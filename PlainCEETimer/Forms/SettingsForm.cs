@@ -143,7 +143,7 @@ namespace PlainCEETimer.Forms
             SetLabelAutoWrap(LabelLine01, GBoxColors);
             SetLabelAutoWrap(LabelRestart, GBoxRestart);
             CompactControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly);
-            CompactControlsX(CheckBoxRounding, ComboBoxShowXOnly, 10);
+            CompactControlsX(CheckBoxCeiling, ComboBoxShowXOnly, 10);
             CompactControlsX(ComboBoxScreens, LabelScreens);
             CompactControlsX(LabelChar1, ComboBoxScreens);
             CompactControlsX(ComboBoxPosition, LabelChar1);
@@ -176,7 +176,7 @@ namespace PlainCEETimer.Forms
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
             CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
             CheckBoxCustomText.Checked = AppConfig.Display.CustomText;
-            CheckBoxRounding.Checked = AppConfig.Display.Rounding;
+            CheckBoxCeiling.Checked = AppConfig.Display.Ceiling;
             ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
             CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
             CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
@@ -226,14 +226,14 @@ namespace PlainCEETimer.Forms
         private void CheckBoxShowXOnly_CheckedChanged(object sender, EventArgs e)
         {
             SettingsChanged(sender, e);
-            CheckBoxRounding.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
+            CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
             ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
             ChangeCustomTextStyle(sender);
 
-            if (CheckBoxRounding.Checked && !CheckBoxShowXOnly.Checked)
+            if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
             {
-                CheckBoxRounding.Checked = false;
-                CheckBoxRounding.Enabled = false;
+                CheckBoxCeiling.Checked = false;
+                CheckBoxCeiling.Enabled = false;
             }
         }
 
@@ -473,8 +473,8 @@ namespace PlainCEETimer.Forms
         private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
         {
             SettingsChanged(sender, e);
-            CheckBoxRounding.Visible = ComboBoxShowXOnly.SelectedIndex == 0;
-            CheckBoxRounding.Checked = ComboBoxShowXOnly.SelectedIndex == 0 && AppConfig.Display.Rounding;
+            CheckBoxCeiling.Visible = ComboBoxShowXOnly.SelectedIndex == 0;
+            CheckBoxCeiling.Checked = ComboBoxShowXOnly.SelectedIndex == 0 && AppConfig.Display.Ceiling;
         }
 
         private void ComboBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
@@ -713,7 +713,7 @@ namespace PlainCEETimer.Forms
                 {
                     ShowXOnly = CheckBoxShowXOnly.Checked,
                     X = ComboBoxShowXOnly.SelectedIndex,
-                    Rounding = CheckBoxRounding.Checked,
+                    Ceiling = CheckBoxCeiling.Checked,
                     EndIndex = ComboBoxCountdownEnd.SelectedIndex,
                     CustomText = CheckBoxCustomText.Checked,
                     CustomTexts = EditedCustomTexts,

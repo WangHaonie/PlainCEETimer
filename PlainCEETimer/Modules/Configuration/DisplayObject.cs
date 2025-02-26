@@ -25,7 +25,7 @@ namespace PlainCEETimer.Modules.Configuration
             }
         }
 
-        public bool Rounding { get; set; }
+        public bool Ceiling { get; set; }
 
         public int EndIndex
         {

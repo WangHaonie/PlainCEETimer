@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules
     {
         Normal,
         DaysOnly,
-        DaysOnlyWithRounding,
+        DaysOnlyWithCeiling,
         HoursOnly,
         MinutesOnly,
         SecondsOnly

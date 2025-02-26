@@ -7,11 +7,11 @@
         public const string PH_HOURS = "{h}";
         public const string PH_MINUTES = "{m}";
         public const string PH_SECONDS = "{s}";
-        public const string PH_ROUNDEDDAYS = "{rd}";
+        public const string PH_CEILINGDAYS = "{cd}";
         public const string PH_TOTALHOURS = "{th}";
         public const string PH_TOTALMINUTES = "{tm}";
         public const string PH_TOTALSECONDS = "{ts}";
-        public const string PH_PHINFO = $"{PH_EXAMNAME}-考试名称 {PH_DAYS}-天 {PH_HOURS}-时 {PH_MINUTES}-分 {PH_SECONDS}-秒 {PH_ROUNDEDDAYS}-四舍五入的天数 {PH_TOTALHOURS}-总小时数 {PH_TOTALMINUTES}-总分钟数 {PH_TOTALSECONDS}-总秒数。";
+        public const string PH_PHINFO = $"{PH_EXAMNAME}-考试名称 {PH_DAYS}-天 {PH_HOURS}-时 {PH_MINUTES}-分 {PH_SECONDS}-秒 {PH_CEILINGDAYS}-向上取整的天数 {PH_TOTALHOURS}-总小时数 {PH_TOTALMINUTES}-总分钟数 {PH_TOTALSECONDS}-总秒数。";
         public const string PH_JULI = "距离";
         public const string PH_START = "还有";
         public const string PH_LEFT = "结束还有";

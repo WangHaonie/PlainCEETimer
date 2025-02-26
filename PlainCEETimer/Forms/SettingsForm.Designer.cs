@@ -57,7 +57,7 @@
             this.CheckBoxCustomText = new System.Windows.Forms.CheckBox();
             this.ButtonCustomText = new System.Windows.Forms.Button();
             this.ComboBoxShowXOnly = new System.Windows.Forms.ComboBox();
-            this.CheckBoxRounding = new System.Windows.Forms.CheckBox();
+            this.CheckBoxCeiling = new System.Windows.Forms.CheckBox();
             this.CheckBoxShowXOnly = new System.Windows.Forms.CheckBox();
             this.GBoxDraggable = new System.Windows.Forms.GroupBox();
             this.ComboBoxPosition = new System.Windows.Forms.ComboBox();
@@ -368,7 +368,7 @@
             this.GBoxContent.Controls.Add(this.CheckBoxCustomText);
             this.GBoxContent.Controls.Add(this.ButtonCustomText);
             this.GBoxContent.Controls.Add(this.ComboBoxShowXOnly);
-            this.GBoxContent.Controls.Add(this.CheckBoxRounding);
+            this.GBoxContent.Controls.Add(this.CheckBoxCeiling);
             this.GBoxContent.Controls.Add(this.CheckBoxShowXOnly);
             this.GBoxContent.Location = new System.Drawing.Point(7, 5);
             this.GBoxContent.Name = "GBoxContent";
@@ -446,17 +446,17 @@
             this.ComboBoxShowXOnly.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxShowXOnly.SelectedIndexChanged += new System.EventHandler(this.ComboBoxShowXOnly_SelectedIndexChanged);
             // 
-            // CheckBoxRounding
+            // CheckBoxCeiling
             // 
-            this.CheckBoxRounding.AutoSize = true;
-            this.CheckBoxRounding.Enabled = false;
-            this.CheckBoxRounding.Location = new System.Drawing.Point(117, 22);
-            this.CheckBoxRounding.Name = "CheckBoxRounding";
-            this.CheckBoxRounding.Size = new System.Drawing.Size(199, 19);
-            this.CheckBoxRounding.TabIndex = 1;
-            this.CheckBoxRounding.Text = "将不足一天的时间视为一天(&N)";
-            this.CheckBoxRounding.UseVisualStyleBackColor = true;
-            this.CheckBoxRounding.CheckedChanged += new System.EventHandler(this.SettingsChanged);
+            this.CheckBoxCeiling.AutoSize = true;
+            this.CheckBoxCeiling.Enabled = false;
+            this.CheckBoxCeiling.Location = new System.Drawing.Point(117, 22);
+            this.CheckBoxCeiling.Name = "CheckBoxCeiling";
+            this.CheckBoxCeiling.Size = new System.Drawing.Size(199, 19);
+            this.CheckBoxCeiling.TabIndex = 1;
+            this.CheckBoxCeiling.Text = "不足一天按整天计算(&N)";
+            this.CheckBoxCeiling.UseVisualStyleBackColor = true;
+            this.CheckBoxCeiling.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // CheckBoxShowXOnly
             // 
@@ -914,7 +914,7 @@
         private System.Windows.Forms.Button ButtonDefaultFont;
         private System.Windows.Forms.GroupBox GBoxContent;
         private System.Windows.Forms.CheckBox CheckBoxShowXOnly;
-        private System.Windows.Forms.CheckBox CheckBoxRounding;
+        private System.Windows.Forms.CheckBox CheckBoxCeiling;
         private System.Windows.Forms.GroupBox GBoxDraggable;
         private System.Windows.Forms.CheckBox CheckBoxDraggable;
         private System.Windows.Forms.GroupBox GBoxPptsvc;

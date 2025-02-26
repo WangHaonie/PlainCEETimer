@@ -35,7 +35,7 @@ namespace PlainCEETimer.Forms
         private bool IsDraggable;
         private bool IsShowEnd;
         private bool IsShowPast;
-        private bool IsRounding;
+        private bool IsCeiling;
         private bool IsPPTService;
         private bool IsCustomText;
         private int ScreenIndex;
@@ -157,7 +157,7 @@ namespace PlainCEETimer.Forms
         {
             if (ValidateNeeded)
             {
-                AppConfig.Display.Rounding = AppConfig.Display.Rounding && AppConfig.Display.ShowXOnly && AppConfig.Display.X == 0;
+                AppConfig.Display.Ceiling = AppConfig.Display.Ceiling && AppConfig.Display.ShowXOnly && AppConfig.Display.X == 0;
                 AppConfig.Display.CustomText = AppConfig.Display.CustomText && !AppConfig.Display.ShowXOnly;
                 AppConfig.Display.SeewoPptsvc = AppConfig.Display.SeewoPptsvc && ((AppConfig.General.TopMost && AppConfig.Display.X == 0) || AppConfig.Display.Draggable);
                 AppConfig.General.TrayText = AppConfig.General.TrayText && AppConfig.General.TrayIcon;
@@ -178,7 +178,7 @@ namespace PlainCEETimer.Forms
             CustomText = AppConfig.Display.CustomTexts;
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
-            IsRounding = AppConfig.Display.Rounding;
+            IsCeiling = AppConfig.Display.Ceiling;
             IsShowEnd = GetEndPast(AppConfig.Display.EndIndex);
             IsShowPast = AppConfig.Display.EndIndex == 2;
             IsDraggable = AppConfig.Display.Draggable;
@@ -228,7 +228,7 @@ namespace PlainCEETimer.Forms
                     1 => CountdownState.HoursOnly,
                     2 => CountdownState.MinutesOnly,
                     3 => CountdownState.SecondsOnly,
-                    _ => IsRounding ? CountdownState.DaysOnlyWithRounding : CountdownState.DaysOnly
+                    _ => IsCeiling ? CountdownState.DaysOnlyWithCeiling : CountdownState.DaysOnly
                 };
             }
 
@@ -725,7 +725,7 @@ namespace PlainCEETimer.Forms
             .Replace(Placeholders.PH_HOURS, $"{Span.Hours:00}")
             .Replace(Placeholders.PH_MINUTES, $"{Span.Minutes:00}")
             .Replace(Placeholders.PH_SECONDS, $"{Span.Seconds:00}")
-            .Replace(Placeholders.PH_ROUNDEDDAYS, $"{Span.Days + 1}")
+            .Replace(Placeholders.PH_CEILINGDAYS, $"{Span.Days + 1}")
             .Replace(Placeholders.PH_TOTALHOURS, $"{Span.TotalHours:0}")
             .Replace(Placeholders.PH_TOTALMINUTES, $"{Span.TotalMinutes:0}")
             .Replace(Placeholders.PH_TOTALSECONDS, $"{Span.TotalSeconds:0}");
@@ -734,7 +734,7 @@ namespace PlainCEETimer.Forms
         private string GetCountdown(TimeSpan Span, string Name, string Hint) => SelectedState switch
         {
             CountdownState.DaysOnly => string.Format("{0}{1}{2}{3}天", Placeholders.PH_JULI, Name, Hint, Span.Days),
-            CountdownState.DaysOnlyWithRounding => string.Format("{0}{1}{2}{3}天", Placeholders.PH_JULI, Name, Hint, Span.Days + 1),
+            CountdownState.DaysOnlyWithCeiling => string.Format("{0}{1}{2}{3}天", Placeholders.PH_JULI, Name, Hint, Span.Days + 1),
             CountdownState.HoursOnly => string.Format("{0}{1}{2}{3:0}小时", Placeholders.PH_JULI, Name, Hint, Span.TotalHours),
             CountdownState.MinutesOnly => string.Format("{0}{1}{2}{3:0}分钟", Placeholders.PH_JULI, Name, Hint, Span.TotalMinutes),
             CountdownState.SecondsOnly => string.Format("{0}{1}{2}{3:0}秒", Placeholders.PH_JULI, Name, Hint, Span.TotalSeconds),
