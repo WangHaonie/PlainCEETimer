@@ -266,7 +266,7 @@ namespace PlainCEETimer.Forms
         {
             if (ContextMenuStyleChanged)
             {
-                if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后方可正常显示。\n\n是否立即重启？", Buttons: MessageBoxExButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后才能生效。\n\n是否立即重启？", Buttons: MessageBoxExButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Shutdown(true);
                 }
