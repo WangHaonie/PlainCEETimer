@@ -42,7 +42,7 @@ namespace PlainCEETimer.Modules.Configuration
             }
             catch
             {
-                throw;
+                return new();
             }
         }
 
