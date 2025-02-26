@@ -9,7 +9,6 @@ namespace PlainCEETimer.Modules
         public static int MaxCustomTextLength => 50;
         public static int MinFontSize => 10;
         public static int MaxFontSize => 28;
-        public static char[] CharsNotAllowed => ['\\', '/', '*', '?', '"', '\'', '<', '>', '|'];
         public static char ValueSeparator => ',';
         public static string ValueSeparatorString => ", ";
         public static TimeSpan TsMaxAllowed => new(65535, 23, 59, 59);
