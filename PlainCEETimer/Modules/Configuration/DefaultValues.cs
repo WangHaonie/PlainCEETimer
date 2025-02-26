@@ -4,41 +4,39 @@ namespace PlainCEETimer.Modules.Configuration
 {
     public static class DefaultValues
     {
-        public static ColorSetObject[] CountdownDefaultColorsLight
+        public static readonly int Initialize;
+        private static readonly string NotoSansSC = "Noto Sans SC";
+        private static readonly string MicrosoftYaHei = "Microsoft YaHei";
+
+        static DefaultValues()
         {
-            get
+            var FontTester = new Font(NotoSansSC, 1);
+            bool PreferAvailable = false;
+
+            if (FontTester.Name == NotoSansSC)
             {
-                field ??= [
+                PreferAvailable = true;
+            }
+
+            FontTester.Dispose();
+
+            CountdownDefaultColorsLight = [
                     new(Color.Red, Color.White),
                     new(Color.Green, Color.White),
                     new(Color.Black, Color.White),
                     new(Color.Black, Color.White)];
-
-                return field;
-            }
-        }
-
-        public static ColorSetObject[] CountdownDefaultColorsDark
-        {
-            get
-            {
-                field ??= [
+            CountdownDefaultColorsDark = [
                     new(Color.Red, Color.Black),
                     new(Color.Lime, Color.Black),
                     new(Color.White, Color.Black),
                     new(Color.White, Color.Black)];
-
-                return field;
-            }
+            CountdownDefaultFont = new(PreferAvailable ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
         }
 
-        public static Font CountdownDefaultFont
-        {
-            get
-            {
-                field ??= new("Microsoft YaHei", 17.25F, FontStyle.Bold, GraphicsUnit.Point);
-                return field;
-            }
-        }
+        public static ColorSetObject[] CountdownDefaultColorsLight { get; }
+
+        public static ColorSetObject[] CountdownDefaultColorsDark { get; }
+
+        public static Font CountdownDefaultFont { get; }
     }
 }

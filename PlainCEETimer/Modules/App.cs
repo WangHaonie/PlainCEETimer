@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Configuration;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -94,6 +95,7 @@ namespace PlainCEETimer.Modules
         public static void StartProgram(string[] args)
         {
             AppIcon = Icon.ExtractAssociatedIcon(CurrentExecutablePath);
+            _ = DefaultValues.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
             Application.EnableVisualStyles();
