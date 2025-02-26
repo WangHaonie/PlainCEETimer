@@ -761,6 +761,8 @@ namespace PlainCEETimer.Forms
         {
             if (TrayIcon != null)
             {
+                cText = cText.Truncate(60);
+
                 if (cInvokeRequired)
                 {
                     BeginInvoke(() =>

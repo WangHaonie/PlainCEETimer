@@ -28,6 +28,19 @@ namespace PlainCEETimer.Modules
             => new(s.Trim().Replace(" ", "").Where(c => char.IsLetterOrDigit(c) || (c >= ' ' && c <= byte.MaxValue)).Where(x => !ConfigPolicy.CharsNotAllowed.Contains(x)).ToArray());
         #endregion
 
+        #region 来自网络
+        /*
+
+        截断字符串 参考:
+
+        c# - How do I truncate a .NET string? - Stack Overflow
+        https://stackoverflow.com/a/2776689
+
+        */
+        public static string Truncate(this string s, int MaxLength)
+            => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
+        #endregion
+
         public static int ScaleToDpi(this int px)
         {
             int pxScaled;
