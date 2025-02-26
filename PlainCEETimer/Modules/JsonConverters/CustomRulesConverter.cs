@@ -22,6 +22,7 @@ namespace PlainCEETimer.Modules.JsonConverters
             }
 
             var Text = Json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();
+            CustomRuleHelper.VerifyText(Text);
 
             return new()
             {

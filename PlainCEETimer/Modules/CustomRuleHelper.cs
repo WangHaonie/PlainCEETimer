@@ -13,6 +13,14 @@ namespace PlainCEETimer.Modules
         public static string GetExamTickText(TimeSpan timeSpan)
             => $"{timeSpan.Days}{TsSeparator[0]}{timeSpan.Hours}{TsSeparator[1]}{timeSpan.Minutes}{TsSeparator[2]}{timeSpan.Seconds}{TsSeparator[3]}";
 
+        public static void VerifyText(string Text)
+        {
+            if (Text.Length > ConfigPolicy.MaxCustomTextLength)
+            {
+                throw new Exception();
+            }
+        }
+
         public static CountdownPhase GetPhase(string s) => s switch
         {
             Placeholders.PH_LEFT => CountdownPhase.P2,

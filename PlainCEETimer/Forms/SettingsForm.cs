@@ -155,13 +155,12 @@ namespace PlainCEETimer.Forms
 
             Adjust(() =>
             {
-                AlignControlsR(ButtonRulesMan, ComboBoxCountdownEnd);
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
                 AlignControlsX(ComboBoxPosition, LabelChar1);
                 AlignControlsX(ButtonExamInfo, LabelExamInfoWarning);
                 AlignControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
-                AlignControlsX(ButtonCustomText, CheckBoxCustomText);
+                AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
             });
         }
@@ -175,7 +174,7 @@ namespace PlainCEETimer.Forms
             CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
             CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
-            CheckBoxCustomText.Checked = AppConfig.Display.CustomText;
+            CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
             CheckBoxCeiling.Checked = AppConfig.Display.Ceiling;
             ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
             CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
@@ -249,23 +248,27 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void CheckBoxCustomText_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxRulesMan_CheckedChanged(object sender, EventArgs e)
         {
             SettingsChanged(sender, e);
             ChangeCustomTextStyle(sender);
         }
 
-        private void ButtonCustomText_Click(object sender, EventArgs e)
+        private void ButtonRulesMan_Click(object sender, EventArgs e)
         {
-            CustomTextDialog _CustomTextDialog = new() { CustomText = EditedCustomTexts };
+            RulesManager Manager = new()
+            {
+                CustomRules = EditedCustomRules,
+                ShowWarning = !CheckBoxRulesMan.Checked,
+                GlobalCustomTexts = EditedCustomTexts
+            };
 
-            if (_CustomTextDialog.ShowDialog() == DialogResult.OK)
+            if (Manager.ShowDialog() == DialogResult.OK)
             {
                 SettingsChanged(sender, e);
-                EditedCustomTexts = _CustomTextDialog.CustomText;
+                EditedCustomRules = Manager.CustomRules;
+                EditedCustomTexts = Manager.GlobalCustomTexts;
             }
-
-            _CustomTextDialog.Dispose();
         }
 
         private void ButtonFont_Click(object sender, EventArgs e)
@@ -373,22 +376,6 @@ namespace PlainCEETimer.Forms
         {
             SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
             SettingsChanged(sender, e);
-        }
-
-        private void ButtonRulesMan_Click(object sender, EventArgs e)
-        {
-            RulesManager Manager = new()
-            {
-                CustomRules = EditedCustomRules,
-                Preferences = AppConfig.Display.CustomTexts,
-                ShowWarning = !CheckBoxCustomText.Checked
-            };
-
-            if (Manager.ShowDialog() == DialogResult.OK)
-            {
-                SettingsChanged(sender, e);
-                EditedCustomRules = Manager.CustomRules;
-            }
         }
 
         private void ButtonRestart_MouseDown(object sender, MouseEventArgs e)
@@ -532,12 +519,12 @@ namespace PlainCEETimer.Forms
             {
                 if (cb == CheckBoxShowXOnly)
                 {
-                    CheckBoxCustomText.Enabled = !cb.Checked;
-                    ButtonCustomText.Enabled = false;
+                    CheckBoxRulesMan.Enabled = !cb.Checked;
+                    ButtonRulesMan.Enabled = false;
                 }
                 else
                 {
-                    ButtonCustomText.Enabled = cb.Checked;
+                    ButtonRulesMan.Enabled = cb.Checked;
                     CheckBoxShowXOnly.Enabled = !cb.Checked;
                 }
             }
@@ -715,7 +702,7 @@ namespace PlainCEETimer.Forms
                     X = ComboBoxShowXOnly.SelectedIndex,
                     Ceiling = CheckBoxCeiling.Checked,
                     EndIndex = ComboBoxCountdownEnd.SelectedIndex,
-                    CustomText = CheckBoxCustomText.Checked,
+                    CustomText = CheckBoxRulesMan.Checked,
                     CustomTexts = EditedCustomTexts,
                     ScreenIndex = ComboBoxScreens.SelectedIndex,
                     Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,

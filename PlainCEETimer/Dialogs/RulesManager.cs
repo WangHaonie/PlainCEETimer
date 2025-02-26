@@ -13,7 +13,7 @@ namespace PlainCEETimer.Dialogs
     public partial class RulesManager : DialogEx
     {
         public CustomRuleObject[] CustomRules { get; set; }
-        public string[] Preferences { get; set; }
+        public string[] GlobalCustomTexts { get; set; }
         public bool ShowWarning { get; set; }
 
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
@@ -111,7 +111,7 @@ namespace PlainCEETimer.Dialogs
             {
                 ResetCustomText();
             }
-            else if (CustomText != CustomRuleHelper.GetCustomTextDefault(ComboBoxRuleType.SelectedIndex, Preferences))
+            else if (CustomText != CustomRuleHelper.GetCustomTextDefault(ComboBoxRuleType.SelectedIndex, GlobalCustomTexts))
             {
                 SaveUserUnsavedText();
             }
@@ -122,6 +122,7 @@ namespace PlainCEETimer.Dialogs
         protected override void AdjustUI()
         {
             SetLabelAutoWrap(LabelWarning, GroupBoxWarning);
+            SetTextBoxMax(TextBoxCustomText, ConfigPolicy.MaxCustomTextLength);
         }
 
         private void RulesManager_KeyDown(object sender, KeyEventArgs e)
@@ -305,6 +306,19 @@ namespace PlainCEETimer.Dialogs
             base.ButtonA_Click();
         }
 
+        private void ButtonCustomText_Click(object sender, EventArgs e)
+        {
+            CustomTextDialog Dialog = new() { CustomText = GlobalCustomTexts };
+
+            if (Dialog.ShowDialog() == DialogResult.OK)
+            {
+                GlobalCustomTexts = Dialog.CustomText;
+                UserChanged();
+            }
+
+            Dialog.Dispose();
+        }
+
         private IEnumerable<ListViewItem> GetAllItems()
             => ListViewMain.Items.Cast<ListViewItem>();
 
@@ -325,7 +339,7 @@ namespace PlainCEETimer.Dialogs
 
         private void ResetCustomText()
         {
-            TextBoxCustomText.Text = CustomRuleHelper.GetCustomTextDefault(ComboBoxRuleType.SelectedIndex, Preferences);
+            TextBoxCustomText.Text = CustomRuleHelper.GetCustomTextDefault(ComboBoxRuleType.SelectedIndex, GlobalCustomTexts);
         }
 
         private void SelectAllItems()

@@ -37,7 +37,6 @@
             this.ColumnHeaderFore = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderBack = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.LabelInfo = new System.Windows.Forms.Label();
             this.GroupBoxDetails = new System.Windows.Forms.GroupBox();
             this.ComboBoxRuleType = new System.Windows.Forms.ComboBox();
             this.ButtonChange = new System.Windows.Forms.Button();
@@ -60,6 +59,7 @@
             this.LabelChar2 = new System.Windows.Forms.Label();
             this.LabelChar1 = new System.Windows.Forms.Label();
             this.GroupBoxWarning = new System.Windows.Forms.GroupBox();
+            this.ButtonCustomText = new System.Windows.Forms.Button();
             this.LabelWarning = new System.Windows.Forms.Label();
             this.PanelMain.SuspendLayout();
             this.GroupBoxDetails.SuspendLayout();
@@ -73,7 +73,6 @@
             // PanelMain
             // 
             this.PanelMain.Controls.Add(this.ListViewMain);
-            this.PanelMain.Controls.Add(this.LabelInfo);
             this.PanelMain.Location = new System.Drawing.Point(0, 0);
             this.PanelMain.Name = "PanelMain";
             this.PanelMain.Size = new System.Drawing.Size(637, 163);
@@ -90,9 +89,9 @@
             this.ListViewMain.FullRowSelect = true;
             this.ListViewMain.GridLines = true;
             this.ListViewMain.HideSelection = false;
-            this.ListViewMain.Location = new System.Drawing.Point(6, 21);
+            this.ListViewMain.Location = new System.Drawing.Point(6, 3);
             this.ListViewMain.Name = "ListViewMain";
-            this.ListViewMain.Size = new System.Drawing.Size(626, 136);
+            this.ListViewMain.Size = new System.Drawing.Size(626, 154);
             this.ListViewMain.TabIndex = 1;
             this.ListViewMain.UseCompatibleStateImageBehavior = false;
             this.ListViewMain.View = System.Windows.Forms.View.Details;
@@ -122,14 +121,24 @@
             this.ColumnHeaderText.Text = "自定义文本";
             this.ColumnHeaderText.Width = 250;
             // 
-            // LabelInfo
+            // ButtonB
             // 
-            this.LabelInfo.AutoSize = true;
-            this.LabelInfo.Location = new System.Drawing.Point(3, 3);
-            this.LabelInfo.Name = "LabelInfo";
-            this.LabelInfo.Size = new System.Drawing.Size(358, 15);
-            this.LabelInfo.TabIndex = 0;
-            this.LabelInfo.Text = "你可以在这里自定义倒计时在各个时刻要显示的颜色和内容。";
+            this.ButtonB.Location = new System.Drawing.Point(557, 251);
+            this.ButtonB.Name = "ButtonB";
+            this.ButtonB.Size = new System.Drawing.Size(75, 23);
+            this.ButtonB.TabIndex = 22;
+            this.ButtonB.Text = "取消(&C)";
+            this.ButtonB.UseVisualStyleBackColor = true;
+            // 
+            // ButtonA
+            // 
+            this.ButtonA.Enabled = false;
+            this.ButtonA.Location = new System.Drawing.Point(476, 251);
+            this.ButtonA.Name = "ButtonA";
+            this.ButtonA.Size = new System.Drawing.Size(75, 23);
+            this.ButtonA.TabIndex = 21;
+            this.ButtonA.Text = "保存(&S)";
+            this.ButtonA.UseVisualStyleBackColor = true;
             // 
             // GroupBoxDetails
             // 
@@ -171,14 +180,14 @@
             // 
             // ButtonChange
             // 
-            this.ButtonChange.Location = new System.Drawing.Point(375, 87);
             this.ButtonChange.Enabled = false;
+            this.ButtonChange.Location = new System.Drawing.Point(375, 87);
             this.ButtonChange.Name = "ButtonChange";
             this.ButtonChange.Size = new System.Drawing.Size(75, 23);
             this.ButtonChange.TabIndex = 20;
             this.ButtonChange.Text = "更改(&E)";
             this.ButtonChange.UseVisualStyleBackColor = true;
-            this.ButtonChange.Click += new System.EventHandler(ButtonChange_Click);
+            this.ButtonChange.Click += new System.EventHandler(this.ButtonChange_Click);
             // 
             // ButtonAdd
             // 
@@ -362,41 +371,35 @@
             // 
             // GroupBoxWarning
             // 
+            this.GroupBoxWarning.Controls.Add(this.ButtonCustomText);
             this.GroupBoxWarning.Controls.Add(this.LabelWarning);
             this.GroupBoxWarning.Location = new System.Drawing.Point(468, 164);
             this.GroupBoxWarning.Name = "GroupBoxWarning";
             this.GroupBoxWarning.Size = new System.Drawing.Size(164, 81);
             this.GroupBoxWarning.TabIndex = 2;
             this.GroupBoxWarning.TabStop = false;
-            this.GroupBoxWarning.Text = "注意";
+            this.GroupBoxWarning.Text = "全局自定义文本";
+            // 
+            // ButtonCustomText
+            // 
+            this.ButtonCustomText.AutoSize = true;
+            this.ButtonCustomText.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ButtonCustomText.Location = new System.Drawing.Point(73, 50);
+            this.ButtonCustomText.Name = "ButtonCustomText";
+            this.ButtonCustomText.Size = new System.Drawing.Size(85, 25);
+            this.ButtonCustomText.TabIndex = 42;
+            this.ButtonCustomText.Text = "全局设置(G)";
+            this.ButtonCustomText.UseVisualStyleBackColor = true;
+            this.ButtonCustomText.Click += new System.EventHandler(this.ButtonCustomText_Click);
             // 
             // LabelWarning
             // 
             this.LabelWarning.AutoSize = true;
             this.LabelWarning.Location = new System.Drawing.Point(3, 19);
             this.LabelWarning.Name = "LabelWarning";
-            this.LabelWarning.Size = new System.Drawing.Size(360, 15);
+            this.LabelWarning.Size = new System.Drawing.Size(247, 15);
             this.LabelWarning.TabIndex = 0;
-            this.LabelWarning.Text = "自定义文本默认使用 设置 >显示 >自定义文本 选项里的内容。";
-            // 
-            // ButtonB
-            // 
-            this.ButtonB.Location = new System.Drawing.Point(557, 251);
-            this.ButtonB.Name = "ButtonB";
-            this.ButtonB.Size = new System.Drawing.Size(75, 23);
-            this.ButtonB.TabIndex = 22;
-            this.ButtonB.Text = "取消(&C)";
-            this.ButtonB.UseVisualStyleBackColor = true;
-            // 
-            // ButtonA
-            // 
-            this.ButtonA.Enabled = false;
-            this.ButtonA.Location = new System.Drawing.Point(476, 251);
-            this.ButtonA.Name = "ButtonA";
-            this.ButtonA.Size = new System.Drawing.Size(75, 23);
-            this.ButtonA.TabIndex = 21;
-            this.ButtonA.Text = "保存(&S)";
-            this.ButtonA.UseVisualStyleBackColor = true;
+            this.LabelWarning.Text = "若未添加规则, 默认显示全局设置的文本。";
             // 
             // RulesManager
             // 
@@ -420,7 +423,6 @@
             this.Text = "规则管理器 - 高考倒计时";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RulesManager_KeyDown);
             this.PanelMain.ResumeLayout(false);
-            this.PanelMain.PerformLayout();
             this.GroupBoxDetails.ResumeLayout(false);
             this.GroupBoxDetails.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUDSeconds)).EndInit();
@@ -441,7 +443,6 @@
         private System.Windows.Forms.ColumnHeader ColumnHeaderFore;
         private System.Windows.Forms.ColumnHeader ColumnHeaderBack;
         private System.Windows.Forms.ColumnHeader ColumnHeaderText;
-        private System.Windows.Forms.Label LabelInfo;
         private System.Windows.Forms.GroupBox GroupBoxDetails;
         private System.Windows.Forms.NumericUpDown NUDDays;
         private System.Windows.Forms.Label LabelChar2;
@@ -464,9 +465,10 @@
         private System.Windows.Forms.Button ButtonChange;
         private System.Windows.Forms.Button ButtonAdd;
         private System.Windows.Forms.ComboBox ComboBoxRuleType;
-        private System.Windows.Forms.Label LabelWarning;
         //private System.Windows.Forms.Panel PanelMain;
         //private System.Windows.Forms.Button ButtonB;
         //private System.Windows.Forms.Button ButtonA;
+        private System.Windows.Forms.Label LabelWarning;
+        private System.Windows.Forms.Button ButtonCustomText;
     }
 }

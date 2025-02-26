@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             //this.PanelMain = new System.Windows.Forms.Panel();
+            //this.ButtonA = new System.Windows.Forms.Button();
+            //this.ButtonB = new System.Windows.Forms.Button();
             this.LabelP3 = new System.Windows.Forms.Label();
             this.TextBoxP3 = new System.Windows.Forms.TextBox();
             this.LabelP2 = new System.Windows.Forms.Label();
@@ -37,8 +39,6 @@
             this.TextBoxP1 = new System.Windows.Forms.TextBox();
             this.LabelInfo = new System.Windows.Forms.Label();
             this.ButtonReset = new System.Windows.Forms.Button();
-            //this.ButtonA = new System.Windows.Forms.Button();
-            //this.ButtonB = new System.Windows.Forms.Button();
             this.PanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,7 +51,7 @@
             this.PanelMain.Controls.Add(this.LabelP1);
             this.PanelMain.Controls.Add(this.TextBoxP1);
             this.PanelMain.Controls.Add(this.LabelInfo);
-            this.PanelMain.Location = new System.Drawing.Point(6, 6);
+            this.PanelMain.Location = new System.Drawing.Point(3, 3);
             this.PanelMain.Name = "PanelMain";
             this.PanelMain.Size = new System.Drawing.Size(305, 161);
             this.PanelMain.TabIndex = 0;
@@ -112,15 +112,6 @@
             this.LabelInfo.Size = new System.Drawing.Size(0, 15);
             this.LabelInfo.TabIndex = 0;
             // 
-            // ButtonReset
-            // 
-            this.ButtonReset.Location = new System.Drawing.Point(6, 167);
-            this.ButtonReset.Name = "ButtonReset";
-            this.ButtonReset.Size = new System.Drawing.Size(75, 23);
-            this.ButtonReset.TabIndex = 1;
-            this.ButtonReset.Text = "重置(R)";
-            this.ButtonReset.UseVisualStyleBackColor = true;
-            // 
             // ButtonA
             // 
             this.ButtonA.Enabled = false;
@@ -140,6 +131,15 @@
             this.ButtonB.Text = "取消(&C)";
             this.ButtonB.UseVisualStyleBackColor = true;
             // 
+            // ButtonReset
+            // 
+            this.ButtonReset.Location = new System.Drawing.Point(6, 167);
+            this.ButtonReset.Name = "ButtonReset";
+            this.ButtonReset.Size = new System.Drawing.Size(75, 23);
+            this.ButtonReset.TabIndex = 1;
+            this.ButtonReset.Text = "重置(R)";
+            this.ButtonReset.UseVisualStyleBackColor = true;
+            // 
             // CustomTextDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -158,7 +158,7 @@
             this.Name = "CustomTextDialog";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "自定义文本 - 高考倒计时";
+            this.Text = "全局自定义文本 - 高考倒计时";
             this.PanelMain.ResumeLayout(false);
             this.PanelMain.PerformLayout();
             this.ResumeLayout(false);
@@ -168,6 +168,8 @@
         #endregion
 
         //private System.Windows.Forms.Panel PanelMain;
+        //private System.Windows.Forms.Button ButtonA;
+        //private System.Windows.Forms.Button ButtonB;
         private System.Windows.Forms.Label LabelInfo;
         private System.Windows.Forms.Label LabelP3;
         private System.Windows.Forms.TextBox TextBoxP3;
@@ -176,7 +178,5 @@
         private System.Windows.Forms.Label LabelP1;
         private System.Windows.Forms.TextBox TextBoxP1;
         private System.Windows.Forms.Button ButtonReset;
-        //private System.Windows.Forms.Button ButtonA;
-        //private System.Windows.Forms.Button ButtonB;
     }
 }

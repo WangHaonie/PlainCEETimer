@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules
     {
         public static int MinExamNameLength => 2;
         public static int MaxExamNameLength => 10;
-        public static int MaxCustomTextLength => 50;
+        public static int MaxCustomTextLength => 100;
         public static int MinFontSize => 10;
         public static int MaxFontSize => 28;
         public static char ValueSeparator => ',';

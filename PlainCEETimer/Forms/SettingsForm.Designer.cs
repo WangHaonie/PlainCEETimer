@@ -52,10 +52,9 @@
             this.LabelPptsvc = new System.Windows.Forms.Label();
             this.GBoxContent = new System.Windows.Forms.GroupBox();
             this.LabelCountdownEnd = new System.Windows.Forms.Label();
-            this.ButtonRulesMan = new System.Windows.Forms.Button();
             this.ComboBoxCountdownEnd = new System.Windows.Forms.ComboBox();
-            this.CheckBoxCustomText = new System.Windows.Forms.CheckBox();
-            this.ButtonCustomText = new System.Windows.Forms.Button();
+            this.CheckBoxRulesMan = new System.Windows.Forms.CheckBox();
+            this.ButtonRulesMan = new System.Windows.Forms.Button();
             this.ComboBoxShowXOnly = new System.Windows.Forms.ComboBox();
             this.CheckBoxCeiling = new System.Windows.Forms.CheckBox();
             this.CheckBoxShowXOnly = new System.Windows.Forms.CheckBox();
@@ -363,10 +362,9 @@
             // GBoxContent
             // 
             this.GBoxContent.Controls.Add(this.LabelCountdownEnd);
-            this.GBoxContent.Controls.Add(this.ButtonRulesMan);
             this.GBoxContent.Controls.Add(this.ComboBoxCountdownEnd);
-            this.GBoxContent.Controls.Add(this.CheckBoxCustomText);
-            this.GBoxContent.Controls.Add(this.ButtonCustomText);
+            this.GBoxContent.Controls.Add(this.CheckBoxRulesMan);
+            this.GBoxContent.Controls.Add(this.ButtonRulesMan);
             this.GBoxContent.Controls.Add(this.ComboBoxShowXOnly);
             this.GBoxContent.Controls.Add(this.CheckBoxCeiling);
             this.GBoxContent.Controls.Add(this.CheckBoxShowXOnly);
@@ -386,18 +384,6 @@
             this.LabelCountdownEnd.TabIndex = 45;
             this.LabelCountdownEnd.Text = "当倒计时结束时, 显示";
             // 
-            // ButtonRulesMan
-            // 
-            this.ButtonRulesMan.AutoSize = true;
-            this.ButtonRulesMan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ButtonRulesMan.Location = new System.Drawing.Point(215, 68);
-            this.ButtonRulesMan.Name = "ButtonRulesMan";
-            this.ButtonRulesMan.Size = new System.Drawing.Size(98, 25);
-            this.ButtonRulesMan.TabIndex = 20;
-            this.ButtonRulesMan.Text = "规则管理器(&G)";
-            this.ButtonRulesMan.UseVisualStyleBackColor = true;
-            this.ButtonRulesMan.Click += new System.EventHandler(this.ButtonRulesMan_Click);
-            // 
             // ComboBoxCountdownEnd
             // 
             this.ComboBoxCountdownEnd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -410,28 +396,29 @@
             this.ComboBoxCountdownEnd.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxCountdownEnd.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
-            // CheckBoxCustomText
+            // CheckBoxRulesMan
             // 
-            this.CheckBoxCustomText.AutoSize = true;
-            this.CheckBoxCustomText.Location = new System.Drawing.Point(9, 74);
-            this.CheckBoxCustomText.Name = "CheckBoxCustomText";
-            this.CheckBoxCustomText.Size = new System.Drawing.Size(15, 14);
-            this.CheckBoxCustomText.TabIndex = 42;
-            this.CheckBoxCustomText.UseVisualStyleBackColor = true;
-            this.CheckBoxCustomText.CheckedChanged += new System.EventHandler(this.CheckBoxCustomText_CheckedChanged);
+            this.CheckBoxRulesMan.AutoSize = true;
+            this.CheckBoxRulesMan.Location = new System.Drawing.Point(9, 74);
+            this.CheckBoxRulesMan.Name = "CheckBoxRulesMan";
+            this.CheckBoxRulesMan.Size = new System.Drawing.Size(195, 19);
+            this.CheckBoxRulesMan.TabIndex = 42;
+            this.CheckBoxRulesMan.Text = "自定义不同时刻的颜色和内容:";
+            this.CheckBoxRulesMan.UseVisualStyleBackColor = true;
+            this.CheckBoxRulesMan.CheckedChanged += new System.EventHandler(this.CheckBoxRulesMan_CheckedChanged);
             // 
-            // ButtonCustomText
+            // ButtonRulesMan
             // 
-            this.ButtonCustomText.AutoSize = true;
-            this.ButtonCustomText.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ButtonCustomText.Enabled = false;
-            this.ButtonCustomText.Location = new System.Drawing.Point(25, 68);
-            this.ButtonCustomText.Name = "ButtonCustomText";
-            this.ButtonCustomText.Size = new System.Drawing.Size(101, 25);
-            this.ButtonCustomText.TabIndex = 41;
-            this.ButtonCustomText.Text = "自定义文本(&W)";
-            this.ButtonCustomText.UseVisualStyleBackColor = true;
-            this.ButtonCustomText.Click += new System.EventHandler(this.ButtonCustomText_Click);
+            this.ButtonRulesMan.AutoSize = true;
+            this.ButtonRulesMan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ButtonRulesMan.Enabled = false;
+            this.ButtonRulesMan.Location = new System.Drawing.Point(219, 70);
+            this.ButtonRulesMan.Name = "ButtonRulesMan";
+            this.ButtonRulesMan.Size = new System.Drawing.Size(97, 25);
+            this.ButtonRulesMan.TabIndex = 41;
+            this.ButtonRulesMan.Text = "规则管理器(&R)";
+            this.ButtonRulesMan.UseVisualStyleBackColor = true;
+            this.ButtonRulesMan.Click += new System.EventHandler(this.ButtonRulesMan_Click);
             // 
             // ComboBoxShowXOnly
             // 
@@ -452,7 +439,7 @@
             this.CheckBoxCeiling.Enabled = false;
             this.CheckBoxCeiling.Location = new System.Drawing.Point(117, 22);
             this.CheckBoxCeiling.Name = "CheckBoxCeiling";
-            this.CheckBoxCeiling.Size = new System.Drawing.Size(199, 19);
+            this.CheckBoxCeiling.Size = new System.Drawing.Size(160, 19);
             this.CheckBoxCeiling.TabIndex = 1;
             this.CheckBoxCeiling.Text = "不足一天按整天计算(&N)";
             this.CheckBoxCeiling.UseVisualStyleBackColor = true;
@@ -945,9 +932,8 @@
         private System.Windows.Forms.Label LabelLine05;
         private System.Windows.Forms.ComboBox ComboBoxPosition;
         private System.Windows.Forms.Label LabelChar1;
-        private System.Windows.Forms.Button ButtonCustomText;
-        private System.Windows.Forms.CheckBox CheckBoxCustomText;
         private System.Windows.Forms.Button ButtonRulesMan;
+        private System.Windows.Forms.CheckBox CheckBoxRulesMan;
         private System.Windows.Forms.ComboBox ComboBoxNtpServers;
         private System.Windows.Forms.ComboBox ComboBoxCountdownEnd;
         private System.Windows.Forms.Label LabelCountdownEnd;
