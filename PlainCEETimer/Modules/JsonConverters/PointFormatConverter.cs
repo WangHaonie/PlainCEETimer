@@ -12,7 +12,7 @@ namespace PlainCEETimer.Modules.JsonConverters
 
             if (PointParts.Length == 2)
             {
-                return new Point(PointParts[0], PointParts[1]);
+                return new(PointParts[0], PointParts[1]);
             }
 
             throw new Exception();
