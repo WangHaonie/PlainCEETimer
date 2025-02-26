@@ -18,7 +18,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public ToolsObject Tools { get; set; } = new();
 
-        public RulesManagerObject[] CustomRules
+        public CustomRuleObject[] CustomRules
         {
             get => field ?? [];
             set
@@ -31,7 +31,7 @@ namespace PlainCEETimer.Modules.Configuration
                 {
                     if (MainForm.ValidateNeeded)
                     {
-                        var HashSet = new HashSet<RulesManagerObject>();
+                        var HashSet = new HashSet<CustomRuleObject>();
 
                         foreach (var Item in value)
                         {

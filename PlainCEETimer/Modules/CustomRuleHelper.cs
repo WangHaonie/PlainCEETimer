@@ -20,6 +20,13 @@ namespace PlainCEETimer.Modules
             _ => CountdownPhase.P1
         };
 
+        public static CountdownPhase GetPhase(int i) => i switch
+        {
+            0 => CountdownPhase.P1,
+            1 => CountdownPhase.P2,
+            _ => CountdownPhase.P3
+        };
+
         public static string GetRuleTypeText(CountdownPhase i) => i switch
         {
             CountdownPhase.P2 => Placeholders.PH_LEFT,

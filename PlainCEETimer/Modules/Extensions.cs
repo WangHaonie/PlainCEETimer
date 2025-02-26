@@ -3,7 +3,6 @@ using PlainCEETimer.Interop;
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
@@ -11,15 +10,10 @@ namespace PlainCEETimer.Modules
     public static class Extensions
     {
         public static double DpiRatio { get; private set; } = 0;
-        public static bool IsRGB(this int i) => i >= 0 && i <= 255;
-        public static double ToLuminance(this Color color) => color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
-        public static string ToRgb(this Color color) => $"{color.R},{color.G},{color.B}";
-        public static string ToStr(this TimeSpan Tick) => $"{Tick.Days},{Tick.Hours},{Tick.Minutes},{Tick.Seconds}";
+        public static string ToArgbString(this Color color) => color.ToArgbInt().ToString();
+        public static int ToArgbInt(this Color color) => -color.ToArgb();
         public static TimeSpan ToTimeSpan(this string timespan, char[] Separator) => GetTimeSpan(timespan.Split(Separator));
-        public static TimeSpan ToTimeSpan(this string timespan, char Separator) => GetTimeSpan(timespan.Split(Separator));
         public static string ToMessage(this Exception ex) => $"\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
-        public static string FormatLog(this string updateLog, string latestVersion)
-            => $"{Regex.Replace(updateLog.RemoveIllegalChars(), @"[#\>]", "").Replace($"v{latestVersion}更新日志新功能修复移除", "").Replace("+", "\n● ")}";
 
         #region 来自网络
         /*

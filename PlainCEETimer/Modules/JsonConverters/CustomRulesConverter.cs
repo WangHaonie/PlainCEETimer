@@ -5,20 +5,14 @@ using System;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class CustomRulesConverter : JsonConverter<RulesManagerObject>
+    public class CustomRulesConverter : JsonConverter<CustomRuleObject>
     {
-        public override RulesManagerObject ReadJson(JsonReader reader, Type objectType, RulesManagerObject existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             var Json = serializer.Deserialize<JObject>(reader);
-            var PhaseValue = Convert.ToInt32(Json[nameof(existingValue.Phase)]);
 
-            if (!Enum.IsDefined(typeof(CountdownPhase), PhaseValue))
-            {
-                throw new Exception();
-            }
-
-            var Phase = (CountdownPhase)PhaseValue;
-            var Tick = Json[nameof(existingValue.Tick)].ToString().ToTimeSpan(ConfigPolicy.ValueSeparator);
+            var Phase = CustomRuleHelper.GetPhase(int.Parse(Json[nameof(existingValue.Phase)].ToString()));
+            var Tick = TimeSpan.FromSeconds(double.Parse(Json[nameof(existingValue.Tick)].ToString()));
             var Fore = ColorHelper.GetColor(Json, 0);
             var Back = ColorHelper.GetColor(Json, 1);
 
@@ -39,15 +33,15 @@ namespace PlainCEETimer.Modules.JsonConverters
             };
         }
 
-        public override void WriteJson(JsonWriter writer, RulesManagerObject value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, CustomRuleObject value, JsonSerializer serializer)
         {
             new JObject()
             {
                 { nameof(value.Phase), (int)value.Phase },
-                { nameof(value.Tick), value.Tick.ToStr() },
-                { nameof(value.Text), value.Text },
-                { nameof(value.Fore), value.Fore.ToRgb() },
-                { nameof(value.Back), value.Back.ToRgb() }
+                { nameof(value.Tick), value.Tick.TotalSeconds },
+                { nameof(value.Fore), value.Fore.ToArgbInt() },
+                { nameof(value.Back), value.Back.ToArgbInt() },
+                { nameof(value.Text), value.Text }
             }.WriteTo(writer);
         }
     }

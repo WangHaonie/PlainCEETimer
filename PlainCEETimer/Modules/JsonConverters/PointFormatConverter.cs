@@ -8,13 +8,11 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override Point ReadJson(JsonReader reader, Type objectType, Point existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            string[] PointParts = reader.Value.ToString().Split(ConfigPolicy.ValueSeparator);
+            int[] PointParts = serializer.Deserialize<int[]>(reader);
 
             if (PointParts.Length == 2)
             {
-                return new Point(
-                    int.Parse(PointParts[0]),
-                    int.Parse(PointParts[1]));
+                return new Point(PointParts[0], PointParts[1]);
             }
 
             throw new Exception();
@@ -22,7 +20,7 @@ namespace PlainCEETimer.Modules.JsonConverters
 
         public override void WriteJson(JsonWriter writer, Point value, JsonSerializer serializer)
         {
-            writer.WriteValue($"{value.X},{value.Y}");
+            serializer.Serialize(writer, new int[] { value.X, value.Y });
         }
     }
 }

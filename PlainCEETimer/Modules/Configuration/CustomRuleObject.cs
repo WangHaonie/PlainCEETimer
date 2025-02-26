@@ -6,19 +6,19 @@ using System.Drawing;
 namespace PlainCEETimer.Modules.Configuration
 {
     [JsonConverter(typeof(CustomRulesConverter))]
-    public sealed class RulesManagerObject : IComparable<RulesManagerObject>, IEquatable<RulesManagerObject>
+    public sealed class CustomRuleObject : IComparable<CustomRuleObject>, IEquatable<CustomRuleObject>
     {
         public CountdownPhase Phase { get; set; }
 
         public TimeSpan Tick { get; set; }
 
-        public string Text { get; set; }
-
         public Color Fore { get; set; }
 
         public Color Back { get; set; }
 
-        int IComparable<RulesManagerObject>.CompareTo(RulesManagerObject other)
+        public string Text { get; set; }
+
+        int IComparable<CustomRuleObject>.CompareTo(CustomRuleObject other)
         {
             if (other == null)
             {
@@ -34,7 +34,7 @@ namespace PlainCEETimer.Modules.Configuration
             return Tick.CompareTo(other.Tick);
         }
 
-        bool IEquatable<RulesManagerObject>.Equals(RulesManagerObject other)
+        bool IEquatable<CustomRuleObject>.Equals(CustomRuleObject other)
         {
             if (other == null)
             {

@@ -13,8 +13,9 @@ namespace PlainCEETimer.Modules.JsonConverters
 
             var FontPart1 = (Font)new FontConverter().ConvertFromString(string.Join(ConfigPolicy.ValueSeparatorString, FontParts.Take(2)));
             var FontPart2 = (FontStyle)Enum.Parse(typeof(FontStyle), string.Join(ConfigPolicy.ValueSeparatorString, FontParts.Skip(2)));
+            var FontPart1Size = FontPart1.Size;
 
-            if (FontPart1.Size is >= ConfigPolicy.MinFontSize or <= ConfigPolicy.MaxFontSize)
+            if (FontPart1Size >= ConfigPolicy.MinFontSize || FontPart1Size <= ConfigPolicy.MaxFontSize)
             {
                 return new Font(FontPart1, FontPart2);
             }

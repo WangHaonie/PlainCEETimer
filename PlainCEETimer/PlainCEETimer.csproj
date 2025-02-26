@@ -177,7 +177,7 @@
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
     <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
-    <Compile Include="Modules\Configuration\RulesManagerObject.cs" />
+    <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
     <Compile Include="Modules\Configuration\ToolsObject.cs" />
     <Compile Include="Modules\CustomRuleHelper.cs" />
     <Compile Include="Modules\Enums.cs" />

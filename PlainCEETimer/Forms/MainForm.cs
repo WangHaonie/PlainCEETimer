@@ -44,7 +44,7 @@ namespace PlainCEETimer.Forms
         private DateTime ExamEndTime;
         private DateTime ExamStartTime;
         private ColorSetObject[] CountdownColors;
-        private RulesManagerObject[] CustomRules;
+        private CustomRuleObject[] CustomRules;
         private string ExamName;
         private string[] CustomText;
 

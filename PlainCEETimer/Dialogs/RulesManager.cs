@@ -12,7 +12,7 @@ namespace PlainCEETimer.Dialogs
 {
     public partial class RulesManager : DialogEx
     {
-        public RulesManagerObject[] CustomRules { get; set; }
+        public CustomRuleObject[] CustomRules { get; set; }
         public string[] Preferences { get; set; }
         public bool ShowWarning { get; set; }
 
@@ -90,7 +90,7 @@ namespace PlainCEETimer.Dialogs
             {
                 if (CustomRules.Count() == 0)
                 {
-                    AddItem("文本测试", "65535天23时59分59秒", "255,255,255", "255,255,255", Placeholders.PH_P1);
+                    AddItem("文本测试", "65535天23时59分59秒", Color.FromArgb(255, 255, 255), Color.FromArgb(255, 255, 255), Placeholders.PH_P1);
                     DeleteAllItems();
                 }
                 else
@@ -285,8 +285,8 @@ namespace PlainCEETimer.Dialogs
             AddItem(
                 RuleTypeText,
                 TickText,
-                _Fore.ToRgb(),
-                _Back.ToRgb(),
+                _Fore,
+                _Back,
                 TextBoxCustomText.Text.RemoveIllegalChars());
         }
 
@@ -301,7 +301,7 @@ namespace PlainCEETimer.Dialogs
 
         protected override void ButtonA_Click()
         {
-            CustomRules = [.. GetAllItems().Select(x => (RulesManagerObject)x.Tag)];
+            CustomRules = [.. GetAllItems().Select(x => (CustomRuleObject)x.Tag)];
             base.ButtonA_Click();
         }
 
@@ -356,16 +356,16 @@ namespace PlainCEETimer.Dialogs
             UserChanged();
         }
 
-        private void AddItem(string Type, string Tick, string Fore, string Back, string Custom, RulesManagerObject Data = null)
+        private void AddItem(string Type, string Tick, Color Fore, Color Back, string Custom, CustomRuleObject Data = null)
         {
-            var Item = new ListViewItem([Type, Tick, Fore, Back, Custom])
+            var Item = new ListViewItem([Type, Tick, Fore.ToArgbString(), Back.ToArgbString(), Custom])
             {
                 Tag = Data ?? new()
                 {
                     Phase = CustomRuleHelper.GetPhase(Type),
                     Tick = CustomRuleHelper.GetExamTick(Tick),
-                    Fore = ColorHelper.GetColor(Fore),
-                    Back = ColorHelper.GetColor(Back),
+                    Fore = Fore,
+                    Back = Back,
                     Text = Custom
                 }
             };
@@ -374,13 +374,13 @@ namespace PlainCEETimer.Dialogs
             SortItems();
         }
 
-        private void AddItem(RulesManagerObject Rule)
+        private void AddItem(CustomRuleObject Rule)
         {
             AddItem(
                 CustomRuleHelper.GetRuleTypeText(Rule.Phase),
                 CustomRuleHelper.GetExamTickText(Rule.Tick),
-                Rule.Fore.ToRgb(),
-                Rule.Back.ToRgb(),
+                Rule.Fore,
+                Rule.Back,
                 Rule.Text,
                 Rule);
         }
@@ -402,11 +402,11 @@ namespace PlainCEETimer.Dialogs
 
             SubItems[0].Text = CustomRuleHelper.GetRuleTypeText(Phase);
             SubItems[1].Text = CustomRuleHelper.GetExamTickText(Tick);
-            SubItems[2].Text = Fore.ToRgb();
-            SubItems[3].Text = Back.ToRgb();
+            SubItems[2].Text = Fore.ToArgbString();
+            SubItems[3].Text = Back.ToArgbString();
             SubItems[4].Text = Text;
 
-            Item.Tag = new RulesManagerObject()
+            Item.Tag = new CustomRuleObject()
             {
                 Phase = Phase,
                 Tick = Tick,

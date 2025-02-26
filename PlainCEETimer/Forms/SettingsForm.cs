@@ -16,7 +16,7 @@ namespace PlainCEETimer.Forms
     public partial class SettingsForm : AppForm
     {
         private Font SelectedFont;
-        private RulesManagerObject[] EditedCustomRules;
+        private CustomRuleObject[] EditedCustomRules;
         private string[] EditedCustomTexts;
         private bool IsColorLabelsDragging;
         private bool IsSyncingTime;
