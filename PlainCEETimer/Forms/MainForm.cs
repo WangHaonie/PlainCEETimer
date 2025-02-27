@@ -38,6 +38,7 @@ namespace PlainCEETimer.Forms
         private bool IsCeiling;
         private bool IsPPTService;
         private bool IsCustomText;
+        private bool CanSaveConfig;
         private int ScreenIndex;
         private CountdownPosition CountdownPos;
         private int ShowXOnlyIndex;
@@ -114,6 +115,7 @@ namespace PlainCEETimer.Forms
 
             App.AppConfigChanged += (sender, e) =>
             {
+                CanSaveConfig = true;
                 SaveConfig();
                 RefreshSettings();
             };
@@ -494,7 +496,7 @@ namespace PlainCEETimer.Forms
                 UnselectAllExamItems();
                 ExamIndex = ItemIndex;
                 AppConfig.General.ExamIndex = ItemIndex;
-                SaveConfig();
+                CanSaveConfig = true;
                 LoadExams();
                 UpdateExamSelection();
             }
@@ -544,7 +546,7 @@ namespace PlainCEETimer.Forms
                 CompatibleWithPPTService();
                 SetLabelCountdownAutoWrap();
                 AppConfig.Pos = Location;
-                SaveConfig();
+                CanSaveConfig = true;
             }
 
             IsReadyToMove = false;
@@ -583,13 +585,14 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (!App.AllowClosing)
+            if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
             {
-                e.Cancel = e.CloseReason != CloseReason.WindowsShutDown;
+                SaveConfig();
+                e.Cancel = false;
             }
             else
             {
-                e.Cancel = false;
+                e.Cancel = true;
             }
         }
 
@@ -803,13 +806,17 @@ namespace PlainCEETimer.Forms
 
         private void SaveConfig()
         {
-            Config.Save(AppConfig);
+            if (CanSaveConfig)
+            {
+                Config.Save(AppConfig);
+                CanSaveConfig = false;
+            }
         }
 
         private void ExamAutoSwitch(object state)
         {
             AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            SaveConfig();
+            CanSaveConfig = true;
             LoadExams();
             UnselectAllExamItems();
             UpdateExamSelection(true);

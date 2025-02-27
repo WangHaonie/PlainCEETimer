@@ -164,6 +164,9 @@ namespace PlainCEETimer.Modules
         {
             AllowClosing = true;
 
+            Application.Exit();
+            Application.ExitThread();
+
             if (Restart)
             {
                 ClearMutex();
