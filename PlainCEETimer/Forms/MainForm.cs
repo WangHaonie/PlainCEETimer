@@ -594,6 +594,7 @@ namespace PlainCEETimer.Forms
         {
             if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
             {
+                SaveConfig();
                 e.Cancel = false;
             }
             else
