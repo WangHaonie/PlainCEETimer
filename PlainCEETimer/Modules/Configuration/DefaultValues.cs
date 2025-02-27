@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -31,6 +32,7 @@ namespace PlainCEETimer.Modules.Configuration
                     new(Color.White, Color.Black),
                     new(Color.White, Color.Black)];
             CountdownDefaultFont = new(PreferAvailable ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
+            ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
         }
 
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
@@ -38,5 +40,7 @@ namespace PlainCEETimer.Modules.Configuration
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
 
         public static Font CountdownDefaultFont { get; }
+
+        public static int[] ColorDialogColors { get; }
     }
 }

@@ -182,6 +182,7 @@
     <Compile Include="Modules\CustomRuleHelper.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
+    <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />

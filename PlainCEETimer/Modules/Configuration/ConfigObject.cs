@@ -4,7 +4,6 @@ using PlainCEETimer.Modules.JsonConverters;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -49,7 +48,8 @@ namespace PlainCEETimer.Modules.Configuration
             }
         }
 
-        public int[] CustomColors { get; set; } = [.. Enumerable.Repeat(16777215, 16)];
+        [JsonConverter(typeof(CustomColorsConverter))]
+        public int[] CustomColors { get; set; } = DefaultValues.ColorDialogColors;
 
         [JsonConverter(typeof(PointFormatConverter))]
         public Point Pos { get; set; }
