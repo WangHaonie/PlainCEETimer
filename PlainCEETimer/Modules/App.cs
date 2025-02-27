@@ -20,6 +20,7 @@ namespace PlainCEETimer.Modules
         public static event EventHandler TrayMenuShowAllClicked;
         public static event EventHandler UniTopMostStateChanged;
         public static event EventHandler AppConfigChanged;
+        public static event EventHandler SavingConfig;
         public static Icon AppIcon { get; private set; }
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
         public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
@@ -163,9 +164,7 @@ namespace PlainCEETimer.Modules
         public static void Shutdown(bool Restart = false)
         {
             AllowClosing = true;
-
-            Application.Exit();
-            Application.ExitThread();
+            SavingConfig?.Invoke(null, EventArgs.Empty);
 
             if (Restart)
             {

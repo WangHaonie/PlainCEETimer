@@ -23,6 +23,8 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected MessageBoxHelper MessageX { get; private set; }
 
+        protected event EventHandler LocationRefreshed;
+
         private bool IsLoading = true;
 
         protected AppForm()
@@ -389,11 +391,36 @@ namespace PlainCEETimer.Controls
         protected void KeepOnScreen()
         {
             var ValidArea = GetScreenRect();
+            bool b = false;
 
-            if (Left < ValidArea.Left) Left = ValidArea.Left;
-            if (Top < ValidArea.Top) Top = ValidArea.Top;
-            if (Right > ValidArea.Right) Left = ValidArea.Right - Width;
-            if (Bottom > ValidArea.Bottom) Top = ValidArea.Bottom - Height;
+            if (Left < ValidArea.Left)
+            {
+                Left = ValidArea.Left;
+                b = true;
+            }
+
+            if (Top < ValidArea.Top)
+            {
+                Top = ValidArea.Top;
+                b = true;
+            }
+
+            if (Right > ValidArea.Right)
+            {
+                Left = ValidArea.Right - Width;
+                b = true;
+            }
+
+            if (Bottom > ValidArea.Bottom)
+            {
+                Top = ValidArea.Bottom - Height;
+                b = true;
+            }
+
+            if (b)
+            {
+                LocationRefreshed?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         protected Rectangle GetScreenRect(int Index = -1)

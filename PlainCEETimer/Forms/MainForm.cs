@@ -101,6 +101,7 @@ namespace PlainCEETimer.Forms
             LocationWatcher.Tick += LocationWatcher_Tick;
             LocationWatcher.Start();
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            LocationRefreshed += MainForm_LocationRefreshed;
 
             if (SetRoundCornerRegion)
             {
@@ -112,7 +113,7 @@ namespace PlainCEETimer.Forms
         {
             Config = new ConfigHandler();
             AppConfig = Config.Read();
-
+            App.SavingConfig += (sender, e) => SaveConfig();
             App.AppConfigChanged += (sender, e) =>
             {
                 CanSaveConfig = true;
@@ -469,6 +470,12 @@ namespace PlainCEETimer.Forms
             }
         }
 
+        private void MainForm_LocationRefreshed(object sender, EventArgs e)
+        {
+            AppConfig.Pos = Location;
+            CanSaveConfig = true;
+        }
+
         private void ExamItems_Click(object sender, EventArgs e)
         {
             int ItemIndex;
@@ -587,7 +594,6 @@ namespace PlainCEETimer.Forms
         {
             if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
             {
-                SaveConfig();
                 e.Cancel = false;
             }
             else
