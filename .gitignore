@@ -7,3 +7,4 @@ NSIS/*.exe
 PlainCEETimer.Setup/*.exe
 *.aps
 /MigrationBackup
+/PlainCEETimer/bin

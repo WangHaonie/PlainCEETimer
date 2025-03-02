@@ -89,6 +89,8 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
@@ -100,7 +102,9 @@
     <Reference Include="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\AppForm.cs">
@@ -198,6 +202,13 @@
     <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WPF\ViewModels\AboutViewModel.cs" />
+    <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\AppIcon.ico" />
   </ItemGroup>
@@ -217,6 +228,15 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
+    <PackageReference Include="ReactiveUI">
+      <Version>20.1.63</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.Fody">
+      <Version>19.5.41</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.WPF">
+      <Version>20.1.63</Version>
+    </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
     </PackageReference>
@@ -229,6 +249,14 @@
     <PackageReference Include="System.Security.Cryptography.X509Certificates">
       <Version>4.3.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>9.0.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="WPF\Windows\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
