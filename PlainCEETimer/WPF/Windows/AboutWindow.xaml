@@ -8,20 +8,27 @@
     xmlns:vms="clr-namespace:PlainCEETimer.WPF.ViewModels"
     mc:Ignorable="d"
     x:TypeArguments="vms:AboutViewModel"
-    Height="158" Width="232" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+    Height="158"
+    Width="232"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterScreen"
+    Topmost="True"
+    Title="关于本程序"
+    >
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50*" />
-            <RowDefinition Height="25*" />
-            <RowDefinition Height="25*" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </Grid>
+        <StackPanel Orientation="Vertical" Margin="10">
+            <Image x:Name="ImageLogo" Stretch="Uniform" Cursor="Hand" Height="32" Width="32"/>
+            <TextBlock x:Name="TextBlockAppName" Text="TestTestTestTestTestTestTest" />
+            <TextBlock x:Name="TextBlockVersion" Text="TestTestTestTestTestTestTest" />
+            <TextBlock x:Name="TextBlockLicense" Text="TestTestTestTestTestTestTest" />
+            <TextBlock x:Name="TextBlockCopyright"  Text="TestTestTestTestTestTestTest" />
+            <StackPanel Orientation="Vertical">
+                <TextBlock>
+                    <Hyperlink NavigateUri="">GitHub</Hyperlink> 
+                    <Hyperlink NavigateUri="">教程</Hyperlink> 
+                    <Hyperlink NavigateUri="">反馈</Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </ReactiveUI:ReactiveWindow>
