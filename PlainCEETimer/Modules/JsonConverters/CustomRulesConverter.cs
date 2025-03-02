@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules.JsonConverters
             new JObject()
             {
                 { nameof(value.Phase), (int)value.Phase },
-                { nameof(value.Tick), value.Tick.TotalSeconds },
+                { nameof(value.Tick), (int)value.Tick.TotalSeconds },
                 { nameof(value.Fore), value.Fore.ToArgbInt() },
                 { nameof(value.Back), value.Back.ToArgbInt() },
                 { nameof(value.Text), value.Text }
