@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using PlainCEETimer.WPF.Windows;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace PlainCEETimer.Forms
         {
             LabelInfo.Text = $"{App.AppName}\n版本 v{App.AppVersion} x64 ({App.AppBuildDate})";
             LabelLicense.Text = $"Licensed under the GNU GPL, v3.\n{App.CopyrightInfo}";
+            new AboutWindow().Show();
         }
 
         private void PicBoxLogo_MouseClick(object sender, MouseEventArgs e)
