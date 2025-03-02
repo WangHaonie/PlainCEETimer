@@ -211,6 +211,7 @@ namespace PlainCEETimer.Forms
             }
             catch
             {
+                ExamIndex = -1;
                 CurrentExam = new();
             }
 
@@ -370,7 +371,7 @@ namespace PlainCEETimer.Forms
             ([
                 AddSubMenu("切换(&Q)",
                 [
-                    AddItem("暂无考试信息")
+                    AddItem("请先添加考试信息")
                 ]),
                 AddSeparator(),
                 AddItem("设置(&S)", ContextSettings_Click),
@@ -383,7 +384,7 @@ namespace PlainCEETimer.Forms
             ([
                 AddSubStrip("切换(&Q)",
                 [
-                    AddStripItem("暂无考试信息")
+                    AddStripItem("请先添加考试信息")
                 ]),
                 AddStripSeparator(),
                 AddStripItem("设置(&S)", ContextSettings_Click),
@@ -635,20 +636,41 @@ namespace PlainCEETimer.Forms
 
         private void UpdateExamSelection(bool UpdateOnly = false)
         {
-            if (UseClassicContextMenu)
+            if (ExamIndex != -1)
             {
-                ExamSwitchMain[ExamIndex].Checked = true;
+                if (UseClassicContextMenu)
+                {
+                    ExamSwitchMain[ExamIndex].Checked = true;
+                }
+                else
+                {
+                    BeginInvoke(() => ((ToolStripMenuItem)ExamSwitchMainStrip[ExamIndex]).Checked = true);
+                }
             }
             else
             {
-                BeginInvoke(() => ((ToolStripMenuItem)ExamSwitchMainStrip[ExamIndex]).Checked = true);
+                if (UseClassicContextMenu)
+                {
+                    var Item = ExamSwitchMain[0];
+                    Item.Checked = false;
+                    Item.Enabled = false;
+                }
+                else
+                {
+                    var Item = (ToolStripMenuItem)ExamSwitchMainStrip[0];
+                    BeginInvoke(() =>
+                    {
+                        Item.Checked = false;
+                        Item.Enabled = false;
+                    });
+                }
             }
 
             if (!UpdateOnly && AutoSwitch)
             {
                 AutoSwitchHandler?.Dispose();
 
-                if (IsCountdownReady)
+                if (IsCountdownReady && Exams.Length > 1)
                 {
                     AutoSwitchHandler = new(ExamAutoSwitch, null, AutoSwitchInterval, AutoSwitchInterval);
                 }
