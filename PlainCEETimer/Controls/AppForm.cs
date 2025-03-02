@@ -39,6 +39,8 @@ namespace PlainCEETimer.Controls
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
         }
 
+        public void KeepOnScreenPublic() => KeepOnScreen();
+
         protected sealed override void OnLoad(EventArgs e)
         {
             if (AdjustBeforeLoad)

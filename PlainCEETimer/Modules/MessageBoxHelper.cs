@@ -64,7 +64,11 @@ namespace PlainCEETimer.Modules
 
             DialogResult ShowPopup()
             {
-                Parent?.ReActivate();
+                if (Parent != null)
+                {
+                    Parent.ReActivate();
+                    Parent.KeepOnScreenPublic();
+                }
 
                 if (ParentTabControl != null)
                 {
