@@ -287,7 +287,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Container">容器类控件</param>
         protected void AlignControlsR(Button Btn1, Button Btn2, Control Container)
         {
-            AlignControlsRCore(Btn1, Btn2, Container, Container.Height + 6.ScaleToDpi());
+            AlignControlsRCore(Btn1, Btn2, Container, Container.Height + 6.ScaleToDpi(this));
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void AlignControlsX(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Top = Reference.Top + Reference.Height / 2 - Target.Height / 2 + Tweak.ScaleToDpi();
+            Target.Top = Reference.Top + Reference.Height / 2 - Target.Height / 2 + Tweak.ScaleToDpi(this);
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void CompactControlsX(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Left = Reference.Left + Reference.Width + Tweak.ScaleToDpi();
+            Target.Left = Reference.Left + Reference.Width + Tweak.ScaleToDpi(this);
         }
 
         /// <summary>
@@ -345,7 +345,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void CompactControlsY(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Top = Reference.Top + Reference.Height + Tweak.ScaleToDpi();
+            Target.Top = Reference.Top + Reference.Height + Tweak.ScaleToDpi(this);
         }
 
         protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
@@ -456,7 +456,7 @@ namespace PlainCEETimer.Controls
         private void AlignControlsRCore(Button Btn1, Button Btn2, Control Main, int yTweak)
         {
             Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
-            Btn1.Location = new(Btn2.Location.X - Btn1.Width - 6.ScaleToDpi(), Btn2.Location.Y);
+            Btn1.Location = new(Btn2.Location.X - Btn1.Width - 6.ScaleToDpi(this), Btn2.Location.Y);
         }
     }
 }

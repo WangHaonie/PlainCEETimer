@@ -29,15 +29,10 @@ namespace PlainCEETimer.Modules
             => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
         #endregion
 
-        public static int ScaleToDpi(this int px)
+        public static int ScaleToDpi(this int px, Control ctrl)
         {
             int pxScaled;
-
-            if (DpiRatio == 0)
-            {
-                DpiRatio = NativeInterop.GetDpiForSystem() / 96D;
-            }
-
+            DpiRatio = NativeInterop.GetDpiForWindow(ctrl.Handle) / 96D;
             pxScaled = (int)(px * DpiRatio);
             return pxScaled;
         }

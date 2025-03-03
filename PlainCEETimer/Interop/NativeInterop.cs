@@ -19,6 +19,6 @@ namespace PlainCEETimer.Interop
         #endregion
 
         [DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern int GetDpiForSystem();
+        public static extern uint GetDpiForWindow(IntPtr hwnd);
     }
 }
