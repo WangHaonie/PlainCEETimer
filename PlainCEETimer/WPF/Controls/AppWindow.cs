@@ -36,9 +36,12 @@ namespace PlainCEETimer.WPF.Controls
 
         public void ReActivate()
         {
+            var tmp = Topmost;
+            Topmost = true;
             WindowState = WindowState.Normal;
             Show();
             Activate();
+            Topmost = tmp;
         }
 
         private void SetUniTopMost(object sender, EventArgs e)

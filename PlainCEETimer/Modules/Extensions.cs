@@ -37,16 +37,6 @@ namespace PlainCEETimer.Modules
             return pxScaled;
         }
 
-        public static void ReActivate(this AppForm form)
-        {
-            var tmp = form.TopMost;
-            form.TopMost = true;
-            form.WindowState = FormWindowState.Normal;
-            form.Show();
-            form.Activate();
-            form.TopMost = tmp;
-        }
-
         public static bool IsValid(this DateTime dateTime)
             => dateTime >= new DateTime(1753, 1, 1, 0, 0, 0) || dateTime <= new DateTime(9998, 12, 31, 23, 59, 59);
 

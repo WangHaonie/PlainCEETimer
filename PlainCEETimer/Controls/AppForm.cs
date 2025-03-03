@@ -41,6 +41,16 @@ namespace PlainCEETimer.Controls
 
         public void KeepOnScreenPublic() => KeepOnScreen();
 
+        public void ReActivate()
+        {
+            var tmp = TopMost;
+            TopMost = true;
+            WindowState = FormWindowState.Normal;
+            Show();
+            Activate();
+            TopMost = tmp;
+        }
+
         protected sealed override void OnLoad(EventArgs e)
         {
             if (AdjustBeforeLoad)
