@@ -3,6 +3,7 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.WPF.Windows;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace PlainCEETimer.Forms
         private Point LastMouseLocation;
         private Rectangle CurrentScreenRect;
         private SettingsForm FormSettings;
-        private AboutForm FormAbout;
+        private AboutWindow WindowAbout;
         private NotifyIcon TrayIcon;
 
         private ConfigHandler Config;
@@ -578,12 +579,12 @@ namespace PlainCEETimer.Forms
 
         private void ContextAbout_Click(object sender, EventArgs e)
         {
-            if (FormAbout == null || FormAbout.IsDisposed)
+            if (WindowAbout == null || WindowAbout.IsClosed)
             {
-                FormAbout = new();
+                WindowAbout = new();
             }
 
-            FormAbout.ReActivate();
+            WindowAbout.ReActivate();
         }
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)

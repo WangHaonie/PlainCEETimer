@@ -146,12 +146,6 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\DownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +197,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPF\Base\RelayCommand.cs" />
+    <Compile Include="WPF\Controls\AppWindow.cs" />
     <Compile Include="WPF\ViewModels\AboutViewModel.cs" />
     <Compile Include="WPF\Base\ViewModelBase.cs" />
     <Compile Include="WPF\Windows\AboutWindow.xaml.cs">

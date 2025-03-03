@@ -1,18 +1,22 @@
-﻿using PlainCEETimer.WPF.ViewModels;
+﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace PlainCEETimer.WPF.Windows
 {
-    /// <summary>
-    /// AboutWindow.xaml 的交互逻辑
-    /// </summary>
     public partial class AboutWindow
     {
         public AboutWindow()
         {
             InitializeComponent();
-            DataContext = new AboutViewModel();
+            Closing += AppWindow_Closing;
+        }
+
+        private void ImageLogo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.CheckForUpdate();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -21,9 +25,14 @@ namespace PlainCEETimer.WPF.Windows
             e.Handled = true;
         }
 
-        private void ImageLogo_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
         {
+            Close();
+        }
 
+        private void AppWindow_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = !ViewModel.UpdateControlsEnabled;
         }
     }
 }

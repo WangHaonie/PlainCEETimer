@@ -1,33 +1,40 @@
-﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules;
 using PlainCEETimer.WPF.Base;
-using System;
+using System.Threading.Tasks;
 
 namespace PlainCEETimer.WPF.ViewModels
 {
     public sealed class AboutViewModel : ViewModelBase
     {
-        public bool TopMost
+        public bool UpdateControlsEnabled
+        {
+            get => field;
+            private set => SetField(ref field, value);
+        } = true;
+
+        public string AppVersion
         {
             get => field;
             set => SetField(ref field, value);
-        }
-
-        public string AppVersion => $"v{App.AppVersion} {App.AppBuildDate}";
+        } = $"版本 v{App.AppVersion} x64 ({App.AppBuildDate})";
 
         public string AppLicensing => "Licensed under the GNU GPL, v3.";
 
         public string AppCopyright => App.CopyrightInfo;
 
-        public AboutViewModel()
+        public void CheckForUpdate()
         {
-            App.UniTopMostStateChanged += App_UniTopMostStateChanged;
-            App_UniTopMostStateChanged(null, EventArgs.Empty);
-        }
-
-        private void App_UniTopMostStateChanged(object sender, EventArgs e)
-        {
-            TopMost = MainForm.UniTopMost;
+            if (UpdateControlsEnabled)
+            {
+                var OriginalVersionString = AppVersion;
+                UpdateControlsEnabled = false;
+                AppVersion = "正在检查更新, 请稍候...";
+                Task.Run(() => new Updater().CheckForUpdate(false, null)).ContinueWith(t =>
+                {
+                    UpdateControlsEnabled = true;
+                    AppVersion = OriginalVersionString;
+                });
+            }
         }
     }
 }
