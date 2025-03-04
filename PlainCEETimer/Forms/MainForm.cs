@@ -19,16 +19,6 @@ namespace PlainCEETimer.Forms
         public static bool ValidateNeeded { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
 
-        public static ConfigObject AppConfigPub
-        {
-            get => AppConfig;
-            set
-            {
-                AppConfig = value;
-                App.OnAppConfigChanged();
-            }
-        }
-
         public static Screen CurrentScreen { get; private set; } = null;
 
         private int LastDpi = 96;
@@ -42,12 +32,12 @@ namespace PlainCEETimer.Forms
         private bool IsCeiling;
         private bool IsPPTService;
         private bool IsCustomText;
-        private bool CanSaveConfig;
         private int ScreenIndex;
         private CountdownPosition CountdownPos;
         private int ShowXOnlyIndex;
         private DateTime ExamEndTime;
         private DateTime ExamStartTime;
+        private ConfigObject AppConfig;
         private ColorSetObject[] CountdownColors;
         private CustomRuleObject[] CustomRules;
         private string ExamName;
@@ -77,8 +67,6 @@ namespace PlainCEETimer.Forms
         private AboutWindow WindowAbout;
         private NotifyIcon TrayIcon;
 
-        private ConfigHandler Config;
-        private static ConfigObject AppConfig;
         private bool TrayIconReopen;
         private bool ContextMenuStyleChanged;
         private bool UseClassicContextMenuBak;
@@ -117,16 +105,6 @@ namespace PlainCEETimer.Forms
 
         protected override void OnShown()
         {
-            Config = new ConfigHandler();
-            AppConfig = Config.Read();
-            App.SavingConfig += (sender, e) => SaveConfig();
-            App.AppConfigChanged += (sender, e) =>
-            {
-                CanSaveConfig = true;
-                SaveConfig();
-                RefreshSettings();
-            };
-
             RefreshSettings();
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
@@ -140,6 +118,7 @@ namespace PlainCEETimer.Forms
 
         private void RefreshSettings()
         {
+            AppConfig = App.AppConfig;
             ValidateConfig();
             LoadExams();
             LoadConfig();
@@ -479,7 +458,7 @@ namespace PlainCEETimer.Forms
         private void MainForm_LocationRefreshed(object sender, EventArgs e)
         {
             AppConfig.Pos = Location;
-            CanSaveConfig = true;
+            SaveConfig();
         }
 
         private void ExamItems_Click(object sender, EventArgs e)
@@ -509,7 +488,7 @@ namespace PlainCEETimer.Forms
                 UnselectAllExamItems();
                 ExamIndex = ItemIndex;
                 AppConfig.General.ExamIndex = ItemIndex;
-                CanSaveConfig = true;
+                SaveConfig();
                 LoadExams();
                 UpdateExamSelection();
             }
@@ -559,7 +538,7 @@ namespace PlainCEETimer.Forms
                 CompatibleWithPPTService();
                 SetLabelCountdownAutoWrap();
                 AppConfig.Pos = Location;
-                CanSaveConfig = true;
+                SaveConfig();
             }
 
             IsReadyToMove = false;
@@ -575,6 +554,14 @@ namespace PlainCEETimer.Forms
                     ExamName = ExamName,
                     ExamStartTime = ExamStartTime,
                     ExamEndTime = ExamEndTime
+                };
+
+                FormSettings.FormClosed += (_, _) =>
+                {
+                    if (FormSettings.RefreshNeeded)
+                    {
+                        RefreshSettings();
+                    }
                 };
             }
 
@@ -600,7 +587,12 @@ namespace PlainCEETimer.Forms
         {
             if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
             {
-                SaveConfig();
+                if (App.CanSaveConfig)
+                {
+                    ConfigHandler.Save();
+                }
+
+                Countdown?.Dispose();
                 e.Cancel = false;
             }
             else
@@ -840,17 +832,13 @@ namespace PlainCEETimer.Forms
 
         private void SaveConfig()
         {
-            if (CanSaveConfig)
-            {
-                Config.Save(AppConfig);
-                CanSaveConfig = false;
-            }
+            App.AppConfig = AppConfig;
         }
 
         private void ExamAutoSwitch(object state)
         {
             AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            CanSaveConfig = true;
+            SaveConfig();
             LoadExams();
             UnselectAllExamItems();
             UpdateExamSelection(true);

@@ -31,11 +31,12 @@ namespace PlainCEETimer.Forms
         private Label[] ColorLabels;
         private Label[] ColorPreviewLabels;
         private ColorSetObject[] SelectedColors;
-        private readonly ConfigObject AppConfig = MainForm.AppConfigPub;
+        private readonly ConfigObject AppConfig = App.AppConfig;
 
         public string ExamName { get; set; }
         public DateTime ExamStartTime { get; set; }
         public DateTime ExamEndTime { get; set; }
+        public bool RefreshNeeded { get; private set; }
 
         private bool EIMAutoSwitch;
         private int EIMInterval;
@@ -48,6 +49,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnLoad()
         {
+            RefreshNeeded = false;
             InitializeExtra();
             RefreshSettings();
             ChangeWorkingStyle(WorkingArea.LastColor);
@@ -723,7 +725,8 @@ namespace PlainCEETimer.Forms
 
                 AppConfig.CustomRules = EditedCustomRules;
 
-                MainForm.AppConfigPub = AppConfig;
+                App.AppConfig = AppConfig;
+                RefreshNeeded = true;
             }
             catch
             {

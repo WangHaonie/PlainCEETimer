@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.IO;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public class ConfigHandler
+    public static class ConfigHandler
     {
-        private readonly JsonSerializerSettings Settings;
-        private readonly MessageBoxHelper MessageX;
+        private static readonly JsonSerializerSettings Settings;
 
-        public ConfigHandler()
+        static ConfigHandler()
         {
             Settings = new JsonSerializerSettings()
             {
@@ -18,23 +16,14 @@ namespace PlainCEETimer.Modules.Configuration
                 NullValueHandling = NullValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto
             };
-
-            MessageX = new();
         }
 
-        public void Save(ConfigObject Config)
+        public static void Save()
         {
-            try
-            {
-                File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(Config, Settings));
-            }
-            catch (Exception ex)
-            {
-                MessageX.Error($"保存设置时出现错误！{ex.ToMessage()}");
-            }
+            File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
         }
 
-        public ConfigObject Read()
+        public static ConfigObject Read()
         {
             try
             {

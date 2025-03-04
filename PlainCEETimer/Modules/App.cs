@@ -17,14 +17,12 @@ namespace PlainCEETimer.Modules
         public static bool AllowClosing { get; private set; } = false;
         public static bool IsWindows7Above => Environment.OSVersion.Version >= new Version(6, 1, 7600);
         public static bool IsWindows11 => Environment.OSVersion.Version >= new Version(10, 0, 22000);
+        public static bool CanSaveConfig { get; set; }
         public static event EventHandler TrayMenuShowAllClicked;
         public static event EventHandler UniTopMostStateChanged;
-        public static event EventHandler AppConfigChanged;
-        public static event EventHandler SavingConfig;
         public static Icon AppIcon { get; private set; }
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
         public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
-        public static void OnAppConfigChanged() => AppConfigChanged?.Invoke(null, EventArgs.Empty);
 
         public static string CurrentExecutableDir
         {
@@ -62,6 +60,24 @@ namespace PlainCEETimer.Modules
                 }
 
                 return field;
+            }
+        }
+
+        public static ConfigObject AppConfig
+        {
+            get
+            {
+                if (field == null)
+                {
+                    field = ConfigHandler.Read();
+                }
+
+                return field;
+            }
+            set
+            {
+                field = value;
+                CanSaveConfig = true;
             }
         }
 
@@ -164,7 +180,14 @@ namespace PlainCEETimer.Modules
         public static void Shutdown(bool Restart = false)
         {
             AllowClosing = true;
-            SavingConfig?.Invoke(null, EventArgs.Empty);
+
+            if (CanSaveConfig)
+            {
+                ConfigHandler.Save();
+            }
+
+            Application.Exit();
+            Application.ExitThread();
 
             if (Restart)
             {

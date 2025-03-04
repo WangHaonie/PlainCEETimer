@@ -1,5 +1,4 @@
-﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Modules.Configuration;
+﻿using PlainCEETimer.Modules;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,9 +37,9 @@ namespace PlainCEETimer.Controls
         {
             if (CustomColorCollection != null && PreviousCustomColors != null && !CustomColorCollection.SequenceEqual(PreviousCustomColors))
             {
-                var ExistingConfig = MainForm.AppConfigPub;
+                var ExistingConfig = App.AppConfig;
                 ExistingConfig.CustomColors = CustomColorCollection;
-                new ConfigHandler().Save(ExistingConfig);
+                App.AppConfig = ExistingConfig;
             }
         }
     }
