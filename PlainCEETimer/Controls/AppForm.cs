@@ -92,7 +92,7 @@ namespace PlainCEETimer.Controls
         {
             if (!IsDisposed)
             {
-                this.ReActivate();
+                ReActivate();
                 KeepOnScreen();
             }
         }

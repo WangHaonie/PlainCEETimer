@@ -77,14 +77,25 @@ namespace PlainCEETimer.Forms
         private ContextMenu ContextMenuMain;
         private ContextMenu ContextMenuTray;
         private Menu.MenuItemCollection ExamSwitchMain;
-
         private ContextMenuStrip ContextMenuStripMain;
         private ContextMenuStrip ContextMenuStripTray;
         private ToolStripItemCollection ExamSwitchMainStrip;
+        private readonly EventHandler OnContextSettingsClick;
+        private readonly EventHandler OnContextAboutClick;
+        private readonly EventHandler OnContextInstDirClick;
+        private readonly EventHandler OnContextShowAllClick;
+        private readonly EventHandler OnContextRestartClick;
+        private readonly EventHandler OnContextQuitClick;
 
         public MainForm()
         {
             InitializeComponent();
+            OnContextSettingsClick = new(ContextSettings_Click);
+            OnContextAboutClick = new(ContextAbout_Click);
+            OnContextInstDirClick = new((_, _) => App.OpenInstallDir());
+            OnContextShowAllClick = new((_, _) => App.OnTrayMenuShowAllClicked());
+            OnContextRestartClick = new((_, _) => App.Shutdown(true));
+            OnContextQuitClick = new((_, _) => App.Shutdown());
         }
 
         protected override void OnLoad()
@@ -358,10 +369,10 @@ namespace PlainCEETimer.Forms
                     AddItem("请先添加考试信息")
                 ]),
                 AddSeparator(),
-                AddItem("设置(&S)", ContextSettings_Click),
-                AddItem("关于(&A)", ContextAbout_Click),
+                AddItem("设置(&S)", OnContextSettingsClick),
+                AddItem("关于(&A)", OnContextAboutClick),
                 AddSeparator(),
-                AddItem("安装目录(&D)", (sender, e) => App.OpenInstallDir())
+                AddItem("安装目录(&D)", OnContextInstDirClick)
             ]);
 
             ContextMenuStrip BaseContextMenuStrip() => CreateNewStrip
@@ -371,10 +382,10 @@ namespace PlainCEETimer.Forms
                     AddStripItem("请先添加考试信息")
                 ]),
                 AddStripSeparator(),
-                AddStripItem("设置(&S)", ContextSettings_Click),
-                AddStripItem("关于(&A)", ContextAbout_Click),
+                AddStripItem("设置(&S)", OnContextSettingsClick),
+                AddStripItem("关于(&A)", OnContextAboutClick),
                 AddStripSeparator(),
-                AddStripItem("安装目录(&D)", (sender, e) => App.OpenInstallDir())
+                AddStripItem("安装目录(&D)", OnContextInstDirClick)
             ]);
             #endregion
         }
@@ -409,11 +420,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
                         ([
                             AddSeparator(),
-                            AddItem("显示界面(&S)", (sender, e) => App.OnTrayMenuShowAllClicked()),
+                            AddItem("显示界面(&S)", OnContextShowAllClick),
                             AddSubMenu("关闭(&C)",
                             [
-                                AddItem("重启(&R)", (sender, e) => App.Shutdown(true)),
-                                AddItem("退出(&Q)", (sender, e) => App.Shutdown())
+                                AddItem("重启(&R)", OnContextRestartClick),
+                                AddItem("退出(&Q)", OnContextQuitClick)
                             ])
                         ]));
                     }
@@ -422,11 +433,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenuStrip = MergeStrip(ContextMenuStripTray,
                         [
                             AddStripSeparator(),
-                            AddStripItem("显示界面(&S)", (sender, e) => App.OnTrayMenuShowAllClicked()),
+                            AddStripItem("显示界面(&S)", OnContextShowAllClick),
                             AddSubStrip("关闭(&C)",
                             [
-                                AddStripItem("重启(&R)", (sender, e) => App.Shutdown(true)),
-                                AddStripItem("退出(&Q)", (sender, e) => App.Shutdown())
+                                AddStripItem("重启(&R)", OnContextRestartClick),
+                                AddStripItem("退出(&Q)", OnContextQuitClick)
                             ])
                         ]);
                     }

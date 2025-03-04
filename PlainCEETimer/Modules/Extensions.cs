@@ -1,5 +1,4 @@
-﻿using PlainCEETimer.Controls;
-using PlainCEETimer.Interop;
+﻿using PlainCEETimer.Interop;
 using System;
 using System.Drawing;
 using System.Linq;

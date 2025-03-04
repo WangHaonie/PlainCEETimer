@@ -11,7 +11,6 @@ namespace PlainCEETimer.WPF.Windows
         public AboutWindow()
         {
             InitializeComponent();
-            Closing += AppWindow_Closing;
         }
 
         private void ImageLogo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -30,8 +29,9 @@ namespace PlainCEETimer.WPF.Windows
             Close();
         }
 
-        private void AppWindow_Closing(object sender, CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
+            base.OnClosing(e);
             e.Cancel = !ViewModel.UpdateControlsEnabled;
         }
     }
