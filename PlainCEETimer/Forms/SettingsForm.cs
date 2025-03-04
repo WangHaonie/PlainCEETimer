@@ -32,6 +32,8 @@ namespace PlainCEETimer.Forms
         private Label[] ColorPreviewLabels;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
+        private readonly EventHandler OnItemDarkClick;
+        private readonly EventHandler OnItemLightClick;
 
         public string ExamName { get; set; }
         public DateTime ExamStartTime { get; set; }
@@ -45,6 +47,8 @@ namespace PlainCEETimer.Forms
         {
             InitializeComponent();
             CompositedStyle = true;
+            OnItemLightClick = new(MenuItemLight_Click);
+            OnItemDarkClick = new(MenuItemDark_Click);
         }
 
         protected override void OnLoad()
@@ -62,16 +66,16 @@ namespace PlainCEETimer.Forms
             {
                 ContextMenuDefaultColor = CreateNew
                 ([
-                    AddItem("白底(&L)", MenuItemLight_Click),
-                    AddItem("黑底(&D)", MenuItemDark_Click)
+                    AddItem("白底(&L)", OnItemLightClick),
+                    AddItem("黑底(&D)", OnItemDarkClick)
                 ]);
             }
             else
             {
                 ContextMenuStripDefaultColor = CreateNewStrip
                 ([
-                    AddStripItem("白底(&L)", MenuItemLight_Click),
-                    AddStripItem("黑底(&D)", MenuItemDark_Click)
+                    AddStripItem("白底(&L)", OnItemLightClick),
+                    AddStripItem("黑底(&D)", OnItemDarkClick)
                 ]);
             }
 

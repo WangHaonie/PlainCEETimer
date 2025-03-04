@@ -14,7 +14,7 @@ namespace PlainCEETimer.Modules
     public static class App
     {
         public static bool IsAdmin { get; private set; }
-        public static bool AllowClosing { get; private set; } = false;
+        public static bool AllowClosing { get; private set; }
         public static bool IsWindows7Above => Environment.OSVersion.Version >= new Version(6, 1, 7600);
         public static bool IsWindows11 => Environment.OSVersion.Version >= new Version(10, 0, 22000);
         public static bool CanSaveConfig { get; set; }
@@ -118,8 +118,8 @@ namespace PlainCEETimer.Modules
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += (sender, e) => HandleException(e.Exception);
-            AppDomain.CurrentDomain.UnhandledException += (sender, e) => HandleException((Exception)e.ExceptionObject);
+            Application.ThreadException += (_, e) => HandleException(e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
             MainMutex = new Mutex(true, $"{AppNameEngBak}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
 
             if (IsNewProcess)

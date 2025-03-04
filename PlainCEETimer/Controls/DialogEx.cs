@@ -26,8 +26,8 @@ namespace PlainCEETimer.Controls
             PanelMain = new();
             ButtonA = new();
             ButtonB = new();
-            ButtonA.Click += (sender, e) => ButtonA_Click();
-            ButtonB.Click += (sender, e) => ButtonB_Click();
+            ButtonA.Click += (_, _) => ButtonA_Click();
+            ButtonB.Click += (_, _) => ButtonB_Click();
         }
 
         protected override void OnClosing(FormClosingEventArgs e)

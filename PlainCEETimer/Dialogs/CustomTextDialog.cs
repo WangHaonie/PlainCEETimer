@@ -11,10 +11,12 @@ namespace PlainCEETimer.Dialogs
         private string P1TextRaw;
         private string P2TextRaw;
         private string P3TextRaw;
+        private readonly EventHandler OnUserChanged;
 
         public CustomTextDialog() : base(DialogExProp.BindButtons)
         {
             InitializeComponent();
+            OnUserChanged = new((_, _) => UserChanged());
         }
 
         protected override void OnLoad()
@@ -22,9 +24,9 @@ namespace PlainCEETimer.Dialogs
             TextBoxP1.Text = CustomText[0];
             TextBoxP2.Text = CustomText[1];
             TextBoxP3.Text = CustomText[2];
-            TextBoxP1.TextChanged += (sender, e) => UserChanged();
-            TextBoxP2.TextChanged += (sender, e) => UserChanged();
-            TextBoxP3.TextChanged += (sender, e) => UserChanged();
+            TextBoxP1.TextChanged += OnUserChanged;
+            TextBoxP2.TextChanged += OnUserChanged;
+            TextBoxP3.TextChanged += OnUserChanged;
 
             LabelInfo.Text = $"自定义倒计时的内容，用占位符表示变量:\n{Placeholders.PH_PHINFO}\n比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}.{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
         }
