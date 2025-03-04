@@ -121,7 +121,7 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
-            new WPFHost().Run();
+            _ = new WPFHost();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
