@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.WPF.Windows
+namespace PlainCEETimer.WPF.Controls
 {
     public partial class AppMessageBox
     {
