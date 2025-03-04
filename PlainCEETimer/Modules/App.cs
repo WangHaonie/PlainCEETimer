@@ -186,6 +186,7 @@ namespace PlainCEETimer.Modules
                 ConfigHandler.Save();
             }
 
+            System.Windows.Application.Current?.Shutdown();
             Application.Exit();
             Application.ExitThread();
 

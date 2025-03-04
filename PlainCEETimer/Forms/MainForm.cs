@@ -3,6 +3,7 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.WPF;
 using PlainCEETimer.WPF.Windows;
 using System;
 using System.Drawing;
@@ -120,6 +121,7 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
+            new WPFHost().Run();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)

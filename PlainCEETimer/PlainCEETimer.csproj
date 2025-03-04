@@ -196,6 +196,9 @@
     <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WPF\WPFHost.xaml.cs">
+      <DependentUpon>WPFHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\Base\RelayCommand.cs" />
     <Compile Include="WPF\Controls\AppWindow.cs" />
     <Compile Include="WPF\ViewModels\AboutViewModel.cs" />
@@ -223,6 +226,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="WPF\WPFHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WPF\Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
