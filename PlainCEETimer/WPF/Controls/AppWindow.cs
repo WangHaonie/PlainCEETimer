@@ -9,7 +9,7 @@ namespace PlainCEETimer.WPF.Controls
 {
     public class AppWindow<TViewModel> : Window where TViewModel : ViewModelBase, new()
     {
-        protected TViewModel ViewModel { get; set; } = new TViewModel();
+        protected TViewModel ViewModel { get; }
 
         public bool IsClosed { get; private set; }
 
@@ -28,8 +28,10 @@ namespace PlainCEETimer.WPF.Controls
 
         public AppWindow()
         {
+            ViewModel = new TViewModel();
             DataContext = ViewModel;
             FontFamily = new("Segoe UI, Microsoft YaHei");
+            FontSize = 13D;
             SetUniTopMost(null, null);
             App.UniTopMostStateChanged += SetUniTopMost;
         }

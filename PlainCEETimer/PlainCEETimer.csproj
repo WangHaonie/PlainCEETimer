@@ -196,6 +196,10 @@
     <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WPF\ViewModels\SettingsViewModel.cs" />
+    <Compile Include="WPF\Windows\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\WPFHost.xaml.cs">
       <DependentUpon>WPFHost.xaml</DependentUpon>
     </Compile>
@@ -225,6 +229,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="WPF\Windows\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPF\WPFHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

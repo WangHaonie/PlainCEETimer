@@ -11,6 +11,7 @@ namespace PlainCEETimer.WPF.Windows
         public AboutWindow()
         {
             InitializeComponent();
+            new SettingsWindow().Show();
         }
 
         private void ImageLogo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

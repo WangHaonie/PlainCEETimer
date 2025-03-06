@@ -26,6 +26,6 @@
                 <Hyperlink NavigateUri="https://github.com/WangHaonie/PlainCEETimer/issues/new/choose" RequestNavigate="Hyperlink_RequestNavigate">反馈</Hyperlink>
             </TextBlock>
         </StackPanel>
-        <Button Content="关闭(_C)" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="75" Height="25" Click="ButtonClose_Click" />
+        <Button Content="关闭(_C)" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="ButtonClose_Click" />
     </Grid>
 </local:AppWindow>
