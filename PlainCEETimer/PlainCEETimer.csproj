@@ -146,6 +146,12 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\DownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -196,23 +202,6 @@
     <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WPF\ViewModels\SettingsViewModel.cs" />
-    <Compile Include="WPF\Windows\SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WPF\WPFHost.xaml.cs">
-      <DependentUpon>WPFHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WPF\Base\RelayCommand.cs" />
-    <Compile Include="WPF\Controls\AppWindow.cs" />
-    <Compile Include="WPF\ViewModels\AboutViewModel.cs" />
-    <Compile Include="WPF\Base\ViewModelBase.cs" />
-    <Compile Include="WPF\Windows\AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WPF\Controls\AppMessageBox.xaml.cs">
-      <DependentUpon>AppMessageBox.xaml</DependentUpon>
-    </Compile>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\AppIcon.ico" />
   </ItemGroup>
@@ -227,24 +216,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="WPF\Windows\SettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WPF\WPFHost.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WPF\Windows\AboutWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WPF\Controls\AppMessageBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

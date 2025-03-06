@@ -3,8 +3,6 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.WPF;
-using PlainCEETimer.WPF.Windows;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -65,7 +63,7 @@ namespace PlainCEETimer.Forms
         private Point LastMouseLocation;
         private Rectangle CurrentScreenRect;
         private SettingsForm FormSettings;
-        private AboutWindow WindowAbout;
+        private AboutForm FormAbout;
         private NotifyIcon TrayIcon;
 
         private bool TrayIconReopen;
@@ -121,7 +119,6 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
-            _ = new WPFHost();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -583,12 +580,12 @@ namespace PlainCEETimer.Forms
 
         private void ContextAbout_Click(object sender, EventArgs e)
         {
-            if (WindowAbout == null || WindowAbout.IsClosed)
+            if (FormAbout == null || FormAbout.IsDisposed)
             {
-                WindowAbout = new();
+                FormAbout = new();
             }
 
-            WindowAbout.ReActivate();
+            FormAbout.ReActivate();
         }
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
