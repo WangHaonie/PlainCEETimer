@@ -715,10 +715,10 @@ namespace PlainCEETimer.Forms
         {
             if (IsCustomText)
             {
-                var r = CustomRules.Where(x => (int)x.Phase == Phase).Select(x => new { x.Tick, x.Text, x.Fore, x.Back });
-                var Rules = (Phase == 2 ? r.OrderByDescending(x => x.Tick) : r.OrderBy(x => x.Tick)).ToList();
+                var r = CustomRules.Where(x => (int)x.Phase == Phase);
+                var Rules = (Phase == 2 ? r.OrderByDescending(x => x.Tick) : r.OrderBy(x => x.Tick));
 
-                if (Rules.Count > 0)
+                if (Rules.Count() > 0)
                 {
                     foreach (var Rule in Rules)
                     {
