@@ -45,16 +45,16 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        [DllImport("PlainCEETimer.Natives.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.AppNativesDll, CallingConvention = CallingConvention.StdCall)]
         private static extern void InitilizeTaskbarList(IntPtr hWnd);
 
-        [DllImport("PlainCEETimer.Natives.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.AppNativesDll, CallingConvention = CallingConvention.StdCall)]
         private static extern void SetTaskbarProgressState(int tbpFlags);
 
-        [DllImport("PlainCEETimer.Natives.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.AppNativesDll, CallingConvention = CallingConvention.StdCall)]
         private static extern void SetTaskbarProgressValue(ulong ullCompleted, ulong ullTotal);
 
-        [DllImport("PlainCEETimer.Natives.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.AppNativesDll, CallingConvention = CallingConvention.StdCall)]
         private static extern void ReleaseTaskbarList();
     }
 }
