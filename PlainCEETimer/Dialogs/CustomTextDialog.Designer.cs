@@ -63,7 +63,7 @@
             this.LabelP3.Name = "LabelP3";
             this.LabelP3.Size = new System.Drawing.Size(72, 15);
             this.LabelP3.TabIndex = 9;
-            this.LabelP3.Text = "考试未开始";
+            this.LabelP3.Text = "考试已结束";
             // 
             // TextBoxP3
             // 
@@ -79,7 +79,7 @@
             this.LabelP2.Name = "LabelP2";
             this.LabelP2.Size = new System.Drawing.Size(72, 15);
             this.LabelP2.TabIndex = 7;
-            this.LabelP2.Text = "考试未开始";
+            this.LabelP2.Text = "考试已开始";
             // 
             // TextBoxP2
             // 
