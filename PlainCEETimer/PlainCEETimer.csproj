@@ -199,7 +199,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\app.manifest" />
-    <None Include="Properties\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -222,7 +221,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Properties\AppIcon256px.png" />
+    <Content Include="Properties\AppIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
