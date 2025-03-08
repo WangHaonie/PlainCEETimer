@@ -3,6 +3,7 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

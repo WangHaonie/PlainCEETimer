@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using System;
 
 namespace PlainCEETimer.Dialogs

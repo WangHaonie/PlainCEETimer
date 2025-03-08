@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -192,7 +193,7 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected void Adjust(Action Adjustment)
         {
-            if (Extensions.DpiRatio > 1)
+            if (DpiExtensions.DpiRatio > 1)
             {
                 Adjustment();
             }

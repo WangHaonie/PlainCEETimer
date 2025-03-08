@@ -181,6 +181,9 @@
     <Compile Include="Modules\Configuration\ToolsObject.cs" />
     <Compile Include="Modules\CustomRuleHelper.cs" />
     <Compile Include="Modules\Enums.cs" />
+    <Compile Include="Modules\Extensions\ColorExtensions.cs" />
+    <Compile Include="Modules\Extensions\DpiExtensions.cs" />
+    <Compile Include="Modules\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
@@ -192,7 +195,7 @@
     <Compile Include="Modules\Placeholders.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\Updater.cs" />
-    <Compile Include="Modules\Extensions.cs" />
+    <Compile Include="Modules\Extensions\ValidationExtensions.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />
     <Compile Include="Interop\NativeInterop.cs" />

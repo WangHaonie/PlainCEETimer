@@ -1,6 +1,7 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;

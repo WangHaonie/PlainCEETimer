@@ -1,6 +1,7 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.Drawing;
