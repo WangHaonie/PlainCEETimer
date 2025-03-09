@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Forms;
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
@@ -81,7 +82,8 @@ namespace PlainCEETimer.Modules.Configuration
             }
         }
 
-        public CountdownPosition Position { get; set; }
+        [DefaultValue(CountdownPosition.TopCenter)]
+        public CountdownPosition Position { get; set; } = CountdownPosition.TopCenter;
 
         public bool Draggable { get; set; }
 

@@ -48,7 +48,8 @@ namespace PlainCEETimer.Modules.Configuration
 
         public int Interval { get; set; }
 
-        public bool TrayIcon { get; set; }
+        [DefaultValue(true)]
+        public bool TrayIcon { get; set; } = true;
 
         public bool TrayText { get; set; }
 
@@ -57,8 +58,10 @@ namespace PlainCEETimer.Modules.Configuration
         [DefaultValue(true)]
         public bool TopMost { get; set; } = true;
 
-        public bool UniTopMost { get; set; }
+        [DefaultValue(true)]
+        public bool UniTopMost { get; set; } = true;
 
-        public bool WCCMS { get; set; }
+        [DefaultValue(true)]
+        public bool WCCMS { get; set; } = true;
     }
 }
