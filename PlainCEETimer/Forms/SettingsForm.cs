@@ -94,21 +94,22 @@ namespace PlainCEETimer.Forms
 
             BindComboData(ComboBoxCountdownEnd,
             [
-                new("<程序欢迎界面>", 0),
+                new("<程序欢迎信息>", 0),
                 new("考试还有多久结束", 1),
-                new("考试还有多久结束 和 已过去了多久", 2)
+                new("考试还有多久结束 和 已过去了多久", 2),
+                //new("负数 (仅供娱乐)", 3)
             ]);
 
             BindComboData(ComboBoxPosition,
             [
                 new("左上角", 0),
-                new("左侧中央", 1),
+                new("左侧居中", 1),
                 new("左下角", 2),
-                new("上侧中央", 3),
-                new("中央", 4),
-                new("下侧中央", 5),
+                new("顶部居中", 3),
+                new("中部居中", 4),
+                new("底部居中", 5),
                 new("右上角", 6),
-                new("右侧中央", 7),
+                new("右侧居中", 7),
                 new("右下角", 8)
             ]);
 

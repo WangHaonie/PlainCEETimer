@@ -401,7 +401,7 @@
             this.CheckBoxRulesMan.AutoSize = true;
             this.CheckBoxRulesMan.Location = new System.Drawing.Point(9, 74);
             this.CheckBoxRulesMan.Name = "CheckBoxRulesMan";
-            this.CheckBoxRulesMan.Size = new System.Drawing.Size(195, 19);
+            this.CheckBoxRulesMan.Size = new System.Drawing.Size(198, 19);
             this.CheckBoxRulesMan.TabIndex = 42;
             this.CheckBoxRulesMan.Text = "自定义不同时刻的颜色和内容:";
             this.CheckBoxRulesMan.UseVisualStyleBackColor = true;
@@ -475,9 +475,9 @@
             this.ComboBoxPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxPosition.Enabled = false;
             this.ComboBoxPosition.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ComboBoxPosition.Location = new System.Drawing.Point(204, 17);
+            this.ComboBoxPosition.Location = new System.Drawing.Point(232, 17);
             this.ComboBoxPosition.Name = "ComboBoxPosition";
-            this.ComboBoxPosition.Size = new System.Drawing.Size(76, 23);
+            this.ComboBoxPosition.Size = new System.Drawing.Size(84, 23);
             this.ComboBoxPosition.TabIndex = 7;
             this.ComboBoxPosition.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxPosition.SelectedIndexChanged += new System.EventHandler(this.ChangePptsvcStyle);
@@ -496,11 +496,11 @@
             // LabelChar1
             // 
             this.LabelChar1.AutoSize = true;
-            this.LabelChar1.Location = new System.Drawing.Point(182, 21);
+            this.LabelChar1.Location = new System.Drawing.Point(193, 21);
             this.LabelChar1.Name = "LabelChar1";
-            this.LabelChar1.Size = new System.Drawing.Size(20, 15);
+            this.LabelChar1.Size = new System.Drawing.Size(33, 15);
             this.LabelChar1.TabIndex = 6;
-            this.LabelChar1.Text = "的";
+            this.LabelChar1.Text = "位置";
             // 
             // LabelScreens
             // 
@@ -509,7 +509,7 @@
             this.LabelScreens.Name = "LabelScreens";
             this.LabelScreens.Size = new System.Drawing.Size(72, 15);
             this.LabelScreens.TabIndex = 5;
-            this.LabelScreens.Text = "显示在屏幕";
+            this.LabelScreens.Text = "固定在屏幕";
             // 
             // ComboBoxScreens
             // 
@@ -518,7 +518,7 @@
             this.ComboBoxScreens.Location = new System.Drawing.Point(80, 17);
             this.ComboBoxScreens.MaxDropDownItems = 1;
             this.ComboBoxScreens.Name = "ComboBoxScreens";
-            this.ComboBoxScreens.Size = new System.Drawing.Size(100, 23);
+            this.ComboBoxScreens.Size = new System.Drawing.Size(107, 23);
             this.ComboBoxScreens.TabIndex = 4;
             this.ComboBoxScreens.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxScreens.SelectedIndexChanged += new System.EventHandler(this.ComboBoxScreens_SelectedIndexChanged);
