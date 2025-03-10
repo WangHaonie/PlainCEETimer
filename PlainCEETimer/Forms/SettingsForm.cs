@@ -493,7 +493,11 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (IsSyncingTime)
+            if (App.AllowClosing)
+            {
+                e.Cancel = false;
+            }
+            else if (IsSyncingTime)
             {
                 e.Cancel = true;
             }
