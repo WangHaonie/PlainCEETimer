@@ -503,7 +503,7 @@ namespace PlainCEETimer.Forms
             }
             else if (HasSettingsChanged)
             {
-                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, () => ButtonSave_Click(null, null), () =>
+                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, ButtonSave_Click, () =>
                 {
                     HasSettingsChanged = false;
                     Close();

@@ -717,7 +717,7 @@ namespace PlainCEETimer.Forms
             if (IsCustomText)
             {
                 var r = CustomRules.Where(x => (int)x.Phase == Phase);
-                var Rules = (Phase == 2 ? r.OrderByDescending(x => x.Tick) : r.OrderBy(x => x.Tick));
+                var Rules = Phase == 2 ? r.OrderByDescending(x => x.Tick) : r.OrderBy(x => x.Tick);
 
                 if (Rules.Count() > 0)
                 {

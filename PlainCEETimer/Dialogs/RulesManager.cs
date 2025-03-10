@@ -304,10 +304,10 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        protected override void ButtonA_Click()
+        protected override void ButtonA_Click(object sender, EventArgs e)
         {
             CustomRules = [.. GetAllItems().Select(x => (CustomRuleObject)x.Tag)];
-            base.ButtonA_Click();
+            base.ButtonA_Click(sender, e);
         }
 
         private void ButtonCustomText_Click(object sender, EventArgs e)

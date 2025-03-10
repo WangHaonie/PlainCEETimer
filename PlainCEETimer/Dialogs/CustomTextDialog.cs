@@ -55,7 +55,7 @@ namespace PlainCEETimer.Dialogs
             TextBoxP3.Text = Placeholders.PH_P3;
         }
 
-        protected override void ButtonA_Click()
+        protected override void ButtonA_Click(object sender, EventArgs e)
         {
             P1TextRaw = RemoveInvalid(TextBoxP1.Text);
             P2TextRaw = RemoveInvalid(TextBoxP2.Text);
@@ -69,7 +69,7 @@ namespace PlainCEETimer.Dialogs
             }
 
             CustomText = tmp;
-            base.ButtonA_Click();
+            base.ButtonA_Click(sender, e);
         }
 
         private string RemoveInvalid(string s)

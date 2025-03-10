@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Modules;
+using System;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -26,8 +27,8 @@ namespace PlainCEETimer.Controls
             PanelMain = new();
             ButtonA = new();
             ButtonB = new();
-            ButtonA.Click += (_, _) => ButtonA_Click();
-            ButtonB.Click += (_, _) => ButtonB_Click();
+            ButtonA.Click += ButtonA_Click;
+            ButtonB.Click += ButtonB_Click;
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -42,14 +43,14 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        protected virtual void ButtonA_Click()
+        protected virtual void ButtonA_Click(object sender, EventArgs e)
         {
             IsUserChanged = false;
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        protected virtual void ButtonB_Click()
+        protected virtual void ButtonB_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();

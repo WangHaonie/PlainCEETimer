@@ -60,11 +60,11 @@ namespace PlainCEETimer.Dialogs
             ComboBoxSwitchPeriod.Enabled = CheckBoxAutoSwitch.Checked;
         }
 
-        protected override void ButtonA_Click()
+        protected override void ButtonA_Click(object sender, EventArgs e)
         {
             AutoSwitch = CheckBoxAutoSwitch.Checked;
             PeriodIndex = ComboBoxSwitchPeriod.SelectedIndex;
-            base.ButtonA_Click();
+            base.ButtonA_Click(sender, e);
         }
 
         //private bool Tmp()

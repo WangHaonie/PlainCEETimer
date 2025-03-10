@@ -26,6 +26,7 @@ namespace PlainCEETimer.Modules.Configuration
             }
 
             var PhaseComparer = Phase.CompareTo(other.Phase);
+
             if (PhaseComparer != 0)
             {
                 return PhaseComparer;

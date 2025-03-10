@@ -208,13 +208,13 @@ namespace PlainCEETimer.Controls
         /// <param name="e">FormClosingEventArgs</param>
         /// <param name="SaveChanges">执行 保存更改 的代码</param>
         /// <param name="IgnoreChanges">执行 忽略更改 的代码</param>
-        protected void ShowUnsavedWarning(string WarningMsg, FormClosingEventArgs e, Action SaveChanges, Action IgnoreChanges)
+        protected void ShowUnsavedWarning(string WarningMsg, FormClosingEventArgs e, EventHandler SaveChanges, Action IgnoreChanges)
         {
             switch (MessageX.Warn(WarningMsg, Buttons: MessageBoxExButtons.YesNo))
             {
                 case DialogResult.Yes:
                     e.Cancel = true;
-                    SaveChanges();
+                    SaveChanges.Invoke(null, null);
                     break;
                 case DialogResult.No:
                     IgnoreChanges();
