@@ -16,14 +16,27 @@ namespace PlainCEETimer.Modules
     {
         public static bool IsAdmin { get; private set; }
         public static bool AllowClosing { get; private set; }
-        public static bool IsWindows7Above => Environment.OSVersion.Version >= new Version(6, 1, 7600);
-        public static bool IsWindows11 => Environment.OSVersion.Version >= new Version(10, 0, 22000);
+        public static bool IsWindows7Above => OSBuild >= WindowsBuilds.Windows7;
+        public static bool IsWindows11 => OSBuild >= WindowsBuilds.Windows11_21H2;
         public static bool CanSaveConfig { get; set; }
         public static event EventHandler TrayMenuShowAllClicked;
         public static event EventHandler UniTopMostStateChanged;
         public static Icon AppIcon { get; private set; }
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
         public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
+
+        public static int OSBuild
+        {
+            get
+            {
+                if (field == 0)
+                {
+                    field = Environment.OSVersion.Version.Build;
+                }
+
+                return field;
+            }
+        }
 
         public static string CurrentExecutableDir
         {
@@ -106,8 +119,8 @@ namespace PlainCEETimer.Modules
 
         public static void SetDpiAwareness()
         {
-            bool IsWindows81Above = Environment.OSVersion.Version >= new Version(6, 3, 9600);
-            bool IsWindows10Build1703Above = Environment.OSVersion.Version >= new Version(10, 0, 15063);
+            bool IsWindows81Above = OSBuild >= WindowsBuilds.Windows81;
+            bool IsWindows10Build1703Above = OSBuild >= WindowsBuilds.Windows10_1703;
             DpiAwareness.SetProcessDpiAwarenessEx(IsWindows10Build1703Above ? 2 : (IsWindows81Above ? 1 : 0));
         }
 
