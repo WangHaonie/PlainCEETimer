@@ -40,8 +40,6 @@ namespace PlainCEETimer.Controls
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
         }
 
-        public void KeepOnScreenPublic() => KeepOnScreen();
-
         public void ReActivate()
         {
             var tmp = TopMost;
@@ -401,7 +399,7 @@ namespace PlainCEETimer.Controls
             return Target;
         }
 
-        protected void KeepOnScreen()
+        public void KeepOnScreen()
         {
             var ValidArea = GetScreenRect();
             bool b = false;
