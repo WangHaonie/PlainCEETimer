@@ -37,6 +37,7 @@ namespace PlainCEETimer.Forms
             this.LinkTutorial = new PlainCEETimer.Controls.Hyperlink();
             this.LinkFeedback = new PlainCEETimer.Controls.Hyperlink();
             this.PicBoxLogo = new System.Windows.Forms.PictureBox();
+            this.LinkGitHub = new PlainCEETimer.Controls.Hyperlink();
             this.PanelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxLogo)).BeginInit();
             this.SuspendLayout();
@@ -74,6 +75,7 @@ namespace PlainCEETimer.Forms
             // 
             this.PanelMain.AutoSize = true;
             this.PanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.PanelMain.Controls.Add(this.LinkTutorial);
             this.PanelMain.Controls.Add(this.LinkFeedback);
             this.PanelMain.Controls.Add(this.PicBoxLogo);
             this.PanelMain.Controls.Add(this.LinkGitHub);
@@ -84,6 +86,19 @@ namespace PlainCEETimer.Forms
             this.PanelMain.Name = "PanelMain";
             this.PanelMain.Size = new System.Drawing.Size(208, 94);
             this.PanelMain.TabIndex = 8;
+            // 
+            // LinkTutorial
+            // 
+            this.LinkTutorial.ActiveLinkColor = System.Drawing.Color.Blue;
+            this.LinkTutorial.AutoSize = true;
+            this.LinkTutorial.Location = new System.Drawing.Point(81, 71);
+            this.LinkTutorial.Name = "LinkTutorial";
+            this.LinkTutorial.Size = new System.Drawing.Size(33, 15);
+            this.LinkTutorial.TabIndex = 11;
+            this.LinkTutorial.TabStop = true;
+            this.LinkTutorial.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
+            this.LinkTutorial.Text = "教程";
+            this.LinkTutorial.VisitedLinkColor = System.Drawing.Color.Blue;
             // 
             // LinkFeedback
             // 
@@ -155,5 +170,6 @@ namespace PlainCEETimer.Forms
         private PlainCEETimer.Controls.Hyperlink LinkGitHub;
         private System.Windows.Forms.PictureBox PicBoxLogo;
         private PlainCEETimer.Controls.Hyperlink LinkFeedback;
+        private PlainCEETimer.Controls.Hyperlink LinkTutorial;
     }
 }
