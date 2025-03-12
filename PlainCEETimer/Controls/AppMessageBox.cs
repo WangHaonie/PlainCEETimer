@@ -8,14 +8,14 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public partial class AppMessageBox : DialogEx
+    public partial class AppMessageBox : AppDialog
     {
         private DialogResult Result;
-        private readonly MessageBoxExButtons ButtonsEx;
+        private readonly AppMessageBoxButtons ButtonsEx;
         private readonly SystemSound DialogSound;
         private readonly bool AutoCloseRequired;
 
-        public AppMessageBox(SystemSound Sound, MessageBoxExButtons Buttons, bool AutoClose) : base(DialogExProp.KeyPreview)
+        public AppMessageBox(SystemSound Sound, AppMessageBoxButtons Buttons, bool AutoClose) : base(AppDialogProp.KeyPreview)
         {
             InitializeComponent();
             DialogSound = Sound;
@@ -23,11 +23,11 @@ namespace PlainCEETimer.Controls
             AutoCloseRequired = AutoClose;
         }
 
-        public DialogResult ShowCore(AppForm OwnerForm, string Message, string Title, Bitmap MessageBoxExIcon)
+        public DialogResult ShowCore(AppForm OwnerForm, string Message, string Title, Bitmap AppMessageBoxIcon)
         {
             LabelMessage.Text = Message;
             Text = Title;
-            PicBoxIcon.Image = MessageBoxExIcon;
+            PicBoxIcon.Image = AppMessageBoxIcon;
             StartPosition = (OwnerForm != null && MainForm.IsNormalStart) ? FormStartPosition.CenterParent : FormStartPosition.CenterScreen;
             ShowDialog(OwnerForm);
             return Result;
@@ -44,11 +44,11 @@ namespace PlainCEETimer.Controls
         {
             switch (ButtonsEx)
             {
-                case MessageBoxExButtons.YesNo:
+                case AppMessageBoxButtons.YesNo:
                     ButtonA.Text = "是(&Y)";
                     ButtonB.Text = "否(&N)";
                     break;
-                case MessageBoxExButtons.OK:
+                case AppMessageBoxButtons.OK:
                     ButtonA.Visible = ButtonA.Enabled = false;
                     ButtonB.Text = "确定(&O)";
                     break;
@@ -67,17 +67,17 @@ namespace PlainCEETimer.Controls
 
         protected override void ButtonA_Click(object sender, EventArgs e)
         {
-            Result = ButtonsEx == MessageBoxExButtons.YesNo ? DialogResult.Yes : DialogResult.None;
+            Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
         }
 
         protected override void ButtonB_Click(object sender, EventArgs e)
         {
-            Result = ButtonsEx == MessageBoxExButtons.YesNo ? DialogResult.No : DialogResult.OK;
+            Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();
         }
 
-        private void MessageBoxEx_KeyDown(object sender, KeyEventArgs e)
+        private void AppMessageBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {

@@ -106,7 +106,7 @@
     <Compile Include="Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DialogEx.cs">
+    <Compile Include="Controls\AppDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\Hyperlink.cs">

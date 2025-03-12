@@ -50,6 +50,7 @@ namespace PlainCEETimer.Forms
             TaskbarProgress = new(Handle);
             TaskbarProgress.SetState(TaskbarProgressState.Normal);
             DownloadUrl = string.Format(App.UpdateURL, TargetVersion);
+            LinkBrowser.HyperLink = DownloadUrl;
             DownloadPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(new Uri(DownloadUrl).AbsolutePath));
 
             await DownloadUpdate();
@@ -108,7 +109,7 @@ namespace PlainCEETimer.Forms
                     await Task.Delay(2500);
                     IsCancelled = true;
                     Close();
-                    ProcessHelper.RunProcess("cmd.exe", $"/c start \"\" \"{DownloadPath}\" /S");
+                    Modules.ProcessHelper.Run("cmd.exe", $"/c start \"\" \"{DownloadPath}\" /S");
                     App.Exit(ExitReason.AppUpdating);
                 }
             }
@@ -155,14 +156,6 @@ namespace PlainCEETimer.Forms
             }
 
             Close();
-        }
-
-        private async void LinkBrowser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            LinkBrowser.Enabled = false;
-            Process.Start(DownloadUrl);
-            await Task.Delay(3000);
-            LinkBrowser.Enabled = true;
         }
 
         private void UpdateUI(long Downloaded, long Total, double Speed, int Progress)

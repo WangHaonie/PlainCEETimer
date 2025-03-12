@@ -145,7 +145,7 @@ namespace PlainCEETimer.Modules
                 if (!CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", AutoClose: true);
-                    ProcessHelper.RunProcess("cmd.exe", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} & start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
+                    ProcessHelper.Run("cmd.exe", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} & start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
                     Exit(ExitReason.InvalidExeName);
                 }
                 else
@@ -207,7 +207,7 @@ namespace PlainCEETimer.Modules
             if (Restart)
             {
                 ClearMutex();
-                ProcessHelper.RunProcess(CurrentExecutablePath, null);
+                ProcessHelper.Run(CurrentExecutablePath);
                 Exit(ExitReason.UserRestart);
             }
             else
@@ -220,14 +220,12 @@ namespace PlainCEETimer.Modules
 
         public static void CheckAdmin(out string UserName, bool QueryUserName = false)
         {
-            var AdminChecker = ProcessHelper.RunProcess("cmd.exe", "/c net session");
-            AdminChecker.WaitForExit();
-            IsAdmin = AdminChecker.ExitCode == 0;
+            IsAdmin = (int)ProcessHelper.Run("cmd.exe", "/c net session", 2) == 0;
             UserName = "";
 
             if (QueryUserName)
             {
-                UserName = ProcessHelper.GetProcessOutput(ProcessHelper.RunProcess("cmd.exe", "/c whoami", RedirectOutput: true));
+                UserName = (string)ProcessHelper.Run("cmd.exe", "/c whoami", 1);
             }
         }
 
@@ -273,7 +271,7 @@ namespace PlainCEETimer.Modules
             var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
             File.AppendAllText(ExFilePath, ExOutput);
 
-            var _DialogResult = MessageX.Error(string.Format("程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {0} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。{1}", ExFileName, ex.ToMessage()), Buttons: MessageBoxExButtons.YesNo);
+            var _DialogResult = MessageX.Error(string.Format("程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {0} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。{1}", ExFileName, ex.ToMessage()), Buttons: AppMessageBoxButtons.YesNo);
 
             if (_DialogResult != DialogResult.None)
             {

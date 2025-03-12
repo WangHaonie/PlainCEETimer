@@ -29,7 +29,7 @@ namespace PlainCEETimer.Modules
         Error
     }
 
-    public enum MessageBoxExButtons
+    public enum AppMessageBoxButtons
     {
         OK,
         YesNo
@@ -46,7 +46,7 @@ namespace PlainCEETimer.Modules
     }
 
     [Flags]
-    public enum DialogExProp
+    public enum AppDialogProp
     {
         BindButtons = 0B00100001,
         KeyPreview = 0B001000_10

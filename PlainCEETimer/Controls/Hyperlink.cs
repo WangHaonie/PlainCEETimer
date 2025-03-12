@@ -1,6 +1,4 @@
-﻿using PlainCEETimer.Interop;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 

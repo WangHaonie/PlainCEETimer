@@ -22,18 +22,18 @@ namespace PlainCEETimer.Modules
             ErrorIcon = GetIcon(93);
         }
 
-        public DialogResult Info(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, MessageBoxExButtons Buttons = MessageBoxExButtons.OK, bool AutoClose = false)
+        public DialogResult Info(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
             => Popup(Message, MessageLevel.Info, ParentTabControl, ParentTabPage, Buttons, AutoClose);
 
-        public DialogResult Warn(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, MessageBoxExButtons Buttons = MessageBoxExButtons.OK, bool AutoClose = false)
+        public DialogResult Warn(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
             => Popup(Message, MessageLevel.Warning, ParentTabControl, ParentTabPage, Buttons, AutoClose);
 
-        public DialogResult Error(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, MessageBoxExButtons Buttons = MessageBoxExButtons.OK, bool AutoClose = false)
+        public DialogResult Error(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
             => Popup(Message, MessageLevel.Error, ParentTabControl, ParentTabPage, Buttons, AutoClose);
 
-        private DialogResult Popup(string Message, MessageLevel Level, TabControl ParentTabControl, TabPage ParentTabPage, MessageBoxExButtons Buttons, bool AutoClose)
+        private DialogResult Popup(string Message, MessageLevel Level, TabControl ParentTabControl, TabPage ParentTabPage, AppMessageBoxButtons Buttons, bool AutoClose)
         {
-            var (Title, MessageBoxExIcon, Sound) = GetStuff(Level);
+            var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
 
             if (Parent != null)
             {
@@ -76,7 +76,7 @@ namespace PlainCEETimer.Modules
                     ParentTabControl.SelectedTab = ParentTabPage;
                 }
 
-                return Mbox.ShowCore(Parent, Message, Title, MessageBoxExIcon);
+                return Mbox.ShowCore(Parent, Message, Title, AppMessageBoxIcon);
             }
         }
 

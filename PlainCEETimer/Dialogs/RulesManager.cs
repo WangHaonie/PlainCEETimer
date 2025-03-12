@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class RulesManager : DialogEx
+    public partial class RulesManager : AppDialog
     {
         public CustomRuleObject[] CustomRules { get; set; }
         public string[] GlobalCustomTexts { get; set; }
@@ -26,7 +26,7 @@ namespace PlainCEETimer.Dialogs
         private string LastText;
         private readonly Dictionary<int, string> UserUnsavedText = [];
 
-        public RulesManager() : base(DialogExProp.BindButtons | DialogExProp.KeyPreview)
+        public RulesManager() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
         {
             CompositedStyle = true;
             InitializeComponent();
@@ -35,7 +35,7 @@ namespace PlainCEETimer.Dialogs
 
         private void ContextDelete_Click(object sender, EventArgs e)
         {
-            if (MessageX.Warn("确认删除所选规则吗？此操作将不可撤销！", Buttons: MessageBoxExButtons.YesNo) == DialogResult.Yes)
+            if (MessageX.Warn("确认删除所选规则吗？此操作将不可撤销！", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 foreach (ListViewItem Item in GetSelections())
                 {
@@ -278,7 +278,7 @@ namespace PlainCEETimer.Dialogs
 
             if (Existing != null)
             {
-                if (MessageX.Warn("检测到即将添加的规则与现有的某个规则重复！\n\n是否覆盖? (是 则覆盖, 否 则取消添加)", Buttons: MessageBoxExButtons.YesNo)
+                if (MessageX.Warn("检测到即将添加的规则与现有的某个规则重复！\n\n是否覆盖? (是 则覆盖, 否 则取消添加)", Buttons: AppMessageBoxButtons.YesNo)
                     == DialogResult.Yes)
                 {
                     EditItem(Existing);

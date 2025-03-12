@@ -5,14 +5,14 @@ using System;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class ExamInfoManager : DialogEx
+    public partial class ExamInfoManager : AppDialog
     {
         public ExamInfoObject[] ExamInfo { get; set; }
         public bool AutoSwitch { get; set; }
         public bool ExamsChanged { get; set; }
         public int PeriodIndex { get; set; }
 
-        public ExamInfoManager() : base(DialogExProp.BindButtons | DialogExProp.KeyPreview)
+        public ExamInfoManager() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
         {
             CompositedStyle = true;
             InitializeComponent();
@@ -105,7 +105,7 @@ namespace PlainCEETimer.Dialogs
 
         //    if (!string.IsNullOrEmpty(UniMsg))
         //    {
-        //        var _DialogResult = MessageX.Warn(UniMsg, TabControlMain, TabPageGeneral, Buttons: MessageBoxExButtons.YesNo);
+        //        var _DialogResult = MessageX.Warn(UniMsg, TabControlMain, TabPageGeneral, Buttons: AppMessageBoxButtons.YesNo);
 
         //        if (_DialogResult is DialogResult.No or DialogResult.None)
         //        {

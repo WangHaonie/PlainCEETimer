@@ -5,7 +5,7 @@ using System;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class CustomTextDialog : DialogEx
+    public partial class CustomTextDialog : AppDialog
     {
         public string[] CustomText { get; set; } = [];
 
@@ -14,7 +14,7 @@ namespace PlainCEETimer.Dialogs
         private string P3TextRaw;
         private readonly EventHandler OnUserChanged;
 
-        public CustomTextDialog() : base(DialogExProp.BindButtons)
+        public CustomTextDialog() : base(AppDialogProp.BindButtons)
         {
             InitializeComponent();
             OnUserChanged = new((_, _) => UserChanged());

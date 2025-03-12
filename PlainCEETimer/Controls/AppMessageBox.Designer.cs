@@ -80,7 +80,7 @@
             this.ButtonB.TabIndex = 2;
             this.ButtonB.UseVisualStyleBackColor = true;
             // 
-            // MessageBoxEx
+            // AppMessageBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -94,10 +94,10 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "MessageBoxEx";
+            this.Name = "AppMessageBox";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "MessageBoxEx";
+            this.Text = "AppMessageBox";
             this.PanelMain.ResumeLayout(false);
             this.PanelMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIcon)).EndInit();

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public class DialogEx : AppForm
+    public class AppDialog : AppForm
     {
         protected Panel PanelMain { get; private set; }
         protected Button ButtonB { get; private set; }
@@ -12,12 +12,12 @@ namespace PlainCEETimer.Controls
 
         private bool IsUserChanged;
 
-        private DialogEx()
+        private AppDialog()
         {
             InitializeComponent();
         }
 
-        protected DialogEx(DialogExProp Prop) : this()
+        protected AppDialog(AppDialogProp Prop) : this()
         {
             SetProperties(Prop);
         }
@@ -79,15 +79,15 @@ namespace PlainCEETimer.Controls
             });
         }
 
-        private void SetProperties(DialogExProp Prop)
+        private void SetProperties(AppDialogProp Prop)
         {
-            if ((Prop & DialogExProp.BindButtons) != 0)
+            if ((Prop & AppDialogProp.BindButtons) != 0)
             {
                 AcceptButton = ButtonA;
                 CancelButton = ButtonB;
             }
 
-            if ((Prop & DialogExProp.KeyPreview) != 0)
+            if ((Prop & AppDialogProp.KeyPreview) != 0)
             {
                 KeyPreview = true;
             }

@@ -34,7 +34,7 @@
             this.ProgressBarMain = new System.Windows.Forms.ProgressBar();
             this.ButtonRetry = new System.Windows.Forms.Button();
             this.ButtonCancel = new System.Windows.Forms.Button();
-            this.LinkBrowser = new System.Windows.Forms.LinkLabel();
+            this.LinkBrowser = new PlainCEETimer.Controls.Hyperlink();
             this.SuspendLayout();
             // 
             // LabelDownloading
@@ -108,7 +108,6 @@
             this.LinkBrowser.TabIndex = 9;
             this.LinkBrowser.TabStop = true;
             this.LinkBrowser.Text = "浏览器下载";
-            this.LinkBrowser.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkBrowser_LinkClicked);
             // 
             // DownloaderForm
             // 
@@ -143,6 +142,6 @@
         private System.Windows.Forms.ProgressBar ProgressBarMain;
         private System.Windows.Forms.Button ButtonRetry;
         private System.Windows.Forms.Button ButtonCancel;
-        private System.Windows.Forms.LinkLabel LinkBrowser;
+        private PlainCEETimer.Controls.Hyperlink LinkBrowser;
     }
 }
