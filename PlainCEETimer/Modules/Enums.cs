@@ -80,4 +80,11 @@ namespace PlainCEETimer.Modules
         Error = 4,
         Paused = 8
     }
+
+    public enum DarkControlType
+    {
+        Button,
+        ComboBox,
+        CheckBox
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -44,12 +45,15 @@ namespace PlainCEETimer.Forms
         private bool EIMAutoSwitch;
         private int EIMInterval;
 
+        protected override Control[] DarkControls => [this, TabPageGeneral, TabPageDisplay, TabPageAppearance, TabPageTools];
+
         public SettingsForm()
         {
             InitializeComponent();
             CompositedStyle = true;
             OnItemLightClick = new(MenuItemLight_Click);
             OnItemDarkClick = new(MenuItemDark_Click);
+            ThemeManager.FlushControl(ComboBoxCountdownEnd, DarkControlType.ComboBox);
         }
 
         protected override void OnLoad()

@@ -1,7 +1,9 @@
 ﻿using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -24,6 +26,8 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected MessageBoxHelper MessageX { get; private set; }
 
+        protected virtual Control[] DarkControls { get; }
+
         protected event EventHandler LocationRefreshed;
 
         private bool IsLoading = true;
@@ -38,9 +42,13 @@ namespace PlainCEETimer.Controls
             TopMost = MainForm.UniTopMost;
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
-        }
 
-        public void KeepOnScreenPublic() => KeepOnScreen();
+            if (ThemeManager.AllowDarkMode)
+            {
+                DarkControls = [];
+                ThemeManager.SystemThemeChanged += ThemeManager_SystemThemeChanged;
+            }
+        }
 
         public void ReActivate()
         {
@@ -54,6 +62,8 @@ namespace PlainCEETimer.Controls
 
         protected sealed override void OnLoad(EventArgs e)
         {
+            RefreshTheme(true);
+
             if (AdjustBeforeLoad)
             {
                 AdjustUI();
@@ -173,6 +183,16 @@ namespace PlainCEETimer.Controls
         /// 在 AppForm 关闭后触发。该方法没有默认实现，可不调用 base.OnClosed();
         /// </summary>
         protected virtual void OnClosed()
+        {
+
+        }
+
+        protected virtual void DarkAdjustment()
+        {
+
+        }
+
+        protected virtual void LightAdjustment()
         {
 
         }
@@ -401,7 +421,7 @@ namespace PlainCEETimer.Controls
             return Target;
         }
 
-        protected void KeepOnScreen()
+        public void KeepOnScreen()
         {
             var ValidArea = GetScreenRect();
             bool b = false;
@@ -468,6 +488,43 @@ namespace PlainCEETimer.Controls
         {
             Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
             Btn1.Location = new(Btn2.Location.X - Btn1.Width - 6.ScaleToDpi(this), Btn2.Location.Y);
+        }
+
+        private void ThemeManager_SystemThemeChanged(object sender, EventArgs e)
+        {
+            RefreshTheme(false);
+            Invalidate(false);
+        }
+
+        private void RefreshTheme(bool SkipLight)
+        {
+            if (ThemeManager.IsDarkMode)
+            {
+                ThemeManager.FlushTitleBar(Handle, 1);
+                ApplyTheme(ThemeManager.DarkFore, ThemeManager.DarkBack);
+                DarkAdjustment();
+            }
+            else if (!SkipLight)
+            {
+                ThemeManager.FlushTitleBar(Handle, 0);
+                ApplyTheme(ThemeManager.LightFore, ThemeManager.LightBack);
+                LightAdjustment();
+            }
+        }
+
+        private void ApplyTheme(Color Fore, Color Back)
+        {
+            if (this is not MainForm)
+            {
+                ForeColor = Fore;
+                BackColor = Back;
+            }
+
+            foreach (var Ctrl in DarkControls)
+            {
+                Ctrl.ForeColor = Fore;
+                Ctrl.BackColor = Back;
+            }
         }
     }
 }

@@ -34,8 +34,7 @@ namespace PlainCEETimer.Modules
         private DialogResult Popup(string Message, MessageLevel Level, TabControl ParentTabControl, TabPage ParentTabPage, MessageBoxExButtons Buttons, bool AutoClose)
         {
             var (Title, MessageBoxExIcon, Sound) = GetStuff(Level);
-            var _MessageBoxEx = new AppMessageBox(Sound, Buttons, AutoClose);
-
+            
             if (Parent != null)
             {
                 if (Parent.InvokeRequired)
@@ -64,10 +63,12 @@ namespace PlainCEETimer.Modules
 
             DialogResult ShowPopup()
             {
+                var MBox = new AppMessageBox(Sound, Buttons, AutoClose);
+
                 if (Parent != null)
                 {
                     Parent.ReActivate();
-                    Parent.KeepOnScreenPublic();
+                    Parent.KeepOnScreen();
                 }
 
                 if (ParentTabControl != null)
@@ -75,7 +76,7 @@ namespace PlainCEETimer.Modules
                     ParentTabControl.SelectedTab = ParentTabPage;
                 }
 
-                return _MessageBoxEx.ShowCore(Parent, Message, Title, MessageBoxExIcon);
+                return MBox.ShowCore(Parent, Message, Title, MessageBoxExIcon);
             }
         }
 

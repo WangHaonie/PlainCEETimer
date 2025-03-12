@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonB = new System.Windows.Forms.Button();
-            //this.ButtonA = new System.Windows.Forms.Button();
+            //this.ButtonB = new PlainCEETimer.Controls.AppButton();
+            //this.ButtonA = new PlainCEETimer.Controls.AppButton();
             this.ListViewMain = new PlainCEETimer.Controls.ListViewEx();
             this.ColumnHeaderType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderTick = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderFore = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderBack = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderText = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.GroupBoxDetails = new System.Windows.Forms.GroupBox();
+            this.GroupBoxDetails = new PlainCEETimer.Controls.AppGroupBox();
             this.ComboBoxRuleType = new System.Windows.Forms.ComboBox();
-            this.ButtonChange = new System.Windows.Forms.Button();
-            this.ButtonAdd = new System.Windows.Forms.Button();
+            this.ButtonChange = new PlainCEETimer.Controls.AppButton();
+            this.ButtonAdd = new PlainCEETimer.Controls.AppButton();
             this.LinkReset = new System.Windows.Forms.LinkLabel();
             this.TextBoxCustomText = new System.Windows.Forms.TextBox();
             this.LabelCustomText = new System.Windows.Forms.Label();
@@ -58,8 +58,8 @@
             this.NUDDays = new System.Windows.Forms.NumericUpDown();
             this.LabelChar2 = new System.Windows.Forms.Label();
             this.LabelChar1 = new System.Windows.Forms.Label();
-            this.GroupBoxWarning = new System.Windows.Forms.GroupBox();
-            this.ButtonCustomText = new System.Windows.Forms.Button();
+            this.GroupBoxWarning = new PlainCEETimer.Controls.AppGroupBox();
+            this.ButtonCustomText = new PlainCEETimer.Controls.AppButton();
             this.LabelWarning = new System.Windows.Forms.Label();
             this.PanelMain.SuspendLayout();
             this.GroupBoxDetails.SuspendLayout();
@@ -443,7 +443,7 @@
         private System.Windows.Forms.ColumnHeader ColumnHeaderFore;
         private System.Windows.Forms.ColumnHeader ColumnHeaderBack;
         private System.Windows.Forms.ColumnHeader ColumnHeaderText;
-        private System.Windows.Forms.GroupBox GroupBoxDetails;
+        private PlainCEETimer.Controls.AppGroupBox GroupBoxDetails;
         private System.Windows.Forms.NumericUpDown NUDDays;
         private System.Windows.Forms.Label LabelChar2;
         private System.Windows.Forms.Label LabelChar1;
@@ -461,14 +461,14 @@
         private System.Windows.Forms.TextBox TextBoxCustomText;
         private System.Windows.Forms.Label LabelCustomText;
         private System.Windows.Forms.Label LabelColorPreview;
-        private System.Windows.Forms.GroupBox GroupBoxWarning;
-        private System.Windows.Forms.Button ButtonChange;
-        private System.Windows.Forms.Button ButtonAdd;
+        private PlainCEETimer.Controls.AppGroupBox GroupBoxWarning;
+        private PlainCEETimer.Controls.AppButton ButtonChange;
+        private PlainCEETimer.Controls.AppButton ButtonAdd;
         private System.Windows.Forms.ComboBox ComboBoxRuleType;
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonB;
-        //private System.Windows.Forms.Button ButtonA;
+        //private PlainCEETimer.Controls.AppButton ButtonB;
+        //private PlainCEETimer.Controls.AppButton ButtonA;
         private System.Windows.Forms.Label LabelWarning;
-        private System.Windows.Forms.Button ButtonCustomText;
+        private PlainCEETimer.Controls.AppButton ButtonCustomText;
     }
 }

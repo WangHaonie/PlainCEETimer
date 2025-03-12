@@ -29,26 +29,26 @@
         private void InitializeComponent()
         {
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonA = new System.Windows.Forms.Button();
-            //this.ButtonB = new System.Windows.Forms.Button();
+            //this.ButtonA = new PlainCEETimer.Controls.AppButton();
+            //this.ButtonB = new PlainCEETimer.Controls.AppButton();
             this.LabelInfo = new System.Windows.Forms.Label();
             this.ListViewMain = new PlainCEETimer.Controls.ListViewEx();
             this.ColumnHeadExamName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeadStart = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeadEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.GroupBoxEdit = new System.Windows.Forms.GroupBox();
-            this.ButtonChange = new System.Windows.Forms.Button();
-            this.ButtonAdd = new System.Windows.Forms.Button();
+            this.GroupBoxEdit = new PlainCEETimer.Controls.AppGroupBox();
+            this.ButtonChange = new PlainCEETimer.Controls.AppButton();
+            this.ButtonAdd = new PlainCEETimer.Controls.AppButton();
             this.LabelEnd = new System.Windows.Forms.Label();
             this.DTPEnd = new System.Windows.Forms.DateTimePicker();
             this.LabelStart = new System.Windows.Forms.Label();
             this.DTPStart = new System.Windows.Forms.DateTimePicker();
             this.LabelName = new System.Windows.Forms.Label();
             this.TextBoxName = new System.Windows.Forms.TextBox();
-            this.GroupBoxAutoSwitch = new System.Windows.Forms.GroupBox();
+            this.GroupBoxAutoSwitch = new PlainCEETimer.Controls.AppGroupBox();
             this.ComboBoxSwitchPeriod = new System.Windows.Forms.ComboBox();
             this.LabelSwitchPeriod = new System.Windows.Forms.Label();
-            this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
+            this.CheckBoxAutoSwitch = new PlainCEETimer.Controls.AppCheckBox();
             this.PanelMain.SuspendLayout();
             this.GroupBoxEdit.SuspendLayout();
             this.GroupBoxAutoSwitch.SuspendLayout();
@@ -288,21 +288,21 @@
         private System.Windows.Forms.ColumnHeader ColumnHeadStart;
         private System.Windows.Forms.ColumnHeader ColumnHeadEnd;
         private System.Windows.Forms.Label LabelInfo;
-        private System.Windows.Forms.GroupBox GroupBoxEdit;
+        private PlainCEETimer.Controls.AppGroupBox GroupBoxEdit;
         private System.Windows.Forms.Label LabelEnd;
         private System.Windows.Forms.DateTimePicker DTPEnd;
         private System.Windows.Forms.Label LabelStart;
         private System.Windows.Forms.DateTimePicker DTPStart;
         private System.Windows.Forms.Label LabelName;
         private System.Windows.Forms.TextBox TextBoxName;
-        private System.Windows.Forms.GroupBox GroupBoxAutoSwitch;
+        private PlainCEETimer.Controls.AppGroupBox GroupBoxAutoSwitch;
         private System.Windows.Forms.Label LabelSwitchPeriod;
-        private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
+        private PlainCEETimer.Controls.AppCheckBox CheckBoxAutoSwitch;
         private System.Windows.Forms.ComboBox ComboBoxSwitchPeriod;
-        private System.Windows.Forms.Button ButtonAdd;
-        private System.Windows.Forms.Button ButtonChange;
+        private PlainCEETimer.Controls.AppButton ButtonAdd;
+        private PlainCEETimer.Controls.AppButton ButtonChange;
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonA;
-        //private System.Windows.Forms.Button ButtonB;
+        //private PlainCEETimer.Controls.AppButton ButtonA;
+        //private PlainCEETimer.Controls.AppButton ButtonB;
     }
 }

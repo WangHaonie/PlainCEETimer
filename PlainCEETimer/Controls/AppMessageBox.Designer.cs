@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonA = new System.Windows.Forms.Button();
-            //this.ButtonB = new System.Windows.Forms.Button();
+            //this.ButtonA = new PlainCEETimer.Controls.AppButton();
+            //this.ButtonB = new PlainCEETimer.Controls.AppButton();
             this.PicBoxIcon = new System.Windows.Forms.PictureBox();
             this.LabelMessage = new System.Windows.Forms.Label();
             this.PanelMain.SuspendLayout();
@@ -110,7 +110,7 @@
         private System.Windows.Forms.PictureBox PicBoxIcon;
         private System.Windows.Forms.Label LabelMessage;
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonA;
-        //private System.Windows.Forms.Button ButtonB;
+        //private PlainCEETimer.Controls.AppButton ButtonA;
+        //private PlainCEETimer.Controls.AppButton ButtonB;
     }
 }

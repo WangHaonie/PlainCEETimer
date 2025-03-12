@@ -31,12 +31,13 @@ namespace PlainCEETimer.Forms
         private void InitializeComponent()
         {
             this.LabelInfo = new System.Windows.Forms.Label();
-            this.ButtonClose = new System.Windows.Forms.Button();
+            this.ButtonClose = new PlainCEETimer.Controls.AppButton();
             this.LabelLicense = new System.Windows.Forms.Label();
             this.PanelMain = new System.Windows.Forms.Panel();
-            this.LinkFeedback = new System.Windows.Forms.LinkLabel();
-            this.LinkGitHub = new System.Windows.Forms.LinkLabel();
+            this.LinkTutorial = new PlainCEETimer.Controls.Hyperlink();
+            this.LinkFeedback = new PlainCEETimer.Controls.Hyperlink();
             this.PicBoxLogo = new System.Windows.Forms.PictureBox();
+            this.LinkGitHub = new PlainCEETimer.Controls.Hyperlink();
             this.PanelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxLogo)).BeginInit();
             this.SuspendLayout();
@@ -52,6 +53,7 @@ namespace PlainCEETimer.Forms
             // 
             // ButtonClose
             // 
+            this.ButtonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.ButtonClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonClose.Location = new System.Drawing.Point(130, 66);
             this.ButtonClose.Name = "ButtonClose";
@@ -74,6 +76,7 @@ namespace PlainCEETimer.Forms
             // 
             this.PanelMain.AutoSize = true;
             this.PanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.PanelMain.Controls.Add(this.LinkTutorial);
             this.PanelMain.Controls.Add(this.LinkFeedback);
             this.PanelMain.Controls.Add(this.PicBoxLogo);
             this.PanelMain.Controls.Add(this.LinkGitHub);
@@ -85,18 +88,42 @@ namespace PlainCEETimer.Forms
             this.PanelMain.Size = new System.Drawing.Size(208, 94);
             this.PanelMain.TabIndex = 8;
             // 
+            // LinkTutorial
+            // 
+            this.LinkTutorial.ActiveLinkColor = System.Drawing.Color.Blue;
+            this.LinkTutorial.AutoSize = true;
+            this.LinkTutorial.Location = new System.Drawing.Point(81, 71);
+            this.LinkTutorial.Name = "LinkTutorial";
+            this.LinkTutorial.Size = new System.Drawing.Size(33, 15);
+            this.LinkTutorial.TabIndex = 11;
+            this.LinkTutorial.TabStop = true;
+            this.LinkTutorial.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
+            this.LinkTutorial.Text = "教程";
+            this.LinkTutorial.VisitedLinkColor = System.Drawing.Color.Blue;
+            // 
             // LinkFeedback
             // 
             this.LinkFeedback.ActiveLinkColor = System.Drawing.Color.Blue;
             this.LinkFeedback.AutoSize = true;
             this.LinkFeedback.Location = new System.Drawing.Point(49, 71);
             this.LinkFeedback.Name = "LinkFeedback";
-            this.LinkFeedback.Size = new System.Drawing.Size(31, 15);
+            this.LinkFeedback.Size = new System.Drawing.Size(33, 15);
             this.LinkFeedback.TabIndex = 10;
             this.LinkFeedback.TabStop = true;
+            this.LinkFeedback.HyperLink = "https://github.com/WangHaonie/PlainCEETimer/issues/new/choose";
             this.LinkFeedback.Text = "反馈";
             this.LinkFeedback.VisitedLinkColor = System.Drawing.Color.Blue;
-            this.LinkFeedback.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabels_LinkClicked);
+            // 
+            // PicBoxLogo
+            // 
+            this.PicBoxLogo.Cursor = System.Windows.Forms.Cursors.Help;
+            this.PicBoxLogo.Location = new System.Drawing.Point(6, 3);
+            this.PicBoxLogo.Name = "PicBoxLogo";
+            this.PicBoxLogo.Size = new System.Drawing.Size(32, 32);
+            this.PicBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.PicBoxLogo.TabIndex = 9;
+            this.PicBoxLogo.TabStop = false;
+            this.PicBoxLogo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PicBoxLogo_MouseClick);
             // 
             // LinkGitHub
             // 
@@ -107,21 +134,9 @@ namespace PlainCEETimer.Forms
             this.LinkGitHub.Size = new System.Drawing.Size(45, 15);
             this.LinkGitHub.TabIndex = 8;
             this.LinkGitHub.TabStop = true;
+            this.LinkGitHub.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
             this.LinkGitHub.Text = "GitHub";
             this.LinkGitHub.VisitedLinkColor = System.Drawing.Color.Blue;
-            this.LinkGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabels_LinkClicked);
-            // 
-            // PicBoxLogo
-            // 
-            this.PicBoxLogo.Cursor = System.Windows.Forms.Cursors.Help;
-            this.PicBoxLogo.Image = App.AppIcon.ToBitmap();
-            this.PicBoxLogo.Location = new System.Drawing.Point(6, 3);
-            this.PicBoxLogo.Name = "PicBoxLogo";
-            this.PicBoxLogo.Size = new System.Drawing.Size(32, 32);
-            this.PicBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PicBoxLogo.TabIndex = 9;
-            this.PicBoxLogo.TabStop = false;
-            this.PicBoxLogo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PicBoxLogo_MouseClick);
             // 
             // AboutForm
             // 
@@ -150,11 +165,12 @@ namespace PlainCEETimer.Forms
 
         #endregion
         private System.Windows.Forms.Label LabelInfo;
-        private System.Windows.Forms.Button ButtonClose;
+        private PlainCEETimer.Controls.AppButton ButtonClose;
         private System.Windows.Forms.Label LabelLicense;
         private System.Windows.Forms.Panel PanelMain;
-        private System.Windows.Forms.LinkLabel LinkGitHub;
+        private PlainCEETimer.Controls.Hyperlink LinkGitHub;
         private System.Windows.Forms.PictureBox PicBoxLogo;
-        private System.Windows.Forms.LinkLabel LinkFeedback;
+        private PlainCEETimer.Controls.Hyperlink LinkFeedback;
+        private PlainCEETimer.Controls.Hyperlink LinkTutorial;
     }
 }

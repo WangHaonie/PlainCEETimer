@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonA = new System.Windows.Forms.Button();
-            //this.ButtonB = new System.Windows.Forms.Button();
+            //this.ButtonA = new PlainCEETimer.Controls.AppButton();
+            //this.ButtonB = new PlainCEETimer.Controls.AppButton();
             this.LabelP3 = new System.Windows.Forms.Label();
             this.TextBoxP3 = new System.Windows.Forms.TextBox();
             this.LabelP2 = new System.Windows.Forms.Label();
@@ -38,7 +38,7 @@
             this.LabelP1 = new System.Windows.Forms.Label();
             this.TextBoxP1 = new System.Windows.Forms.TextBox();
             this.LabelInfo = new System.Windows.Forms.Label();
-            this.ButtonReset = new System.Windows.Forms.Button();
+            this.ButtonReset = new PlainCEETimer.Controls.AppButton();
             this.PanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -168,8 +168,8 @@
         #endregion
 
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonA;
-        //private System.Windows.Forms.Button ButtonB;
+        //private PlainCEETimer.Controls.AppButton ButtonA;
+        //private PlainCEETimer.Controls.AppButton ButtonB;
         private System.Windows.Forms.Label LabelInfo;
         private System.Windows.Forms.Label LabelP3;
         private System.Windows.Forms.TextBox TextBoxP3;
@@ -177,6 +177,6 @@
         private System.Windows.Forms.TextBox TextBoxP2;
         private System.Windows.Forms.Label LabelP1;
         private System.Windows.Forms.TextBox TextBoxP1;
-        private System.Windows.Forms.Button ButtonReset;
+        private PlainCEETimer.Controls.AppButton ButtonReset;
     }
 }

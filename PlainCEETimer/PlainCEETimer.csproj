@@ -103,11 +103,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AppButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\AppCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\AppGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\DialogEx.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Hyperlink.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
@@ -167,6 +179,7 @@
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
+    <Compile Include="Interop\ThemeManager.cs" />
     <Compile Include="Modules\ConfigPolicy.cs" />
     <Compile Include="Modules\Configuration\AppearanceObject.cs" />
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
@@ -199,6 +212,7 @@
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />
     <Compile Include="Interop\NativeInterop.cs" />
+    <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\app.manifest" />
@@ -225,6 +239,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
