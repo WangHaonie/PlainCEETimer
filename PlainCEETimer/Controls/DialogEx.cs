@@ -7,8 +7,8 @@ namespace PlainCEETimer.Controls
     public class DialogEx : AppForm
     {
         protected Panel PanelMain { get; private set; }
-        protected AppButton ButtonB { get; private set; }
-        protected AppButton ButtonA { get; private set; }
+        protected Button ButtonB { get; private set; }
+        protected Button ButtonA { get; private set; }
 
         private bool IsUserChanged;
 

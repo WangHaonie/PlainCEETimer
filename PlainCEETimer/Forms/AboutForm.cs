@@ -1,6 +1,7 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,6 @@ namespace PlainCEETimer.Forms
 
         protected override void OnLoad()
         {
-            PicBoxLogo.Image = App.AppIcon.ToBitmap();
             LabelInfo.Text = $"{App.AppName}\n版本 v{App.AppVersion} x64 ({App.AppBuildDate})";
             LabelLicense.Text = $"Licensed under the GNU GPL, v3.\n{App.CopyrightInfo}";
         }
@@ -36,6 +36,14 @@ namespace PlainCEETimer.Forms
                     PicBoxLogo.Enabled = true;
                     IsCheckingUpdate = false;
                 }));
+            }
+        }
+
+        private void LinkLabels_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Process.Start($"https://github.com/WangHaonie/PlainCEETimer{((LinkLabel)sender == LinkFeedback ? "/issues/new/choose" : "")}");
             }
         }
 
