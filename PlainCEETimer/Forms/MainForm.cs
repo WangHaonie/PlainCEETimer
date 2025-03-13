@@ -7,6 +7,7 @@ using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -762,17 +763,20 @@ namespace PlainCEETimer.Forms
             UpdateCountdown(IsCustomText ? GetCountdownWithCustomText(Span, Name, Custom) : GetCountdown(Span, Name, Hint), Fore, Back);
         }
 
-        private string GetCountdownWithCustomText(TimeSpan Span, string Name, string Custom) => Custom
-            .Replace(Placeholders.PH_EXAMNAME, Name)
-            .Replace(Placeholders.PH_DAYS, $"{Span.Days}")
-            .Replace(Placeholders.PH_HOURS, $"{Span.Hours:00}")
-            .Replace(Placeholders.PH_MINUTES, $"{Span.Minutes:00}")
-            .Replace(Placeholders.PH_SECONDS, $"{Span.Seconds:00}")
-            .Replace(Placeholders.PH_CEILINGDAYS, $"{Span.Days + 1}")
-            .Replace(Placeholders.PH_TOTALHOURS, $"{Span.TotalHours:0}")
-            .Replace(Placeholders.PH_TOTALMINUTES, $"{Span.TotalMinutes:0}")
-            .Replace(Placeholders.PH_TOTALSECONDS, $"{Span.TotalSeconds:0}");
-
+        private string GetCountdownWithCustomText(TimeSpan Span, string Name, string Custom)
+        {
+            var Builder = new StringBuilder(Custom);
+            Builder.Replace(Placeholders.PH_EXAMNAME, Name);
+            Builder.Replace(Placeholders.PH_DAYS, $"{Span.Days}");
+            Builder.Replace(Placeholders.PH_HOURS, $"{Span.Hours:00}");
+            Builder.Replace(Placeholders.PH_MINUTES, $"{Span.Minutes:00}");
+            Builder.Replace(Placeholders.PH_SECONDS, $"{Span.Seconds:00}");
+            Builder.Replace(Placeholders.PH_CEILINGDAYS, $"{Span.Days + 1}");
+            Builder.Replace(Placeholders.PH_TOTALHOURS, $"{Span.TotalHours:0}");
+            Builder.Replace(Placeholders.PH_TOTALMINUTES, $"{Span.TotalMinutes:0}");
+            Builder.Replace(Placeholders.PH_TOTALSECONDS, $"{Span.TotalSeconds:0}");
+            return Builder.ToString();
+        }
 
         private string GetCountdown(TimeSpan Span, string Name, string Hint) => SelectedState switch
         {
