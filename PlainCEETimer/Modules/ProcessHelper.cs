@@ -29,6 +29,10 @@ namespace PlainCEETimer.Modules
             {
                 process.WaitForExit();
             }
+            else
+            {
+                return null;
+            }
 
             return Return == 1 ? process.StandardOutput.ReadToEnd().Trim() : process.ExitCode;
         }
