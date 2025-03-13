@@ -166,6 +166,10 @@ namespace PlainCEETimer.Forms
                 UseClassicContextMenuBak = UseClassicContextMenu;
                 ContextMenuStyleChanged = true;
             }
+            else if (tmp == UseClassicContextMenuBak)
+            {
+                ContextMenuStyleChanged = false;
+            }
 
             UseClassicContextMenu = tmp;
             CustomText = AppConfig.Display.CustomTexts;
@@ -260,13 +264,11 @@ namespace PlainCEETimer.Forms
         {
             if (ContextMenuStyleChanged)
             {
+                UseClassicContextMenu = UseClassicContextMenuBak;
+
                 if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后才能生效。\n\n是否立即重启？", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Shutdown(true);
-                }
-                else
-                {
-                    UseClassicContextMenu = UseClassicContextMenuBak;
                 }
             }
 
