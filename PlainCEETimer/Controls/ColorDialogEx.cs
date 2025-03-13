@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public class ColorDialogEx : ColorDialog
+    public sealed class ColorDialogEx : ColorDialog
     {
         public static int[] CustomColorCollection { get; set; }
 

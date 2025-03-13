@@ -371,7 +371,7 @@ namespace PlainCEETimer.Dialogs
             
             */
             #endregion
-            ListViewMain.ListViewItemSorter = new CustomRulesComparer();
+            ListViewMain.Sorter = new CustomRulesComparer();
             UserChanged();
         }
 
@@ -445,14 +445,6 @@ namespace PlainCEETimer.Dialogs
         private void DeleteAllItems()
         {
             ListViewMain.Items.Clear();
-        }
-
-        private void AutoAdjustColumnWidth()
-        {
-            foreach (ColumnHeader column in ListViewMain.Columns)
-            {
-                column.Width = -2;
-            }
         }
 
         private void SuspendListView(Action Operation)
