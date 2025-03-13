@@ -21,9 +21,6 @@ namespace PlainCEETimer.Forms
 
         public static Screen CurrentScreen { get; private set; } = null;
 
-        private int LastDpi = 96;
-        private int NewDpi;
-        private float DpiRatio = 1;
         private bool MemClean;
         private bool IsShowXOnly;
         private bool IsDraggable;
@@ -100,8 +97,6 @@ namespace PlainCEETimer.Forms
 
         protected override void OnLoad()
         {
-            NewDpi = (int)NativeInterop.GetDpiForWindow(Handle);
-            LastDpi = NewDpi;
             LocationWatcher = new() { Interval = 1000 };
             LocationWatcher.Tick += LocationWatcher_Tick;
             LocationWatcher.Start();
@@ -231,7 +226,7 @@ namespace PlainCEETimer.Forms
                 };
             }
 
-            ScaleFont(LabelCountdown, AppConfig.Appearance.Font);
+            LabelCountdown.Font = AppConfig.Appearance.Font;
 
             LabelCountdown.MouseDown -= LabelCountdown_MouseDown;
             LabelCountdown.MouseMove -= LabelCountdown_MouseMove;
@@ -867,50 +862,10 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void ScaleControls(int NewDpi)
-        {
-            DpiRatio = (float)NewDpi / LastDpi;
-            ScaleControl(LabelCountdown);
-
-            if (!UseClassicContextMenu)
-            {
-                ScaleControl(ContextMenuStripMain);
-                ScaleControl(ContextMenuStripTray);
-            }
-
-            Scale(new SizeF(DpiRatio, DpiRatio));
-        }
-
-        private void ScaleControl(Control Target)
-        {
-            Target.Left = (int)(Target.Left * DpiRatio);
-            Target.Top = (int)(Target.Top * DpiRatio);
-            Target.Width = (int)(Target.Width * DpiRatio);
-            Target.Height = (int)(Target.Height * DpiRatio);
-            ScaleFont(Target, Target.Font);
-        }
-
-        private void ScaleFont(Control Target, Font Existing)
-        {
-            Target.Font = new Font(Existing.FontFamily, Existing.Size * DpiRatio, Existing.Style);
-        }
-
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
             SetRoundCorners();
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x02E0) // WM_DPICHANGED
-            {
-                int NewDpiX = m.WParam.ToInt32() & 0xFFFF;
-                ScaleControls(NewDpiX);
-                LastDpi = NewDpiX;
-            }
-
-            base.WndProc(ref m);
         }
     }
 }
