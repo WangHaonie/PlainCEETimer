@@ -589,7 +589,7 @@ namespace PlainCEETimer.Forms
 
             if (ColorCheckMsg != 0)
             {
-                MessageX.Error($"第{ColorCheckMsg}组的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！", TabControlMain, TabPageAppearance);
+                MessageX.Error($"第{ColorCheckMsg}组的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！", TabPageAppearance);
                 return false;
             }
 
@@ -606,7 +606,7 @@ namespace PlainCEETimer.Forms
                 }
 
                 var ExitCode = (int)Modules.ProcessHelper.Run("cmd.exe", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
-                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)", TabControlMain, TabPageTools);
+                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)", TabPageTools);
             }
             #region 来自网络
             /*
@@ -619,12 +619,12 @@ namespace PlainCEETimer.Forms
             */
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
-                MessageX.Error($"授权失败，请在 UAC 对话框弹出时点击 \"是\"。{ex.ToMessage()}", TabControlMain, TabPageTools);
+                MessageX.Error($"授权失败，请在 UAC 对话框弹出时点击 \"是\"。{ex.ToMessage()}", TabPageTools);
             }
             #endregion
             catch (Exception ex)
             {
-                MessageX.Error($"命令执行时发生了错误。{ex.ToMessage()}", TabControlMain, TabPageTools);
+                MessageX.Error($"命令执行时发生了错误。{ex.ToMessage()}", TabPageTools);
             }
         }
 

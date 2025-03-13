@@ -22,16 +22,16 @@ namespace PlainCEETimer.Modules
             ErrorIcon = GetIcon(93);
         }
 
-        public DialogResult Info(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Info, ParentTabControl, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Info(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(Message, MessageLevel.Info, ParentTabPage, Buttons, AutoClose);
 
-        public DialogResult Warn(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Warning, ParentTabControl, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Warn(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(Message, MessageLevel.Warning, ParentTabPage, Buttons, AutoClose);
 
-        public DialogResult Error(string Message, TabControl ParentTabControl = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Error, ParentTabControl, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Error(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(Message, MessageLevel.Error, ParentTabPage, Buttons, AutoClose);
 
-        private DialogResult Popup(string Message, MessageLevel Level, TabControl ParentTabControl, TabPage ParentTabPage, AppMessageBoxButtons Buttons, bool AutoClose)
+        private DialogResult Popup(string Message, MessageLevel Level, TabPage ParentTabPage, AppMessageBoxButtons Buttons, bool AutoClose)
         {
             var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
 
@@ -71,9 +71,9 @@ namespace PlainCEETimer.Modules
                     Parent.KeepOnScreen();
                 }
 
-                if (ParentTabControl != null)
+                if (ParentTabPage != null)
                 {
-                    ParentTabControl.SelectedTab = ParentTabPage;
+                    ((TabControl)ParentTabPage.Parent).SelectedTab = ParentTabPage;
                 }
 
                 return Mbox.ShowCore(Parent, Message, Title, AppMessageBoxIcon);
