@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules
         /// <param name="Args">启动参数</param>
         /// <param name="Return">返回类型：0 - 不等待, 1 - 返回进程输出, 2 - 返回进程返回值</param>
         /// <param name="AdminRequired">是否需要管理员权限</param>
-        /// <returns>object (string or int)</returns>
+        /// <returns><see cref="object"/> 【<see cref="string"/> (输出结果), <see cref="int"/> (返回值)】</returns>
         public static object Run(string ProcessPath, string Args = "", int Return = 0, bool AdminRequired = false)
         {
             var process = Process.Start(new ProcessStartInfo

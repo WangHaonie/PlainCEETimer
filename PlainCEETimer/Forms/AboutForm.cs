@@ -22,6 +22,11 @@ namespace PlainCEETimer.Forms
             LabelLicense.Text = $"Licensed under the GNU GPL, v3.\n{App.CopyrightInfo}";
         }
 
+        protected override void OnClosing(FormClosingEventArgs e)
+        {
+            e.Cancel = IsCheckingUpdate;
+        }
+
         private void PicBoxLogo_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && !IsCheckingUpdate)
@@ -42,11 +47,6 @@ namespace PlainCEETimer.Forms
         private void ButtonClose_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        protected override void OnClosing(FormClosingEventArgs e)
-        {
-            e.Cancel = IsCheckingUpdate;
         }
     }
 }

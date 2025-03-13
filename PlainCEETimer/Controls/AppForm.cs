@@ -40,6 +40,9 @@ namespace PlainCEETimer.Controls
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
         }
 
+        public Screen GetCurrentScreen()
+            => MainForm.CurrentScreen ?? Screen.FromPoint(Cursor.Position);
+
         public void ReActivate()
         {
             var tmp = TopMost;
@@ -86,28 +89,6 @@ namespace PlainCEETimer.Controls
             OnClosed();
             base.OnClosed(e);
             Dispose(true);
-        }
-
-        private void AppLauncher_TrayMenuShowAllClicked(object sender, EventArgs e)
-        {
-            if (!IsDisposed)
-            {
-                ReActivate();
-                KeepOnScreen();
-            }
-        }
-
-        private void AppLauncher_UniTopMostStateChanged(object sender, EventArgs e)
-        {
-            if (!IsDisposed)
-            {
-                if (this is MainForm)
-                {
-                    return;
-                }
-
-                TopMost = MainForm.UniTopMost;
-            }
         }
 
         #region
@@ -204,7 +185,7 @@ namespace PlainCEETimer.Controls
         /// 在用户未保存更改并尝试关闭窗体时显示警告。同时防止直接关闭警告时也窗体会随之关闭。
         /// </summary>
         /// <param name="WarningMsg">警告信息</param>
-        /// <param name="e">FormClosingEventArgs</param>
+        /// <param name="e"><see cref="FormClosingEventArgs"/></param>
         /// <param name="SaveChanges">执行 保存更改 的代码</param>
         /// <param name="IgnoreChanges">执行 忽略更改 的代码</param>
         protected void ShowUnsavedWarning(string WarningMsg, FormClosingEventArgs e, EventHandler SaveChanges, Action IgnoreChanges)
@@ -461,12 +442,32 @@ namespace PlainCEETimer.Controls
             #endregion
         }
 
-        public Screen GetCurrentScreen() => MainForm.CurrentScreen ?? Screen.FromPoint(Cursor.Position);
-
         private void AlignControlsRCore(Button Btn1, Button Btn2, Control Main, int yTweak)
         {
             Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
             Btn1.Location = new(Btn2.Location.X - Btn1.Width - 6.ScaleToDpi(this), Btn2.Location.Y);
+        }
+
+        private void AppLauncher_TrayMenuShowAllClicked(object sender, EventArgs e)
+        {
+            if (!IsDisposed)
+            {
+                ReActivate();
+                KeepOnScreen();
+            }
+        }
+
+        private void AppLauncher_UniTopMostStateChanged(object sender, EventArgs e)
+        {
+            if (!IsDisposed)
+            {
+                if (this is MainForm)
+                {
+                    return;
+                }
+
+                TopMost = MainForm.UniTopMost;
+            }
         }
     }
 }

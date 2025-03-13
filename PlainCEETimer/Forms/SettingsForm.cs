@@ -60,88 +60,6 @@ namespace PlainCEETimer.Forms
             ChangeWorkingStyle(WorkingArea.Funny, false);
         }
 
-        private void InitializeExtra()
-        {
-            if (UseClassicContextMenu)
-            {
-                ContextMenuDefaultColor = CreateNew
-                ([
-                    AddItem("白底(&L)", OnItemLightClick),
-                    AddItem("黑底(&D)", OnItemDarkClick)
-                ]);
-            }
-            else
-            {
-                ContextMenuStripDefaultColor = CreateNewStrip
-                ([
-                    AddStripItem("白底(&L)", OnItemLightClick),
-                    AddStripItem("黑底(&D)", OnItemDarkClick)
-                ]);
-            }
-
-            LabelPreviewColor1.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_START}...";
-            LabelPreviewColor2.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_LEFT}...";
-            LabelPreviewColor3.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_PAST}...";
-
-            BindComboData(ComboBoxShowXOnly,
-            [
-                new("天", 0),
-                new("时", 1),
-                new("分", 2),
-                new("秒", 3)
-            ]);
-
-            BindComboData(ComboBoxCountdownEnd,
-            [
-                new("<程序欢迎信息>", 0),
-                new("考试还有多久结束", 1),
-                new("考试还有多久结束 和 已过去了多久", 2),
-                //new("负数 (仅供娱乐)", 3)
-            ]);
-
-            BindComboData(ComboBoxPosition,
-            [
-                new("左上角", 0),
-                new("左侧居中", 1),
-                new("左下角", 2),
-                new("顶部居中", 3),
-                new("中部居中", 4),
-                new("底部居中", 5),
-                new("右上角", 6),
-                new("右侧居中", 7),
-                new("右下角", 8)
-            ]);
-
-            BindComboData(ComboBoxNtpServers,
-            [
-                new("time.windows.com", 0),
-                new("ntp.aliyun.com", 1),
-                new("ntp.tencent.com", 2),
-                new("time.cloudflare.com", 3)
-            ]);
-
-            var CurrentScreens = Screen.AllScreens;
-            var Length = CurrentScreens.Length + 1;
-            var Monitors = new ComboData[Length];
-            Monitors[0] = new("<请选择>", 0);
-            for (int i = 1; i < Length; i++)
-            {
-                var CurrentScreen = CurrentScreens[i - 1];
-                Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
-            }
-            BindComboData(ComboBoxScreens, Monitors);
-
-            ColorLabels = [LabelColor11, LabelColor21, LabelColor31, LabelColor41, LabelColor12, LabelColor22, LabelColor32, LabelColor42];
-            foreach (Label ColorLabel in ColorLabels)
-            {
-                ColorLabel.Click += ColorLabels_Click;
-                ColorLabel.MouseDown += ColorLabels_MouseDown;
-                ColorLabel.MouseMove += ColorLabels_MouseMove;
-                ColorLabel.MouseUp += ColorLabels_MouseUp;
-            }
-            ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
-        }
-
         protected override void AdjustUI()
         {
             AlignControlsR(ButtonSave, ButtonCancel, TabControlMain);
@@ -172,33 +90,34 @@ namespace PlainCEETimer.Forms
             });
         }
 
-        private void RefreshSettings()
+        protected override void OnClosing(FormClosingEventArgs e)
         {
-            CheckBoxStartup.Checked = (Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)?.GetValue(App.AppNameEng) is string regvalue) && regvalue.Equals($"\"{App.CurrentExecutablePath}\"", StringComparison.OrdinalIgnoreCase);
-            CheckBoxTopMost.Checked = AppConfig.General.TopMost;
-            LabelExamInfo.Text = $"考试名称：{ExamName}\n考试开始时间和日期：{ExamStartTime.ToString(App.DateTimeFormat)}\n考试结束时间和日期：{ExamEndTime.ToString(App.DateTimeFormat)}";
-            CheckBoxMemClean.Checked = AppConfig.General.MemClean;
-            CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
-            CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
-            CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
-            CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
-            CheckBoxCeiling.Checked = AppConfig.Display.Ceiling;
-            ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
-            CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
-            CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
-            ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
-            ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
-            ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-            ChangeWorkingStyle(WorkingArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
-            ChangePptsvcStyle(null, EventArgs.Empty);
-            ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
-            ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
-            EditedCustomTexts = AppConfig.Display.CustomTexts;
-            EditedCustomRules = AppConfig.CustomRules;
-            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked = AppConfig.General.TrayIcon;
-            CheckBoxTrayText.Checked = AppConfig.General.TrayText;
-            EIMAutoSwitch = AppConfig.General.AutoSwitch;
-            EIMInterval = AppConfig.General.Interval;
+            if (App.AllowClosing)
+            {
+                e.Cancel = false;
+            }
+            else if (IsSyncingTime)
+            {
+                e.Cancel = true;
+            }
+            else if (HasSettingsChanged)
+            {
+                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, ButtonSave_Click, () =>
+                {
+                    HasSettingsChanged = false;
+                    Close();
+                });
+            }
+        }
+
+        protected override void OnClosed()
+        {
+            if (InvokeChangeRequired)
+            {
+                SaveSettings();
+            }
+
+            ChangeWorkingStyle(WorkingArea.Funny, false);
         }
 
         private void SettingsChanged(object sender, EventArgs e)
@@ -490,34 +409,115 @@ namespace PlainCEETimer.Forms
             Close();
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
+        private void InitializeExtra()
         {
-            if (App.AllowClosing)
+            if (UseClassicContextMenu)
             {
-                e.Cancel = false;
+                ContextMenuDefaultColor = CreateNew
+                ([
+                    AddItem("白底(&L)", OnItemLightClick),
+                    AddItem("黑底(&D)", OnItemDarkClick)
+                ]);
             }
-            else if (IsSyncingTime)
+            else
             {
-                e.Cancel = true;
+                ContextMenuStripDefaultColor = CreateNewStrip
+                ([
+                    AddStripItem("白底(&L)", OnItemLightClick),
+                    AddStripItem("黑底(&D)", OnItemDarkClick)
+                ]);
             }
-            else if (HasSettingsChanged)
+
+            LabelPreviewColor1.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_START}...";
+            LabelPreviewColor2.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_LEFT}...";
+            LabelPreviewColor3.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_PAST}...";
+
+            BindComboData(ComboBoxShowXOnly,
+            [
+                new("天", 0),
+                new("时", 1),
+                new("分", 2),
+                new("秒", 3)
+            ]);
+
+            BindComboData(ComboBoxCountdownEnd,
+            [
+                new("<程序欢迎信息>", 0),
+                new("考试还有多久结束", 1),
+                new("考试还有多久结束 和 已过去了多久", 2),
+                //new("负数 (仅供娱乐)", 3)
+            ]);
+
+            BindComboData(ComboBoxPosition,
+            [
+                new("左上角", 0),
+                new("左侧居中", 1),
+                new("左下角", 2),
+                new("顶部居中", 3),
+                new("中部居中", 4),
+                new("底部居中", 5),
+                new("右上角", 6),
+                new("右侧居中", 7),
+                new("右下角", 8)
+            ]);
+
+            BindComboData(ComboBoxNtpServers,
+            [
+                new("time.windows.com", 0),
+                new("ntp.aliyun.com", 1),
+                new("ntp.tencent.com", 2),
+                new("time.cloudflare.com", 3)
+            ]);
+
+            var CurrentScreens = Screen.AllScreens;
+            var Length = CurrentScreens.Length + 1;
+            var Monitors = new ComboData[Length];
+            Monitors[0] = new("<请选择>", 0);
+            for (int i = 1; i < Length; i++)
             {
-                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, ButtonSave_Click, () =>
-                {
-                    HasSettingsChanged = false;
-                    Close();
-                });
+                var CurrentScreen = CurrentScreens[i - 1];
+                Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
             }
+            BindComboData(ComboBoxScreens, Monitors);
+
+            ColorLabels = [LabelColor11, LabelColor21, LabelColor31, LabelColor41, LabelColor12, LabelColor22, LabelColor32, LabelColor42];
+            foreach (Label ColorLabel in ColorLabels)
+            {
+                ColorLabel.Click += ColorLabels_Click;
+                ColorLabel.MouseDown += ColorLabels_MouseDown;
+                ColorLabel.MouseMove += ColorLabels_MouseMove;
+                ColorLabel.MouseUp += ColorLabels_MouseUp;
+            }
+            ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
         }
 
-        protected override void OnClosed()
+        private void RefreshSettings()
         {
-            if (InvokeChangeRequired)
-            {
-                SaveSettings();
-            }
-
-            ChangeWorkingStyle(WorkingArea.Funny, false);
+            CheckBoxStartup.Checked = (Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)?.GetValue(App.AppNameEng) is string regvalue) && regvalue.Equals($"\"{App.CurrentExecutablePath}\"", StringComparison.OrdinalIgnoreCase);
+            CheckBoxTopMost.Checked = AppConfig.General.TopMost;
+            LabelExamInfo.Text = $"考试名称：{ExamName}\n考试开始时间和日期：{ExamStartTime.ToString(App.DateTimeFormat)}\n考试结束时间和日期：{ExamEndTime.ToString(App.DateTimeFormat)}";
+            CheckBoxMemClean.Checked = AppConfig.General.MemClean;
+            CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
+            CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
+            CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
+            CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
+            CheckBoxCeiling.Checked = AppConfig.Display.Ceiling;
+            ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
+            CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
+            CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
+            ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
+            ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
+            ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
+            ChangeWorkingStyle(WorkingArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
+            ChangePptsvcStyle(null, EventArgs.Empty);
+            ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
+            ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
+            EditedCustomTexts = AppConfig.Display.CustomTexts;
+            EditedCustomRules = AppConfig.CustomRules;
+            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked = AppConfig.General.TrayIcon;
+            CheckBoxTrayText.Checked = AppConfig.General.TrayText;
+            EIMAutoSwitch = AppConfig.General.AutoSwitch;
+            EIMInterval = AppConfig.General.Interval;
         }
 
         private void ChangeCustomTextStyle(object sender)

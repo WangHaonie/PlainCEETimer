@@ -22,15 +22,6 @@ namespace PlainCEETimer.Controls
             SetProperties(Prop);
         }
 
-        private void InitializeComponent()
-        {
-            PanelMain = new();
-            ButtonA = new();
-            ButtonB = new();
-            ButtonA.Click += ButtonA_Click;
-            ButtonB.Click += ButtonB_Click;
-        }
-
         protected override void OnClosing(FormClosingEventArgs e)
         {
             if (IsUserChanged)
@@ -77,6 +68,15 @@ namespace PlainCEETimer.Controls
                     ButtonA.Enabled = true;
                 }
             });
+        }
+
+        private void InitializeComponent()
+        {
+            PanelMain = new();
+            ButtonA = new();
+            ButtonB = new();
+            ButtonA.Click += ButtonA_Click;
+            ButtonB.Click += ButtonB_Click;
         }
 
         private void SetProperties(AppDialogProp Prop)

@@ -14,17 +14,6 @@ namespace PlainCEETimer.Modules
 {
     public static class App
     {
-        public static bool IsAdmin { get; private set; }
-        public static bool AllowClosing { get; private set; }
-        public static bool IsWindows7Above => OSBuild >= WindowsBuilds.Windows7;
-        public static bool IsWindows11 => OSBuild >= WindowsBuilds.Windows11_21H2;
-        public static bool CanSaveConfig { get; set; }
-        public static event EventHandler TrayMenuShowAllClicked;
-        public static event EventHandler UniTopMostStateChanged;
-        public static Icon AppIcon { get; private set; }
-        public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
-        public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
-
         public static int OSBuild
         {
             get
@@ -94,6 +83,17 @@ namespace PlainCEETimer.Modules
                 CanSaveConfig = true;
             }
         }
+
+        public static bool IsAdmin { get; private set; }
+        public static bool AllowClosing { get; private set; }
+        public static bool IsWindows7Above => OSBuild >= WindowsBuilds.Windows7;
+        public static bool IsWindows11 => OSBuild >= WindowsBuilds.Windows11_21H2;
+        public static bool CanSaveConfig { get; set; }
+        public static event EventHandler TrayMenuShowAllClicked;
+        public static event EventHandler UniTopMostStateChanged;
+        public static Icon AppIcon { get; private set; }
+        public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
+        public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
 
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";

@@ -56,7 +56,7 @@ namespace PlainCEETimer.Modules
         /// <param name="msg">错误信息</param>
         /// <param name="index">[仅进行单个判断时提供] 索引，可以为 0, 1, 2</param>
         /// <param name="ToBoolean">[仅进行单个判断时提供] 是否返回为 bool 类型</param>
-        /// <returns>bool (是否有效), string (更正后的文本)</returns>
+        /// <returns><see cref="object"/> 【<see cref="bool"/> (是否有效), <see cref="string"/> (更正后的文本)】</returns>
         public static object CheckCustomText(string[] arr, out string msg, int index = -1, bool ToBoolean = false)
         {
             bool Result = true;

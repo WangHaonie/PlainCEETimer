@@ -56,6 +56,20 @@ namespace PlainCEETimer.Forms
             await DownloadUpdate();
         }
 
+        protected override void OnClosing(FormClosingEventArgs e)
+        {
+            e.Cancel = !IsCancelled;
+        }
+
+        protected override void OnClosed()
+        {
+            if (IsCancelled)
+            {
+                TaskbarProgress.SetState(TaskbarProgressState.None);
+                TaskbarProgress.Release();
+            }
+        }
+
         private async Task DownloadUpdate()
         {
             TaskbarProgress.SetValue(0UL, 100UL);
@@ -180,20 +194,6 @@ namespace PlainCEETimer.Forms
             if (!string.IsNullOrEmpty(Speed))
             {
                 LabelSpeed.Text = Speed;
-            }
-        }
-
-        protected override void OnClosing(FormClosingEventArgs e)
-        {
-            e.Cancel = !IsCancelled;
-        }
-
-        protected override void OnClosed()
-        {
-            if (IsCancelled)
-            {
-                TaskbarProgress.SetState(TaskbarProgressState.None);
-                TaskbarProgress.Release();
             }
         }
     }

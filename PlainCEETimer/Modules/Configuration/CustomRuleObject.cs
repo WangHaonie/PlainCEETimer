@@ -18,7 +18,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public string Text { get; set; }
 
-        int IComparable<CustomRuleObject>.CompareTo(CustomRuleObject other)
+        public int CompareTo(CustomRuleObject other)
         {
             if (other == null)
             {
@@ -35,7 +35,7 @@ namespace PlainCEETimer.Modules.Configuration
             return Tick.CompareTo(other.Tick);
         }
 
-        bool IEquatable<CustomRuleObject>.Equals(CustomRuleObject other)
+        public bool Equals(CustomRuleObject other)
         {
             if (other == null)
             {

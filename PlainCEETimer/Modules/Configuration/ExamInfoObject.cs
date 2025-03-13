@@ -34,9 +34,7 @@ namespace PlainCEETimer.Modules.Configuration
         public override string ToString()
             => string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
 
-        int IComparable<ExamInfoObject>.CompareTo(ExamInfoObject other)
-        {
-            return other == null ? 1 : Start.CompareTo(other.Start);
-        }
+        public int CompareTo(ExamInfoObject other)
+            => other == null ? 1 : Start.CompareTo(other.Start);
     }
 }

@@ -95,6 +95,12 @@ namespace PlainCEETimer.Forms
             OnContextQuitClick = new((_, _) => App.Shutdown());
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            SetRoundCorners();
+        }
+
         protected override void OnLoad()
         {
             LocationWatcher = new() { Interval = 1000 };
@@ -117,9 +123,164 @@ namespace PlainCEETimer.Forms
             IsNormalStart = true;
         }
 
+        protected override void OnClosing(FormClosingEventArgs e)
+        {
+            if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                if (App.CanSaveConfig)
+                {
+                    ConfigHandler.Save();
+                }
+
+                Countdown?.Dispose();
+                e.Cancel = false;
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            RefreshScreen();
+            SetLabelCountdownAutoWrap();
+        }
+
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi(this));
+        }
+
+        private void MainForm_LocationRefreshed(object sender, EventArgs e)
+        {
+            AppConfig.Pos = Location;
+            SaveConfig();
+        }
+
+        private void ExamItems_Click(object sender, EventArgs e)
+        {
+            int ItemIndex;
+            MenuItem Sender = null;
+            ToolStripMenuItem SenderStrip = null;
+
+            if (UseClassicContextMenu)
+            {
+                Sender = (MenuItem)sender;
+                ItemIndex = Sender.Index;
+            }
+            else
+            {
+                SenderStrip = (ToolStripMenuItem)sender;
+                ItemIndex = (int)SenderStrip.Tag;
+            }
+
+            if (SenderStrip != null && SenderStrip.Checked)
+            {
+                SenderStrip.Checked = true;
+            }
+
+            if ((SenderStrip != null && !SenderStrip.Checked) || (Sender != null && !Sender.Checked))
+            {
+                UnselectAllExamItems();
+                ExamIndex = ItemIndex;
+                AppConfig.General.ExamIndex = ItemIndex;
+                SaveConfig();
+                LoadExams();
+                UpdateExamSelection();
+            }
+        }
+
+        #region 来自网络
+        /*
+        
+        无边框窗口的拖动 参考:
+
+        C#创建无边框可拖动窗口 - 掘金
+        https://juejin.cn/post/6989144829607280648
+
+        */
+        private void LabelCountdown_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                IsReadyToMove = true;
+                Cursor = Cursors.SizeAll;
+                LastMouseLocation = e.Location;
+                LastLocation = Location;
+            }
+        }
+
+        private void LabelCountdown_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (IsReadyToMove)
+            {
+                Location = new(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
+            }
+        }
+
+        private void LabelCountdown_MouseUp(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Default;
+
+            if (IsReadyToMove && Location != LastLocation)
+            {
+                KeepOnScreen();
+                CompatibleWithPPTService();
+                SetLabelCountdownAutoWrap();
+                AppConfig.Pos = Location;
+                SaveConfig();
+            }
+
+            IsReadyToMove = false;
+        }
+        #endregion
+
+        private void ContextSettings_Click(object sender, EventArgs e)
+        {
+            if (FormSettings == null || FormSettings.IsDisposed)
+            {
+                FormSettings = new()
+                {
+                    ExamName = ExamName,
+                    ExamStartTime = ExamStartTime,
+                    ExamEndTime = ExamEndTime
+                };
+
+                FormSettings.FormClosed += (_, _) =>
+                {
+                    if (FormSettings.RefreshNeeded)
+                    {
+                        RefreshSettings();
+                    }
+                };
+            }
+
+            FormSettings.ReActivate();
+        }
+
+        private void ContextAbout_Click(object sender, EventArgs e)
+        {
+            if (FormAbout == null || FormAbout.IsDisposed)
+            {
+                FormAbout = new();
+            }
+
+            FormAbout.ReActivate();
+        }
+
+        private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) App.OnTrayMenuShowAllClicked();
+        }
+
+        private void LocationWatcher_Tick(object sender, EventArgs e)
+        {
+            if (!IsReadyToMove)
+            {
+                ApplyLocation();
+                KeepOnScreen();
+            }
         }
 
         private void RefreshSettings()
@@ -463,161 +624,6 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void MainForm_LocationRefreshed(object sender, EventArgs e)
-        {
-            AppConfig.Pos = Location;
-            SaveConfig();
-        }
-
-        private void ExamItems_Click(object sender, EventArgs e)
-        {
-            int ItemIndex;
-            MenuItem Sender = null;
-            ToolStripMenuItem SenderStrip = null;
-
-            if (UseClassicContextMenu)
-            {
-                Sender = (MenuItem)sender;
-                ItemIndex = Sender.Index;
-            }
-            else
-            {
-                SenderStrip = (ToolStripMenuItem)sender;
-                ItemIndex = (int)SenderStrip.Tag;
-            }
-
-            if (SenderStrip != null && SenderStrip.Checked)
-            {
-                SenderStrip.Checked = true;
-            }
-
-            if ((SenderStrip != null && !SenderStrip.Checked) || (Sender != null && !Sender.Checked))
-            {
-                UnselectAllExamItems();
-                ExamIndex = ItemIndex;
-                AppConfig.General.ExamIndex = ItemIndex;
-                SaveConfig();
-                LoadExams();
-                UpdateExamSelection();
-            }
-        }
-
-        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
-        {
-            RefreshScreen();
-            SetLabelCountdownAutoWrap();
-        }
-
-        #region 来自网络
-        /*
-        
-        无边框窗口的拖动 参考:
-
-        C#创建无边框可拖动窗口 - 掘金
-        https://juejin.cn/post/6989144829607280648
-
-        */
-        private void LabelCountdown_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                IsReadyToMove = true;
-                Cursor = Cursors.SizeAll;
-                LastMouseLocation = e.Location;
-                LastLocation = Location;
-            }
-        }
-
-        private void LabelCountdown_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (IsReadyToMove)
-            {
-                Location = new(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
-            }
-        }
-
-        private void LabelCountdown_MouseUp(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Default;
-
-            if (IsReadyToMove && Location != LastLocation)
-            {
-                KeepOnScreen();
-                CompatibleWithPPTService();
-                SetLabelCountdownAutoWrap();
-                AppConfig.Pos = Location;
-                SaveConfig();
-            }
-
-            IsReadyToMove = false;
-        }
-        #endregion
-
-        private void ContextSettings_Click(object sender, EventArgs e)
-        {
-            if (FormSettings == null || FormSettings.IsDisposed)
-            {
-                FormSettings = new()
-                {
-                    ExamName = ExamName,
-                    ExamStartTime = ExamStartTime,
-                    ExamEndTime = ExamEndTime
-                };
-
-                FormSettings.FormClosed += (_, _) =>
-                {
-                    if (FormSettings.RefreshNeeded)
-                    {
-                        RefreshSettings();
-                    }
-                };
-            }
-
-            FormSettings.ReActivate();
-        }
-
-        private void ContextAbout_Click(object sender, EventArgs e)
-        {
-            if (FormAbout == null || FormAbout.IsDisposed)
-            {
-                FormAbout = new();
-            }
-
-            FormAbout.ReActivate();
-        }
-
-        private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) App.OnTrayMenuShowAllClicked();
-        }
-
-        protected override void OnClosing(FormClosingEventArgs e)
-        {
-            if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
-            {
-                if (App.CanSaveConfig)
-                {
-                    ConfigHandler.Save();
-                }
-
-                Countdown?.Dispose();
-                e.Cancel = false;
-            }
-            else
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void LocationWatcher_Tick(object sender, EventArgs e)
-        {
-            if (!IsReadyToMove)
-            {
-                ApplyLocation();
-                KeepOnScreen();
-            }
-        }
-
         private void UnselectAllExamItems()
         {
             if (UseClassicContextMenu)
@@ -862,12 +868,6 @@ namespace PlainCEETimer.Forms
             {
                 SetRoundCornerRegion = true;
             }
-        }
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            SetRoundCorners();
         }
     }
 }
