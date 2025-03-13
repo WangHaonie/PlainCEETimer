@@ -48,6 +48,7 @@ namespace PlainCEETimer.Controls
             Show();
             Activate();
             TopMost = tmp;
+            KeepOnScreen();
         }
 
         protected sealed override void OnLoad(EventArgs e)
@@ -399,7 +400,7 @@ namespace PlainCEETimer.Controls
             return Target;
         }
 
-        public void KeepOnScreen()
+        protected void KeepOnScreen()
         {
             var ValidArea = GetScreenRect();
             bool b = false;

@@ -68,7 +68,6 @@ namespace PlainCEETimer.Modules
                 if (Parent != null)
                 {
                     Parent.ReActivate();
-                    Parent.KeepOnScreen();
                 }
 
                 if (ParentTabPage != null)
