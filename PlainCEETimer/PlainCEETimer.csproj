@@ -193,7 +193,7 @@
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
-    <Compile Include="Modules\ListViewItemComparer.cs" />
+    <Compile Include="Modules\CustomRulesComparer.cs" />
     <Compile Include="Modules\ComboData.cs" />
     <Compile Include="Modules\Placeholders.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />

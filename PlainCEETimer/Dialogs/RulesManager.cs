@@ -361,16 +361,17 @@ namespace PlainCEETimer.Dialogs
 
         private void SortItems()
         {
-            var Items = GetAllItems().ToList();
-            Items.Sort(new ListViewItemComparer());
+            #region
+            /*
+            
+            使用 ListView 自带的排序机制 参考：
 
-            SuspendListView(() =>
-            {
-                DeleteAllItems();
-                AddItems(Items);
-                AutoAdjustColumnWidth();
-            });
-
+            ListView.ListViewItemSorter 属性 (System.Windows.Forms) | Microsoft Learn
+            https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.forms.listview.listviewitemsorter?view=windowsdesktop-9.0#--
+            
+            */
+            #endregion
+            ListViewMain.ListViewItemSorter = new CustomRulesComparer();
             UserChanged();
         }
 
