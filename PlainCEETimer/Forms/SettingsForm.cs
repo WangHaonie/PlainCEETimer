@@ -352,7 +352,7 @@ namespace PlainCEETimer.Forms
         {
             ChangePptsvcStyle(sender, e);
             ComboBoxScreens.SelectedIndex = CheckBoxDraggable.Checked ? 0 : AppConfig.Display.ScreenIndex;
-            ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 0 : (int)AppConfig.Display.Position;
+            ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
             LabelScreens.Enabled = LabelChar1.Enabled = ComboBoxScreens.Enabled = !CheckBoxDraggable.Checked;
         }
 
@@ -394,7 +394,7 @@ namespace PlainCEETimer.Forms
         {
             SettingsChanged(sender, e);
             ComboBoxPosition.Enabled = !CheckBoxDraggable.Checked && ComboBoxScreens.SelectedIndex != 0;
-            ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 0;
+            ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
         }
 
         private void CheckBoxTrayIcon_CheckedChanged(object sender, EventArgs e)
@@ -454,7 +454,7 @@ namespace PlainCEETimer.Forms
                 new("左侧居中", 1),
                 new("左下角", 2),
                 new("顶部居中", 3),
-                new("中部居中", 4),
+                new("屏幕中心", 4),
                 new("底部居中", 5),
                 new("右上角", 6),
                 new("右侧居中", 7),
