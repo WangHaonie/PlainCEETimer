@@ -154,7 +154,11 @@ namespace PlainCEETimer.Forms
         private void MainForm_LocationRefreshed(object sender, EventArgs e)
         {
             AppConfig.Pos = Location;
-            SaveConfig();
+
+            if (IsDraggable)
+            {
+                SaveConfig();
+            }
         }
 
         private void ExamItems_Click(object sender, EventArgs e)
