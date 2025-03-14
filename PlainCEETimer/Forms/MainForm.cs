@@ -52,10 +52,10 @@ namespace PlainCEETimer.Forms
         private readonly int PptsvcThreshold = 1;
         private readonly int BorderRadius = 13;
         private CountdownState SelectedState;
-        private Timer LocationWatcher;
         private System.Threading.Timer MemCleaner;
-        private System.Threading.Timer AutoSwitchHandler;
+        private Timer AutoSwitchHandler;
         private System.Threading.Timer Countdown;
+        private readonly StringBuilder Builder = new();
         private readonly int MemCleanerInterval = 300_000; // 5 min
         private int AutoSwitchInterval;
         private Point LastLocation;
@@ -104,16 +104,9 @@ namespace PlainCEETimer.Forms
 
         protected override void OnLoad()
         {
-            LocationWatcher = new() { Interval = 1000 };
-            LocationWatcher.Tick += LocationWatcher_Tick;
-            LocationWatcher.Start();
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             LocationRefreshed += MainForm_LocationRefreshed;
-
-            if (SetRoundCornerRegion)
-            {
-                SizeChanged += MainForm_SizeChanged;
-            }
+            SizeChanged += MainForm_SizeChanged;
         }
 
         protected override void OnShown()
@@ -150,7 +143,12 @@ namespace PlainCEETimer.Forms
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
-            RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi(this));
+            if (SetRoundCornerRegion)
+            {
+                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi(this));
+            }
+
+            ValidateLocation();
         }
 
         private void MainForm_LocationRefreshed(object sender, EventArgs e)
@@ -275,7 +273,7 @@ namespace PlainCEETimer.Forms
             if (e.Button == MouseButtons.Left) App.OnTrayMenuShowAllClicked();
         }
 
-        private void LocationWatcher_Tick(object sender, EventArgs e)
+        private void ValidateLocation()
         {
             if (!IsReadyToMove)
             {
@@ -606,7 +604,7 @@ namespace PlainCEETimer.Forms
 
                     if (!ShowTrayText)
                     {
-                        UpdateTrayIconText(App.AppName, false);
+                        UpdateTrayIconText(App.AppName);
                     }
                 }
             }
@@ -620,7 +618,7 @@ namespace PlainCEETimer.Forms
                 }
                 else if (!ShowTrayText)
                 {
-                    UpdateTrayIconText(App.AppName, false);
+                    UpdateTrayIconText(App.AppName);
                 }
             }
         }
@@ -636,13 +634,10 @@ namespace PlainCEETimer.Forms
             }
             else
             {
-                BeginInvoke(() =>
+                foreach (ToolStripMenuItem Item in ExamSwitchMainStrip)
                 {
-                    foreach (ToolStripMenuItem Item in ExamSwitchMainStrip)
-                    {
-                        Item.Checked = false;
-                    }
-                });
+                    Item.Checked = false;
+                }
             }
         }
 
@@ -656,7 +651,7 @@ namespace PlainCEETimer.Forms
                 }
                 else
                 {
-                    BeginInvoke(() => ((ToolStripMenuItem)ExamSwitchMainStrip[ExamIndex]).Checked = true);
+                    ((ToolStripMenuItem)ExamSwitchMainStrip[ExamIndex]).Checked = true;
                 }
             }
             else
@@ -670,11 +665,8 @@ namespace PlainCEETimer.Forms
                 else
                 {
                     var Item = (ToolStripMenuItem)ExamSwitchMainStrip[0];
-                    BeginInvoke(() =>
-                    {
-                        Item.Checked = false;
-                        Item.Enabled = false;
-                    });
+                    Item.Checked = false;
+                    Item.Enabled = false;
                 }
             }
 
@@ -684,7 +676,9 @@ namespace PlainCEETimer.Forms
 
                 if (IsCountdownReady && Exams.Length > 1)
                 {
-                    AutoSwitchHandler = new(ExamAutoSwitch, null, AutoSwitchInterval, AutoSwitchInterval);
+                    AutoSwitchHandler = new() { Interval = AutoSwitchInterval };
+                    AutoSwitchHandler.Tick += ExamAutoSwitch;
+                    AutoSwitchHandler.Start();
                 }
             }
             else if (!AutoSwitch)
@@ -711,7 +705,7 @@ namespace PlainCEETimer.Forms
             {
                 Countdown.Dispose();
                 UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3].Fore, CountdownColors[3].Back);
-                UpdateTrayIconText(App.AppName);
+                UpdateTrayIconText(App.AppName, true);
                 IsCountdownRunning = false;
             }
         }
@@ -765,7 +759,8 @@ namespace PlainCEETimer.Forms
 
         private string GetCountdownWithCustomText(TimeSpan Span, string Name, string Custom)
         {
-            var Builder = new StringBuilder(Custom);
+            Builder.Clear();
+            Builder.Append(Custom);
             Builder.Replace(Placeholders.PH_EXAMNAME, Name);
             Builder.Replace(Placeholders.PH_DAYS, $"{Span.Days}");
             Builder.Replace(Placeholders.PH_HOURS, $"{Span.Hours:00}");
@@ -799,12 +794,12 @@ namespace PlainCEETimer.Forms
 
                 if (ShowTrayText)
                 {
-                    UpdateTrayIconText(CountdownText, false);
+                    UpdateTrayIconText(CountdownText);
                 }
             });
         }
 
-        private void UpdateTrayIconText(string cText, bool cInvokeRequired = true)
+        private void UpdateTrayIconText(string cText, bool cInvokeRequired = false)
         {
             if (TrayIcon != null)
             {
@@ -853,7 +848,7 @@ namespace PlainCEETimer.Forms
             App.AppConfig = AppConfig;
         }
 
-        private void ExamAutoSwitch(object state)
+        private void ExamAutoSwitch(object sender, EventArgs e)
         {
             AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
             SaveConfig();
