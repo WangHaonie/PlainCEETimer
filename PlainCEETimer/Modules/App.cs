@@ -159,7 +159,16 @@ namespace PlainCEETimer.Modules
                         {
                             case "/?":
                             case "/h":
-                                MessageX.Info("可用的命令行参数: \n\n/h    显示此帮助信息；\n/ac  检测当前用户是否具有管理员权限；\n/fr <版本号>\n        强制下载并安装指定的版本，留空则当前版本，\n        推荐在特殊情况下使用，不支持老版本。");
+                                MessageX.Info(
+                                    """
+                                    可用的命令行参数: 
+                                    
+                                    /h    显示此帮助信息；
+                                    /ac  检测当前用户是否具有管理员权限；
+                                    /fr <版本号>
+                                            强制下载并安装指定的版本，留空则当前版本，
+                                            推荐在特殊情况下使用，不支持老版本。
+                                    """);
                                 break;
                             case "/ac":
                                 CheckAdmin(out string UserName, true);
