@@ -414,7 +414,7 @@ namespace PlainCEETimer.Forms
 
             if (MemClean && !LoadedMemCleaner)
             {
-                MemCleaner = new((state) => MemoryCleaner.CleanMemory(9437184), null, MemCleanerInterval, MemCleanerInterval);
+                MemCleaner = new((state) => MemoryCleaner.CleanMemory(9437184), null, 3000, MemCleanerInterval);
                 LoadedMemCleaner = true;
             }
 
