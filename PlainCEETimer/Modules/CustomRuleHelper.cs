@@ -6,10 +6,13 @@ namespace PlainCEETimer.Modules
 {
     public static class CustomRuleHelper
     {
+        public static char[] TsSeparator => ['天', '时', '分', '秒'];
+
         private static readonly string[] AllPHs = [Placeholders.PH_EXAMNAME, Placeholders.PH_DAYS, Placeholders.PH_HOURS, Placeholders.PH_MINUTES, Placeholders.PH_SECONDS, Placeholders.PH_CEILINGDAYS, Placeholders.PH_TOTALHOURS, Placeholders.PH_TOTALMINUTES, Placeholders.PH_TOTALSECONDS];
 
-        public static char[] TsSeparator => ['天', '时', '分', '秒'];
-        public static TimeSpan GetExamTick(string str) => GetTimeSpan(str.Split(TsSeparator));
+        public static TimeSpan GetExamTick(string str)
+            => GetTimeSpan(str.Split(TsSeparator));
+
         public static string GetExamTickText(TimeSpan timeSpan)
             => $"{timeSpan.Days}{TsSeparator[0]}{timeSpan.Hours}{TsSeparator[1]}{timeSpan.Minutes}{TsSeparator[2]}{timeSpan.Seconds}{TsSeparator[3]}";
 
@@ -143,7 +146,7 @@ namespace PlainCEETimer.Modules
 
             var ts = new TimeSpan(d, h, m, s);
 
-            if (ts >= ConfigPolicy.TsMinAllowed || ts <= ConfigPolicy.TsMaxAllowed)
+            if (ts.TotalSeconds is >= ConfigPolicy.MinTick and <= ConfigPolicy.MaxTick)
             {
                 return ts;
             }
