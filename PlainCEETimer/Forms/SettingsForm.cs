@@ -589,7 +589,7 @@ namespace PlainCEETimer.Forms
 
             if (ColorCheckMsg != 0)
             {
-                MessageX.Error($"第{ColorCheckMsg}组的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！", TabPageAppearance);
+                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！", TabPageAppearance);
                 return false;
             }
 

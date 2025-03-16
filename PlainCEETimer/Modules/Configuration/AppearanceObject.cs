@@ -34,6 +34,8 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        } = DefaultValues.CountdownDefaultColorsLight;
+        } = DefaultValues.IsDarkModeSupported
+          ? DefaultValues.CountdownDefaultColorsDark
+          : DefaultValues.CountdownDefaultColorsLight;
     }
 }

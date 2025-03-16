@@ -1,17 +1,21 @@
-﻿using System.Drawing;
+﻿using Microsoft.Win32;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace PlainCEETimer.Modules.Configuration
 {
     public static class DefaultValues
     {
-        public static ColorSetObject[] CountdownDefaultColorsLight { get; }
+        public static bool IsDarkModeSupported { get; }
+
+        public static int[] ColorDialogColors { get; }
 
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
 
-        public static Font CountdownDefaultFont { get; }
+        public static ColorSetObject[] CountdownDefaultColorsLight { get; }
 
-        public static int[] ColorDialogColors { get; }
+        public static Font CountdownDefaultFont { get; }
 
         public static readonly int Initialize;
         private static readonly string NotoSansSC = "Noto Sans SC";
@@ -33,7 +37,7 @@ namespace PlainCEETimer.Modules.Configuration
             [
                 new(Color.Red, Color.White),
                 new(Color.Green, Color.White),
-                new(Color.Black, Color.White),
+                new(Color.Blue, Color.White),
                 new(Color.Black, Color.White)
             ];
 
@@ -41,12 +45,15 @@ namespace PlainCEETimer.Modules.Configuration
             [
                 new(Color.Red, Color.Black),
                 new(Color.Lime, Color.Black),
-                new(Color.White, Color.Black),
+                new(Color.Aqua, Color.Black),
                 new(Color.White, Color.Black)
             ];
 
             CountdownDefaultFont = new(NotoAvailable ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
+            IsDarkModeSupported = !File.Exists(App.ConfigFilePath)
+                && App.OSBuild >= WindowsBuilds.Windows10_1903
+                && (int)(Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")?.GetValue("AppsUseLightTheme") ?? 1) == 0;
         }
     }
 }
