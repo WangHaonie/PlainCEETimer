@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.Controls
+﻿namespace PlainCEETimer.Dialogs
 {
     partial class AppMessageBox
     {

@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Dialogs;
 using PlainCEETimer.Interop;
 using System;
 using System.Drawing;

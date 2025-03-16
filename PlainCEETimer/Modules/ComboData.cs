@@ -2,7 +2,7 @@
 {
     public class ComboData(string display, int value)
     {
-        public string Display { get; set; } = display;
-        public int Value { get; set; } = value;
+        public string Display { get; } = display;
+        public int Value { get; } = value;
     }
 }

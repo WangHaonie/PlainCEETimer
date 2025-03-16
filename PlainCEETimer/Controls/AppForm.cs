@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.Forms;
+﻿using PlainCEETimer.Dialogs;
+using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using System;
@@ -160,7 +161,7 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
         /// </summary>
-        protected void Execute(Action Method)
+        protected void WhenLoaded(Action Method)
         {
             if (!IsLoading)
             {
@@ -171,7 +172,7 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 仅当在高 DPI 下执行调整控件的代码。
         /// </summary>
-        protected void Adjust(Action Adjustment)
+        protected void WhenHighDpi(Action Adjustment)
         {
             if (DpiExtensions.DpiRatio > 1)
             {

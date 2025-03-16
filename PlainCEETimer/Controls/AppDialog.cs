@@ -60,7 +60,7 @@ namespace PlainCEETimer.Controls
 
         protected void UserChanged()
         {
-            Execute(() =>
+            WhenLoaded(() =>
             {
                 if (!ButtonA.Enabled)
                 {

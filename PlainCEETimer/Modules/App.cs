@@ -14,6 +14,11 @@ namespace PlainCEETimer.Modules
 {
     public static class App
     {
+        public static bool CanSaveConfig { get; set; }
+        public static bool AllowClosing { get; private set; }
+        public static bool IsAdmin { get; private set; }
+        public static Icon AppIcon { get; private set; }
+
         public static int OSBuild
         {
             get
@@ -84,16 +89,8 @@ namespace PlainCEETimer.Modules
             }
         }
 
-        public static bool IsAdmin { get; private set; }
-        public static bool AllowClosing { get; private set; }
-        public static bool IsWindows7Above => OSBuild >= WindowsBuilds.Windows7;
-        public static bool IsWindows11 => OSBuild >= WindowsBuilds.Windows11_21H2;
-        public static bool CanSaveConfig { get; set; }
         public static event EventHandler TrayMenuShowAllClicked;
         public static event EventHandler UniTopMostStateChanged;
-        public static Icon AppIcon { get; private set; }
-        public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
-        public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
 
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
@@ -199,6 +196,22 @@ namespace PlainCEETimer.Modules
             }
         }
 
+        public static void CheckAdmin(out string UserName, bool QueryUserName = false)
+        {
+            IsAdmin = (int)ProcessHelper.Run("cmd.exe", "/c net session", 2) == 0;
+            UserName = "";
+
+            if (QueryUserName)
+            {
+                UserName = (string)ProcessHelper.Run("cmd.exe", "/c whoami", 1);
+            }
+        }
+
+        public static void OnTrayMenuShowAllClicked()
+            => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
+        public static void OnUniTopMostStateChanged()
+            => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
+
         public static void Shutdown(bool Restart = false)
         {
             AllowClosing = true;
@@ -225,26 +238,9 @@ namespace PlainCEETimer.Modules
             AllowClosing = false;
         }
 
-        public static void CheckAdmin(out string UserName, bool QueryUserName = false)
-        {
-            IsAdmin = (int)ProcessHelper.Run("cmd.exe", "/c net session", 2) == 0;
-            UserName = "";
-
-            if (QueryUserName)
-            {
-                UserName = (string)ProcessHelper.Run("cmd.exe", "/c whoami", 1);
-            }
-        }
-
         public static void OpenInstallDir()
         {
             Process.Start(CurrentExecutableDir);
-        }
-
-        public static void Exit(ExitReason Reason)
-        {
-            ClearMutex();
-            Environment.Exit((int)Reason);
         }
 
         private static void StartPipeServer()
@@ -284,6 +280,12 @@ namespace PlainCEETimer.Modules
             {
                 Shutdown(Restart: _DialogResult == DialogResult.Yes);
             }
+        }
+
+        public static void Exit(ExitReason Reason)
+        {
+            ClearMutex();
+            Environment.Exit((int)Reason);
         }
 
         private static void ClearMutex()

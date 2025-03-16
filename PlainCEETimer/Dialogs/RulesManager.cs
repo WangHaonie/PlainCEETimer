@@ -174,16 +174,16 @@ namespace PlainCEETimer.Dialogs
 
             if (Selections.Count > 0)
             {
-                var Selected = Selections[0].SubItems;
-                var Tick = CustomRuleHelper.GetExamTick(Selected[1].Text);
+                var SelectedData = (CustomRuleObject)Selections[0].Tag;
+                var Tick = SelectedData.Tick;
 
-                ComboBoxRuleType.SelectedIndex = (int)CustomRuleHelper.GetPhase(Selected[0].Text);
+                ComboBoxRuleType.SelectedIndex = (int)SelectedData.Phase;
                 NUDDays.Value = Tick.Days;
                 NUDHours.Value = Tick.Hours;
                 NUDMinutes.Value = Tick.Minutes;
                 NUDSeconds.Value = Tick.Seconds;
-                UpdateColorLabels(ColorHelper.GetColor(Selected[2].Text), ColorHelper.GetColor(Selected[3].Text));
-                TextBoxCustomText.Text = Selected[4].Text;
+                UpdateColorLabels(SelectedData.Fore, SelectedData.Back);
+                TextBoxCustomText.Text = SelectedData.Text;
             }
         }
 
@@ -195,7 +195,7 @@ namespace PlainCEETimer.Dialogs
 
         private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Execute(() =>
+            WhenLoaded(() =>
             {
                 var UserSelected = ComboBoxRuleType.SelectedIndex;
 
@@ -232,7 +232,7 @@ namespace PlainCEETimer.Dialogs
 
         private void TextBoxCustomText_TextChanged(object sender, EventArgs e)
         {
-            Execute(SaveUserUnsavedText);
+            WhenLoaded(SaveUserUnsavedText);
         }
 
         private void LinkReset_Click(object sender, EventArgs e)

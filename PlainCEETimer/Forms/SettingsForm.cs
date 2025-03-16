@@ -56,8 +56,8 @@ namespace PlainCEETimer.Forms
             RefreshNeeded = false;
             InitializeExtra();
             RefreshSettings();
-            ChangeWorkingStyle(WorkingArea.LastColor);
-            ChangeWorkingStyle(WorkingArea.Funny, false);
+            ChangeWorkingStyle(SettingsArea.LastColor);
+            ChangeWorkingStyle(SettingsArea.Funny, false);
         }
 
         protected override void AdjustUI()
@@ -78,7 +78,7 @@ namespace PlainCEETimer.Forms
             CompactControlsY(ButtonRestart, LabelRestart, 3);
             CompactControlsY(ButtonExamInfo, LabelExamInfo, 3);
 
-            Adjust(() =>
+            WhenHighDpi(() =>
             {
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
@@ -117,12 +117,12 @@ namespace PlainCEETimer.Forms
                 SaveSettings();
             }
 
-            ChangeWorkingStyle(WorkingArea.Funny, false);
+            ChangeWorkingStyle(SettingsArea.Funny, false);
         }
 
         private void SettingsChanged(object sender, EventArgs e)
         {
-            Execute(() =>
+            WhenLoaded(() =>
             {
                 HasSettingsChanged = true;
                 ButtonSave.Enabled = true;
@@ -213,7 +213,7 @@ namespace PlainCEETimer.Forms
             if (FontDialogMain.ShowDialog() == DialogResult.OK)
             {
                 SettingsChanged(sender, e);
-                ChangeWorkingStyle(WorkingArea.ChangeFont, NewFont: FontDialogMain.Font);
+                ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: FontDialogMain.Font);
             }
 
             FontDialogMain.Dispose();
@@ -221,7 +221,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonDefaultFont_Click(object sender, EventArgs e)
         {
-            ChangeWorkingStyle(WorkingArea.ChangeFont, NewFont: DefaultValues.CountdownDefaultFont);
+            ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: DefaultValues.CountdownDefaultFont);
             SettingsChanged(sender, e);
         }
 
@@ -234,7 +234,7 @@ namespace PlainCEETimer.Forms
             {
                 SettingsChanged(sender, e);
                 LabelSender.BackColor = ColorDialogMain.Color;
-                ChangeWorkingStyle(WorkingArea.SelectedColor);
+                ChangeWorkingStyle(SettingsArea.SelectedColor);
             }
 
             ColorDialogMain.Dispose();
@@ -272,7 +272,7 @@ namespace PlainCEETimer.Forms
                 {
                     TagetLabel.BackColor = LabelSender.BackColor;
                     SettingsChanged(sender, e);
-                    ChangeWorkingStyle(WorkingArea.SelectedColor);
+                    ChangeWorkingStyle(SettingsArea.SelectedColor);
                 }
             }
             catch { }
@@ -314,7 +314,7 @@ namespace PlainCEETimer.Forms
                     IsFunnyClick = false;
                     break;
                 case MouseButtons.Right:
-                    ChangeWorkingStyle(WorkingArea.Funny);
+                    ChangeWorkingStyle(SettingsArea.Funny);
                     IsFunnyClick = true;
                     break;
             }
@@ -328,8 +328,8 @@ namespace PlainCEETimer.Forms
         private void ButtonSyncTime_Click(object sender, EventArgs e)
         {
             var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
-            ChangeWorkingStyle(WorkingArea.SyncTime);
-            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => ChangeWorkingStyle(WorkingArea.SyncTime, false)));
+            ChangeWorkingStyle(SettingsArea.SyncTime);
+            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => ChangeWorkingStyle(SettingsArea.SyncTime, false)));
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -508,7 +508,7 @@ namespace PlainCEETimer.Forms
             ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
             ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-            ChangeWorkingStyle(WorkingArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
+            ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
             ChangePptsvcStyle(null, EventArgs.Empty);
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
             ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
@@ -555,15 +555,15 @@ namespace PlainCEETimer.Forms
 
             if (!a)
             {
-                ChangeWorkingStyle(WorkingArea.SetPPTService, false);
+                ChangeWorkingStyle(SettingsArea.SetPPTService, false);
             }
             else if ((a && c) || (a && b))
             {
-                ChangeWorkingStyle(WorkingArea.SetPPTService);
+                ChangeWorkingStyle(SettingsArea.SetPPTService);
             }
             else
             {
-                ChangeWorkingStyle(WorkingArea.SetPPTService, false, 1);
+                ChangeWorkingStyle(SettingsArea.SetPPTService, false, 1);
             }
         }
 
@@ -628,11 +628,11 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void ChangeWorkingStyle(WorkingArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
+        private void ChangeWorkingStyle(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
         {
             switch (Where)
             {
-                case WorkingArea.SyncTime:
+                case SettingsArea.SyncTime:
                     IsSyncingTime = IsWorking;
                     ButtonSyncTime.Enabled = !IsWorking;
                     ComboBoxNtpServers.Enabled = !IsWorking;
@@ -641,24 +641,24 @@ namespace PlainCEETimer.Forms
                     ButtonCancel.Enabled = !IsWorking;
                     ButtonSyncTime.Text = IsWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
                     break;
-                case WorkingArea.Funny:
+                case SettingsArea.Funny:
                     GBoxRestart.Text = IsWorking ? "关闭倒计时" : "重启倒计时";
                     LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(IsWorking ? "(●'◡'●)" : "")}";
                     ButtonRestart.Text = IsWorking ? "点击关闭(&G)" : "点击重启(&R)";
                     break;
-                case WorkingArea.SetPPTService:
+                case SettingsArea.SetPPTService:
                     CheckBoxPptSvc.Enabled = IsWorking;
                     CheckBoxPptSvc.Checked = IsWorking && AppConfig.Display.SeewoPptsvc;
                     CheckBoxPptSvc.Text = IsWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(SubCase == 0 ? "顶置" : "在左上角")}。";
                     break;
-                case WorkingArea.ChangeFont:
+                case SettingsArea.ChangeFont:
                     SelectedFont = NewFont;
                     LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
                     break;
-                case WorkingArea.LastColor:
+                case SettingsArea.LastColor:
                     SetLabelColors(AppConfig.Appearance.Colors);
                     break;
-                case WorkingArea.SelectedColor:
+                case SettingsArea.SelectedColor:
                     LabelPreviewColor1.BackColor = LabelColor12.BackColor;
                     LabelPreviewColor2.BackColor = LabelColor22.BackColor;
                     LabelPreviewColor3.BackColor = LabelColor32.BackColor;

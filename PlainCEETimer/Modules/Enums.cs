@@ -12,7 +12,27 @@ namespace PlainCEETimer.Modules
         SecondsOnly
     }
 
-    public enum WorkingArea
+    public enum CountdownPhase
+    {
+        P1,
+        P2,
+        P3
+    }
+
+    public enum CountdownPosition
+    {
+        TopLeft,
+        LeftCenter,
+        BottomLeft,
+        TopCenter,
+        Center,
+        BottomCenter,
+        TopRight,
+        RightCenter,
+        BottomRight
+    }
+
+    public enum SettingsArea
     {
         Funny,
         SyncTime,
@@ -48,28 +68,8 @@ namespace PlainCEETimer.Modules
     [Flags]
     public enum AppDialogProp
     {
-        BindButtons = 0B00100001,
-        KeyPreview = 0B001000_10
-    }
-
-    public enum CountdownPhase
-    {
-        P1,
-        P2,
-        P3
-    }
-
-    public enum CountdownPosition
-    {
-        TopLeft,
-        LeftCenter,
-        BottomLeft,
-        TopCenter,
-        Center,
-        BottomCenter,
-        TopRight,
-        RightCenter,
-        BottomRight
+        BindButtons = 0b01,
+        KeyPreview = 0b10
     }
 
     public enum TaskbarProgressState

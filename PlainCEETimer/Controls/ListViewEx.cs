@@ -12,23 +12,19 @@ namespace PlainCEETimer.Controls
             set
             {
                 ListViewItemSorter = value;
-                AutoAdjustColumnWidth();
+
+                foreach (ColumnHeader column in Columns)
+                {
+                    column.Width = -2;
+                }
             }
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            base.OnHandleCreated(e);
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             UpdateStyles();
-        }
-
-        private void AutoAdjustColumnWidth()
-        {
-            foreach (ColumnHeader column in Columns)
-            {
-                column.Width = -2;
-            }
+            base.OnHandleCreated(e);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace PlainCEETimer.Interop
 
         static TaskbarProgress()
         {
-            IsWindows7Above = App.IsWindows7Above;
+            IsWindows7Above = App.OSBuild >= WindowsBuilds.Windows7;
         }
 
         public void SetState(TaskbarProgressState State)

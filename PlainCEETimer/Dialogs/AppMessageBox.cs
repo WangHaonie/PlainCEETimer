@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.Forms;
+﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 using System;
 using System.Drawing;
@@ -6,7 +7,7 @@ using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.Controls
+namespace PlainCEETimer.Dialogs
 {
     public partial class AppMessageBox : AppDialog
     {

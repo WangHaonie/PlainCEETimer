@@ -19,7 +19,6 @@ namespace PlainCEETimer.Forms
         public static bool IsNormalStart { get; set; }
         public static bool ValidateNeeded { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
-
         public static Screen CurrentScreen { get; private set; } = null;
 
         private bool MemClean;
@@ -49,14 +48,14 @@ namespace PlainCEETimer.Forms
         private bool ShowTrayText;
         private bool LoadedMemCleaner;
         private bool AutoSwitch;
-        private readonly int PptsvcThreshold = 1;
-        private readonly int BorderRadius = 13;
+        private const int PptsvcThreshold = 1;
+        private const int BorderRadius = 13;
+        private const int MemCleanerInterval = 300_000; // 5 min
         private CountdownState SelectedState;
         private System.Threading.Timer MemCleaner;
         private Timer AutoSwitchHandler;
         private System.Threading.Timer Countdown;
         private readonly StringBuilder Builder = new();
-        private readonly int MemCleanerInterval = 300_000; // 5 min
         private int AutoSwitchInterval;
         private Point LastLocation;
         private Point LastMouseLocation;
@@ -863,7 +862,7 @@ namespace PlainCEETimer.Forms
 
         private void SetRoundCorners()
         {
-            if (App.IsWindows11)
+            if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
             {
                 RoundCorner.SetRoundCornerModern(Handle);
             }
