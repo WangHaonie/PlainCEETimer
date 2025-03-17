@@ -82,10 +82,11 @@ namespace PlainCEETimer.Forms
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
                 AlignControlsX(ComboBoxPosition, LabelChar1);
-                AlignControlsX(ButtonExamInfo, LabelExamInfoWarning);
                 AlignControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
                 AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
+                CompactControlsY(ButtonExamInfo, LabelExamInfo);
+                AlignControlsX(LabelExamInfoWarning, ButtonExamInfo);
             });
         }
 

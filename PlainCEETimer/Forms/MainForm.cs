@@ -143,7 +143,7 @@ namespace PlainCEETimer.Forms
         {
             if (SetRoundCornerRegion)
             {
-                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi(this));
+                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi());
             }
 
             ValidateLocation();

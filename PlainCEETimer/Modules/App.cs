@@ -1,6 +1,7 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -123,6 +124,7 @@ namespace PlainCEETimer.Modules
         {
             AppIcon = Icon.ExtractAssociatedIcon(CurrentExecutablePath);
             _ = DefaultValues.Initialize;
+            DpiExtensions.DpiRatio = NativeInterop.GetDpiForSystem() / 96D;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
             Application.EnableVisualStyles();

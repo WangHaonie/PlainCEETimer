@@ -20,6 +20,14 @@ namespace PlainCEETimer.Forms
             PicBoxLogo.Image = App.AppIcon.ToBitmap();
             LabelInfo.Text = $"{App.AppName}\n版本 v{App.AppVersion} x64 ({App.AppBuildDate})";
             LabelLicense.Text = $"Licensed under the GNU GPL, v3.\n{App.CopyrightInfo}";
+
+            WhenHighDpi(() =>
+            {
+                CompactControlsY(ButtonClose, LabelLicense);
+                AlignControlsX([LinkGitHub, LinkFeedback, LinkTutorial], ButtonClose);
+                CompactControlsX(LinkFeedback, LinkGitHub);
+                CompactControlsX(LinkTutorial, LinkFeedback);
+            });
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
