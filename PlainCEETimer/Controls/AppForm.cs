@@ -23,11 +23,12 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 获取当前的消息框实例以向用户显示消息框。
         /// </summary>
-        protected MessageBoxHelper MessageX { get; private set; }
+        protected MessageBoxHelper MessageX { get; }
 
         protected event EventHandler LocationRefreshed;
 
         private bool IsLoading = true;
+        private readonly bool IsMainForm;
 
         protected AppForm()
         {
@@ -36,6 +37,7 @@ namespace PlainCEETimer.Controls
                 MessageX = new(this);
             }
 
+            IsMainForm = this is MainForm;
             TopMost = MainForm.UniTopMost;
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
@@ -170,7 +172,7 @@ namespace PlainCEETimer.Controls
         }
 
         /// <summary>
-        /// 仅当在高 DPI 下执行调整控件的代码。
+        /// 仅当在高 DPI 下才执行指定的代码。
         /// </summary>
         protected void WhenHighDpi(Action Adjustment)
         {
@@ -411,7 +413,7 @@ namespace PlainCEETimer.Controls
                 b = true;
             }
 
-            if (b)
+            if (IsMainForm && b)
             {
                 LocationRefreshed?.Invoke(this, EventArgs.Empty);
             }
@@ -462,7 +464,7 @@ namespace PlainCEETimer.Controls
         {
             if (!IsDisposed)
             {
-                if (this is MainForm)
+                if (IsMainForm)
                 {
                     return;
                 }

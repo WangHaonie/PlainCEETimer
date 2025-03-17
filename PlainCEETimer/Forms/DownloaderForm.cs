@@ -1,7 +1,6 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -123,7 +122,7 @@ namespace PlainCEETimer.Forms
                     await Task.Delay(2500);
                     IsCancelled = true;
                     Close();
-                    Modules.ProcessHelper.Run("cmd.exe", $"/c start \"\" \"{DownloadPath}\" /S");
+                    ProcessHelper.Run("cmd.exe", $"/c start \"\" \"{DownloadPath}\" /S");
                     App.Exit(ExitReason.AppUpdating);
                 }
             }
@@ -133,7 +132,7 @@ namespace PlainCEETimer.Forms
 
                 if (ex is not TaskCanceledException)
                 {
-                    MessageX.Error($"无法下载更新文件！{ex.ToMessage()}");
+                    MessageX.Error("无法下载更新文件！", ex);
                     UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
                     ButtonRetry.Enabled = true;
                 }

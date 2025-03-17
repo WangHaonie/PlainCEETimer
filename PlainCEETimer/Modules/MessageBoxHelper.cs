@@ -29,8 +29,8 @@ namespace PlainCEETimer.Modules
         public DialogResult Warn(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
             => Popup(Message, MessageLevel.Warning, ParentTabPage, Buttons, AutoClose);
 
-        public DialogResult Error(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Error, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Error(string Message, Exception Ex = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(GetExMessage(Message, Ex), MessageLevel.Error, ParentTabPage, Buttons, AutoClose);
 
         private DialogResult Popup(string Message, MessageLevel Level, TabPage ParentTabPage, AppMessageBoxButtons Buttons, bool AutoClose)
         {
@@ -64,19 +64,14 @@ namespace PlainCEETimer.Modules
 
             DialogResult ShowPopup()
             {
-                var Mbox = new AppMessageBox(Sound, Buttons, AutoClose);
-
-                if (Parent != null)
-                {
-                    Parent.ReActivate();
-                }
+                Parent?.ReActivate();
 
                 if (ParentTabPage != null)
                 {
                     ((TabControl)ParentTabPage.Parent).SelectedTab = ParentTabPage;
                 }
 
-                return Mbox.ShowCore(Parent, Message, Title, AppMessageBoxIcon);
+                return new AppMessageBox(Sound, Buttons, AutoClose).ShowCore(Parent, Message, Title, AppMessageBoxIcon);
             }
         }
 
@@ -104,6 +99,16 @@ namespace PlainCEETimer.Modules
 
             #endregion
         };
+
+        private string GetExMessage(string Message, Exception ex)
+        {
+            if (ex == null)
+            {
+                return Message;
+            }
+
+            return $"{Message}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
+        }
 
         private static Bitmap GetIcon(int Index)
         {

@@ -569,7 +569,7 @@
             this.LabelPreviewColor4.Name = "LabelPreviewColor4";
             this.LabelPreviewColor4.Size = new System.Drawing.Size(59, 15);
             this.LabelPreviewColor4.TabIndex = 19;
-            this.LabelPreviewColor4.Text = "欢迎使用";
+            this.LabelPreviewColor4.Text = "欢迎使用...";
             // 
             // LabelColor41
             // 

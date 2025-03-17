@@ -3,7 +3,6 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -56,8 +55,8 @@ namespace PlainCEETimer.Forms
             RefreshNeeded = false;
             InitializeExtra();
             RefreshSettings();
-            ChangeWorkingStyle(SettingsArea.LastColor);
-            ChangeWorkingStyle(SettingsArea.Funny, false);
+            UpdateSettingsArea(SettingsArea.LastColor);
+            UpdateSettingsArea(SettingsArea.Funny, false);
         }
 
         protected override void AdjustUI()
@@ -117,7 +116,7 @@ namespace PlainCEETimer.Forms
                 SaveSettings();
             }
 
-            ChangeWorkingStyle(SettingsArea.Funny, false);
+            UpdateSettingsArea(SettingsArea.Funny, false);
         }
 
         private void SettingsChanged(object sender, EventArgs e)
@@ -213,7 +212,7 @@ namespace PlainCEETimer.Forms
             if (FontDialogMain.ShowDialog() == DialogResult.OK)
             {
                 SettingsChanged(sender, e);
-                ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: FontDialogMain.Font);
+                UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: FontDialogMain.Font);
             }
 
             FontDialogMain.Dispose();
@@ -221,7 +220,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonDefaultFont_Click(object sender, EventArgs e)
         {
-            ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: DefaultValues.CountdownDefaultFont);
+            UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: DefaultValues.CountdownDefaultFont);
             SettingsChanged(sender, e);
         }
 
@@ -234,7 +233,7 @@ namespace PlainCEETimer.Forms
             {
                 SettingsChanged(sender, e);
                 LabelSender.BackColor = ColorDialogMain.Color;
-                ChangeWorkingStyle(SettingsArea.SelectedColor);
+                UpdateSettingsArea(SettingsArea.SelectedColor);
             }
 
             ColorDialogMain.Dispose();
@@ -272,7 +271,7 @@ namespace PlainCEETimer.Forms
                 {
                     TagetLabel.BackColor = LabelSender.BackColor;
                     SettingsChanged(sender, e);
-                    ChangeWorkingStyle(SettingsArea.SelectedColor);
+                    UpdateSettingsArea(SettingsArea.SelectedColor);
                 }
             }
             catch { }
@@ -314,7 +313,7 @@ namespace PlainCEETimer.Forms
                     IsFunnyClick = false;
                     break;
                 case MouseButtons.Right:
-                    ChangeWorkingStyle(SettingsArea.Funny);
+                    UpdateSettingsArea(SettingsArea.Funny);
                     IsFunnyClick = true;
                     break;
             }
@@ -328,8 +327,8 @@ namespace PlainCEETimer.Forms
         private void ButtonSyncTime_Click(object sender, EventArgs e)
         {
             var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
-            ChangeWorkingStyle(SettingsArea.SyncTime);
-            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => ChangeWorkingStyle(SettingsArea.SyncTime, false)));
+            UpdateSettingsArea(SettingsArea.SyncTime);
+            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false)));
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -444,8 +443,7 @@ namespace PlainCEETimer.Forms
             [
                 new("<程序欢迎信息>", 0),
                 new("考试还有多久结束", 1),
-                new("考试还有多久结束 和 已过去了多久", 2),
-                //new("负数 (仅供娱乐)", 3)
+                new("考试还有多久结束 和 已过去了多久", 2)
             ]);
 
             BindComboData(ComboBoxPosition,
@@ -508,7 +506,7 @@ namespace PlainCEETimer.Forms
             ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
             ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-            ChangeWorkingStyle(SettingsArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
+            UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
             ChangePptsvcStyle(null, EventArgs.Empty);
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
             ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
@@ -555,15 +553,15 @@ namespace PlainCEETimer.Forms
 
             if (!a)
             {
-                ChangeWorkingStyle(SettingsArea.SetPPTService, false);
+                UpdateSettingsArea(SettingsArea.SetPPTService, false);
             }
             else if ((a && c) || (a && b))
             {
-                ChangeWorkingStyle(SettingsArea.SetPPTService);
+                UpdateSettingsArea(SettingsArea.SetPPTService);
             }
             else
             {
-                ChangeWorkingStyle(SettingsArea.SetPPTService, false, 1);
+                UpdateSettingsArea(SettingsArea.SetPPTService, false, 1);
             }
         }
 
@@ -589,7 +587,7 @@ namespace PlainCEETimer.Forms
 
             if (ColorCheckMsg != 0)
             {
-                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！", TabPageAppearance);
+                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！", ParentTabPage: TabPageAppearance);
                 return false;
             }
 
@@ -605,7 +603,7 @@ namespace PlainCEETimer.Forms
                     MessageX.Warn("检测到当前用户不具有管理员权限，运行该操作会发生错误。\n\n程序将在此消息框关闭后尝试弹出 UAC 提示框，前提要把系统的 UAC 设置为 \"仅当应用尝试更改我的计算机时通知我\" 或及以上，否则将无法进行授权。\n\n稍后若没有看见提示框，请更改 UAC 设置: 开始菜单搜索 uac");
                 }
 
-                var ExitCode = (int)Modules.ProcessHelper.Run("cmd.exe", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
+                var ExitCode = (int)ProcessHelper.Run("cmd.exe", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
                 MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)", TabPageTools);
             }
             #region 来自网络
@@ -619,16 +617,16 @@ namespace PlainCEETimer.Forms
             */
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
-                MessageX.Error($"授权失败，请在 UAC 对话框弹出时点击 \"是\"。{ex.ToMessage()}", TabPageTools);
+                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex, TabPageTools);
             }
             #endregion
             catch (Exception ex)
             {
-                MessageX.Error($"命令执行时发生了错误。{ex.ToMessage()}", TabPageTools);
+                MessageX.Error("命令执行时发生了错误。", ex, TabPageTools);
             }
         }
 
-        private void ChangeWorkingStyle(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
+        private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
         {
             switch (Where)
             {

@@ -1,7 +1,6 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -108,6 +107,7 @@ namespace PlainCEETimer.Modules
         public const string UpdateURL = "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe";
         public const string RequestUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36";
 
+        private const string ExFileName = "UnhandledException.txt";
         private static bool MainInstance;
         private static readonly string PipeName = $"{AppNameEngBak}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
@@ -269,12 +269,11 @@ namespace PlainCEETimer.Modules
 
         private static void HandleException(Exception ex)
         {
-            var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToString(DateTimeFormat)} =================={ex.ToMessage()}";
-            var ExFileName = "UnhandledException.txt";
+            var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToString(DateTimeFormat)} ==================\n{ex}";
             var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
             File.AppendAllText(ExFilePath, ExOutput);
 
-            var _DialogResult = MessageX.Error(string.Format("程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {0} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。{1}", ExFileName, ex.ToMessage()), Buttons: AppMessageBoxButtons.YesNo);
+            var _DialogResult = MessageX.Error("程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
 
             if (_DialogResult != DialogResult.None)
             {

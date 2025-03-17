@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Forms;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Net.Http;
 using System.Windows.Forms;
@@ -50,7 +49,7 @@ namespace PlainCEETimer.Modules
             {
                 if (!IsProgramStart)
                 {
-                    MessageX.Error($"检查更新时发生错误! {ex.ToMessage()}");
+                    MessageX.Error("检查更新时发生错误! ", ex);
                 }
             }
         }

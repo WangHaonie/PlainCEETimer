@@ -19,7 +19,7 @@ namespace PlainCEETimer.Forms
         public static bool IsNormalStart { get; set; }
         public static bool ValidateNeeded { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
-        public static Screen CurrentScreen { get; private set; } = null;
+        public static Screen CurrentScreen { get; private set; }
 
         private bool MemClean;
         private bool IsShowXOnly;

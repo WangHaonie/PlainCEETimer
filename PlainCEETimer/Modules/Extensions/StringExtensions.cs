@@ -1,14 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace PlainCEETimer.Modules.Extensions
 {
     public static class StringExtensions
     {
         private static readonly char[] IllegalChars = [' ', '\n', '\r', '\t', '\v', '\f', '\b'];
-
-        public static string ToMessage(this Exception ex)
-            => $"\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
 
         public static string RemoveIllegalChars(this string s)
             => new([.. s.Trim().Where(x => !IllegalChars.Contains(x))]);
