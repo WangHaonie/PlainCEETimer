@@ -104,7 +104,6 @@ namespace PlainCEETimer.Forms
         protected override void OnLoad()
         {
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-            LocationRefreshed += MainForm_LocationRefreshed;
             SizeChanged += MainForm_SizeChanged;
         }
 
@@ -153,11 +152,7 @@ namespace PlainCEETimer.Forms
         private void MainForm_LocationRefreshed(object sender, EventArgs e)
         {
             AppConfig.Pos = Location;
-
-            if (IsDraggable)
-            {
-                SaveConfig();
-            }
+            SaveConfig();
         }
 
         private void ExamItems_Click(object sender, EventArgs e)
@@ -398,12 +393,14 @@ namespace PlainCEETimer.Forms
             LabelCountdown.MouseDown -= LabelCountdown_MouseDown;
             LabelCountdown.MouseMove -= LabelCountdown_MouseMove;
             LabelCountdown.MouseUp -= LabelCountdown_MouseUp;
+            LocationRefreshed -= MainForm_LocationRefreshed;
 
             if (IsDraggable)
             {
                 LabelCountdown.MouseDown += LabelCountdown_MouseDown;
                 LabelCountdown.MouseMove += LabelCountdown_MouseMove;
                 LabelCountdown.MouseUp += LabelCountdown_MouseUp;
+                LocationRefreshed += MainForm_LocationRefreshed;
                 Location = AppConfig.Pos;
             }
             else
