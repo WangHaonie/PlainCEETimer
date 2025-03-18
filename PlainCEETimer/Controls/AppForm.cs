@@ -174,11 +174,11 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 仅当在高 DPI 下才执行指定的代码。
         /// </summary>
-        protected void WhenHighDpi(Action Adjustment)
+        protected void WhenHighDpi(Action Method)
         {
             if (DpiExtensions.DpiRatio > 1D)
             {
-                Adjustment();
+                Method();
             }
         }
 
@@ -348,6 +348,7 @@ namespace PlainCEETimer.Controls
 
         protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
 
+
         protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
 
         protected MenuItem AddSeparator() => new("-");
@@ -382,6 +383,20 @@ namespace PlainCEETimer.Controls
         {
             Target.Items.AddRange(Reference);
             return Target;
+        }
+
+        protected void ShowContextMenu(Control Target, ContextMenu Menu, ContextMenuStrip Strip, bool IsClassic)
+        {
+            var Pos = new Point(0, Target.Height);
+
+            if (IsClassic)
+            {
+                Menu.Show(Target, Pos);
+            }
+            else
+            {
+                Strip.Show(Target, Pos);
+            }
         }
 
         protected void KeepOnScreen()

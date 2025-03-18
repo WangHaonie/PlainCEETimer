@@ -6,7 +6,7 @@ using System;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class ExamInfoObject : IComparable<ExamInfoObject>
+    public sealed class ExamInfoObject : IComparable<ExamInfoObject>, IEquatable<ExamInfoObject>
     {
         public string Name
         {
@@ -31,10 +31,20 @@ namespace PlainCEETimer.Modules.Configuration
         [JsonConverter(typeof(ExamTimeConverter))]
         public DateTime End { get; set; } = DateTime.Now;
 
-        public override string ToString()
-            => string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
-
         public int CompareTo(ExamInfoObject other)
             => other == null ? 1 : Start.CompareTo(other.Start);
+
+        public bool Equals(ExamInfoObject other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Name == other.Name && Start == other.Start;
+        }
+
+        public override string ToString()
+            => string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
     }
 }

@@ -35,9 +35,10 @@
             this.TabControlMain = new System.Windows.Forms.TabControl();
             this.TabPageGeneral = new System.Windows.Forms.TabPage();
             this.GBoxExamInfo = new System.Windows.Forms.GroupBox();
-            this.LabelExamInfoWarning = new System.Windows.Forms.Label();
+            this.ComboBoxAutoSwitchIntervel = new System.Windows.Forms.ComboBox();
+            this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.ButtonExamInfo = new System.Windows.Forms.Button();
-            this.LabelExamInfo = new System.Windows.Forms.Label();
             this.GBoxOthers = new System.Windows.Forms.GroupBox();
             this.CheckBoxTrayText = new System.Windows.Forms.CheckBox();
             this.CheckBoxWCCMS = new System.Windows.Forms.CheckBox();
@@ -182,44 +183,56 @@
             // 
             // GBoxExamInfo
             // 
-            this.GBoxExamInfo.Controls.Add(this.LabelExamInfoWarning);
+            this.GBoxExamInfo.Controls.Add(this.ComboBoxAutoSwitchIntervel);
+            this.GBoxExamInfo.Controls.Add(this.CheckBoxAutoSwitch);
+            this.GBoxExamInfo.Controls.Add(this.label1);
             this.GBoxExamInfo.Controls.Add(this.ButtonExamInfo);
-            this.GBoxExamInfo.Controls.Add(this.LabelExamInfo);
             this.GBoxExamInfo.Location = new System.Drawing.Point(7, 5);
             this.GBoxExamInfo.Name = "GBoxExamInfo";
-            this.GBoxExamInfo.Size = new System.Drawing.Size(323, 96);
+            this.GBoxExamInfo.Size = new System.Drawing.Size(323, 67);
             this.GBoxExamInfo.TabIndex = 45;
             this.GBoxExamInfo.TabStop = false;
-            this.GBoxExamInfo.Text = "当前考试信息";
+            this.GBoxExamInfo.Text = "考试信息";
             // 
-            // LabelExamInfoWarning
+            // ComboBoxAutoSwitchIntervel
             // 
-            this.LabelExamInfoWarning.AutoSize = true;
-            this.LabelExamInfoWarning.ForeColor = System.Drawing.Color.Red;
-            this.LabelExamInfoWarning.Location = new System.Drawing.Point(90, 71);
-            this.LabelExamInfoWarning.Name = "LabelExamInfoWarning";
-            this.LabelExamInfoWarning.Size = new System.Drawing.Size(135, 15);
-            this.LabelExamInfoWarning.TabIndex = 4;
-            this.LabelExamInfoWarning.Text = "*修改成功, 保存后生效";
-            this.LabelExamInfoWarning.Visible = false;
+            this.ComboBoxAutoSwitchIntervel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBoxAutoSwitchIntervel.Enabled = false;
+            this.ComboBoxAutoSwitchIntervel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.ComboBoxAutoSwitchIntervel.Location = new System.Drawing.Point(231, 37);
+            this.ComboBoxAutoSwitchIntervel.Name = "ComboBoxAutoSwitchIntervel";
+            this.ComboBoxAutoSwitchIntervel.Size = new System.Drawing.Size(86, 23);
+            this.ComboBoxAutoSwitchIntervel.TabIndex = 10;
+            // 
+            // CheckBoxAutoSwitch
+            // 
+            this.CheckBoxAutoSwitch.AutoSize = true;
+            this.CheckBoxAutoSwitch.Location = new System.Drawing.Point(125, 40);
+            this.CheckBoxAutoSwitch.Name = "CheckBoxAutoSwitch";
+            this.CheckBoxAutoSwitch.Size = new System.Drawing.Size(104, 19);
+            this.CheckBoxAutoSwitch.TabIndex = 9;
+            this.CheckBoxAutoSwitch.Text = "启用自动切换";
+            this.CheckBoxAutoSwitch.UseVisualStyleBackColor = true;
+            this.CheckBoxAutoSwitch.CheckedChanged += new System.EventHandler(this.CheckBoxAutoSwitch_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(241, 15);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "添加多个考试信息以便快速切换倒计时。";
             // 
             // ButtonExamInfo
             // 
-            this.ButtonExamInfo.Location = new System.Drawing.Point(9, 67);
+            this.ButtonExamInfo.Location = new System.Drawing.Point(8, 37);
             this.ButtonExamInfo.Name = "ButtonExamInfo";
             this.ButtonExamInfo.Size = new System.Drawing.Size(75, 23);
             this.ButtonExamInfo.TabIndex = 3;
             this.ButtonExamInfo.Text = "管理(&G)";
             this.ButtonExamInfo.UseVisualStyleBackColor = true;
             this.ButtonExamInfo.Click += new System.EventHandler(this.ButtonExamInfo_Click);
-            // 
-            // LabelExamInfo
-            // 
-            this.LabelExamInfo.AutoSize = true;
-            this.LabelExamInfo.Location = new System.Drawing.Point(6, 19);
-            this.LabelExamInfo.Name = "LabelExamInfo";
-            this.LabelExamInfo.Size = new System.Drawing.Size(0, 15);
-            this.LabelExamInfo.TabIndex = 0;
             // 
             // GBoxOthers
             // 
@@ -230,7 +243,7 @@
             this.GBoxOthers.Controls.Add(this.CheckBoxUniTopMost);
             this.GBoxOthers.Controls.Add(this.CheckBoxTopMost);
             this.GBoxOthers.Controls.Add(this.CheckBoxStartup);
-            this.GBoxOthers.Location = new System.Drawing.Point(7, 102);
+            this.GBoxOthers.Location = new System.Drawing.Point(7, 78);
             this.GBoxOthers.Name = "GBoxOthers";
             this.GBoxOthers.Size = new System.Drawing.Size(323, 149);
             this.GBoxOthers.TabIndex = 44;
@@ -399,7 +412,7 @@
             // CheckBoxRulesMan
             // 
             this.CheckBoxRulesMan.AutoSize = true;
-            this.CheckBoxRulesMan.Location = new System.Drawing.Point(9, 74);
+            this.CheckBoxRulesMan.Location = new System.Drawing.Point(9, 72);
             this.CheckBoxRulesMan.Name = "CheckBoxRulesMan";
             this.CheckBoxRulesMan.Size = new System.Drawing.Size(198, 19);
             this.CheckBoxRulesMan.TabIndex = 42;
@@ -412,7 +425,7 @@
             this.ButtonRulesMan.AutoSize = true;
             this.ButtonRulesMan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ButtonRulesMan.Enabled = false;
-            this.ButtonRulesMan.Location = new System.Drawing.Point(219, 70);
+            this.ButtonRulesMan.Location = new System.Drawing.Point(219, 68);
             this.ButtonRulesMan.Name = "ButtonRulesMan";
             this.ButtonRulesMan.Size = new System.Drawing.Size(97, 25);
             this.ButtonRulesMan.TabIndex = 41;
@@ -567,7 +580,7 @@
             this.LabelPreviewColor4.AutoSize = true;
             this.LabelPreviewColor4.Location = new System.Drawing.Point(200, 118);
             this.LabelPreviewColor4.Name = "LabelPreviewColor4";
-            this.LabelPreviewColor4.Size = new System.Drawing.Size(59, 15);
+            this.LabelPreviewColor4.Size = new System.Drawing.Size(68, 15);
             this.LabelPreviewColor4.TabIndex = 19;
             this.LabelPreviewColor4.Text = "欢迎使用...";
             // 
@@ -942,13 +955,14 @@
         private System.Windows.Forms.TabPage TabPageGeneral;
         private System.Windows.Forms.GroupBox GBoxExamInfo;
         private System.Windows.Forms.Button ButtonExamInfo;
-        private System.Windows.Forms.Label LabelExamInfo;
         private System.Windows.Forms.GroupBox GBoxOthers;
         private System.Windows.Forms.CheckBox CheckBoxMemClean;
         private System.Windows.Forms.CheckBox CheckBoxUniTopMost;
         private System.Windows.Forms.CheckBox CheckBoxTopMost;
         private System.Windows.Forms.CheckBox CheckBoxStartup;
         private System.Windows.Forms.CheckBox CheckBoxWCCMS;
-        private System.Windows.Forms.Label LabelExamInfoWarning;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox ComboBoxAutoSwitchIntervel;
+        private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
     }
 }

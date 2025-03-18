@@ -121,6 +121,12 @@
     <Compile Include="Dialogs\CustomTextDialog.Designer.cs">
       <DependentUpon>CustomTextDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ExamInfoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ExamInfoDialog.Designer.cs">
+      <DependentUpon>ExamInfoDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ExamInfoManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +196,7 @@
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
+    <Compile Include="Modules\ExamInfoComparer.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />

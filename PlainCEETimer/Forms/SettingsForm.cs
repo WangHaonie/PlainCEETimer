@@ -14,8 +14,11 @@ namespace PlainCEETimer.Forms
 {
     public partial class SettingsForm : AppForm
     {
+        public bool RefreshNeeded { get; private set; }
+
         private Font SelectedFont;
         private CustomRuleObject[] EditedCustomRules;
+        private ExamInfoObject[] EditedExamInfo;
         private string[] EditedCustomTexts;
         private bool IsColorLabelsDragging;
         private bool IsSyncingTime;
@@ -31,23 +34,11 @@ namespace PlainCEETimer.Forms
         private Label[] ColorPreviewLabels;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
-        private readonly EventHandler OnItemDarkClick;
-        private readonly EventHandler OnItemLightClick;
-
-        public string ExamName { get; set; }
-        public DateTime ExamStartTime { get; set; }
-        public DateTime ExamEndTime { get; set; }
-        public bool RefreshNeeded { get; private set; }
-
-        private bool EIMAutoSwitch;
-        private int EIMInterval;
 
         public SettingsForm()
         {
             InitializeComponent();
             CompositedStyle = true;
-            OnItemLightClick = new(MenuItemLight_Click);
-            OnItemDarkClick = new(MenuItemDark_Click);
         }
 
         protected override void OnLoad()
@@ -73,20 +64,19 @@ namespace PlainCEETimer.Forms
             CompactControlsX(ComboBoxPosition, LabelChar1);
             CompactControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
             CompactControlsX(ButtonSyncTime, ComboBoxNtpServers, 3);
+            CompactControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
             CompactControlsY(ButtonSyncTime, LabelSyncTime, 3);
             CompactControlsY(ButtonRestart, LabelRestart, 3);
-            CompactControlsY(ButtonExamInfo, LabelExamInfo, 3);
 
             WhenHighDpi(() =>
             {
+                AlignControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
                 AlignControlsX(ComboBoxPosition, LabelChar1);
                 AlignControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
                 AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
-                CompactControlsY(ButtonExamInfo, LabelExamInfo);
-                AlignControlsX(LabelExamInfoWarning, ButtonExamInfo);
             });
         }
 
@@ -133,19 +123,20 @@ namespace PlainCEETimer.Forms
         {
             ExamInfoManager ExamMan = new()
             {
-                AutoSwitch = EIMAutoSwitch,
-                PeriodIndex = EIMInterval
+                ExamInfo = EditedExamInfo
             };
 
             if (ExamMan.ShowDialog() == DialogResult.OK)
             {
-                LabelExamInfoWarning.Visible = ExamMan.ExamsChanged;
-                EIMAutoSwitch = ExamMan.AutoSwitch;
-                EIMInterval = ExamMan.PeriodIndex;
+                EditedExamInfo = ExamMan.ExamInfo;
                 SettingsChanged(sender, e);
             }
+        }
 
-            ExamMan.Dispose();
+        private void CheckBoxAutoSwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            ComboBoxAutoSwitchIntervel.Enabled = CheckBoxAutoSwitch.Checked;
+            SettingsChanged(sender, e);
         }
 
         private void CheckBoxShowXOnly_CheckedChanged(object sender, EventArgs e)
@@ -191,9 +182,9 @@ namespace PlainCEETimer.Forms
 
             if (Manager.ShowDialog() == DialogResult.OK)
             {
-                SettingsChanged(sender, e);
                 EditedCustomRules = Manager.CustomRules;
                 EditedCustomTexts = Manager.GlobalCustomTexts;
+                SettingsChanged(sender, e);
             }
         }
 
@@ -280,25 +271,16 @@ namespace PlainCEETimer.Forms
 
         private void ButtonDefaultColor_Click(object sender, EventArgs e)
         {
-            var Pos = new Point(0, ButtonDefaultColor.Height);
-
-            if (UseClassicContextMenu)
-            {
-                ContextMenuDefaultColor.Show(ButtonDefaultColor, Pos);
-            }
-            else
-            {
-                ContextMenuStripDefaultColor.Show(ButtonDefaultColor, Pos);
-            }
+            ShowContextMenu(ButtonDefaultColor, ContextMenuDefaultColor, ContextMenuStripDefaultColor, UseClassicContextMenu);
         }
 
-        private void MenuItemDark_Click(object sender, EventArgs e)
+        private void ContextDark_Click(object sender, EventArgs e)
         {
             SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
             SettingsChanged(sender, e);
         }
 
-        private void MenuItemLight_Click(object sender, EventArgs e)
+        private void ContextLight_Click(object sender, EventArgs e)
         {
             SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
             SettingsChanged(sender, e);
@@ -415,22 +397,39 @@ namespace PlainCEETimer.Forms
             {
                 ContextMenuDefaultColor = CreateNew
                 ([
-                    AddItem("白底(&L)", OnItemLightClick),
-                    AddItem("黑底(&D)", OnItemDarkClick)
+                    AddItem("白底(&L)", ContextLight_Click),
+                    AddItem("黑底(&D)", ContextDark_Click)
                 ]);
             }
             else
             {
                 ContextMenuStripDefaultColor = CreateNewStrip
                 ([
-                    AddStripItem("白底(&L)", OnItemLightClick),
-                    AddStripItem("黑底(&D)", OnItemDarkClick)
+                    AddStripItem("白底(&L)", ContextLight_Click),
+                    AddStripItem("黑底(&D)", ContextDark_Click)
                 ]);
             }
 
             LabelPreviewColor1.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_START}...";
             LabelPreviewColor2.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_LEFT}...";
             LabelPreviewColor3.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_PAST}...";
+
+            BindComboData(ComboBoxAutoSwitchIntervel,
+            [
+                new("10 秒", 0),
+                new("15 秒", 1),
+                new("30 秒", 2),
+                new("45 秒", 3),
+                new("1 分钟", 4),
+                new("2 分钟", 5),
+                new("3 分钟", 6),
+                new("5 分钟", 7),
+                new("10 分钟", 8),
+                new("15 分钟", 9),
+                new("30 分钟", 10),
+                new("45 分钟", 11),
+                new("1 小时", 12),
+            ]);
 
             BindComboData(ComboBoxShowXOnly,
             [
@@ -494,7 +493,6 @@ namespace PlainCEETimer.Forms
         {
             CheckBoxStartup.Checked = (Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)?.GetValue(App.AppNameEng) is string regvalue) && regvalue.Equals($"\"{App.CurrentExecutablePath}\"", StringComparison.OrdinalIgnoreCase);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
-            LabelExamInfo.Text = $"考试名称：{ExamName}\n考试开始时间和日期：{ExamStartTime.ToString(App.DateTimeFormat)}\n考试结束时间和日期：{ExamEndTime.ToString(App.DateTimeFormat)}";
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
             CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
@@ -513,10 +511,11 @@ namespace PlainCEETimer.Forms
             ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
             EditedCustomTexts = AppConfig.Display.CustomTexts;
             EditedCustomRules = AppConfig.CustomRules;
+            EditedExamInfo = AppConfig.General.ExamInfo;
             CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked = AppConfig.General.TrayIcon;
             CheckBoxTrayText.Checked = AppConfig.General.TrayText;
-            EIMAutoSwitch = AppConfig.General.AutoSwitch;
-            EIMInterval = AppConfig.General.Interval;
+            CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
+            ComboBoxAutoSwitchIntervel.SelectedIndex = AppConfig.General.Interval;
         }
 
         private void ChangeCustomTextStyle(object sender)
@@ -694,10 +693,10 @@ namespace PlainCEETimer.Forms
 
                 AppConfig.General = new()
                 {
-                    ExamInfo = AppConfig.General.ExamInfo,
+                    ExamInfo = EditedExamInfo,
                     ExamIndex = AppConfig.General.ExamIndex,
-                    AutoSwitch = EIMAutoSwitch,
-                    Interval = EIMInterval,
+                    AutoSwitch = CheckBoxAutoSwitch.Checked,
+                    Interval = ComboBoxAutoSwitchIntervel.SelectedIndex,
                     MemClean = CheckBoxMemClean.Checked,
                     TopMost = CheckBoxTopMost.Checked,
                     UniTopMost = CheckBoxUniTopMost.Checked,

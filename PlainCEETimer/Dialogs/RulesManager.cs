@@ -68,7 +68,6 @@ namespace PlainCEETimer.Dialogs
 
             ListViewMain.MouseDown += ListViewMain_MouseUpDown;
             ListViewMain.MouseUp += ListViewMain_MouseUpDown;
-            ListViewMain.ColumnWidthChanging += ListViewMain_ColumnWidthChanging;
             ListViewMain.SelectedIndexChanged += ListViewMain_SelectedIndexChanged;
 
             BindComboData(ComboBoxRuleType,
@@ -92,16 +91,19 @@ namespace PlainCEETimer.Dialogs
                 if (CustomRules.Count() == 0)
                 {
                     AddItem("文本测试", "65535天23时59分59秒", Color.FromArgb(255, 255, 255), Color.FromArgb(255, 255, 255), Placeholders.PH_P1);
-                    DeleteAllItems();
+                    ListViewMain.AutoAdjustColumnWidth();
+                    ListViewMain.ClearAll();
                 }
                 else
                 {
-                    SuspendListView(() =>
+                    ListViewMain.Suspend(() =>
                     {
                         foreach (var Rule in CustomRules)
                         {
                             AddItem(Rule);
                         }
+
+                        ListViewMain.AutoAdjustColumnWidth();
                     });
                 }
             }
@@ -182,12 +184,6 @@ namespace PlainCEETimer.Dialogs
                 UpdateColorLabels(SelectedData.Fore, SelectedData.Back);
                 TextBoxCustomText.Text = SelectedData.Text;
             }
-        }
-
-        private void ListViewMain_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-        {
-            e.NewWidth = ((ListView)sender).Columns[e.ColumnIndex].Width;
-            e.Cancel = true;
         }
 
         private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)
@@ -290,6 +286,7 @@ namespace PlainCEETimer.Dialogs
                 _Fore,
                 _Back,
                 TextBoxCustomText.Text.RemoveIllegalChars());
+            ListViewMain.AutoAdjustColumnWidth();
         }
 
         private void ButtonChange_Click(object sender, EventArgs e)
@@ -368,7 +365,8 @@ namespace PlainCEETimer.Dialogs
             
             */
             #endregion
-            ListViewMain.Sorter = new CustomRulesComparer();
+            ListViewMain.Sort();
+            ListViewMain.AutoAdjustColumnWidth();
             UserChanged();
         }
 
@@ -387,7 +385,6 @@ namespace PlainCEETimer.Dialogs
             };
 
             ListViewMain.Items.Add(Item);
-            SortItems();
         }
 
         private void AddItem(CustomRuleObject Rule)
@@ -399,11 +396,6 @@ namespace PlainCEETimer.Dialogs
                 Rule.Back,
                 Rule.Text,
                 Rule);
-        }
-
-        private void AddItems(IEnumerable<ListViewItem> Items)
-        {
-            ListViewMain.Items.AddRange([.. Items]);
         }
 
         private void EditItem(ListViewItem Item)
@@ -437,18 +429,6 @@ namespace PlainCEETimer.Dialogs
         private void DeleteItem(ListViewItem Item)
         {
             ListViewMain.Items.Remove(Item);
-        }
-
-        private void DeleteAllItems()
-        {
-            ListViewMain.Items.Clear();
-        }
-
-        private void SuspendListView(Action Operation)
-        {
-            ListViewMain.BeginUpdate();
-            Operation();
-            ListViewMain.EndUpdate();
         }
     }
 }
