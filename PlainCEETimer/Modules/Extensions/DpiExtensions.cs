@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PlainCEETimer.Modules.Extensions
+﻿namespace PlainCEETimer.Modules.Extensions
 {
     public static class DpiExtensions
     {

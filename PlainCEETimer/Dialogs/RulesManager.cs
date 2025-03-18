@@ -22,7 +22,6 @@ namespace PlainCEETimer.Dialogs
         private MenuItem ContextDelete;
         private ContextMenuStrip ContextMenuStripMain;
         private ToolStripMenuItem ContextDeleteStrip;
-        private EventHandler OnContextDeleteClick;
         private string LastText;
         private readonly Dictionary<int, string> UserUnsavedText = [];
 
@@ -48,13 +47,11 @@ namespace PlainCEETimer.Dialogs
 
         private void InitializeExtra()
         {
-            OnContextDeleteClick = new(ContextDelete_Click);
-
             if (UseClassicContextMenu)
             {
                 ContextMenuMain = CreateNew
                 ([
-                    ContextDelete = AddItem("删除(&D)", OnContextDeleteClick)
+                    ContextDelete = AddItem("删除(&D)", ContextDelete_Click)
                 ]);
 
                 ListViewMain.ContextMenu = ContextMenuMain;
@@ -63,7 +60,7 @@ namespace PlainCEETimer.Dialogs
             {
                 ContextMenuStripMain = CreateNewStrip
                 ([
-                    ContextDeleteStrip = AddStripItem("删除(&D)", OnContextDeleteClick)
+                    ContextDeleteStrip = AddStripItem("删除(&D)", ContextDelete_Click)
                 ]);
 
                 ListViewMain.ContextMenuStrip = ContextMenuStripMain;

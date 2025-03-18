@@ -77,8 +77,6 @@ namespace PlainCEETimer.Forms
         private ContextMenuStrip ContextMenuStripMain;
         private ContextMenuStrip ContextMenuStripTray;
         private ToolStripItemCollection ExamSwitchMainStrip;
-        private readonly EventHandler OnContextSettingsClick;
-        private readonly EventHandler OnContextAboutClick;
         private readonly EventHandler OnContextInstDirClick;
         private readonly EventHandler OnContextShowAllClick;
         private readonly EventHandler OnContextRestartClick;
@@ -87,8 +85,6 @@ namespace PlainCEETimer.Forms
         public MainForm()
         {
             InitializeComponent();
-            OnContextSettingsClick = new(ContextSettings_Click);
-            OnContextAboutClick = new(ContextAbout_Click);
             OnContextInstDirClick = new((_, _) => App.OpenInstallDir());
             OnContextShowAllClick = new((_, _) => App.OnTrayMenuShowAllClicked());
             OnContextRestartClick = new((_, _) => App.Shutdown(true));
@@ -237,12 +233,7 @@ namespace PlainCEETimer.Forms
         {
             if (FormSettings == null || FormSettings.IsDisposed)
             {
-                FormSettings = new()
-                {
-                    ExamName = ExamName,
-                    ExamStartTime = ExamStartTime,
-                    ExamEndTime = ExamEndTime
-                };
+                FormSettings = new();
 
                 FormSettings.FormClosed += (_, _) =>
                 {
@@ -526,8 +517,8 @@ namespace PlainCEETimer.Forms
                     AddItem("请先添加考试信息")
                 ]),
                 AddSeparator(),
-                AddItem("设置(&S)", OnContextSettingsClick),
-                AddItem("关于(&A)", OnContextAboutClick),
+                AddItem("设置(&S)", ContextSettings_Click),
+                AddItem("关于(&A)", ContextAbout_Click),
                 AddSeparator(),
                 AddItem("安装目录(&D)", OnContextInstDirClick)
             ]);
@@ -539,8 +530,8 @@ namespace PlainCEETimer.Forms
                     AddStripItem("请先添加考试信息")
                 ]),
                 AddStripSeparator(),
-                AddStripItem("设置(&S)", OnContextSettingsClick),
-                AddStripItem("关于(&A)", OnContextAboutClick),
+                AddStripItem("设置(&S)", ContextSettings_Click),
+                AddStripItem("关于(&A)", ContextAbout_Click),
                 AddStripSeparator(),
                 AddStripItem("安装目录(&D)", OnContextInstDirClick)
             ]);
