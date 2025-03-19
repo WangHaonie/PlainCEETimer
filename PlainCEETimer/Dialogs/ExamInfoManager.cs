@@ -167,7 +167,7 @@ namespace PlainCEETimer.Dialogs
                 ContextMenuStripMain.Opening += (_, _) => HandleMenuItemEnabling();
             }
 
-            ListViewMain.ListViewItemSorter = new ExamInfoComparer();
+            ListViewMain.ListViewItemSorter = new PlainComparer<ExamInfoObject>();
         }
 
         private void HandleMenuItemEnabling()
