@@ -46,7 +46,7 @@ namespace PlainCEETimer.Dialogs
             SetTextBoxMax(TextBoxP3, ConfigPolicy.MaxCustomTextLength);
         }
 
-        protected override void ButtonA_Click(object sender, EventArgs e)
+        protected override void ButtonA_Click()
         {
             P1TextRaw = RemoveInvalid(TextBoxP1.Text);
             P2TextRaw = RemoveInvalid(TextBoxP2.Text);
@@ -60,7 +60,7 @@ namespace PlainCEETimer.Dialogs
             }
 
             CustomText = tmp;
-            base.ButtonA_Click(sender, e);
+            base.ButtonA_Click();
         }
 
         private void ButtonReset_Click(object sender, EventArgs e)

@@ -3,6 +3,7 @@ using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -12,6 +13,7 @@ namespace PlainCEETimer.Dialogs
     {
         public ExamInfoObject[] ExamInfo { get; set; }
 
+        private readonly HashSet<ExamInfoObject> ItemDataSet = [];
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private ContextMenu ContextMenuMain;
         private MenuItem ContextEdit;
@@ -44,6 +46,7 @@ namespace PlainCEETimer.Dialogs
                         foreach (var Info in ExamInfo)
                         {
                             AddItem(Info);
+                            ItemDataSet.Add(Info);
                         }
 
                         ListViewMain.AutoAdjustColumnWidth();
@@ -69,10 +72,10 @@ namespace PlainCEETimer.Dialogs
             base.OnKeyDown(e);
         }
 
-        protected override void ButtonA_Click(object sender, EventArgs e)
+        protected override void ButtonA_Click()
         {
-            ExamInfo = [.. ListViewMain.Items.Cast<ListViewItem>().Select(x => (ExamInfoObject)x.Tag)];
-            base.ButtonA_Click(sender, e);
+            ExamInfo = ListViewMain.GetData<ExamInfoObject>();
+            base.ButtonA_Click();
         }
 
         private void ListViewMain_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -110,7 +113,7 @@ namespace PlainCEETimer.Dialogs
 
             if (Dialog.ShowDialog() == DialogResult.OK)
             {
-                EditItem(TargetItem, Dialog.ExamInfo);
+                AddItemSafe(Dialog.ExamInfo, TargetItem);
             }
         }
 
@@ -188,31 +191,17 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        private void AddItem(ExamInfoObject Info)
+        private void AddItemSafe(ExamInfoObject Info, ListViewItem Item = null)
         {
-            var Item = new ListViewItem([Info.Name, Info.Start.ToString(App.DateTimeFormat), Info.End.ToString(App.DateTimeFormat)])
+            var EditMode = Item != null;
+
+            if (ItemDataSet.Add(Info))
             {
-                Tag = Info
-            };
-
-            ListViewMain.Items.Add(Item);
-        }
-
-        private void AddItemSafe(ExamInfoObject Info)
-        {
-            var CanAdd = true;
-
-            foreach (var Data in ExamInfo)
-            {
-                if (Data.Equals(Info))
+                if (EditMode)
                 {
-                    CanAdd = false;
-                    break;
+                    ListViewMain.Items.Remove(Item);
                 }
-            }
 
-            if (CanAdd)
-            {
                 AddItem(Info);
                 ListViewMain.Sort();
                 ListViewMain.AutoAdjustColumnWidth();
@@ -220,7 +209,7 @@ namespace PlainCEETimer.Dialogs
             }
             else
             {
-                MessageX.Error("检测待添加的考试信息与现有的重复。\n\n请重新添加！");
+                MessageX.Error(EditMode ? "检测到此考试信息在编辑后与现有的重复。\n\n请重新编辑！" : "检测待添加的考试信息与现有的重复。\n\n请重新添加！");
                 ExamInfoDialog Dialog = new(Info);
 
                 if (Dialog.ShowDialog() == DialogResult.OK)
@@ -230,41 +219,12 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        private void EditItem(ListViewItem Item, ExamInfoObject NewData)
+        private void AddItem(ExamInfoObject Info)
         {
-            var CanEdit = true;
-
-            foreach (var Data in ExamInfo)
+            ListViewMain.Items.Add(new ListViewItem([Info.Name, Info.Start.ToString(App.DateTimeFormat), Info.End.ToString(App.DateTimeFormat)])
             {
-                if (Data.Equals(NewData))
-                {
-                    CanEdit = false;
-                    break;
-                }
-            }
-
-            if (CanEdit)
-            {
-                var Target = Item;
-                var SubItem = Target.SubItems;
-                Target.Tag = NewData;
-                SubItem[0].Text = NewData.Name;
-                SubItem[1].Text = NewData.Start.ToString(App.DateTimeFormat);
-                SubItem[2].Text = NewData.End.ToString(App.DateTimeFormat);
-                ListViewMain.Sort();
-                ListViewMain.AutoAdjustColumnWidth();
-                UserChanged();
-            }
-            else
-            {
-                MessageX.Error("检测到此考试信息在编辑后与现有的重复。\n\n请重新编辑！");
-                ExamInfoDialog Dialog = new(NewData);
-
-                if (Dialog.ShowDialog() == DialogResult.OK)
-                {
-                    EditItem(Item, Dialog.ExamInfo);
-                }
-            }
+                Tag = Info
+            });
         }
     }
 }

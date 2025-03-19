@@ -1,20 +1,23 @@
 ﻿using PlainCEETimer.Modules;
-using System;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
     public class AppDialog : AppForm
     {
-        protected Panel PanelMain { get; private set; }
-        protected Button ButtonB { get; private set; }
-        protected Button ButtonA { get; private set; }
+        protected Panel PanelMain { get; }
+        protected Button ButtonB { get; }
+        protected Button ButtonA { get; }
 
         private bool IsUserChanged;
 
         private AppDialog()
         {
-            InitializeComponent();
+            PanelMain = new();
+            ButtonA = new();
+            ButtonB = new();
+            ButtonA.Click += (_, _) => ButtonA_Click();
+            ButtonB.Click += (_, _) => ButtonB_Click();
         }
 
         protected AppDialog(AppDialogProp Prop) : this()
@@ -24,7 +27,11 @@ namespace PlainCEETimer.Controls
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (IsUserChanged)
+            if (App.AllowClosing)
+            {
+                e.Cancel = false;
+            }
+            else if (IsUserChanged)
             {
                 ShowUnsavedWarning("是否保存当前更改？", e, ButtonA_Click, () =>
                 {
@@ -34,14 +41,14 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        protected virtual void ButtonA_Click(object sender, EventArgs e)
+        protected virtual void ButtonA_Click()
         {
             IsUserChanged = false;
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        protected virtual void ButtonB_Click(object sender, EventArgs e)
+        protected virtual void ButtonB_Click()
         {
             DialogResult = DialogResult.Cancel;
             Close();
@@ -68,15 +75,6 @@ namespace PlainCEETimer.Controls
                     ButtonA.Enabled = true;
                 }
             });
-        }
-
-        private void InitializeComponent()
-        {
-            PanelMain = new();
-            ButtonA = new();
-            ButtonB = new();
-            ButtonA.Click += ButtonA_Click;
-            ButtonB.Click += ButtonB_Click;
         }
 
         private void SetProperties(AppDialogProp Prop)

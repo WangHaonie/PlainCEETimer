@@ -1,7 +1,6 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
-using System;
 using System.Drawing;
 using System.Media;
 using System.Threading.Tasks;
@@ -66,13 +65,13 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        protected override void ButtonA_Click(object sender, EventArgs e)
+        protected override void ButtonA_Click()
         {
             Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
         }
 
-        protected override void ButtonB_Click(object sender, EventArgs e)
+        protected override void ButtonB_Click()
         {
             Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();

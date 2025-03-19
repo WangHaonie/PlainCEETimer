@@ -36,31 +36,23 @@ namespace PlainCEETimer.Modules
         {
             var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
 
-            if (Parent != null)
+            if (Parent != null && Parent.InvokeRequired)
             {
-                if (Parent.InvokeRequired)
-                {
-                    #region 来自网络
-                    /*
+                #region 来自网络
+                /*
 
-                    在 Invoke 方法内部获取到 DialogResult 返回值 参考:
+                在 Invoke 方法内部获取到 DialogResult 返回值 参考:
 
-                    c# - Return Ivoke message DialogResult - Stack Overflow
-                    https://stackoverflow.com/a/29256646/21094697
+                c# - Return Ivoke message DialogResult - Stack Overflow
+                https://stackoverflow.com/a/29256646/21094697
 
-                    */
-                    return (DialogResult)Parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
-                    #endregion
-                }
-                else
-                {
-                    return ShowPopup();
-                }
+                */
+                return (DialogResult)Parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
+                #endregion
             }
-            else
-            {
-                return ShowPopup();
-            }
+
+            return ShowPopup();
+
 
             DialogResult ShowPopup()
             {
