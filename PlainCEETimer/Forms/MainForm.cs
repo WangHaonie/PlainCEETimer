@@ -133,6 +133,7 @@ namespace PlainCEETimer.Forms
         {
             RefreshScreen();
             SetLabelCountdownAutoWrap();
+            ApplyLocation();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
