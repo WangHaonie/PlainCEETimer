@@ -69,6 +69,7 @@ namespace PlainCEETimer.Dialogs
             ListViewMain.MouseDown += ListViewMain_MouseUpDown;
             ListViewMain.MouseUp += ListViewMain_MouseUpDown;
             ListViewMain.SelectedIndexChanged += ListViewMain_SelectedIndexChanged;
+            ListViewMain.ListViewItemSorter = new CustomRulesComparer();
 
             BindComboData(ComboBoxRuleType,
             [
@@ -385,6 +386,7 @@ namespace PlainCEETimer.Dialogs
             };
 
             ListViewMain.Items.Add(Item);
+            SortItems();
         }
 
         private void AddItem(CustomRuleObject Rule)

@@ -25,14 +25,16 @@ namespace PlainCEETimer.Modules.Configuration
                 return 1;
             }
 
-            var PhaseComparer = Phase.CompareTo(other.Phase);
+            int PhaseOrder = Phase.CompareTo(other.Phase);
 
-            if (PhaseComparer != 0)
+            if (PhaseOrder != 0)
             {
-                return PhaseComparer;
+                return PhaseOrder;
             }
 
-            return Tick.CompareTo(other.Tick);
+            int TickOrder = other.Tick.CompareTo(Tick);
+
+            return Phase == CountdownPhase.P3 ? -TickOrder : TickOrder;
         }
 
         public bool Equals(CustomRuleObject other)

@@ -63,7 +63,7 @@ namespace PlainCEETimer.Dialogs
             var StartTime = DTPStart.Value;
             var EndTime = DTPEnd.Value;
             var ExamSpan = EndTime - StartTime;
-            var TotalSeconds  = ExamSpan.TotalSeconds;
+            var TotalSeconds = ExamSpan.TotalSeconds;
 
             if (EndTime <= StartTime || TotalSeconds < 1D)
             {
