@@ -62,8 +62,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        }
-
+        } = [Placeholders.PH_P1, Placeholders.PH_P2, Placeholders.PH_P3];
 
         public int ScreenIndex
         {
