@@ -46,5 +46,16 @@ namespace PlainCEETimer.Modules.Configuration
 
         public override string ToString()
             => string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
+
+        public override bool Equals(object obj)
+            => Equals((ExamInfoObject)obj);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode();
+            }
+        }
     }
 }

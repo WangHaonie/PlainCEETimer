@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.ListViewMain = new PlainCEETimer.Controls.ListViewEx();
-            this.ColumnHeadExamName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnHeadStart = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnHeadEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             //this.PanelMain = new System.Windows.Forms.Panel();
             //this.ButtonA = new System.Windows.Forms.Button();
             //this.ButtonB = new System.Windows.Forms.Button();
@@ -41,12 +38,12 @@
             // 
             // ListViewMain
             // 
-            this.ListViewMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.ColumnHeadExamName,
-            this.ColumnHeadStart,
-            this.ColumnHeadEnd});
             this.ListViewMain.FullRowSelect = true;
             this.ListViewMain.GridLines = true;
+            this.ListViewMain.Headers = new string[] {
+        "考试名称",
+        "开始日期和时间",
+        "结束日期和时间"};
             this.ListViewMain.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.ListViewMain.HideSelection = false;
             this.ListViewMain.Location = new System.Drawing.Point(3, 2);
@@ -55,20 +52,6 @@
             this.ListViewMain.TabIndex = 0;
             this.ListViewMain.UseCompatibleStateImageBehavior = false;
             this.ListViewMain.View = System.Windows.Forms.View.Details;
-            // 
-            // ColumnHeadExamName
-            // 
-            this.ColumnHeadExamName.Text = "考试名称";
-            // 
-            // ColumnHeadStart
-            // 
-            this.ColumnHeadStart.Text = "开始日期和时间";
-            this.ColumnHeadStart.Width = 96;
-            // 
-            // ColumnHeadEnd
-            // 
-            this.ColumnHeadEnd.Text = "结束日期和时间";
-            this.ColumnHeadEnd.Width = 363;
             // 
             // PanelMain
             // 
@@ -134,9 +117,6 @@
         #endregion
 
         private Controls.ListViewEx ListViewMain;
-        private System.Windows.Forms.ColumnHeader ColumnHeadExamName;
-        private System.Windows.Forms.ColumnHeader ColumnHeadStart;
-        private System.Windows.Forms.ColumnHeader ColumnHeadEnd;
         //private System.Windows.Forms.Panel PanelMain;
         //private System.Windows.Forms.Button ButtonA;
         //private System.Windows.Forms.Button ButtonB;

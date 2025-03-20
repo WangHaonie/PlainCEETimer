@@ -46,5 +46,16 @@ namespace PlainCEETimer.Modules.Configuration
 
             return Phase == other.Phase && Tick == other.Tick;
         }
+
+        public override bool Equals(object obj)
+            => Equals((CustomRuleObject)obj);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (37 * 31 + Phase.GetHashCode()) * 31 + Tick.GetHashCode();
+            }
+        }
     }
 }

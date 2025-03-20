@@ -121,7 +121,7 @@ namespace PlainCEETimer.Dialogs
         {
             if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn("确认删除所选考试信息吗？此操作将不可撤销！", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                ListViewMain.RemoveSelectedItems();
+                ListViewMain.Suspend(ListViewMain.RemoveSelectedItems);
                 UserChanged();
             }
         }
@@ -130,10 +130,13 @@ namespace PlainCEETimer.Dialogs
         {
             if (ListViewMain.ItemsCount != 0)
             {
-                foreach (ListViewItem Item in ListViewMain.Items)
+                ListViewMain.Suspend(() =>
                 {
-                    Item.Selected = true;
-                }
+                    foreach (ListViewItem Item in ListViewMain.Items)
+                    {
+                        Item.Selected = true;
+                    }
+                });
             }
         }
 
@@ -202,7 +205,7 @@ namespace PlainCEETimer.Dialogs
                     ListViewMain.Items.Remove(Item);
                 }
 
-                AddItem(Info);
+                AddItem(Info, true);
                 ListViewMain.Sort();
                 ListViewMain.AutoAdjustColumnWidth();
                 UserChanged();
@@ -219,11 +222,13 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        private void AddItem(ExamInfoObject Info)
+        private void AddItem(ExamInfoObject Info, bool CanSelect = false)
         {
             ListViewMain.Items.Add(new ListViewItem([Info.Name, Info.Start.ToString(App.DateTimeFormat), Info.End.ToString(App.DateTimeFormat)])
             {
-                Tag = Info
+                Tag = Info,
+                Selected = CanSelect,
+                Focused = CanSelect
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -7,9 +8,32 @@ namespace PlainCEETimer.Controls
     {
         public int ItemsCount => Items.Count;
 
+        public int SelectedItemsCount => SelectedItems.Count;
+
+        public string[] Headers
+        {
+            get => field;
+            set
+            {
+                foreach (var Title in value)
+                {
+                    Columns.Add(new ColumnHeader() { Text = Title });
+                }
+
+                field = value;
+            }
+        }
+
         public ListViewItem SelectedItem => SelectedItems[0];
 
-        public int SelectedItemsCount => SelectedItems.Count;
+        public ListViewEx()
+        {
+            View = View.Details;
+            FullRowSelect = true;
+            GridLines = true;
+            HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            HideSelection = false;
+        }
 
         public void RemoveSelectedItems()
         {
@@ -40,6 +64,11 @@ namespace PlainCEETimer.Controls
                     column.Width = -2;
                 }
             }
+        }
+
+        public T[] GetData<T>()
+        {
+            return [.. Items.Cast<ListViewItem>().Select(x => (T)x.Tag)];
         }
 
         protected override void OnHandleCreated(EventArgs e)

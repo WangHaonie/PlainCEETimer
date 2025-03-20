@@ -52,7 +52,7 @@ namespace PlainCEETimer.Dialogs
             UserChanged();
         }
 
-        protected override void ButtonA_Click(object sender, EventArgs e)
+        protected override void ButtonA_Click()
         {
             if (string.IsNullOrWhiteSpace(CurrentExamName) || !CurrentExamName.Length.IsValid())
             {
@@ -101,7 +101,7 @@ namespace PlainCEETimer.Dialogs
                 End = EndTime
             };
 
-            base.ButtonA_Click(sender, e);
+            base.ButtonA_Click();
         }
     }
 }

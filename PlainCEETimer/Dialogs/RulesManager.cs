@@ -299,10 +299,10 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        protected override void ButtonA_Click(object sender, EventArgs e)
+        protected override void ButtonA_Click()
         {
-            CustomRules = [.. GetAllItems().Select(x => (CustomRuleObject)x.Tag)];
-            base.ButtonA_Click(sender, e);
+            CustomRules = ListViewMain.GetData<CustomRuleObject>();
+            base.ButtonA_Click();
         }
 
         private void ButtonCustomText_Click(object sender, EventArgs e)
