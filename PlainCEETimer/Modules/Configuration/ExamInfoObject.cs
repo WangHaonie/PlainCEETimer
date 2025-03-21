@@ -10,7 +10,7 @@ namespace PlainCEETimer.Modules.Configuration
     {
         public string Name
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)

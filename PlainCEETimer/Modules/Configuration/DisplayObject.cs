@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public int X
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)
@@ -30,7 +30,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public int EndIndex
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)
@@ -49,7 +49,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public string[] CustomTexts
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)
@@ -66,7 +66,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public int ScreenIndex
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)

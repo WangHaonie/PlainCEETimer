@@ -13,7 +13,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public ColorSetObject[] Colors
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)

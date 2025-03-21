@@ -29,7 +29,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public int ExamIndex
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)

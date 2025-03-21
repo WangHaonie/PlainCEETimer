@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules.Configuration
     {
         public int NtpServer
         {
-            get => field;
+            get;
             set
             {
                 if (MainForm.ValidateNeeded)

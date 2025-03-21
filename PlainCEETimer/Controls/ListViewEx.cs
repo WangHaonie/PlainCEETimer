@@ -12,7 +12,7 @@ namespace PlainCEETimer.Controls
 
         public string[] Headers
         {
-            get => field;
+            get;
             set
             {
                 foreach (var Title in value)
