@@ -35,12 +35,26 @@ namespace PlainCEETimer.Controls
             HideSelection = false;
         }
 
+        public void SelectAll(bool IsSelected)
+        {
+            if (ItemsCount != 0)
+            {
+                foreach (ListViewItem Item in Items)
+                {
+                    Item.Selected = IsSelected;
+                }
+            }
+        }
+
         public void RemoveSelectedItems()
         {
-            foreach (ListViewItem Item in SelectedItems)
+            Suspend(() =>
             {
-                Items.Remove(Item);
-            }
+                foreach (ListViewItem Item in SelectedItems)
+                {
+                    Items.Remove(Item);
+                }
+            });
         }
 
         public void Suspend(Action Method)
@@ -48,21 +62,14 @@ namespace PlainCEETimer.Controls
             BeginUpdate();
             Method();
             EndUpdate();
-        }
-
-        public void ClearAll()
-        {
-            Items.Clear();
+            Focus();
         }
 
         public void AutoAdjustColumnWidth()
         {
-            if (ItemsCount != 0)
+            foreach (ColumnHeader column in Columns)
             {
-                foreach (ColumnHeader column in Columns)
-                {
-                    column.Width = -2;
-                }
+                column.Width = -2;
             }
         }
 

@@ -18,9 +18,11 @@ namespace PlainCEETimer.Dialogs
         private ContextMenu ContextMenuMain;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
+        private MenuItem ContextSelectAll;
         private ContextMenuStrip ContextMenuStripMain;
         private ToolStripMenuItem StripEdit;
         private ToolStripMenuItem StripDelete;
+        private ToolStripMenuItem StripSelectAll;
 
         public ExamInfoManager() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
         {
@@ -35,9 +37,7 @@ namespace PlainCEETimer.Dialogs
             {
                 if (ExamInfo.Count() == 0)
                 {
-                    AddItem(new ExamInfoObject() { Name = "文本测试" });
                     ListViewMain.AutoAdjustColumnWidth();
-                    ListViewMain.ClearAll();
                 }
                 else
                 {
@@ -121,23 +121,14 @@ namespace PlainCEETimer.Dialogs
         {
             if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn("确认删除所选考试信息吗？此操作将不可撤销！", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                ListViewMain.Suspend(ListViewMain.RemoveSelectedItems);
+                ListViewMain.RemoveSelectedItems();
                 UserChanged();
             }
         }
 
         private void ContextSelectAll_Click(object sender, EventArgs e)
         {
-            if (ListViewMain.ItemsCount != 0)
-            {
-                ListViewMain.Suspend(() =>
-                {
-                    foreach (ListViewItem Item in ListViewMain.Items)
-                    {
-                        Item.Selected = true;
-                    }
-                });
-            }
+            ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
         }
 
         private void InitializeExtra()
@@ -151,7 +142,7 @@ namespace PlainCEETimer.Dialogs
                     ContextEdit = AddItem("编辑(&E)", ContextEdit_Click),
                     ContextDelete = AddItem("删除(&D)", ContextDelete_Click),
                     AddSeparator(),
-                    AddItem("全选(&Q)", ContextSelectAll_Click)
+                    ContextSelectAll = AddItem("全选(&Q)", ContextSelectAll_Click)
                 ]);
 
                 ListViewMain.ContextMenu = ContextMenuMain;
@@ -166,7 +157,7 @@ namespace PlainCEETimer.Dialogs
                     StripEdit = AddStripItem("编辑(&E)", ContextEdit_Click),
                     StripDelete = AddStripItem("删除(&D)", ContextDelete_Click),
                     AddStripSeparator(),
-                    AddStripItem("全选(&Q)", ContextSelectAll_Click)
+                    StripSelectAll = AddStripItem("全选(&Q)", ContextSelectAll_Click)
                 ]);
 
                 ListViewMain.ContextMenuStrip = ContextMenuStripMain;
@@ -181,16 +172,19 @@ namespace PlainCEETimer.Dialogs
             var SelectedCount = ListViewMain.SelectedItemsCount;
             var EnableDelete = SelectedCount != 0;
             var EnableEdit = SelectedCount == 1;
+            var EnableSelectAll = ListViewMain.ItemsCount != 0;
 
             if (UseClassicContextMenu)
             {
                 ContextDelete.Enabled = EnableDelete;
                 ContextEdit.Enabled = EnableEdit;
+                ContextSelectAll.Enabled = EnableSelectAll;
             }
             else
             {
                 StripDelete.Enabled = EnableDelete;
                 StripEdit.Enabled = EnableEdit;
+                StripSelectAll.Enabled = EnableSelectAll;
             }
         }
 
@@ -205,9 +199,14 @@ namespace PlainCEETimer.Dialogs
                     ListViewMain.Items.Remove(Item);
                 }
 
-                AddItem(Info, true);
-                ListViewMain.Sort();
-                ListViewMain.AutoAdjustColumnWidth();
+                ListViewMain.Suspend(() =>
+                {
+                    ListViewMain.SelectAll(false);
+                    AddItem(Info, true);
+                    ListViewMain.Sort();
+                    ListViewMain.AutoAdjustColumnWidth();
+                });
+
                 UserChanged();
             }
             else
@@ -222,13 +221,13 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        private void AddItem(ExamInfoObject Info, bool CanSelect = false)
+        private void AddItem(ExamInfoObject Info, bool IsSelected = false)
         {
             ListViewMain.Items.Add(new ListViewItem([Info.Name, Info.Start.ToString(App.DateTimeFormat), Info.End.ToString(App.DateTimeFormat)])
             {
                 Tag = Info,
-                Selected = CanSelect,
-                Focused = CanSelect
+                Selected = IsSelected,
+                Focused = IsSelected
             });
         }
     }
