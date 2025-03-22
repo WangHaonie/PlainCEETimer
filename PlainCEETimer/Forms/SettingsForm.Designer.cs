@@ -35,7 +35,7 @@
             this.TabControlMain = new System.Windows.Forms.TabControl();
             this.TabPageGeneral = new System.Windows.Forms.TabPage();
             this.GBoxExamInfo = new System.Windows.Forms.GroupBox();
-            this.ComboBoxAutoSwitchIntervel = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAutoSwitchIntervel = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ButtonExamInfo = new System.Windows.Forms.Button();
@@ -53,18 +53,18 @@
             this.LabelPptsvc = new System.Windows.Forms.Label();
             this.GBoxContent = new System.Windows.Forms.GroupBox();
             this.LabelCountdownEnd = new System.Windows.Forms.Label();
-            this.ComboBoxCountdownEnd = new System.Windows.Forms.ComboBox();
+            this.ComboBoxCountdownEnd = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxRulesMan = new System.Windows.Forms.CheckBox();
             this.ButtonRulesMan = new System.Windows.Forms.Button();
-            this.ComboBoxShowXOnly = new System.Windows.Forms.ComboBox();
+            this.ComboBoxShowXOnly = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxCeiling = new System.Windows.Forms.CheckBox();
             this.CheckBoxShowXOnly = new System.Windows.Forms.CheckBox();
             this.GBoxDraggable = new System.Windows.Forms.GroupBox();
-            this.ComboBoxPosition = new System.Windows.Forms.ComboBox();
+            this.ComboBoxPosition = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxDraggable = new System.Windows.Forms.CheckBox();
             this.LabelChar1 = new System.Windows.Forms.Label();
             this.LabelScreens = new System.Windows.Forms.Label();
-            this.ComboBoxScreens = new System.Windows.Forms.ComboBox();
+            this.ComboBoxScreens = new PlainCEETimer.Controls.ComboBoxEx();
             this.TabPageAppearance = new System.Windows.Forms.TabPage();
             this.GBoxColors = new System.Windows.Forms.GroupBox();
             this.LabelPreviewColor4 = new System.Windows.Forms.Label();
@@ -93,7 +93,7 @@
             this.GBoxRestart = new System.Windows.Forms.GroupBox();
             this.LabelRestart = new System.Windows.Forms.Label();
             this.GBoxSyncTime = new System.Windows.Forms.GroupBox();
-            this.ComboBoxNtpServers = new System.Windows.Forms.ComboBox();
+            this.ComboBoxNtpServers = new PlainCEETimer.Controls.ComboBoxEx();
             this.LabelSyncTime = new System.Windows.Forms.Label();
             this.TabControlMain.SuspendLayout();
             this.TabPageGeneral.SuspendLayout();
@@ -406,7 +406,6 @@
             this.ComboBoxCountdownEnd.Name = "ComboBoxCountdownEnd";
             this.ComboBoxCountdownEnd.Size = new System.Drawing.Size(178, 23);
             this.ComboBoxCountdownEnd.TabIndex = 44;
-            this.ComboBoxCountdownEnd.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxCountdownEnd.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // CheckBoxRulesMan
@@ -443,7 +442,6 @@
             this.ComboBoxShowXOnly.Name = "ComboBoxShowXOnly";
             this.ComboBoxShowXOnly.Size = new System.Drawing.Size(38, 23);
             this.ComboBoxShowXOnly.TabIndex = 5;
-            this.ComboBoxShowXOnly.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxShowXOnly.SelectedIndexChanged += new System.EventHandler(this.ComboBoxShowXOnly_SelectedIndexChanged);
             // 
             // CheckBoxCeiling
@@ -492,7 +490,6 @@
             this.ComboBoxPosition.Name = "ComboBoxPosition";
             this.ComboBoxPosition.Size = new System.Drawing.Size(84, 23);
             this.ComboBoxPosition.TabIndex = 7;
-            this.ComboBoxPosition.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxPosition.SelectedIndexChanged += new System.EventHandler(this.ChangePptsvcStyle);
             // 
             // CheckBoxDraggable
@@ -533,7 +530,6 @@
             this.ComboBoxScreens.Name = "ComboBoxScreens";
             this.ComboBoxScreens.Size = new System.Drawing.Size(107, 23);
             this.ComboBoxScreens.TabIndex = 4;
-            this.ComboBoxScreens.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxScreens.SelectedIndexChanged += new System.EventHandler(this.ComboBoxScreens_SelectedIndexChanged);
             // 
             // TabPageAppearance
@@ -837,7 +833,6 @@
             this.ComboBoxNtpServers.Name = "ComboBoxNtpServers";
             this.ComboBoxNtpServers.Size = new System.Drawing.Size(130, 23);
             this.ComboBoxNtpServers.TabIndex = 21;
-            this.ComboBoxNtpServers.DropDown += new System.EventHandler(this.ComboBoxes_DropDown);
             this.ComboBoxNtpServers.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // LabelSyncTime
@@ -921,8 +916,8 @@
         private System.Windows.Forms.Label LabelPptsvc;
         private System.Windows.Forms.CheckBox CheckBoxPptSvc;
         private System.Windows.Forms.Label LabelScreens;
-        private System.Windows.Forms.ComboBox ComboBoxScreens;
-        private System.Windows.Forms.ComboBox ComboBoxShowXOnly;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxScreens;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxShowXOnly;
         private System.Windows.Forms.TabPage TabPageAppearance;
         private System.Windows.Forms.GroupBox GBoxColors;
         private System.Windows.Forms.Label LabelColor31;
@@ -943,12 +938,12 @@
         private System.Windows.Forms.Label LabelColor41;
         private System.Windows.Forms.Label LabelColor42;
         private System.Windows.Forms.Label LabelLine05;
-        private System.Windows.Forms.ComboBox ComboBoxPosition;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxPosition;
         private System.Windows.Forms.Label LabelChar1;
         private System.Windows.Forms.Button ButtonRulesMan;
         private System.Windows.Forms.CheckBox CheckBoxRulesMan;
-        private System.Windows.Forms.ComboBox ComboBoxNtpServers;
-        private System.Windows.Forms.ComboBox ComboBoxCountdownEnd;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxNtpServers;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxCountdownEnd;
         private System.Windows.Forms.Label LabelCountdownEnd;
         private System.Windows.Forms.CheckBox CheckBoxTrayText;
         private System.Windows.Forms.CheckBox CheckBoxTrayIcon;
@@ -962,7 +957,7 @@
         private System.Windows.Forms.CheckBox CheckBoxStartup;
         private System.Windows.Forms.CheckBox CheckBoxWCCMS;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox ComboBoxAutoSwitchIntervel;
+        private PlainCEETimer.Controls.ComboBoxEx ComboBoxAutoSwitchIntervel;
         private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
     }
 }

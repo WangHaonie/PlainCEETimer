@@ -513,28 +513,28 @@ namespace PlainCEETimer.Forms
 
             ContextMenu BaseContextMenu() => CreateNew
             ([
-                AddSubMenu("切换(&Q)",
+                AddSubMenu(ContextMenuConstants.Switch,
                 [
-                    AddItem("请先添加考试信息")
+                    AddItem(ContextMenuConstants.AddExamInfo)
                 ]),
                 AddSeparator(),
-                AddItem("设置(&S)", ContextSettings_Click),
-                AddItem("关于(&A)", ContextAbout_Click),
+                AddItem(ContextMenuConstants.Settings, ContextSettings_Click),
+                AddItem(ContextMenuConstants.About, ContextAbout_Click),
                 AddSeparator(),
-                AddItem("安装目录(&D)", OnContextInstDirClick)
+                AddItem(ContextMenuConstants.InstallDir, OnContextInstDirClick)
             ]);
 
             ContextMenuStrip BaseContextMenuStrip() => CreateNewStrip
             ([
-                AddSubStrip("切换(&Q)",
+                AddSubStrip(ContextMenuConstants.Switch,
                 [
-                    AddStripItem("请先添加考试信息")
+                    AddStripItem(ContextMenuConstants.AddExamInfo)
                 ]),
                 AddStripSeparator(),
-                AddStripItem("设置(&S)", ContextSettings_Click),
-                AddStripItem("关于(&A)", ContextAbout_Click),
+                AddStripItem(ContextMenuConstants.Settings, ContextSettings_Click),
+                AddStripItem(ContextMenuConstants.About, ContextAbout_Click),
                 AddStripSeparator(),
-                AddStripItem("安装目录(&D)", OnContextInstDirClick)
+                AddStripItem(ContextMenuConstants.InstallDir, OnContextInstDirClick)
             ]);
             #endregion
         }
@@ -569,11 +569,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
                         ([
                             AddSeparator(),
-                            AddItem("显示界面(&S)", OnContextShowAllClick),
-                            AddSubMenu("关闭(&C)",
+                            AddItem(ContextMenuConstants.Show, OnContextShowAllClick),
+                            AddSubMenu(ContextMenuConstants.Close,
                             [
-                                AddItem("重启(&R)", OnContextRestartClick),
-                                AddItem("退出(&Q)", OnContextQuitClick)
+                                AddItem(ContextMenuConstants.Restart, OnContextRestartClick),
+                                AddItem(ContextMenuConstants.Quit, OnContextQuitClick)
                             ])
                         ]));
                     }
@@ -582,11 +582,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenuStrip = MergeStrip(ContextMenuStripTray,
                         [
                             AddStripSeparator(),
-                            AddStripItem("显示界面(&S)", OnContextShowAllClick),
-                            AddSubStrip("关闭(&C)",
+                            AddStripItem(ContextMenuConstants.Show, OnContextShowAllClick),
+                            AddSubStrip(ContextMenuConstants.Close,
                             [
-                                AddStripItem("重启(&R)", OnContextRestartClick),
-                                AddStripItem("退出(&Q)", OnContextQuitClick)
+                                AddStripItem(ContextMenuConstants.Restart, OnContextRestartClick),
+                                AddStripItem(ContextMenuConstants.Quit, OnContextQuitClick)
                             ])
                         ]);
                     }

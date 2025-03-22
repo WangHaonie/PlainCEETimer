@@ -1,0 +1,209 @@
+﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace PlainCEETimer.Dialogs
+{
+    public partial class RuleDialog : AppDialog, ISubDialog<CustomRuleObject, RuleDialog>
+    {
+        public CustomRuleObject Data { get; set; }
+        public string[] GlobalTexts { private get; set; }
+        public ColorSetObject[] GlobalColors { private get; set; }
+
+        private bool IsEditMode;
+        private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
+
+        private struct Cache(Color fore, Color back, string text)
+        {
+            public Color Fore = fore;
+            public Color Back = back;
+            public string Text = text;
+        }
+
+        public RuleDialog() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
+        {
+            CompositedStyle = true;
+            InitializeComponent();
+        }
+
+        protected override void OnLoad()
+        {
+            BindComboData(ComboBoxRuleType,
+            [
+                new(Placeholders.PH_START, 0),
+                new(Placeholders.PH_LEFT, 1),
+                new(Placeholders.PH_PAST, 2)
+            ]);
+
+            LabelFore.Click += ColorLabels_Click;
+            LabelBack.Click += ColorLabels_Click;
+            IsEditMode = Data != null;
+
+            if (IsEditMode)
+            {
+                ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
+                var Ticks = Data.Tick;
+                NUDDays.Value = Ticks.Days;
+                NUDHours.Value = Ticks.Hours;
+                NUDMinutes.Value = Ticks.Minutes;
+                NUDSeconds.Value = Ticks.Seconds;
+                ApplyColorBlock(Data.Fore, Data.Back);
+                TextBoxCustomText.Text = Data.Text;
+            }
+            else
+            {
+                GetNewData();
+                ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
+                TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
+            }
+        }
+
+        protected override void ButtonA_Click()
+        {
+            var d = (int)NUDDays.Value;
+            var h = (int)NUDHours.Value;
+            var m = (int)NUDMinutes.Value;
+            var s = (int)NUDSeconds.Value;
+
+            if (d == 0 && m == 0 && h == 0 && s == 0)
+            {
+                MessageX.Error("时刻不能为0，请重新设置！");
+                return;
+            }
+
+            var Fore = LabelFore.BackColor;
+            var Back = LabelBack.BackColor;
+
+            if (!ColorHelper.IsNiceContrast(Fore, Back))
+            {
+                MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
+                return;
+            }
+
+            var Text = TextBoxCustomText.Text.RemoveIllegalChars();
+
+            if (!(bool)CustomRuleHelper.CheckCustomText([Text], out string Error, ToBoolean: true) && !string.IsNullOrWhiteSpace(Error))
+            {
+                MessageX.Error(Error);
+                return;
+            }
+
+            Data = new()
+            {
+                Phase = (CountdownPhase)ComboBoxRuleType.SelectedIndex,
+                Tick = new(d, h, m, s),
+                Fore = Fore,
+                Back = Back,
+                Text = Text
+            };
+
+            base.ButtonA_Click();
+        }
+
+        private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!IsEditMode)
+            {
+                WhenLoaded(() =>
+                {
+                    var Index = ComboBoxRuleType.SelectedIndex;
+
+                    if (TemporaryChanges.ContainsKey(Index))
+                    {
+                        var Temp = TemporaryChanges[Index];
+                        ApplyColorBlock(Temp.Fore, Temp.Back);
+                        TextBoxCustomText.Text = Temp.Text;
+                    }
+                    else
+                    {
+                        GetNewData();
+                    }
+                });
+            }
+
+            UserChanged();
+        }
+
+        private void NUD_TextChanged(object sender, EventArgs e)
+        {
+            UserChanged();
+        }
+
+        private void ColorLabels_Click(object sender, EventArgs e)
+        {
+            var LabelSender = (Label)sender;
+            var ColorDialogMain = new ColorDialogEx();
+
+            if (ColorDialogMain.ShowDialog(LabelSender.BackColor) == DialogResult.OK)
+            {
+                LabelSender.BackColor = ColorDialogMain.Color;
+                LabelColorPreview.ForeColor = LabelFore.BackColor;
+                LabelColorPreview.BackColor = LabelBack.BackColor;
+                UserChanged();
+
+                if (!IsEditMode)
+                {
+                    SaveTemp();
+                }
+            }
+
+            ColorDialogMain.Dispose();
+        }
+
+        private void TextBoxCustomText_TextChanged(object sender, EventArgs e)
+        {
+            if (!IsEditMode)
+            {
+                WhenLoaded(SaveTemp);
+            }
+
+            UserChanged();
+        }
+
+        private void SaveTemp()
+        {
+            TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(LabelFore.BackColor, LabelBack.BackColor, TextBoxCustomText.Text);
+        }
+
+        private void GetNewData(bool All = true, bool ColorOnly = false, bool TextOnly = false)
+        {
+            var Index = ComboBoxRuleType.SelectedIndex;
+
+            if (All || ColorOnly)
+            {
+                var Colors = GlobalColors[Index];
+                ApplyColorBlock(Colors.Fore, Colors.Back);
+            }
+
+            if (All || TextOnly)
+            {
+                TextBoxCustomText.Text = GlobalTexts[Index];
+            }
+
+            if (!IsEditMode)
+            {
+                SaveTemp();
+            }
+        }
+
+        private void ApplyColorBlock(Color fore, Color back)
+        {
+            LabelFore.BackColor = fore;
+            LabelColorPreview.ForeColor = fore;
+            LabelBack.BackColor = back;
+            LabelColorPreview.BackColor = back;
+        }
+
+        private void LinkReset_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var flag = (LinkLabel)sender == LinkResetColor;
+            GetNewData(false, flag, !flag);
+            UserChanged();
+        }
+    }
+}

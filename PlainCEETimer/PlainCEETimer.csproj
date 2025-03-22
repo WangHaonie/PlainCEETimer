@@ -109,8 +109,14 @@
     <Compile Include="Controls\AppDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\ComboBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\Hyperlink.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ListViewDialogBase.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
@@ -127,23 +133,23 @@
     <Compile Include="Dialogs\ExamInfoDialog.Designer.cs">
       <DependentUpon>ExamInfoDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ExamInfoManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ExamInfoManager.Designer.cs">
-      <DependentUpon>ExamInfoManager.cs</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\AppMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\AppMessageBox.Designer.cs">
       <DependentUpon>AppMessageBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\RulesManager.cs">
+    <Compile Include="Dialogs\ExamInfoManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\RulesManager.Designer.cs">
-      <DependentUpon>RulesManager.cs</DependentUpon>
+    <Compile Include="Dialogs\RuleDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RuleDialog.Designer.cs">
+      <DependentUpon>RuleDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RulesManager.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -188,11 +194,14 @@
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
     <Compile Include="Modules\Configuration\ToolsObject.cs" />
+    <Compile Include="Modules\ContextMenuConstants.cs" />
     <Compile Include="Modules\CustomRuleHelper.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\DpiExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
+    <Compile Include="Modules\IListViewObject.cs" />
+    <Compile Include="Modules\ISubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />

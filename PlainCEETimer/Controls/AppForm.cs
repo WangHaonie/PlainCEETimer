@@ -212,7 +212,7 @@ namespace PlainCEETimer.Controls
         /// </summary>
         /// <param name="Target">目标 ComboBox 控件</param>
         /// <param name="Data">DataSource</param>
-        protected void BindComboData(ComboBox Target, ComboData[] Data)
+        protected void BindComboData(ComboBoxEx Target, ComboData[] Data)
         {
             Target.DataSource = Data;
             Target.DisplayMember = nameof(ComboData.Display);

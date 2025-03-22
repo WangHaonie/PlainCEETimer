@@ -1,234 +1,31 @@
 ﻿using PlainCEETimer.Controls;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class ExamInfoManager : AppDialog
+    public sealed class ExamInfoManager : ListViewDialogBase<ExamInfoObject, ExamInfoDialog>
     {
-        public ExamInfoObject[] ExamInfo { get; set; }
-
-        private readonly HashSet<ExamInfoObject> ItemDataSet = [];
-        private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
-        private ContextMenu ContextMenuMain;
-        private MenuItem ContextEdit;
-        private MenuItem ContextDelete;
-        private MenuItem ContextSelectAll;
-        private ContextMenuStrip ContextMenuStripMain;
-        private ToolStripMenuItem StripEdit;
-        private ToolStripMenuItem StripDelete;
-        private ToolStripMenuItem StripSelectAll;
-
-        public ExamInfoManager() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
+        protected override void InitializeDialog()
         {
-            CompositedStyle = true;
-            InitializeComponent();
-            InitializeExtra();
+            DialogTitle = "管理考试信息 - 高考倒计时";
+            ContentDescription = "考试信息";
+            ListViewHeaders = ["考试名称", "开始日期和时间", "结束日期和时间"];
+            ListViewWidth = 440;
         }
 
-        protected override void OnLoad()
+        protected override void AddItem(ExamInfoObject Data, bool IsSelected = false)
         {
-            if (ExamInfo != null)
+            AddItem(new ListViewItem([Data.Name, Data.Start.ToString(App.DateTimeFormat), Data.End.ToString(App.DateTimeFormat)])
             {
-                if (ExamInfo.Count() == 0)
-                {
-                    ListViewMain.AutoAdjustColumnWidth();
-                }
-                else
-                {
-                    ListViewMain.Suspend(() =>
-                    {
-                        foreach (var Info in ExamInfo)
-                        {
-                            AddItem(Info);
-                            ItemDataSet.Add(Info);
-                        }
-
-                        ListViewMain.AutoAdjustColumnWidth();
-                    });
-                }
-            }
-
-            ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.Control && e.KeyCode == Keys.A)
-            {
-                ContextSelectAll_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                ContextDelete_Click(null, null);
-            }
-
-            e.Handled = true;
-            base.OnKeyDown(e);
-        }
-
-        protected override void ButtonA_Click()
-        {
-            ExamInfo = ListViewMain.GetData<ExamInfoObject>();
-            base.ButtonA_Click();
-        }
-
-        private void ListViewMain_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                var MouseLocation = e.Location;
-
-                if (ListViewMain.GetItemAt(MouseLocation.X, MouseLocation.Y) != null)
-                {
-                    ContextEdit_Click(null, null);
-                }
-            }
-        }
-
-        private void ButtonOperation_Click(object sender, EventArgs e)
-        {
-            ShowContextMenu(ButtonOperation, ContextMenuMain, ContextMenuStripMain, UseClassicContextMenu);
-        }
-
-        private void ContextAdd_Click(object sender, EventArgs e)
-        {
-            ExamInfoDialog Dialog = new();
-
-            if (Dialog.ShowDialog() == DialogResult.OK)
-            {
-                AddItemSafe(Dialog.ExamInfo);
-            }
-        }
-
-        private void ContextEdit_Click(object sender, EventArgs e)
-        {
-            var TargetItem = ListViewMain.SelectedItem;
-            ExamInfoDialog Dialog = new((ExamInfoObject)TargetItem.Tag);
-
-            if (Dialog.ShowDialog() == DialogResult.OK)
-            {
-                AddItemSafe(Dialog.ExamInfo, TargetItem);
-            }
-        }
-
-        private void ContextDelete_Click(object sender, EventArgs e)
-        {
-            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn("确认删除所选考试信息吗？此操作将不可撤销！", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                ListViewMain.RemoveSelectedItems();
-                UserChanged();
-            }
-        }
-
-        private void ContextSelectAll_Click(object sender, EventArgs e)
-        {
-            ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
-        }
-
-        private void InitializeExtra()
-        {
-            if (UseClassicContextMenu)
-            {
-                ContextMenuMain = CreateNew
-                ([
-                    AddItem("添加(&A)", ContextAdd_Click),
-                    AddSeparator(),
-                    ContextEdit = AddItem("编辑(&E)", ContextEdit_Click),
-                    ContextDelete = AddItem("删除(&D)", ContextDelete_Click),
-                    AddSeparator(),
-                    ContextSelectAll = AddItem("全选(&Q)", ContextSelectAll_Click)
-                ]);
-
-                ListViewMain.ContextMenu = ContextMenuMain;
-                ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
-            }
-            else
-            {
-                ContextMenuStripMain = CreateNewStrip
-                ([
-                    AddStripItem("添加(&A)", ContextAdd_Click),
-                    AddStripSeparator(),
-                    StripEdit = AddStripItem("编辑(&E)", ContextEdit_Click),
-                    StripDelete = AddStripItem("删除(&D)", ContextDelete_Click),
-                    AddStripSeparator(),
-                    StripSelectAll = AddStripItem("全选(&Q)", ContextSelectAll_Click)
-                ]);
-
-                ListViewMain.ContextMenuStrip = ContextMenuStripMain;
-                ContextMenuStripMain.Opening += (_, _) => HandleMenuItemEnabling();
-            }
-
-            ListViewMain.ListViewItemSorter = new PlainComparer<ExamInfoObject>();
-        }
-
-        private void HandleMenuItemEnabling()
-        {
-            var SelectedCount = ListViewMain.SelectedItemsCount;
-            var EnableDelete = SelectedCount != 0;
-            var EnableEdit = SelectedCount == 1;
-            var EnableSelectAll = ListViewMain.ItemsCount != 0;
-
-            if (UseClassicContextMenu)
-            {
-                ContextDelete.Enabled = EnableDelete;
-                ContextEdit.Enabled = EnableEdit;
-                ContextSelectAll.Enabled = EnableSelectAll;
-            }
-            else
-            {
-                StripDelete.Enabled = EnableDelete;
-                StripEdit.Enabled = EnableEdit;
-                StripSelectAll.Enabled = EnableSelectAll;
-            }
-        }
-
-        private void AddItemSafe(ExamInfoObject Info, ListViewItem Item = null)
-        {
-            var EditMode = Item != null;
-
-            if (ItemDataSet.Add(Info))
-            {
-                if (EditMode)
-                {
-                    ListViewMain.Items.Remove(Item);
-                }
-
-                ListViewMain.Suspend(() =>
-                {
-                    ListViewMain.SelectAll(false);
-                    AddItem(Info, true);
-                    ListViewMain.Sort();
-                    ListViewMain.AutoAdjustColumnWidth();
-                });
-
-                UserChanged();
-            }
-            else
-            {
-                MessageX.Error(EditMode ? "检测到此考试信息在编辑后与现有的重复。\n\n请重新编辑！" : "检测待添加的考试信息与现有的重复。\n\n请重新添加！");
-                ExamInfoDialog Dialog = new(Info);
-
-                if (Dialog.ShowDialog() == DialogResult.OK)
-                {
-                    AddItemSafe(Dialog.ExamInfo);
-                }
-            }
-        }
-
-        private void AddItem(ExamInfoObject Info, bool IsSelected = false)
-        {
-            ListViewMain.Items.Add(new ListViewItem([Info.Name, Info.Start.ToString(App.DateTimeFormat), Info.End.ToString(App.DateTimeFormat)])
-            {
-                Tag = Info,
+                Tag = Data,
                 Selected = IsSelected,
                 Focused = IsSelected
-            });
+            }, Data);
         }
+
+        protected override ISubDialog<ExamInfoObject, ExamInfoDialog> GetSubDialogInstance(ExamInfoObject Existing = null)
+            => new ExamInfoDialog(Existing);
     }
 }

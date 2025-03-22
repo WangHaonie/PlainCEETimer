@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -15,16 +14,19 @@ namespace PlainCEETimer.Controls
             get;
             set
             {
-                foreach (var Title in value)
+                if (value?.Length != 0)
                 {
-                    Columns.Add(new ColumnHeader() { Text = Title });
+                    Columns.Clear();
+
+                    foreach (var Title in value)
+                    {
+                        Columns.Add(new ColumnHeader() { Text = Title });
+                    }
                 }
 
                 field = value;
             }
         }
-
-        public ListViewItem SelectedItem => SelectedItems[0];
 
         public ListViewEx()
         {
@@ -46,17 +48,6 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        public void RemoveSelectedItems()
-        {
-            Suspend(() =>
-            {
-                foreach (ListViewItem Item in SelectedItems)
-                {
-                    Items.Remove(Item);
-                }
-            });
-        }
-
         public void Suspend(Action Method)
         {
             BeginUpdate();
@@ -71,11 +62,6 @@ namespace PlainCEETimer.Controls
             {
                 column.Width = -2;
             }
-        }
-
-        public T[] GetData<T>()
-        {
-            return [.. Items.Cast<ListViewItem>().Select(x => (T)x.Tag)];
         }
 
         protected override void OnHandleCreated(EventArgs e)

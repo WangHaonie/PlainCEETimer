@@ -8,22 +8,22 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class ExamInfoDialog : AppDialog
+    public partial class ExamInfoDialog : AppDialog, ISubDialog<ExamInfoObject, ExamInfoDialog>
     {
-        public ExamInfoObject ExamInfo { get; private set; }
+        public ExamInfoObject Data { get; set; }
 
         private string CurrentExamName;
 
-        public ExamInfoDialog() : base(AppDialogProp.BindButtons)
+        public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppDialogProp.BindButtons)
         {
             InitializeComponent();
-        }
 
-        public ExamInfoDialog(ExamInfoObject Info) : this()
-        {
-            TextBoxName.Text = Info.Name;
-            DTPStart.Value = Info.Start;
-            DTPEnd.Value = Info.End;
+            if (Existing != null)
+            {
+                TextBoxName.Text = Existing.Name;
+                DTPStart.Value = Existing.Start;
+                DTPEnd.Value = Existing.End;
+            }
         }
 
         protected override void OnLoad()
@@ -94,7 +94,7 @@ namespace PlainCEETimer.Dialogs
                 }
             }
 
-            ExamInfo = new()
+            Data = new()
             {
                 Name = CurrentExamName,
                 Start = StartTime,

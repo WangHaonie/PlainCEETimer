@@ -75,12 +75,7 @@ namespace PlainCEETimer.Modules
         {
             get
             {
-                if (field == null)
-                {
-                    field = ConfigHandler.Read();
-                }
-
-                return field;
+                return field ??= ConfigHandler.Read();
             }
             set
             {
@@ -275,7 +270,7 @@ namespace PlainCEETimer.Modules
             var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
             File.AppendAllText(ExFilePath, ExOutput);
 
-            var _DialogResult = MessageX.Error("程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
+            var _DialogResult = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
 
             if (_DialogResult != DialogResult.None)
             {

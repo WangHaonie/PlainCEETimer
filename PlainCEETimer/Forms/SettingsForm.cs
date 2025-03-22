@@ -123,12 +123,12 @@ namespace PlainCEETimer.Forms
         {
             ExamInfoManager ExamMan = new()
             {
-                ExamInfo = EditedExamInfo
+                Data = EditedExamInfo
             };
 
             if (ExamMan.ShowDialog() == DialogResult.OK)
             {
-                EditedExamInfo = ExamMan.ExamInfo;
+                EditedExamInfo = ExamMan.Data;
                 SettingsChanged(sender, e);
             }
         }
@@ -175,15 +175,15 @@ namespace PlainCEETimer.Forms
         {
             RulesManager Manager = new()
             {
-                CustomRules = EditedCustomRules,
-                ShowWarning = !CheckBoxRulesMan.Checked,
-                GlobalCustomTexts = EditedCustomTexts
+                Data = EditedCustomRules,
+                ColorPresets = SelectedColors,
+                CustomTextPreset = EditedCustomTexts
             };
 
             if (Manager.ShowDialog() == DialogResult.OK)
             {
-                EditedCustomRules = Manager.CustomRules;
-                EditedCustomTexts = Manager.GlobalCustomTexts;
+                EditedCustomRules = Manager.Data;
+                EditedCustomTexts = Manager.CustomTextPreset;
                 SettingsChanged(sender, e);
             }
         }
@@ -338,33 +338,6 @@ namespace PlainCEETimer.Forms
             LabelScreens.Enabled = LabelChar1.Enabled = ComboBoxScreens.Enabled = !CheckBoxDraggable.Checked;
         }
 
-        private void ComboBoxes_DropDown(object sender, EventArgs e)
-        {
-            #region
-            /*
-             
-            DropDown 自适应大小 参考:
-
-            c# - Auto-width of ComboBox's content - Stack Overflow
-            https://stackoverflow.com/a/16435431/21094697
-            c# - ComboBox auto DropDownWidth regardless of DataSource type - Stack Overflow
-            https://stackoverflow.com/a/69350288/21094697
-             
-             */
-
-            var ComboBoxes = (ComboBox)sender;
-            int MaxWidth = 0;
-
-            foreach (var Item in ComboBoxes.Items)
-            {
-                MaxWidth = Math.Max(MaxWidth, TextRenderer.MeasureText(ComboBoxes.GetItemText(Item), ComboBoxes.Font).Width);
-            }
-
-            ComboBoxes.DropDownWidth = MaxWidth + SystemInformation.VerticalScrollBarWidth;
-
-            #endregion
-        }
-
         private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
         {
             SettingsChanged(sender, e);
@@ -397,16 +370,16 @@ namespace PlainCEETimer.Forms
             {
                 ContextMenuDefaultColor = CreateNew
                 ([
-                    AddItem("白底(&L)", ContextLight_Click),
-                    AddItem("黑底(&D)", ContextDark_Click)
+                    AddItem(ContextMenuConstants.Light, ContextLight_Click),
+                    AddItem(ContextMenuConstants.Dark, ContextDark_Click)
                 ]);
             }
             else
             {
                 ContextMenuStripDefaultColor = CreateNewStrip
                 ([
-                    AddStripItem("白底(&L)", ContextLight_Click),
-                    AddStripItem("黑底(&D)", ContextDark_Click)
+                    AddStripItem(ContextMenuConstants.Light, ContextLight_Click),
+                    AddStripItem(ContextMenuConstants.Dark, ContextDark_Click)
                 ]);
             }
 
@@ -507,6 +480,7 @@ namespace PlainCEETimer.Forms
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
             UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
             ChangePptsvcStyle(null, EventArgs.Empty);
+            SelectedColors = AppConfig.Appearance.Colors;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
             ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
             EditedCustomTexts = AppConfig.Display.CustomTexts;
@@ -654,7 +628,7 @@ namespace PlainCEETimer.Forms
                     LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
                     break;
                 case SettingsArea.LastColor:
-                    SetLabelColors(AppConfig.Appearance.Colors);
+                    SetLabelColors(SelectedColors);
                     break;
                 case SettingsArea.SelectedColor:
                     LabelPreviewColor1.BackColor = LabelColor12.BackColor;

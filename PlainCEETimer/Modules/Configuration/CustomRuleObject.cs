@@ -6,7 +6,7 @@ using System.Drawing;
 namespace PlainCEETimer.Modules.Configuration
 {
     [JsonConverter(typeof(CustomRulesConverter))]
-    public sealed class CustomRuleObject : IComparable<CustomRuleObject>, IEquatable<CustomRuleObject>
+    public sealed class CustomRuleObject : IListViewObject<CustomRuleObject>
     {
         public CountdownPhase Phase { get; set; }
 
@@ -17,6 +17,8 @@ namespace PlainCEETimer.Modules.Configuration
         public Color Back { get; set; }
 
         public string Text { get; set; }
+
+        public bool CanExecute() => true;
 
         public int CompareTo(CustomRuleObject other)
         {

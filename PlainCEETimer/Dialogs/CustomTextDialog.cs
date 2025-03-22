@@ -7,7 +7,7 @@ namespace PlainCEETimer.Dialogs
 {
     public partial class CustomTextDialog : AppDialog
     {
-        public string[] CustomText { get; set; } = [];
+        public string[] CustomTexts { get; set; } = [];
 
         private string P1TextRaw;
         private string P2TextRaw;
@@ -22,14 +22,14 @@ namespace PlainCEETimer.Dialogs
 
         protected override void OnLoad()
         {
-            TextBoxP1.Text = CustomText[0];
-            TextBoxP2.Text = CustomText[1];
-            TextBoxP3.Text = CustomText[2];
+            TextBoxP1.Text = CustomTexts[0];
+            TextBoxP2.Text = CustomTexts[1];
+            TextBoxP3.Text = CustomTexts[2];
             TextBoxP1.TextChanged += OnUserChanged;
             TextBoxP2.TextChanged += OnUserChanged;
             TextBoxP3.TextChanged += OnUserChanged;
 
-            LabelInfo.Text = $"自定义倒计时的内容，用占位符表示变量:\n{Placeholders.PH_PHINFO}\n比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}.{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
+            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Placeholders.PH_PHINFO}。比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}:{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
         }
 
         protected override void AdjustUI()
@@ -59,17 +59,16 @@ namespace PlainCEETimer.Dialogs
                 return;
             }
 
-            CustomText = tmp;
+            CustomTexts = tmp;
             base.ButtonA_Click();
         }
 
         private void ButtonReset_Click(object sender, EventArgs e)
         {
-            UserChanged();
-
             TextBoxP1.Text = Placeholders.PH_P1;
             TextBoxP2.Text = Placeholders.PH_P2;
             TextBoxP3.Text = Placeholders.PH_P3;
+            UserChanged();
         }
 
         private string RemoveInvalid(string s)

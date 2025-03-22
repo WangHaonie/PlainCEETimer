@@ -10,9 +10,6 @@ namespace PlainCEETimer.Modules
 
         private static readonly string[] AllPHs = [Placeholders.PH_EXAMNAME, Placeholders.PH_DAYS, Placeholders.PH_HOURS, Placeholders.PH_MINUTES, Placeholders.PH_SECONDS, Placeholders.PH_CEILINGDAYS, Placeholders.PH_TOTALHOURS, Placeholders.PH_TOTALMINUTES, Placeholders.PH_TOTALSECONDS];
 
-        public static TimeSpan GetExamTick(string str)
-            => GetTimeSpan(str.Split(TsSeparator));
-
         public static string GetExamTickText(TimeSpan timeSpan)
             => $"{timeSpan.Days}{TsSeparator[0]}{timeSpan.Hours}{TsSeparator[1]}{timeSpan.Minutes}{TsSeparator[2]}{timeSpan.Seconds}{TsSeparator[3]}";
 
@@ -23,13 +20,6 @@ namespace PlainCEETimer.Modules
                 throw new Exception();
             }
         }
-
-        public static CountdownPhase GetPhase(string s) => s switch
-        {
-            Placeholders.PH_LEFT => CountdownPhase.P2,
-            Placeholders.PH_PAST => CountdownPhase.P3,
-            _ => CountdownPhase.P1
-        };
 
         public static CountdownPhase GetPhase(int i) => i switch
         {
@@ -135,23 +125,6 @@ namespace PlainCEETimer.Modules
             Warning = "";
             IsValid = true;
             return;
-        }
-
-        private static TimeSpan GetTimeSpan(string[] Splited)
-        {
-            int d = int.Parse(Splited[0]);
-            int h = int.Parse(Splited[1]);
-            int m = int.Parse(Splited[2]);
-            int s = int.Parse(Splited[3]);
-
-            var ts = new TimeSpan(d, h, m, s);
-
-            if (ts.TotalSeconds is >= ConfigPolicy.MinTick and <= ConfigPolicy.MaxTick)
-            {
-                return ts;
-            }
-
-            throw new Exception();
         }
 
         private static string GetIndexHint(int Index) => Index switch
