@@ -6,7 +6,7 @@ using System;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class ExamInfoObject : IComparable<ExamInfoObject>, IEquatable<ExamInfoObject>
+    public sealed class ExamInfoObject : IListViewObject<ExamInfoObject>
     {
         public string Name
         {
@@ -57,5 +57,7 @@ namespace PlainCEETimer.Modules.Configuration
                 return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode();
             }
         }
+
+        public bool CanExecute() => true;
     }
 }

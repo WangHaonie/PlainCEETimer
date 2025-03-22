@@ -123,12 +123,12 @@ namespace PlainCEETimer.Forms
         {
             ExamInfoManager ExamMan = new()
             {
-                ExamInfo = EditedExamInfo
+                Data = EditedExamInfo
             };
 
             if (ExamMan.ShowDialog() == DialogResult.OK)
             {
-                EditedExamInfo = ExamMan.ExamInfo;
+                EditedExamInfo = ExamMan.Data;
                 SettingsChanged(sender, e);
             }
         }
@@ -175,15 +175,16 @@ namespace PlainCEETimer.Forms
         {
             RulesManager Manager = new()
             {
-                CustomRules = EditedCustomRules,
-                ShowWarning = !CheckBoxRulesMan.Checked,
-                GlobalCustomTexts = EditedCustomTexts
+                Data = EditedCustomRules
+                //CustomRules = EditedCustomRules,
+                //ShowWarning = !CheckBoxRulesMan.Checked,
+                //GlobalCustomTexts = EditedCustomTexts
             };
 
             if (Manager.ShowDialog() == DialogResult.OK)
             {
-                EditedCustomRules = Manager.CustomRules;
-                EditedCustomTexts = Manager.GlobalCustomTexts;
+                EditedCustomRules = Manager.Data;
+                //EditedCustomTexts = Manager.GlobalCustomTexts;
                 SettingsChanged(sender, e);
             }
         }

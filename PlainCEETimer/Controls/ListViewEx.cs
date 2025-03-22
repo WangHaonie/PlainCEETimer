@@ -15,9 +15,14 @@ namespace PlainCEETimer.Controls
             get;
             set
             {
-                foreach (var Title in value)
+                if (value != null && value.Length != 0)
                 {
-                    Columns.Add(new ColumnHeader() { Text = Title });
+                    Columns.Clear();
+
+                    foreach (var Title in value)
+                    {
+                        Columns.Add(new ColumnHeader() { Text = Title });
+                    }
                 }
 
                 field = value;
@@ -44,17 +49,6 @@ namespace PlainCEETimer.Controls
                     Item.Selected = IsSelected;
                 }
             }
-        }
-
-        public void RemoveSelectedItems()
-        {
-            Suspend(() =>
-            {
-                foreach (ListViewItem Item in SelectedItems)
-                {
-                    Items.Remove(Item);
-                }
-            });
         }
 
         public void Suspend(Action Method)
