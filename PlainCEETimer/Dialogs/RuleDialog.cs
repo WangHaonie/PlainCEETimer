@@ -63,6 +63,19 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
+        protected override void AdjustUI()
+        {
+            CompactControlsX(LabelChar7, LabelFore);
+            CompactControlsX(LabelBack, LabelChar7);
+
+            WhenHighDpi(() =>
+            {
+                AlignControlsX([ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds], LabelChar1);
+                AlignControlsX(TextBoxCustomText, LabelCustomText);
+
+            });
+        }
+
         protected override void ButtonA_Click()
         {
             var d = (int)NUDDays.Value;
@@ -151,8 +164,6 @@ namespace PlainCEETimer.Dialogs
                     SaveTemp();
                 }
             }
-
-            ColorDialogMain.Dispose();
         }
 
         private void TextBoxCustomText_TextChanged(object sender, EventArgs e)
@@ -162,6 +173,13 @@ namespace PlainCEETimer.Dialogs
                 WhenLoaded(SaveTemp);
             }
 
+            UserChanged();
+        }
+
+        private void LinkReset_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var flag = (LinkLabel)sender == LinkResetColor;
+            GetNewData(false, flag, !flag);
             UserChanged();
         }
 
@@ -197,13 +215,6 @@ namespace PlainCEETimer.Dialogs
             LabelColorPreview.ForeColor = fore;
             LabelBack.BackColor = back;
             LabelColorPreview.BackColor = back;
-        }
-
-        private void LinkReset_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            var flag = (LinkLabel)sender == LinkResetColor;
-            GetNewData(false, flag, !flag);
-            UserChanged();
         }
     }
 }

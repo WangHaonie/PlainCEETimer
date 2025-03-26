@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,7 +32,7 @@ namespace PlainCEETimer.Controls
         protected int ListViewWidth
         {
             get => ListViewMain.Size.Width;
-            set => ListViewMain.Size = new(value, 218);
+            set => ListViewMain.Size = new Size(value, 218).ScaleToDpi();
         }
 
         protected ListViewItem SelectedItem
@@ -60,6 +61,7 @@ namespace PlainCEETimer.Controls
         protected ListViewDialogBase() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
         {
             CompositedStyle = true;
+            AdjustBeforeLoad = true;
             InitializeComponent();
             InitializeDialog();
         }
@@ -84,14 +86,17 @@ namespace PlainCEETimer.Controls
         /// <returns><see cref="TSubDialog"/> 实例</returns>
         protected abstract ISubDialog<TData, TSubDialog> GetSubDialogInstance(TData Existing = default);
 
-        protected override void OnLoad()
+        protected override void AdjustUI()
         {
             CompactControlsY(ButtonA, PanelMain);
             CompactControlsY(ButtonB, PanelMain);
             CompactControlsY(ButtonOperation, PanelMain);
             AlignControlsREx(ButtonA, ButtonB, PanelMain);
             AlignControlsL(ButtonOperation, ButtonA, PanelMain);
+        }
 
+        protected override void OnLoad()
+        {
             if (Data?.Count() != 0)
             {
                 ListViewMain.Suspend(() =>
@@ -295,10 +300,7 @@ namespace PlainCEETimer.Controls
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new(460, 176);
-            Controls.Add(ButtonOperation);
-            Controls.Add(ButtonB);
-            Controls.Add(ButtonA);
-            Controls.Add(PanelMain);
+            Controls.AddRange([ButtonOperation, ButtonB, ButtonA, PanelMain]);
             Font = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;

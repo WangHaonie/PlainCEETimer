@@ -206,8 +206,6 @@ namespace PlainCEETimer.Forms
                 SettingsChanged(sender, e);
                 UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: FontDialogMain.Font);
             }
-
-            FontDialogMain.Dispose();
         }
 
         private void ButtonDefaultFont_Click(object sender, EventArgs e)
@@ -227,8 +225,6 @@ namespace PlainCEETimer.Forms
                 LabelSender.BackColor = ColorDialogMain.Color;
                 UpdateSettingsArea(SettingsArea.SelectedColor);
             }
-
-            ColorDialogMain.Dispose();
         }
 
         private void ColorLabels_MouseDown(object sender, MouseEventArgs e)
@@ -661,9 +657,9 @@ namespace PlainCEETimer.Forms
                 using var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
                 if (CheckBoxStartup.Checked)
-                    reg.SetValue(App.AppNameEng, $"\"{App.CurrentExecutablePath}\"");
+                    reg.SetValue(App.AppNameEngOld, $"\"{App.CurrentExecutablePath}\"");
                 else
-                    reg.DeleteValue(App.AppNameEng, false);
+                    reg.DeleteValue(App.AppNameEngOld, false);
 
                 AppConfig.General = new()
                 {

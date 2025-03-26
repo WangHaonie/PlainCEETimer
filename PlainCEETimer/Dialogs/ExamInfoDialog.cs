@@ -28,14 +28,17 @@ namespace PlainCEETimer.Dialogs
 
         protected override void OnLoad()
         {
+            TextBoxName_TextChanged(null, EventArgs.Empty);
+        }
+
+        protected override void AdjustUI()
+        {
             WhenHighDpi(() =>
             {
                 AlignControlsX(TextBoxName, LabelName);
                 AlignControlsX(DTPStart, LabelStart);
                 AlignControlsX(DTPEnd, LabelEnd);
             });
-
-            TextBoxName_TextChanged(null, EventArgs.Empty);
         }
 
         private void DTP_ValueChanged(object sender, EventArgs e)

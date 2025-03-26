@@ -89,7 +89,7 @@ namespace PlainCEETimer.Modules
 
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
-        public const string AppNameEngBak = "CEETimerCSharpWinForms";
+        public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppNativesDll = "PlainCEETimer.Natives.dll";
         public const string AppVersion = "3.0.9";
         public const string AppBuildDate = "2025/03/03";
@@ -105,7 +105,7 @@ namespace PlainCEETimer.Modules
 
         private const string ExFileName = "UnhandledException.txt";
         private static bool MainInstance;
-        private static readonly string PipeName = $"{AppNameEngBak}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
+        private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
         private static readonly MessageBoxHelper MessageX = new();
         private static Mutex MainMutex;
@@ -127,7 +127,7 @@ namespace PlainCEETimer.Modules
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (_, e) => HandleException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-            MainMutex = new Mutex(true, $"{AppNameEngBak}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
+            MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
 
             if (IsNewProcess)
             {

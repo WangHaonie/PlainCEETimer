@@ -1,7 +1,9 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
@@ -22,7 +24,7 @@ namespace PlainCEETimer.Dialogs
 
             ButtonGlobal = new Button()
             {
-                Size = new(90, 23),
+                Size = new Size(90, 23).ScaleToDpi(),
                 Text = "全局设置(G)",
                 UseVisualStyleBackColor = true
             };
