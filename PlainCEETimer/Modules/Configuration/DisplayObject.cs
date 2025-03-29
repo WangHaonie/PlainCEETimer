@@ -56,7 +56,7 @@ namespace PlainCEETimer.Modules.Configuration
                 {
                     foreach (var Text in value)
                     {
-                        CustomRuleHelper.VerifyText(Text);
+                        Validator.EnsureCustomTextLength(Text);
                     }
                 }
 

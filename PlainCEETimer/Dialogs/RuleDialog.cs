@@ -59,8 +59,9 @@ namespace PlainCEETimer.Dialogs
             {
                 GetNewData();
                 ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
-                TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
             }
+
+            TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
         }
 
         protected override void AdjustUI()
@@ -92,7 +93,7 @@ namespace PlainCEETimer.Dialogs
             var Fore = LabelFore.BackColor;
             var Back = LabelBack.BackColor;
 
-            if (!ColorHelper.IsNiceContrast(Fore, Back))
+            if (!Validator.IsNiceContrast(Fore, Back))
             {
                 MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
                 return;
@@ -100,9 +101,9 @@ namespace PlainCEETimer.Dialogs
 
             var Text = TextBoxCustomText.Text.RemoveIllegalChars();
 
-            if (!(bool)CustomRuleHelper.CheckCustomText([Text], out string Error, ToBoolean: true) && !string.IsNullOrWhiteSpace(Error))
+            if (!Validator.VerifyCustomText(Text, out string ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
             {
-                MessageX.Error(Error);
+                MessageX.Error(ErrorMsg);
                 return;
             }
 

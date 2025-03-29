@@ -342,7 +342,7 @@ namespace PlainCEETimer.Forms
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
             IsCeiling = AppConfig.Display.Ceiling;
-            IsShowEnd = GetEndPast(AppConfig.Display.EndIndex);
+            IsShowEnd = AppConfig.Display.EndIndex is 1 or 2;
             IsShowPast = AppConfig.Display.EndIndex == 2;
             IsDraggable = AppConfig.Display.Draggable;
             UniTopMost = AppConfig.General.UniTopMost;
@@ -354,7 +354,6 @@ namespace PlainCEETimer.Forms
             ShowTrayIcon = AppConfig.General.TrayIcon;
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
-            ColorDialogEx.CustomColorCollection = AppConfig.CustomColors;
             CountdownColors = AppConfig.Appearance.Colors;
         }
 

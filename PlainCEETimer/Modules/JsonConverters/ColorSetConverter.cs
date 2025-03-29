@@ -13,10 +13,10 @@ namespace PlainCEETimer.Modules.JsonConverters
 
             if (Colors.Length == 2)
             {
-                var Fore = ColorHelper.GetColor(Colors[0]);
-                var Back = ColorHelper.GetColor(Colors[1]);
+                var Fore = Validator.GetColor(Colors[0]);
+                var Back = Validator.GetColor(Colors[1]);
 
-                if (ColorHelper.IsNiceContrast(Fore, Back))
+                if (Validator.IsNiceContrast(Fore, Back))
                 {
                     return new ColorSetObject(Fore, Back);
                 }

@@ -18,6 +18,9 @@ namespace PlainCEETimer.Modules
         public static bool AllowClosing { get; private set; }
         public static bool IsAdmin { get; private set; }
         public static Icon AppIcon { get; private set; }
+        public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
+        public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
+        public static string ConfigFilePath => field = $"{CurrentExecutableDir}{AppNameEng}.config";
 
         public static int OSBuild
         {
@@ -32,51 +35,9 @@ namespace PlainCEETimer.Modules
             }
         }
 
-        public static string CurrentExecutableDir
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(field))
-                {
-                    field = AppDomain.CurrentDomain.BaseDirectory;
-                }
-
-                return field;
-            }
-        }
-
-        public static string CurrentExecutablePath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(field))
-                {
-                    field = Application.ExecutablePath;
-                }
-
-                return field;
-            }
-        }
-
-        public static string ConfigFilePath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(field))
-                {
-                    field = $"{CurrentExecutableDir}{AppNameEng}.config";
-                }
-
-                return field;
-            }
-        }
-
         public static ConfigObject AppConfig
         {
-            get
-            {
-                return field ??= ConfigHandler.Read();
-            }
+            get => field ??= ConfigHandler.Read();
             set
             {
                 field = value;
@@ -270,11 +231,11 @@ namespace PlainCEETimer.Modules
             var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
             File.AppendAllText(ExFilePath, ExOutput);
 
-            var _DialogResult = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
+            var Result = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
 
-            if (_DialogResult != DialogResult.None)
+            if (Result != DialogResult.None)
             {
-                Shutdown(Restart: _DialogResult == DialogResult.Yes);
+                Shutdown(Restart: Result == DialogResult.Yes);
             }
         }
 

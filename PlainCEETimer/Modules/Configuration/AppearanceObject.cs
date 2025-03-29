@@ -25,7 +25,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                     for (int i = 0; i < 4; i++)
                     {
-                        if (!ColorHelper.IsNiceContrast(value[i].Fore, value[i].Back))
+                        if (!Validator.IsNiceContrast(value[i].Fore, value[i].Back))
                         {
                             throw new Exception();
                         }

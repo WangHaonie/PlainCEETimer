@@ -53,10 +53,13 @@ namespace PlainCEETimer.Dialogs
             P3TextRaw = RemoveInvalid(TextBoxP3.Text);
             string[] tmp = [P1TextRaw, P2TextRaw, P3TextRaw];
 
-            if (!(bool)CustomRuleHelper.CheckCustomText(tmp, out string ErrorMsg) && !string.IsNullOrWhiteSpace(ErrorMsg))
+            for (int i = 0; i < 3; i++)
             {
-                MessageX.Error(ErrorMsg);
-                return;
+                if (!Validator.VerifyCustomText(tmp[i], out string ErrorMsg, i + 1) && !string.IsNullOrEmpty(ErrorMsg))
+                {
+                    MessageX.Error(ErrorMsg);
+                    return;
+                }
             }
 
             CustomTexts = tmp;

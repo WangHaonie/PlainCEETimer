@@ -8,7 +8,7 @@ namespace PlainCEETimer.Forms
 {
     public partial class AboutForm : AppForm
     {
-        private bool IsCheckingUpdate = false;
+        private bool IsCheckingUpdate;
 
         public AboutForm()
         {

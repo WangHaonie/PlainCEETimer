@@ -7,8 +7,7 @@ namespace PlainCEETimer.Controls
 {
     public sealed class ColorDialogEx : ColorDialog
     {
-        public static int[] CustomColorCollection { get; set; }
-
+        private static int[] CustomColorCollection = App.AppConfig.CustomColors;
         private int[] PreviousCustomColors;
 
         public ColorDialogEx()

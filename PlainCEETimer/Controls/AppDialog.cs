@@ -59,12 +59,6 @@ namespace PlainCEETimer.Controls
             AlignControlsR(ButtonA, ButtonB, PanelMain);
         }
 
-        protected void EnablePanelAutoSize(AutoSizeMode Mode)
-        {
-            PanelMain.AutoSize = true;
-            PanelMain.AutoSizeMode = Mode;
-        }
-
         protected void UserChanged()
         {
             WhenLoaded(() =>
