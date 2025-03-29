@@ -32,7 +32,7 @@ namespace PlainCEETimer.Controls
         protected int ListViewWidth
         {
             get => ListViewMain.Size.Width;
-            set => ListViewMain.Size = new Size(value, 218).ScaleToDpi();
+            set => ListViewMain.Size = new SmartSize(value, 218);
         }
 
         protected ListViewItem SelectedItem
@@ -58,7 +58,7 @@ namespace PlainCEETimer.Controls
         private ToolStripMenuItem StripDelete;
         private ToolStripMenuItem StripSelectAll;
 
-        protected ListViewDialogBase() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
+        protected ListViewDialogBase() : base(AppDialogProp.All)
         {
             CompositedStyle = true;
             AdjustBeforeLoad = true;

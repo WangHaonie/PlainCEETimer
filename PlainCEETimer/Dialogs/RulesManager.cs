@@ -24,7 +24,7 @@ namespace PlainCEETimer.Dialogs
 
             ButtonGlobal = new Button()
             {
-                Size = new Size(90, 23).ScaleToDpi(),
+                Size = new SmartSize(90, 23),
                 Text = "全局设置(G)",
                 UseVisualStyleBackColor = true
             };

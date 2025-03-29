@@ -69,7 +69,8 @@ namespace PlainCEETimer.Modules
     public enum AppDialogProp
     {
         BindButtons = 0b01,
-        KeyPreview = 0b10
+        KeyPreview = 0b10,
+        All = BindButtons | KeyPreview
     }
 
     public enum TaskbarProgressState

@@ -31,6 +31,8 @@ namespace PlainCEETimer.Modules.Configuration
         [JsonConverter(typeof(ExamTimeConverter))]
         public DateTime End { get; set; } = DateTime.Now;
 
+        public bool CanExecute() => true;
+
         public int CompareTo(ExamInfoObject other)
             => other == null ? 1 : Start.CompareTo(other.Start);
 
@@ -57,7 +59,5 @@ namespace PlainCEETimer.Modules.Configuration
                 return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode();
             }
         }
-
-        public bool CanExecute() => true;
     }
 }

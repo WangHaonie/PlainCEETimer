@@ -19,14 +19,10 @@ namespace PlainCEETimer.Modules.Configuration
 
         public CustomRuleObject[] CustomRules
         {
-            get => field ?? [];
+            get;
             set
             {
-                if (value == null)
-                {
-                    field = [];
-                }
-                else
+                if (value != null)
                 {
                     if (MainForm.ValidateNeeded)
                     {
@@ -46,7 +42,7 @@ namespace PlainCEETimer.Modules.Configuration
                     field = value;
                 }
             }
-        }
+        } = [];
 
         [JsonConverter(typeof(CustomColorsConverter))]
         public int[] CustomColors { get; set; } = DefaultValues.ColorDialogColors;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using PlainCEETimer.Controls;
+﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
@@ -34,6 +33,7 @@ namespace PlainCEETimer.Forms
         private Label[] ColorPreviewLabels;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
+        private readonly StartUp StartUp = new();
 
         public SettingsForm()
         {
@@ -460,7 +460,7 @@ namespace PlainCEETimer.Forms
 
         private void RefreshSettings()
         {
-            CheckBoxStartup.Checked = (Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)?.GetValue(App.AppNameEng) is string regvalue) && regvalue.Equals($"\"{App.CurrentExecutablePath}\"", StringComparison.OrdinalIgnoreCase);
+            CheckBoxStartup.Checked = (bool)StartUp.Operate(0);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
             CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
@@ -654,12 +654,7 @@ namespace PlainCEETimer.Forms
         {
             try
             {
-                using var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
-                if (CheckBoxStartup.Checked)
-                    reg.SetValue(App.AppNameEngOld, $"\"{App.CurrentExecutablePath}\"");
-                else
-                    reg.DeleteValue(App.AppNameEngOld, false);
+                StartUp.Operate(CheckBoxStartup.Checked ? 1 : 2);
 
                 AppConfig.General = new()
                 {

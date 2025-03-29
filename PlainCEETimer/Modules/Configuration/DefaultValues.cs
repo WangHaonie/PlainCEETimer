@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+﻿using PlainCEETimer.Interop;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace PlainCEETimer.Modules.Configuration
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
             IsDarkModeSupported = !File.Exists(App.ConfigFilePath)
                 && App.OSBuild >= WindowsBuilds.Windows10_1903
-                && (int)(Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")?.GetValue("AppsUseLightTheme") ?? 1) == 0;
+                && NativeInterop.ShouldAppsUseDarkMode();
         }
     }
 }

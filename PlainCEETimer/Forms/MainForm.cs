@@ -117,7 +117,7 @@ namespace PlainCEETimer.Forms
             {
                 if (App.CanSaveConfig)
                 {
-                    ConfigHandler.Save();
+                    RealSaveConfig();
                 }
 
                 Countdown?.Dispose();
@@ -240,6 +240,7 @@ namespace PlainCEETimer.Forms
                 {
                     if (FormSettings.RefreshNeeded)
                     {
+                        RealSaveConfig();
                         RefreshSettings();
                     }
                 };
@@ -459,8 +460,6 @@ namespace PlainCEETimer.Forms
                         ItemIndex++;
                     }
                 }
-
-                UpdateExamSelection();
             }
             else
             {
@@ -497,9 +496,9 @@ namespace PlainCEETimer.Forms
                         ItemIndex++;
                     }
                 }
-
-                UpdateExamSelection();
             }
+
+            UpdateExamSelection();
 
             #region 来自网络
             /*
@@ -838,6 +837,11 @@ namespace PlainCEETimer.Forms
         private void SaveConfig()
         {
             App.AppConfig = AppConfig;
+        }
+
+        private void RealSaveConfig()
+        {
+            ConfigHandler.Save();
         }
 
         private void ExamAutoSwitch(object sender, EventArgs e)

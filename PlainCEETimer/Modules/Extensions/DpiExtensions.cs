@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace PlainCEETimer.Modules.Extensions
+﻿namespace PlainCEETimer.Modules.Extensions
 {
     public static class DpiExtensions
     {
@@ -8,8 +6,5 @@ namespace PlainCEETimer.Modules.Extensions
 
         public static int ScaleToDpi(this int px)
             => (int)(px * DpiRatio);
-
-        public static Size ScaleToDpi(this Size size)
-            => new(size.Width.ScaleToDpi(), size.Height.ScaleToDpi());
     }
 }

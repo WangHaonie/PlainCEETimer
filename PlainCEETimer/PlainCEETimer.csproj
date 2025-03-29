@@ -212,7 +212,10 @@
     <Compile Include="Modules\Placeholders.cs" />
     <Compile Include="Modules\PlainComparer.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
+    <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
+    <Compile Include="Modules\SmartSize.cs" />
+    <Compile Include="Modules\StartUp.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\Extensions\ValidationExtensions.cs" />
     <Compile Include="Modules\App.cs" />

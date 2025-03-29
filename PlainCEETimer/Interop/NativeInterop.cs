@@ -20,5 +20,19 @@ namespace PlainCEETimer.Interop
 
         [DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint GetDpiForSystem();
+
+        #region 来自网络
+        /*
+        
+        WinAPI 获取应用程序是否启用深色模式 参考：
+
+        How to detect Windows dark mode - Microsoft Q&A
+        https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
+
+        */
+        [DllImport("uxtheme.dll", EntryPoint = "#132", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ShouldAppsUseDarkMode();
+        #endregion
     }
 }

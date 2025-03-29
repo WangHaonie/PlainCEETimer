@@ -25,7 +25,7 @@ namespace PlainCEETimer.Dialogs
             public string Text = text;
         }
 
-        public RuleDialog() : base(AppDialogProp.BindButtons | AppDialogProp.KeyPreview)
+        public RuleDialog() : base(AppDialogProp.All)
         {
             CompositedStyle = true;
             InitializeComponent();

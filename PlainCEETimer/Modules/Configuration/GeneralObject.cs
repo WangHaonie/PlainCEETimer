@@ -8,14 +8,10 @@ namespace PlainCEETimer.Modules.Configuration
     {
         public ExamInfoObject[] ExamInfo
         {
-            get => field ?? [];
+            get;
             set
             {
-                if (value == null)
-                {
-                    field = [];
-                }
-                else
+                if (value != null)
                 {
                     if (MainForm.ValidateNeeded)
                     {
@@ -25,7 +21,7 @@ namespace PlainCEETimer.Modules.Configuration
                     field = value;
                 }
             }
-        }
+        } = [];
 
         public int ExamIndex
         {
