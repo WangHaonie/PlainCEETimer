@@ -1,6 +1,5 @@
 ﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,30 +14,10 @@ namespace PlainCEETimer.Controls
     {
         public TData[] Data { get; set; }
 
-        protected string ContentDescription { get; set; }
-
-        protected string DialogTitle
-        {
-            get => Text;
-            set => Text = value;
-        }
-
-        protected string[] ListViewHeaders
-        {
-            get => ListViewMain.Headers;
-            set => ListViewMain.Headers = value;
-        }
-
-        protected int ListViewWidth
-        {
-            get => ListViewMain.Size.Width;
-            set => ListViewMain.Size = new SmartSize(value, 218);
-        }
-
-        protected ListViewItem SelectedItem
-        {
-            get => ListViewMain.SelectedItems[0];
-        }
+        protected abstract string DialogTitle { get; }
+        protected abstract string ContentDescription { get; }
+        protected abstract string[] ListViewHeaders { get; }
+        protected abstract int ListViewWidth { get; }
 
         private readonly ListViewEx ListViewMain = new()
         {
@@ -63,14 +42,10 @@ namespace PlainCEETimer.Controls
             CompositedStyle = true;
             AdjustBeforeLoad = true;
             InitializeComponent();
-            InitializeDialog();
+            Text = DialogTitle;
+            ListViewMain.Headers = ListViewHeaders;
+            ListViewMain.Size = new SmartSize(ListViewWidth, 218);
         }
-
-        /// <summary>
-        /// 初始化 <see cref="ListViewDialogBase{TData, TSubDialog}"/> 实例。
-        /// 请务必在该方法中为以下属性赋值 DialogTitle, ContentDescription, ListViewHeaders, ListViewWidth
-        /// </summary>
-        protected abstract void InitializeDialog();
 
         /// <summary>
         /// 实现向 ListView 添加新项的逻辑。请务必在此调用基类 <see cref="AddItem(ListViewItem, TData)"/> 方法以完成添加。
@@ -174,7 +149,7 @@ namespace PlainCEETimer.Controls
 
         private void ContextEdit_Click(object sender, EventArgs e)
         {
-            var TargetItem = SelectedItem;
+            var TargetItem = ListViewMain.SelectedItems[0];
             var SubDialog = GetSubDialogInstance((TData)TargetItem.Tag);
 
             if (SubDialog.ShowDialog() == DialogResult.OK)

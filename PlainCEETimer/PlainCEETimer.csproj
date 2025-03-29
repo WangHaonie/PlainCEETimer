@@ -187,7 +187,6 @@
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
     <Compile Include="Modules\Configuration\ConfigObject.cs" />
     <Compile Include="Modules\Configuration\ConfigHandler.cs" />
-    <Compile Include="Modules\ColorHelper.cs" />
     <Compile Include="Modules\Configuration\DefaultValues.cs" />
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
     <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
@@ -195,7 +194,6 @@
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
     <Compile Include="Modules\Configuration\ToolsObject.cs" />
     <Compile Include="Modules\ContextMenuConstants.cs" />
-    <Compile Include="Modules\CustomRuleHelper.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\DpiExtensions.cs" />
@@ -210,7 +208,7 @@
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
     <Compile Include="Modules\ComboData.cs" />
     <Compile Include="Modules\Placeholders.cs" />
-    <Compile Include="Modules\PlainComparer.cs" />
+    <Compile Include="Modules\PlainListViewComparer.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
@@ -221,6 +219,7 @@
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />
     <Compile Include="Interop\NativeInterop.cs" />
+    <Compile Include="Modules\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

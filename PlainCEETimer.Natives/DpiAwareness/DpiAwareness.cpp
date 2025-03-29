@@ -16,7 +16,7 @@ void SetProcessDpiAwarenessEx(int windowsid)
 			SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 			break;
 		case 2:
-			SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+			SetProcessDpiAwarenessContext(((DPI_AWARENESS_CONTEXT)-4));
 			break;
 		case 0:
 		default:

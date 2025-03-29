@@ -1,9 +1,7 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
@@ -13,23 +11,23 @@ namespace PlainCEETimer.Dialogs
         public ColorSetObject[] ColorPresets { private get; set; }
         public string[] CustomTextPreset { get; set; }
 
-        private Button ButtonGlobal;
+        protected override string DialogTitle => "管理自定义规则 - 高考倒计时";
+        protected override string ContentDescription => "规则";
+        protected override string[] ListViewHeaders => ["类别", "时刻", "效果预览"];
+        protected override int ListViewWidth => 490;
 
-        protected override void InitializeDialog()
+        private readonly Button ButtonGlobal;
+
+        public RulesManager()
         {
-            DialogTitle = "管理自定义规则 - 高考倒计时";
-            ContentDescription = "规则";
-            ListViewHeaders = ["类别", "时刻", "效果预览"];
-            ListViewWidth = 490;
-
             ButtonGlobal = new Button()
             {
                 Size = new SmartSize(90, 23),
                 Text = "全局设置(G)",
                 UseVisualStyleBackColor = true
             };
-            ButtonGlobal.Click += ButtonGlobal_Click;
 
+            ButtonGlobal.Click += ButtonGlobal_Click;
             Controls.Add(ButtonGlobal);
         }
 
@@ -41,7 +39,7 @@ namespace PlainCEETimer.Dialogs
 
         protected override void AddItem(CustomRuleObject Info, bool IsSelected = false)
         {
-            var Item = new ListViewItem([CustomRuleHelper.GetRuleTypeText(Info.Phase), CustomRuleHelper.GetExamTickText(Info.Tick)])
+            var Item = new ListViewItem([Validator.GetPhaseText(Info.Phase), Validator.GetTickText(Info.Tick)])
             {
                 Tag = Info,
                 Selected = IsSelected,
@@ -50,7 +48,6 @@ namespace PlainCEETimer.Dialogs
             };
 
             Item.SubItems.Add(new ListViewItem.ListViewSubItem(Item, Info.Text, Info.Fore, Info.Back, null));
-
             AddItem(Item, Info);
         }
 

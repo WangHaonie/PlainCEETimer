@@ -8,6 +8,7 @@ namespace PlainCEETimer.Modules
         where TSubDialog : AppDialog, ISubDialog<TData, TSubDialog>
     {
         TData Data { get; set; }
+
         DialogResult ShowDialog();
     }
 }

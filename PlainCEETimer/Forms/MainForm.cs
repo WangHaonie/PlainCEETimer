@@ -342,7 +342,7 @@ namespace PlainCEETimer.Forms
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
             IsCeiling = AppConfig.Display.Ceiling;
-            IsShowEnd = GetEndPast(AppConfig.Display.EndIndex);
+            IsShowEnd = AppConfig.Display.EndIndex is 1 or 2;
             IsShowPast = AppConfig.Display.EndIndex == 2;
             IsDraggable = AppConfig.Display.Draggable;
             UniTopMost = AppConfig.General.UniTopMost;
@@ -354,14 +354,13 @@ namespace PlainCEETimer.Forms
             ShowTrayIcon = AppConfig.General.TrayIcon;
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
-            ColorDialogEx.CustomColorCollection = AppConfig.CustomColors;
             CountdownColors = AppConfig.Appearance.Colors;
         }
 
         private void LoadExams()
         {
             AutoSwitch = AppConfig.General.AutoSwitch;
-            AutoSwitchInterval = ConfigHandler.GetAutoSwitchInterval(AppConfig.General.Interval);
+            AutoSwitchInterval = Validator.GetAutoSwitchInterval(AppConfig.General.Interval);
             Exams = AppConfig.General.ExamInfo;
             var i = AppConfig.General.ExamIndex;
             ExamIndex = i < Exams.Length ? i : 0;
@@ -418,7 +417,7 @@ namespace PlainCEETimer.Forms
 
             if (MemClean && !LoadedMemCleaner)
             {
-                MemCleaner = new((state) => MemoryCleaner.CleanMemory(9437184), null, 3000, MemCleanerInterval);
+                MemCleaner = new((_) => MemoryCleaner.CleanMemory(9 * 1024 * 1024), null, 3000, MemCleanerInterval);
                 LoadedMemCleaner = true;
             }
 
@@ -760,10 +759,10 @@ namespace PlainCEETimer.Forms
 
         private void SetCountdown(TimeSpan Span, string Name, string Hint, Color Fore, Color Back, string Custom)
         {
-            UpdateCountdown(IsCustomText ? GetCountdownWithCustomText(Span, Name, Custom) : GetCountdown(Span, Name, Hint), Fore, Back);
+            UpdateCountdown(IsCustomText ? GetCustomText(Span, Name, Custom) : GetCountdown(Span, Name, Hint), Fore, Back);
         }
 
-        private string GetCountdownWithCustomText(TimeSpan Span, string Name, string Custom)
+        private string GetCustomText(TimeSpan Span, string Name, string Custom)
         {
             Builder.Clear();
             Builder.Append(Custom);

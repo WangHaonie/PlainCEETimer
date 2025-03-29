@@ -37,8 +37,8 @@ namespace PlainCEETimer.Forms
 
         public SettingsForm()
         {
-            InitializeComponent();
             CompositedStyle = true;
+            InitializeComponent();
         }
 
         protected override void OnLoad()
@@ -262,7 +262,10 @@ namespace PlainCEETimer.Forms
                     UpdateSettingsArea(SettingsArea.SelectedColor);
                 }
             }
-            catch { }
+            catch
+            {
+
+            }
         }
 
         private void ButtonDefaultColor_Click(object sender, EventArgs e)
@@ -286,15 +289,14 @@ namespace PlainCEETimer.Forms
         {
             IsFunny = IsFunnyClick;
 
-            switch (e.Button)
+            if (e.Button == MouseButtons.Left)
             {
-                case MouseButtons.Left:
-                    IsFunnyClick = false;
-                    break;
-                case MouseButtons.Right:
-                    UpdateSettingsArea(SettingsArea.Funny);
-                    IsFunnyClick = true;
-                    break;
+                IsFunnyClick = false;
+            }
+            else
+            {
+                UpdateSettingsArea(SettingsArea.Funny);
+                IsFunnyClick = true;
             }
         }
 
@@ -410,7 +412,7 @@ namespace PlainCEETimer.Forms
 
             BindComboData(ComboBoxCountdownEnd,
             [
-                new("<程序欢迎信息>", 0),
+                new("<不执行任何操作>", 0),
                 new("考试还有多久结束", 1),
                 new("考试还有多久结束 和 已过去了多久", 2)
             ]);
@@ -546,7 +548,7 @@ namespace PlainCEETimer.Forms
                 var Fore = ColorLabels[i].BackColor;
                 var Back = ColorLabels[i + Length].BackColor;
 
-                if (!ColorHelper.IsNiceContrast(Fore, Back))
+                if (!Validator.IsNiceContrast(Fore, Back))
                 {
                     ColorCheckMsg = i + 1;
                     break;
@@ -627,14 +629,11 @@ namespace PlainCEETimer.Forms
                     SetLabelColors(SelectedColors);
                     break;
                 case SettingsArea.SelectedColor:
-                    LabelPreviewColor1.BackColor = LabelColor12.BackColor;
-                    LabelPreviewColor2.BackColor = LabelColor22.BackColor;
-                    LabelPreviewColor3.BackColor = LabelColor32.BackColor;
-                    LabelPreviewColor4.BackColor = LabelColor42.BackColor;
-                    LabelPreviewColor1.ForeColor = LabelColor11.BackColor;
-                    LabelPreviewColor2.ForeColor = LabelColor21.BackColor;
-                    LabelPreviewColor3.ForeColor = LabelColor31.BackColor;
-                    LabelPreviewColor4.ForeColor = LabelColor41.BackColor;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        ColorPreviewLabels[i].ForeColor = ColorLabels[i].BackColor;
+                        ColorPreviewLabels[i].BackColor = ColorLabels[i + 4].BackColor;
+                    }
                     break;
             }
         }
@@ -652,58 +651,50 @@ namespace PlainCEETimer.Forms
 
         private void SaveSettings()
         {
-            try
+            StartUp.Operate(CheckBoxStartup.Checked ? 1 : 2);
+
+            AppConfig.General = new()
             {
-                StartUp.Operate(CheckBoxStartup.Checked ? 1 : 2);
+                ExamInfo = EditedExamInfo,
+                ExamIndex = AppConfig.General.ExamIndex,
+                AutoSwitch = CheckBoxAutoSwitch.Checked,
+                Interval = ComboBoxAutoSwitchIntervel.SelectedIndex,
+                MemClean = CheckBoxMemClean.Checked,
+                TopMost = CheckBoxTopMost.Checked,
+                UniTopMost = CheckBoxUniTopMost.Checked,
+                TrayIcon = CheckBoxTrayIcon.Checked,
+                TrayText = CheckBoxTrayText.Checked,
+                WCCMS = CheckBoxWCCMS.Checked
+            };
 
-                AppConfig.General = new()
-                {
-                    ExamInfo = EditedExamInfo,
-                    ExamIndex = AppConfig.General.ExamIndex,
-                    AutoSwitch = CheckBoxAutoSwitch.Checked,
-                    Interval = ComboBoxAutoSwitchIntervel.SelectedIndex,
-                    MemClean = CheckBoxMemClean.Checked,
-                    TopMost = CheckBoxTopMost.Checked,
-                    UniTopMost = CheckBoxUniTopMost.Checked,
-                    TrayIcon = CheckBoxTrayIcon.Checked,
-                    TrayText = CheckBoxTrayText.Checked,
-                    WCCMS = CheckBoxWCCMS.Checked
-                };
-
-                AppConfig.Display = new()
-                {
-                    ShowXOnly = CheckBoxShowXOnly.Checked,
-                    X = ComboBoxShowXOnly.SelectedIndex,
-                    Ceiling = CheckBoxCeiling.Checked,
-                    EndIndex = ComboBoxCountdownEnd.SelectedIndex,
-                    CustomText = CheckBoxRulesMan.Checked,
-                    CustomTexts = EditedCustomTexts,
-                    ScreenIndex = ComboBoxScreens.SelectedIndex,
-                    Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,
-                    Draggable = CheckBoxDraggable.Checked,
-                    SeewoPptsvc = CheckBoxPptSvc.Checked
-                };
-
-                AppConfig.Appearance = new()
-                {
-                    Font = SelectedFont,
-                    Colors = SelectedColors
-                };
-
-                AppConfig.Tools = new()
-                {
-                    NtpServer = ComboBoxNtpServers.SelectedIndex
-                };
-
-                AppConfig.CustomRules = EditedCustomRules;
-
-                App.AppConfig = AppConfig;
-                RefreshNeeded = true;
-            }
-            catch
+            AppConfig.Display = new()
             {
+                ShowXOnly = CheckBoxShowXOnly.Checked,
+                X = ComboBoxShowXOnly.SelectedIndex,
+                Ceiling = CheckBoxCeiling.Checked,
+                EndIndex = ComboBoxCountdownEnd.SelectedIndex,
+                CustomText = CheckBoxRulesMan.Checked,
+                CustomTexts = EditedCustomTexts,
+                ScreenIndex = ComboBoxScreens.SelectedIndex,
+                Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,
+                Draggable = CheckBoxDraggable.Checked,
+                SeewoPptsvc = CheckBoxPptSvc.Checked
+            };
 
-            }
+            AppConfig.Appearance = new()
+            {
+                Font = SelectedFont,
+                Colors = SelectedColors
+            };
+
+            AppConfig.Tools = new()
+            {
+                NtpServer = ComboBoxNtpServers.SelectedIndex
+            };
+
+            AppConfig.CustomRules = EditedCustomRules;
+            App.AppConfig = AppConfig;
+            RefreshNeeded = true;
         }
     }
 }
