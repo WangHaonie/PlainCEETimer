@@ -181,6 +181,7 @@ namespace PlainCEETimer.Forms
                 AppConfig.General.ExamIndex = ItemIndex;
                 SaveConfig();
                 LoadExams();
+                TryRunCountdown();
                 UpdateExamSelection();
             }
         }
@@ -264,6 +265,16 @@ namespace PlainCEETimer.Forms
             if (e.Button == MouseButtons.Left) App.OnTrayMenuShowAllClicked();
         }
 
+        private void ExamAutoSwitch(object sender, EventArgs e)
+        {
+            AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
+            SaveConfig();
+            LoadExams();
+            TryRunCountdown();
+            UnselectAllExamItems();
+            UpdateExamSelection(true);
+        }
+
         private void ValidateLocation()
         {
             if (!IsReadyToMove)
@@ -289,7 +300,11 @@ namespace PlainCEETimer.Forms
             TopMost = false;
             TopMost = AppConfig.General.TopMost;
             ShowInTaskbar = !TopMost;
+            TryRunCountdown();
+        }
 
+        private void TryRunCountdown()
+        {
             if (!IsCountdownRunning)
             {
                 IsCountdownRunning = true;
@@ -842,15 +857,6 @@ namespace PlainCEETimer.Forms
         private void RealSaveConfig()
         {
             ConfigHandler.Save();
-        }
-
-        private void ExamAutoSwitch(object sender, EventArgs e)
-        {
-            AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            SaveConfig();
-            LoadExams();
-            UnselectAllExamItems();
-            UpdateExamSelection(true);
         }
 
         private void SetRoundCorners()
