@@ -6,5 +6,4 @@
 # https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
 *.cpp linguist-language=C++
 *.h linguist-language=C++
-*.xaml linguist-language=HTML
 PlainCEETimer.Setup/** linguist-documentation
