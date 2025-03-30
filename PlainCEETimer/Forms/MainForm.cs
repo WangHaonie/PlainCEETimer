@@ -3,6 +3,7 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Drawing;
@@ -82,6 +83,8 @@ namespace PlainCEETimer.Forms
         private readonly EventHandler OnContextRestartClick;
         private readonly EventHandler OnContextQuitClick;
 
+        private ICountdownProvider CountdownProvider;
+
         public MainForm()
         {
             InitializeComponent();
@@ -109,6 +112,18 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
+        }
+
+        private void CountdownProvider_CountdownUpdated(string Content, Color Fore, Color Back)
+        {
+            LabelCountdown.Text = Content;
+            LabelCountdown.ForeColor = Fore;
+            BackColor = Back;
+
+            if (TrayIcon != null)
+            {
+                TrayIcon.Text = Content.Truncate(60);
+            }
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -183,6 +198,7 @@ namespace PlainCEETimer.Forms
                 LoadExams();
                 TryRunCountdown();
                 UpdateExamSelection();
+                CountdownProvider.JumpTo(ItemIndex);
             }
         }
 
@@ -267,12 +283,12 @@ namespace PlainCEETimer.Forms
 
         private void ExamAutoSwitch(object sender, EventArgs e)
         {
-            AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            SaveConfig();
-            LoadExams();
-            TryRunCountdown();
-            UnselectAllExamItems();
-            UpdateExamSelection(true);
+            //AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
+            //SaveConfig();
+            //LoadExams();
+            //TryRunCountdown();
+            //UnselectAllExamItems();
+            //UpdateExamSelection(true);
         }
 
         private void ValidateLocation()
@@ -305,10 +321,24 @@ namespace PlainCEETimer.Forms
 
         private void TryRunCountdown()
         {
-            if (!IsCountdownRunning)
+            if (CountdownProvider == null || !CountdownProvider.IsRunning)
             {
-                IsCountdownRunning = true;
-                Countdown = new(StartCountdown, null, 0, 1000);
+                CountdownProvider = new DefaultCountdown()
+                {
+                    Exams = AppConfig.General.ExamInfo,
+                    GlobalColors = AppConfig.Appearance.Colors,
+                    GlobalTexts = AppConfig.Display.CustomTexts,
+                    Rules = AppConfig.CustomRules,
+                    ExamIndex = AppConfig.General.ExamIndex,
+                    Mode = IsShowPast ? CountdownMode.Mode3 : (IsShowEnd ? CountdownMode.Mode2 : CountdownMode.Mode1),
+                    State = SelectedState,
+                    AutoSwitch = true,
+                    AutoSwitchInterval = Validator.GetAutoSwitchInterval(AppConfig.General.Interval),
+                    UseCustomText = AppConfig.Display.CustomText
+                };
+
+                CountdownProvider.CountdownUpdated += CountdownProvider_CountdownUpdated;
+                CountdownProvider.Start();
             }
         }
 
@@ -418,7 +448,7 @@ namespace PlainCEETimer.Forms
 
             if (MemClean && !LoadedMemCleaner)
             {
-                MemCleaner = new((_) => MemoryCleaner.CleanMemory(9 * 1024 * 1024), null, 3000, MemCleanerInterval);
+                MemCleaner = new(_ => MemoryCleaner.CleanMemory(9 * 1024 * 1024), null, 3000, MemCleanerInterval);
                 LoadedMemCleaner = true;
             }
 
@@ -693,7 +723,7 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void StartCountdown(object state)
+        public void StartCountdown(object state)
         {
             if (IsCountdownReady && DateTime.Now < ExamStartTime)
             {

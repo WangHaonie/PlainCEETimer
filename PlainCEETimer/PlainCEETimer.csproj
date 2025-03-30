@@ -193,6 +193,9 @@
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
     <Compile Include="Modules\Configuration\ToolsObject.cs" />
     <Compile Include="Modules\ContextMenuConstants.cs" />
+    <Compile Include="Modules\Countdown\DefaultCountdown.cs" />
+    <Compile Include="Modules\Countdown\Enums.cs" />
+    <Compile Include="Modules\Countdown\Interfaces.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\DpiExtensions.cs" />
@@ -246,5 +249,6 @@
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
