@@ -288,8 +288,8 @@ namespace PlainCEETimer.Forms
         {
             AppConfig = App.AppConfig;
             ValidateConfig();
-            LoadExams();
             LoadConfig();
+            LoadExams();
             PrepareCountdown();
             ApplyLocation();
             CompatibleWithPPTService();
@@ -364,6 +364,7 @@ namespace PlainCEETimer.Forms
             Exams = AppConfig.General.ExamInfo;
             var i = AppConfig.General.ExamIndex;
             ExamIndex = i < Exams.Length ? i : 0;
+
             try
             {
                 CurrentExam = Exams[ExamIndex];
@@ -377,7 +378,7 @@ namespace PlainCEETimer.Forms
             ExamName = CurrentExam.Name;
             ExamStartTime = CurrentExam.Start;
             ExamEndTime = CurrentExam.End;
-            IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && ExamStartTime.IsValid() && ExamEndTime.IsValid() && (ExamEndTime > ExamStartTime || !IsShowEnd);
+            IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEndTime > ExamStartTime || !IsShowEnd);
         }
 
         private void PrepareCountdown()

@@ -13,23 +13,49 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
+                value = value.RemoveIllegalChars();
+
                 if (MainForm.ValidateNeeded)
                 {
-                    if (!value.Length.IsValid())
+                    if (!Validator.IsValidExamLength(value.Length))
                     {
                         throw new Exception();
                     }
                 }
 
-                field = value.RemoveIllegalChars();
+                field = value;
             }
         } = "";
 
         [JsonConverter(typeof(ExamTimeConverter))]
-        public DateTime Start { get; set; } = DateTime.Now;
+        public DateTime Start
+        {
+            get;
+            set
+            {
+                if (MainForm.ValidateNeeded && !Validator.IsValidExamDate(value))
+                {
+                    throw new Exception();
+                }
+
+                field = value;
+            }
+        } = DateTime.Now;
 
         [JsonConverter(typeof(ExamTimeConverter))]
-        public DateTime End { get; set; } = DateTime.Now;
+        public DateTime End
+        {
+            get;
+            set
+            {
+                if (MainForm.ValidateNeeded && !Validator.IsValidExamDate(value))
+                {
+                    throw new Exception();
+                }
+
+                field = value;
+            }
+        } = DateTime.Now;
 
         public bool CanExecute() => true;
 

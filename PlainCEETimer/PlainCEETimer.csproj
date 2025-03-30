@@ -182,7 +182,6 @@
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
-    <Compile Include="Modules\ConfigPolicy.cs" />
     <Compile Include="Modules\Configuration\AppearanceObject.cs" />
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
     <Compile Include="Modules\Configuration\ConfigObject.cs" />
@@ -215,7 +214,6 @@
     <Compile Include="Modules\SmartSize.cs" />
     <Compile Include="Modules\StartUp.cs" />
     <Compile Include="Modules\Updater.cs" />
-    <Compile Include="Modules\Extensions\ValidationExtensions.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />
     <Compile Include="Interop\NativeInterop.cs" />

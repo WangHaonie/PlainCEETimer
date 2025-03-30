@@ -9,13 +9,13 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override Font ReadJson(JsonReader reader, Type objectType, Font existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            string[] FontParts = reader.Value.ToString().Split(ConfigPolicy.ValueSeparator);
+            string[] FontParts = reader.Value.ToString().Split(Validator.ValueSeparator);
 
-            var FontPart1 = (Font)new FontConverter().ConvertFromString(string.Join(ConfigPolicy.ValueSeparatorString, FontParts.Take(2)));
-            var FontPart2 = (FontStyle)Enum.Parse(typeof(FontStyle), string.Join(ConfigPolicy.ValueSeparatorString, FontParts.Skip(2)));
+            var FontPart1 = (Font)new FontConverter().ConvertFromString(string.Join(Validator.ValueSeparatorString, FontParts.Take(2)));
+            var FontPart2 = (FontStyle)Enum.Parse(typeof(FontStyle), string.Join(Validator.ValueSeparatorString, FontParts.Skip(2)));
             var FontPart1Size = FontPart1.Size;
 
-            if (FontPart1Size is >= ConfigPolicy.MinFontSize and <= ConfigPolicy.MaxFontSize)
+            if (FontPart1Size is >= Validator.MinFontSize and <= Validator.MaxFontSize)
             {
                 return new Font(FontPart1, FontPart2);
             }

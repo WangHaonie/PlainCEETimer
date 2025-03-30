@@ -196,8 +196,8 @@ namespace PlainCEETimer.Forms
                 AllowVerticalFonts = false,
                 Font = AppConfig.Appearance.Font,
                 FontMustExist = true,
-                MinSize = ConfigPolicy.MinFontSize,
-                MaxSize = ConfigPolicy.MaxFontSize,
+                MinSize = Validator.MinFontSize,
+                MaxSize = Validator.MaxFontSize,
                 ScriptsOnly = true
             };
 

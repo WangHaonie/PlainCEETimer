@@ -50,14 +50,14 @@ namespace PlainCEETimer.Dialogs
         {
             CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
             int CharCount = CurrentExamName.Length;
-            LabelCounter.Text = $"{CharCount}/{ConfigPolicy.MaxExamNameLength}";
-            LabelCounter.ForeColor = CharCount.IsValid() ? Color.Black : Color.Red;
+            LabelCounter.Text = $"{CharCount}/{Validator.MaxExamNameLength}";
+            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? Color.Black : Color.Red;
             UserChanged();
         }
 
         protected override void ButtonA_Click()
         {
-            if (string.IsNullOrWhiteSpace(CurrentExamName) || !CurrentExamName.Length.IsValid())
+            if (string.IsNullOrWhiteSpace(CurrentExamName) || !Validator.IsValidExamLength(CurrentExamName.Length))
             {
                 MessageX.Error("输入的考试名称有误！\n\n请检查输入的考试名称是否太长或太短！");
                 return;
