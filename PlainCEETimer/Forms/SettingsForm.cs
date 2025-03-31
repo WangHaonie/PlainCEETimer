@@ -194,7 +194,7 @@ namespace PlainCEETimer.Forms
             {
                 AllowScriptChange = true,
                 AllowVerticalFonts = false,
-                Font = AppConfig.Appearance.Font,
+                Font = AppConfig.Font,
                 FontMustExist = true,
                 MinSize = Validator.MinFontSize,
                 MaxSize = Validator.MaxFontSize,
@@ -412,7 +412,7 @@ namespace PlainCEETimer.Forms
 
             BindComboData(ComboBoxCountdownEnd,
             [
-                new("<不执行任何操作>", 0),
+                new("<程序欢迎信息>", 0),
                 new("考试还有多久结束", 1),
                 new("考试还有多久结束 和 已过去了多久", 2)
             ]);
@@ -476,14 +476,14 @@ namespace PlainCEETimer.Forms
             ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
             ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-            UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Appearance.Font);
+            UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Font);
             ChangePptsvcStyle(null, EventArgs.Empty);
-            SelectedColors = AppConfig.Appearance.Colors;
+            SelectedColors = AppConfig.GlobalColors;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
-            ComboBoxNtpServers.SelectedIndex = AppConfig.Tools.NtpServer;
-            EditedCustomTexts = AppConfig.Display.CustomTexts;
+            ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
+            EditedCustomTexts = AppConfig.GlobalCustomTexts;
             EditedCustomRules = AppConfig.CustomRules;
-            EditedExamInfo = AppConfig.General.ExamInfo;
+            EditedExamInfo = AppConfig.Exams;
             CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked = AppConfig.General.TrayIcon;
             CheckBoxTrayText.Checked = AppConfig.General.TrayText;
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
@@ -653,47 +653,44 @@ namespace PlainCEETimer.Forms
         {
             StartUp.Operate(CheckBoxStartup.Checked ? 1 : 2);
 
-            AppConfig.General = new()
+            App.AppConfig = new()
             {
-                ExamInfo = EditedExamInfo,
-                ExamIndex = AppConfig.General.ExamIndex,
-                AutoSwitch = CheckBoxAutoSwitch.Checked,
-                Interval = ComboBoxAutoSwitchIntervel.SelectedIndex,
-                MemClean = CheckBoxMemClean.Checked,
-                TopMost = CheckBoxTopMost.Checked,
-                UniTopMost = CheckBoxUniTopMost.Checked,
-                TrayIcon = CheckBoxTrayIcon.Checked,
-                TrayText = CheckBoxTrayText.Checked,
-                WCCMS = CheckBoxWCCMS.Checked
-            };
+                General = new()
+                {
+                    AutoSwitch = CheckBoxAutoSwitch.Checked,
+                    Interval = ComboBoxAutoSwitchIntervel.SelectedIndex,
+                    TrayIcon = CheckBoxTrayIcon.Checked,
+                    TrayText = CheckBoxTrayText.Checked,
+                    MemClean = CheckBoxMemClean.Checked,
+                    TopMost = CheckBoxTopMost.Checked,
+                    UniTopMost = CheckBoxUniTopMost.Checked,
+                    WCCMS = CheckBoxWCCMS.Checked
+                },
 
-            AppConfig.Display = new()
-            {
-                ShowXOnly = CheckBoxShowXOnly.Checked,
-                X = ComboBoxShowXOnly.SelectedIndex,
-                Ceiling = CheckBoxCeiling.Checked,
-                EndIndex = ComboBoxCountdownEnd.SelectedIndex,
-                CustomText = CheckBoxRulesMan.Checked,
-                CustomTexts = EditedCustomTexts,
-                ScreenIndex = ComboBoxScreens.SelectedIndex,
-                Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,
-                Draggable = CheckBoxDraggable.Checked,
-                SeewoPptsvc = CheckBoxPptSvc.Checked
-            };
+                Display = new()
+                {
+                    ShowXOnly = CheckBoxShowXOnly.Checked,
+                    X = ComboBoxShowXOnly.SelectedIndex,
+                    Ceiling = CheckBoxCeiling.Checked,
+                    EndIndex = ComboBoxCountdownEnd.SelectedIndex,
+                    CustomText = CheckBoxRulesMan.Checked,
+                    ScreenIndex = ComboBoxScreens.SelectedIndex,
+                    Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,
+                    Draggable = CheckBoxDraggable.Checked,
+                    SeewoPptsvc = CheckBoxPptSvc.Checked
+                },
 
-            AppConfig.Appearance = new()
-            {
+                Exams = EditedExamInfo,
+                ExamIndex = AppConfig.ExamIndex,
+                GlobalCustomTexts = EditedCustomTexts,
+                GlobalColors = SelectedColors,
+                CustomRules = EditedCustomRules,
+                CustomColors = AppConfig.CustomColors,
                 Font = SelectedFont,
-                Colors = SelectedColors
+                NtpServer = ComboBoxNtpServers.SelectedIndex,
+                Location = AppConfig.Location,
             };
 
-            AppConfig.Tools = new()
-            {
-                NtpServer = ComboBoxNtpServers.SelectedIndex
-            };
-
-            AppConfig.CustomRules = EditedCustomRules;
-            App.AppConfig = AppConfig;
             RefreshNeeded = true;
         }
     }

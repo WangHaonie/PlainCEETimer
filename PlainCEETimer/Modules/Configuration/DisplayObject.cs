@@ -47,23 +47,6 @@ namespace PlainCEETimer.Modules.Configuration
 
         public bool CustomText { get; set; }
 
-        public string[] CustomTexts
-        {
-            get;
-            set
-            {
-                if (MainForm.ValidateNeeded)
-                {
-                    foreach (var Text in value)
-                    {
-                        Validator.EnsureCustomTextLength(Text);
-                    }
-                }
-
-                field = value;
-            }
-        } = [Placeholders.PH_P1, Placeholders.PH_P2, Placeholders.PH_P3];
-
         public int ScreenIndex
         {
             get;

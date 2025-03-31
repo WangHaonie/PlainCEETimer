@@ -8,13 +8,9 @@ namespace PlainCEETimer.Modules.Configuration
     public static class DefaultValues
     {
         public static bool IsDarkModeSupported { get; }
-
         public static int[] ColorDialogColors { get; }
-
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
-
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
-
         public static Font CountdownDefaultFont { get; }
 
         public static readonly int Initialize;

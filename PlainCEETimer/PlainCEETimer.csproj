@@ -182,7 +182,6 @@
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
-    <Compile Include="Modules\Configuration\AppearanceObject.cs" />
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
     <Compile Include="Modules\Configuration\ConfigObject.cs" />
     <Compile Include="Modules\Configuration\ConfigHandler.cs" />
@@ -191,11 +190,7 @@
     <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
-    <Compile Include="Modules\Configuration\ToolsObject.cs" />
     <Compile Include="Modules\ContextMenuConstants.cs" />
-    <Compile Include="Modules\Countdown\DefaultCountdown.cs" />
-    <Compile Include="Modules\Countdown\Enums.cs" />
-    <Compile Include="Modules\Countdown\Interfaces.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\DpiExtensions.cs" />

@@ -1,45 +1,9 @@
-﻿using PlainCEETimer.Forms;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace PlainCEETimer.Modules.Configuration
 {
     public sealed class GeneralObject
     {
-        public ExamInfoObject[] ExamInfo
-        {
-            get;
-            set
-            {
-                if (value != null)
-                {
-                    if (MainForm.ValidateNeeded)
-                    {
-                        Array.Sort(value);
-                    }
-
-                    field = value;
-                }
-            }
-        } = [];
-
-        public int ExamIndex
-        {
-            get;
-            set
-            {
-                if (MainForm.ValidateNeeded)
-                {
-                    if (value < 0 || value > ExamInfo.Length)
-                    {
-                        throw new Exception();
-                    }
-                }
-
-                field = value;
-            }
-        }
-
         public bool AutoSwitch { get; set; }
 
         public int Interval { get; set; }

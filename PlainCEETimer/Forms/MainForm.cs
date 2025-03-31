@@ -3,12 +3,13 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,82 +17,73 @@ namespace PlainCEETimer.Forms
 {
     public partial class MainForm : AppForm
     {
-        public static bool UniTopMost { get; private set; } = true;
         public static bool IsNormalStart { get; set; }
-        public static bool ValidateNeeded { get; private set; } = true;
+        public static bool UniTopMost { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
+        public static bool ValidateNeeded { get; private set; } = true;
         public static Screen CurrentScreen { get; private set; }
 
-        private bool MemClean;
-        private bool IsShowXOnly;
-        private bool IsDraggable;
-        private bool IsShowEnd;
-        private bool IsShowPast;
+        private bool AutoSwitch;
+        private bool ContextMenuStyleChanged;
         private bool IsCeiling;
-        private bool IsPPTService;
-        private bool IsCustomText;
-        private int ScreenIndex;
-        private CountdownPosition CountdownPos;
-        private int ShowXOnlyIndex;
-        private DateTime ExamEndTime;
-        private DateTime ExamStartTime;
-        private ConfigObject AppConfig;
-        private ColorSetObject[] CountdownColors;
-        private CustomRuleObject[] CustomRules;
-        private string ExamName;
-        private string[] CustomText;
-
-        private bool IsReadyToMove;
         private bool IsCountdownReady;
         private bool IsCountdownRunning;
-        private bool SetRoundCornerRegion;
+        private bool IsDraggable;
+        private bool IsPPTService;
+        private bool IsReadyToMove;
+        private bool IsShowXOnly;
+        private bool LoadedMemCleaner;
+        private bool MemClean;
+        private bool SetRoundRegion;
         private bool ShowTrayIcon;
         private bool ShowTrayText;
-        private bool LoadedMemCleaner;
-        private bool AutoSwitch;
-        private const int PptsvcThreshold = 1;
-        private const int BorderRadius = 13;
-        private const int MemCleanerInterval = 300_000; // 5 min
-        private CountdownState SelectedState;
-        private System.Threading.Timer MemCleaner;
-        private Timer AutoSwitchHandler;
-        private System.Threading.Timer Countdown;
-        private readonly StringBuilder Builder = new();
+        private bool TrayIconReopen;
+        private bool UseClassicContextMenuBak;
+        private bool UseCustomText;
         private int AutoSwitchInterval;
+        private int ExamIndex;
+        private int ScreenIndex;
+        private int ShowXOnlyIndex;
+        private const int BorderRadius = 13;
+        private const int PptsvcThreshold = 1;
+        private const int MemCleanerInterval = 300_000; // 5 min
+        private string ExamName;
+        private string[] GlobalTexts;
+        private CountdownMode Mode;
+        private CountdownPosition CountdownPos;
+        private CountdownPhase CurrentPhase = (CountdownPhase)3;
+        private CountdownState SelectedState;
+        private IEnumerable<CustomRuleObject> CurrentRules;
+        private ColorSetObject[] CountdownColors;
+        private DateTime ExamEnd;
+        private DateTime ExamStart;
         private Point LastLocation;
         private Point LastMouseLocation;
         private Rectangle CurrentScreenRect;
-        private SettingsForm FormSettings;
         private AboutForm FormAbout;
-        private NotifyIcon TrayIcon;
-
-        private bool TrayIconReopen;
-        private bool ContextMenuStyleChanged;
-        private bool UseClassicContextMenuBak;
-        private ExamInfoObject CurrentExam;
-        private ExamInfoObject[] Exams;
-        private int ExamIndex;
-
+        private ConfigObject AppConfig;
         private ContextMenu ContextMenuMain;
         private ContextMenu ContextMenuTray;
-        private Menu.MenuItemCollection ExamSwitchMain;
         private ContextMenuStrip ContextMenuStripMain;
         private ContextMenuStrip ContextMenuStripTray;
+        private CustomRuleObject[] CustomRules;
+        private ExamInfoObject CurrentExam;
+        private ExamInfoObject[] Exams;
+        private Menu.MenuItemCollection ExamSwitchMain;
+        private NotifyIcon TrayIcon;
+        private SettingsForm FormSettings;
+        private System.Threading.Timer MemCleaner;
+        private System.Threading.Timer Countdown;
+        private System.Windows.Forms.Timer AutoSwitchHandler;
         private ToolStripItemCollection ExamSwitchMainStrip;
-        private readonly EventHandler OnContextInstDirClick;
-        private readonly EventHandler OnContextShowAllClick;
-        private readonly EventHandler OnContextRestartClick;
-        private readonly EventHandler OnContextQuitClick;
-
-        private ICountdownProvider CountdownProvider;
+        private readonly string[] DefaultTexts = [Placeholders.PH_START, Placeholders.PH_LEFT, Placeholders.PH_PAST];
+        private readonly SynchronizationContext CurrentContext;
+        private static readonly StringBuilder CustomTextBuilder = new();
 
         public MainForm()
         {
             InitializeComponent();
-            OnContextInstDirClick = new((_, _) => App.OpenInstallDir());
-            OnContextShowAllClick = new((_, _) => App.OnTrayMenuShowAllClicked());
-            OnContextRestartClick = new((_, _) => App.Shutdown(true));
-            OnContextQuitClick = new((_, _) => App.Shutdown());
+            CurrentContext = SynchronizationContext.Current;
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -112,18 +104,6 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
-        }
-
-        private void CountdownProvider_CountdownUpdated(string Content, Color Fore, Color Back)
-        {
-            LabelCountdown.Text = Content;
-            LabelCountdown.ForeColor = Fore;
-            BackColor = Back;
-
-            if (TrayIcon != null)
-            {
-                TrayIcon.Text = Content.Truncate(60);
-            }
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -153,7 +133,7 @@ namespace PlainCEETimer.Forms
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
-            if (SetRoundCornerRegion)
+            if (SetRoundRegion)
             {
                 RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi());
             }
@@ -163,7 +143,7 @@ namespace PlainCEETimer.Forms
 
         private void MainForm_LocationRefreshed(object sender, EventArgs e)
         {
-            AppConfig.Pos = Location;
+            AppConfig.Location = Location;
             SaveConfig();
         }
 
@@ -193,12 +173,11 @@ namespace PlainCEETimer.Forms
             {
                 UnselectAllExamItems();
                 ExamIndex = ItemIndex;
-                AppConfig.General.ExamIndex = ItemIndex;
+                AppConfig.ExamIndex = ItemIndex;
                 SaveConfig();
                 LoadExams();
                 TryRunCountdown();
                 UpdateExamSelection();
-                CountdownProvider.JumpTo(ItemIndex);
             }
         }
 
@@ -239,7 +218,7 @@ namespace PlainCEETimer.Forms
                 KeepOnScreen();
                 CompatibleWithPPTService();
                 SetLabelCountdownAutoWrap();
-                AppConfig.Pos = Location;
+                AppConfig.Location = Location;
                 SaveConfig();
             }
 
@@ -283,12 +262,12 @@ namespace PlainCEETimer.Forms
 
         private void ExamAutoSwitch(object sender, EventArgs e)
         {
-            //AppConfig.General.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            //SaveConfig();
-            //LoadExams();
-            //TryRunCountdown();
-            //UnselectAllExamItems();
-            //UpdateExamSelection(true);
+            AppConfig.ExamIndex = (ExamIndex + 1) % Exams.Length;
+            SaveConfig();
+            LoadExams();
+            TryRunCountdown();
+            UnselectAllExamItems();
+            UpdateExamSelection(true);
         }
 
         private void ValidateLocation()
@@ -321,24 +300,10 @@ namespace PlainCEETimer.Forms
 
         private void TryRunCountdown()
         {
-            if (CountdownProvider == null || !CountdownProvider.IsRunning)
+            if (!IsCountdownRunning)
             {
-                CountdownProvider = new DefaultCountdown()
-                {
-                    Exams = AppConfig.General.ExamInfo,
-                    GlobalColors = AppConfig.Appearance.Colors,
-                    GlobalTexts = AppConfig.Display.CustomTexts,
-                    Rules = AppConfig.CustomRules,
-                    ExamIndex = AppConfig.General.ExamIndex,
-                    Mode = IsShowPast ? CountdownMode.Mode3 : (IsShowEnd ? CountdownMode.Mode2 : CountdownMode.Mode1),
-                    State = SelectedState,
-                    AutoSwitch = true,
-                    AutoSwitchInterval = Validator.GetAutoSwitchInterval(AppConfig.General.Interval),
-                    UseCustomText = AppConfig.Display.CustomText
-                };
-
-                CountdownProvider.CountdownUpdated += CountdownProvider_CountdownUpdated;
-                CountdownProvider.Start();
+                IsCountdownRunning = true;
+                Countdown = new(CountdownCallback, null, 0, 1000);
             }
         }
 
@@ -368,31 +333,32 @@ namespace PlainCEETimer.Forms
             }
 
             UseClassicContextMenu = tmp;
-            CustomText = AppConfig.Display.CustomTexts;
+            GlobalTexts = AppConfig.GlobalCustomTexts;
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
             IsCeiling = AppConfig.Display.Ceiling;
-            IsShowEnd = AppConfig.Display.EndIndex is 1 or 2;
-            IsShowPast = AppConfig.Display.EndIndex == 2;
             IsDraggable = AppConfig.Display.Draggable;
             UniTopMost = AppConfig.General.UniTopMost;
             IsPPTService = AppConfig.Display.SeewoPptsvc;
-            IsCustomText = AppConfig.Display.CustomText;
+            UseCustomText = AppConfig.Display.CustomText;
             ScreenIndex = AppConfig.Display.ScreenIndex - 1;
             CountdownPos = AppConfig.Display.Position;
             ShowXOnlyIndex = AppConfig.Display.X;
             ShowTrayIcon = AppConfig.General.TrayIcon;
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
-            CountdownColors = AppConfig.Appearance.Colors;
+            CountdownColors = AppConfig.GlobalColors;
+
+            var EndIndex = AppConfig.Display.EndIndex;
+            Mode = EndIndex == 2 ? CountdownMode.Mode3 : (EndIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
         }
 
         private void LoadExams()
         {
             AutoSwitch = AppConfig.General.AutoSwitch;
             AutoSwitchInterval = Validator.GetAutoSwitchInterval(AppConfig.General.Interval);
-            Exams = AppConfig.General.ExamInfo;
-            var i = AppConfig.General.ExamIndex;
+            Exams = AppConfig.Exams;
+            var i = AppConfig.ExamIndex;
             ExamIndex = i < Exams.Length ? i : 0;
 
             try
@@ -406,9 +372,9 @@ namespace PlainCEETimer.Forms
             }
 
             ExamName = CurrentExam.Name;
-            ExamStartTime = CurrentExam.Start;
-            ExamEndTime = CurrentExam.End;
-            IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEndTime > ExamStartTime || !IsShowEnd);
+            ExamStart = CurrentExam.Start;
+            ExamEnd = CurrentExam.End;
+            IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
         }
 
         private void PrepareCountdown()
@@ -426,8 +392,7 @@ namespace PlainCEETimer.Forms
                 };
             }
 
-            LabelCountdown.Font = AppConfig.Appearance.Font;
-
+            LabelCountdown.Font = AppConfig.Font;
             LabelCountdown.MouseDown -= LabelCountdown_MouseDown;
             LabelCountdown.MouseMove -= LabelCountdown_MouseMove;
             LabelCountdown.MouseUp -= LabelCountdown_MouseUp;
@@ -439,7 +404,7 @@ namespace PlainCEETimer.Forms
                 LabelCountdown.MouseMove += LabelCountdown_MouseMove;
                 LabelCountdown.MouseUp += LabelCountdown_MouseUp;
                 LocationRefreshed += MainForm_LocationRefreshed;
-                Location = AppConfig.Pos;
+                Location = AppConfig.Location;
             }
             else
             {
@@ -565,7 +530,7 @@ namespace PlainCEETimer.Forms
                 AddItem(ContextMenuConstants.Settings, ContextSettings_Click),
                 AddItem(ContextMenuConstants.About, ContextAbout_Click),
                 AddSeparator(),
-                AddItem(ContextMenuConstants.InstallDir, OnContextInstDirClick)
+                AddItem(ContextMenuConstants.InstallDir, (_, _) => App.OpenInstallDir())
             ]);
 
             ContextMenuStrip BaseContextMenuStrip() => CreateNewStrip
@@ -578,7 +543,7 @@ namespace PlainCEETimer.Forms
                 AddStripItem(ContextMenuConstants.Settings, ContextSettings_Click),
                 AddStripItem(ContextMenuConstants.About, ContextAbout_Click),
                 AddStripSeparator(),
-                AddStripItem(ContextMenuConstants.InstallDir, OnContextInstDirClick)
+                AddStripItem(ContextMenuConstants.InstallDir, (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -613,11 +578,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
                         ([
                             AddSeparator(),
-                            AddItem(ContextMenuConstants.Show, OnContextShowAllClick),
+                            AddItem(ContextMenuConstants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
                             AddSubMenu(ContextMenuConstants.Close,
                             [
-                                AddItem(ContextMenuConstants.Restart, OnContextRestartClick),
-                                AddItem(ContextMenuConstants.Quit, OnContextQuitClick)
+                                AddItem(ContextMenuConstants.Restart, (_, _) => App.Shutdown(true)),
+                                AddItem(ContextMenuConstants.Quit, (_, _) => App.Shutdown())
                             ])
                         ]));
                     }
@@ -626,11 +591,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenuStrip = MergeStrip(ContextMenuStripTray,
                         [
                             AddStripSeparator(),
-                            AddStripItem(ContextMenuConstants.Show, OnContextShowAllClick),
+                            AddStripItem(ContextMenuConstants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
                             AddSubStrip(ContextMenuConstants.Close,
                             [
-                                AddStripItem(ContextMenuConstants.Restart, OnContextRestartClick),
-                                AddStripItem(ContextMenuConstants.Quit, OnContextQuitClick)
+                                AddStripItem(ContextMenuConstants.Restart, (_, _) => App.Shutdown(true)),
+                                AddStripItem(ContextMenuConstants.Quit, (_, _) => App.Shutdown())
                             ])
                         ]);
                     }
@@ -723,116 +688,110 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        public void StartCountdown(object state)
+        private void CountdownCallback(object state)
         {
-            if (IsCountdownReady && DateTime.Now < ExamStartTime)
+            var Now = DateTime.Now;
+
+            if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
             {
-                ApplyColorRule(0, ExamStartTime - DateTime.Now, ExamName, Placeholders.PH_START);
+                SetPhase(CountdownPhase.P3);
+                ApplyCustomRule(2, Now - ExamEnd);
             }
-            else if (IsCountdownReady && DateTime.Now < ExamEndTime && IsShowEnd)
+            else if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
             {
-                ApplyColorRule(1, ExamEndTime - DateTime.Now, ExamName, Placeholders.PH_LEFT);
+                SetPhase(CountdownPhase.P2);
+                ApplyCustomRule(1, ExamEnd - Now);
             }
-            else if (IsCountdownReady && DateTime.Now > ExamEndTime && IsShowEnd && IsShowPast)
+            else if (Mode >= CountdownMode.Mode1 && Now < ExamEnd)
             {
-                ApplyColorRule(2, DateTime.Now - ExamEndTime, ExamName, Placeholders.PH_PAST);
+                SetPhase(CountdownPhase.P1);
+                ApplyCustomRule(0, ExamEnd - Now);
             }
             else
             {
                 Countdown.Dispose();
-                UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3].Fore, CountdownColors[3].Back);
+                UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3]);
                 UpdateTrayIconText(App.AppName, true);
                 IsCountdownRunning = false;
             }
         }
 
-        private void ApplyColorRule(int Phase, TimeSpan Span, string Name, string Hint)
+        private void ApplyCustomRule(int Phase, TimeSpan Span)
         {
-            if (IsCustomText)
+            if (UseCustomText)
             {
-                var r = CustomRules.Where(x => (int)x.Phase == Phase);
-                var Rules = Phase == 2 ? r.OrderByDescending(x => x.Tick) : r.OrderBy(x => x.Tick);
-
-                if (Rules.Count() > 0)
+                if (CurrentRules.Count() > 0)
                 {
-                    foreach (var Rule in Rules)
+                    foreach (var Rule in CurrentRules)
                     {
                         if (Phase == 2 ? (Span >= Rule.Tick) : (Span <= Rule.Tick + new TimeSpan(0, 0, 0, 1)))
                         {
-                            SetCountdown(Span, Name, Hint, Rule.Fore, Rule.Back, Rule.Text);
+
+                            UpdateCountdown(SetCustomRule(Span, Rule.Text), new(Rule.Fore, Rule.Back));
                             return;
                         }
                     }
                 }
+
+                UpdateCountdown(SetCustomRule(Span, GlobalTexts[Phase]), CountdownColors[Phase]);
+                return;
             }
 
-            SetCountdown(Span, Name, Hint, CountdownColors[Phase].Fore, CountdownColors[Phase].Back, CustomText[Phase]);
+            UpdateCountdown(GetCountdown(Span, DefaultTexts[Phase]), CountdownColors[Phase]);
         }
 
-        private void ApplyLocation()
+        private string SetCustomRule(TimeSpan ExamSpan, string Custom)
         {
-            if (!IsDraggable)
-            {
-                Location = CountdownPos switch
-                {
-                    CountdownPosition.LeftCenter => new(CurrentScreenRect.Left, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomLeft => new(CurrentScreenRect.Left, CurrentScreenRect.Bottom - Height),
-                    CountdownPosition.TopCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top),
-                    CountdownPosition.Center => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Bottom - Height),
-                    CountdownPosition.TopRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top),
-                    CountdownPosition.RightCenter => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Bottom - Height),
-                    _ => IsPPTService ? new(CurrentScreenRect.Location.X + PptsvcThreshold, CurrentScreenRect.Location.Y) : CurrentScreenRect.Location
-                };
-            }
+            CustomTextBuilder.Clear();
+            CustomTextBuilder.Append(Custom);
+            CustomTextBuilder.Replace(Placeholders.PH_EXAMNAME, ExamName);
+            CustomTextBuilder.Replace(Placeholders.PH_DAYS, $"{ExamSpan.Days}");
+            CustomTextBuilder.Replace(Placeholders.PH_HOURS, $"{ExamSpan.Hours:00}");
+            CustomTextBuilder.Replace(Placeholders.PH_MINUTES, $"{ExamSpan.Minutes:00}");
+            CustomTextBuilder.Replace(Placeholders.PH_SECONDS, $"{ExamSpan.Seconds:00}");
+            CustomTextBuilder.Replace(Placeholders.PH_CEILINGDAYS, $"{ExamSpan.Days + 1}");
+            CustomTextBuilder.Replace(Placeholders.PH_TOTALHOURS, $"{ExamSpan.TotalHours:0}");
+            CustomTextBuilder.Replace(Placeholders.PH_TOTALMINUTES, $"{ExamSpan.TotalMinutes:0}");
+            CustomTextBuilder.Replace(Placeholders.PH_TOTALSECONDS, $"{ExamSpan.TotalSeconds:0}");
+            return CustomTextBuilder.ToString();
         }
 
-        private void SetCountdown(TimeSpan Span, string Name, string Hint, Color Fore, Color Back, string Custom)
+        private string GetCountdown(TimeSpan Span, string Hint) => SelectedState switch
         {
-            UpdateCountdown(IsCustomText ? GetCustomText(Span, Name, Custom) : GetCountdown(Span, Name, Hint), Fore, Back);
-        }
-
-        private string GetCustomText(TimeSpan Span, string Name, string Custom)
-        {
-            Builder.Clear();
-            Builder.Append(Custom);
-            Builder.Replace(Placeholders.PH_EXAMNAME, Name);
-            Builder.Replace(Placeholders.PH_DAYS, $"{Span.Days}");
-            Builder.Replace(Placeholders.PH_HOURS, $"{Span.Hours:00}");
-            Builder.Replace(Placeholders.PH_MINUTES, $"{Span.Minutes:00}");
-            Builder.Replace(Placeholders.PH_SECONDS, $"{Span.Seconds:00}");
-            Builder.Replace(Placeholders.PH_CEILINGDAYS, $"{Span.Days + 1}");
-            Builder.Replace(Placeholders.PH_TOTALHOURS, $"{Span.TotalHours:0}");
-            Builder.Replace(Placeholders.PH_TOTALMINUTES, $"{Span.TotalMinutes:0}");
-            Builder.Replace(Placeholders.PH_TOTALSECONDS, $"{Span.TotalSeconds:0}");
-            return Builder.ToString();
-        }
-
-        private string GetCountdown(TimeSpan Span, string Name, string Hint) => SelectedState switch
-        {
-            CountdownState.DaysOnly => string.Format("{0}{1}{2}{3}天", Placeholders.PH_JULI, Name, Hint, Span.Days),
-            CountdownState.DaysOnlyWithCeiling => string.Format("{0}{1}{2}{3}天", Placeholders.PH_JULI, Name, Hint, Span.Days + 1),
-            CountdownState.HoursOnly => string.Format("{0}{1}{2}{3:0}小时", Placeholders.PH_JULI, Name, Hint, Span.TotalHours),
-            CountdownState.MinutesOnly => string.Format("{0}{1}{2}{3:0}分钟", Placeholders.PH_JULI, Name, Hint, Span.TotalMinutes),
-            CountdownState.SecondsOnly => string.Format("{0}{1}{2}{3:0}秒", Placeholders.PH_JULI, Name, Hint, Span.TotalSeconds),
-            _ => string.Format("{0}{1}{2}{3}天{4:00}时{5:00}分{6:00}秒", Placeholders.PH_JULI, Name, Hint, Span.Days, Span.Hours, Span.Minutes, Span.Seconds)
+            CountdownState.DaysOnly => string.Format("距离{0}{1}{2}天", ExamName, Hint, Span.Days),
+            CountdownState.DaysOnlyWithCeiling => string.Format("距离{0}{1}{2}天", ExamName, Hint, Span.Days + 1),
+            CountdownState.HoursOnly => string.Format("距离{0}{1}{2:0}小时", ExamName, Hint, Span.TotalHours),
+            CountdownState.MinutesOnly => string.Format("距离{0}{1}{2:0}分钟", ExamName, Hint, Span.TotalMinutes),
+            CountdownState.SecondsOnly => string.Format("距离{0}{1}{2:0}秒", ExamName, Hint, Span.TotalSeconds),
+            _ => string.Format("距离{0}{1}{2}天{3:00}时{4:00}分{5:00}秒", ExamName, Hint, Span.Days, Span.Hours, Span.Minutes, Span.Seconds)
         };
 
-
-        private void UpdateCountdown(string CountdownText, Color Fore, Color Back)
+        private void UpdateCountdown(string Content, ColorSetObject Colors)
         {
-            BeginInvoke(() =>
+            CurrentContext.Post(_ =>
             {
-                LabelCountdown.Text = CountdownText;
-                LabelCountdown.ForeColor = Fore;
-                BackColor = Back;
+                LabelCountdown.Text = Content;
+                LabelCountdown.ForeColor = Colors.Fore;
+                BackColor = Colors.Back;
 
                 if (ShowTrayText)
                 {
-                    UpdateTrayIconText(CountdownText);
+                    UpdateTrayIconText(Content);
                 }
-            });
+            }, null);
+        }
+
+        private void SetPhase(CountdownPhase phase)
+        {
+            if (CurrentPhase != phase)
+            {
+                if (UseCustomText)
+                {
+                    CurrentRules = CustomRules.Where(x => x.Phase == phase);
+                }
+
+                CurrentPhase = phase;
+            }
         }
 
         private void UpdateTrayIconText(string cText, bool cInvokeRequired = false)
@@ -843,10 +802,7 @@ namespace PlainCEETimer.Forms
 
                 if (cInvokeRequired)
                 {
-                    BeginInvoke(() =>
-                    {
-                        TrayIcon.Text = cText;
-                    });
+                    CurrentContext.Post(_ => TrayIcon.Text = cText, null);
                 }
                 else
                 {
@@ -873,6 +829,25 @@ namespace PlainCEETimer.Forms
             SetLabelAutoWrap(LabelCountdown, true);
         }
 
+        private void ApplyLocation()
+        {
+            if (!IsDraggable)
+            {
+                Location = CountdownPos switch
+                {
+                    CountdownPosition.LeftCenter => new(CurrentScreenRect.Left, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.BottomLeft => new(CurrentScreenRect.Left, CurrentScreenRect.Bottom - Height),
+                    CountdownPosition.TopCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top),
+                    CountdownPosition.Center => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.BottomCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Bottom - Height),
+                    CountdownPosition.TopRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top),
+                    CountdownPosition.RightCenter => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.BottomRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Bottom - Height),
+                    _ => IsPPTService ? new(CurrentScreenRect.Location.X + PptsvcThreshold, CurrentScreenRect.Location.Y) : CurrentScreenRect.Location
+                };
+            }
+        }
+
         private void RefreshScreen()
         {
             CurrentScreenRect = GetScreenRect(ScreenIndex);
@@ -897,7 +872,7 @@ namespace PlainCEETimer.Forms
             }
             else
             {
-                SetRoundCornerRegion = true;
+                SetRoundRegion = true;
             }
         }
     }
