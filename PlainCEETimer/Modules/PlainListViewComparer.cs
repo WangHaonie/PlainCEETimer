@@ -3,10 +3,10 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
 {
-    public sealed class PlainListViewComparer<TObject> : IComparer
-        where TObject : IListViewObject<TObject>
+    public sealed class PlainListViewComparer<TData> : IComparer
+        where TData : IListViewObject<TData>
     {
         public int Compare(object x, object y)
-            => ((TObject)((ListViewItem)x).Tag).CompareTo((TObject)((ListViewItem)y).Tag);
+            => ((TData)((ListViewItem)x).Tag).CompareTo((TData)((ListViewItem)y).Tag);
     }
 }

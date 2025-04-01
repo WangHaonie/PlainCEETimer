@@ -393,18 +393,18 @@
             this.LabelCountdownEnd.AutoSize = true;
             this.LabelCountdownEnd.Location = new System.Drawing.Point(6, 47);
             this.LabelCountdownEnd.Name = "LabelCountdownEnd";
-            this.LabelCountdownEnd.Size = new System.Drawing.Size(130, 15);
+            this.LabelCountdownEnd.Size = new System.Drawing.Size(117, 15);
             this.LabelCountdownEnd.TabIndex = 45;
-            this.LabelCountdownEnd.Text = "当倒计时结束时, 显示";
+            this.LabelCountdownEnd.Text = "当考试开始后, 显示";
             // 
             // ComboBoxCountdownEnd
             // 
             this.ComboBoxCountdownEnd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxCountdownEnd.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ComboBoxCountdownEnd.Location = new System.Drawing.Point(138, 43);
+            this.ComboBoxCountdownEnd.Location = new System.Drawing.Point(125, 43);
             this.ComboBoxCountdownEnd.MaxDropDownItems = 1;
             this.ComboBoxCountdownEnd.Name = "ComboBoxCountdownEnd";
-            this.ComboBoxCountdownEnd.Size = new System.Drawing.Size(178, 23);
+            this.ComboBoxCountdownEnd.Size = new System.Drawing.Size(191, 23);
             this.ComboBoxCountdownEnd.TabIndex = 44;
             this.ComboBoxCountdownEnd.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -574,7 +574,7 @@
             // LabelPreviewColor4
             // 
             this.LabelPreviewColor4.AutoSize = true;
-            this.LabelPreviewColor4.Location = new System.Drawing.Point(200, 118);
+            this.LabelPreviewColor4.Location = new System.Drawing.Point(174, 118);
             this.LabelPreviewColor4.Name = "LabelPreviewColor4";
             this.LabelPreviewColor4.Size = new System.Drawing.Size(68, 15);
             this.LabelPreviewColor4.TabIndex = 19;
@@ -584,7 +584,7 @@
             // 
             this.LabelColor41.AutoSize = true;
             this.LabelColor41.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor41.Location = new System.Drawing.Point(110, 118);
+            this.LabelColor41.Location = new System.Drawing.Point(84, 118);
             this.LabelColor41.Name = "LabelColor41";
             this.LabelColor41.Size = new System.Drawing.Size(39, 17);
             this.LabelColor41.TabIndex = 18;
@@ -594,7 +594,7 @@
             // 
             this.LabelColor42.AutoSize = true;
             this.LabelColor42.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor42.Location = new System.Drawing.Point(155, 118);
+            this.LabelColor42.Location = new System.Drawing.Point(129, 118);
             this.LabelColor42.Name = "LabelColor42";
             this.LabelColor42.Size = new System.Drawing.Size(39, 17);
             this.LabelColor42.TabIndex = 17;
@@ -605,14 +605,14 @@
             this.LabelLine05.AutoSize = true;
             this.LabelLine05.Location = new System.Drawing.Point(6, 119);
             this.LabelLine05.Name = "LabelLine05";
-            this.LabelLine05.Size = new System.Drawing.Size(99, 15);
+            this.LabelLine05.Size = new System.Drawing.Size(73, 15);
             this.LabelLine05.TabIndex = 16;
-            this.LabelLine05.Text = "[4]程序欢迎界面";
+            this.LabelLine05.Text = "[4]欢迎信息";
             // 
             // LabelPreviewColor1
             // 
             this.LabelPreviewColor1.AutoSize = true;
-            this.LabelPreviewColor1.Location = new System.Drawing.Point(200, 53);
+            this.LabelPreviewColor1.Location = new System.Drawing.Point(174, 53);
             this.LabelPreviewColor1.Name = "LabelPreviewColor1";
             this.LabelPreviewColor1.Size = new System.Drawing.Size(0, 15);
             this.LabelPreviewColor1.TabIndex = 15;
@@ -620,7 +620,7 @@
             // LabelPreviewColor2
             // 
             this.LabelPreviewColor2.AutoSize = true;
-            this.LabelPreviewColor2.Location = new System.Drawing.Point(200, 75);
+            this.LabelPreviewColor2.Location = new System.Drawing.Point(174, 75);
             this.LabelPreviewColor2.Name = "LabelPreviewColor2";
             this.LabelPreviewColor2.Size = new System.Drawing.Size(0, 15);
             this.LabelPreviewColor2.TabIndex = 14;
@@ -628,7 +628,7 @@
             // LabelPreviewColor3
             // 
             this.LabelPreviewColor3.AutoSize = true;
-            this.LabelPreviewColor3.Location = new System.Drawing.Point(200, 97);
+            this.LabelPreviewColor3.Location = new System.Drawing.Point(174, 97);
             this.LabelPreviewColor3.Name = "LabelPreviewColor3";
             this.LabelPreviewColor3.Size = new System.Drawing.Size(0, 15);
             this.LabelPreviewColor3.TabIndex = 13;
@@ -657,7 +657,7 @@
             // 
             this.LabelColor31.AutoSize = true;
             this.LabelColor31.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor31.Location = new System.Drawing.Point(110, 96);
+            this.LabelColor31.Location = new System.Drawing.Point(84, 96);
             this.LabelColor31.Name = "LabelColor31";
             this.LabelColor31.Size = new System.Drawing.Size(39, 17);
             this.LabelColor31.TabIndex = 9;
@@ -667,7 +667,7 @@
             // 
             this.LabelColor32.AutoSize = true;
             this.LabelColor32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor32.Location = new System.Drawing.Point(155, 96);
+            this.LabelColor32.Location = new System.Drawing.Point(129, 96);
             this.LabelColor32.Name = "LabelColor32";
             this.LabelColor32.Size = new System.Drawing.Size(39, 17);
             this.LabelColor32.TabIndex = 8;
@@ -677,7 +677,7 @@
             // 
             this.LabelColor21.AutoSize = true;
             this.LabelColor21.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor21.Location = new System.Drawing.Point(110, 74);
+            this.LabelColor21.Location = new System.Drawing.Point(84, 74);
             this.LabelColor21.Name = "LabelColor21";
             this.LabelColor21.Size = new System.Drawing.Size(39, 17);
             this.LabelColor21.TabIndex = 7;
@@ -687,7 +687,7 @@
             // 
             this.LabelColor22.AutoSize = true;
             this.LabelColor22.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor22.Location = new System.Drawing.Point(155, 74);
+            this.LabelColor22.Location = new System.Drawing.Point(129, 74);
             this.LabelColor22.Name = "LabelColor22";
             this.LabelColor22.Size = new System.Drawing.Size(39, 17);
             this.LabelColor22.TabIndex = 6;
@@ -697,7 +697,7 @@
             // 
             this.LabelColor11.AutoSize = true;
             this.LabelColor11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor11.Location = new System.Drawing.Point(110, 52);
+            this.LabelColor11.Location = new System.Drawing.Point(84, 52);
             this.LabelColor11.Name = "LabelColor11";
             this.LabelColor11.Size = new System.Drawing.Size(39, 17);
             this.LabelColor11.TabIndex = 5;
@@ -707,7 +707,7 @@
             // 
             this.LabelColor12.AutoSize = true;
             this.LabelColor12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.LabelColor12.Location = new System.Drawing.Point(155, 52);
+            this.LabelColor12.Location = new System.Drawing.Point(129, 52);
             this.LabelColor12.Name = "LabelColor12";
             this.LabelColor12.Size = new System.Drawing.Size(39, 17);
             this.LabelColor12.TabIndex = 0;
@@ -718,27 +718,27 @@
             this.LabelLine04.AutoSize = true;
             this.LabelLine04.Location = new System.Drawing.Point(6, 97);
             this.LabelLine04.Name = "LabelLine04";
-            this.LabelLine04.Size = new System.Drawing.Size(99, 15);
+            this.LabelLine04.Size = new System.Drawing.Size(60, 15);
             this.LabelLine04.TabIndex = 4;
-            this.LabelLine04.Text = "[3]考试已结束时";
+            this.LabelLine04.Text = "[3]考试后";
             // 
             // LabelLine03
             // 
             this.LabelLine03.AutoSize = true;
             this.LabelLine03.Location = new System.Drawing.Point(6, 75);
             this.LabelLine03.Name = "LabelLine03";
-            this.LabelLine03.Size = new System.Drawing.Size(99, 15);
+            this.LabelLine03.Size = new System.Drawing.Size(60, 15);
             this.LabelLine03.TabIndex = 3;
-            this.LabelLine03.Text = "[2]考试已开始时";
+            this.LabelLine03.Text = "[2]考试中";
             // 
             // LabelLine02
             // 
             this.LabelLine02.AutoSize = true;
             this.LabelLine02.Location = new System.Drawing.Point(6, 53);
             this.LabelLine02.Name = "LabelLine02";
-            this.LabelLine02.Size = new System.Drawing.Size(99, 15);
+            this.LabelLine02.Size = new System.Drawing.Size(60, 15);
             this.LabelLine02.TabIndex = 2;
-            this.LabelLine02.Text = "[1]考试未开始时";
+            this.LabelLine02.Text = "[1]考试前";
             // 
             // GBoxFont
             // 

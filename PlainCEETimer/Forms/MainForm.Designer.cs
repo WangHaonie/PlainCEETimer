@@ -62,7 +62,7 @@ namespace PlainCEETimer.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "高考倒计时 by WangHaonie";
+            this.Text = "高考倒计时";
             this.ResumeLayout(false);
             this.PerformLayout();
 

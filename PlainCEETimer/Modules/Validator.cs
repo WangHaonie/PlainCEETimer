@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using PlainCEETimer.Modules.Configuration;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -77,10 +76,10 @@ namespace PlainCEETimer.Modules
         }
 
         public static bool IsValidExamDate(DateTime ExamTime)
-            => ExamTime.Ticks is >= Validator.MinDate and <= Validator.MaxDate;
+            => ExamTime.Ticks is >= MinDate and <= MaxDate;
 
         public static bool IsValidExamLength(int ExamLength)
-            => ExamLength is >= Validator.MinExamNameLength and <= Validator.MaxExamNameLength;
+            => ExamLength is >= MinExamNameLength and <= MaxExamNameLength;
 
         public static int GetAutoSwitchInterval(int Index) => Index switch
         {
@@ -124,28 +123,35 @@ namespace PlainCEETimer.Modules
 
         public static string GetPhaseText(CountdownPhase i) => i switch
         {
-            CountdownPhase.P2 => Placeholders.PH_LEFT,
-            CountdownPhase.P3 => Placeholders.PH_PAST,
-            _ => Placeholders.PH_START
+            CountdownPhase.P2 => Placeholders.PH_RTP2,
+            CountdownPhase.P3 => Placeholders.PH_RTP3,
+            _ => Placeholders.PH_RTP1
         };
 
         public static void EnsureCustomTextLength(string Text)
         {
-            if (Text.Length > Validator.MaxCustomTextLength)
+            if (Text.Length > MaxCustomTextLength)
             {
                 throw new Exception();
             }
         }
 
-        public static Color GetColor(object Argb)
-            => GetColorCore(Argb);
+        public static void Validate<TData>(TData[] value) where TData : IListViewObject<TData>
+        {
+            HashSet<TData> set = [];
 
-        public static Color GetColor(JObject Json, int Index)
-            => Index == 0
-            ? GetColorCore(Json[nameof(ColorSetObject.Fore)])
-            : GetColorCore(Json[nameof(ColorSetObject.Back)]);
+            foreach (var item in value)
+            {
+                if (!set.Add(item))
+                {
+                    throw new Exception();
+                }
+            }
 
-        private static Color GetColorCore(object obj)
+            Array.Sort(value);
+        }
+
+        public static Color GetColor(object obj)
         {
             int Argb;
 

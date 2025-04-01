@@ -19,8 +19,8 @@ namespace PlainCEETimer.Modules.JsonConverters
             }
 
             var Tick = TimeSpan.FromSeconds(double.Parse(Json[nameof(existingValue.Tick)].ToString()));
-            var Fore = Validator.GetColor(Json, 0);
-            var Back = Validator.GetColor(Json, 1);
+            var Fore = Validator.GetColor(Json[nameof(ColorSetObject.Fore)]);
+            var Back = Validator.GetColor(Json[nameof(ColorSetObject.Back)]);
 
             if (!Validator.IsNiceContrast(Fore, Back))
             {
@@ -35,8 +35,7 @@ namespace PlainCEETimer.Modules.JsonConverters
                 Phase = (CountdownPhase)PhaseInt,
                 Tick = Tick,
                 Text = Text,
-                Fore = Fore,
-                Back = Back
+                Colors = new(Fore, Back)
             };
         }
 
@@ -46,8 +45,8 @@ namespace PlainCEETimer.Modules.JsonConverters
             {
                 { nameof(value.Phase), (int)value.Phase },
                 { nameof(value.Tick), (long)value.Tick.TotalSeconds },
-                { nameof(value.Fore), value.Fore.ToArgbInt() },
-                { nameof(value.Back), value.Back.ToArgbInt() },
+                { nameof(value.Colors.Fore), value.Colors.Fore.ToArgbInt() },
+                { nameof(value.Colors.Back), value.Colors.Back.ToArgbInt() },
                 { nameof(value.Text), value.Text }
             }.WriteTo(writer);
         }

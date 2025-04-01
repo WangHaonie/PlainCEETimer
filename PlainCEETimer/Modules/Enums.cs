@@ -16,7 +16,8 @@ namespace PlainCEETimer.Modules
     {
         P1,
         P2,
-        P3
+        P3,
+        Temp
     }
 
     public enum CountdownPosition
@@ -35,7 +36,6 @@ namespace PlainCEETimer.Modules
     /// <summary>
     /// 表示倒计时要显示哪些阶段
     /// </summary>
-    [Flags]
     public enum CountdownMode
     {
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
 using System;
-using System.Drawing;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -12,11 +11,9 @@ namespace PlainCEETimer.Modules.Configuration
 
         public TimeSpan Tick { get; set; }
 
-        public Color Fore { get; set; }
-
-        public Color Back { get; set; }
-
         public string Text { get; set; }
+
+        public ColorSetObject Colors { get; set; }
 
         public bool CanExecute() => true;
 

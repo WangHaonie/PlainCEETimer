@@ -244,6 +244,5 @@
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

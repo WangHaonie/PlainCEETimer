@@ -28,6 +28,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public bool Ceiling { get; set; }
 
+        [DefaultValue(2)]
         public int EndIndex
         {
             get;
@@ -43,7 +44,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        }
+        } = 2;
 
         public bool CustomText { get; set; }
 

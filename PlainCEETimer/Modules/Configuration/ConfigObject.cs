@@ -2,7 +2,6 @@
 using PlainCEETimer.Forms;
 using PlainCEETimer.Modules.JsonConverters;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace PlainCEETimer.Modules.Configuration
@@ -22,7 +21,7 @@ namespace PlainCEETimer.Modules.Configuration
                 {
                     if (MainForm.ValidateNeeded)
                     {
-                        Array.Sort(value);
+                        Validator.Validate(value);
                     }
 
                     field = value;
@@ -71,17 +70,9 @@ namespace PlainCEETimer.Modules.Configuration
             {
                 if (MainForm.ValidateNeeded)
                 {
-                    if (value.Length > 4)
+                    if (value.Length < 4)
                     {
                         throw new Exception();
-                    }
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (!Validator.IsNiceContrast(value[i].Fore, value[i].Back))
-                        {
-                            throw new Exception();
-                        }
                     }
                 }
 
@@ -100,17 +91,7 @@ namespace PlainCEETimer.Modules.Configuration
                 {
                     if (MainForm.ValidateNeeded)
                     {
-                        var HashSet = new HashSet<CustomRuleObject>();
-
-                        foreach (var Item in value)
-                        {
-                            if (!HashSet.Add(Item))
-                            {
-                                throw new Exception();
-                            }
-                        }
-
-                        Array.Sort(value);
+                        Validator.Validate(value);
                     }
 
                     field = value;

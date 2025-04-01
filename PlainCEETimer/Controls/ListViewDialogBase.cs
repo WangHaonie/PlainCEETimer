@@ -27,7 +27,7 @@ namespace PlainCEETimer.Controls
 
         private Button ButtonOperation;
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
-        private readonly HashSet<TData> ListViewItemsIndex = [];
+        private readonly HashSet<TData> ListViewItemsSet = [];
         private ContextMenu ContextMenuMain;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
@@ -129,7 +129,7 @@ namespace PlainCEETimer.Controls
         protected void AddItem(ListViewItem Item, TData Data)
         {
             ListViewMain.Items.Add(Item);
-            ListViewItemsIndex.Add(Data);
+            ListViewItemsSet.Add(Data);
         }
 
         private void ButtonOperation_Click(object sender, EventArgs e)
@@ -196,7 +196,7 @@ namespace PlainCEETimer.Controls
         {
             var EditMode = Item != null;
 
-            if (ListViewItemsIndex.Add(Info) || EditMode)
+            if (ListViewItemsSet.Add(Info) || EditMode)
             {
                 if (EditMode)
                 {
@@ -235,7 +235,7 @@ namespace PlainCEETimer.Controls
         private void RemoveItem(ListViewItem Item, TData TagData)
         {
             ListViewMain.Items.Remove(Item);
-            ListViewItemsIndex.Remove(TagData);
+            ListViewItemsSet.Remove(TagData);
         }
 
         private void InitializeComponent()

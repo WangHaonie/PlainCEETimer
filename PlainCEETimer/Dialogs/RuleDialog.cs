@@ -35,7 +35,7 @@ namespace PlainCEETimer.Dialogs
         {
             BindComboData(ComboBoxRuleType,
             [
-                new(Placeholders.PH_START, 0),
+                new($"开始{Placeholders.PH_START}", 0),
                 new(Placeholders.PH_LEFT, 1),
                 new(Placeholders.PH_PAST, 2)
             ]);
@@ -48,11 +48,12 @@ namespace PlainCEETimer.Dialogs
             {
                 ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
                 var Ticks = Data.Tick;
+                var tmp = Data.Colors;
                 NUDDays.Value = Ticks.Days;
                 NUDHours.Value = Ticks.Hours;
                 NUDMinutes.Value = Ticks.Minutes;
                 NUDSeconds.Value = Ticks.Seconds;
-                ApplyColorBlock(Data.Fore, Data.Back);
+                ApplyColorBlock(tmp.Fore, tmp.Back);
                 TextBoxCustomText.Text = Data.Text;
             }
             else
@@ -111,9 +112,8 @@ namespace PlainCEETimer.Dialogs
             {
                 Phase = (CountdownPhase)ComboBoxRuleType.SelectedIndex,
                 Tick = new(d, h, m, s),
-                Fore = Fore,
-                Back = Back,
-                Text = Text
+                Text = Text,
+                Colors = new(Fore, Back)
             };
 
             base.ButtonA_Click();

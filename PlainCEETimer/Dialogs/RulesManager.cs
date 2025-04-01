@@ -23,7 +23,7 @@ namespace PlainCEETimer.Dialogs
             ButtonGlobal = new Button()
             {
                 Size = new SmartSize(90, 23),
-                Text = "全局设置(G)",
+                Text = "全局设置(&G)",
                 UseVisualStyleBackColor = true
             };
 
@@ -37,18 +37,19 @@ namespace PlainCEETimer.Dialogs
             AddNewButton(ButtonGlobal, 6);
         }
 
-        protected override void AddItem(CustomRuleObject Info, bool IsSelected = false)
+        protected override void AddItem(CustomRuleObject Data, bool IsSelected = false)
         {
-            var Item = new ListViewItem([Validator.GetPhaseText(Info.Phase), Validator.GetTickText(Info.Tick)])
+            var tmp = Data.Colors;
+            var Item = new ListViewItem([Validator.GetPhaseText(Data.Phase), Validator.GetTickText(Data.Tick)])
             {
-                Tag = Info,
+                Tag = Data,
                 Selected = IsSelected,
                 Focused = IsSelected,
                 UseItemStyleForSubItems = false
             };
 
-            Item.SubItems.Add(new ListViewItem.ListViewSubItem(Item, Info.Text, Info.Fore, Info.Back, null));
-            AddItem(Item, Info);
+            Item.SubItems.Add(new ListViewItem.ListViewSubItem(Item, Data.Text, tmp.Fore, tmp.Back, null));
+            AddItem(Item, Data);
         }
 
         protected override ISubDialog<CustomRuleObject, RuleDialog> GetSubDialogInstance(CustomRuleObject Existing = null) => new RuleDialog()

@@ -51,7 +51,7 @@ namespace PlainCEETimer.Forms
         private string[] GlobalTexts;
         private CountdownMode Mode;
         private CountdownPosition CountdownPos;
-        private CountdownPhase CurrentPhase = (CountdownPhase)3;
+        private CountdownPhase CurrentPhase = CountdownPhase.Temp;
         private CountdownState SelectedState;
         private IEnumerable<CustomRuleObject> CurrentRules;
         private ColorSetObject[] CountdownColors;
@@ -375,6 +375,11 @@ namespace PlainCEETimer.Forms
             ExamStart = CurrentExam.Start;
             ExamEnd = CurrentExam.End;
             IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
+
+            if (IsCountdownReady && CurrentPhase != CountdownPhase.Temp)
+            {
+                RefreshCustomRules(CurrentPhase);
+            }
         }
 
         private void PrepareCountdown()
@@ -692,42 +697,48 @@ namespace PlainCEETimer.Forms
         {
             var Now = DateTime.Now;
 
-            if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
+            if (IsCountdownReady)
             {
-                SetPhase(CountdownPhase.P3);
-                ApplyCustomRule(2, Now - ExamEnd);
+                if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
+                {
+                    SetPhase(CountdownPhase.P1);
+                    ApplyCustomRule(0, ExamEnd - Now);
+                    return;
+                }
+
+                if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
+                {
+                    SetPhase(CountdownPhase.P2);
+                    ApplyCustomRule(1, ExamEnd - Now);
+                    return;
+                }
+
+                if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
+                {
+                    SetPhase(CountdownPhase.P3);
+                    ApplyCustomRule(2, Now - ExamEnd);
+                    return;
+                }
             }
-            else if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
-            {
-                SetPhase(CountdownPhase.P2);
-                ApplyCustomRule(1, ExamEnd - Now);
-            }
-            else if (Mode >= CountdownMode.Mode1 && Now < ExamEnd)
-            {
-                SetPhase(CountdownPhase.P1);
-                ApplyCustomRule(0, ExamEnd - Now);
-            }
-            else
-            {
-                Countdown.Dispose();
-                UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3]);
-                UpdateTrayIconText(App.AppName, true);
-                IsCountdownRunning = false;
-            }
+
+            Countdown.Dispose();
+            UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3]);
+            UpdateTrayIconText(App.AppName, true);
+            IsCountdownRunning = false;
         }
 
         private void ApplyCustomRule(int Phase, TimeSpan Span)
         {
             if (UseCustomText)
             {
-                if (CurrentRules.Count() > 0)
+                if (CurrentRules.Count() != 0)
                 {
                     foreach (var Rule in CurrentRules)
                     {
                         if (Phase == 2 ? (Span >= Rule.Tick) : (Span <= Rule.Tick + new TimeSpan(0, 0, 0, 1)))
                         {
 
-                            UpdateCountdown(SetCustomRule(Span, Rule.Text), new(Rule.Fore, Rule.Back));
+                            UpdateCountdown(SetCustomRule(Span, Rule.Text), Rule.Colors);
                             return;
                         }
                     }
@@ -787,7 +798,7 @@ namespace PlainCEETimer.Forms
             {
                 if (UseCustomText)
                 {
-                    CurrentRules = CustomRules.Where(x => x.Phase == phase);
+                    RefreshCustomRules(phase);
                 }
 
                 CurrentPhase = phase;
@@ -852,6 +863,11 @@ namespace PlainCEETimer.Forms
         {
             CurrentScreenRect = GetScreenRect(ScreenIndex);
             CurrentScreen = Screen.FromControl(this);
+        }
+
+        private void RefreshCustomRules(CountdownPhase phase)
+        {
+            CurrentRules = CustomRules.Where(x => x.Phase == phase);
         }
 
         private void SaveConfig()
