@@ -8,7 +8,6 @@ namespace PlainCEETimer
         [STAThread]
         private static void Main(string[] args)
         {
-            App.SetDpiAwareness();
             App.StartProgram(args);
         }
     }

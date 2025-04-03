@@ -23,8 +23,9 @@ namespace PlainCEETimer.Forms
 
         private DownloaderForm()
         {
-            InitializeComponent();
             AdjustBeforeLoad = true;
+            ShowInCenterScreen = true;
+            InitializeComponent();
         }
 
         public DownloaderForm(string ManualVersion) : this()
@@ -180,17 +181,17 @@ namespace PlainCEETimer.Forms
 
         private void UpdateLabels(string Info, string Size, string Speed)
         {
-            if (!string.IsNullOrEmpty(Info))
+            if (Info != null)
             {
                 LabelDownloading.Text = Info;
             }
 
-            if (!string.IsNullOrEmpty(Size))
+            if (Size != null)
             {
                 LabelSize.Text = Size;
             }
 
-            if (!string.IsNullOrEmpty(Speed))
+            if (Speed != null)
             {
                 LabelSpeed.Text = Speed;
             }

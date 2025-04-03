@@ -38,6 +38,7 @@ namespace PlainCEETimer.Forms
         public SettingsForm()
         {
             CompositedStyle = true;
+            ShowInCenterScreen = true;
             InitializeComponent();
         }
 
@@ -333,7 +334,12 @@ namespace PlainCEETimer.Forms
             ChangePptsvcStyle(sender, e);
             ComboBoxScreens.SelectedIndex = CheckBoxDraggable.Checked ? 0 : AppConfig.Display.ScreenIndex;
             ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
-            LabelScreens.Enabled = LabelChar1.Enabled = ComboBoxScreens.Enabled = !CheckBoxDraggable.Checked;
+
+            var flag = !CheckBoxDraggable.Checked;
+            LabelScreens.Enabled = flag;
+            LabelChar1.Enabled = flag;
+            ComboBoxScreens.Enabled = flag;
+            ComboBoxPosition.Enabled = flag;
         }
 
         private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
@@ -346,7 +352,6 @@ namespace PlainCEETimer.Forms
         private void ComboBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
         {
             SettingsChanged(sender, e);
-            ComboBoxPosition.Enabled = !CheckBoxDraggable.Checked && ComboBoxScreens.SelectedIndex != 0;
             ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
         }
 
@@ -439,13 +444,12 @@ namespace PlainCEETimer.Forms
             ]);
 
             var CurrentScreens = Screen.AllScreens;
-            var Length = CurrentScreens.Length + 1;
+            var Length = CurrentScreens.Length;
             var Monitors = new ComboData[Length];
-            Monitors[0] = new("<请选择>", 0);
-            for (int i = 1; i < Length; i++)
+            for (int i = 0; i < Length; i++)
             {
-                var CurrentScreen = CurrentScreens[i - 1];
-                Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
+                var CurrentScreen = CurrentScreens[i];
+                Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i + 1, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
             }
             BindComboData(ComboBoxScreens, Monitors);
 

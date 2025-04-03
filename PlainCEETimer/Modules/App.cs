@@ -1,7 +1,5 @@
 ﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -71,16 +69,10 @@ namespace PlainCEETimer.Modules
         private static readonly MessageBoxHelper MessageX = new();
         private static Mutex MainMutex;
 
-        public static void SetDpiAwareness()
-        {
-            DpiAwareness.SetProcessDpiAwarenessEx(0);
-        }
-
         public static void StartProgram(string[] args)
         {
             AppIcon = Icon.ExtractAssociatedIcon(CurrentExecutablePath);
             _ = DefaultValues.Initialize;
-            DpiExtensions.DpiRatio = NativeInterop.GetDpiForSystem() / 96D;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
             Application.EnableVisualStyles();

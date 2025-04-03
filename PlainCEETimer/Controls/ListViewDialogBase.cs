@@ -39,12 +39,12 @@ namespace PlainCEETimer.Controls
 
         protected ListViewDialogBase() : base(AppDialogProp.All)
         {
-            CompositedStyle = true;
             AdjustBeforeLoad = true;
+            CompositedStyle = true;
             InitializeComponent();
             Text = DialogTitle;
             ListViewMain.Headers = ListViewHeaders;
-            ListViewMain.Size = new SmartSize(ListViewWidth, 218);
+            ListViewMain.Size = new Size(ScaleToDpi(ListViewWidth), ScaleToDpi(218));
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿using PlainCEETimer.Dialogs;
 using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,24 +11,38 @@ namespace PlainCEETimer.Controls
     public class AppForm : Form
     {
         /// <summary>
-        /// 获取或设置一个值，该值指示窗体是否应在加载之前就先开始调整 UI。
+        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否应在加载之前就先调用 <see cref="AdjustUI"/> 调整 UI。
         /// </summary>
         protected bool AdjustBeforeLoad { get; set; }
 
         /// <summary>
-        /// 获取或设置一个值，该值指示窗体是否启用 WS_EX_COMPOSITED 样式以减少闪烁。
+        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否启用 WS_EX_COMPOSITED 样式以减少闪烁。
         /// </summary>
         protected bool CompositedStyle { get; set; }
+
+        /// <summary>
+        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否在屏幕 DPI 变化时引发 <see cref="OnCurrentDpiChanged(float)"/>。
+        /// </summary>
+        protected bool InvokeDpiChanged { get; set; }
+
+        /// <summary>
+        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否应当出现在屏幕中心。用于解决 <see cref="FormStartPosition.CenterScreen"/> 失效的问题。
+        /// </summary>
+        protected bool ShowInCenterScreen { get; set; }
 
         /// <summary>
         /// 获取当前的消息框实例以向用户显示消息框。
         /// </summary>
         protected MessageBoxHelper MessageX { get; }
 
+        protected bool Special { get; set; }
+
         protected event EventHandler LocationRefreshed;
 
         private bool IsLoading = true;
-        private readonly bool IsMainForm;
+        private float LastDpi;
+        private float CurrentDpi;
+        private float CurrentDpiRatio;
 
         protected AppForm()
         {
@@ -37,14 +51,17 @@ namespace PlainCEETimer.Controls
                 MessageX = new(this);
             }
 
-            IsMainForm = this is MainForm;
-            TopMost = MainForm.UniTopMost;
+            GetDpi(true);
+
+            if (InvokeDpiChanged && CurrentDpiRatio > 1)
+            {
+                OnCurrentDpiChanged(CurrentDpi, CurrentDpiRatio);
+            }
+
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
+            AppLauncher_UniTopMostStateChanged(null, null);
         }
-
-        public Screen GetCurrentScreen()
-            => MainForm.CurrentScreen ?? Screen.FromPoint(Cursor.Position);
 
         public void ReActivate()
         {
@@ -57,8 +74,25 @@ namespace PlainCEETimer.Controls
             KeepOnScreen();
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (InvokeDpiChanged && m.Msg == 0x02E0)
+            {
+                GetDpi();
+                OnCurrentDpiChanged(CurrentDpi, CurrentDpiRatio);
+            }
+
+            base.WndProc(ref m);
+        }
+
         protected sealed override void OnLoad(EventArgs e)
         {
+            if (ShowInCenterScreen)
+            {
+                StartPosition = FormStartPosition.Manual;
+                Location = GetScreenCenter(GetCurrentScreenRect());
+            }
+
             if (AdjustBeforeLoad)
             {
                 AdjustUI();
@@ -145,7 +179,7 @@ namespace PlainCEETimer.Controls
         }
 
         /// <summary>
-        /// 在 AppForm 被关闭时触发。该方法没有默认实现，可不调用 base.OnClosing(e);
+        /// 在 AppForm 被关闭时触发。该方法没有默认实现，可不调用 base.OnClosing(FormClosingEventArgs);
         /// </summary>
         protected virtual void OnClosing(FormClosingEventArgs e)
         {
@@ -159,6 +193,18 @@ namespace PlainCEETimer.Controls
         {
 
         }
+
+        /// <summary>
+        /// 在当前屏幕缩放改变时发生。该方法没有默认实现，可不调用 base.OnCurrentDpiChanged(float);
+        /// </summary>
+        /// <param name="newDpi">新的 DPI</param>
+        protected virtual void OnCurrentDpiChanged(float newDpi, float newDpiRatio)
+        {
+
+        }
+
+        protected int ScaleToDpi(int px)
+            => (int)(px * (CurrentDpi / 96F));
 
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
@@ -176,7 +222,7 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected void WhenHighDpi(Action Method)
         {
-            if (DpiExtensions.DpiRatio > 1D)
+            if (CurrentDpiRatio > 1F)
             {
                 Method();
             }
@@ -234,7 +280,7 @@ namespace PlainCEETimer.Controls
         /// <param name="FullWidth">[可选] 默认 false。true 则按屏幕宽度减10px作为最大长度，false 则屏幕宽度的3/4。</param>
         protected void SetLabelAutoWrap(Label Target, bool FullWidth = false)
         {
-            var CurrentScreenWidth = GetCurrentScreen().WorkingArea.Width;
+            var CurrentScreenWidth = GetCurrentScreenRect().Width;
             SetLabelAutoWrapCore(Target, new(FullWidth ? CurrentScreenWidth - 10 : (int)(CurrentScreenWidth * 0.75), 0));
         }
 
@@ -278,7 +324,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Container">容器类控件</param>
         protected void AlignControlsR(Button Btn1, Button Btn2, Control Container)
         {
-            AlignControlsRCore(Btn1, Btn2, Container, Container.Height + 6.ScaleToDpi());
+            AlignControlsRCore(Btn1, Btn2, Container, Container.Height + ScaleToDpi(6));
         }
 
         /// <summary>
@@ -300,7 +346,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void AlignControlsX(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Top = Reference.Top + Reference.Height / 2 - Target.Height / 2 + Tweak.ScaleToDpi();
+            Target.Top = Reference.Top + Reference.Height / 2 - Target.Height / 2 + ScaleToDpi(Tweak);
         }
 
         /// <summary>
@@ -325,7 +371,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void CompactControlsX(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Left = Reference.Left + Reference.Width + Tweak.ScaleToDpi();
+            Target.Left = Reference.Left + Reference.Width + ScaleToDpi(Tweak);
         }
 
         /// <summary>
@@ -336,7 +382,18 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void CompactControlsY(Control Target, Control Reference, int Tweak = 0)
         {
-            Target.Top = Reference.Top + Reference.Height + Tweak.ScaleToDpi();
+            Target.Top = Reference.Top + Reference.Height + ScaleToDpi(Tweak);
+        }
+
+        protected void ScaleControl(Control Target, float dpiRatio)
+        {
+            Target.Left = (int)(Target.Left * dpiRatio);
+            Target.Top = (int)(Target.Top * dpiRatio);
+            Target.Width = (int)(Target.Width * dpiRatio);
+            Target.Height = (int)(Target.Height * dpiRatio);
+
+            var font = Target.Font;
+            Target.Font = new(font.FontFamily, font.Size * CurrentDpiRatio, font.Style);
         }
 
         protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
@@ -344,7 +401,6 @@ namespace PlainCEETimer.Controls
         protected MenuItem AddItem(string Text) => new(Text);
 
         protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
-
 
         protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
 
@@ -396,9 +452,12 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        protected Point GetScreenCenter(Rectangle workingArea)
+            => new(workingArea.Left + workingArea.Width / 2 - Width / 2, workingArea.Top + workingArea.Height / 2 - Height / 2);
+
         protected void KeepOnScreen()
         {
-            var ValidArea = GetScreenRect();
+            var ValidArea = GetCurrentScreenRect();
             bool b = false;
 
             if (Left < ValidArea.Left)
@@ -425,21 +484,45 @@ namespace PlainCEETimer.Controls
                 b = true;
             }
 
-            if (IsMainForm && b)
+            if (Special && b)
             {
                 LocationRefreshed?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        protected Rectangle GetScreenRect(int Index = -1)
+        private void AppLauncher_TrayMenuShowAllClicked(object sender, EventArgs e)
         {
-            if (Index >= 0)
+            if (!IsDisposed)
             {
-                return Screen.AllScreens[Index].WorkingArea;
+                ReActivate();
+                KeepOnScreen();
+            }
+        }
+
+        private void AppLauncher_UniTopMostStateChanged(object sender, EventArgs e)
+        {
+            TopMost = !IsDisposed && !Special && MainForm.UniTopMost;
+        }
+
+        private void GetDpi(bool once = false)
+        {
+            CurrentDpi = NativeInterop.GetDpiForWindow(Handle);
+
+            if (once)
+            {
+                LastDpi = CurrentDpi;
             }
 
-            return Screen.GetWorkingArea(this);
+            CurrentDpiRatio = (CurrentDpi) / LastDpi;
+
+            if (!once)
+            {
+                LastDpi = CurrentDpi;
+            }
         }
+
+        private Rectangle GetCurrentScreenRect()
+            => Special ? Screen.FromControl(this).WorkingArea : Screen.FromPoint(Cursor.Position).WorkingArea;
 
         private void SetLabelAutoWrapCore(Label Target, Size NewSize)
         {
@@ -460,29 +543,7 @@ namespace PlainCEETimer.Controls
         private void AlignControlsRCore(Button Btn1, Button Btn2, Control Main, int yTweak)
         {
             Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
-            Btn1.Location = new(Btn2.Location.X - Btn1.Width - 6.ScaleToDpi(), Btn2.Location.Y);
-        }
-
-        private void AppLauncher_TrayMenuShowAllClicked(object sender, EventArgs e)
-        {
-            if (!IsDisposed)
-            {
-                ReActivate();
-                KeepOnScreen();
-            }
-        }
-
-        private void AppLauncher_UniTopMostStateChanged(object sender, EventArgs e)
-        {
-            if (!IsDisposed)
-            {
-                if (IsMainForm)
-                {
-                    return;
-                }
-
-                TopMost = MainForm.UniTopMost;
-            }
+            Btn1.Location = new(Btn2.Location.X - Btn1.Width - ScaleToDpi(6), Btn2.Location.Y);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace PlainCEETimer.Forms
 
         public AboutForm()
         {
+            ShowInCenterScreen = true;
             InitializeComponent();
         }
 

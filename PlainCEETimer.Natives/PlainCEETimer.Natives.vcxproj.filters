@@ -33,9 +33,6 @@
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DpiAwareness\DpiAwareness.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -48,9 +45,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DpiAwareness\DpiAwareness.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

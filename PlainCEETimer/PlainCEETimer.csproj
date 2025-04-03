@@ -178,7 +178,6 @@
     <Compile Include="Controls\ColorDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Interop\DpiAwareness.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
@@ -193,7 +192,6 @@
     <Compile Include="Modules\ContextMenuConstants.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
-    <Compile Include="Modules\Extensions\DpiExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\IListViewObject.cs" />
     <Compile Include="Modules\ISubDialog.cs" />
@@ -209,7 +207,6 @@
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
-    <Compile Include="Modules\SmartSize.cs" />
     <Compile Include="Modules\StartUp.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />

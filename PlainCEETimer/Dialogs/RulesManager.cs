@@ -22,7 +22,7 @@ namespace PlainCEETimer.Dialogs
         {
             ButtonGlobal = new Button()
             {
-                Size = new SmartSize(90, 23),
+                Size = new(ScaleToDpi(90), ScaleToDpi(23)),
                 Text = "全局设置(&G)",
                 UseVisualStyleBackColor = true
             };

@@ -37,7 +37,7 @@
             this.GBoxExamInfo = new System.Windows.Forms.GroupBox();
             this.ComboBoxAutoSwitchIntervel = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.LabelExamInfo = new System.Windows.Forms.Label();
             this.ButtonExamInfo = new System.Windows.Forms.Button();
             this.GBoxOthers = new System.Windows.Forms.GroupBox();
             this.CheckBoxTrayText = new System.Windows.Forms.CheckBox();
@@ -185,7 +185,7 @@
             // 
             this.GBoxExamInfo.Controls.Add(this.ComboBoxAutoSwitchIntervel);
             this.GBoxExamInfo.Controls.Add(this.CheckBoxAutoSwitch);
-            this.GBoxExamInfo.Controls.Add(this.label1);
+            this.GBoxExamInfo.Controls.Add(this.LabelExamInfo);
             this.GBoxExamInfo.Controls.Add(this.ButtonExamInfo);
             this.GBoxExamInfo.Location = new System.Drawing.Point(7, 5);
             this.GBoxExamInfo.Name = "GBoxExamInfo";
@@ -215,14 +215,14 @@
             this.CheckBoxAutoSwitch.UseVisualStyleBackColor = true;
             this.CheckBoxAutoSwitch.CheckedChanged += new System.EventHandler(this.CheckBoxAutoSwitch_CheckedChanged);
             // 
-            // label1
+            // LabelExamInfo
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(241, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "添加多个考试信息以便快速切换倒计时。";
+            this.LabelExamInfo.AutoSize = true;
+            this.LabelExamInfo.Location = new System.Drawing.Point(6, 19);
+            this.LabelExamInfo.Name = "LabelExamInfo";
+            this.LabelExamInfo.Size = new System.Drawing.Size(241, 15);
+            this.LabelExamInfo.TabIndex = 4;
+            this.LabelExamInfo.Text = "添加多个考试信息以便快速切换倒计时。";
             // 
             // ButtonExamInfo
             // 
@@ -484,7 +484,7 @@
             // ComboBoxPosition
             // 
             this.ComboBoxPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBoxPosition.Enabled = false;
+            this.ComboBoxPosition.Enabled = true;
             this.ComboBoxPosition.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.ComboBoxPosition.Location = new System.Drawing.Point(232, 17);
             this.ComboBoxPosition.Name = "ComboBoxPosition";
@@ -956,7 +956,7 @@
         private System.Windows.Forms.CheckBox CheckBoxTopMost;
         private System.Windows.Forms.CheckBox CheckBoxStartup;
         private System.Windows.Forms.CheckBox CheckBoxWCCMS;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label LabelExamInfo;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxAutoSwitchIntervel;
         private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
     }

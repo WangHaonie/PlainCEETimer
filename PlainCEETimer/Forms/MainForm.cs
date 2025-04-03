@@ -21,7 +21,6 @@ namespace PlainCEETimer.Forms
         public static bool UniTopMost { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
         public static bool ValidateNeeded { get; private set; } = true;
-        public static Screen CurrentScreen { get; private set; }
 
         private bool AutoSwitch;
         private bool ContextMenuStyleChanged;
@@ -59,7 +58,7 @@ namespace PlainCEETimer.Forms
         private DateTime ExamStart;
         private Point LastLocation;
         private Point LastMouseLocation;
-        private Rectangle CurrentScreenRect;
+        private Rectangle SelectedScreenRect;
         private AboutForm FormAbout;
         private ConfigObject AppConfig;
         private ContextMenu ContextMenuMain;
@@ -82,8 +81,10 @@ namespace PlainCEETimer.Forms
 
         public MainForm()
         {
-            InitializeComponent();
+            InvokeDpiChanged = true;
+            Special = true;
             CurrentContext = SynchronizationContext.Current;
+            InitializeComponent();
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -104,6 +105,17 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
+        }
+
+        protected override void OnCurrentDpiChanged(float newDpi, float newDpiRatio)
+        {
+            ScaleControl(LabelCountdown, newDpiRatio);
+
+            if (!UseClassicContextMenu)
+            {
+                ScaleControl(ContextMenuStripMain, newDpiRatio);
+                ScaleControl(ContextMenuStripTray, newDpiRatio);
+            }
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -135,7 +147,7 @@ namespace PlainCEETimer.Forms
         {
             if (SetRoundRegion)
             {
-                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, BorderRadius.ScaleToDpi());
+                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, ScaleToDpi(BorderRadius));
             }
 
             ValidateLocation();
@@ -341,7 +353,7 @@ namespace PlainCEETimer.Forms
             UniTopMost = AppConfig.General.UniTopMost;
             IsPPTService = AppConfig.Display.SeewoPptsvc;
             UseCustomText = AppConfig.Display.CustomText;
-            ScreenIndex = AppConfig.Display.ScreenIndex - 1;
+            ScreenIndex = AppConfig.Display.ScreenIndex;
             CountdownPos = AppConfig.Display.Position;
             ShowXOnlyIndex = AppConfig.Display.X;
             ShowTrayIcon = AppConfig.General.TrayIcon;
@@ -398,6 +410,7 @@ namespace PlainCEETimer.Forms
             }
 
             LabelCountdown.Font = AppConfig.Font;
+
             LabelCountdown.MouseDown -= LabelCountdown_MouseDown;
             LabelCountdown.MouseMove -= LabelCountdown_MouseMove;
             LabelCountdown.MouseUp -= LabelCountdown_MouseUp;
@@ -737,7 +750,6 @@ namespace PlainCEETimer.Forms
                     {
                         if (Phase == 2 ? (Span >= Rule.Tick) : (Span <= Rule.Tick + new TimeSpan(0, 0, 0, 1)))
                         {
-
                             UpdateCountdown(SetCustomRule(Span, Rule.Text), Rule.Colors);
                             return;
                         }
@@ -826,7 +838,7 @@ namespace PlainCEETimer.Forms
         {
             if (IsPPTService)
             {
-                var ValidArea = GetScreenRect();
+                var ValidArea = SelectedScreenRect;
 
                 if (Left == ValidArea.Left && Top == ValidArea.Top)
                 {
@@ -846,23 +858,22 @@ namespace PlainCEETimer.Forms
             {
                 Location = CountdownPos switch
                 {
-                    CountdownPosition.LeftCenter => new(CurrentScreenRect.Left, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomLeft => new(CurrentScreenRect.Left, CurrentScreenRect.Bottom - Height),
-                    CountdownPosition.TopCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top),
-                    CountdownPosition.Center => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomCenter => new(CurrentScreenRect.Left + CurrentScreenRect.Width / 2 - Width / 2, CurrentScreenRect.Bottom - Height),
-                    CountdownPosition.TopRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top),
-                    CountdownPosition.RightCenter => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Top + CurrentScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomRight => new(CurrentScreenRect.Right - Width, CurrentScreenRect.Bottom - Height),
-                    _ => IsPPTService ? new(CurrentScreenRect.Location.X + PptsvcThreshold, CurrentScreenRect.Location.Y) : CurrentScreenRect.Location
+                    CountdownPosition.LeftCenter => new(SelectedScreenRect.Left, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.BottomLeft => new(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height),
+                    CountdownPosition.TopCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top),
+                    CountdownPosition.Center => GetScreenCenter(SelectedScreenRect),
+                    CountdownPosition.BottomCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Bottom - Height),
+                    CountdownPosition.TopRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top),
+                    CountdownPosition.RightCenter => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.BottomRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Bottom - Height),
+                    _ => IsPPTService ? new(SelectedScreenRect.Location.X + PptsvcThreshold, SelectedScreenRect.Location.Y) : SelectedScreenRect.Location
                 };
             }
         }
 
         private void RefreshScreen()
         {
-            CurrentScreenRect = GetScreenRect(ScreenIndex);
-            CurrentScreen = Screen.FromControl(this);
+            SelectedScreenRect = Screen.AllScreens[ScreenIndex].WorkingArea;
         }
 
         private void RefreshCustomRules(CountdownPhase phase)
