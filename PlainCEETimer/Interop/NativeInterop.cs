@@ -19,7 +19,7 @@ namespace PlainCEETimer.Interop
         #endregion
 
         [DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint GetDpiForWindow(IntPtr hWnd);
+        public static extern uint GetDpiForSystem();
 
         #region 来自网络
         /*
@@ -30,7 +30,7 @@ namespace PlainCEETimer.Interop
         https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
 
         */
-        [DllImport("uxtheme.dll", EntryPoint = "#132", SetLastError = true)]
+        [DllImport("uxtheme.dll", EntryPoint = "#132", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShouldAppsUseDarkMode();
         #endregion

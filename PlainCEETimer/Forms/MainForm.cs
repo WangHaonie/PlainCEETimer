@@ -81,7 +81,6 @@ namespace PlainCEETimer.Forms
 
         public MainForm()
         {
-            InvokeDpiChanged = true;
             Special = true;
             CurrentContext = SynchronizationContext.Current;
             InitializeComponent();
@@ -105,17 +104,6 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
-        }
-
-        protected override void OnCurrentDpiChanged(float newDpi, float newDpiRatio)
-        {
-            ScaleControl(LabelCountdown, newDpiRatio);
-
-            if (!UseClassicContextMenu)
-            {
-                ScaleControl(ContextMenuStripMain, newDpiRatio);
-                ScaleControl(ContextMenuStripTray, newDpiRatio);
-            }
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -861,7 +849,7 @@ namespace PlainCEETimer.Forms
                     CountdownPosition.LeftCenter => new(SelectedScreenRect.Left, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
                     CountdownPosition.BottomLeft => new(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height),
                     CountdownPosition.TopCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top),
-                    CountdownPosition.Center => GetScreenCenter(SelectedScreenRect),
+                    CountdownPosition.Center => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
                     CountdownPosition.BottomCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Bottom - Height),
                     CountdownPosition.TopRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top),
                     CountdownPosition.RightCenter => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),

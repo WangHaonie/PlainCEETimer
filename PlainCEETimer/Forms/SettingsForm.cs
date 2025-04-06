@@ -38,7 +38,6 @@ namespace PlainCEETimer.Forms
         public SettingsForm()
         {
             CompositedStyle = true;
-            ShowInCenterScreen = true;
             InitializeComponent();
         }
 

@@ -24,7 +24,6 @@ namespace PlainCEETimer.Forms
         private DownloaderForm()
         {
             AdjustBeforeLoad = true;
-            ShowInCenterScreen = true;
             InitializeComponent();
         }
 
