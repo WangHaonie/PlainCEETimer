@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class RuleDialog : AppDialog, ISubDialog<CustomRuleObject, RuleDialog>
+    public partial class RuleDialog : AppDialog, ISubDialog<CustomRuleObject>
     {
         public CustomRuleObject Data { get; set; }
         public string[] GlobalTexts { private get; set; }

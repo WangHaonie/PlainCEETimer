@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class ExamInfoDialog : AppDialog, ISubDialog<ExamInfoObject, ExamInfoDialog>
+    public partial class ExamInfoDialog : AppDialog, ISubDialog<ExamInfoObject>
     {
         public ExamInfoObject Data { get; set; }
 

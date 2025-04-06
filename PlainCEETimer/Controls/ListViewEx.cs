@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
+using System;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -41,10 +42,7 @@ namespace PlainCEETimer.Controls
         {
             if (ItemsCount != 0)
             {
-                foreach (ListViewItem Item in Items)
-                {
-                    Item.Selected = IsSelected;
-                }
+                ListViewHelper.SelectAllItems(Handle, IsSelected ? 1 : 0);
             }
         }
 

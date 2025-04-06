@@ -52,7 +52,7 @@ namespace PlainCEETimer.Dialogs
             AddItem(Item, Data);
         }
 
-        protected override ISubDialog<CustomRuleObject, RuleDialog> GetSubDialogInstance(CustomRuleObject Existing = null) => new RuleDialog()
+        protected override ISubDialog<CustomRuleObject> GetSubDialogInstance(CustomRuleObject Existing = null) => new RuleDialog()
         {
             Data = Existing,
             GlobalColors = ColorPresets,

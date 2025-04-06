@@ -29,7 +29,7 @@ namespace PlainCEETimer.Dialogs
             TextBoxP2.TextChanged += OnUserChanged;
             TextBoxP3.TextChanged += OnUserChanged;
 
-            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Placeholders.PH_PHINFO}。比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}:{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
+            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Placeholders.PH_PHINFO}。比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}.{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
         }
 
         protected override void AdjustUI()

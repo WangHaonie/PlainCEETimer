@@ -178,6 +178,7 @@
     <Compile Include="Controls\ColorDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Interop\ListViewHelper.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />

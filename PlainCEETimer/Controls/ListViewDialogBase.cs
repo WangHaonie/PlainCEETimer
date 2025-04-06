@@ -10,7 +10,7 @@ namespace PlainCEETimer.Controls
 {
     public abstract class ListViewDialogBase<TData, TSubDialog> : AppDialog
         where TData : IListViewObject<TData>
-        where TSubDialog : AppDialog, ISubDialog<TData, TSubDialog>
+        where TSubDialog : AppDialog, ISubDialog<TData>
     {
         public TData[] Data { get; set; }
 
@@ -55,11 +55,11 @@ namespace PlainCEETimer.Controls
         protected abstract void AddItem(TData Data, bool IsSelected = false);
 
         /// <summary>
-        /// 获取向用户显示用于 添加、更改、重试 的对话框实例。
+        /// 获取用于向用户显示 添加、更改、重试 的对话框实例。
         /// </summary>
         /// <param name="Existing">现有数据</param>
-        /// <returns><see cref="TSubDialog"/> 实例</returns>
-        protected abstract ISubDialog<TData, TSubDialog> GetSubDialogInstance(TData Existing = default);
+        /// <returns><see cref="ISubDialog{TData}"/> 实例</returns>
+        protected abstract ISubDialog<TData> GetSubDialogInstance(TData Existing = default);
 
         protected override void AdjustUI()
         {

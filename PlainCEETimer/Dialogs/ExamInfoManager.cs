@@ -22,7 +22,7 @@ namespace PlainCEETimer.Dialogs
             }, Data);
         }
 
-        protected override ISubDialog<ExamInfoObject, ExamInfoDialog> GetSubDialogInstance(ExamInfoObject Existing = null)
+        protected override ISubDialog<ExamInfoObject> GetSubDialogInstance(ExamInfoObject Existing = null)
             => new ExamInfoDialog(Existing);
     }
 }

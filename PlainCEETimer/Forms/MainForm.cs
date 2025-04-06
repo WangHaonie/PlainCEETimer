@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -77,13 +76,11 @@ namespace PlainCEETimer.Forms
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private ToolStripItemCollection ExamSwitchMainStrip;
         private readonly string[] DefaultTexts = [Placeholders.PH_START, Placeholders.PH_LEFT, Placeholders.PH_PAST];
-        private readonly SynchronizationContext CurrentContext;
         private static readonly StringBuilder CustomTextBuilder = new();
 
         public MainForm()
         {
             Special = true;
-            CurrentContext = SynchronizationContext.Current;
             InitializeComponent();
         }
 
@@ -780,7 +777,7 @@ namespace PlainCEETimer.Forms
 
         private void UpdateCountdown(string Content, ColorSetObject Colors)
         {
-            CurrentContext.Post(_ =>
+            BeginInvoke(() =>
             {
                 LabelCountdown.Text = Content;
                 LabelCountdown.ForeColor = Colors.Fore;
@@ -790,7 +787,7 @@ namespace PlainCEETimer.Forms
                 {
                     UpdateTrayIconText(Content);
                 }
-            }, null);
+            });
         }
 
         private void SetPhase(CountdownPhase phase)
@@ -814,7 +811,7 @@ namespace PlainCEETimer.Forms
 
                 if (cInvokeRequired)
                 {
-                    CurrentContext.Post(_ => TrayIcon.Text = cText, null);
+                    BeginInvoke(() => TrayIcon.Text = cText);
                 }
                 else
                 {
