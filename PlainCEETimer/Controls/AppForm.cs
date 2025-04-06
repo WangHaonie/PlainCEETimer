@@ -4,6 +4,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -43,21 +44,18 @@ namespace PlainCEETimer.Controls
         private float LastDpi;
         private float CurrentDpi;
         private float CurrentDpiRatio;
+        private readonly SynchronizationContext CurrentContext;
 
         protected AppForm()
         {
+            CurrentContext = SynchronizationContext.Current;
+
             if (this is not AppMessageBox)
             {
                 MessageX = new(this);
             }
 
-            GetDpi(true);
-
-            if (InvokeDpiChanged && CurrentDpiRatio > 1)
-            {
-                OnCurrentDpiChanged(CurrentDpi, CurrentDpiRatio);
-            }
-
+            GetDpi(true, true);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
             AppLauncher_UniTopMostStateChanged(null, null);
@@ -99,6 +97,11 @@ namespace PlainCEETimer.Controls
             }
 
             OnLoad();
+
+            if (InvokeDpiChanged && CurrentDpiRatio > 1F)
+            {
+                OnCurrentDpiChanged(CurrentDpi, CurrentDpiRatio);
+            }
 
             if (!AdjustBeforeLoad)
             {
@@ -204,7 +207,7 @@ namespace PlainCEETimer.Controls
         }
 
         protected int ScaleToDpi(int px)
-            => (int)(px * (CurrentDpi / 96F));
+            => (int)(px * CurrentDpiRatio);
 
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
@@ -215,6 +218,11 @@ namespace PlainCEETimer.Controls
             {
                 Method();
             }
+        }
+
+        protected void InvokePost(SendOrPostCallback operation)
+        {
+            CurrentContext.Post(operation, null);
         }
 
         /// <summary>
@@ -385,15 +393,18 @@ namespace PlainCEETimer.Controls
             Target.Top = Reference.Top + Reference.Height + ScaleToDpi(Tweak);
         }
 
-        protected void ScaleControl(Control Target, float dpiRatio)
+        protected void ScaleControl(Control Target, float dpiRatio, bool scaleFont = true)
         {
             Target.Left = (int)(Target.Left * dpiRatio);
             Target.Top = (int)(Target.Top * dpiRatio);
             Target.Width = (int)(Target.Width * dpiRatio);
             Target.Height = (int)(Target.Height * dpiRatio);
 
-            var font = Target.Font;
-            Target.Font = new(font.FontFamily, font.Size * CurrentDpiRatio, font.Style);
+            if (scaleFont)
+            {
+                var font = Target.Font;
+                Target.Font = new(font.FontFamily, font.Size * CurrentDpiRatio, font.Style);
+            }
         }
 
         protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
@@ -504,7 +515,7 @@ namespace PlainCEETimer.Controls
             TopMost = !IsDisposed && !Special && MainForm.UniTopMost;
         }
 
-        private void GetDpi(bool once = false)
+        private void GetDpi(bool once = false, bool initial = false)
         {
             CurrentDpi = NativeInterop.GetDpiForWindow(Handle);
 
@@ -513,7 +524,7 @@ namespace PlainCEETimer.Controls
                 LastDpi = CurrentDpi;
             }
 
-            CurrentDpiRatio = (CurrentDpi) / LastDpi;
+            CurrentDpiRatio = (CurrentDpi) / (initial ? 96F : LastDpi);
 
             if (!once)
             {

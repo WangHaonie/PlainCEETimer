@@ -56,7 +56,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\.output\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -119,6 +119,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\NavigationBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Page.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dialogs\CustomTextDialog.cs">

@@ -34,5 +34,8 @@ namespace PlainCEETimer.Interop
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShouldAppsUseDarkMode();
         #endregion
+
+        [DllImport("uxtheme.dll", SetLastError = true, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
     }
 }

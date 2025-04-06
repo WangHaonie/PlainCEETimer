@@ -23,16 +23,16 @@ namespace PlainCEETimer.Modules
             ErrorIcon = GetIcon(93);
         }
 
-        public DialogResult Info(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Info, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Info(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(Message, MessageLevel.Info, Buttons, AutoClose);
 
-        public DialogResult Warn(string Message, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Warning, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Warn(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(Message, MessageLevel.Warning, Buttons, AutoClose);
 
-        public DialogResult Error(string Message, Exception Ex = null, TabPage ParentTabPage = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(GetExMessage(Message, Ex), MessageLevel.Error, ParentTabPage, Buttons, AutoClose);
+        public DialogResult Error(string Message, Exception Ex = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+            => Popup(GetExMessage(Message, Ex), MessageLevel.Error, Buttons, AutoClose);
 
-        private DialogResult Popup(string Message, MessageLevel Level, TabPage ParentTabPage, AppMessageBoxButtons Buttons, bool AutoClose)
+        private DialogResult Popup(string Message, MessageLevel Level, AppMessageBoxButtons Buttons, bool AutoClose)
         {
             var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
 
@@ -57,12 +57,6 @@ namespace PlainCEETimer.Modules
             DialogResult ShowPopup()
             {
                 Parent?.ReActivate();
-
-                if (ParentTabPage != null)
-                {
-                    ((TabControl)ParentTabPage.Parent).SelectedTab = ParentTabPage;
-                }
-
                 return new AppMessageBox(Sound, Buttons, AutoClose).ShowCore(Parent, Message, Title, AppMessageBoxIcon);
             }
         }
