@@ -40,6 +40,7 @@ namespace PlainCEETimer.Forms
         private bool UseClassicContextMenuBak;
         private bool UseCustomText;
         private int AutoSwitchInterval;
+        private int CurrentRuleCount;
         private int ExamIndex;
         private int ScreenIndex;
         private int ShowXOnlyIndex;
@@ -732,7 +733,7 @@ namespace PlainCEETimer.Forms
         {
             if (UseCustomText)
             {
-                if (CurrentRules.Count() != 0)
+                if (CurrentRuleCount != 0)
                 {
                     foreach (var Rule in CurrentRules)
                     {
@@ -867,6 +868,7 @@ namespace PlainCEETimer.Forms
         private void RefreshCustomRules(CountdownPhase phase)
         {
             CurrentRules = CustomRules.Where(x => x.Phase == phase);
+            CurrentRuleCount = CurrentRules.Count();
         }
 
         private void SaveConfig()
