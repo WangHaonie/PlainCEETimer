@@ -76,12 +76,14 @@ namespace PlainCEETimer.Forms
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private ToolStripItemCollection ExamSwitchMainStrip;
         private readonly string[] DefaultTexts = [Placeholders.PH_START, Placeholders.PH_LEFT, Placeholders.PH_PAST];
+        private readonly SynchronizationContext CurrentContext;
         private static readonly StringBuilder CustomTextBuilder = new();
 
         public MainForm()
         {
             InvokeDpiChanged = true;
             Special = true;
+            CurrentContext = SynchronizationContext.Current;
             InitializeComponent();
         }
 
@@ -95,11 +97,11 @@ namespace PlainCEETimer.Forms
         {
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             SizeChanged += MainForm_SizeChanged;
-            RefreshSettings();
         }
 
         protected override void OnShown()
         {
+            RefreshSettings();
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(true, this));
             IsNormalStart = true;
@@ -107,7 +109,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnCurrentDpiChanged(float newDpi, float newDpiRatio)
         {
-            ScaleControl(LabelCountdown, newDpiRatio, false);
+            ScaleControl(LabelCountdown, newDpiRatio);
 
             if (!UseClassicContextMenu)
             {
@@ -789,7 +791,7 @@ namespace PlainCEETimer.Forms
 
         private void UpdateCountdown(string Content, ColorSetObject Colors)
         {
-            InvokePost(_ =>
+            CurrentContext.Post(_ =>
             {
                 LabelCountdown.Text = Content;
                 LabelCountdown.ForeColor = Colors.Fore;
@@ -799,7 +801,7 @@ namespace PlainCEETimer.Forms
                 {
                     UpdateTrayIconText(Content);
                 }
-            });
+            }, null);
         }
 
         private void SetPhase(CountdownPhase phase)
@@ -823,7 +825,7 @@ namespace PlainCEETimer.Forms
 
                 if (cInvokeRequired)
                 {
-                    InvokePost(_ => TrayIcon.Text = cText);
+                    CurrentContext.Post(_ => TrayIcon.Text = cText, null);
                 }
                 else
                 {

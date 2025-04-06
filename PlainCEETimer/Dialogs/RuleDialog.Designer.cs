@@ -46,7 +46,7 @@
             this.LabelChar3 = new System.Windows.Forms.Label();
             this.NUDDays = new System.Windows.Forms.NumericUpDown();
             this.LabelChar2 = new System.Windows.Forms.Label();
-            this.LabelPosition = new System.Windows.Forms.Label();
+            this.LabelChar1 = new System.Windows.Forms.Label();
             //this.PanelMain = new System.Windows.Forms.Panel();
             //this.ButtonB = new System.Windows.Forms.Button();
             //this.ButtonA = new System.Windows.Forms.Button();
@@ -86,7 +86,7 @@
             this.PanelMain.Controls.Add(this.LabelChar3);
             this.PanelMain.Controls.Add(this.NUDDays);
             this.PanelMain.Controls.Add(this.LabelChar2);
-            this.PanelMain.Controls.Add(this.LabelPosition);
+            this.PanelMain.Controls.Add(this.LabelChar1);
             this.PanelMain.Location = new System.Drawing.Point(0, 0);
             this.PanelMain.Name = "PanelMain";
             this.PanelMain.Size = new System.Drawing.Size(454, 76);
@@ -270,14 +270,14 @@
             this.LabelChar2.TabIndex = 23;
             this.LabelChar2.Text = "天";
             // 
-            // LabelPosition
+            // LabelChar1
             // 
-            this.LabelPosition.AutoSize = true;
-            this.LabelPosition.Location = new System.Drawing.Point(3, 6);
-            this.LabelPosition.Name = "LabelPosition";
-            this.LabelPosition.Size = new System.Drawing.Size(72, 15);
-            this.LabelPosition.TabIndex = 22;
-            this.LabelPosition.Text = "当距离考试";
+            this.LabelChar1.AutoSize = true;
+            this.LabelChar1.Location = new System.Drawing.Point(3, 6);
+            this.LabelChar1.Name = "LabelChar1";
+            this.LabelChar1.Size = new System.Drawing.Size(72, 15);
+            this.LabelChar1.TabIndex = 22;
+            this.LabelChar1.Text = "当距离考试";
             // 
             // ButtonB
             // 
@@ -346,7 +346,7 @@
         private System.Windows.Forms.Label LabelChar3;
         private System.Windows.Forms.NumericUpDown NUDDays;
         private System.Windows.Forms.Label LabelChar2;
-        private System.Windows.Forms.Label LabelPosition;
+        private System.Windows.Forms.Label LabelChar1;
         //private System.Windows.Forms.Panel PanelMain;
         //private System.Windows.Forms.Button ButtonB;
         //private System.Windows.Forms.Button ButtonA;

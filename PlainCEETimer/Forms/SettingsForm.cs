@@ -31,7 +31,6 @@ namespace PlainCEETimer.Forms
         private ContextMenuStrip ContextMenuStripDefaultColor;
         private Label[] ColorLabels;
         private Label[] ColorPreviewLabels;
-        private Panel[] NavPages;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
         private readonly StartUp StartUp = new();
@@ -40,7 +39,6 @@ namespace PlainCEETimer.Forms
         {
             CompositedStyle = true;
             ShowInCenterScreen = true;
-            InvokeDpiChanged = true;
             InitializeComponent();
         }
 
@@ -55,23 +53,20 @@ namespace PlainCEETimer.Forms
 
         protected override void AdjustUI()
         {
-            //AlignControlsR(ButtonSave, ButtonCancel, TabControlMain);
-            SetLabelAutoWrap(LabelSyncTime, SplitContainerMain.Panel2);
-            SetLabelAutoWrap(LabelLine01, SplitContainerMain.Panel2);
-            SetLabelAutoWrap(LabelRestart, SplitContainerMain.Panel2);
-            CompactControlsX(ButtonExamInfo, LabelExamInfo);
-            CompactControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
-            CompactControlsX(CheckBoxUniTopMost, CheckBoxTopMost, 15);
+            AlignControlsR(ButtonSave, ButtonCancel, TabControlMain);
+            SetLabelAutoWrap(LabelPptsvc, GBoxPptsvc);
+            SetLabelAutoWrap(LabelSyncTime, GBoxSyncTime);
+            SetLabelAutoWrap(LabelLine01, GBoxColors);
+            SetLabelAutoWrap(LabelRestart, GBoxRestart);
             CompactControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly);
             CompactControlsX(CheckBoxCeiling, ComboBoxShowXOnly, 10);
             CompactControlsX(ComboBoxScreens, LabelScreens);
-            CompactControlsX(ComboBoxPosition, LabelPosition);
+            CompactControlsX(LabelChar1, ComboBoxScreens);
+            CompactControlsX(ComboBoxPosition, LabelChar1);
             CompactControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
-            CompactControlsY(ComboBoxNtpServers, LabelSyncTime, 3);
-            CompactControlsX(ButtonSyncTime, ComboBoxNtpServers);
-            AlignControlsX(ButtonSyncTime, ComboBoxNtpServers);
+            CompactControlsX(ButtonSyncTime, ComboBoxNtpServers, 3);
             CompactControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
-            CompactControlsY(LabelRestart, ComboBoxNtpServers, 3);
+            CompactControlsY(ButtonSyncTime, LabelSyncTime, 3);
             CompactControlsY(ButtonRestart, LabelRestart, 3);
 
             WhenHighDpi(() =>
@@ -79,37 +74,11 @@ namespace PlainCEETimer.Forms
                 AlignControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
-                AlignControlsX(ComboBoxPosition, LabelPosition);
+                AlignControlsX(ComboBoxPosition, LabelChar1);
                 AlignControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
                 AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
             });
-        }
-
-        protected override void OnCurrentDpiChanged(float newDpi, float newDpiRatio)
-        {
-            ScaleControl(this, newDpiRatio);
-            NavBar.ItemHeight = (int)(NavBar.ItemHeight * newDpiRatio);
-            SplitContainerMain.SplitterDistance = (int)(SplitContainerMain.SplitterDistance * newDpiRatio);
-            SplitContainerMain.Size = new Size(ScaleToDpi(SplitContainerMain.Size.Width), ScaleToDpi(SplitContainerMain.Size.Width));
-
-
-
-            for (int i = 0; i < 4; i++)
-            {
-                foreach (Control control in NavPages[i].Controls)
-                {
-                    ScaleControl(control, newDpiRatio,false);
-                }
-            }
-
-            PerformAutoScale();
-            AdjustUI();
-        }
-
-        protected override void OnShown()
-        {
-            NavBar.Focus();
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -341,14 +310,13 @@ namespace PlainCEETimer.Forms
         {
             var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
             UpdateSettingsArea(SettingsArea.SyncTime);
-            Task.Run(() => StartSyncTime(server));
+            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false)));
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             if (IsSyncingTime)
             {
-                SwitchToPage(PageTools);
                 MessageX.Warn("无法执行此操作，请等待同步网络时钟完成！");
                 return;
             }
@@ -369,7 +337,7 @@ namespace PlainCEETimer.Forms
 
             var flag = !CheckBoxDraggable.Checked;
             LabelScreens.Enabled = flag;
-            LabelPosition.Enabled = flag;
+            LabelChar1.Enabled = flag;
             ComboBoxScreens.Enabled = flag;
             ComboBoxPosition.Enabled = flag;
         }
@@ -401,9 +369,6 @@ namespace PlainCEETimer.Forms
 
         private void InitializeExtra()
         {
-            NavPages = [PageGeneral, PageDisplay, PageAppearance, PageTools];
-            SplitContainerMain.Panel2.Controls.AddRange(NavPages);
-
             if (UseClassicContextMenu)
             {
                 ContextMenuDefaultColor = CreateNew
@@ -598,8 +563,7 @@ namespace PlainCEETimer.Forms
 
             if (ColorCheckMsg != 0)
             {
-                SwitchToPage(PageAppearance);
-                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
+                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！", ParentTabPage: TabPageAppearance);
                 return false;
             }
 
@@ -616,14 +580,7 @@ namespace PlainCEETimer.Forms
                 }
 
                 var ExitCode = (int)ProcessHelper.Run("cmd.exe", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
-
-                InvokePost(_ =>
-                {
-                    SwitchToPage(PageTools);
-                    UpdateSettingsArea(SettingsArea.SyncTime, false);
-                });
-
-                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
+                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)", TabPageTools);
             }
             #region 来自网络
             /*
@@ -636,14 +593,12 @@ namespace PlainCEETimer.Forms
             */
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
-                SwitchToPage(PageTools, true);
-                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
+                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex, TabPageTools);
             }
             #endregion
             catch (Exception ex)
             {
-                SwitchToPage(PageTools, true);
-                MessageX.Error("命令执行时发生了错误。", ex);
+                MessageX.Error("命令执行时发生了错误。", ex, TabPageTools);
             }
         }
 
@@ -661,17 +616,18 @@ namespace PlainCEETimer.Forms
                     ButtonSyncTime.Text = IsWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
                     break;
                 case SettingsArea.Funny:
-                    LabelRestart.Text = $"{(IsWorking ? "关闭倒计时" : "重启倒计时")}: 用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(IsWorking ? "(●'◡'●)" : "")}";
+                    GBoxRestart.Text = IsWorking ? "关闭倒计时" : "重启倒计时";
+                    LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(IsWorking ? "(●'◡'●)" : "")}";
                     ButtonRestart.Text = IsWorking ? "点击关闭(&G)" : "点击重启(&R)";
                     break;
                 case SettingsArea.SetPPTService:
                     CheckBoxPptSvc.Enabled = IsWorking;
                     CheckBoxPptSvc.Checked = IsWorking && AppConfig.Display.SeewoPptsvc;
-                    SetToolTip(CheckBoxPptSvc, IsWorking ? "用于解决内置白板打开后底部工具栏消失的情况。" : $"此项暂不可用，因为倒计时没有{(SubCase == 0 ? "顶置" : "在左上角")}。", IsWorking ? ToolTipIcon.Info : ToolTipIcon.Warning);
+                    CheckBoxPptSvc.Text = IsWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(SubCase == 0 ? "顶置" : "在左上角")}。";
                     break;
                 case SettingsArea.ChangeFont:
                     SelectedFont = NewFont;
-                    LabelFont.Text = $"字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
+                    LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
                     break;
                 case SettingsArea.LastColor:
                     SetLabelColors(SelectedColors);
@@ -684,12 +640,6 @@ namespace PlainCEETimer.Forms
                     }
                     break;
             }
-        }
-
-        private void SetToolTip(Control control, string content, ToolTipIcon icon = ToolTipIcon.Info)
-        {
-            ToolTipMain.ToolTipIcon = icon;
-            ToolTipMain.SetToolTip(control, content);
         }
 
         private void SetLabelColors(ColorSetObject[] Colors)
@@ -746,26 +696,6 @@ namespace PlainCEETimer.Forms
             };
 
             RefreshNeeded = true;
-        }
-
-        private void NavBar_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                NavPages[i].Visible = i == e.Node.Index;
-            }
-        }
-
-        private void SwitchToPage(Page navPage, bool invokePost = false)
-        {
-            if (invokePost)
-            {
-                InvokePost(_ => NavBar.SelectedNode = NavBar.Nodes[navPage.Index]);
-            }
-            else
-            {
-                NavBar.SelectedNode = NavBar.Nodes[navPage.Index];
-            }
         }
     }
 }

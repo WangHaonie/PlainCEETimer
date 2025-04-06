@@ -11,7 +11,7 @@ namespace PlainCEETimer.Dialogs
         public ColorSetObject[] ColorPresets { private get; set; }
         public string[] CustomTextPreset { get; set; }
 
-        protected override string DialogTitle => "管理规则 - 高考倒计时";
+        protected override string DialogTitle => "管理自定义规则 - 高考倒计时";
         protected override string ContentDescription => "规则";
         protected override string[] ListViewHeaders => ["类别", "时刻", "效果预览"];
         protected override int ListViewWidth => 490;

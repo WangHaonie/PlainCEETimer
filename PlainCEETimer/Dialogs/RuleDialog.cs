@@ -72,7 +72,7 @@ namespace PlainCEETimer.Dialogs
 
             WhenHighDpi(() =>
             {
-                AlignControlsX([ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds], LabelPosition);
+                AlignControlsX([ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds], LabelChar1);
                 AlignControlsX(TextBoxCustomText, LabelCustomText);
 
             });
