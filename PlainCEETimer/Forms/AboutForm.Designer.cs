@@ -53,6 +53,7 @@ namespace PlainCEETimer.Forms
             // 
             // ButtonClose
             // 
+            this.ButtonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.ButtonClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonClose.Location = new System.Drawing.Point(130, 66);
             this.ButtonClose.Name = "ButtonClose";
@@ -91,12 +92,12 @@ namespace PlainCEETimer.Forms
             // 
             this.LinkTutorial.ActiveLinkColor = System.Drawing.Color.Blue;
             this.LinkTutorial.AutoSize = true;
+            this.LinkTutorial.HyperLink = "https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md";
             this.LinkTutorial.Location = new System.Drawing.Point(81, 71);
             this.LinkTutorial.Name = "LinkTutorial";
             this.LinkTutorial.Size = new System.Drawing.Size(33, 15);
             this.LinkTutorial.TabIndex = 11;
             this.LinkTutorial.TabStop = true;
-            this.LinkTutorial.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
             this.LinkTutorial.Text = "教程";
             this.LinkTutorial.VisitedLinkColor = System.Drawing.Color.Blue;
             // 
@@ -104,12 +105,12 @@ namespace PlainCEETimer.Forms
             // 
             this.LinkFeedback.ActiveLinkColor = System.Drawing.Color.Blue;
             this.LinkFeedback.AutoSize = true;
+            this.LinkFeedback.HyperLink = "https://github.com/WangHaonie/PlainCEETimer/issues/new/choose";
             this.LinkFeedback.Location = new System.Drawing.Point(49, 71);
             this.LinkFeedback.Name = "LinkFeedback";
             this.LinkFeedback.Size = new System.Drawing.Size(33, 15);
             this.LinkFeedback.TabIndex = 10;
             this.LinkFeedback.TabStop = true;
-            this.LinkFeedback.HyperLink = "https://github.com/WangHaonie/PlainCEETimer/issues/new/choose";
             this.LinkFeedback.Text = "反馈";
             this.LinkFeedback.VisitedLinkColor = System.Drawing.Color.Blue;
             // 
@@ -128,12 +129,12 @@ namespace PlainCEETimer.Forms
             // 
             this.LinkGitHub.ActiveLinkColor = System.Drawing.Color.Blue;
             this.LinkGitHub.AutoSize = true;
+            this.LinkGitHub.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
             this.LinkGitHub.Location = new System.Drawing.Point(5, 71);
             this.LinkGitHub.Name = "LinkGitHub";
             this.LinkGitHub.Size = new System.Drawing.Size(45, 15);
             this.LinkGitHub.TabIndex = 8;
             this.LinkGitHub.TabStop = true;
-            this.LinkGitHub.HyperLink = "https://github.com/WangHaonie/PlainCEETimer";
             this.LinkGitHub.Text = "GitHub";
             this.LinkGitHub.VisitedLinkColor = System.Drawing.Color.Blue;
             // 
