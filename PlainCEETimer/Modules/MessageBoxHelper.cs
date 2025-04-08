@@ -24,13 +24,19 @@ namespace PlainCEETimer.Modules
         }
 
         public DialogResult Info(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Info, Buttons, AutoClose);
+        {
+            return Popup(Message, MessageLevel.Info, Buttons, AutoClose);
+        }
 
         public DialogResult Warn(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Warning, Buttons, AutoClose);
+        {
+            return Popup(Message, MessageLevel.Warning, Buttons, AutoClose);
+        }
 
         public DialogResult Error(string Message, Exception Ex = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
-            => Popup(GetExMessage(Message, Ex), MessageLevel.Error, Buttons, AutoClose);
+        {
+            return Popup(GetExMessage(Message, Ex), MessageLevel.Error, Buttons, AutoClose);
+        }
 
         private DialogResult Popup(string Message, MessageLevel Level, AppMessageBoxButtons Buttons, bool AutoClose)
         {

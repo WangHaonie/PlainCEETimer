@@ -21,15 +21,15 @@ namespace PlainCEETimer.Controls
         {
             Color = Default;
             PreviousCustomColors = CustomColorCollection;
-            var _DialogResult = ShowDialog();
+            var Result = ShowDialog();
 
-            if (_DialogResult == DialogResult.OK)
+            if (Result == DialogResult.OK)
             {
                 CustomColorCollection = CustomColors;
                 SaveCustomColors();
             }
 
-            return _DialogResult;
+            return Result;
         }
 
         private void SaveCustomColors()

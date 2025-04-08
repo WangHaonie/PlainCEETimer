@@ -47,7 +47,9 @@ namespace PlainCEETimer.Modules.Configuration
         }
 
         public override bool Equals(object obj)
-            => Equals((CustomRuleObject)obj);
+        {
+            return Equals((CustomRuleObject)obj);
+        }
 
         public override int GetHashCode()
         {

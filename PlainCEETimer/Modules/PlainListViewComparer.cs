@@ -7,6 +7,8 @@ namespace PlainCEETimer.Modules
         where TData : IListViewObject<TData>
     {
         public int Compare(object x, object y)
-            => ((TData)((ListViewItem)x).Tag).CompareTo((TData)((ListViewItem)y).Tag);
+        {
+            return ((TData)((ListViewItem)x).Tag).CompareTo((TData)((ListViewItem)y).Tag);
+        }
     }
 }

@@ -21,12 +21,12 @@ namespace PlainCEETimer.Controls
         protected bool CompositedStyle { get; set; }
 
         /// <summary>
-        /// 获取当前的消息框实例以向用户显示消息框。
+        /// 获取当前 <see cref="AppForm"/> 的消息框实例以向用户显示消息框。
         /// </summary>
         protected MessageBoxHelper MessageX { get; }
 
-        protected bool Special { get; set; }
-        protected event EventHandler LocationRefreshed;
+        protected bool Special { private get; set; }
+        protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
         private static readonly float CurrentDpiRatio;
@@ -40,7 +40,7 @@ namespace PlainCEETimer.Controls
 
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
-            AppLauncher_UniTopMostStateChanged(null, null);
+            AppLauncher_UniTopMostStateChanged();
         }
 
         static AppForm()
@@ -161,9 +161,6 @@ namespace PlainCEETimer.Controls
         {
 
         }
-
-        protected int ScaleToDpi(int px)
-            => (int)(px * CurrentDpiRatio);
 
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
@@ -344,48 +341,6 @@ namespace PlainCEETimer.Controls
             Target.Top = Reference.Top + Reference.Height + ScaleToDpi(Tweak);
         }
 
-        protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
-
-        protected MenuItem AddItem(string Text) => new(Text);
-
-        protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
-
-        protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
-
-        protected MenuItem AddSeparator() => new("-");
-
-        protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
-        {
-            Target.MergeMenu(Reference);
-            return Target;
-        }
-
-        protected ContextMenuStrip CreateNewStrip(ToolStripItem[] Items)
-        {
-            var Strip = new ContextMenuStrip();
-            Strip.Items.AddRange(Items);
-            return Strip;
-        }
-
-        protected ToolStripMenuItem AddStripItem(string Text) => new(Text);
-
-        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler) => new(Text, null, OnClickHandler);
-
-        protected ToolStripMenuItem AddSubStrip(string Text, ToolStripItem[] SubItems)
-        {
-            var Item = new ToolStripMenuItem(Text);
-            Item.DropDownItems.AddRange(SubItems);
-            return Item;
-        }
-
-        protected ToolStripItem AddStripSeparator() => new ToolStripSeparator();
-
-        protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
-        {
-            Target.Items.AddRange(Reference);
-            return Target;
-        }
-
         protected void ShowContextMenu(Control Target, ContextMenu Menu, ContextMenuStrip Strip, bool IsClassic)
         {
             var Pos = new Point(0, Target.Height);
@@ -431,11 +386,58 @@ namespace PlainCEETimer.Controls
 
             if (Special && b)
             {
-                LocationRefreshed?.Invoke(this, EventArgs.Empty);
+                LocationRefreshed?.Invoke();
             }
         }
 
-        private void AppLauncher_TrayMenuShowAllClicked(object sender, EventArgs e)
+        protected int ScaleToDpi(int px)
+        {
+            return (int)(px * CurrentDpiRatio);
+        }
+
+        protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
+
+        protected MenuItem AddItem(string Text) => new(Text);
+
+        protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
+
+        protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
+
+        protected MenuItem AddSeparator() => new("-");
+
+        protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
+        {
+            Target.MergeMenu(Reference);
+            return Target;
+        }
+
+        protected ContextMenuStrip CreateNewStrip(ToolStripItem[] Items)
+        {
+            var Strip = new ContextMenuStrip();
+            Strip.Items.AddRange(Items);
+            return Strip;
+        }
+
+        protected ToolStripMenuItem AddStripItem(string Text) => new(Text);
+
+        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler) => new(Text, null, OnClickHandler);
+
+        protected ToolStripMenuItem AddSubStrip(string Text, ToolStripItem[] SubItems)
+        {
+            var Item = new ToolStripMenuItem(Text);
+            Item.DropDownItems.AddRange(SubItems);
+            return Item;
+        }
+
+        protected ToolStripItem AddStripSeparator() => new ToolStripSeparator();
+
+        protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
+        {
+            Target.Items.AddRange(Reference);
+            return Target;
+        }
+
+        private void AppLauncher_TrayMenuShowAllClicked()
         {
             if (!IsDisposed)
             {
@@ -444,13 +446,10 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void AppLauncher_UniTopMostStateChanged(object sender, EventArgs e)
+        private void AppLauncher_UniTopMostStateChanged()
         {
             TopMost = !IsDisposed && !Special && MainForm.UniTopMost;
         }
-
-        private Rectangle GetCurrentScreenRect()
-            => Special ? Screen.FromControl(this).WorkingArea : Screen.FromPoint(Cursor.Position).WorkingArea;
 
         private void SetLabelAutoWrapCore(Label Target, Size NewSize)
         {
@@ -472,6 +471,11 @@ namespace PlainCEETimer.Controls
         {
             Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
             Btn1.Location = new(Btn2.Location.X - Btn1.Width - ScaleToDpi(6), Btn2.Location.Y);
+        }
+
+        private Rectangle GetCurrentScreenRect()
+        {
+            return Special ? Screen.FromControl(this).WorkingArea : Screen.FromPoint(Cursor.Position).WorkingArea;
         }
     }
 }

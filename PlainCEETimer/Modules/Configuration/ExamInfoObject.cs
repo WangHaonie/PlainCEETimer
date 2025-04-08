@@ -60,7 +60,9 @@ namespace PlainCEETimer.Modules.Configuration
         public bool CanExecute() => true;
 
         public int CompareTo(ExamInfoObject other)
-            => other == null ? 1 : Start.CompareTo(other.Start);
+        {
+            return other == null ? 1 : Start.CompareTo(other.Start);
+        }
 
         public bool Equals(ExamInfoObject other)
         {
@@ -73,10 +75,14 @@ namespace PlainCEETimer.Modules.Configuration
         }
 
         public override string ToString()
-            => string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
+        {
+            return string.Format("{0} - {1}", Name, Start.ToString(App.DateTimeFormat));
+        }
 
         public override bool Equals(object obj)
-            => Equals((ExamInfoObject)obj);
+        {
+            return Equals((ExamInfoObject)obj);
+        }
 
         public override int GetHashCode()
         {

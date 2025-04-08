@@ -8,8 +8,8 @@ namespace PlainCEETimer.Dialogs
 {
     public sealed class RulesManager : ListViewDialogBase<CustomRuleObject, RuleDialog>
     {
-        public ColorSetObject[] ColorPresets { private get; set; }
         public string[] CustomTextPreset { get; set; }
+        public ColorSetObject[] ColorPresets { private get; set; }
 
         protected override string DialogTitle => "管理自定义规则 - 高考倒计时";
         protected override string ContentDescription => "规则";
@@ -52,12 +52,15 @@ namespace PlainCEETimer.Dialogs
             AddItem(Item, Data);
         }
 
-        protected override ISubDialog<CustomRuleObject> GetSubDialogInstance(CustomRuleObject Existing = null) => new RuleDialog()
+        protected override ISubDialog<CustomRuleObject> GetSubDialogInstance(CustomRuleObject Existing = null)
         {
-            Data = Existing,
-            GlobalColors = ColorPresets,
-            GlobalTexts = CustomTextPreset
-        };
+            return new RuleDialog()
+            {
+                Data = Existing,
+                GlobalColors = ColorPresets,
+                GlobalTexts = CustomTextPreset
+            };
+        }
 
         private void ButtonGlobal_Click(object sender, EventArgs e)
         {

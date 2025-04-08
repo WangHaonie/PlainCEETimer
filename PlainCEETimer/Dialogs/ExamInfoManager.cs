@@ -23,6 +23,8 @@ namespace PlainCEETimer.Dialogs
         }
 
         protected override ISubDialog<ExamInfoObject> GetSubDialogInstance(ExamInfoObject Existing = null)
-            => new ExamInfoDialog(Existing);
+        {
+            return new ExamInfoDialog(Existing);
+        }
     }
 }

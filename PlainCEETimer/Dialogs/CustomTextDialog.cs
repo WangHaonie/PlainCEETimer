@@ -35,7 +35,6 @@ namespace PlainCEETimer.Dialogs
         protected override void AdjustUI()
         {
             SetLabelAutoWrap(LabelInfo, PanelMain);
-            AdjustPanel();
             AlignControlsL(ButtonReset, ButtonA, LabelP3);
             AlignControlsX(TextBoxP1, LabelP1);
             AlignControlsX(TextBoxP2, LabelP2);

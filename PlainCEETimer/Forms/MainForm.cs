@@ -139,7 +139,7 @@ namespace PlainCEETimer.Forms
             ValidateLocation();
         }
 
-        private void MainForm_LocationRefreshed(object sender, EventArgs e)
+        private void MainForm_LocationRefreshed()
         {
             AppConfig.Location = Location;
             SaveConfig();

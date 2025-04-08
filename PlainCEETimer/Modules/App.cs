@@ -43,8 +43,10 @@ namespace PlainCEETimer.Modules
             }
         }
 
-        public static event EventHandler TrayMenuShowAllClicked;
-        public static event EventHandler UniTopMostStateChanged;
+        public static event Action TrayMenuShowAllClicked;
+        public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke();
+        public static event Action UniTopMostStateChanged;
+        public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke();
 
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
@@ -156,11 +158,6 @@ namespace PlainCEETimer.Modules
                 UserName = (string)ProcessHelper.Run("cmd.exe", "/c whoami", 1);
             }
         }
-
-        public static void OnTrayMenuShowAllClicked()
-            => TrayMenuShowAllClicked?.Invoke(null, EventArgs.Empty);
-        public static void OnUniTopMostStateChanged()
-            => UniTopMostStateChanged?.Invoke(null, EventArgs.Empty);
 
         public static void Shutdown(bool Restart = false)
         {

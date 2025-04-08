@@ -19,23 +19,22 @@ namespace PlainCEETimer.Controls
         protected abstract string[] ListViewHeaders { get; }
         protected abstract int ListViewWidth { get; }
 
+        private ContextMenu ContextMenuMain;
+        private ContextMenuStrip ContextMenuStripMain;
+        private Button ButtonOperation;
+        private MenuItem ContextEdit;
+        private MenuItem ContextDelete;
+        private MenuItem ContextSelectAll;
+        private ToolStripMenuItem StripEdit;
+        private ToolStripMenuItem StripDelete;
+        private ToolStripMenuItem StripSelectAll;
+        private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
+        private readonly HashSet<TData> ListViewItemsSet = [];
         private readonly ListViewEx ListViewMain = new()
         {
             Location = new(3, 3),
             UseCompatibleStateImageBehavior = false
         };
-
-        private Button ButtonOperation;
-        private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
-        private readonly HashSet<TData> ListViewItemsSet = [];
-        private ContextMenu ContextMenuMain;
-        private MenuItem ContextEdit;
-        private MenuItem ContextDelete;
-        private MenuItem ContextSelectAll;
-        private ContextMenuStrip ContextMenuStripMain;
-        private ToolStripMenuItem StripEdit;
-        private ToolStripMenuItem StripDelete;
-        private ToolStripMenuItem StripSelectAll;
 
         protected ListViewDialogBase() : base(AppDialogProp.All)
         {
@@ -106,7 +105,16 @@ namespace PlainCEETimer.Controls
 
         protected sealed override void ButtonA_Click()
         {
-            Data = [.. ListViewMain.Items.Cast<ListViewItem>().Select(x => (TData)x.Tag)];
+            var length = ListViewMain.ItemsCount;
+            var tmp = new TData[length];
+            var src = ListViewMain.Items;
+
+            for (int i = 0; i < length; i++)
+            {
+                tmp[i] = (TData)src[i].Tag;
+            }
+
+            Data = tmp;
             base.ButtonA_Click();
         }
 

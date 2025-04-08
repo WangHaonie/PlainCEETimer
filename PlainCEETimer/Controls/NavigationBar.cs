@@ -9,6 +9,12 @@ namespace PlainCEETimer.Controls
         private readonly int ItemsCount;
         private readonly NavigationPage[] Pages;
 
+        /// <summary>
+        /// 初始化新的竖直导航栏实例。
+        /// </summary>
+        /// <param name="navItems">导航栏的项 (不支持多级)。</param>
+        /// <param name="pages">导航栏关联的相关页面。</param>
+        /// <param name="pagePresenter">用于显示页面的可滚动的控件</param>
         public NavigationBar(string[] navItems, NavigationPage[] pages, ScrollableControl pagePresenter)
         {
             BorderStyle = BorderStyle.None;
@@ -36,6 +42,15 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        /// <summary>
+        /// 切换到对应的页面。
+        /// </summary>
+        /// <param name="page"></param>
+        public void SwitchTo(NavigationPage page)
+        {
+            SwitchTo(page.Index);
+        }
+
         protected override void OnHandleCreated(EventArgs e)
         {
             NativeInterop.SetWindowTheme(Handle, "Explorer", null);
@@ -46,11 +61,6 @@ namespace PlainCEETimer.Controls
         {
             SwitchTo(e.Node.Index);
             base.OnAfterSelect(e);
-        }
-
-        public void SwitchTo(NavigationPage page)
-        {
-            SwitchTo(page.Index);
         }
 
         private void SwitchTo(int pageIndex)

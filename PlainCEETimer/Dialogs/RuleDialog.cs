@@ -11,9 +11,9 @@ namespace PlainCEETimer.Dialogs
 {
     public partial class RuleDialog : AppDialog, ISubDialog<CustomRuleObject>
     {
-        public CustomRuleObject Data { get; set; }
         public string[] GlobalTexts { private get; set; }
         public ColorSetObject[] GlobalColors { private get; set; }
+        public CustomRuleObject Data { get; set; }
 
         private bool IsEditMode;
         private readonly Dictionary<int, Cache> TemporaryChanges = new(3);

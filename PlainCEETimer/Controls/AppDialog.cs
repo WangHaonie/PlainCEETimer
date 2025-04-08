@@ -54,20 +54,12 @@ namespace PlainCEETimer.Controls
             Close();
         }
 
-        protected void AdjustPanel()
-        {
-            AlignControlsR(ButtonA, ButtonB, PanelMain);
-        }
-
         protected void UserChanged()
         {
             WhenLoaded(() =>
             {
-                if (!ButtonA.Enabled)
-                {
-                    IsUserChanged = true;
-                    ButtonA.Enabled = true;
-                }
+                IsUserChanged = true;
+                ButtonA.Enabled = true;
             });
         }
 

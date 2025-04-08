@@ -5,13 +5,8 @@ namespace PlainCEETimer.Controls
 {
     public sealed class ComboBoxEx : ComboBox
     {
-        private static readonly int VerticalScrollBarWidth;
         private bool Calculated;
-
-        static ComboBoxEx()
-        {
-            VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
-        }
+        private static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
 
         protected override void OnDropDown(EventArgs e)
         {

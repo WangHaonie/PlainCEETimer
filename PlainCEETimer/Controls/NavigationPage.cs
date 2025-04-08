@@ -5,6 +5,9 @@ namespace PlainCEETimer.Controls
 {
     public sealed class NavigationPage : Panel
     {
+        /// <summary>
+        /// 该页面关联的索引。此项不应手动设置。
+        /// </summary>
         public int Index
         {
             get;
@@ -17,6 +20,9 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        /// <summary>
+        /// 初始化新的 <see cref="NavigationPage"/> 实例。
+        /// </summary>
         public NavigationPage()
         {
             BackColor = SystemColors.Window;

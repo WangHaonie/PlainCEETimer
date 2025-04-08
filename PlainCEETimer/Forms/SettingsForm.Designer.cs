@@ -59,18 +59,18 @@
             this.GBoxDraggable = new System.Windows.Forms.GroupBox();
             this.ComboBoxPosition = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxDraggable = new System.Windows.Forms.CheckBox();
-            this.LabelChar1 = new System.Windows.Forms.Label();
+            this.LabelPosition = new System.Windows.Forms.Label();
             this.LabelScreens = new System.Windows.Forms.Label();
             this.ComboBoxScreens = new PlainCEETimer.Controls.ComboBoxEx();
             this.GBoxColors = new System.Windows.Forms.GroupBox();
             this.LabelPreviewColor4 = new System.Windows.Forms.Label();
             this.LabelColor41 = new System.Windows.Forms.Label();
             this.LabelColor42 = new System.Windows.Forms.Label();
-            this.LabelLine05 = new System.Windows.Forms.Label();
+            this.LabelColorWelcome = new System.Windows.Forms.Label();
             this.LabelPreviewColor1 = new System.Windows.Forms.Label();
             this.LabelPreviewColor2 = new System.Windows.Forms.Label();
             this.LabelPreviewColor3 = new System.Windows.Forms.Label();
-            this.LabelLine01 = new System.Windows.Forms.Label();
+            this.LabelColor = new System.Windows.Forms.Label();
             this.ButtonDefaultColor = new System.Windows.Forms.Button();
             this.LabelColor31 = new System.Windows.Forms.Label();
             this.LabelColor32 = new System.Windows.Forms.Label();
@@ -78,9 +78,9 @@
             this.LabelColor22 = new System.Windows.Forms.Label();
             this.LabelColor11 = new System.Windows.Forms.Label();
             this.LabelColor12 = new System.Windows.Forms.Label();
-            this.LabelLine04 = new System.Windows.Forms.Label();
-            this.LabelLine03 = new System.Windows.Forms.Label();
-            this.LabelLine02 = new System.Windows.Forms.Label();
+            this.LabelColorP3 = new System.Windows.Forms.Label();
+            this.LabelColorP2 = new System.Windows.Forms.Label();
+            this.LabelColorP1 = new System.Windows.Forms.Label();
             this.GBoxFont = new System.Windows.Forms.GroupBox();
             this.ButtonDefaultFont = new System.Windows.Forms.Button();
             this.ButtonFont = new System.Windows.Forms.Button();
@@ -196,9 +196,9 @@
             this.LabelExamInfo.AutoSize = true;
             this.LabelExamInfo.Location = new System.Drawing.Point(6, 19);
             this.LabelExamInfo.Name = "LabelExamInfo";
-            this.LabelExamInfo.Size = new System.Drawing.Size(241, 15);
+            this.LabelExamInfo.Size = new System.Drawing.Size(202, 15);
             this.LabelExamInfo.TabIndex = 4;
-            this.LabelExamInfo.Text = "添加多个考试信息以便快速切换倒计时。";
+            this.LabelExamInfo.Text = "在此添加考试信息以启动倒计时。";
             // 
             // ButtonExamInfo
             // 
@@ -221,7 +221,7 @@
             this.GBoxOthers.Controls.Add(this.CheckBoxStartup);
             this.GBoxOthers.Location = new System.Drawing.Point(5, 76);
             this.GBoxOthers.Name = "GBoxOthers";
-            this.GBoxOthers.Size = new System.Drawing.Size(323, 149);
+            this.GBoxOthers.Size = new System.Drawing.Size(323, 167);
             this.GBoxOthers.TabIndex = 44;
             this.GBoxOthers.TabStop = false;
             this.GBoxOthers.Text = "其他";
@@ -230,7 +230,7 @@
             // 
             this.CheckBoxTrayText.AutoSize = true;
             this.CheckBoxTrayText.Enabled = false;
-            this.CheckBoxTrayText.Location = new System.Drawing.Point(9, 97);
+            this.CheckBoxTrayText.Location = new System.Drawing.Point(9, 119);
             this.CheckBoxTrayText.Name = "CheckBoxTrayText";
             this.CheckBoxTrayText.Size = new System.Drawing.Size(277, 19);
             this.CheckBoxTrayText.TabIndex = 1;
@@ -241,7 +241,7 @@
             // CheckBoxWCCMS
             // 
             this.CheckBoxWCCMS.AutoSize = true;
-            this.CheckBoxWCCMS.Location = new System.Drawing.Point(9, 122);
+            this.CheckBoxWCCMS.Location = new System.Drawing.Point(9, 144);
             this.CheckBoxWCCMS.Name = "CheckBoxWCCMS";
             this.CheckBoxWCCMS.Size = new System.Drawing.Size(228, 19);
             this.CheckBoxWCCMS.TabIndex = 19;
@@ -252,18 +252,18 @@
             // CheckBoxMemClean
             // 
             this.CheckBoxMemClean.AutoSize = true;
-            this.CheckBoxMemClean.Location = new System.Drawing.Point(157, 22);
+            this.CheckBoxMemClean.Location = new System.Drawing.Point(9, 44);
             this.CheckBoxMemClean.Name = "CheckBoxMemClean";
-            this.CheckBoxMemClean.Size = new System.Drawing.Size(149, 19);
+            this.CheckBoxMemClean.Size = new System.Drawing.Size(227, 19);
             this.CheckBoxMemClean.TabIndex = 2;
-            this.CheckBoxMemClean.Text = "自动清理程序内存(&M)";
+            this.CheckBoxMemClean.Text = "自动清理倒计时占用的运行内存(&M)";
             this.CheckBoxMemClean.UseVisualStyleBackColor = true;
             this.CheckBoxMemClean.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // CheckBoxTrayIcon
             // 
             this.CheckBoxTrayIcon.AutoSize = true;
-            this.CheckBoxTrayIcon.Location = new System.Drawing.Point(9, 72);
+            this.CheckBoxTrayIcon.Location = new System.Drawing.Point(9, 94);
             this.CheckBoxTrayIcon.Name = "CheckBoxTrayIcon";
             this.CheckBoxTrayIcon.Size = new System.Drawing.Size(180, 19);
             this.CheckBoxTrayIcon.TabIndex = 0;
@@ -274,11 +274,11 @@
             // CheckBoxUniTopMost
             // 
             this.CheckBoxUniTopMost.AutoSize = true;
-            this.CheckBoxUniTopMost.Location = new System.Drawing.Point(157, 47);
+            this.CheckBoxUniTopMost.Location = new System.Drawing.Point(157, 69);
             this.CheckBoxUniTopMost.Name = "CheckBoxUniTopMost";
             this.CheckBoxUniTopMost.Size = new System.Drawing.Size(120, 19);
             this.CheckBoxUniTopMost.TabIndex = 4;
-            this.CheckBoxUniTopMost.Text = "顶置所有窗口(&U)";
+            this.CheckBoxUniTopMost.Text = "顶置其他窗口(&U)";
             this.CheckBoxUniTopMost.UseVisualStyleBackColor = true;
             this.CheckBoxUniTopMost.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -287,7 +287,7 @@
             this.CheckBoxTopMost.AutoSize = true;
             this.CheckBoxTopMost.Checked = true;
             this.CheckBoxTopMost.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CheckBoxTopMost.Location = new System.Drawing.Point(9, 47);
+            this.CheckBoxTopMost.Location = new System.Drawing.Point(9, 69);
             this.CheckBoxTopMost.Name = "CheckBoxTopMost";
             this.CheckBoxTopMost.Size = new System.Drawing.Size(132, 19);
             this.CheckBoxTopMost.TabIndex = 0;
@@ -300,9 +300,9 @@
             this.CheckBoxStartup.AutoSize = true;
             this.CheckBoxStartup.Location = new System.Drawing.Point(9, 22);
             this.CheckBoxStartup.Name = "CheckBoxStartup";
-            this.CheckBoxStartup.Size = new System.Drawing.Size(119, 19);
+            this.CheckBoxStartup.Size = new System.Drawing.Size(197, 19);
             this.CheckBoxStartup.TabIndex = 18;
-            this.CheckBoxStartup.Text = "开机自动启动(&B)";
+            this.CheckBoxStartup.Text = "系统运行时自动启动倒计时(&B)";
             this.CheckBoxStartup.UseVisualStyleBackColor = true;
             this.CheckBoxStartup.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -332,9 +332,9 @@
             this.LabelPptsvc.AutoSize = true;
             this.LabelPptsvc.Location = new System.Drawing.Point(6, 19);
             this.LabelPptsvc.Name = "LabelPptsvc";
-            this.LabelPptsvc.Size = new System.Drawing.Size(587, 15);
+            this.LabelPptsvc.Size = new System.Drawing.Size(358, 15);
             this.LabelPptsvc.TabIndex = 0;
-            this.LabelPptsvc.Text = "用于解决个别机型在内置白板打开后底部工具栏消失的情况。(仅倒计时恰好在左上角且顶置才会出现)";
+            this.LabelPptsvc.Text = "用于解决个别机型在内置白板打开后底部工具栏消失的情况。";
             // 
             // GBoxContent
             // 
@@ -355,7 +355,7 @@
             // LabelCountdownEnd
             // 
             this.LabelCountdownEnd.AutoSize = true;
-            this.LabelCountdownEnd.Location = new System.Drawing.Point(6, 47);
+            this.LabelCountdownEnd.Location = new System.Drawing.Point(7, 19);
             this.LabelCountdownEnd.Name = "LabelCountdownEnd";
             this.LabelCountdownEnd.Size = new System.Drawing.Size(117, 15);
             this.LabelCountdownEnd.TabIndex = 45;
@@ -365,10 +365,10 @@
             // 
             this.ComboBoxCountdownEnd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxCountdownEnd.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ComboBoxCountdownEnd.Location = new System.Drawing.Point(125, 43);
+            this.ComboBoxCountdownEnd.Location = new System.Drawing.Point(126, 15);
             this.ComboBoxCountdownEnd.MaxDropDownItems = 1;
             this.ComboBoxCountdownEnd.Name = "ComboBoxCountdownEnd";
-            this.ComboBoxCountdownEnd.Size = new System.Drawing.Size(191, 23);
+            this.ComboBoxCountdownEnd.Size = new System.Drawing.Size(190, 23);
             this.ComboBoxCountdownEnd.TabIndex = 44;
             this.ComboBoxCountdownEnd.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -401,7 +401,7 @@
             this.ComboBoxShowXOnly.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxShowXOnly.Enabled = false;
             this.ComboBoxShowXOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ComboBoxShowXOnly.Location = new System.Drawing.Point(72, 19);
+            this.ComboBoxShowXOnly.Location = new System.Drawing.Point(72, 43);
             this.ComboBoxShowXOnly.MaxDropDownItems = 1;
             this.ComboBoxShowXOnly.Name = "ComboBoxShowXOnly";
             this.ComboBoxShowXOnly.Size = new System.Drawing.Size(38, 23);
@@ -412,7 +412,7 @@
             // 
             this.CheckBoxCeiling.AutoSize = true;
             this.CheckBoxCeiling.Enabled = false;
-            this.CheckBoxCeiling.Location = new System.Drawing.Point(117, 22);
+            this.CheckBoxCeiling.Location = new System.Drawing.Point(117, 46);
             this.CheckBoxCeiling.Name = "CheckBoxCeiling";
             this.CheckBoxCeiling.Size = new System.Drawing.Size(160, 19);
             this.CheckBoxCeiling.TabIndex = 1;
@@ -423,7 +423,7 @@
             // CheckBoxShowXOnly
             // 
             this.CheckBoxShowXOnly.AutoSize = true;
-            this.CheckBoxShowXOnly.Location = new System.Drawing.Point(9, 22);
+            this.CheckBoxShowXOnly.Location = new System.Drawing.Point(9, 46);
             this.CheckBoxShowXOnly.Name = "CheckBoxShowXOnly";
             this.CheckBoxShowXOnly.Size = new System.Drawing.Size(65, 19);
             this.CheckBoxShowXOnly.TabIndex = 0;
@@ -435,7 +435,7 @@
             // 
             this.GBoxDraggable.Controls.Add(this.ComboBoxPosition);
             this.GBoxDraggable.Controls.Add(this.CheckBoxDraggable);
-            this.GBoxDraggable.Controls.Add(this.LabelChar1);
+            this.GBoxDraggable.Controls.Add(this.LabelPosition);
             this.GBoxDraggable.Controls.Add(this.LabelScreens);
             this.GBoxDraggable.Controls.Add(this.ComboBoxScreens);
             this.GBoxDraggable.Location = new System.Drawing.Point(5, 103);
@@ -466,14 +466,14 @@
             this.CheckBoxDraggable.UseVisualStyleBackColor = true;
             this.CheckBoxDraggable.CheckedChanged += new System.EventHandler(this.CheckBoxDraggable_CheckedChanged);
             // 
-            // LabelChar1
+            // LabelPosition
             // 
-            this.LabelChar1.AutoSize = true;
-            this.LabelChar1.Location = new System.Drawing.Point(193, 21);
-            this.LabelChar1.Name = "LabelChar1";
-            this.LabelChar1.Size = new System.Drawing.Size(33, 15);
-            this.LabelChar1.TabIndex = 6;
-            this.LabelChar1.Text = "位置";
+            this.LabelPosition.AutoSize = true;
+            this.LabelPosition.Location = new System.Drawing.Point(193, 21);
+            this.LabelPosition.Name = "LabelPosition";
+            this.LabelPosition.Size = new System.Drawing.Size(33, 15);
+            this.LabelPosition.TabIndex = 6;
+            this.LabelPosition.Text = "位置";
             // 
             // LabelScreens
             // 
@@ -500,11 +500,11 @@
             this.GBoxColors.Controls.Add(this.LabelPreviewColor4);
             this.GBoxColors.Controls.Add(this.LabelColor41);
             this.GBoxColors.Controls.Add(this.LabelColor42);
-            this.GBoxColors.Controls.Add(this.LabelLine05);
+            this.GBoxColors.Controls.Add(this.LabelColorWelcome);
             this.GBoxColors.Controls.Add(this.LabelPreviewColor1);
             this.GBoxColors.Controls.Add(this.LabelPreviewColor2);
             this.GBoxColors.Controls.Add(this.LabelPreviewColor3);
-            this.GBoxColors.Controls.Add(this.LabelLine01);
+            this.GBoxColors.Controls.Add(this.LabelColor);
             this.GBoxColors.Controls.Add(this.ButtonDefaultColor);
             this.GBoxColors.Controls.Add(this.LabelColor31);
             this.GBoxColors.Controls.Add(this.LabelColor32);
@@ -512,9 +512,9 @@
             this.GBoxColors.Controls.Add(this.LabelColor22);
             this.GBoxColors.Controls.Add(this.LabelColor11);
             this.GBoxColors.Controls.Add(this.LabelColor12);
-            this.GBoxColors.Controls.Add(this.LabelLine04);
-            this.GBoxColors.Controls.Add(this.LabelLine03);
-            this.GBoxColors.Controls.Add(this.LabelLine02);
+            this.GBoxColors.Controls.Add(this.LabelColorP3);
+            this.GBoxColors.Controls.Add(this.LabelColorP2);
+            this.GBoxColors.Controls.Add(this.LabelColorP1);
             this.GBoxColors.Location = new System.Drawing.Point(5, 77);
             this.GBoxColors.Name = "GBoxColors";
             this.GBoxColors.Size = new System.Drawing.Size(323, 168);
@@ -551,14 +551,14 @@
             this.LabelColor42.TabIndex = 17;
             this.LabelColor42.Text = "          ";
             // 
-            // LabelLine05
+            // LabelColorWelcome
             // 
-            this.LabelLine05.AutoSize = true;
-            this.LabelLine05.Location = new System.Drawing.Point(6, 119);
-            this.LabelLine05.Name = "LabelLine05";
-            this.LabelLine05.Size = new System.Drawing.Size(73, 15);
-            this.LabelLine05.TabIndex = 16;
-            this.LabelLine05.Text = "[4]欢迎信息";
+            this.LabelColorWelcome.AutoSize = true;
+            this.LabelColorWelcome.Location = new System.Drawing.Point(6, 119);
+            this.LabelColorWelcome.Name = "LabelColorWelcome";
+            this.LabelColorWelcome.Size = new System.Drawing.Size(73, 15);
+            this.LabelColorWelcome.TabIndex = 16;
+            this.LabelColorWelcome.Text = "[4]欢迎信息";
             // 
             // LabelPreviewColor1
             // 
@@ -584,14 +584,14 @@
             this.LabelPreviewColor3.Size = new System.Drawing.Size(0, 15);
             this.LabelPreviewColor3.TabIndex = 13;
             // 
-            // LabelLine01
+            // LabelColor
             // 
-            this.LabelLine01.AutoSize = true;
-            this.LabelLine01.Location = new System.Drawing.Point(6, 19);
-            this.LabelLine01.Name = "LabelLine01";
-            this.LabelLine01.Size = new System.Drawing.Size(527, 15);
-            this.LabelLine01.TabIndex = 12;
-            this.LabelLine01.Text = "请点击色块来选择文字、背景颜色。将一个色块拖放到其它色块上可快速应用相同的颜色。";
+            this.LabelColor.AutoSize = true;
+            this.LabelColor.Location = new System.Drawing.Point(6, 19);
+            this.LabelColor.Name = "LabelColor";
+            this.LabelColor.Size = new System.Drawing.Size(514, 15);
+            this.LabelColor.TabIndex = 12;
+            this.LabelColor.Text = "点击色块来选择文字、背景颜色。将一个色块拖放到其它色块上可快速应用相同的颜色。";
             // 
             // ButtonDefaultColor
             // 
@@ -664,32 +664,32 @@
             this.LabelColor12.TabIndex = 0;
             this.LabelColor12.Text = "          ";
             // 
-            // LabelLine04
+            // LabelColorP3
             // 
-            this.LabelLine04.AutoSize = true;
-            this.LabelLine04.Location = new System.Drawing.Point(6, 97);
-            this.LabelLine04.Name = "LabelLine04";
-            this.LabelLine04.Size = new System.Drawing.Size(60, 15);
-            this.LabelLine04.TabIndex = 4;
-            this.LabelLine04.Text = "[3]考试后";
+            this.LabelColorP3.AutoSize = true;
+            this.LabelColorP3.Location = new System.Drawing.Point(6, 97);
+            this.LabelColorP3.Name = "LabelColorP3";
+            this.LabelColorP3.Size = new System.Drawing.Size(60, 15);
+            this.LabelColorP3.TabIndex = 4;
+            this.LabelColorP3.Text = "[3]考试后";
             // 
-            // LabelLine03
+            // LabelColorP2
             // 
-            this.LabelLine03.AutoSize = true;
-            this.LabelLine03.Location = new System.Drawing.Point(6, 75);
-            this.LabelLine03.Name = "LabelLine03";
-            this.LabelLine03.Size = new System.Drawing.Size(60, 15);
-            this.LabelLine03.TabIndex = 3;
-            this.LabelLine03.Text = "[2]考试中";
+            this.LabelColorP2.AutoSize = true;
+            this.LabelColorP2.Location = new System.Drawing.Point(6, 75);
+            this.LabelColorP2.Name = "LabelColorP2";
+            this.LabelColorP2.Size = new System.Drawing.Size(60, 15);
+            this.LabelColorP2.TabIndex = 3;
+            this.LabelColorP2.Text = "[2]考试中";
             // 
-            // LabelLine02
+            // LabelColorP1
             // 
-            this.LabelLine02.AutoSize = true;
-            this.LabelLine02.Location = new System.Drawing.Point(6, 53);
-            this.LabelLine02.Name = "LabelLine02";
-            this.LabelLine02.Size = new System.Drawing.Size(60, 15);
-            this.LabelLine02.TabIndex = 2;
-            this.LabelLine02.Text = "[1]考试前";
+            this.LabelColorP1.AutoSize = true;
+            this.LabelColorP1.Location = new System.Drawing.Point(6, 53);
+            this.LabelColorP1.Name = "LabelColorP1";
+            this.LabelColorP1.Size = new System.Drawing.Size(60, 15);
+            this.LabelColorP1.TabIndex = 2;
+            this.LabelColorP1.Text = "[1]考试前";
             // 
             // GBoxFont
             // 
@@ -779,9 +779,9 @@
             this.LabelSyncTime.AutoSize = true;
             this.LabelSyncTime.Location = new System.Drawing.Point(6, 19);
             this.LabelSyncTime.Name = "LabelSyncTime";
-            this.LabelSyncTime.Size = new System.Drawing.Size(517, 15);
+            this.LabelSyncTime.Size = new System.Drawing.Size(439, 15);
             this.LabelSyncTime.TabIndex = 20;
-            this.LabelSyncTime.Text = "设置默认 NTP 服务器并同步系统时间。此项将自动启动 Windows Time 服务, 请谨慎操作。";
+            this.LabelSyncTime.Text = "将尝试自动启动 Windows Time 服务, 并设置默认 NTP 服务器然后与之同步。";
             // 
             // PageNavPages
             // 
@@ -806,7 +806,7 @@
             this.PageGeneral.Index = 0;
             this.PageGeneral.Location = new System.Drawing.Point(400, 0);
             this.PageGeneral.Name = "PageGeneral";
-            this.PageGeneral.Size = new System.Drawing.Size(332, 234);
+            this.PageGeneral.Size = new System.Drawing.Size(332, 254);
             this.PageGeneral.TabIndex = 43;
             this.PageGeneral.Visible = false;
             // 
@@ -829,7 +829,7 @@
             this.PageAppearance.Controls.Add(this.GBoxColors);
             this.PageAppearance.Controls.Add(this.GBoxFont);
             this.PageAppearance.Index = 0;
-            this.PageAppearance.Location = new System.Drawing.Point(400, 240);
+            this.PageAppearance.Location = new System.Drawing.Point(400, 262);
             this.PageAppearance.Name = "PageAppearance";
             this.PageAppearance.Size = new System.Drawing.Size(332, 254);
             this.PageAppearance.TabIndex = 45;
@@ -929,20 +929,20 @@
         private System.Windows.Forms.Label LabelColor22;
         private System.Windows.Forms.Label LabelColor11;
         private System.Windows.Forms.Label LabelColor12;
-        private System.Windows.Forms.Label LabelLine04;
-        private System.Windows.Forms.Label LabelLine03;
-        private System.Windows.Forms.Label LabelLine02;
+        private System.Windows.Forms.Label LabelColorP3;
+        private System.Windows.Forms.Label LabelColorP2;
+        private System.Windows.Forms.Label LabelColorP1;
         private System.Windows.Forms.Button ButtonDefaultColor;
-        private System.Windows.Forms.Label LabelLine01;
+        private System.Windows.Forms.Label LabelColor;
         private System.Windows.Forms.Label LabelPreviewColor1;
         private System.Windows.Forms.Label LabelPreviewColor2;
         private System.Windows.Forms.Label LabelPreviewColor3;
         private System.Windows.Forms.Label LabelPreviewColor4;
         private System.Windows.Forms.Label LabelColor41;
         private System.Windows.Forms.Label LabelColor42;
-        private System.Windows.Forms.Label LabelLine05;
+        private System.Windows.Forms.Label LabelColorWelcome;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxPosition;
-        private System.Windows.Forms.Label LabelChar1;
+        private System.Windows.Forms.Label LabelPosition;
         private System.Windows.Forms.Button ButtonRulesMan;
         private System.Windows.Forms.CheckBox CheckBoxRulesMan;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxNtpServers;

@@ -15,23 +15,23 @@ namespace PlainCEETimer.Forms
     {
         public bool RefreshNeeded { get; private set; }
 
-        private Font SelectedFont;
-        private CustomRuleObject[] EditedCustomRules;
-        private ExamInfoObject[] EditedExamInfo;
-        private string[] EditedCustomTexts;
         private bool IsColorLabelsDragging;
         private bool IsSyncingTime;
-        private bool HasSettingsChanged;
+        private bool UserChanged;
         private bool InvokeChangeRequired;
         private bool IsFunny;
         private bool IsFunnyClick;
         private bool ChangingCheckBox;
+        private string[] EditedCustomTexts;
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private ContextMenu ContextMenuDefaultColor;
         private ContextMenuStrip ContextMenuStripDefaultColor;
-        private NavigationBar NavBar;
+        private CustomRuleObject[] EditedCustomRules;
+        private ExamInfoObject[] EditedExamInfo;
+        private Font SelectedFont;
         private Label[] ColorLabels;
         private Label[] ColorPreviewLabels;
+        private NavigationBar NavBar;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
         private readonly StartUp StartUp = new();
@@ -56,13 +56,13 @@ namespace PlainCEETimer.Forms
             AlignControlsR(ButtonSave, ButtonCancel, PageNavPages);
             SetLabelAutoWrap(LabelPptsvc, GBoxPptsvc);
             SetLabelAutoWrap(LabelSyncTime, GBoxSyncTime);
-            SetLabelAutoWrap(LabelLine01, GBoxColors);
+            SetLabelAutoWrap(LabelColor, GBoxColors);
             SetLabelAutoWrap(LabelRestart, GBoxRestart);
             CompactControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly);
             CompactControlsX(CheckBoxCeiling, ComboBoxShowXOnly, 10);
             CompactControlsX(ComboBoxScreens, LabelScreens);
-            CompactControlsX(LabelChar1, ComboBoxScreens);
-            CompactControlsX(ComboBoxPosition, LabelChar1);
+            CompactControlsX(LabelPosition, ComboBoxScreens);
+            CompactControlsX(ComboBoxPosition, LabelPosition);
             CompactControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
             CompactControlsX(ButtonSyncTime, ComboBoxNtpServers, 3);
             CompactControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
@@ -74,7 +74,7 @@ namespace PlainCEETimer.Forms
                 AlignControlsX(ComboBoxAutoSwitchIntervel, CheckBoxAutoSwitch);
                 AlignControlsX(ComboBoxShowXOnly, CheckBoxShowXOnly, -1);
                 AlignControlsX(ComboBoxScreens, LabelScreens);
-                AlignControlsX(ComboBoxPosition, LabelChar1);
+                AlignControlsX(ComboBoxPosition, LabelPosition);
                 AlignControlsX(ComboBoxCountdownEnd, LabelCountdownEnd);
                 AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
@@ -96,11 +96,11 @@ namespace PlainCEETimer.Forms
             {
                 e.Cancel = true;
             }
-            else if (HasSettingsChanged)
+            else if (UserChanged)
             {
                 ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, () => ButtonSave_Click(null, null), () =>
                 {
-                    HasSettingsChanged = false;
+                    UserChanged = false;
                     Close();
                 });
             }
@@ -120,7 +120,7 @@ namespace PlainCEETimer.Forms
         {
             WhenLoaded(() =>
             {
-                HasSettingsChanged = true;
+                UserChanged = true;
                 ButtonSave.Enabled = true;
             });
         }
@@ -135,33 +135,19 @@ namespace PlainCEETimer.Forms
             if (ExamMan.ShowDialog() == DialogResult.OK)
             {
                 EditedExamInfo = ExamMan.Data;
-                SettingsChanged(sender, e);
+                SettingsChanged(null, null);
             }
         }
 
         private void CheckBoxAutoSwitch_CheckedChanged(object sender, EventArgs e)
         {
             ComboBoxAutoSwitchIntervel.Enabled = CheckBoxAutoSwitch.Checked;
-            SettingsChanged(sender, e);
-        }
-
-        private void CheckBoxShowXOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            SettingsChanged(sender, e);
-            CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
-            ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
-            ChangeCustomTextStyle(sender);
-
-            if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
-            {
-                CheckBoxCeiling.Checked = false;
-                CheckBoxCeiling.Enabled = false;
-            }
+            SettingsChanged(null, null);
         }
 
         private void CheckBoxTopMost_CheckedChanged(object sender, EventArgs e)
         {
-            ChangePptsvcStyle(sender, e);
+            ChangePptsvcStyle(null, null);
             CheckBoxUniTopMost.Enabled = CheckBoxTopMost.Checked;
 
             if (CheckBoxUniTopMost.Checked && !CheckBoxTopMost.Checked)
@@ -171,10 +157,40 @@ namespace PlainCEETimer.Forms
             }
         }
 
+        private void CheckBoxTrayIcon_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked;
+            CheckBoxTrayText.Checked = CheckBoxTrayIcon.Checked && AppConfig.General.TrayText;
+            SettingsChanged(null, null);
+        }
+
+        private void CheckBoxShowXOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
+            ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
+            ChangeCustomTextStyle(sender);
+
+            if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
+            {
+                CheckBoxCeiling.Checked = false;
+                CheckBoxCeiling.Enabled = false;
+            }
+
+            SettingsChanged(null, null);
+        }
+
+        private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var Index = ComboBoxShowXOnly.SelectedIndex;
+            CheckBoxCeiling.Visible = Index == 0;
+            CheckBoxCeiling.Checked = Index == 0 && AppConfig.Display.Ceiling;
+            SettingsChanged(null, null);
+        }
+
         private void CheckBoxRulesMan_CheckedChanged(object sender, EventArgs e)
         {
-            SettingsChanged(sender, e);
             ChangeCustomTextStyle(sender);
+            SettingsChanged(null, null);
         }
 
         private void ButtonRulesMan_Click(object sender, EventArgs e)
@@ -190,13 +206,32 @@ namespace PlainCEETimer.Forms
             {
                 EditedCustomRules = Manager.Data;
                 EditedCustomTexts = Manager.CustomTextPreset;
-                SettingsChanged(sender, e);
+                SettingsChanged(null, null);
             }
+        }
+
+        private void ComboBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
+            SettingsChanged(null, null);
+        }
+
+        private void CheckBoxDraggable_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangePptsvcStyle(null, null);
+            ComboBoxScreens.SelectedIndex = CheckBoxDraggable.Checked ? 0 : AppConfig.Display.ScreenIndex;
+            ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
+
+            var flag = !CheckBoxDraggable.Checked;
+            LabelScreens.Enabled = flag;
+            LabelPosition.Enabled = flag;
+            ComboBoxScreens.Enabled = flag;
+            ComboBoxPosition.Enabled = flag;
         }
 
         private void ButtonFont_Click(object sender, EventArgs e)
         {
-            FontDialog FontDialogMain = new()
+            FontDialog Dialog = new()
             {
                 AllowScriptChange = true,
                 AllowVerticalFonts = false,
@@ -207,10 +242,10 @@ namespace PlainCEETimer.Forms
                 ScriptsOnly = true
             };
 
-            if (FontDialogMain.ShowDialog() == DialogResult.OK)
+            if (Dialog.ShowDialog() == DialogResult.OK)
             {
                 SettingsChanged(sender, e);
-                UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: FontDialogMain.Font);
+                UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: Dialog.Font);
             }
         }
 
@@ -223,13 +258,13 @@ namespace PlainCEETimer.Forms
         private void ColorLabels_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
-            var ColorDialogMain = new ColorDialogEx();
+            var Dialog = new ColorDialogEx();
 
-            if (ColorDialogMain.ShowDialog(LabelSender.BackColor) == DialogResult.OK)
+            if (Dialog.ShowDialog(LabelSender.BackColor) == DialogResult.OK)
             {
-                SettingsChanged(sender, e);
-                LabelSender.BackColor = ColorDialogMain.Color;
+                LabelSender.BackColor = Dialog.Color;
                 UpdateSettingsArea(SettingsArea.SelectedColor);
+                SettingsChanged(sender, e);
             }
         }
 
@@ -251,26 +286,19 @@ namespace PlainCEETimer.Forms
 
         private void ColorLabels_MouseUp(object sender, MouseEventArgs e)
         {
-            try
+            IsColorLabelsDragging = false;
+            Cursor = Cursors.Default;
+
+            var LabelSender = (Label)sender;
+            var ParentContainer = LabelSender.Parent;
+            var CursorPosition = ParentContainer.PointToClient(Cursor.Position);
+            var TargetControl = ParentContainer.GetChildAtPoint(CursorPosition);
+
+            if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
             {
-                IsColorLabelsDragging = false;
-                Cursor = Cursors.Default;
-
-                var LabelSender = (Label)sender;
-                var ParentContainer = LabelSender.Parent;
-                var CursorPosition = ParentContainer.PointToClient(Cursor.Position);
-                var TargetControl = ParentContainer.GetChildAtPoint(CursorPosition);
-
-                if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
-                {
-                    TagetLabel.BackColor = LabelSender.BackColor;
-                    SettingsChanged(sender, e);
-                    UpdateSettingsArea(SettingsArea.SelectedColor);
-                }
-            }
-            catch
-            {
-
+                TagetLabel.BackColor = LabelSender.BackColor;
+                UpdateSettingsArea(SettingsArea.SelectedColor);
+                SettingsChanged(sender, e);
             }
         }
 
@@ -289,6 +317,13 @@ namespace PlainCEETimer.Forms
         {
             SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
             SettingsChanged(sender, e);
+        }
+
+        private void ButtonSyncTime_Click(object sender, EventArgs e)
+        {
+            var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
+            UpdateSettingsArea(SettingsArea.SyncTime);
+            Task.Run(() => StartSyncTime(server));
         }
 
         private void ButtonRestart_MouseDown(object sender, MouseEventArgs e)
@@ -311,13 +346,6 @@ namespace PlainCEETimer.Forms
             App.Shutdown(!IsFunny);
         }
 
-        private void ButtonSyncTime_Click(object sender, EventArgs e)
-        {
-            var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
-            UpdateSettingsArea(SettingsArea.SyncTime);
-            Task.Run(() => StartSyncTime(server)).ContinueWith(t => BeginInvoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false)));
-        }
-
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             if (IsSyncingTime)
@@ -329,42 +357,9 @@ namespace PlainCEETimer.Forms
             if (IsSettingsFormatValid())
             {
                 InvokeChangeRequired = true;
-                HasSettingsChanged = false;
+                UserChanged = false;
                 Close();
             }
-        }
-
-        private void CheckBoxDraggable_CheckedChanged(object sender, EventArgs e)
-        {
-            ChangePptsvcStyle(sender, e);
-            ComboBoxScreens.SelectedIndex = CheckBoxDraggable.Checked ? 0 : AppConfig.Display.ScreenIndex;
-            ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
-
-            var flag = !CheckBoxDraggable.Checked;
-            LabelScreens.Enabled = flag;
-            LabelChar1.Enabled = flag;
-            ComboBoxScreens.Enabled = flag;
-            ComboBoxPosition.Enabled = flag;
-        }
-
-        private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SettingsChanged(sender, e);
-            CheckBoxCeiling.Visible = ComboBoxShowXOnly.SelectedIndex == 0;
-            CheckBoxCeiling.Checked = ComboBoxShowXOnly.SelectedIndex == 0 && AppConfig.Display.Ceiling;
-        }
-
-        private void ComboBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SettingsChanged(sender, e);
-            ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
-        }
-
-        private void CheckBoxTrayIcon_CheckedChanged(object sender, EventArgs e)
-        {
-            SettingsChanged(sender, e);
-            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked;
-            CheckBoxTrayText.Checked = CheckBoxTrayIcon.Checked && AppConfig.General.TrayText;
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
@@ -492,7 +487,7 @@ namespace PlainCEETimer.Forms
             ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
             UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Font);
-            ChangePptsvcStyle(null, EventArgs.Empty);
+            ChangePptsvcStyle(null, null);
             SelectedColors = AppConfig.GlobalColors;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
             ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
@@ -532,8 +527,6 @@ namespace PlainCEETimer.Forms
 
         private void ChangePptsvcStyle(object sender, EventArgs e)
         {
-            SettingsChanged(sender, e);
-
             var a = CheckBoxTopMost.Checked;
             var b = ComboBoxPosition.SelectedIndex == 0;
             var c = CheckBoxDraggable.Checked;
@@ -550,6 +543,8 @@ namespace PlainCEETimer.Forms
             {
                 UpdateSettingsArea(SettingsArea.SetPPTService, false, 1);
             }
+
+            SettingsChanged(sender, e);
         }
 
         private bool IsSettingsFormatValid()
@@ -615,6 +610,10 @@ namespace PlainCEETimer.Forms
                 SwitchToToolsSafe();
                 MessageX.Error("命令执行时发生了错误。", ex);
             }
+            finally
+            {
+                BeginInvoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false));
+            }
         }
 
         private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
@@ -626,7 +625,7 @@ namespace PlainCEETimer.Forms
                     ButtonSyncTime.Enabled = !IsWorking;
                     ComboBoxNtpServers.Enabled = !IsWorking;
                     ButtonRestart.Enabled = !IsWorking;
-                    ButtonSave.Enabled = !IsWorking && HasSettingsChanged;
+                    ButtonSave.Enabled = !IsWorking && UserChanged;
                     ButtonCancel.Enabled = !IsWorking;
                     ButtonSyncTime.Text = IsWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
                     break;

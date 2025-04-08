@@ -28,7 +28,7 @@ namespace PlainCEETimer.Dialogs
 
         protected override void OnLoad()
         {
-            TextBoxName_TextChanged(null, EventArgs.Empty);
+            TextBoxName_TextChanged(null, null);
         }
 
         protected override void AdjustUI()
@@ -39,20 +39,6 @@ namespace PlainCEETimer.Dialogs
                 AlignControlsX(DTPStart, LabelStart);
                 AlignControlsX(DTPEnd, LabelEnd);
             });
-        }
-
-        private void DTP_ValueChanged(object sender, EventArgs e)
-        {
-            UserChanged();
-        }
-
-        private void TextBoxName_TextChanged(object sender, EventArgs e)
-        {
-            CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
-            int CharCount = CurrentExamName.Length;
-            LabelCounter.Text = $"{CharCount}/{Validator.MaxExamNameLength}";
-            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? Color.Black : Color.Red;
-            UserChanged();
         }
 
         protected override void ButtonA_Click()
@@ -105,6 +91,20 @@ namespace PlainCEETimer.Dialogs
             };
 
             base.ButtonA_Click();
+        }
+
+        private void DTP_ValueChanged(object sender, EventArgs e)
+        {
+            UserChanged();
+        }
+
+        private void TextBoxName_TextChanged(object sender, EventArgs e)
+        {
+            CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
+            int CharCount = CurrentExamName.Length;
+            LabelCounter.Text = $"{CharCount}/{Validator.MaxExamNameLength}";
+            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? Color.Black : Color.Red;
+            UserChanged();
         }
     }
 }

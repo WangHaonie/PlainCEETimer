@@ -136,7 +136,8 @@ namespace PlainCEETimer.Modules
             }
         }
 
-        public static void Validate<TData>(TData[] value) where TData : IListViewObject<TData>
+        public static void Validate<TData>(TData[] value)
+            where TData : IListViewObject<TData>
         {
             HashSet<TData> set = [];
 

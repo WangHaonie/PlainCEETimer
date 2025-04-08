@@ -11,9 +11,9 @@ namespace PlainCEETimer.Dialogs
     public partial class AppMessageBox : AppDialog
     {
         private DialogResult Result;
+        private readonly bool AutoCloseRequired;
         private readonly AppMessageBoxButtons ButtonsEx;
         private readonly SystemSound DialogSound;
-        private readonly bool AutoCloseRequired;
 
         public AppMessageBox(SystemSound Sound, AppMessageBoxButtons Buttons, bool AutoClose) : base(AppDialogProp.KeyPreview)
         {
@@ -38,7 +38,7 @@ namespace PlainCEETimer.Dialogs
             PanelMain.AutoSize = true;
             PanelMain.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             SetLabelAutoWrap(LabelMessage);
-            AdjustPanel();
+            AlignControlsR(ButtonA, ButtonB, PanelMain);
         }
 
         protected override void OnLoad()
@@ -78,12 +78,14 @@ namespace PlainCEETimer.Dialogs
             Close();
         }
 
-        private void AppMessageBox_KeyDown(object sender, KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
                 Close();
             }
+
+            base.OnKeyDown(e);
         }
     }
 }
