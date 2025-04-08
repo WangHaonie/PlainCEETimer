@@ -121,6 +121,12 @@
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\NavigationBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\NavigationPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Dialogs\CustomTextDialog.cs">
       <SubType>Form</SubType>
     </Compile>

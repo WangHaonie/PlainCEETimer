@@ -29,6 +29,7 @@ namespace PlainCEETimer.Forms
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private ContextMenu ContextMenuDefaultColor;
         private ContextMenuStrip ContextMenuStripDefaultColor;
+        private NavigationBar NavBar;
         private Label[] ColorLabels;
         private Label[] ColorPreviewLabels;
         private ColorSetObject[] SelectedColors;
@@ -52,7 +53,7 @@ namespace PlainCEETimer.Forms
 
         protected override void AdjustUI()
         {
-            AlignControlsR(ButtonSave, ButtonCancel, TabControlMain);
+            AlignControlsR(ButtonSave, ButtonCancel, PageNavPages);
             SetLabelAutoWrap(LabelPptsvc, GBoxPptsvc);
             SetLabelAutoWrap(LabelSyncTime, GBoxSyncTime);
             SetLabelAutoWrap(LabelLine01, GBoxColors);
@@ -78,6 +79,11 @@ namespace PlainCEETimer.Forms
                 AlignControlsX(ButtonRulesMan, CheckBoxRulesMan);
                 AlignControlsX(ComboBoxNtpServers, ButtonSyncTime);
             });
+        }
+
+        protected override void OnShown()
+        {
+            NavBar.Focus();
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -368,6 +374,12 @@ namespace PlainCEETimer.Forms
 
         private void InitializeExtra()
         {
+            PanelNav.Controls.Add(NavBar = new(["基本", "显示", "外观", "工具"], [PageGeneral, PageDisplay, PageAppearance, PageTools], PageNavPages)
+            {
+                Indent = ScaleToDpi(5),
+                ItemHeight = ScaleToDpi(25)
+            });
+
             if (UseClassicContextMenu)
             {
                 ContextMenuDefaultColor = CreateNew
@@ -562,7 +574,8 @@ namespace PlainCEETimer.Forms
 
             if (ColorCheckMsg != 0)
             {
-                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！", ParentTabPage: TabPageAppearance);
+                NavBar.SwitchTo(PageAppearance);
+                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
                 return false;
             }
 
@@ -579,7 +592,8 @@ namespace PlainCEETimer.Forms
                 }
 
                 var ExitCode = (int)ProcessHelper.Run("cmd.exe", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
-                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)", TabPageTools);
+                SwitchToToolsSafe();
+                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
             }
             #region 来自网络
             /*
@@ -592,12 +606,14 @@ namespace PlainCEETimer.Forms
             */
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
-                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex, TabPageTools);
+                SwitchToToolsSafe();
+                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
             }
             #endregion
             catch (Exception ex)
             {
-                MessageX.Error("命令执行时发生了错误。", ex, TabPageTools);
+                SwitchToToolsSafe();
+                MessageX.Error("命令执行时发生了错误。", ex);
             }
         }
 
@@ -650,6 +666,11 @@ namespace PlainCEETimer.Forms
                 ColorLabels[i + 4].BackColor = Colors[i].Back;
                 ColorPreviewLabels[i].BackColor = Colors[i].Back;
             }
+        }
+
+        private void SwitchToToolsSafe()
+        {
+            BeginInvoke(() => NavBar.SwitchTo(PageTools));
         }
 
         private void SaveSettings()

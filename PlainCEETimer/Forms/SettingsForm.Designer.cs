@@ -32,8 +32,6 @@
             this.ButtonSyncTime = new System.Windows.Forms.Button();
             this.ButtonRestart = new System.Windows.Forms.Button();
             this.ButtonSave = new System.Windows.Forms.Button();
-            this.TabControlMain = new System.Windows.Forms.TabControl();
-            this.TabPageGeneral = new System.Windows.Forms.TabPage();
             this.GBoxExamInfo = new System.Windows.Forms.GroupBox();
             this.ComboBoxAutoSwitchIntervel = new PlainCEETimer.Controls.ComboBoxEx();
             this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
@@ -47,7 +45,6 @@
             this.CheckBoxUniTopMost = new System.Windows.Forms.CheckBox();
             this.CheckBoxTopMost = new System.Windows.Forms.CheckBox();
             this.CheckBoxStartup = new System.Windows.Forms.CheckBox();
-            this.TabPageDisplay = new System.Windows.Forms.TabPage();
             this.GBoxPptsvc = new System.Windows.Forms.GroupBox();
             this.CheckBoxPptSvc = new System.Windows.Forms.CheckBox();
             this.LabelPptsvc = new System.Windows.Forms.Label();
@@ -65,7 +62,6 @@
             this.LabelChar1 = new System.Windows.Forms.Label();
             this.LabelScreens = new System.Windows.Forms.Label();
             this.ComboBoxScreens = new PlainCEETimer.Controls.ComboBoxEx();
-            this.TabPageAppearance = new System.Windows.Forms.TabPage();
             this.GBoxColors = new System.Windows.Forms.GroupBox();
             this.LabelPreviewColor4 = new System.Windows.Forms.Label();
             this.LabelColor41 = new System.Windows.Forms.Label();
@@ -89,32 +85,36 @@
             this.ButtonDefaultFont = new System.Windows.Forms.Button();
             this.ButtonFont = new System.Windows.Forms.Button();
             this.LabelFont = new System.Windows.Forms.Label();
-            this.TabPageTools = new System.Windows.Forms.TabPage();
             this.GBoxRestart = new System.Windows.Forms.GroupBox();
             this.LabelRestart = new System.Windows.Forms.Label();
             this.GBoxSyncTime = new System.Windows.Forms.GroupBox();
             this.ComboBoxNtpServers = new PlainCEETimer.Controls.ComboBoxEx();
             this.LabelSyncTime = new System.Windows.Forms.Label();
-            this.TabControlMain.SuspendLayout();
-            this.TabPageGeneral.SuspendLayout();
+            this.PageNavPages = new System.Windows.Forms.Panel();
+            this.PanelNav = new System.Windows.Forms.Panel();
+            this.PageGeneral = new PlainCEETimer.Controls.NavigationPage();
+            this.PageDisplay = new PlainCEETimer.Controls.NavigationPage();
+            this.PageAppearance = new PlainCEETimer.Controls.NavigationPage();
+            this.PageTools = new PlainCEETimer.Controls.NavigationPage();
             this.GBoxExamInfo.SuspendLayout();
             this.GBoxOthers.SuspendLayout();
-            this.TabPageDisplay.SuspendLayout();
             this.GBoxPptsvc.SuspendLayout();
             this.GBoxContent.SuspendLayout();
             this.GBoxDraggable.SuspendLayout();
-            this.TabPageAppearance.SuspendLayout();
             this.GBoxColors.SuspendLayout();
             this.GBoxFont.SuspendLayout();
-            this.TabPageTools.SuspendLayout();
             this.GBoxRestart.SuspendLayout();
             this.GBoxSyncTime.SuspendLayout();
+            this.PageGeneral.SuspendLayout();
+            this.PageDisplay.SuspendLayout();
+            this.PageAppearance.SuspendLayout();
+            this.PageTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // ButtonCancel
             // 
             this.ButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ButtonCancel.Location = new System.Drawing.Point(276, 296);
+            this.ButtonCancel.Location = new System.Drawing.Point(314, 262);
             this.ButtonCancel.Name = "ButtonCancel";
             this.ButtonCancel.Size = new System.Drawing.Size(75, 25);
             this.ButtonCancel.TabIndex = 17;
@@ -149,7 +149,7 @@
             // ButtonSave
             // 
             this.ButtonSave.Enabled = false;
-            this.ButtonSave.Location = new System.Drawing.Point(195, 296);
+            this.ButtonSave.Location = new System.Drawing.Point(233, 262);
             this.ButtonSave.Name = "ButtonSave";
             this.ButtonSave.Size = new System.Drawing.Size(75, 25);
             this.ButtonSave.TabIndex = 16;
@@ -157,37 +157,13 @@
             this.ButtonSave.UseVisualStyleBackColor = true;
             this.ButtonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
-            // TabControlMain
-            // 
-            this.TabControlMain.Controls.Add(this.TabPageGeneral);
-            this.TabControlMain.Controls.Add(this.TabPageDisplay);
-            this.TabControlMain.Controls.Add(this.TabPageAppearance);
-            this.TabControlMain.Controls.Add(this.TabPageTools);
-            this.TabControlMain.Location = new System.Drawing.Point(5, 4);
-            this.TabControlMain.Name = "TabControlMain";
-            this.TabControlMain.SelectedIndex = 0;
-            this.TabControlMain.Size = new System.Drawing.Size(347, 289);
-            this.TabControlMain.TabIndex = 40;
-            // 
-            // TabPageGeneral
-            // 
-            this.TabPageGeneral.Controls.Add(this.GBoxExamInfo);
-            this.TabPageGeneral.Controls.Add(this.GBoxOthers);
-            this.TabPageGeneral.Location = new System.Drawing.Point(4, 24);
-            this.TabPageGeneral.Name = "TabPageGeneral";
-            this.TabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageGeneral.Size = new System.Drawing.Size(339, 261);
-            this.TabPageGeneral.TabIndex = 0;
-            this.TabPageGeneral.Text = "基本";
-            this.TabPageGeneral.UseVisualStyleBackColor = true;
-            // 
             // GBoxExamInfo
             // 
             this.GBoxExamInfo.Controls.Add(this.ComboBoxAutoSwitchIntervel);
             this.GBoxExamInfo.Controls.Add(this.CheckBoxAutoSwitch);
             this.GBoxExamInfo.Controls.Add(this.LabelExamInfo);
             this.GBoxExamInfo.Controls.Add(this.ButtonExamInfo);
-            this.GBoxExamInfo.Location = new System.Drawing.Point(7, 5);
+            this.GBoxExamInfo.Location = new System.Drawing.Point(5, 3);
             this.GBoxExamInfo.Name = "GBoxExamInfo";
             this.GBoxExamInfo.Size = new System.Drawing.Size(323, 67);
             this.GBoxExamInfo.TabIndex = 45;
@@ -243,7 +219,7 @@
             this.GBoxOthers.Controls.Add(this.CheckBoxUniTopMost);
             this.GBoxOthers.Controls.Add(this.CheckBoxTopMost);
             this.GBoxOthers.Controls.Add(this.CheckBoxStartup);
-            this.GBoxOthers.Location = new System.Drawing.Point(7, 78);
+            this.GBoxOthers.Location = new System.Drawing.Point(5, 76);
             this.GBoxOthers.Name = "GBoxOthers";
             this.GBoxOthers.Size = new System.Drawing.Size(323, 149);
             this.GBoxOthers.TabIndex = 44;
@@ -330,23 +306,11 @@
             this.CheckBoxStartup.UseVisualStyleBackColor = true;
             this.CheckBoxStartup.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
-            // TabPageDisplay
-            // 
-            this.TabPageDisplay.Controls.Add(this.GBoxPptsvc);
-            this.TabPageDisplay.Controls.Add(this.GBoxContent);
-            this.TabPageDisplay.Controls.Add(this.GBoxDraggable);
-            this.TabPageDisplay.Location = new System.Drawing.Point(4, 24);
-            this.TabPageDisplay.Name = "TabPageDisplay";
-            this.TabPageDisplay.Size = new System.Drawing.Size(339, 261);
-            this.TabPageDisplay.TabIndex = 3;
-            this.TabPageDisplay.Text = "显示";
-            this.TabPageDisplay.UseVisualStyleBackColor = true;
-            // 
             // GBoxPptsvc
             // 
             this.GBoxPptsvc.Controls.Add(this.CheckBoxPptSvc);
             this.GBoxPptsvc.Controls.Add(this.LabelPptsvc);
-            this.GBoxPptsvc.Location = new System.Drawing.Point(7, 178);
+            this.GBoxPptsvc.Location = new System.Drawing.Point(5, 176);
             this.GBoxPptsvc.Name = "GBoxPptsvc";
             this.GBoxPptsvc.Size = new System.Drawing.Size(323, 78);
             this.GBoxPptsvc.TabIndex = 0;
@@ -381,7 +345,7 @@
             this.GBoxContent.Controls.Add(this.ComboBoxShowXOnly);
             this.GBoxContent.Controls.Add(this.CheckBoxCeiling);
             this.GBoxContent.Controls.Add(this.CheckBoxShowXOnly);
-            this.GBoxContent.Location = new System.Drawing.Point(7, 5);
+            this.GBoxContent.Location = new System.Drawing.Point(5, 3);
             this.GBoxContent.Name = "GBoxContent";
             this.GBoxContent.Size = new System.Drawing.Size(323, 98);
             this.GBoxContent.TabIndex = 1;
@@ -474,7 +438,7 @@
             this.GBoxDraggable.Controls.Add(this.LabelChar1);
             this.GBoxDraggable.Controls.Add(this.LabelScreens);
             this.GBoxDraggable.Controls.Add(this.ComboBoxScreens);
-            this.GBoxDraggable.Location = new System.Drawing.Point(7, 105);
+            this.GBoxDraggable.Location = new System.Drawing.Point(5, 103);
             this.GBoxDraggable.Name = "GBoxDraggable";
             this.GBoxDraggable.Size = new System.Drawing.Size(323, 71);
             this.GBoxDraggable.TabIndex = 4;
@@ -484,7 +448,6 @@
             // ComboBoxPosition
             // 
             this.ComboBoxPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBoxPosition.Enabled = true;
             this.ComboBoxPosition.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.ComboBoxPosition.Location = new System.Drawing.Point(232, 17);
             this.ComboBoxPosition.Name = "ComboBoxPosition";
@@ -532,18 +495,6 @@
             this.ComboBoxScreens.TabIndex = 4;
             this.ComboBoxScreens.SelectedIndexChanged += new System.EventHandler(this.ComboBoxScreens_SelectedIndexChanged);
             // 
-            // TabPageAppearance
-            // 
-            this.TabPageAppearance.Controls.Add(this.GBoxColors);
-            this.TabPageAppearance.Controls.Add(this.GBoxFont);
-            this.TabPageAppearance.Location = new System.Drawing.Point(4, 24);
-            this.TabPageAppearance.Name = "TabPageAppearance";
-            this.TabPageAppearance.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageAppearance.Size = new System.Drawing.Size(339, 261);
-            this.TabPageAppearance.TabIndex = 4;
-            this.TabPageAppearance.Text = "外观";
-            this.TabPageAppearance.UseVisualStyleBackColor = true;
-            // 
             // GBoxColors
             // 
             this.GBoxColors.Controls.Add(this.LabelPreviewColor4);
@@ -564,7 +515,7 @@
             this.GBoxColors.Controls.Add(this.LabelLine04);
             this.GBoxColors.Controls.Add(this.LabelLine03);
             this.GBoxColors.Controls.Add(this.LabelLine02);
-            this.GBoxColors.Location = new System.Drawing.Point(7, 79);
+            this.GBoxColors.Location = new System.Drawing.Point(5, 77);
             this.GBoxColors.Name = "GBoxColors";
             this.GBoxColors.Size = new System.Drawing.Size(323, 168);
             this.GBoxColors.TabIndex = 0;
@@ -745,7 +696,7 @@
             this.GBoxFont.Controls.Add(this.ButtonDefaultFont);
             this.GBoxFont.Controls.Add(this.ButtonFont);
             this.GBoxFont.Controls.Add(this.LabelFont);
-            this.GBoxFont.Location = new System.Drawing.Point(7, 5);
+            this.GBoxFont.Location = new System.Drawing.Point(5, 3);
             this.GBoxFont.Name = "GBoxFont";
             this.GBoxFont.Size = new System.Drawing.Size(323, 68);
             this.GBoxFont.TabIndex = 0;
@@ -782,23 +733,11 @@
             this.LabelFont.Size = new System.Drawing.Size(0, 15);
             this.LabelFont.TabIndex = 1;
             // 
-            // TabPageTools
-            // 
-            this.TabPageTools.Controls.Add(this.GBoxRestart);
-            this.TabPageTools.Controls.Add(this.GBoxSyncTime);
-            this.TabPageTools.Location = new System.Drawing.Point(4, 24);
-            this.TabPageTools.Name = "TabPageTools";
-            this.TabPageTools.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageTools.Size = new System.Drawing.Size(339, 261);
-            this.TabPageTools.TabIndex = 1;
-            this.TabPageTools.Text = "工具";
-            this.TabPageTools.UseVisualStyleBackColor = true;
-            // 
             // GBoxRestart
             // 
             this.GBoxRestart.Controls.Add(this.LabelRestart);
             this.GBoxRestart.Controls.Add(this.ButtonRestart);
-            this.GBoxRestart.Location = new System.Drawing.Point(7, 94);
+            this.GBoxRestart.Location = new System.Drawing.Point(5, 92);
             this.GBoxRestart.Name = "GBoxRestart";
             this.GBoxRestart.Size = new System.Drawing.Size(323, 83);
             this.GBoxRestart.TabIndex = 45;
@@ -817,7 +756,7 @@
             this.GBoxSyncTime.Controls.Add(this.ComboBoxNtpServers);
             this.GBoxSyncTime.Controls.Add(this.LabelSyncTime);
             this.GBoxSyncTime.Controls.Add(this.ButtonSyncTime);
-            this.GBoxSyncTime.Location = new System.Drawing.Point(7, 5);
+            this.GBoxSyncTime.Location = new System.Drawing.Point(5, 3);
             this.GBoxSyncTime.Name = "GBoxSyncTime";
             this.GBoxSyncTime.Size = new System.Drawing.Size(323, 83);
             this.GBoxSyncTime.TabIndex = 44;
@@ -844,6 +783,70 @@
             this.LabelSyncTime.TabIndex = 20;
             this.LabelSyncTime.Text = "设置默认 NTP 服务器并同步系统时间。此项将自动启动 Windows Time 服务, 请谨慎操作。";
             // 
+            // PageNavPages
+            // 
+            this.PageNavPages.Location = new System.Drawing.Point(57, 0);
+            this.PageNavPages.Name = "PageNavPages";
+            this.PageNavPages.Size = new System.Drawing.Size(332, 259);
+            this.PageNavPages.TabIndex = 42;
+            // 
+            // PanelNav
+            // 
+            this.PanelNav.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.PanelNav.Location = new System.Drawing.Point(3, 0);
+            this.PanelNav.Name = "PanelNav";
+            this.PanelNav.Size = new System.Drawing.Size(53, 259);
+            this.PanelNav.TabIndex = 41;
+            // 
+            // PageGeneral
+            // 
+            this.PageGeneral.BackColor = System.Drawing.SystemColors.Window;
+            this.PageGeneral.Controls.Add(this.GBoxExamInfo);
+            this.PageGeneral.Controls.Add(this.GBoxOthers);
+            this.PageGeneral.Index = 0;
+            this.PageGeneral.Location = new System.Drawing.Point(400, 0);
+            this.PageGeneral.Name = "PageGeneral";
+            this.PageGeneral.Size = new System.Drawing.Size(332, 234);
+            this.PageGeneral.TabIndex = 43;
+            this.PageGeneral.Visible = false;
+            // 
+            // PageDisplay
+            // 
+            this.PageDisplay.BackColor = System.Drawing.SystemColors.Window;
+            this.PageDisplay.Controls.Add(this.GBoxPptsvc);
+            this.PageDisplay.Controls.Add(this.GBoxContent);
+            this.PageDisplay.Controls.Add(this.GBoxDraggable);
+            this.PageDisplay.Index = 0;
+            this.PageDisplay.Location = new System.Drawing.Point(738, 0);
+            this.PageDisplay.Name = "PageDisplay";
+            this.PageDisplay.Size = new System.Drawing.Size(332, 261);
+            this.PageDisplay.TabIndex = 44;
+            this.PageDisplay.Visible = false;
+            // 
+            // PageAppearance
+            // 
+            this.PageAppearance.BackColor = System.Drawing.SystemColors.Window;
+            this.PageAppearance.Controls.Add(this.GBoxColors);
+            this.PageAppearance.Controls.Add(this.GBoxFont);
+            this.PageAppearance.Index = 0;
+            this.PageAppearance.Location = new System.Drawing.Point(400, 240);
+            this.PageAppearance.Name = "PageAppearance";
+            this.PageAppearance.Size = new System.Drawing.Size(332, 254);
+            this.PageAppearance.TabIndex = 45;
+            this.PageAppearance.Visible = false;
+            // 
+            // PageTools
+            // 
+            this.PageTools.BackColor = System.Drawing.SystemColors.Window;
+            this.PageTools.Controls.Add(this.GBoxRestart);
+            this.PageTools.Controls.Add(this.GBoxSyncTime);
+            this.PageTools.Index = 0;
+            this.PageTools.Location = new System.Drawing.Point(738, 267);
+            this.PageTools.Name = "PageTools";
+            this.PageTools.Size = new System.Drawing.Size(332, 185);
+            this.PageTools.TabIndex = 45;
+            this.PageTools.Visible = false;
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.ButtonSave;
@@ -852,8 +855,13 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.ButtonCancel;
-            this.ClientSize = new System.Drawing.Size(359, 327);
-            this.Controls.Add(this.TabControlMain);
+            this.ClientSize = new System.Drawing.Size(391, 290);
+            this.Controls.Add(this.PageAppearance);
+            this.Controls.Add(this.PageTools);
+            this.Controls.Add(this.PageDisplay);
+            this.Controls.Add(this.PageGeneral);
+            this.Controls.Add(this.PageNavPages);
+            this.Controls.Add(this.PanelNav);
             this.Controls.Add(this.ButtonSave);
             this.Controls.Add(this.ButtonCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -864,29 +872,28 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "设置 - 高考倒计时";
-            this.TabControlMain.ResumeLayout(false);
-            this.TabPageGeneral.ResumeLayout(false);
             this.GBoxExamInfo.ResumeLayout(false);
             this.GBoxExamInfo.PerformLayout();
             this.GBoxOthers.ResumeLayout(false);
             this.GBoxOthers.PerformLayout();
-            this.TabPageDisplay.ResumeLayout(false);
             this.GBoxPptsvc.ResumeLayout(false);
             this.GBoxPptsvc.PerformLayout();
             this.GBoxContent.ResumeLayout(false);
             this.GBoxContent.PerformLayout();
             this.GBoxDraggable.ResumeLayout(false);
             this.GBoxDraggable.PerformLayout();
-            this.TabPageAppearance.ResumeLayout(false);
             this.GBoxColors.ResumeLayout(false);
             this.GBoxColors.PerformLayout();
             this.GBoxFont.ResumeLayout(false);
             this.GBoxFont.PerformLayout();
-            this.TabPageTools.ResumeLayout(false);
             this.GBoxRestart.ResumeLayout(false);
             this.GBoxRestart.PerformLayout();
             this.GBoxSyncTime.ResumeLayout(false);
             this.GBoxSyncTime.PerformLayout();
+            this.PageGeneral.ResumeLayout(false);
+            this.PageDisplay.ResumeLayout(false);
+            this.PageAppearance.ResumeLayout(false);
+            this.PageTools.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -896,13 +903,10 @@
         private System.Windows.Forms.Button ButtonSyncTime;
         private System.Windows.Forms.Button ButtonRestart;
         private System.Windows.Forms.Button ButtonSave;
-        private System.Windows.Forms.TabControl TabControlMain;
-        private System.Windows.Forms.TabPage TabPageTools;
         private System.Windows.Forms.GroupBox GBoxRestart;
         private System.Windows.Forms.GroupBox GBoxSyncTime;
         private System.Windows.Forms.Label LabelRestart;
         private System.Windows.Forms.Label LabelSyncTime;
-        private System.Windows.Forms.TabPage TabPageDisplay;
         private System.Windows.Forms.GroupBox GBoxFont;
         private System.Windows.Forms.Label LabelFont;
         private System.Windows.Forms.Button ButtonFont;
@@ -918,7 +922,6 @@
         private System.Windows.Forms.Label LabelScreens;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxScreens;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxShowXOnly;
-        private System.Windows.Forms.TabPage TabPageAppearance;
         private System.Windows.Forms.GroupBox GBoxColors;
         private System.Windows.Forms.Label LabelColor31;
         private System.Windows.Forms.Label LabelColor32;
@@ -947,7 +950,6 @@
         private System.Windows.Forms.Label LabelCountdownEnd;
         private System.Windows.Forms.CheckBox CheckBoxTrayText;
         private System.Windows.Forms.CheckBox CheckBoxTrayIcon;
-        private System.Windows.Forms.TabPage TabPageGeneral;
         private System.Windows.Forms.GroupBox GBoxExamInfo;
         private System.Windows.Forms.Button ButtonExamInfo;
         private System.Windows.Forms.GroupBox GBoxOthers;
@@ -959,5 +961,11 @@
         private System.Windows.Forms.Label LabelExamInfo;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxAutoSwitchIntervel;
         private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
+        private System.Windows.Forms.Panel PageNavPages;
+        private System.Windows.Forms.Panel PanelNav;
+        private Controls.NavigationPage PageGeneral;
+        private Controls.NavigationPage PageDisplay;
+        private Controls.NavigationPage PageAppearance;
+        private Controls.NavigationPage PageTools;
     }
 }

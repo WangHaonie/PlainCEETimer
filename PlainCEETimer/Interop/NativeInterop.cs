@@ -14,7 +14,7 @@ namespace PlainCEETimer.Interop
         https://stackoverflow.com/a/6873026/21094697
 
         */
-        [DllImport("shell32.dll", EntryPoint = "ExtractIconExW", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("shell32.dll", EntryPoint = "ExtractIconExW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, ExactSpelling = true)]
         public static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, out IntPtr phiconSmall, int nIcons);
         #endregion
 
@@ -30,9 +30,12 @@ namespace PlainCEETimer.Interop
         https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
 
         */
-        [DllImport("uxtheme.dll", EntryPoint = "#132", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("uxtheme.dll", EntryPoint = "#132", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShouldAppsUseDarkMode();
         #endregion
+
+        [DllImport("uxtheme.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
     }
 }
