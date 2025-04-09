@@ -153,7 +153,7 @@ namespace PlainCEETimer.Dialogs
             var LabelSender = (Label)sender;
             var ColorDialogMain = new ColorDialogEx();
 
-            if (ColorDialogMain.ShowDialog(LabelSender.BackColor) == DialogResult.OK)
+            if (ColorDialogMain.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
             {
                 LabelSender.BackColor = ColorDialogMain.Color;
                 LabelColorPreview.ForeColor = LabelFore.BackColor;

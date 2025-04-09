@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
+using System;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -7,6 +8,18 @@ namespace PlainCEETimer.Controls
     {
         private bool Calculated;
         private static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                ForeColor = ThemeManager.DarkFore;
+                BackColor = ThemeManager.DarkBack;
+                ThemeManager.FlushDarkControl(this, Modules.DarkControlType.CFD);
+            }
+
+            base.OnHandleCreated(e);
+        }
 
         protected override void OnDropDown(EventArgs e)
         {

@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             this.LabelP3 = new System.Windows.Forms.Label();
-            this.TextBoxP3 = new System.Windows.Forms.TextBox();
+            this.TextBoxP3 = new PlainCEETimer.Controls.PlainTextBox();
             this.LabelP2 = new System.Windows.Forms.Label();
-            this.TextBoxP2 = new System.Windows.Forms.TextBox();
+            this.TextBoxP2 = new PlainCEETimer.Controls.PlainTextBox();
             this.LabelP1 = new System.Windows.Forms.Label();
-            this.TextBoxP1 = new System.Windows.Forms.TextBox();
+            this.TextBoxP1 = new PlainCEETimer.Controls.PlainTextBox();
             this.LabelInfo = new System.Windows.Forms.Label();
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonA = new System.Windows.Forms.Button();
-            //this.ButtonB = new System.Windows.Forms.Button();
-            this.ButtonReset = new System.Windows.Forms.Button();
+            //this.ButtonA = new PlainCEETimer.Controls.PlainButton();
+            //this.ButtonB = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonReset = new PlainCEETimer.Controls.PlainButton();
             this.PanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -169,15 +169,15 @@
         #endregion
 
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonA;
-        //private System.Windows.Forms.Button ButtonB;
+        //private PlainCEETimer.Controls.PlainButton ButtonA;
+        //private PlainCEETimer.Controls.PlainButton ButtonB;
         private System.Windows.Forms.Label LabelInfo;
         private System.Windows.Forms.Label LabelP3;
-        private System.Windows.Forms.TextBox TextBoxP3;
+        private PlainCEETimer.Controls.PlainTextBox TextBoxP3;
         private System.Windows.Forms.Label LabelP2;
-        private System.Windows.Forms.TextBox TextBoxP2;
+        private PlainCEETimer.Controls.PlainTextBox TextBoxP2;
         private System.Windows.Forms.Label LabelP1;
-        private System.Windows.Forms.TextBox TextBoxP1;
-        private System.Windows.Forms.Button ButtonReset;
+        private PlainCEETimer.Controls.PlainTextBox TextBoxP1;
+        private PlainCEETimer.Controls.PlainButton ButtonReset;
     }
 }

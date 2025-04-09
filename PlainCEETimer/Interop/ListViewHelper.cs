@@ -6,7 +6,7 @@ namespace PlainCEETimer.Interop
 {
     public static class ListViewHelper
     {
-        [DllImport(App.AppNativesDll, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.NativesDll, CallingConvention = CallingConvention.StdCall)]
         public static extern void SelectAllItems(IntPtr hLV, int state);
     }
 }

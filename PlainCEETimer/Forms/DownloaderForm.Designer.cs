@@ -32,8 +32,8 @@
             this.LabelSize = new System.Windows.Forms.Label();
             this.LabelSpeed = new System.Windows.Forms.Label();
             this.ProgressBarMain = new System.Windows.Forms.ProgressBar();
-            this.ButtonRetry = new System.Windows.Forms.Button();
-            this.ButtonCancel = new System.Windows.Forms.Button();
+            this.ButtonRetry = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonCancel = new PlainCEETimer.Controls.PlainButton();
             this.LinkBrowser = new PlainCEETimer.Controls.Hyperlink();
             this.SuspendLayout();
             // 
@@ -140,8 +140,8 @@
         private System.Windows.Forms.Label LabelSize;
         private System.Windows.Forms.Label LabelSpeed;
         private System.Windows.Forms.ProgressBar ProgressBarMain;
-        private System.Windows.Forms.Button ButtonRetry;
-        private System.Windows.Forms.Button ButtonCancel;
+        private PlainCEETimer.Controls.PlainButton ButtonRetry;
+        private PlainCEETimer.Controls.PlainButton ButtonCancel;
         private PlainCEETimer.Controls.Hyperlink LinkBrowser;
     }
 }

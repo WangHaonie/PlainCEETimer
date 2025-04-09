@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules.Configuration
 {
     public static class DefaultValues
     {
-        public static bool IsDarkModeSupported { get; }
+        public static bool AutoDarkCountdown { get; }
         public static int[] ColorDialogColors { get; }
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
@@ -47,9 +47,7 @@ namespace PlainCEETimer.Modules.Configuration
 
             CountdownDefaultFont = new(NotoAvailable ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
-            IsDarkModeSupported = !File.Exists(App.ConfigFilePath)
-                && App.OSBuild >= WindowsBuilds.Windows10_1903
-                && NativeInterop.ShouldAppsUseDarkMode();
+            AutoDarkCountdown = !File.Exists(App.ConfigFilePath) && ThemeManager.IsDarkModeSupported && ThemeManager.ShouldAppsUseDarkMode();
         }
     }
 }

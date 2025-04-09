@@ -28,41 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ButtonCancel = new System.Windows.Forms.Button();
-            this.ButtonSyncTime = new System.Windows.Forms.Button();
-            this.ButtonRestart = new System.Windows.Forms.Button();
-            this.ButtonSave = new System.Windows.Forms.Button();
-            this.GBoxExamInfo = new System.Windows.Forms.GroupBox();
+            this.ButtonCancel = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonSyncTime = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonRestart = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonSave = new PlainCEETimer.Controls.PlainButton();
+            this.GBoxExamInfo = new PlainCEETimer.Controls.PlainGroupBox();
             this.ComboBoxAutoSwitchIntervel = new PlainCEETimer.Controls.ComboBoxEx();
-            this.CheckBoxAutoSwitch = new System.Windows.Forms.CheckBox();
+            this.CheckBoxAutoSwitch = new PlainCEETimer.Controls.PlainCheckBox();
             this.LabelExamInfo = new System.Windows.Forms.Label();
-            this.ButtonExamInfo = new System.Windows.Forms.Button();
-            this.GBoxOthers = new System.Windows.Forms.GroupBox();
-            this.CheckBoxTrayText = new System.Windows.Forms.CheckBox();
-            this.CheckBoxWCCMS = new System.Windows.Forms.CheckBox();
-            this.CheckBoxMemClean = new System.Windows.Forms.CheckBox();
-            this.CheckBoxTrayIcon = new System.Windows.Forms.CheckBox();
-            this.CheckBoxUniTopMost = new System.Windows.Forms.CheckBox();
-            this.CheckBoxTopMost = new System.Windows.Forms.CheckBox();
-            this.CheckBoxStartup = new System.Windows.Forms.CheckBox();
-            this.GBoxPptsvc = new System.Windows.Forms.GroupBox();
-            this.CheckBoxPptSvc = new System.Windows.Forms.CheckBox();
+            this.ButtonExamInfo = new PlainCEETimer.Controls.PlainButton();
+            this.GBoxOthers = new PlainCEETimer.Controls.PlainGroupBox();
+            this.CheckBoxTrayText = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxWCCMS = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxMemClean = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxTrayIcon = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxUniTopMost = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxTopMost = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxStartup = new PlainCEETimer.Controls.PlainCheckBox();
+            this.GBoxPptsvc = new PlainCEETimer.Controls.PlainGroupBox();
+            this.CheckBoxPptSvc = new PlainCEETimer.Controls.PlainCheckBox();
             this.LabelPptsvc = new System.Windows.Forms.Label();
-            this.GBoxContent = new System.Windows.Forms.GroupBox();
+            this.GBoxContent = new PlainCEETimer.Controls.PlainGroupBox();
             this.LabelCountdownEnd = new System.Windows.Forms.Label();
             this.ComboBoxCountdownEnd = new PlainCEETimer.Controls.ComboBoxEx();
-            this.CheckBoxRulesMan = new System.Windows.Forms.CheckBox();
-            this.ButtonRulesMan = new System.Windows.Forms.Button();
+            this.CheckBoxRulesMan = new PlainCEETimer.Controls.PlainCheckBox();
+            this.ButtonRulesMan = new PlainCEETimer.Controls.PlainButton();
             this.ComboBoxShowXOnly = new PlainCEETimer.Controls.ComboBoxEx();
-            this.CheckBoxCeiling = new System.Windows.Forms.CheckBox();
-            this.CheckBoxShowXOnly = new System.Windows.Forms.CheckBox();
-            this.GBoxDraggable = new System.Windows.Forms.GroupBox();
+            this.CheckBoxCeiling = new PlainCEETimer.Controls.PlainCheckBox();
+            this.CheckBoxShowXOnly = new PlainCEETimer.Controls.PlainCheckBox();
+            this.GBoxDraggable = new PlainCEETimer.Controls.PlainGroupBox();
             this.ComboBoxPosition = new PlainCEETimer.Controls.ComboBoxEx();
-            this.CheckBoxDraggable = new System.Windows.Forms.CheckBox();
+            this.CheckBoxDraggable = new PlainCEETimer.Controls.PlainCheckBox();
             this.LabelPosition = new System.Windows.Forms.Label();
             this.LabelScreens = new System.Windows.Forms.Label();
             this.ComboBoxScreens = new PlainCEETimer.Controls.ComboBoxEx();
-            this.GBoxColors = new System.Windows.Forms.GroupBox();
+            this.GBoxColors = new PlainCEETimer.Controls.PlainGroupBox();
             this.LabelPreviewColor4 = new System.Windows.Forms.Label();
             this.LabelColor41 = new System.Windows.Forms.Label();
             this.LabelColor42 = new System.Windows.Forms.Label();
@@ -71,7 +71,7 @@
             this.LabelPreviewColor2 = new System.Windows.Forms.Label();
             this.LabelPreviewColor3 = new System.Windows.Forms.Label();
             this.LabelColor = new System.Windows.Forms.Label();
-            this.ButtonDefaultColor = new System.Windows.Forms.Button();
+            this.ButtonDefaultColor = new PlainCEETimer.Controls.PlainButton();
             this.LabelColor31 = new System.Windows.Forms.Label();
             this.LabelColor32 = new System.Windows.Forms.Label();
             this.LabelColor21 = new System.Windows.Forms.Label();
@@ -81,13 +81,13 @@
             this.LabelColorP3 = new System.Windows.Forms.Label();
             this.LabelColorP2 = new System.Windows.Forms.Label();
             this.LabelColorP1 = new System.Windows.Forms.Label();
-            this.GBoxFont = new System.Windows.Forms.GroupBox();
-            this.ButtonDefaultFont = new System.Windows.Forms.Button();
-            this.ButtonFont = new System.Windows.Forms.Button();
+            this.GBoxFont = new PlainCEETimer.Controls.PlainGroupBox();
+            this.ButtonDefaultFont = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonFont = new PlainCEETimer.Controls.PlainButton();
             this.LabelFont = new System.Windows.Forms.Label();
-            this.GBoxRestart = new System.Windows.Forms.GroupBox();
+            this.GBoxRestart = new PlainCEETimer.Controls.PlainGroupBox();
             this.LabelRestart = new System.Windows.Forms.Label();
-            this.GBoxSyncTime = new System.Windows.Forms.GroupBox();
+            this.GBoxSyncTime = new PlainCEETimer.Controls.PlainGroupBox();
             this.ComboBoxNtpServers = new PlainCEETimer.Controls.ComboBoxEx();
             this.LabelSyncTime = new System.Windows.Forms.Label();
             this.PageNavPages = new System.Windows.Forms.Panel();
@@ -96,6 +96,10 @@
             this.PageDisplay = new PlainCEETimer.Controls.NavigationPage();
             this.PageAppearance = new PlainCEETimer.Controls.NavigationPage();
             this.PageTools = new PlainCEETimer.Controls.NavigationPage();
+            this.GBoxTheme = new PlainCEETimer.Controls.PlainGroupBox();
+            this.RadioButtonThemeDark = new PlainCEETimer.Controls.PlainRadioButton();
+            this.RadioButtonThemeLight = new PlainCEETimer.Controls.PlainRadioButton();
+            this.RadioButtonThemeSystem = new PlainCEETimer.Controls.PlainRadioButton();
             this.GBoxExamInfo.SuspendLayout();
             this.GBoxOthers.SuspendLayout();
             this.GBoxPptsvc.SuspendLayout();
@@ -109,6 +113,7 @@
             this.PageDisplay.SuspendLayout();
             this.PageAppearance.SuspendLayout();
             this.PageTools.SuspendLayout();
+            this.GBoxTheme.SuspendLayout();
             this.SuspendLayout();
             // 
             // ButtonCancel
@@ -128,7 +133,7 @@
             this.ButtonSyncTime.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ButtonSyncTime.Location = new System.Drawing.Point(145, 54);
             this.ButtonSyncTime.Name = "ButtonSyncTime";
-            this.ButtonSyncTime.Size = new System.Drawing.Size(84, 25);
+            this.ButtonSyncTime.Size = new System.Drawing.Size(88, 24);
             this.ButtonSyncTime.TabIndex = 19;
             this.ButtonSyncTime.Text = "立即同步(&Y)";
             this.ButtonSyncTime.UseVisualStyleBackColor = true;
@@ -140,7 +145,7 @@
             this.ButtonRestart.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ButtonRestart.Location = new System.Drawing.Point(9, 54);
             this.ButtonRestart.Name = "ButtonRestart";
-            this.ButtonRestart.Size = new System.Drawing.Size(6, 6);
+            this.ButtonRestart.Size = new System.Drawing.Size(14, 9);
             this.ButtonRestart.TabIndex = 36;
             this.ButtonRestart.UseVisualStyleBackColor = true;
             this.ButtonRestart.Click += new System.EventHandler(this.ButtonRestart_Click);
@@ -390,7 +395,7 @@
             this.ButtonRulesMan.Enabled = false;
             this.ButtonRulesMan.Location = new System.Drawing.Point(219, 68);
             this.ButtonRulesMan.Name = "ButtonRulesMan";
-            this.ButtonRulesMan.Size = new System.Drawing.Size(97, 25);
+            this.ButtonRulesMan.Size = new System.Drawing.Size(101, 24);
             this.ButtonRulesMan.TabIndex = 41;
             this.ButtonRulesMan.Text = "规则管理器(&R)";
             this.ButtonRulesMan.UseVisualStyleBackColor = true;
@@ -598,7 +603,7 @@
             this.ButtonDefaultColor.AutoSize = true;
             this.ButtonDefaultColor.Location = new System.Drawing.Point(9, 137);
             this.ButtonDefaultColor.Name = "ButtonDefaultColor";
-            this.ButtonDefaultColor.Size = new System.Drawing.Size(88, 25);
+            this.ButtonDefaultColor.Size = new System.Drawing.Size(92, 25);
             this.ButtonDefaultColor.TabIndex = 11;
             this.ButtonDefaultColor.Text = "恢复默认(&M)";
             this.ButtonDefaultColor.UseVisualStyleBackColor = true;
@@ -708,7 +713,7 @@
             this.ButtonDefaultFont.AutoSize = true;
             this.ButtonDefaultFont.Location = new System.Drawing.Point(98, 37);
             this.ButtonDefaultFont.Name = "ButtonDefaultFont";
-            this.ButtonDefaultFont.Size = new System.Drawing.Size(86, 25);
+            this.ButtonDefaultFont.Size = new System.Drawing.Size(90, 25);
             this.ButtonDefaultFont.TabIndex = 4;
             this.ButtonDefaultFont.Text = "恢复默认(&H)";
             this.ButtonDefaultFont.UseVisualStyleBackColor = true;
@@ -719,7 +724,7 @@
             this.ButtonFont.AutoSize = true;
             this.ButtonFont.Location = new System.Drawing.Point(9, 37);
             this.ButtonFont.Name = "ButtonFont";
-            this.ButtonFont.Size = new System.Drawing.Size(83, 25);
+            this.ButtonFont.Size = new System.Drawing.Size(87, 25);
             this.ButtonFont.TabIndex = 2;
             this.ButtonFont.Text = "选择字体(&F)";
             this.ButtonFont.UseVisualStyleBackColor = true;
@@ -800,7 +805,6 @@
             // 
             // PageGeneral
             // 
-            this.PageGeneral.BackColor = System.Drawing.SystemColors.Window;
             this.PageGeneral.Controls.Add(this.GBoxExamInfo);
             this.PageGeneral.Controls.Add(this.GBoxOthers);
             this.PageGeneral.Index = 0;
@@ -812,7 +816,6 @@
             // 
             // PageDisplay
             // 
-            this.PageDisplay.BackColor = System.Drawing.SystemColors.Window;
             this.PageDisplay.Controls.Add(this.GBoxPptsvc);
             this.PageDisplay.Controls.Add(this.GBoxContent);
             this.PageDisplay.Controls.Add(this.GBoxDraggable);
@@ -825,7 +828,6 @@
             // 
             // PageAppearance
             // 
-            this.PageAppearance.BackColor = System.Drawing.SystemColors.Window;
             this.PageAppearance.Controls.Add(this.GBoxColors);
             this.PageAppearance.Controls.Add(this.GBoxFont);
             this.PageAppearance.Index = 0;
@@ -837,15 +839,60 @@
             // 
             // PageTools
             // 
-            this.PageTools.BackColor = System.Drawing.SystemColors.Window;
+            this.PageTools.Controls.Add(this.GBoxTheme);
             this.PageTools.Controls.Add(this.GBoxRestart);
             this.PageTools.Controls.Add(this.GBoxSyncTime);
             this.PageTools.Index = 0;
-            this.PageTools.Location = new System.Drawing.Point(738, 267);
+            this.PageTools.Location = new System.Drawing.Point(738, 269);
             this.PageTools.Name = "PageTools";
-            this.PageTools.Size = new System.Drawing.Size(332, 185);
+            this.PageTools.Size = new System.Drawing.Size(332, 245);
             this.PageTools.TabIndex = 45;
             this.PageTools.Visible = false;
+            // 
+            // GBoxTheme
+            // 
+            this.GBoxTheme.Controls.Add(this.RadioButtonThemeDark);
+            this.GBoxTheme.Controls.Add(this.RadioButtonThemeLight);
+            this.GBoxTheme.Controls.Add(this.RadioButtonThemeSystem);
+            this.GBoxTheme.Location = new System.Drawing.Point(5, 181);
+            this.GBoxTheme.Name = "GBoxTheme";
+            this.GBoxTheme.Size = new System.Drawing.Size(323, 51);
+            this.GBoxTheme.TabIndex = 46;
+            this.GBoxTheme.TabStop = false;
+            this.GBoxTheme.Text = "应用主题设定";
+            // 
+            // RadioButtonThemeDark
+            // 
+            this.RadioButtonThemeDark.AutoSize = true;
+            this.RadioButtonThemeDark.Location = new System.Drawing.Point(149, 22);
+            this.RadioButtonThemeDark.Name = "RadioButtonThemeDark";
+            this.RadioButtonThemeDark.Size = new System.Drawing.Size(51, 19);
+            this.RadioButtonThemeDark.TabIndex = 2;
+            this.RadioButtonThemeDark.TabStop = true;
+            this.RadioButtonThemeDark.Text = "深色";
+            this.RadioButtonThemeDark.UseVisualStyleBackColor = true;
+            // 
+            // RadioButtonThemeLight
+            // 
+            this.RadioButtonThemeLight.AutoSize = true;
+            this.RadioButtonThemeLight.Location = new System.Drawing.Point(92, 22);
+            this.RadioButtonThemeLight.Name = "RadioButtonThemeLight";
+            this.RadioButtonThemeLight.Size = new System.Drawing.Size(51, 19);
+            this.RadioButtonThemeLight.TabIndex = 1;
+            this.RadioButtonThemeLight.TabStop = true;
+            this.RadioButtonThemeLight.Text = "浅色";
+            this.RadioButtonThemeLight.UseVisualStyleBackColor = true;
+            // 
+            // RadioButtonThemeSystem
+            // 
+            this.RadioButtonThemeSystem.AutoSize = true;
+            this.RadioButtonThemeSystem.Location = new System.Drawing.Point(9, 22);
+            this.RadioButtonThemeSystem.Name = "RadioButtonThemeSystem";
+            this.RadioButtonThemeSystem.Size = new System.Drawing.Size(77, 19);
+            this.RadioButtonThemeSystem.TabIndex = 0;
+            this.RadioButtonThemeSystem.TabStop = true;
+            this.RadioButtonThemeSystem.Text = "跟随系统";
+            this.RadioButtonThemeSystem.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -855,7 +902,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.ButtonCancel;
-            this.ClientSize = new System.Drawing.Size(391, 290);
+            this.ClientSize = new System.Drawing.Size(407, 329);
             this.Controls.Add(this.PageAppearance);
             this.Controls.Add(this.PageTools);
             this.Controls.Add(this.PageDisplay);
@@ -894,35 +941,37 @@
             this.PageDisplay.ResumeLayout(false);
             this.PageAppearance.ResumeLayout(false);
             this.PageTools.ResumeLayout(false);
+            this.GBoxTheme.ResumeLayout(false);
+            this.GBoxTheme.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button ButtonCancel;
-        private System.Windows.Forms.Button ButtonSyncTime;
-        private System.Windows.Forms.Button ButtonRestart;
-        private System.Windows.Forms.Button ButtonSave;
-        private System.Windows.Forms.GroupBox GBoxRestart;
-        private System.Windows.Forms.GroupBox GBoxSyncTime;
+        private PlainCEETimer.Controls.PlainButton ButtonCancel;
+        private PlainCEETimer.Controls.PlainButton ButtonSyncTime;
+        private PlainCEETimer.Controls.PlainButton ButtonRestart;
+        private PlainCEETimer.Controls.PlainButton ButtonSave;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxRestart;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxSyncTime;
         private System.Windows.Forms.Label LabelRestart;
         private System.Windows.Forms.Label LabelSyncTime;
-        private System.Windows.Forms.GroupBox GBoxFont;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxFont;
         private System.Windows.Forms.Label LabelFont;
-        private System.Windows.Forms.Button ButtonFont;
-        private System.Windows.Forms.Button ButtonDefaultFont;
-        private System.Windows.Forms.GroupBox GBoxContent;
-        private System.Windows.Forms.CheckBox CheckBoxShowXOnly;
-        private System.Windows.Forms.CheckBox CheckBoxCeiling;
-        private System.Windows.Forms.GroupBox GBoxDraggable;
-        private System.Windows.Forms.CheckBox CheckBoxDraggable;
-        private System.Windows.Forms.GroupBox GBoxPptsvc;
+        private PlainCEETimer.Controls.PlainButton ButtonFont;
+        private PlainCEETimer.Controls.PlainButton ButtonDefaultFont;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxContent;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxShowXOnly;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxCeiling;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxDraggable;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxDraggable;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxPptsvc;
         private System.Windows.Forms.Label LabelPptsvc;
-        private System.Windows.Forms.CheckBox CheckBoxPptSvc;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxPptSvc;
         private System.Windows.Forms.Label LabelScreens;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxScreens;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxShowXOnly;
-        private System.Windows.Forms.GroupBox GBoxColors;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxColors;
         private System.Windows.Forms.Label LabelColor31;
         private System.Windows.Forms.Label LabelColor32;
         private System.Windows.Forms.Label LabelColor21;
@@ -932,7 +981,7 @@
         private System.Windows.Forms.Label LabelColorP3;
         private System.Windows.Forms.Label LabelColorP2;
         private System.Windows.Forms.Label LabelColorP1;
-        private System.Windows.Forms.Button ButtonDefaultColor;
+        private PlainCEETimer.Controls.PlainButton ButtonDefaultColor;
         private System.Windows.Forms.Label LabelColor;
         private System.Windows.Forms.Label LabelPreviewColor1;
         private System.Windows.Forms.Label LabelPreviewColor2;
@@ -943,29 +992,33 @@
         private System.Windows.Forms.Label LabelColorWelcome;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxPosition;
         private System.Windows.Forms.Label LabelPosition;
-        private System.Windows.Forms.Button ButtonRulesMan;
-        private System.Windows.Forms.CheckBox CheckBoxRulesMan;
+        private PlainCEETimer.Controls.PlainButton ButtonRulesMan;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxRulesMan;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxNtpServers;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxCountdownEnd;
         private System.Windows.Forms.Label LabelCountdownEnd;
-        private System.Windows.Forms.CheckBox CheckBoxTrayText;
-        private System.Windows.Forms.CheckBox CheckBoxTrayIcon;
-        private System.Windows.Forms.GroupBox GBoxExamInfo;
-        private System.Windows.Forms.Button ButtonExamInfo;
-        private System.Windows.Forms.GroupBox GBoxOthers;
-        private System.Windows.Forms.CheckBox CheckBoxMemClean;
-        private System.Windows.Forms.CheckBox CheckBoxUniTopMost;
-        private System.Windows.Forms.CheckBox CheckBoxTopMost;
-        private System.Windows.Forms.CheckBox CheckBoxStartup;
-        private System.Windows.Forms.CheckBox CheckBoxWCCMS;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxTrayText;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxTrayIcon;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxExamInfo;
+        private PlainCEETimer.Controls.PlainButton ButtonExamInfo;
+        private PlainCEETimer.Controls.PlainGroupBox GBoxOthers;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxMemClean;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxUniTopMost;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxTopMost;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxStartup;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxWCCMS;
         private System.Windows.Forms.Label LabelExamInfo;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxAutoSwitchIntervel;
-        private System.Windows.Forms.CheckBox CheckBoxAutoSwitch;
+        private PlainCEETimer.Controls.PlainCheckBox CheckBoxAutoSwitch;
         private System.Windows.Forms.Panel PageNavPages;
         private System.Windows.Forms.Panel PanelNav;
         private Controls.NavigationPage PageGeneral;
         private Controls.NavigationPage PageDisplay;
         private Controls.NavigationPage PageAppearance;
         private Controls.NavigationPage PageTools;
+        private Controls.PlainGroupBox GBoxTheme;
+        private PlainCEETimer.Controls.PlainRadioButton RadioButtonThemeDark;
+        private PlainCEETimer.Controls.PlainRadioButton RadioButtonThemeLight;
+        private PlainCEETimer.Controls.PlainRadioButton RadioButtonThemeSystem;
     }
 }

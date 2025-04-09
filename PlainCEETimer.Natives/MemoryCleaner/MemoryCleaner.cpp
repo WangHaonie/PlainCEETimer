@@ -1,12 +1,14 @@
 ﻿#include "pch.h"
 #include "MemoryCleaner.h"
 
-//
-// 通过清空工作集来实现减少内存占用参考:
-//
-// .NET EXE memory footprint - Stack Overflow
-// https://stackoverflow.com/a/223300/21094697
-//
+/*
+
+通过清空工作集来实现减少内存占用参考:
+
+.NET EXE memory footprint - Stack Overflow
+https://stackoverflow.com/a/223300/21094697
+
+*/
 
 static HANDLE hwProc;
 

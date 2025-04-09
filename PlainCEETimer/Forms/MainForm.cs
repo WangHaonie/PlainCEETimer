@@ -33,6 +33,7 @@ namespace PlainCEETimer.Forms
         private bool LoadedMemCleaner;
         private bool MemClean;
         private bool SetRoundRegion;
+        private bool ShowThemeChangedWarning;
         private bool ShowTrayIcon;
         private bool ShowTrayText;
         private bool TrayIconReopen;
@@ -40,6 +41,7 @@ namespace PlainCEETimer.Forms
         private bool UseCustomText;
         private int AutoSwitchInterval;
         private int CurrentRuleCount;
+        private int CurrentTheme;
         private int ExamIndex;
         private int ScreenIndex;
         private int ShowXOnlyIndex;
@@ -294,6 +296,12 @@ namespace PlainCEETimer.Forms
             TopMost = AppConfig.General.TopMost;
             ShowInTaskbar = !TopMost;
             TryRunCountdown();
+
+            if (ShowThemeChangedWarning)
+            {
+                MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
+                App.Shutdown(true);
+            }
         }
 
         private void TryRunCountdown()
@@ -346,6 +354,16 @@ namespace PlainCEETimer.Forms
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
             CountdownColors = AppConfig.GlobalColors;
+            var theme = AppConfig.Dark;
+
+            if (!ValidateNeeded && theme != CurrentTheme)
+            {
+                ShowThemeChangedWarning = true;
+            }
+            else if (ValidateNeeded)
+            {
+                CurrentTheme = theme;
+            }
 
             var EndIndex = AppConfig.Display.EndIndex;
             Mode = EndIndex == 2 ? CountdownMode.Mode3 : (EndIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);

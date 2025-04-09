@@ -160,6 +160,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
     <ClInclude Include="TaskbarProgress\TaskbarProgress.h" />
+    <ClInclude Include="ThemeManager\ThemeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListViewHelper\ListViewHelper.cpp" />
@@ -172,6 +173,7 @@
     </ClCompile>
     <ClCompile Include="RoundCorner\RoundCorner.cpp" />
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
+    <ClCompile Include="ThemeManager\ThemeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PlainCEETimer.Natives.rc" />

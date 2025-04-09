@@ -31,7 +31,7 @@ namespace PlainCEETimer.Forms
         private void InitializeComponent()
         {
             this.LabelInfo = new System.Windows.Forms.Label();
-            this.ButtonClose = new System.Windows.Forms.Button();
+            this.ButtonClose = new PlainCEETimer.Controls.PlainButton();
             this.LabelLicense = new System.Windows.Forms.Label();
             this.PanelMain = new System.Windows.Forms.Panel();
             this.LinkTutorial = new PlainCEETimer.Controls.Hyperlink();
@@ -165,7 +165,7 @@ namespace PlainCEETimer.Forms
 
         #endregion
         private System.Windows.Forms.Label LabelInfo;
-        private System.Windows.Forms.Button ButtonClose;
+        private PlainCEETimer.Controls.PlainButton ButtonClose;
         private System.Windows.Forms.Label LabelLicense;
         private System.Windows.Forms.Panel PanelMain;
         private PlainCEETimer.Controls.Hyperlink LinkGitHub;

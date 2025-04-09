@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -13,6 +14,7 @@ namespace PlainCEETimer.Dialogs
         public ExamInfoObject Data { get; set; }
 
         private string CurrentExamName;
+        private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
         public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppDialogProp.BindButtons)
         {
@@ -103,7 +105,7 @@ namespace PlainCEETimer.Dialogs
             CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
             int CharCount = CurrentExamName.Length;
             LabelCounter.Text = $"{CharCount}/{Validator.MaxExamNameLength}";
-            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? Color.Black : Color.Red;
+            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? (IsDark ? ThemeManager.DarkFore : Color.Black) : Color.Red;
             UserChanged();
         }
     }

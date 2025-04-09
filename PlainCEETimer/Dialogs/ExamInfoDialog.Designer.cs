@@ -34,9 +34,9 @@
             this.LabelStart = new System.Windows.Forms.Label();
             this.DTPStart = new System.Windows.Forms.DateTimePicker();
             this.LabelName = new System.Windows.Forms.Label();
-            this.TextBoxName = new System.Windows.Forms.TextBox();
-            //this.ButtonB = new System.Windows.Forms.Button();
-            //this.ButtonA = new System.Windows.Forms.Button();
+            this.TextBoxName = new PlainCEETimer.Controls.PlainTextBox();
+            //this.ButtonB = new PlainCEETimer.Controls.PlainButton();
+            //this.ButtonA = new PlainCEETimer.Controls.PlainButton();
             //this.PanelMain = new System.Windows.Forms.Panel();
             this.PanelMain.SuspendLayout();
             this.SuspendLayout();
@@ -165,14 +165,14 @@
         #endregion
 
         private System.Windows.Forms.Label LabelCounter;
-        //private System.Windows.Forms.Button ButtonB;
-        //private System.Windows.Forms.Button ButtonA;
+        //private PlainCEETimer.Controls.PlainButton ButtonB;
+        //private PlainCEETimer.Controls.PlainButton ButtonA;
         //private System.Windows.Forms.Panel PanelMain;
         private System.Windows.Forms.Label LabelEnd;
         private System.Windows.Forms.DateTimePicker DTPEnd;
         private System.Windows.Forms.Label LabelStart;
         private System.Windows.Forms.DateTimePicker DTPStart;
         private System.Windows.Forms.Label LabelName;
-        private System.Windows.Forms.TextBox TextBoxName;
+        private PlainCEETimer.Controls.PlainTextBox TextBoxName;
     }
 }

@@ -36,6 +36,9 @@
     <ClInclude Include="ListViewHelper\ListViewHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ThemeManager\ThemeManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -51,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ListViewHelper\ListViewHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ThemeManager\ThemeManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

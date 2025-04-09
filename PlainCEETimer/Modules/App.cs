@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using System;
 using System.Diagnostics;
@@ -51,7 +52,10 @@ namespace PlainCEETimer.Modules
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
-        public const string AppNativesDll = "PlainCEETimer.Natives.dll";
+        public const string NativesDll = "PlainCEETimer.Natives.dll";
+        public const string User32Dll = "user32.dll";
+        public const string UxThemeDll = "uxtheme.dll";
+        public const string Shell32Dll = "shell32.dll";
         public const string AppVersion = "3.0.9";
         public const string AppBuildDate = "2025/04/07";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
@@ -74,6 +78,7 @@ namespace PlainCEETimer.Modules
         public static void StartProgram(string[] args)
         {
             AppIcon = Icon.ExtractAssociatedIcon(CurrentExecutablePath);
+            _ = ThemeManager.Initialize;
             _ = DefaultValues.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
@@ -216,15 +221,18 @@ namespace PlainCEETimer.Modules
 
         private static void HandleException(Exception ex)
         {
-            var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToString(DateTimeFormat)} ==================\n{ex}";
-            var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
-            File.AppendAllText(ExFilePath, ExOutput);
-
-            var Result = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
-
-            if (Result != DialogResult.None)
+            if (!AllowClosing)
             {
-                Shutdown(Restart: Result == DialogResult.Yes);
+                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToString(DateTimeFormat)} ==================\n{ex}";
+                var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
+                File.AppendAllText(ExFilePath, ExOutput);
+
+                var Result = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: AppMessageBoxButtons.YesNo);
+
+                if (Result != DialogResult.None)
+                {
+                    Shutdown(Restart: Result == DialogResult.Yes);
+                }
             }
         }
 

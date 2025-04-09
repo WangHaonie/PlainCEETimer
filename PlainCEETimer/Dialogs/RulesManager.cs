@@ -16,11 +16,11 @@ namespace PlainCEETimer.Dialogs
         protected override string[] ListViewHeaders => ["类别", "时刻", "效果预览"];
         protected override int ListViewWidth => 490;
 
-        private readonly Button ButtonGlobal;
+        private readonly PlainButton ButtonGlobal;
 
         public RulesManager()
         {
-            ButtonGlobal = new Button()
+            ButtonGlobal = new PlainButton()
             {
                 Size = new(ScaleToDpi(90), ScaleToDpi(23)),
                 Text = "全局设置(&G)",

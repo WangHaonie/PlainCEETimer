@@ -1,5 +1,6 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using System;
@@ -22,6 +23,7 @@ namespace PlainCEETimer.Forms
         private bool IsFunny;
         private bool IsFunnyClick;
         private bool ChangingCheckBox;
+        private int SelectedTheme;
         private string[] EditedCustomTexts;
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private ContextMenu ContextMenuDefaultColor;
@@ -223,15 +225,13 @@ namespace PlainCEETimer.Forms
             ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
 
             var flag = !CheckBoxDraggable.Checked;
-            LabelScreens.Enabled = flag;
-            LabelPosition.Enabled = flag;
             ComboBoxScreens.Enabled = flag;
             ComboBoxPosition.Enabled = flag;
         }
 
         private void ButtonFont_Click(object sender, EventArgs e)
         {
-            FontDialog Dialog = new()
+            FontDialogEx Dialog = new()
             {
                 AllowScriptChange = true,
                 AllowVerticalFonts = false,
@@ -239,10 +239,11 @@ namespace PlainCEETimer.Forms
                 FontMustExist = true,
                 MinSize = Validator.MinFontSize,
                 MaxSize = Validator.MaxFontSize,
-                ScriptsOnly = true
+                ScriptsOnly = true,
+                ShowColor = false
             };
 
-            if (Dialog.ShowDialog() == DialogResult.OK)
+            if (Dialog.ShowDialog(this) == DialogResult.OK)
             {
                 SettingsChanged(sender, e);
                 UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: Dialog.Font);
@@ -260,7 +261,7 @@ namespace PlainCEETimer.Forms
             var LabelSender = (Label)sender;
             var Dialog = new ColorDialogEx();
 
-            if (Dialog.ShowDialog(LabelSender.BackColor) == DialogResult.OK)
+            if (Dialog.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
             {
                 LabelSender.BackColor = Dialog.Color;
                 UpdateSettingsArea(SettingsArea.SelectedColor);
@@ -468,6 +469,19 @@ namespace PlainCEETimer.Forms
                 ColorLabel.MouseUp += ColorLabels_MouseUp;
             }
             ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
+
+            RadioButtonThemeSystem.Tag = 0;
+            RadioButtonThemeDark.Tag = 1;
+            RadioButtonThemeLight.Tag = 2;
+            RadioButtonThemeSystem.CheckedChanged += RadioButtonTheme_CheckedChanged;
+            RadioButtonThemeLight.CheckedChanged += RadioButtonTheme_CheckedChanged;
+            RadioButtonThemeDark.CheckedChanged += RadioButtonTheme_CheckedChanged;
+        }
+
+        private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
+        {
+            SelectedTheme = (int)((RadioButton)sender).Tag;
+            SettingsChanged(null, null);
         }
 
         private void RefreshSettings()
@@ -498,6 +512,16 @@ namespace PlainCEETimer.Forms
             CheckBoxTrayText.Checked = AppConfig.General.TrayText;
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
             ComboBoxAutoSwitchIntervel.SelectedIndex = AppConfig.General.Interval;
+            ApplyRadios();
+        }
+
+        private void ApplyRadios()
+        {
+            var option = AppConfig.Dark;
+
+            RadioButtonThemeSystem.Checked = option == 0;
+            RadioButtonThemeDark.Checked = option == 1 && ThemeManager.IsDarkModeSupported;
+            RadioButtonThemeLight.Checked = option == 2;
         }
 
         private void ChangeCustomTextStyle(object sender)
@@ -711,7 +735,8 @@ namespace PlainCEETimer.Forms
                 CustomColors = AppConfig.CustomColors,
                 Font = SelectedFont,
                 NtpServer = ComboBoxNtpServers.SelectedIndex,
-                Location = AppConfig.Location,
+                Dark = SelectedTheme,
+                Location = AppConfig.Location
             };
 
             RefreshNeeded = true;

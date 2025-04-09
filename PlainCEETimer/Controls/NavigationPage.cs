@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PlainCEETimer.Interop;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -25,7 +26,7 @@ namespace PlainCEETimer.Controls
         /// </summary>
         public NavigationPage()
         {
-            BackColor = SystemColors.Window;
+            BackColor = ThemeManager.ShouldUseDarkMode ? ThemeManager.DarkBack : SystemColors.Window;
             Visible = false;
         }
     }

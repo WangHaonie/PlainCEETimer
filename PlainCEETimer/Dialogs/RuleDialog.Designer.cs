@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.ComboBoxRuleType = new PlainCEETimer.Controls.ComboBoxEx();
-            this.LinkResetColor = new System.Windows.Forms.LinkLabel();
-            this.LinkResetText = new System.Windows.Forms.LinkLabel();
-            this.TextBoxCustomText = new System.Windows.Forms.TextBox();
+            this.LinkResetColor = new PlainCEETimer.Controls.PlainLinkLabel();
+            this.LinkResetText = new PlainCEETimer.Controls.PlainLinkLabel();
+            this.TextBoxCustomText = new PlainCEETimer.Controls.PlainTextBox();
             this.LabelCustomText = new System.Windows.Forms.Label();
             this.LabelColorPreview = new System.Windows.Forms.Label();
             this.LabelBack = new System.Windows.Forms.Label();
             this.LabelChar7 = new System.Windows.Forms.Label();
             this.LabelFore = new System.Windows.Forms.Label();
             this.LabelChar6 = new System.Windows.Forms.Label();
-            this.NUDSeconds = new System.Windows.Forms.NumericUpDown();
-            this.NUDMinutes = new System.Windows.Forms.NumericUpDown();
-            this.NUDHours = new System.Windows.Forms.NumericUpDown();
+            this.NUDSeconds = new PlainCEETimer.Controls.PlainNumericUpDown();
+            this.NUDMinutes = new PlainCEETimer.Controls.PlainNumericUpDown();
+            this.NUDHours = new PlainCEETimer.Controls.PlainNumericUpDown();
             this.LabelChar5 = new System.Windows.Forms.Label();
             this.LabelChar4 = new System.Windows.Forms.Label();
             this.LabelChar3 = new System.Windows.Forms.Label();
-            this.NUDDays = new System.Windows.Forms.NumericUpDown();
+            this.NUDDays = new PlainCEETimer.Controls.PlainNumericUpDown();
             this.LabelChar2 = new System.Windows.Forms.Label();
             this.LabelChar1 = new System.Windows.Forms.Label();
             //this.PanelMain = new System.Windows.Forms.Panel();
-            //this.ButtonB = new System.Windows.Forms.Button();
-            //this.ButtonA = new System.Windows.Forms.Button();
+            //this.ButtonB = new PlainCEETimer.Controls.PlainButton();
+            //this.ButtonA = new PlainCEETimer.Controls.PlainButton();
             this.PanelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUDSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDMinutes)).BeginInit();
@@ -328,27 +328,27 @@
 
         #endregion
 
-        private System.Windows.Forms.LinkLabel LinkResetColor;
+        private PlainCEETimer.Controls.PlainLinkLabel LinkResetColor;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxRuleType;
-        private System.Windows.Forms.LinkLabel LinkResetText;
-        private System.Windows.Forms.TextBox TextBoxCustomText;
+        private PlainCEETimer.Controls.PlainLinkLabel LinkResetText;
+        private PlainCEETimer.Controls.PlainTextBox TextBoxCustomText;
         private System.Windows.Forms.Label LabelCustomText;
         private System.Windows.Forms.Label LabelColorPreview;
         private System.Windows.Forms.Label LabelBack;
         private System.Windows.Forms.Label LabelChar7;
         private System.Windows.Forms.Label LabelFore;
         private System.Windows.Forms.Label LabelChar6;
-        private System.Windows.Forms.NumericUpDown NUDSeconds;
-        private System.Windows.Forms.NumericUpDown NUDMinutes;
-        private System.Windows.Forms.NumericUpDown NUDHours;
+        private PlainCEETimer.Controls.PlainNumericUpDown NUDSeconds;
+        private PlainCEETimer.Controls.PlainNumericUpDown NUDMinutes;
+        private PlainCEETimer.Controls.PlainNumericUpDown NUDHours;
         private System.Windows.Forms.Label LabelChar5;
         private System.Windows.Forms.Label LabelChar4;
         private System.Windows.Forms.Label LabelChar3;
-        private System.Windows.Forms.NumericUpDown NUDDays;
+        private PlainCEETimer.Controls.PlainNumericUpDown NUDDays;
         private System.Windows.Forms.Label LabelChar2;
         private System.Windows.Forms.Label LabelChar1;
         //private System.Windows.Forms.Panel PanelMain;
-        //private System.Windows.Forms.Button ButtonB;
-        //private System.Windows.Forms.Button ButtonA;
+        //private PlainCEETimer.Controls.PlainButton ButtonB;
+        //private PlainCEETimer.Controls.PlainButton ButtonA;
     }
 }

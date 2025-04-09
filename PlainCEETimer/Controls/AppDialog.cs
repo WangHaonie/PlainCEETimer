@@ -6,8 +6,8 @@ namespace PlainCEETimer.Controls
     public class AppDialog : AppForm
     {
         protected Panel PanelMain { get; }
-        protected Button ButtonB { get; }
-        protected Button ButtonA { get; }
+        protected PlainButton ButtonB { get; }
+        protected PlainButton ButtonA { get; }
 
         private bool IsUserChanged;
 

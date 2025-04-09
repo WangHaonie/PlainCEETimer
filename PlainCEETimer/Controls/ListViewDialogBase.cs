@@ -21,7 +21,7 @@ namespace PlainCEETimer.Controls
 
         private ContextMenu ContextMenuMain;
         private ContextMenuStrip ContextMenuStripMain;
-        private Button ButtonOperation;
+        private PlainButton ButtonOperation;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;

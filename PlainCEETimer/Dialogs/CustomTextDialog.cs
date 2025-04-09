@@ -16,6 +16,7 @@ namespace PlainCEETimer.Dialogs
 
         public CustomTextDialog() : base(AppDialogProp.BindButtons)
         {
+            CompositedStyle = true;
             InitializeComponent();
             OnUserChanged = new((_, _) => UserChanged());
         }

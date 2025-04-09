@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using System;
 using System.Windows.Forms;
 
@@ -53,7 +54,17 @@ namespace PlainCEETimer.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            NativeInterop.SetWindowTheme(Handle, "Explorer", null);
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                ForeColor = ThemeManager.DarkFore;
+                BackColor = ThemeManager.DarkBack;
+                ThemeManager.FlushDarkControl(this, DarkControlType.Explorer);
+            }
+            else
+            {
+                ThemeManager.FlushDarkControl(this, DarkControlType.ExplorerLight);
+            }
+
             base.OnHandleCreated(e);
         }
 

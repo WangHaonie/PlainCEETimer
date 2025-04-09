@@ -1,5 +1,7 @@
 ﻿using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -36,6 +38,11 @@ namespace PlainCEETimer.Controls
             GridLines = true;
             HeaderStyle = ColumnHeaderStyle.Nonclickable;
             HideSelection = false;
+
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                OwnerDraw = true;
+            }
         }
 
         public void SelectAll(bool IsSelected)
@@ -66,7 +73,43 @@ namespace PlainCEETimer.Controls
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             UpdateStyles();
+
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                ThemeManager.FlushDarkControl(this, DarkControlType.Explorer);
+                ForeColor = ThemeManager.DarkFore;
+                BackColor = ThemeManager.DarkBack;
+            }
+
             base.OnHandleCreated(e);
+        }
+
+        protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
+        {
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                using var backBrush = new SolidBrush(ThemeManager.DarkBack);
+                using var foreBrush = new SolidBrush(ThemeManager.DarkFore);
+                using var sf = new StringFormat();
+                var bounds = e.Bounds;
+                sf.Alignment = StringAlignment.Near;
+                e.Graphics.FillRectangle(backBrush, bounds);
+                e.Graphics.DrawString(e.Header.Text, Font, foreBrush, new Rectangle(bounds.X + 3, bounds.Y + 3, bounds.Width, bounds.Height), sf);
+            }
+
+            base.OnDrawColumnHeader(e);
+        }
+
+        protected override void OnDrawItem(DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
+            base.OnDrawItem(e);
+        }
+
+        protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
+        {
+            e.DrawDefault = true;
+            base.OnDrawSubItem(e);
         }
 
         protected override void OnColumnWidthChanging(ColumnWidthChangingEventArgs e)

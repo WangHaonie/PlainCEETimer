@@ -78,7 +78,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        } = DefaultValues.IsDarkModeSupported
+        } = DefaultValues.AutoDarkCountdown
           ? DefaultValues.CountdownDefaultColorsDark
           : DefaultValues.CountdownDefaultColorsLight;
 
@@ -121,6 +121,7 @@ namespace PlainCEETimer.Modules.Configuration
                 field = value;
             }
         }
+        public int Dark { get; set; }
 
         [JsonConverter(typeof(PointFormatConverter))]
         public Point Location { get; set; }

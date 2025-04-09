@@ -122,6 +122,22 @@ namespace PlainCEETimer.Controls
         }
         #endregion
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                if (!Special)
+                {
+                    ForeColor = ThemeManager.DarkFore;
+                    BackColor = ThemeManager.DarkBack;
+                }
+
+                ThemeManager.FlushDarkWindow(Handle);
+            }
+
+            base.OnHandleCreated(e);
+        }
+
         /// <summary>
         /// 用于计算并调整 UI 控件布局。该方法没有默认实现，可不调用 base.AdjustUI();
         /// </summary>

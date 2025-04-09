@@ -112,6 +112,9 @@
     <Compile Include="Controls\ComboBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FontDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\Hyperlink.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -125,6 +128,24 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\NavigationPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlainTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dialogs\CustomTextDialog.cs">
@@ -184,10 +205,12 @@
     <Compile Include="Controls\ColorDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Interop\CommonDialogHelper.cs" />
     <Compile Include="Interop\ListViewHelper.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
+    <Compile Include="Interop\ThemeManager.cs" />
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
     <Compile Include="Modules\Configuration\ConfigObject.cs" />
     <Compile Include="Modules\Configuration\ConfigHandler.cs" />
@@ -221,6 +244,9 @@
     <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Modules\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
+    <Compile Include="Controls\PlainLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\app.manifest" />
@@ -247,6 +273,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

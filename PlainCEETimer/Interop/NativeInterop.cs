@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlainCEETimer.Modules;
+using System;
 using System.Runtime.InteropServices;
 
 namespace PlainCEETimer.Interop
@@ -14,28 +15,11 @@ namespace PlainCEETimer.Interop
         https://stackoverflow.com/a/6873026/21094697
 
         */
-        [DllImport("shell32.dll", EntryPoint = "ExtractIconExW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, ExactSpelling = true)]
+        [DllImport(App.Shell32Dll, EntryPoint = "ExtractIconExW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, ExactSpelling = true)]
         public static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, out IntPtr phiconSmall, int nIcons);
         #endregion
 
-        [DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.User32Dll, CallingConvention = CallingConvention.StdCall)]
         public static extern uint GetDpiForSystem();
-
-        #region 来自网络
-        /*
-        
-        WinAPI 获取应用程序是否启用深色模式 参考：
-
-        How to detect Windows dark mode - Microsoft Q&A
-        https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
-
-        */
-        [DllImport("uxtheme.dll", EntryPoint = "#132", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ShouldAppsUseDarkMode();
-        #endregion
-
-        [DllImport("uxtheme.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
     }
 }

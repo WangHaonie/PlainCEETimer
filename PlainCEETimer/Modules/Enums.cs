@@ -103,4 +103,12 @@ namespace PlainCEETimer.Modules
         Error = 4,
         Paused = 8
     }
+
+    public enum DarkControlType
+    {
+        Explorer,
+        ItemsView,
+        CFD,
+        ExplorerLight
+    }
 }

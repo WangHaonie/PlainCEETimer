@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public sealed class Hyperlink : LinkLabel
+    public sealed class Hyperlink : PlainLinkLabel
     {
         public string HyperLink { get; set; }
 
