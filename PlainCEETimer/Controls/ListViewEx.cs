@@ -38,7 +38,7 @@ namespace PlainCEETimer.Controls
         {
             View = View.Details;
             FullRowSelect = true;
-            GridLines = true;
+            GridLines = false;
             HeaderStyle = ColumnHeaderStyle.Nonclickable;
             HideSelection = false;
 
@@ -102,7 +102,7 @@ namespace PlainCEETimer.Controls
                 if (e.ColumnIndex < Headers.Length - 1)
                 {
                     var x = b.Right - 1F;
-                    using var p = new SolidBrush(ThemeManager.DarkFore);
+                    using var p = new SolidBrush(ThemeManager.DarkBorder);
                     g.FillRectangle(p, x, b.Top, 1F, b.Height);
                 }
             }

@@ -366,6 +366,12 @@ namespace PlainCEETimer.Forms
                 ItemHeight = ScaleToDpi(25)
             });
 
+            if (!ThemeManager.IsDarkModeSupported)
+            {
+                GBoxTheme.Enabled = false;
+                GBoxTheme.Visible = false;
+            }
+
             if (UseClassicContextMenu)
             {
                 ContextMenuDefaultColor = CreateNew
