@@ -15,11 +15,11 @@ namespace PlainCEETimer.Interop
         https://stackoverflow.com/a/6873026/21094697
 
         */
-        [DllImport(App.Shell32Dll, EntryPoint = "ExtractIconExW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, ExactSpelling = true)]
+        [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
         public static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, out IntPtr phiconSmall, int nIcons);
         #endregion
 
-        [DllImport(App.User32Dll, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.User32Dll)]
         public static extern uint GetDpiForSystem();
     }
 }

@@ -1,0 +1,11 @@
+LIBRARY PlainCEETimer.Natives
+EXPORTS
+	SelectAllItems @1 NONAME
+	CleanMemory @2 NONAME
+	SetRoundCornerRegion @3 NONAME
+	SetRoundCornerModern @4 NONAME
+	InitilizeTaskbarList @5 NONAME
+	SetTaskbarProgressState @6 NONAME
+	SetTaskbarProgressValue @7 NONAME
+	ReleaseTaskbarList @8 NONAME
+	FlushDarkWindow @9 NONAME

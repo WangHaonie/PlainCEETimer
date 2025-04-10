@@ -25,18 +25,23 @@ namespace PlainCEETimer.Interop
             {
                 SetPreferredAppMode(2);
             }
-
         }
 
         public static void FlushDarkControl(Control control, DarkControlType type)
         {
-            FlushDarkControl(control.Handle, type);
+            SetWindowTheme(control.Handle, GetPszSubAppName(type), null);
         }
 
-        public static void FlushDarkControl(IntPtr hWnd, DarkControlType type)
+        private static string GetPszSubAppName(DarkControlType type) => type switch
         {
-            SetWindowTheme(hWnd, GetPszSubAppName(type), null);
-        }
+            DarkControlType.Explorer => "DarkMode_Explorer",
+            DarkControlType.CFD => "DarkMode_CFD",
+            DarkControlType.ItemsView => "DarkMode_ItemsView",
+            _ => "Explorer"
+        };
+
+        [DllImport(App.NativesDll, EntryPoint = "#9")]
+        public static extern int FlushDarkWindow(IntPtr hWnd);
 
         #region 来自网络
         /*
@@ -47,7 +52,7 @@ namespace PlainCEETimer.Interop
         https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
 
         */
-        [DllImport(App.UxThemeDll, EntryPoint = "#132", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        [DllImport(App.UxThemeDll, EntryPoint = "#132")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShouldAppsUseDarkMode();
         #endregion
@@ -67,22 +72,12 @@ namespace PlainCEETimer.Interop
         https://github.com/ysc3839/win32-darkmode
 
         */
-        [DllImport(App.UxThemeDll, CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
-        [DllImport(App.UxThemeDll, EntryPoint = "#135", CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport(App.UxThemeDll, EntryPoint = "#135")]
         private static extern int SetPreferredAppMode(int preferredAppMode);
+
+        [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
         #endregion
-
-        [DllImport(App.NativesDll, CallingConvention = CallingConvention.StdCall)]
-        public static extern int FlushDarkWindow(IntPtr hWnd);
-
-        private static string GetPszSubAppName(DarkControlType type) => type switch
-        {
-            DarkControlType.Explorer => "DarkMode_Explorer",
-            DarkControlType.CFD => "DarkMode_CFD",
-            DarkControlType.ItemsView => "DarkMode_ItemsView",
-            _ => "Explorer"
-        };
     }
 }

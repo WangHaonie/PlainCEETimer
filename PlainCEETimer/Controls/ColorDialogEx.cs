@@ -7,8 +7,11 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public sealed class ColorDialogEx : ColorDialog
+    public sealed class ColorDialogEx : ColorDialog, ICommDlg
     {
+        public CommDlg DlgType => CommDlg.Color;
+        public string DialogTitle => "选取颜色 - 高考倒计时";
+
         private static int[] CustomColorCollection = App.AppConfig.CustomColors;
         private int[] PreviousCustomColors;
         private CommonDialogHelper Helper;
@@ -36,9 +39,14 @@ namespace PlainCEETimer.Controls
             return Result;
         }
 
+        public IntPtr HookProcCallBack(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        {
+            return base.HookProc(hWnd, Msg, wParam, lParam);
+        }
+
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
         {
-            return Helper.HookProc(hWnd, msg, wparam, lparam);
+            return Helper.HookProc(this, hWnd, msg, wparam, lparam);
         }
 
         private void SaveCustomColors()

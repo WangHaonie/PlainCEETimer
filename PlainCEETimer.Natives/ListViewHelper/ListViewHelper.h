@@ -5,5 +5,5 @@
 
 extern "C"
 {
-	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int state);
+	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int isSelected);
 }

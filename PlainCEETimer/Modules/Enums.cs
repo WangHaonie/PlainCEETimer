@@ -111,4 +111,10 @@ namespace PlainCEETimer.Modules
         CFD,
         ExplorerLight
     }
+
+    public enum CommDlg
+    {
+        Color,
+        Font
+    }
 }

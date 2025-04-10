@@ -223,6 +223,7 @@
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
+    <Compile Include="Modules\ICommDlg.cs" />
     <Compile Include="Modules\IListViewObject.cs" />
     <Compile Include="Modules\ISubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
@@ -273,11 +274,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\SettingsForm.resx">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

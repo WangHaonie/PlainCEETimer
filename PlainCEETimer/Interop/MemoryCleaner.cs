@@ -5,7 +5,7 @@ namespace PlainCEETimer.Interop
 {
     public static class MemoryCleaner
     {
-        [DllImport(App.NativesDll, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(App.NativesDll, EntryPoint = "#2")]
         public static extern void CleanMemory(int threshold);
     }
 }
