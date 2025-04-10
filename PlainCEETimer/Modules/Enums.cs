@@ -107,7 +107,6 @@ namespace PlainCEETimer.Modules
     public enum DarkControlType
     {
         Explorer,
-        ItemsView,
         CFD,
         ExplorerLight
     }
@@ -116,5 +115,14 @@ namespace PlainCEETimer.Modules
     {
         Color,
         Font
+    }
+
+    public enum CommDlgControl
+    {
+        Label,
+        Button,
+        ComboBox,
+        ComboLBox,
+        TextBox
     }
 }

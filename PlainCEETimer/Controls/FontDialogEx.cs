@@ -23,6 +23,7 @@ namespace PlainCEETimer.Controls
             MaxSize = Validator.MaxFontSize;
             ScriptsOnly = true;
             ShowColor = false;
+            ShowEffects = false;
         }
 
         public DialogResult ShowDialog(AppForm owner)
@@ -31,7 +32,7 @@ namespace PlainCEETimer.Controls
             return ShowDialog();
         }
 
-        public IntPtr HookProcCallBack(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        public IntPtr BaseHookProc(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
         {
             return base.HookProc(hWnd, Msg, wParam, lParam);
         }

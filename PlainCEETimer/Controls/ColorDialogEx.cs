@@ -39,7 +39,7 @@ namespace PlainCEETimer.Controls
             return Result;
         }
 
-        public IntPtr HookProcCallBack(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        public IntPtr BaseHookProc(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
         {
             return base.HookProc(hWnd, Msg, wParam, lParam);
         }

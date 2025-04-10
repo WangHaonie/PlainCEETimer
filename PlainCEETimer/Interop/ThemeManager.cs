@@ -32,19 +32,20 @@ namespace PlainCEETimer.Interop
 
         public static void FlushDarkControl(Control control, DarkControlType type)
         {
-            SetWindowTheme(control.Handle, GetPszSubAppName(type), null);
+            FlushDarkControl(control.Handle, type);
+        }
+
+        public static void FlushDarkControl(IntPtr hWnd, DarkControlType type)
+        {
+            SetWindowTheme(hWnd, GetPszSubAppName(type), null);
         }
 
         private static string GetPszSubAppName(DarkControlType type) => type switch
         {
             DarkControlType.Explorer => "DarkMode_Explorer",
             DarkControlType.CFD => "DarkMode_CFD",
-            DarkControlType.ItemsView => "DarkMode_ItemsView",
             _ => "Explorer"
         };
-
-        [DllImport(App.NativesDll, EntryPoint = "#9")]
-        public static extern int FlushDarkWindow(IntPtr hWnd);
 
         #region 来自网络
         /*
@@ -81,6 +82,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
         private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+
+        [DllImport(App.NativesDll, EntryPoint = "#9")]
+        public static extern int FlushDarkWindow(IntPtr hWnd);
         #endregion
     }
 }
