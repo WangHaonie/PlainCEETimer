@@ -7,9 +7,9 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public sealed class ColorDialogEx : ColorDialog, ICommDlg
+    public sealed class ColorDialogEx : ColorDialog, ICommonDialog
     {
-        public CommDlg DlgType => CommDlg.Color;
+        public CommonDialogKind DialogKind => CommonDialogKind.Color;
         public string DialogTitle => "选取颜色 - 高考倒计时";
 
         private static int[] CustomColorCollection = App.AppConfig.CustomColors;

@@ -544,28 +544,28 @@ namespace PlainCEETimer.Forms
 
             ContextMenu BaseContextMenu() => CreateNew
             ([
-                AddSubMenu(ContextMenuConstants.Switch,
+                AddSubMenu(Constants.Switch,
                 [
-                    AddItem(ContextMenuConstants.AddExamInfo)
+                    AddItem(Constants.AddExamInfo)
                 ]),
                 AddSeparator(),
-                AddItem(ContextMenuConstants.Settings, ContextSettings_Click),
-                AddItem(ContextMenuConstants.About, ContextAbout_Click),
+                AddItem(Constants.Settings, ContextSettings_Click),
+                AddItem(Constants.About, ContextAbout_Click),
                 AddSeparator(),
-                AddItem(ContextMenuConstants.InstallDir, (_, _) => App.OpenInstallDir())
+                AddItem(Constants.InstallDir, (_, _) => App.OpenInstallDir())
             ]);
 
             ContextMenuStrip BaseContextMenuStrip() => CreateNewStrip
             ([
-                AddSubStrip(ContextMenuConstants.Switch,
+                AddSubStrip(Constants.Switch,
                 [
-                    AddStripItem(ContextMenuConstants.AddExamInfo)
+                    AddStripItem(Constants.AddExamInfo)
                 ]),
                 AddStripSeparator(),
-                AddStripItem(ContextMenuConstants.Settings, ContextSettings_Click),
-                AddStripItem(ContextMenuConstants.About, ContextAbout_Click),
+                AddStripItem(Constants.Settings, ContextSettings_Click),
+                AddStripItem(Constants.About, ContextAbout_Click),
                 AddStripSeparator(),
-                AddStripItem(ContextMenuConstants.InstallDir, (_, _) => App.OpenInstallDir())
+                AddStripItem(Constants.InstallDir, (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -600,11 +600,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
                         ([
                             AddSeparator(),
-                            AddItem(ContextMenuConstants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
-                            AddSubMenu(ContextMenuConstants.Close,
+                            AddItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
+                            AddSubMenu(Constants.Close,
                             [
-                                AddItem(ContextMenuConstants.Restart, (_, _) => App.Shutdown(true)),
-                                AddItem(ContextMenuConstants.Quit, (_, _) => App.Shutdown())
+                                AddItem(Constants.Restart, (_, _) => App.Shutdown(true)),
+                                AddItem(Constants.Quit, (_, _) => App.Shutdown())
                             ])
                         ]));
                     }
@@ -613,11 +613,11 @@ namespace PlainCEETimer.Forms
                         TrayIcon.ContextMenuStrip = MergeStrip(ContextMenuStripTray,
                         [
                             AddStripSeparator(),
-                            AddStripItem(ContextMenuConstants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
-                            AddSubStrip(ContextMenuConstants.Close,
+                            AddStripItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
+                            AddSubStrip(Constants.Close,
                             [
-                                AddStripItem(ContextMenuConstants.Restart, (_, _) => App.Shutdown(true)),
-                                AddStripItem(ContextMenuConstants.Quit, (_, _) => App.Shutdown())
+                                AddStripItem(Constants.Restart, (_, _) => App.Shutdown(true)),
+                                AddStripItem(Constants.Quit, (_, _) => App.Shutdown())
                             ])
                         ]);
                     }

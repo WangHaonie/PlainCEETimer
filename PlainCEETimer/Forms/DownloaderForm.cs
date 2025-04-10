@@ -17,7 +17,6 @@ namespace PlainCEETimer.Forms
         private CancellationTokenSource cts;
         private string DownloadUrl;
         private string DownloadPath;
-        private TaskbarProgress TaskbarProgress;
         private readonly string TargetVersion;
         private readonly long UpdateSize;
 
@@ -46,7 +45,7 @@ namespace PlainCEETimer.Forms
 
         protected override async void OnLoad()
         {
-            TaskbarProgress = new(Handle);
+            TaskbarProgress.Initialize(Handle, App.OSBuild >= WindowsBuilds.Windows7 ? 1 : 0);
             TaskbarProgress.SetState(TaskbarProgressState.Normal);
             DownloadUrl = string.Format(App.UpdateURL, TargetVersion);
             LinkBrowser.HyperLink = DownloadUrl;
@@ -71,7 +70,7 @@ namespace PlainCEETimer.Forms
 
         private async Task DownloadUpdate()
         {
-            TaskbarProgress.SetValue(0UL, 100UL);
+            TaskbarProgress.SetValue(0UL, 1UL);
             IsCancelled = false;
             using var httpClient = new HttpClient();
             cts = new();
@@ -116,7 +115,7 @@ namespace PlainCEETimer.Forms
                     ButtonRetry.Enabled = false;
                     LinkBrowser.Enabled = false;
                     ProgressBarMain.Value = 100;
-                    TaskbarProgress.SetValue(100UL, 100UL);
+                    TaskbarProgress.SetValue(1UL, 1UL);
                     TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
                     UpdateLabels("下载完成，请稍侯...", null, null);
                     await Task.Delay(2500);
@@ -137,7 +136,7 @@ namespace PlainCEETimer.Forms
                     ButtonRetry.Enabled = true;
                 }
 
-                TaskbarProgress.SetValue(100UL, 100UL);
+                TaskbarProgress.SetValue(1UL, 1UL);
                 TaskbarProgress.SetState(TaskbarProgressState.Error);
                 return;
             }

@@ -11,7 +11,7 @@ namespace PlainCEETimer.Controls
             if (ThemeManager.ShouldUseDarkMode)
             {
                 FlatStyle = FlatStyle.System;
-                ThemeManager.FlushDarkControl(this, DarkControlType.Explorer);
+                ThemeManager.FlushDarkControl(this, NativeStyle.Explorer);
             }
         }
     }

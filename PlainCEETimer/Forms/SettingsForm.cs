@@ -376,16 +376,16 @@ namespace PlainCEETimer.Forms
             {
                 ContextMenuDefaultColor = CreateNew
                 ([
-                    AddItem(ContextMenuConstants.Light, ContextLight_Click),
-                    AddItem(ContextMenuConstants.Dark, ContextDark_Click)
+                    AddItem(Constants.Light, ContextLight_Click),
+                    AddItem(Constants.Dark, ContextDark_Click)
                 ]);
             }
             else
             {
                 ContextMenuStripDefaultColor = CreateNewStrip
                 ([
-                    AddStripItem(ContextMenuConstants.Light, ContextLight_Click),
-                    AddStripItem(ContextMenuConstants.Dark, ContextDark_Click)
+                    AddStripItem(Constants.Light, ContextLight_Click),
+                    AddStripItem(Constants.Dark, ContextDark_Click)
                 ]);
             }
 

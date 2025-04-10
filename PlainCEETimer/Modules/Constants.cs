@@ -1,6 +1,6 @@
 ﻿namespace PlainCEETimer.Modules
 {
-    public static class ContextMenuConstants
+    public static class Constants
     {
         public const string Add = "添加(&A)";
         public const string Edit = "编辑(&E)";

@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public sealed class FontDialogEx : FontDialog, ICommDlg
+    public sealed class FontDialogEx : FontDialog, ICommonDialog
     {
-        public CommDlg DlgType => CommDlg.Font;
+        public CommonDialogKind DialogKind => CommonDialogKind.Font;
         public string DialogTitle => "选择字体 - 高考倒计时";
 
         private CommonDialogHelper Helper;

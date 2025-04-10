@@ -12,8 +12,10 @@ namespace PlainCEETimer.Controls
             {
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
-                ThemeManager.FlushDarkControl(this, DarkControlType.CFD);
+                ThemeManager.FlushDarkControl(this, NativeStyle.CFD);
             }
+
+            MaxLength = Validator.MaxCustomTextLength;
         }
     }
 }

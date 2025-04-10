@@ -41,9 +41,6 @@ namespace PlainCEETimer.Dialogs
             AlignControlsX(TextBoxP2, LabelP2);
             AlignControlsX(TextBoxP3, LabelP3);
             AlignControlsX(ButtonReset, ButtonA);
-            SetTextBoxMax(TextBoxP1, Validator.MaxCustomTextLength);
-            SetTextBoxMax(TextBoxP2, Validator.MaxCustomTextLength);
-            SetTextBoxMax(TextBoxP3, Validator.MaxCustomTextLength);
         }
 
         protected override void ButtonA_Click()

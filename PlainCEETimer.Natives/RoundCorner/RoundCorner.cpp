@@ -13,11 +13,11 @@ https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-rounde
 
 */
 
-void SetRoundCornerRegion(HWND hWnd, int nRightRect, int nBottomRect, int radius)
+void SetRoundCornerRegion(HWND hWnd, int wndWidth, int wndHeight, int radius)
 {
     SetWindowRgn(
         hWnd,
-        CreateRoundRectRgn(0, 0, nRightRect, nBottomRect, radius, radius),
+        CreateRoundRectRgn(0, 0, wndWidth, wndHeight, radius, radius),
         TRUE);
 }
 

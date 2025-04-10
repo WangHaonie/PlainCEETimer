@@ -10,22 +10,22 @@ https://stackoverflow.com/a/223300/21094697
 
 */
 
-static HANDLE hwProc;
+static HANDLE hProc;
 
 void CleanMemory(int threshold)
 {
     PROCESS_MEMORY_COUNTERS_EX pmc = {};
 
-    if (!hwProc)
+    if (!hProc)
     {
-        hwProc = GetCurrentProcess();
+        hProc = GetCurrentProcess();
     }
 
-    if (GetProcessMemoryInfo(hwProc, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
+    if (GetProcessMemoryInfo(hProc, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
     {
         if (pmc.PrivateUsage > threshold)
         {
-            EmptyWorkingSet(hwProc);
+            EmptyWorkingSet(hProc);
         }
     }
 }

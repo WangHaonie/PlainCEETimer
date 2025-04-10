@@ -9,7 +9,7 @@ namespace PlainCEETimer.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                ThemeManager.FlushDarkControl(this, Modules.DarkControlType.Explorer);
+                ThemeManager.FlushDarkControl(this, Modules.NativeStyle.Explorer);
             }
         }
     }

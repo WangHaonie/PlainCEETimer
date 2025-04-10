@@ -31,6 +31,8 @@ namespace PlainCEETimer.Dialogs
         protected override void OnLoad()
         {
             TextBoxName_TextChanged(null, null);
+
+
         }
 
         protected override void AdjustUI()

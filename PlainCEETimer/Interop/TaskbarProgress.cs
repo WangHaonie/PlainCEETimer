@@ -4,57 +4,18 @@ using System.Runtime.InteropServices;
 
 namespace PlainCEETimer.Interop
 {
-    public class TaskbarProgress
+    public static class TaskbarProgress
     {
-        private static readonly bool IsWindows7Above;
-
-        public TaskbarProgress(IntPtr hWnd)
-        {
-            if (IsWindows7Above)
-            {
-                InitilizeTaskbarList(hWnd);
-            }
-        }
-
-        static TaskbarProgress()
-        {
-            IsWindows7Above = App.OSBuild >= WindowsBuilds.Windows7;
-        }
-
-        public void SetState(TaskbarProgressState State)
-        {
-            if (IsWindows7Above)
-            {
-                SetTaskbarProgressState((int)State);
-            }
-        }
-
-        public void SetValue(ulong ullCompleted, ulong ullTotal)
-        {
-            if (IsWindows7Above)
-            {
-                SetTaskbarProgressValue(ullCompleted, ullTotal);
-            }
-        }
-
-        public void Release()
-        {
-            if (IsWindows7Above)
-            {
-                ReleaseTaskbarList();
-            }
-        }
-
         [DllImport(App.NativesDll, EntryPoint = "#5")]
-        private static extern void InitilizeTaskbarList(IntPtr hWnd);
+        public static extern void Initialize(IntPtr hWnd, int enable);
 
         [DllImport(App.NativesDll, EntryPoint = "#6")]
-        private static extern void SetTaskbarProgressState(int tbpFlags);
+        public static extern void SetState(TaskbarProgressState tbpFlags);
 
         [DllImport(App.NativesDll, EntryPoint = "#7")]
-        private static extern void SetTaskbarProgressValue(ulong ullCompleted, ulong ullTotal);
+        public static extern void SetValue(ulong ullCompleted, ulong ullTotal);
 
         [DllImport(App.NativesDll, EntryPoint = "#8")]
-        private static extern void ReleaseTaskbarList();
+        public static extern void Release();
     }
 }

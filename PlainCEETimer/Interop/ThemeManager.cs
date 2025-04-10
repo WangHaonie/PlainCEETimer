@@ -19,9 +19,8 @@ namespace PlainCEETimer.Interop
 
         static ThemeManager()
         {
-            IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903
-                && !SystemInformation.HighContrast;
             var option = App.AppConfig.Dark;
+            IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast;
             ShouldUseDarkMode = IsDarkModeSupported && ((option == 0 && ShouldAppsUseDarkMode()) || option == 1);
 
             if (ShouldUseDarkMode)
@@ -30,20 +29,20 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        public static void FlushDarkControl(Control control, DarkControlType type)
+        public static void FlushDarkControl(Control control, NativeStyle type)
         {
             FlushDarkControl(control.Handle, type);
         }
 
-        public static void FlushDarkControl(IntPtr hWnd, DarkControlType type)
+        public static void FlushDarkControl(IntPtr hWnd, NativeStyle type)
         {
             SetWindowTheme(hWnd, GetPszSubAppName(type), null);
         }
 
-        private static string GetPszSubAppName(DarkControlType type) => type switch
+        private static string GetPszSubAppName(NativeStyle type) => type switch
         {
-            DarkControlType.Explorer => "DarkMode_Explorer",
-            DarkControlType.CFD => "DarkMode_CFD",
+            NativeStyle.Explorer => "DarkMode_Explorer",
+            NativeStyle.CFD => "DarkMode_CFD",
             _ => "Explorer"
         };
 
@@ -81,7 +80,7 @@ namespace PlainCEETimer.Interop
         private static extern int SetPreferredAppMode(int preferredAppMode);
 
         [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
         public static extern int FlushDarkWindow(IntPtr hWnd);

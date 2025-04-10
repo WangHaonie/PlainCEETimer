@@ -11,55 +11,47 @@ https://learn.microsoft.com/zh-cn/windows/win32/shell/taskbar-extensions#progres
 ITaskbarList3(shobjidl_core.h) - Win32 apps | Microsoft Learn
 https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist3
 
-ITaskbarList3：：SetProgressState(shobjidl_core.h) - Win32 apps | Microsoft Learn
-https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist3-setprogressstate
-
-ITaskbarList3：：SetProgressValue(shobjidl_core.h) - Win32 apps | Microsoft Learn
-https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist3-setprogressvalue
-
-ITaskbarList：：HrInit(shobjidl_core.h) - Win32 apps | Microsoft Learn
-https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-hrinit
-
-IUnknown：：Release - Win32 apps | Microsoft Learn
-https://learn.microsoft.com/zh-cn/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-
 */
-static ITaskbarList3* _TaskbarList;
-static HWND WindowHandle;
 
-void InitilizeTaskbarList(HWND hWnd)
+static ITaskbarList3* taskbarList = nullptr;
+static HWND handle = nullptr;
+static int _enable = 0;
+
+void InitilizeTaskbarList(HWND hWnd, int enable)
 {
-	WindowHandle = hWnd;
-
-	if (SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&_TaskbarList)))
+	if (enable)
 	{
-		_TaskbarList->HrInit();
+		if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&taskbarList)))
+		{
+			handle = hWnd;
+			taskbarList->HrInit();
+			_enable = enable;
+		}
 	}
 }
 
 void SetTaskbarProgressState(int tbpFlags)
 {
-	if (_TaskbarList && WindowHandle)
+	if (_enable)
 	{
-		_TaskbarList->SetProgressState(WindowHandle, (TBPFLAG)tbpFlags);
+		taskbarList->SetProgressState(handle, (TBPFLAG)tbpFlags);
 	}
 }
 
 void SetTaskbarProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
-	if (_TaskbarList && WindowHandle)
+	if (_enable)
 	{
-		_TaskbarList->SetProgressValue(WindowHandle, ullCompleted, ullTotal);
+		taskbarList->SetProgressValue(handle, ullCompleted, ullTotal);
 	}
 }
 
 void ReleaseTaskbarList()
 {
-	if (_TaskbarList)
+	if (_enable)
 	{
-		_TaskbarList->Release();
-		_TaskbarList = nullptr;
+		taskbarList->Release();
+		taskbarList = nullptr;
+		handle = nullptr;
 	}
-
-	WindowHandle = nullptr;
 }

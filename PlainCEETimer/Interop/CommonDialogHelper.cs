@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper
+    public sealed class CommonDialogHelper
     {
         private const int SW_HIDE = 0x0000;
         private const int WM_DESTROY = 0x0002;
@@ -25,7 +25,8 @@ namespace PlainCEETimer.Interop
         private RECT DialogRect;
         private IntPtr hBrush;
         private readonly AppForm Parent;
-        private delegate bool EnumChildWindow(IntPtr hWnd, IntPtr lParam);
+        private readonly StringBuilder builder = new(256);
+        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public CommonDialogHelper(AppForm owner)
@@ -34,7 +35,7 @@ namespace PlainCEETimer.Interop
             Parent.ReActivate();
         }
 
-        public IntPtr HookProc(ICommDlg Dlg, IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        public IntPtr HookProc(ICommonDialog Dialog, IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
         {
             #region 来自网络
 
@@ -56,12 +57,12 @@ namespace PlainCEETimer.Interop
                     SetFocus(wParam);
                     break;
                 case WM_INITDIALOG:
-                    if (Dlg.DialogTitle != null)
+                    if (Dialog.DialogTitle != null)
                     {
-                        SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, Dlg.DialogTitle);
+                        SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, Dialog.DialogTitle);
                     }
 
-                    if (Dlg.DlgType == CommDlg.Font && !((FontDialogEx)Dlg).ShowColor)
+                    if (Dialog.DialogKind == CommonDialogKind.Font && !((FontDialogEx)Dialog).ShowColor)
                     {
                         IntPtr hSelectorStatic;
 
@@ -81,7 +82,7 @@ namespace PlainCEETimer.Interop
                     PostMessage(hWnd, WM_SETFOCUS, 0, 0);
                     break;
                 case WM_COMMAND:
-                    return Dlg.BaseHookProc(hWnd, WM_COMMAND, wParam, lParam);
+                    return Dialog.BaseHookProc(hWnd, WM_COMMAND, wParam, lParam);
             }
             #endregion
 
@@ -119,16 +120,16 @@ namespace PlainCEETimer.Interop
         {
             EnumChildWindows(hWnd, (child, _) =>
             {
-                switch (GetDlgCtlType(child))
+                switch (GetNativeControl(child))
                 {
-                    case CommDlgControl.Button:
-                    case CommDlgControl.ComboLBox:
-                        ThemeManager.FlushDarkControl(child, DarkControlType.Explorer);
+                    case NativeControl.Button:
+                    case NativeControl.ComboLBox:
+                        ThemeManager.FlushDarkControl(child, NativeStyle.Explorer);
                         break;
-                    case CommDlgControl.Label:
-                    case CommDlgControl.TextBox:
-                    case CommDlgControl.ComboBox:
-                        ThemeManager.FlushDarkControl(child, DarkControlType.CFD);
+                    case NativeControl.Label:
+                    case NativeControl.TextBox:
+                    case NativeControl.ComboBox:
+                        ThemeManager.FlushDarkControl(child, NativeStyle.CFD);
                         break;
                 }
                 return true;
@@ -154,17 +155,16 @@ namespace PlainCEETimer.Interop
             MoveWindow(hWnd, X, Y, DialogWidth, DialogHeight, false);
         }
 
-        private CommDlgControl GetDlgCtlType(IntPtr hWnd)
+        private NativeControl GetNativeControl(IntPtr hWnd)
         {
-            StringBuilder sb = new(256);
-            GetClassName(hWnd, sb, 256);
-            return sb.ToString() switch
+            GetClassName(hWnd, builder, 256);
+            return builder.ToString() switch
             {
-                "Button" => CommDlgControl.Button,
-                "ComboBox" => CommDlgControl.ComboBox,
-                "ComboLBox" => CommDlgControl.ComboLBox,
-                "Edit" => CommDlgControl.TextBox,
-                _ => CommDlgControl.Label,
+                "Button" => NativeControl.Button,
+                "ComboBox" => NativeControl.ComboBox,
+                "ComboLBox" => NativeControl.ComboLBox,
+                "Edit" => NativeControl.TextBox,
+                _ => NativeControl.Label
             };
         }
 
@@ -181,7 +181,7 @@ namespace PlainCEETimer.Interop
         private static extern bool DeleteObject(IntPtr hObject);
 
         [DllImport(App.User32Dll)]
-        private static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildWindow lpEnumFunc, IntPtr lParam);
+        private static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
         private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);

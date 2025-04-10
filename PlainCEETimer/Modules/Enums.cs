@@ -104,20 +104,20 @@ namespace PlainCEETimer.Modules
         Paused = 8
     }
 
-    public enum DarkControlType
+    public enum NativeStyle
     {
         Explorer,
         CFD,
         ExplorerLight
     }
 
-    public enum CommDlg
+    public enum CommonDialogKind
     {
         Color,
         Font
     }
 
-    public enum CommDlgControl
+    public enum NativeControl
     {
         Label,
         Button,

@@ -236,16 +236,6 @@ namespace PlainCEETimer.Controls
         }
 
         /// <summary>
-        /// 为 TextBox 设置最大文本长度。
-        /// </summary>
-        /// <param name="Target">目标 TextBox 控件</param>
-        /// <param name="Max">最大长度</param>
-        protected void SetTextBoxMax(TextBox Target, int Max)
-        {
-            Target.MaxLength = Max;
-        }
-
-        /// <summary>
         /// 以屏幕宽度为参考使 Label 单行内容达到一定长度时自动换行。
         /// </summary>
         /// <param name="Target">目标 Label 控件</param>
@@ -445,7 +435,7 @@ namespace PlainCEETimer.Controls
             return Item;
         }
 
-        protected ToolStripItem AddStripSeparator() => new ToolStripSeparator();
+        protected ToolStripSeparator AddStripSeparator() => new();
 
         protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
         {

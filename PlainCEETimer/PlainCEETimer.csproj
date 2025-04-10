@@ -219,11 +219,11 @@
     <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
-    <Compile Include="Modules\ContextMenuConstants.cs" />
+    <Compile Include="Modules\Constants.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\ColorExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
-    <Compile Include="Modules\ICommDlg.cs" />
+    <Compile Include="Modules\ICommonDialog.cs" />
     <Compile Include="Modules\IListViewObject.cs" />
     <Compile Include="Modules\ISubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />

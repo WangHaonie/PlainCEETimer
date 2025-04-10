@@ -88,6 +88,11 @@ namespace PlainCEETimer.Controls
             ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
         }
 
+        protected override void OnShown()
+        {
+            ListViewMain.Focus();
+        }
+
         protected sealed override void OnKeyDown(KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.A)
@@ -298,12 +303,12 @@ namespace PlainCEETimer.Controls
             {
                 ContextMenuMain = CreateNew
                 ([
-                    AddItem(ContextMenuConstants.Add, ContextAdd_Click),
+                    AddItem(Constants.Add, ContextAdd_Click),
                     AddSeparator(),
-                    ContextEdit = AddItem(ContextMenuConstants.Edit, ContextEdit_Click),
-                    ContextDelete = AddItem(ContextMenuConstants.Delete, ContextDelete_Click),
+                    ContextEdit = AddItem(Constants.Edit, ContextEdit_Click),
+                    ContextDelete = AddItem(Constants.Delete, ContextDelete_Click),
                     AddSeparator(),
-                    ContextSelectAll = AddItem(ContextMenuConstants.SelectAll, ContextSelectAll_Click)
+                    ContextSelectAll = AddItem(Constants.SelectAll, ContextSelectAll_Click)
                 ]);
 
                 ListViewMain.ContextMenu = ContextMenuMain;
@@ -313,12 +318,12 @@ namespace PlainCEETimer.Controls
             {
                 ContextMenuStripMain = CreateNewStrip
                 ([
-                    AddStripItem(ContextMenuConstants.Add, ContextAdd_Click),
+                    AddStripItem(Constants.Add, ContextAdd_Click),
                     AddStripSeparator(),
-                    StripEdit = AddStripItem(ContextMenuConstants.Edit, ContextEdit_Click),
-                    StripDelete = AddStripItem(ContextMenuConstants.Delete, ContextDelete_Click),
+                    StripEdit = AddStripItem(Constants.Edit, ContextEdit_Click),
+                    StripDelete = AddStripItem(Constants.Delete, ContextDelete_Click),
                     AddStripSeparator(),
-                    StripSelectAll = AddStripItem(ContextMenuConstants.SelectAll, ContextSelectAll_Click)
+                    StripSelectAll = AddStripItem(Constants.SelectAll, ContextSelectAll_Click)
                 ]);
 
                 ListViewMain.ContextMenuStrip = ContextMenuStripMain;
