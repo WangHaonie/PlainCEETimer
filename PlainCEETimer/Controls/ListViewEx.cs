@@ -31,6 +31,9 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        private readonly bool IsDetails;
+        private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+
         public ListViewEx()
         {
             View = View.Details;
@@ -39,9 +42,12 @@ namespace PlainCEETimer.Controls
             HeaderStyle = ColumnHeaderStyle.Nonclickable;
             HideSelection = false;
 
-            if (ThemeManager.ShouldUseDarkMode)
+            if (UseDark)
             {
                 OwnerDraw = true;
+                IsDetails = View == View.Details;
+                ForeColor = ThemeManager.DarkFore;
+                BackColor = ThemeManager.DarkBack;
             }
         }
 
@@ -74,11 +80,9 @@ namespace PlainCEETimer.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             UpdateStyles();
 
-            if (ThemeManager.ShouldUseDarkMode)
+            if (UseDark)
             {
                 ThemeManager.FlushDarkControl(this, DarkControlType.Explorer);
-                ForeColor = ThemeManager.DarkFore;
-                BackColor = ThemeManager.DarkBack;
             }
 
             base.OnHandleCreated(e);
@@ -86,30 +90,52 @@ namespace PlainCEETimer.Controls
 
         protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
         {
-            if (ThemeManager.ShouldUseDarkMode)
+            if (UseDark && IsDetails)
             {
                 using var backBrush = new SolidBrush(ThemeManager.DarkBack);
-                using var foreBrush = new SolidBrush(ThemeManager.DarkFore);
-                using var sf = new StringFormat();
-                var bounds = e.Bounds;
-                sf.Alignment = StringAlignment.Near;
-                e.Graphics.FillRectangle(backBrush, bounds);
-                e.Graphics.DrawString(e.Header.Text, Font, foreBrush, new Rectangle(bounds.X + 3, bounds.Y + 3, bounds.Width, bounds.Height), sf);
-            }
+                var g = e.Graphics;
+                var b = e.Bounds;
 
-            base.OnDrawColumnHeader(e);
+                g.FillRectangle(backBrush, e.Bounds);
+                TextRenderer.DrawText(g, e.Header.Text, Font, b, ThemeManager.DarkFore, TextFormatFlags.LeftAndRightPadding | TextFormatFlags.VerticalCenter);
+
+                if (e.ColumnIndex < Headers.Length - 1)
+                {
+                    var x = b.Right - 1F;
+                    using var p = new SolidBrush(ThemeManager.DarkFore);
+                    g.FillRectangle(p, x, b.Top, 1F, b.Height);
+                }
+            }
+            else
+            {
+                base.OnDrawColumnHeader(e);
+            }
         }
 
         protected override void OnDrawItem(DrawListViewItemEventArgs e)
         {
-            e.DrawDefault = true;
-            base.OnDrawItem(e);
+            if (!UseDark)
+            {
+                base.OnDrawItem(e);
+            }
         }
 
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
-            e.DrawDefault = true;
-            base.OnDrawSubItem(e);
+            if (UseDark && IsDetails)
+            {
+                using var backbrush = new SolidBrush(e.Item.Selected ? ThemeManager.DarkBackSelection : e.SubItem.BackColor);
+                var g = e.Graphics;
+                var b = e.Bounds;
+                g.FillRectangle(backbrush, b);
+                b.Offset(4, 0);
+                var item = e.SubItem;
+                TextRenderer.DrawText(g, item.Text, Font, b, item.ForeColor, TextFormatFlags.VerticalCenter);
+            }
+            else
+            {
+                base.OnDrawSubItem(e);
+            }
         }
 
         protected override void OnColumnWidthChanging(ColumnWidthChangingEventArgs e)

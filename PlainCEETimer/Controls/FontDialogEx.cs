@@ -1,6 +1,7 @@
 ﻿using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -11,6 +12,18 @@ namespace PlainCEETimer.Controls
         public string DialogTitle => "选择字体 - 高考倒计时";
 
         private CommonDialogHelper Helper;
+
+        public FontDialogEx(Font font)
+        {
+            AllowScriptChange = true;
+            AllowVerticalFonts = false;
+            Font = font;
+            FontMustExist = true;
+            MinSize = Validator.MinFontSize;
+            MaxSize = Validator.MaxFontSize;
+            ScriptsOnly = true;
+            ShowColor = false;
+        }
 
         public DialogResult ShowDialog(AppForm owner)
         {
@@ -27,6 +40,5 @@ namespace PlainCEETimer.Controls
         {
             return Helper.HookProc(this, hWnd, msg, wparam, lparam);
         }
-
     }
 }

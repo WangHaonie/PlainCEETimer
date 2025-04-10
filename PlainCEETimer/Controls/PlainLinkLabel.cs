@@ -1,5 +1,4 @@
 ﻿using PlainCEETimer.Interop;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
@@ -8,7 +7,7 @@ namespace PlainCEETimer.Controls
     {
         public PlainLinkLabel()
         {
-            LinkColor = ThemeManager.ShouldUseDarkMode ? Color.FromArgb(95, 197, 255) : LinkColor;
+            LinkColor = ThemeManager.ShouldUseDarkMode ? ThemeManager.DarkForeLink : LinkColor;
         }
     }
 }

@@ -231,17 +231,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonFont_Click(object sender, EventArgs e)
         {
-            FontDialogEx Dialog = new()
-            {
-                AllowScriptChange = true,
-                AllowVerticalFonts = false,
-                Font = AppConfig.Font,
-                FontMustExist = true,
-                MinSize = Validator.MinFontSize,
-                MaxSize = Validator.MaxFontSize,
-                ScriptsOnly = true,
-                ShowColor = false
-            };
+            FontDialogEx Dialog = new(AppConfig.Font);
 
             if (Dialog.ShowDialog(this) == DialogResult.OK)
             {
