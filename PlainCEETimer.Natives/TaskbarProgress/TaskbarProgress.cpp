@@ -61,5 +61,5 @@ void ReleaseTaskbarList()
 		_TaskbarList = nullptr;
 	}
 
-	WindowHandle = NULL;
+	WindowHandle = nullptr;
 }
