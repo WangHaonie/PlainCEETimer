@@ -77,7 +77,7 @@ namespace PlainCEETimer.Forms
         private System.Threading.Timer Countdown;
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private ToolStripItemCollection ExamSwitchMainStrip;
-        private readonly string[] DefaultTexts = [Placeholders.PH_START, Placeholders.PH_LEFT, Placeholders.PH_PAST];
+        private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
 
         public MainForm()
@@ -771,15 +771,15 @@ namespace PlainCEETimer.Forms
         {
             CustomTextBuilder.Clear();
             CustomTextBuilder.Append(Custom);
-            CustomTextBuilder.Replace(Placeholders.PH_EXAMNAME, ExamName);
-            CustomTextBuilder.Replace(Placeholders.PH_DAYS, $"{ExamSpan.Days}");
-            CustomTextBuilder.Replace(Placeholders.PH_HOURS, $"{ExamSpan.Hours:00}");
-            CustomTextBuilder.Replace(Placeholders.PH_MINUTES, $"{ExamSpan.Minutes:00}");
-            CustomTextBuilder.Replace(Placeholders.PH_SECONDS, $"{ExamSpan.Seconds:00}");
-            CustomTextBuilder.Replace(Placeholders.PH_CEILINGDAYS, $"{ExamSpan.Days + 1}");
-            CustomTextBuilder.Replace(Placeholders.PH_TOTALHOURS, $"{ExamSpan.TotalHours:0}");
-            CustomTextBuilder.Replace(Placeholders.PH_TOTALMINUTES, $"{ExamSpan.TotalMinutes:0}");
-            CustomTextBuilder.Replace(Placeholders.PH_TOTALSECONDS, $"{ExamSpan.TotalSeconds:0}");
+            CustomTextBuilder.Replace(Constants.PH_EXAMNAME, ExamName);
+            CustomTextBuilder.Replace(Constants.PH_DAYS, $"{ExamSpan.Days}");
+            CustomTextBuilder.Replace(Constants.PH_HOURS, $"{ExamSpan.Hours:00}");
+            CustomTextBuilder.Replace(Constants.PH_MINUTES, $"{ExamSpan.Minutes:00}");
+            CustomTextBuilder.Replace(Constants.PH_SECONDS, $"{ExamSpan.Seconds:00}");
+            CustomTextBuilder.Replace(Constants.PH_CEILINGDAYS, $"{ExamSpan.Days + 1}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALHOURS, $"{ExamSpan.TotalHours:0}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALMINUTES, $"{ExamSpan.TotalMinutes:0}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALSECONDS, $"{ExamSpan.TotalSeconds:0}");
             return CustomTextBuilder.ToString();
         }
 

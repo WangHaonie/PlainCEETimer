@@ -30,7 +30,7 @@ namespace PlainCEETimer.Dialogs
             TextBoxP2.TextChanged += OnUserChanged;
             TextBoxP3.TextChanged += OnUserChanged;
 
-            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Placeholders.PH_PHINFO}。比如 \"{Placeholders.PH_EXAMNAME}还有{Placeholders.PH_DAYS}.{Placeholders.PH_HOURS}:{Placeholders.PH_MINUTES}:{Placeholders.PH_SECONDS}\"。";
+            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Constants.PH_PHINFO}。比如 \"{Constants.PH_EXAMNAME}还有{Constants.PH_DAYS}.{Constants.PH_HOURS}:{Constants.PH_MINUTES}:{Constants.PH_SECONDS}\"。";
         }
 
         protected override void AdjustUI()
@@ -65,9 +65,9 @@ namespace PlainCEETimer.Dialogs
 
         private void ButtonReset_Click(object sender, EventArgs e)
         {
-            TextBoxP1.Text = Placeholders.PH_P1;
-            TextBoxP2.Text = Placeholders.PH_P2;
-            TextBoxP3.Text = Placeholders.PH_P3;
+            TextBoxP1.Text = Constants.PH_P1;
+            TextBoxP2.Text = Constants.PH_P2;
+            TextBoxP3.Text = Constants.PH_P3;
             UserChanged();
         }
 

@@ -13,36 +13,23 @@ namespace PlainCEETimer.Modules
 {
     public static class App
     {
+        public static int OSBuild { get; } = Environment.OSVersion.Version.Build;
         public static bool CanSaveConfig { get; set; }
         public static bool AllowClosing { get; private set; }
         public static bool IsAdmin { get; private set; }
+        public static string CurrentExecutableDir { get; } = AppDomain.CurrentDomain.BaseDirectory;
+        public static string CurrentExecutablePath { get; } = Application.ExecutablePath;
+        public static string ConfigFilePath { get; } = $"{CurrentExecutableDir}{AppNameEng}.config";
         public static Icon AppIcon { get; private set; }
-        public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
-        public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
-        public static string ConfigFilePath => field = $"{CurrentExecutableDir}{AppNameEng}.config";
-
-        public static int OSBuild
-        {
-            get
-            {
-                if (field == 0)
-                {
-                    field = Environment.OSVersion.Version.Build;
-                }
-
-                return field;
-            }
-        }
-
         public static ConfigObject AppConfig
         {
-            get => field ??= ConfigHandler.Read();
+            get;
             set
             {
                 field = value;
                 CanSaveConfig = true;
             }
-        }
+        } = ConfigHandler.Read();
 
         public static event Action TrayMenuShowAllClicked;
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke();
