@@ -230,7 +230,6 @@
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
     <Compile Include="Modules\ComboData.cs" />
-    <Compile Include="Modules\Placeholders.cs" />
     <Compile Include="Modules\PlainListViewComparer.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />

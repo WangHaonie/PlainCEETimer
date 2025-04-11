@@ -119,7 +119,7 @@
             this.ButtonA.Name = "ButtonA";
             this.ButtonA.Size = new System.Drawing.Size(75, 23);
             this.ButtonA.TabIndex = 2;
-            this.ButtonA.Text = "确定(O)";
+            this.ButtonA.Text = "确定(&O)";
             this.ButtonA.UseVisualStyleBackColor = true;
             // 
             // ButtonB

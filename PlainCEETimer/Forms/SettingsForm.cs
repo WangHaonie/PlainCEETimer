@@ -389,9 +389,9 @@ namespace PlainCEETimer.Forms
                 ]);
             }
 
-            LabelPreviewColor1.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_START}...";
-            LabelPreviewColor2.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_LEFT}...";
-            LabelPreviewColor3.Text = $"{Placeholders.PH_JULI}...{Placeholders.PH_PAST}...";
+            LabelPreviewColor1.Text = $"{Constants.PH_JULI}...{Constants.PH_START}...";
+            LabelPreviewColor2.Text = $"{Constants.PH_JULI}...{Constants.PH_LEFT}...";
+            LabelPreviewColor3.Text = $"{Constants.PH_JULI}...{Constants.PH_PAST}...";
 
             BindComboData(ComboBoxAutoSwitchIntervel,
             [

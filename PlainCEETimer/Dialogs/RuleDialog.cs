@@ -35,9 +35,9 @@ namespace PlainCEETimer.Dialogs
         {
             BindComboData(ComboBoxRuleType,
             [
-                new($"开始{Placeholders.PH_START}", 0),
-                new(Placeholders.PH_LEFT, 1),
-                new(Placeholders.PH_PAST, 2)
+                new($"开始{Constants.PH_START}", 0),
+                new(Constants.PH_LEFT, 1),
+                new(Constants.PH_PAST, 2)
             ]);
 
             LabelFore.Click += ColorLabels_Click;

@@ -20,7 +20,7 @@ namespace PlainCEETimer.Modules
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
 
-        private static readonly string[] AllPHs = [Placeholders.PH_EXAMNAME, Placeholders.PH_DAYS, Placeholders.PH_HOURS, Placeholders.PH_MINUTES, Placeholders.PH_SECONDS, Placeholders.PH_CEILINGDAYS, Placeholders.PH_TOTALHOURS, Placeholders.PH_TOTALMINUTES, Placeholders.PH_TOTALSECONDS];
+        private static readonly string[] AllPHs = [Constants.PH_EXAMNAME, Constants.PH_DAYS, Constants.PH_HOURS, Constants.PH_MINUTES, Constants.PH_SECONDS, Constants.PH_CEILINGDAYS, Constants.PH_TOTALHOURS, Constants.PH_TOTALMINUTES, Constants.PH_TOTALSECONDS];
 
         public static bool VerifyCustomText(string CustomText, out string Warning, int Index = 0)
         {
@@ -123,9 +123,9 @@ namespace PlainCEETimer.Modules
 
         public static string GetPhaseText(CountdownPhase i) => i switch
         {
-            CountdownPhase.P2 => Placeholders.PH_RTP2,
-            CountdownPhase.P3 => Placeholders.PH_RTP3,
-            _ => Placeholders.PH_RTP1
+            CountdownPhase.P2 => Constants.PH_RTP2,
+            CountdownPhase.P3 => Constants.PH_RTP3,
+            _ => Constants.PH_RTP1
         };
 
         public static void EnsureCustomTextLength(string Text)
