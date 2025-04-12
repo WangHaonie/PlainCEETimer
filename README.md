@@ -3,7 +3,7 @@
     <img src="./PlainCEETimer/Properties/AppIcon256px.png" height="128px"/>
     <h2>高考倒计时 by WangHaonie</h2>
 
-[![GitHub all releases](https://img.shields.io/github/downloads/WangHaonie/PlainCEETimer/total?logo=github&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=%23DC67A5)](#) [![GitHub release (with filter)](https://img.shields.io/github/v/release/WangHaonie/PlainCEETimer?logo=github&label=%E6%9C%80%E6%96%B0%E7%89%88&color=%23178600)](https://github.com/WangHaonie/PlainCEETimer/releases/latest/) [![GitHub Repo stars](https://img.shields.io/github/stars/WangHaonie/PlainCEETimer?logo=github&label=Stars&color=%23E5B84E)](#) [![GitHub](https://img.shields.io/github/license/WangHaonie/PlainCEETimer?logo=github&label=%E8%AE%B8%E5%8F%AF%E8%AF%81&color=%233C9DF8)](#GPL-3.0-1-ov-file)
+[![GitHub all releases](https://img.shields.io/github/downloads/WangHaonie/PlainCEETimer/total?logo=github&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=%23DC67A5)](#) [![GitHub release (with filter)](https://img.shields.io/github/v/release/WangHaonie/PlainCEETimer?logo=github&label=%E6%9C%80%E6%96%B0%E7%89%88&color=%23178600)](https://github.com/WangHaonie/PlainCEETimer/releases/latest/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WangHaonie/PlainCEETimer/build.yml?label=CI%2FCD)](https://github.com/WangHaonie/PlainCEETimer/actions) [![GitHub Repo stars](https://img.shields.io/github/stars/WangHaonie/PlainCEETimer?logo=github&label=Stars&color=%23E5B84E)](#) [![GitHub](https://img.shields.io/github/license/WangHaonie/PlainCEETimer?logo=github&label=%E8%AE%B8%E5%8F%AF%E8%AF%81&color=%233C9DF8)](#GPL-3.0-1-ov-file)
 
 </div>
 
@@ -40,7 +40,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ <更多功能等你来探索>
 
 ## 📢 用户手册【墙裂建议先阅读再使用】
-+ 适用于 v3.0.9，2025/4/12 修订。[点此](./.github/Manual.md)进入。
++ 适用于 v3.0.9，2025/4/13 修订。[点此](./.github/Manual.md)进入。
 
 ## 🧑‍💻 正在开发
 + 查看开发进程。[点此](./.github/InProgress.md)进入。

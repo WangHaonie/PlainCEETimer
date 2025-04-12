@@ -1,6 +1,6 @@
 <div align="center">
     <h1>📢 PlainCEETimer 用户手册</h1>
-    <h4>适用于 v3.0.9 | 修订日期 2025/4/12</h4>
+    <h4>适用于 v3.0.9 | 修订日期 2025/4/13</h4>
 </div>
 
 # 📖 目录
@@ -46,9 +46,17 @@
 + .NET Framework 4.8。新版 Windows 10/11 自带，其他版本系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要先安装相关系统更新及安全证书，请自行上网查询。
 
 ## 🛠️ 下载安装程序
+
 + 到 Release 页面下载 `PlainCEETimer_X.X_x64_Setup.exe`。[点此](https://github.com/WangHaonie/PlainCEETimer/releases/latest)进入。
 + 运行安装程序按提示进行。
 + 安装完成后会自动运行倒计时，位置默认在主显示器顶部居中。
+
+> [!TIP]
+> 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请自行到 [Actions](https://github.com/WangHaonie/PlainCEETimer/actions) 点击最新的标注有**绿色对勾**的条目进入后，下载 `Artifacts` 下的 `PlainCEETimer.Setup`。
+> + **【注意事项】**
+> + 自动构建版本的功能可能不稳定，不推荐作为长期使用
+> + 更新频率高，且该渠道的版本不支持自动检查更新，需用户手动保持最新版本
+> + 版本号将沿用上一个正式版的版本号，故自动构建版本仍可以在下一个正式版发布时获取到并进行自动更新
 
 # 🎯 主窗口使用说明
 ## 🎉 特性
