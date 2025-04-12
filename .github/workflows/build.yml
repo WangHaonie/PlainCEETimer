@@ -1,0 +1,40 @@
+name: PlainCEETimer CI/CD Builder
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+      - 'PlainCEETimer/**'
+      - 'PlainCEETimer.Natives/**'
+      - 'PlainCEETimer.Setup/**'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Install NuGet
+        uses: nuget/setup-nuget@v2 # https://github.com/NuGet/setup-nuget?tab=readme-ov-file#basic
+        
+      - name: Install MSBuild
+        uses: microsoft/setup-msbuild@v2 # https://github.com/microsoft/setup-msbuild?tab=readme-ov-file#example-usage
+        
+      - name: Restore Solution
+        run: nuget restore
+        
+      - name: Build Project
+        run: msbuild /p:Configuration=Release
+
+      - name: Build Setup
+        run: makensis PlainCEETimer.Setup/Setup.nsi
+
+      - name: Upload Setup
+        uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact?tab=readme-ov-file#upload-an-individual-file
+        with:
+          name: PlainCEETimer.Setup
+          path: PlainCEETimer.Setup/*.exe

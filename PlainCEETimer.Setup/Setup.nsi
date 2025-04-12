@@ -1,4 +1,4 @@
-RequestExecutionLevel user
+ï»¿RequestExecutionLevel user
 ManifestDPIAware true
 SetFont "Segoe UI" 9
 
@@ -42,8 +42,8 @@ launch:
 !macroend
 
 !include "MUI2.nsh"
-!define PRODUCT_NAME "¸ß¿¼µ¹¼ÆÊ±"
-!define SETUP_FILENAME_NO_V "3.0.9"
+!define PRODUCT_NAME "é«˜è€ƒå€’è®¡æ—¶"
+!define SETUP_FILENAME_NO_V "3.0.8"
 !define PRODUCT_VERSION "${SETUP_FILENAME_NO_V}"
 !define PRODUCT_TITLE "${PRODUCT_NAME} by ${PRODUCT_PUBLISHER}"
 !define PRODUCT_PUBLISHER "WangHaonie"
@@ -78,7 +78,7 @@ Section -POST
   SetOutPath "$INSTDIR"
   nsExec::Exec '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::Exec '"taskkill" /F /IM "PlainCEETimer.exe"'
-  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\¸ß¿¼µ¹¼ÆÊ±"
+  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\é«˜è€ƒå€’è®¡æ—¶"
   Delete "$INSTDIR\GitHub.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
@@ -88,10 +88,10 @@ Section -POST
   Delete "$INSTDIR\CEETimerCSharpWinForms.cfg"
   Delete "$INSTDIR\CEETimerCSharpWinForms.config"
   Delete "$INSTDIR\PlainCEETimer.Natives.dll"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\Ğ¶ÔØ ¸ß¿¼µ¹¼ÆÊ±.lnk"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\GitHub.lnk"
-  Delete "$DESKTOP\¸ß¿¼µ¹¼ÆÊ±.lnk"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\¸ß¿¼µ¹¼ÆÊ±.lnk"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\å¸è½½ é«˜è€ƒå€’è®¡æ—¶.lnk"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\GitHub.lnk"
+  Delete "$DESKTOP\é«˜è€ƒå€’è®¡æ—¶.lnk"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\é«˜è€ƒå€’è®¡æ—¶.lnk"
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_TITLE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
@@ -103,11 +103,11 @@ Section -POST
   File "..\.output\PlainCEETimer.exe"
   File "..\.output\Newtonsoft.Json.dll"
   File "..\.output\PlainCEETimer.Natives.dll"
-  CreateDirectory "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±"
-  CreateShortCut "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\¸ß¿¼µ¹¼ÆÊ±.lnk" "$INSTDIR\PlainCEETimer.exe"
-  CreateShortCut "$DESKTOP\¸ß¿¼µ¹¼ÆÊ±.lnk" "$INSTDIR\PlainCEETimer.exe"
-  CreateShortCut "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-  CreateShortCut "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\Ğ¶ÔØ ¸ß¿¼µ¹¼ÆÊ±.lnk" "$INSTDIR\uninst.exe"
+  CreateDirectory "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶"
+  CreateShortCut "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\é«˜è€ƒå€’è®¡æ—¶.lnk" "$INSTDIR\PlainCEETimer.exe"
+  CreateShortCut "$DESKTOP\é«˜è€ƒå€’è®¡æ—¶.lnk" "$INSTDIR\PlainCEETimer.exe"
+  CreateShortCut "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\å¸è½½ é«˜è€ƒå€’è®¡æ—¶.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 Section Uninstall
@@ -125,11 +125,11 @@ Section Uninstall
   Delete "$INSTDIR\CEETimerCSharpWinForms.cfg"
   Delete "$INSTDIR\CEETimerCSharpWinForms.config"
   Delete "$INSTDIR\PlainCEETimer.Natives.dll"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\Ğ¶ÔØ ¸ß¿¼µ¹¼ÆÊ±.lnk"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\GitHub.lnk"
-  Delete "$DESKTOP\¸ß¿¼µ¹¼ÆÊ±.lnk"
-  Delete "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±\¸ß¿¼µ¹¼ÆÊ±.lnk"
-  RMDir "$SMPROGRAMS\¸ß¿¼µ¹¼ÆÊ±"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\å¸è½½ é«˜è€ƒå€’è®¡æ—¶.lnk"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\GitHub.lnk"
+  Delete "$DESKTOP\é«˜è€ƒå€’è®¡æ—¶.lnk"
+  Delete "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶\é«˜è€ƒå€’è®¡æ—¶.lnk"
+  RMDir "$SMPROGRAMS\é«˜è€ƒå€’è®¡æ—¶"
   RMDir "$INSTDIR"
   SetAutoClose true
 SectionEnd
@@ -144,11 +144,11 @@ FunctionEnd
  
 Function un.onInit
   !insertmacro SingleInstanceMutex
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "È·ÈÏĞ¶ÔØ ${PRODUCT_TITLE}£¿" IDYES +2
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "ç¡®è®¤å¸è½½ ${PRODUCT_TITLE}ï¼Ÿ" IDYES +2
   Abort
 FunctionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "${PRODUCT_TITLE} ÒÑ³É¹¦´ÓÄúµÄ¼ÆËã»úÖĞÒÆ³ı¡£¸ĞĞ»ÄúµÄÊ¹ÓÃ£¡"
+  MessageBox MB_ICONINFORMATION|MB_OK "${PRODUCT_TITLE} å·²æˆåŠŸä»æ‚¨çš„è®¡ç®—æœºä¸­ç§»é™¤ã€‚æ„Ÿè°¢æ‚¨çš„ä½¿ç”¨ï¼"
 FunctionEnd
