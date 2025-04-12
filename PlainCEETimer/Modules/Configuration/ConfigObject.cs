@@ -121,7 +121,22 @@ namespace PlainCEETimer.Modules.Configuration
                 field = value;
             }
         }
-        public int Dark { get; set; }
+        public int Dark
+        {
+            get;
+            set
+            {
+                if (MainForm.ValidateNeeded)
+                {
+                    if (value is < 0 or > 2)
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                field = value;
+            }
+        }
 
         [JsonConverter(typeof(PointFormatConverter))]
         public Point Location { get; set; }

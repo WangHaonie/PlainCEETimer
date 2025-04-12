@@ -11,10 +11,10 @@ namespace PlainCEETimer.Dialogs
         public string[] CustomTextPreset { get; set; }
         public ColorSetObject[] ColorPresets { private get; set; }
 
-        protected override string DialogTitle => "管理自定义规则 - 高考倒计时";
-        protected override string ContentDescription => "规则";
-        protected override string[] ListViewHeaders => ["类别", "时刻", "效果预览"];
-        protected override int ListViewWidth => 490;
+        protected override string DialogTitle { get; } = "管理自定义规则 - 高考倒计时";
+        protected override string ContentDescription { get; } = "规则";
+        protected override string[] ListViewHeaders { get; } = ["类别", "时刻", "效果预览"];
+        protected override int ListViewWidth { get; } = 490;
 
         private readonly PlainButton ButtonGlobal;
 

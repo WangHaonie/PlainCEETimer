@@ -467,8 +467,8 @@ namespace PlainCEETimer.Forms
             ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
 
             RadioButtonThemeSystem.Tag = 0;
-            RadioButtonThemeDark.Tag = 1;
-            RadioButtonThemeLight.Tag = 2;
+            RadioButtonThemeLight.Tag = 1;
+            RadioButtonThemeDark.Tag = 2;
             RadioButtonThemeSystem.CheckedChanged += RadioButtonTheme_CheckedChanged;
             RadioButtonThemeLight.CheckedChanged += RadioButtonTheme_CheckedChanged;
             RadioButtonThemeDark.CheckedChanged += RadioButtonTheme_CheckedChanged;
@@ -516,8 +516,8 @@ namespace PlainCEETimer.Forms
             var option = AppConfig.Dark;
 
             RadioButtonThemeSystem.Checked = option == 0;
-            RadioButtonThemeDark.Checked = option == 1 && ThemeManager.IsDarkModeSupported;
-            RadioButtonThemeLight.Checked = option == 2;
+            RadioButtonThemeLight.Checked = option == 1;
+            RadioButtonThemeDark.Checked = option == 2 && ThemeManager.IsDarkModeSupported;
         }
 
         private void ChangeCustomTextStyle(object sender)

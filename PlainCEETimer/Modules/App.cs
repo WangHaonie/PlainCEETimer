@@ -23,13 +23,13 @@ namespace PlainCEETimer.Modules
         public static Icon AppIcon { get; private set; }
         public static ConfigObject AppConfig
         {
-            get;
+            get => field ??= ConfigHandler.Read();
             set
             {
                 field = value;
                 CanSaveConfig = true;
             }
-        } = ConfigHandler.Read();
+        }
 
         public static event Action TrayMenuShowAllClicked;
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke();
@@ -67,7 +67,6 @@ namespace PlainCEETimer.Modules
         {
             AppIcon = Icon.ExtractAssociatedIcon(CurrentExecutablePath);
             _ = ThemeManager.Initialize;
-            _ = DefaultValues.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
             Application.EnableVisualStyles();

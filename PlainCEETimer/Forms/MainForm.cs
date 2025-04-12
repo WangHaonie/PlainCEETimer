@@ -52,7 +52,7 @@ namespace PlainCEETimer.Forms
         private string[] GlobalTexts;
         private CountdownMode Mode;
         private CountdownPosition CountdownPos;
-        private CountdownPhase CurrentPhase = CountdownPhase.Temp;
+        private CountdownPhase CurrentPhase = CountdownPhase.None;
         private CountdownState SelectedState;
         private IEnumerable<CustomRuleObject> CurrentRules;
         private ColorSetObject[] CountdownColors;
@@ -392,7 +392,7 @@ namespace PlainCEETimer.Forms
             ExamEnd = CurrentExam.End;
             IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
 
-            if (IsCountdownReady && CurrentPhase != CountdownPhase.Temp)
+            if (IsCountdownReady && CurrentPhase != CountdownPhase.None)
             {
                 RefreshCustomRules(CurrentPhase);
             }

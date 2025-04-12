@@ -17,7 +17,7 @@ namespace PlainCEETimer.Modules
         P1,
         P2,
         P3,
-        Temp
+        None
     }
 
     public enum CountdownPosition
@@ -124,5 +124,12 @@ namespace PlainCEETimer.Modules
         ComboBox,
         ComboLBox,
         TextBox
+    }
+
+    public enum SystemTheme
+    {
+        None,
+        Light,
+        Dark
     }
 }

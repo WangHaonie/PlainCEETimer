@@ -13,20 +13,13 @@ namespace PlainCEETimer.Modules.Configuration
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
         public static Font CountdownDefaultFont { get; }
 
-        public static readonly int Initialize;
         private static readonly string NotoSansSC = "Noto Sans SC";
         private static readonly string MicrosoftYaHei = "Microsoft YaHei";
 
         static DefaultValues()
         {
             var FontTester = new Font(NotoSansSC, 1);
-            bool NotoAvailable = false;
-
-            if (FontTester.Name == NotoSansSC)
-            {
-                NotoAvailable = true;
-            }
-
+            CountdownDefaultFont = new(FontTester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
             FontTester.Dispose();
 
             CountdownDefaultColorsLight =
@@ -45,9 +38,8 @@ namespace PlainCEETimer.Modules.Configuration
                 new(Color.White, Color.Black)
             ];
 
-            CountdownDefaultFont = new(NotoAvailable ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
-            AutoDarkCountdown = !File.Exists(App.ConfigFilePath) && ThemeManager.IsDarkModeSupported && ThemeManager.ShouldAppsUseDarkMode();
+            AutoDarkCountdown = !File.Exists(App.ConfigFilePath) && ThemeManager.CurrentTheme != SystemTheme.None;
         }
     }
 }

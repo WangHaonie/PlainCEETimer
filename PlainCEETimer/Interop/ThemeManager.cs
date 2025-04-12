@@ -15,17 +15,21 @@ namespace PlainCEETimer.Interop
         public static Color DarkBack { get; } = Color.FromArgb(32, 32, 32);
         public static Color DarkBackSelection { get; } = Color.FromArgb(77, 77, 77);
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
+        public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
 
         static ThemeManager()
         {
-            var option = App.AppConfig.Dark;
-            IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast;
-            ShouldUseDarkMode = IsDarkModeSupported && ((option == 0 && ShouldAppsUseDarkMode()) || option == 1);
-
-            if (ShouldUseDarkMode)
+            if (IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
             {
-                SetPreferredAppMode(2);
+                var tmp = ShouldAppsUseDarkMode();
+                CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
+                var option = App.AppConfig.Dark; // 顺便触发初始化 DefaultValues
+
+                if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
+                {
+                    SetPreferredAppMode(2);
+                }
             }
         }
 
@@ -57,7 +61,7 @@ namespace PlainCEETimer.Interop
         */
         [DllImport(App.UxThemeDll, EntryPoint = "#132")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ShouldAppsUseDarkMode();
+        private static extern bool ShouldAppsUseDarkMode();
         #endregion
 
         #region 来自网络
@@ -80,7 +84,7 @@ namespace PlainCEETimer.Interop
         private static extern int SetPreferredAppMode(int preferredAppMode);
 
         [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
         public static extern int FlushDarkWindow(IntPtr hWnd);

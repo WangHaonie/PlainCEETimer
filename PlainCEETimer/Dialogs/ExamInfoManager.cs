@@ -7,10 +7,10 @@ namespace PlainCEETimer.Dialogs
 {
     public sealed class ExamInfoManager : ListViewDialogBase<ExamInfoObject, ExamInfoDialog>
     {
-        protected override string DialogTitle => "管理考试信息 - 高考倒计时";
-        protected override string ContentDescription => "考试信息";
-        protected override string[] ListViewHeaders => ["考试名称", "开始日期和时间", "结束日期和时间"];
-        protected override int ListViewWidth => 440;
+        protected override string DialogTitle { get; } = "管理考试信息 - 高考倒计时";
+        protected override string ContentDescription { get; } = "考试信息";
+        protected override string[] ListViewHeaders { get; } = ["考试名称", "开始日期和时间", "结束日期和时间"];
+        protected override int ListViewWidth { get; } = 440;
 
         protected override void AddItem(ExamInfoObject Data, bool IsSelected = false)
         {

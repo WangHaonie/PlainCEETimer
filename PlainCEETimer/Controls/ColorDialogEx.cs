@@ -9,8 +9,8 @@ namespace PlainCEETimer.Controls
 {
     public sealed class ColorDialogEx : ColorDialog, ICommonDialog
     {
-        public CommonDialogKind DialogKind => CommonDialogKind.Color;
-        public string DialogTitle => "选取颜色 - 高考倒计时";
+        public CommonDialogKind DialogKind { get; } = CommonDialogKind.Color;
+        public string DialogTitle { get; } = "选取颜色 - 高考倒计时";
 
         private static int[] CustomColorCollection = App.AppConfig.CustomColors;
         private int[] PreviousCustomColors;

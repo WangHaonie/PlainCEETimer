@@ -8,8 +8,8 @@ namespace PlainCEETimer.Controls
 {
     public sealed class FontDialogEx : FontDialog, ICommonDialog
     {
-        public CommonDialogKind DialogKind => CommonDialogKind.Font;
-        public string DialogTitle => "选择字体 - 高考倒计时";
+        public CommonDialogKind DialogKind { get; } = CommonDialogKind.Font;
+        public string DialogTitle { get; } = "选择字体 - 高考倒计时";
 
         private CommonDialogHelper Helper;
 
