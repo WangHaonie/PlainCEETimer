@@ -212,6 +212,7 @@ namespace PlainCEETimer.Controls
             switch (MessageX.Warn(WarningMsg, Buttons: AppMessageBoxButtons.YesNo))
             {
                 case DialogResult.Yes:
+                    e.Cancel = true;
                     SaveChanges();
                     break;
                 case DialogResult.No:
