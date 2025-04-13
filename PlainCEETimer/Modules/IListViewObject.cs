@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.Modules
 {
-    public interface IListViewObject<TData> : IComparable<TData>, IEquatable<TData>
+    public interface IListViewObject<T> : IComparable<T>, IEquatable<T>
     {
         bool CanExecute();
     }

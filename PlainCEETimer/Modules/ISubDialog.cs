@@ -2,10 +2,10 @@
 
 namespace PlainCEETimer.Modules
 {
-    public interface ISubDialog<TData>
-        where TData : IListViewObject<TData>
+    public interface ISubDialog<T>
+        where T : IListViewObject<T>
     {
-        TData Data { get; set; }
+        T Data { get; set; }
 
         DialogResult ShowDialog();
     }

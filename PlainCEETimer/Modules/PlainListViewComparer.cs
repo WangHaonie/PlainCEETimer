@@ -3,12 +3,12 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
 {
-    public sealed class PlainListViewComparer<TData> : IComparer
-        where TData : IListViewObject<TData>
+    public sealed class PlainListViewComparer<T> : IComparer
+        where T : IListViewObject<T>
     {
         public int Compare(object x, object y)
         {
-            return ((TData)((ListViewItem)x).Tag).CompareTo((TData)((ListViewItem)y).Tag);
+            return ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
         }
     }
 }
