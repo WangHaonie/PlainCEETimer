@@ -12,11 +12,12 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: windows-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
         
       - name: Install NuGet
         uses: nuget/setup-nuget@v2 # https://github.com/NuGet/setup-nuget?tab=readme-ov-file#basic
@@ -32,9 +33,39 @@ jobs:
 
       - name: Build Setup
         run: makensis PlainCEETimer.Setup/Setup.nsi
-
-      - name: Upload Setup
-        uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact?tab=readme-ov-file#upload-an-individual-file
+      
+      - name: Delete Previous Pre-Release
+        uses: 8Mi-Tech/delete-release-assets-action@main
         with:
-          name: PlainCEETimer.Setup
-          path: PlainCEETimer.Setup/*.exe
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: Preview
+          deleteOnlyFromDrafts: false
+
+      - name: Add Tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: Preview
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pre-Release Content
+        run: |
+          Start-Process -FilePath ".github\workflows\getdate.exe" -RedirectStandardOutput "date.txt" -NoNewWindow -Wait
+          $Date = Get-Content ".\date.txt"
+          $Content = "## ♻️ 自动构建版本
+          **🌏 构建日期**
+          + ${Date}
+          
+          **📢 注意事项**
+          + 自动构建版本的功能可能不稳定，不推荐作为长期使用
+          + 更新频率高，且该渠道的版本不支持自动检查更新，需用户手动保持最新版本
+          + 版本号将沿用上一个正式版的版本号，故自动构建版本仍可以在下一个正式版发布时获取到并进行自动更新" >content.txt
+
+      - name: Upload to Pre-Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: Preview
+          files: |
+            PlainCEETimer.Setup/*.exe
+          prerelease: true
+          body_path: content.txt
