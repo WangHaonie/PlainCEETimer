@@ -11,6 +11,7 @@ namespace PlainCEETimer.Interop
     public sealed class CommonDialogHelper
     {
         private const int SW_HIDE = 0x0000;
+        private const int BM_TRANSPARENT = 0x0001;
         private const int WM_DESTROY = 0x0002;
         private const int WM_SETFOCUS = 0x0007;
         private const int WM_SETTEXT = 0x000C;
@@ -19,11 +20,13 @@ namespace PlainCEETimer.Interop
         private const int WM_CTLCOLORDLG = 0x0136;
         private const int WM_CTLCOLOREDIT = 0x0133;
         private const int WM_CTLCOLORSTATIC = 0x0138;
+        private const int WM_CTLCOLORLISTBOX = 0x0134;
         private const int stc4 = 0x0443;
         private const int cmb4 = 0x0473;
 
         private RECT DialogRect;
-        private IntPtr hBrush;
+        private readonly int BackCrColor;
+        private readonly IntPtr hBrush;
         private readonly AppForm Parent;
         private readonly StringBuilder builder = new(256);
         private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
@@ -33,6 +36,8 @@ namespace PlainCEETimer.Interop
         {
             Parent = owner;
             Parent.ReActivate();
+            BackCrColor = ColorTranslator.ToWin32(ThemeManager.DarkBack);
+            hBrush = CreateSolidBrush(BackCrColor);
         }
 
         public IntPtr HookProc(ICommonDialog Dialog, IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
@@ -105,9 +110,11 @@ namespace PlainCEETimer.Interop
                 case WM_CTLCOLORDLG:
                 case WM_CTLCOLOREDIT:
                 case WM_CTLCOLORSTATIC:
+                case WM_CTLCOLORLISTBOX:
+                    SetBkMode(wParam, BM_TRANSPARENT);
                     SetTextColor(wParam, ColorTranslator.ToWin32(ThemeManager.DarkFore));
-                    SetBkMode(wParam, 1);
-                    return hBrush = CreateSolidBrush(ColorTranslator.ToWin32(ThemeManager.DarkBack));
+                    SetBkColor(wParam, BackCrColor);
+                    return hBrush;
                 case WM_DESTROY:
                     DeleteObject(hBrush);
                     break;
@@ -173,6 +180,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.Gdi32Dll)]
         private static extern int SetBkMode(IntPtr hdc, int mode);
+        
+        [DllImport(App.Gdi32Dll)]
+        private static extern uint SetBkColor(IntPtr hdc, int crColor);
 
         [DllImport(App.Gdi32Dll)]
         private static extern int SetTextColor(IntPtr hdc, int crColor);
