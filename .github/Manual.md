@@ -52,7 +52,7 @@
 + 安装完成后会自动运行倒计时，位置默认在主显示器顶部居中。
 
 > [!TIP]
-> 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请自行到 [Actions](https://github.com/WangHaonie/PlainCEETimer/actions) 点击最新的标注有**绿色对勾**的条目进入后，下载 `Artifacts` 下的 `PlainCEETimer.Setup`。
+> 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请自行到 [Release](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) 下载。
 > + **【注意事项】**
 > + 自动构建版本的功能可能不稳定，不推荐作为长期使用
 > + 更新频率高，且该渠道的版本不支持自动检查更新，需用户手动保持最新版本
