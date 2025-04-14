@@ -51,17 +51,15 @@ launch:
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\CEETimerCSharpWinForms"
 !define PRODUCT_UNINST_ROOT_KEY "HKCU"
 !define MUI_ABORTWARNING
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-install.ico"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-uninstall.ico"
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\classic-install.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\classic-uninstall.ico"
 !define MUI_LICENSEPAGE_CHECKBOX
 
 SetCompressor lzma
 
-!insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
 !insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE ".\LicenseLink"
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "SimpChinese"
 
