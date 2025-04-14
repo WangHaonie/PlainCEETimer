@@ -79,7 +79,7 @@ namespace PlainCEETimer.Dialogs
 
             if (!string.IsNullOrEmpty(TimeMsg))
             {
-                if (MessageX.Warn($"检测到设置的考试时间太长或太短！\n\n当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", Buttons: AppMessageBoxButtons.YesNo) != DialogResult.Yes)
+                if (MessageX.Warn($"检测到设置的考试时间太长或太短！\n\n当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", Buttons: MessageButtons.YesNo) != DialogResult.Yes)
                 {
                     return false;
                 }

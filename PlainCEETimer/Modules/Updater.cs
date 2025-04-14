@@ -25,7 +25,7 @@ namespace PlainCEETimer.Modules
 
                 if (Version.Parse(LatestVersion) > Version.Parse(App.AppVersion))
                 {
-                    if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{App.AppVersion}\n最新版本: v{LatestVersion}\n发布日期: {PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{App.AppVersion}\n最新版本: v{LatestVersion}\n发布日期: {PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                     {
                         OwnerForm.BeginInvoke(() => Downloader.Start(LatestVersion, Response.UpdateSize));
                     }

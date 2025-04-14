@@ -451,7 +451,7 @@ namespace PlainCEETimer.Forms
             {
                 UseClassicContextMenu = UseClassicContextMenuBak;
 
-                if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后才能生效。\n\n是否立即重启？", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后才能生效。\n\n是否立即重启？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Shutdown(true);
                 }
@@ -578,7 +578,7 @@ namespace PlainCEETimer.Forms
                 {
                     if (TrayIconReopen)
                     {
-                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                         {
                             App.Shutdown(true);
                         }

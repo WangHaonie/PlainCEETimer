@@ -23,22 +23,22 @@ namespace PlainCEETimer.Modules
             ErrorIcon = GetIcon(93);
         }
 
-        public DialogResult Info(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+        public DialogResult Info(string Message, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
         {
             return Popup(Message, MessageLevel.Info, Buttons, AutoClose);
         }
 
-        public DialogResult Warn(string Message, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+        public DialogResult Warn(string Message, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
         {
             return Popup(Message, MessageLevel.Warning, Buttons, AutoClose);
         }
 
-        public DialogResult Error(string Message, Exception Ex = null, AppMessageBoxButtons Buttons = AppMessageBoxButtons.OK, bool AutoClose = false)
+        public DialogResult Error(string Message, Exception Ex = null, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
         {
             return Popup(GetExMessage(Message, Ex), MessageLevel.Error, Buttons, AutoClose);
         }
 
-        private DialogResult Popup(string Message, MessageLevel Level, AppMessageBoxButtons Buttons, bool AutoClose)
+        private DialogResult Popup(string Message, MessageLevel Level, MessageButtons Buttons, bool AutoClose)
         {
             var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
 
@@ -104,8 +104,7 @@ namespace PlainCEETimer.Modules
 
         private static Bitmap GetIcon(int Index)
         {
-            NativeInterop.ExtractIconEx("imageres.dll", Index, out IntPtr hIcon, out _, 1);
-            return Icon.FromHandle(hIcon).ToBitmap();
+            return IconHelper.GetIcon("imageres.dll", Index).ToBitmap();
         }
     }
 }

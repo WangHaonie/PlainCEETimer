@@ -12,10 +12,10 @@ namespace PlainCEETimer.Dialogs
     {
         private DialogResult Result;
         private readonly bool AutoCloseRequired;
-        private readonly AppMessageBoxButtons ButtonsEx;
+        private readonly MessageButtons ButtonsEx;
         private readonly SystemSound DialogSound;
 
-        public AppMessageBox(SystemSound Sound, AppMessageBoxButtons Buttons, bool AutoClose) : base(AppDialogProp.KeyPreview)
+        public AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : base(AppDialogProp.KeyPreview)
         {
             InitializeComponent();
             DialogSound = Sound;
@@ -45,11 +45,11 @@ namespace PlainCEETimer.Dialogs
         {
             switch (ButtonsEx)
             {
-                case AppMessageBoxButtons.YesNo:
+                case MessageButtons.YesNo:
                     ButtonA.Text = "是(&Y)";
                     ButtonB.Text = "否(&N)";
                     break;
-                case AppMessageBoxButtons.OK:
+                case MessageButtons.OK:
                     ButtonA.Visible = ButtonA.Enabled = false;
                     ButtonB.Text = "确定(&O)";
                     break;
@@ -68,14 +68,14 @@ namespace PlainCEETimer.Dialogs
 
         protected override bool ButtonA_Click()
         {
-            Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.Yes : DialogResult.None;
+            Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
             return true;
         }
 
         protected override void ButtonB_Click()
         {
-            Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.No : DialogResult.OK;
+            Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();
         }
 

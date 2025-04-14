@@ -71,7 +71,7 @@ namespace PlainCEETimer.Modules
         Error
     }
 
-    public enum AppMessageBoxButtons
+    public enum MessageButtons
     {
         OK,
         YesNo

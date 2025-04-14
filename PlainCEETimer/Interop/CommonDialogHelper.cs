@@ -146,7 +146,7 @@ namespace PlainCEETimer.Interop
 
         private void KeepOnScreen(IntPtr hWnd)
         {
-            var validArea = Screen.FromControl(Parent).WorkingArea;
+            var validArea = Screen.GetWorkingArea(Parent);
             var DialogWidth = DialogRect.Right - DialogRect.Left;
             var DialogHeight = DialogRect.Bottom - DialogRect.Top;
             var X = Parent.Left + (Parent.Width / 2) - (DialogWidth / 2);

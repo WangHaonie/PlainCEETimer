@@ -203,6 +203,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Interop\CommonDialogHelper.cs" />
+    <Compile Include="Interop\IconHelper.cs" />
     <Compile Include="Interop\ListViewHelper.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />

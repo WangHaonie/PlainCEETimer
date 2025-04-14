@@ -209,7 +209,7 @@ namespace PlainCEETimer.Controls
         /// <param name="IgnoreChanges">执行 忽略更改 的代码</param>
         protected void ShowUnsavedWarning(string WarningMsg, FormClosingEventArgs e, Func<bool> SaveChanges, ref bool userChanged)
         {
-            switch (MessageX.Warn(WarningMsg, Buttons: AppMessageBoxButtons.YesNo))
+            switch (MessageX.Warn(WarningMsg, Buttons: MessageButtons.YesNo))
             {
                 case DialogResult.Yes:
                     e.Cancel = !SaveChanges();
@@ -482,7 +482,7 @@ namespace PlainCEETimer.Controls
 
         private Rectangle GetCurrentScreenRect()
         {
-            return Special ? Screen.FromControl(this).WorkingArea : Screen.FromPoint(Cursor.Position).WorkingArea;
+            return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
         }
     }
 }
