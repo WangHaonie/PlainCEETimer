@@ -9,8 +9,6 @@ namespace PlainCEETimer.Modules
 {
     public sealed class Updater
     {
-        private DownloaderForm FormDownloader;
-
         public void CheckForUpdate(bool IsProgramStart, AppForm OwnerForm)
         {
             var MessageX = new MessageBoxHelper(OwnerForm);
@@ -29,15 +27,7 @@ namespace PlainCEETimer.Modules
                 {
                     if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{App.AppVersion}\n最新版本: v{LatestVersion}\n发布日期: {PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", Buttons: AppMessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        OwnerForm.BeginInvoke(() =>
-                        {
-                            if (FormDownloader == null || FormDownloader.IsDisposed)
-                            {
-                                FormDownloader = new(LatestVersion, Response.UpdateSize);
-                            }
-
-                            FormDownloader.ReActivate();
-                        });
+                        OwnerForm.BeginInvoke(() => Downloader.Start(LatestVersion, Response.UpdateSize));
                     }
                 }
                 else if (!IsProgramStart)
@@ -51,6 +41,21 @@ namespace PlainCEETimer.Modules
                 {
                     MessageX.Error("检查更新时发生错误! ", ex);
                 }
+            }
+        }
+
+        private static class Downloader
+        {
+            private static DownloaderForm FormDownloader;
+
+            public static void Start(string version, long size)
+            {
+                if (FormDownloader == null || FormDownloader.IsDisposed)
+                {
+                    FormDownloader = new(version, size);
+                }
+
+                FormDownloader.ReActivate();
             }
         }
     }
