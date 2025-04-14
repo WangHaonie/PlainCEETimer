@@ -40,7 +40,7 @@ namespace PlainCEETimer.Interop
             hBrush = CreateSolidBrush(BackCrColor);
         }
 
-        public IntPtr HookProc(ICommonDialog Dialog, IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        public IntPtr HookProc(ICommonDialog Dialog, IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
             #region 来自网络
 
@@ -56,7 +56,7 @@ namespace PlainCEETimer.Interop
 
             */
 
-            switch (Msg)
+            switch (msg)
             {
                 case WM_SETFOCUS:
                     SetFocus(wParam);
@@ -93,15 +93,15 @@ namespace PlainCEETimer.Interop
 
             if (UseDark)
             {
-                return DarkProc(hWnd, Msg, wParam);
+                return DarkProc(hWnd, msg, wParam);
             }
 
             return IntPtr.Zero;
         }
 
-        private IntPtr DarkProc(IntPtr hWnd, int Msg, IntPtr wParam)
+        private IntPtr DarkProc(IntPtr hWnd, int msg, IntPtr wParam)
         {
-            switch (Msg)
+            switch (msg)
             {
                 case WM_INITDIALOG:
                     ThemeManager.FlushDarkWindow(hWnd);
@@ -212,10 +212,10 @@ namespace PlainCEETimer.Interop
         private static extern IntPtr SetFocus(IntPtr hWnd);
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, string lParam);
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
 
         [DllImport(App.User32Dll)]
-        private static extern IntPtr PostMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT

@@ -54,7 +54,13 @@ namespace PlainCEETimer.Modules
         public const string DateTimeFormat = "yyyy'-'MM'-'dd dddd HH':'mm':'ss";
         public const string UpdateAPI = "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json";
         public const string UpdateURL = "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe";
-        public const string RequestUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36";
+        public const string RequestUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
+
+        private const string CP_Q = "/?";
+        private const string CP_H = "/h";
+        private const string CP_AC = "/ac";
+        private const string CP_FR = "/fr";
+        private const string CP_OP = "/op";
 
         private const string ExFileName = "UnhandledException.txt";
         private static bool MainInstance;
@@ -98,8 +104,8 @@ namespace PlainCEETimer.Modules
                     {
                         switch (Args[0])
                         {
-                            case "/?":
-                            case "/h":
+                            case CP_Q:
+                            case CP_H:
                                 MessageX.Info(
                                     """
                                     可用的命令行参数: 
@@ -109,15 +115,31 @@ namespace PlainCEETimer.Modules
                                     /fr <版本号>
                                             强制下载并安装指定的版本，留空则当前版本，
                                             推荐在特殊情况下使用，不支持老版本。
+                                    /op   优化本程序，提升运行速度
                                     """);
                                 break;
-                            case "/ac":
+                            case CP_AC:
                                 CheckAdmin(out string UserName, true);
                                 MessageX.Info($"当前用户 {UserName} {(IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
-                            case "/fr":
+                            case CP_FR:
                                 var version = Args.Length > 1 ? Args[1] : null;
                                 Application.Run(new DownloaderForm(version));
+                                break;
+                            case CP_OP:
+                                if (MessageX.Warn(
+                                    """
+                                    确认对本程序进行优化？此操作将有助于提升一定的运行速度。
+                                    (需要管理员权限，无则自动尝试提权。)
+                                    
+                                    推荐在以下情况下使用：
+                                        1. 首次运行本程序
+                                        2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
+                                        3. 其他情况导致的肉眼明显感知到程序运行速度变慢
+                                    """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                                {
+                                    new OptimizationHelper().Optimize();
+                                }
                                 break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", AutoClose: true);

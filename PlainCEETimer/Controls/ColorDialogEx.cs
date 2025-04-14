@@ -39,9 +39,9 @@ namespace PlainCEETimer.Controls
             return Result;
         }
 
-        public IntPtr BaseHookProc(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam)
+        public IntPtr BaseHookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
-            return base.HookProc(hWnd, Msg, wParam, lParam);
+            return base.HookProc(hWnd, msg, wParam, lParam);
         }
 
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
