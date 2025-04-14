@@ -12,16 +12,16 @@ on:
 jobs:
   build:
     permissions: write-all
-    runs-on: windows-2022 # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+    runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@v4 # https://github.com/actions/checkout
+        uses: actions/checkout@v4
         
       - name: Install NuGet
-        uses: nuget/setup-nuget@v2 # https://github.com/NuGet/setup-nuget?tab=readme-ov-file#basic
+        uses: nuget/setup-nuget@v2
         
       - name: Install MSBuild
-        uses: microsoft/setup-msbuild@v2 # https://github.com/microsoft/setup-msbuild?tab=readme-ov-file#example-usage
+        uses: microsoft/setup-msbuild@v2
         
       - name: Restore Solution
         run: nuget restore
@@ -60,7 +60,7 @@ jobs:
           + 版本号沿用上一个正式版的版本号，确保自动构建版在下一个正式版发布时可以自动更新" >content.txt
 
       - name: Upload to Pre-Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: Preview
           files: |
