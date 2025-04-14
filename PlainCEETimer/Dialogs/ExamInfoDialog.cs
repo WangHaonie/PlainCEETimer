@@ -43,12 +43,12 @@ namespace PlainCEETimer.Dialogs
             });
         }
 
-        protected override void ButtonA_Click()
+        protected override bool ButtonA_Click()
         {
             if (string.IsNullOrWhiteSpace(CurrentExamName) || !Validator.IsValidExamLength(CurrentExamName.Length))
             {
                 MessageX.Error("输入的考试名称有误！\n\n请检查输入的考试名称是否太长或太短！");
-                return;
+                return false;
             }
 
             var StartTime = DTPStart.Value;
@@ -59,7 +59,7 @@ namespace PlainCEETimer.Dialogs
             if (EndTime <= StartTime || TotalSeconds < 1D)
             {
                 MessageX.Error("考试结束时间必须在开始时间之后！");
-                return;
+                return false;
             }
 
             var TimeMsg = "";
@@ -81,7 +81,7 @@ namespace PlainCEETimer.Dialogs
             {
                 if (MessageX.Warn($"检测到设置的考试时间太长或太短！\n\n当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", Buttons: AppMessageBoxButtons.YesNo) != DialogResult.Yes)
                 {
-                    return;
+                    return false;
                 }
             }
 
@@ -92,7 +92,7 @@ namespace PlainCEETimer.Dialogs
                 End = EndTime
             };
 
-            base.ButtonA_Click();
+            return base.ButtonA_Click();
         }
 
         private void DTP_ValueChanged(object sender, EventArgs e)

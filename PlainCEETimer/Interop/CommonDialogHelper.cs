@@ -180,7 +180,7 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.Gdi32Dll)]
         private static extern int SetBkMode(IntPtr hdc, int mode);
-        
+
         [DllImport(App.Gdi32Dll)]
         private static extern uint SetBkColor(IntPtr hdc, int crColor);
 

@@ -78,7 +78,7 @@ namespace PlainCEETimer.Dialogs
             });
         }
 
-        protected override void ButtonA_Click()
+        protected override bool ButtonA_Click()
         {
             var d = (int)NUDDays.Value;
             var h = (int)NUDHours.Value;
@@ -88,7 +88,7 @@ namespace PlainCEETimer.Dialogs
             if (d == 0 && m == 0 && h == 0 && s == 0)
             {
                 MessageX.Error("时刻不能为0，请重新设置！");
-                return;
+                return false;
             }
 
             var Fore = LabelFore.BackColor;
@@ -97,7 +97,7 @@ namespace PlainCEETimer.Dialogs
             if (!Validator.IsNiceContrast(Fore, Back))
             {
                 MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
-                return;
+                return false;
             }
 
             var Text = TextBoxCustomText.Text.RemoveIllegalChars();
@@ -105,7 +105,7 @@ namespace PlainCEETimer.Dialogs
             if (!Validator.VerifyCustomText(Text, out string ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
             {
                 MessageX.Error(ErrorMsg);
-                return;
+                return false;
             }
 
             Data = new()
@@ -116,7 +116,7 @@ namespace PlainCEETimer.Dialogs
                 Colors = new(Fore, Back)
             };
 
-            base.ButtonA_Click();
+            return base.ButtonA_Click();
         }
 
         private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)

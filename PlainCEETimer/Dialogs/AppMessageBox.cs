@@ -66,10 +66,11 @@ namespace PlainCEETimer.Dialogs
             }
         }
 
-        protected override void ButtonA_Click()
+        protected override bool ButtonA_Click()
         {
             Result = ButtonsEx == AppMessageBoxButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
+            return true;
         }
 
         protected override void ButtonB_Click()

@@ -33,19 +33,16 @@ namespace PlainCEETimer.Controls
             }
             else if (IsUserChanged)
             {
-                ShowUnsavedWarning("是否保存当前更改？", e, ButtonA_Click, () =>
-                {
-                    IsUserChanged = false;
-                    Close();
-                });
+                ShowUnsavedWarning("是否保存当前更改？", e, ButtonA_Click, ref IsUserChanged);
             }
         }
 
-        protected virtual void ButtonA_Click()
+        protected virtual bool ButtonA_Click()
         {
             IsUserChanged = false;
             DialogResult = DialogResult.OK;
             Close();
+            return true;
         }
 
         protected virtual void ButtonB_Click()

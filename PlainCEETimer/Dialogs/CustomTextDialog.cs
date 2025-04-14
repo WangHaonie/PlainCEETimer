@@ -43,7 +43,7 @@ namespace PlainCEETimer.Dialogs
             AlignControlsX(ButtonReset, ButtonA);
         }
 
-        protected override void ButtonA_Click()
+        protected override bool ButtonA_Click()
         {
             P1TextRaw = RemoveInvalid(TextBoxP1.Text);
             P2TextRaw = RemoveInvalid(TextBoxP2.Text);
@@ -55,12 +55,12 @@ namespace PlainCEETimer.Dialogs
                 if (!Validator.VerifyCustomText(tmp[i], out string ErrorMsg, i + 1) && !string.IsNullOrEmpty(ErrorMsg))
                 {
                     MessageX.Error(ErrorMsg);
-                    return;
+                    return false;
                 }
             }
 
             CustomTexts = tmp;
-            base.ButtonA_Click();
+            return base.ButtonA_Click();
         }
 
         private void ButtonReset_Click(object sender, EventArgs e)

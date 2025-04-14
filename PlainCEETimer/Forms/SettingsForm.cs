@@ -100,11 +100,7 @@ namespace PlainCEETimer.Forms
             }
             else if (UserChanged)
             {
-                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, () => ButtonSave_Click(null, null), () =>
-                {
-                    UserChanged = false;
-                    Close();
-                });
+                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, Save, ref UserChanged);
             }
         }
 
@@ -339,10 +335,15 @@ namespace PlainCEETimer.Forms
 
         private void ButtonSave_Click(object sender, EventArgs e)
         {
+            Save();
+        }
+
+        private bool Save()
+        {
             if (IsSyncingTime)
             {
                 MessageX.Warn("无法执行此操作，请等待同步网络时钟完成！");
-                return;
+                return false;
             }
 
             if (IsSettingsFormatValid())
@@ -351,6 +352,8 @@ namespace PlainCEETimer.Forms
                 UserChanged = false;
                 Close();
             }
+
+            return true;
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)

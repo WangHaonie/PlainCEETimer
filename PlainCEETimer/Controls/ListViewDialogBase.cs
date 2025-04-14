@@ -13,12 +13,6 @@ namespace PlainCEETimer.Controls
         where TSubDialog : AppDialog, ISubDialog<TData>
     {
         public TData[] Data { get; set; }
-
-        protected abstract string DialogTitle { get; }
-        protected abstract string ContentDescription { get; }
-        protected abstract string[] ListViewHeaders { get; }
-        protected abstract int ListViewWidth { get; }
-
         private ContextMenu ContextMenuMain;
         private ContextMenuStrip ContextMenuStripMain;
         private PlainButton ButtonOperation;
@@ -29,6 +23,7 @@ namespace PlainCEETimer.Controls
         private ToolStripMenuItem StripDelete;
         private ToolStripMenuItem StripSelectAll;
         private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
+        private readonly string ContentDescription;
         private readonly HashSet<TData> ListViewItemsSet = [];
         private readonly ListViewEx ListViewMain = new()
         {
@@ -36,14 +31,19 @@ namespace PlainCEETimer.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        protected ListViewDialogBase() : base(AppDialogProp.All)
+        private ListViewDialogBase() : base(AppDialogProp.All)
         {
             AdjustBeforeLoad = true;
             CompositedStyle = true;
             InitializeComponent();
-            Text = DialogTitle;
-            ListViewMain.Headers = ListViewHeaders;
-            ListViewMain.Size = new Size(ScaleToDpi(ListViewWidth), ScaleToDpi(218));
+        }
+
+        protected ListViewDialogBase(int listViewWidth, string title, string content, string[] headers) : this()
+        {
+            Text = title;
+            ListViewMain.Headers = headers;
+            ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
+            ContentDescription = content;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace PlainCEETimer.Controls
             base.OnKeyDown(e);
         }
 
-        protected sealed override void ButtonA_Click()
+        protected sealed override bool ButtonA_Click()
         {
             var length = ListViewMain.ItemsCount;
             var tmp = new TData[length];
@@ -120,7 +120,7 @@ namespace PlainCEETimer.Controls
             }
 
             Data = tmp;
-            base.ButtonA_Click();
+            return base.ButtonA_Click();
         }
 
         /// <summary>
