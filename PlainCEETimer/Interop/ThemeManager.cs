@@ -18,6 +18,7 @@ namespace PlainCEETimer.Interop
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
+        private static readonly int DarkDwmaType;
 
         static ThemeManager()
         {
@@ -27,11 +28,21 @@ namespace PlainCEETimer.Interop
                 CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
                 var option = App.AppConfig.Dark; // 顺便触发初始化 DefaultValues
 
+                if (App.OSBuild >= WindowsBuilds.Windows10_20H1)
+                {
+                    DarkDwmaType = 1;
+                }
+
                 if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
                 {
                     SetPreferredAppMode(2);
                 }
             }
+        }
+
+        public static void FlushDarkWindow(IntPtr hWnd)
+        {
+            FlushDarkWindow(hWnd, DarkDwmaType);
         }
 
         public static void FlushDarkControl(Control control, NativeStyle type)
@@ -74,7 +85,7 @@ namespace PlainCEETimer.Interop
         private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
-        public static extern int FlushDarkWindow(IntPtr hWnd);
+        private static extern int FlushDarkWindow(IntPtr hWnd, int type);
         #endregion
     }
 }

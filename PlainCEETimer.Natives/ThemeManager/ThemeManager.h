@@ -4,5 +4,5 @@
 
 extern "C"
 {
-	__declspec(dllexport) void __stdcall FlushDarkWindow(HWND hWnd);
+	__declspec(dllexport) void __stdcall FlushDarkWindow(HWND hWnd, int type);
 }
