@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/**'
       - 'PlainCEETimer/**'
       - 'PlainCEETimer.Natives/**'
       - 'PlainCEETimer.Setup/**'
@@ -13,21 +14,26 @@ jobs:
   build:
     permissions: write-all
     runs-on: windows-2022
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Install NuGet
-        uses: nuget/setup-nuget@v2
-        
       - name: Install MSBuild
         uses: microsoft/setup-msbuild@v2
         
-      - name: Restore Solution
-        run: nuget restore
+      - name: Cache NuGet Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
         
-      - name: Build Project
-        run: msbuild /p:Configuration=Release
+      - name: Restore & Build Project
+        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64
 
       - name: Build Setup
         run: makensis PlainCEETimer.Setup/Setup.nsi
@@ -39,14 +45,14 @@ jobs:
           tag: Preview
           deleteOnlyFromDrafts: false
 
-      - name: Add Tag
+      - name: Update Tag
         uses: richardsimko/update-tag@v1
         with:
           tag_name: Preview
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Pre-Release Content
+      - name: Generate Pre-Release Content
         run: |
           Start-Process -FilePath ".github\workflows\getdate.exe" -RedirectStandardOutput "date.txt" -NoNewWindow -Wait
           $Date = Get-Content ".\date.txt"
