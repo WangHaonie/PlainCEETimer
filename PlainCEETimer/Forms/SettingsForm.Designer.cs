@@ -917,7 +917,6 @@
             this.MaximizeBox = false;
             this.Name = "SettingsForm";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "设置 - 高考倒计时";
             this.GBoxExamInfo.ResumeLayout(false);
             this.GBoxExamInfo.PerformLayout();

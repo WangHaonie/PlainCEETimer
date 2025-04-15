@@ -25,6 +25,8 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected MessageBoxHelper MessageX { get; }
 
+        protected bool ShowInScreenCenter { get; set; }
+
         protected bool Special { private get; set; }
         protected event Action LocationRefreshed;
 
@@ -74,6 +76,11 @@ namespace PlainCEETimer.Controls
             }
 
             base.OnLoad(e);
+
+            if (ShowInScreenCenter)
+            {
+                Location = GetScreenCenter(GetCurrentScreenRect());
+            }
         }
 
         protected sealed override void OnShown(EventArgs e)
@@ -400,6 +407,11 @@ namespace PlainCEETimer.Controls
         protected int ScaleToDpi(int px)
         {
             return (int)(px * CurrentDpiRatio);
+        }
+
+        protected Point GetScreenCenter(Rectangle screenRect)
+        {
+            return new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
         }
 
         protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);

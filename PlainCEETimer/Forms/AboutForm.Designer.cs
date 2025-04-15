@@ -153,7 +153,6 @@ namespace PlainCEETimer.Forms
             this.MaximizeBox = false;
             this.Name = "AboutForm";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "关于本程序";
             this.PanelMain.ResumeLayout(false);
             this.PanelMain.PerformLayout();

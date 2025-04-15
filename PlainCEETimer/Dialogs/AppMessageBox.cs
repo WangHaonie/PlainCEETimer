@@ -28,7 +28,16 @@ namespace PlainCEETimer.Dialogs
             LabelMessage.Text = Message;
             Text = Title;
             PicBoxIcon.Image = AppMessageBoxIcon;
-            StartPosition = (OwnerForm != null && MainForm.IsNormalStart) ? FormStartPosition.CenterParent : FormStartPosition.CenterScreen;
+
+            if (OwnerForm != null && MainForm.IsNormalStart)
+            {
+                StartPosition = FormStartPosition.CenterParent;
+            }
+            else
+            {
+                ShowInScreenCenter = true;
+            }
+
             ShowDialog(OwnerForm);
             return Result;
         }

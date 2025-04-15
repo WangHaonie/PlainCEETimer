@@ -865,7 +865,7 @@ namespace PlainCEETimer.Forms
                     CountdownPosition.LeftCenter => new(SelectedScreenRect.Left, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
                     CountdownPosition.BottomLeft => new(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height),
                     CountdownPosition.TopCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top),
-                    CountdownPosition.Center => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
+                    CountdownPosition.Center => GetScreenCenter(SelectedScreenRect),
                     CountdownPosition.BottomCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Bottom - Height),
                     CountdownPosition.TopRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top),
                     CountdownPosition.RightCenter => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),

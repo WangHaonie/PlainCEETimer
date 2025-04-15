@@ -128,7 +128,6 @@
             this.MaximizeBox = false;
             this.Name = "DownloaderForm";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "更新进度 - 高考倒计时";
             this.ResumeLayout(false);
             this.PerformLayout();
