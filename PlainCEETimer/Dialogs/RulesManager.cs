@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed class RulesManager : ListViewDialogBase<CustomRuleObject, RuleDialog>
+    public sealed class RulesManager : ListViewDialog<CustomRuleObject, RuleDialog>
     {
         public string[] CustomTextPreset { get; set; }
         public ColorSetObject[] ColorPresets { private get; set; }

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
-    public abstract class ListViewDialogBase<TData, TSubDialog> : AppDialog
+    public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         where TData : IListViewObject<TData>
         where TSubDialog : AppDialog, ISubDialog<TData>
     {
@@ -31,14 +31,14 @@ namespace PlainCEETimer.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        private ListViewDialogBase() : base(AppDialogProp.All)
+        private ListViewDialog() : base(AppDialogProp.All)
         {
             AdjustBeforeLoad = true;
             CompositedStyle = true;
             InitializeComponent();
         }
 
-        protected ListViewDialogBase(int listViewWidth, string title, string content, string[] headers) : this()
+        protected ListViewDialog(int listViewWidth, string title, string content, string[] headers) : this()
         {
             Text = title;
             ListViewMain.Headers = headers;

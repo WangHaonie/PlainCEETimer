@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.Modules
+﻿namespace PlainCEETimer.Modules.Win32Registry
 {
     public class StartUp
     {
@@ -16,7 +16,7 @@
             switch (Operation)
             {
                 case 0: // state
-                    return Helper.GetState(KeyName, AppPath);
+                    return Helper.GetState(KeyName, AppPath, "");
                 case 1: // set
                     Helper.Set(KeyName, AppPath);
                     return null;

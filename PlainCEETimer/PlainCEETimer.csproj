@@ -115,7 +115,7 @@
     <Compile Include="Controls\Hyperlink.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\ListViewDialogBase.cs">
+    <Compile Include="Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
@@ -234,9 +234,9 @@
     <Compile Include="Modules\OptimizationHelper.cs" />
     <Compile Include="Modules\PlainListViewComparer.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
-    <Compile Include="Modules\RegistryHelper.cs" />
+    <Compile Include="Modules\Win32Registry\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
-    <Compile Include="Modules\StartUp.cs" />
+    <Compile Include="Modules\Win32Registry\StartUp.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />

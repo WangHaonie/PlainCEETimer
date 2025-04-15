@@ -62,7 +62,7 @@ namespace PlainCEETimer.Modules
 
             if (Dialog.ShowDialog() == DialogResult.OK)
             {
-                if (string.Equals(Dialog.SafeFileName, Ngen, StringComparison.OrdinalIgnoreCase))
+                if (Dialog.SafeFileName.Equals(Ngen, StringComparison.OrdinalIgnoreCase))
                 {
                     Start(Dialog.FileName);
                 }

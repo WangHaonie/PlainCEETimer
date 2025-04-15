@@ -1,4 +1,5 @@
 ﻿using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Win32Registry;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -22,7 +23,7 @@ namespace PlainCEETimer.Interop
         {
             if (IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
             {
-                var tmp = ShouldAppsUseDarkMode();
+                var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").GetState("AppsUseLightTheme", 0, 1);
                 CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
                 var option = App.AppConfig.Dark; // 顺便触发初始化 DefaultValues
 
@@ -49,20 +50,6 @@ namespace PlainCEETimer.Interop
             NativeStyle.CFD => "DarkMode_CFD",
             _ => "Explorer"
         };
-
-        #region 来自网络
-        /*
-        
-        WinAPI 获取应用程序是否启用深色模式 参考：
-
-        How to detect Windows dark mode - Microsoft Q&A
-        https://learn.microsoft.com/en-us/answers/questions/715081/how-to-detect-windows-dark-mode
-
-        */
-        [DllImport(App.UxThemeDll, EntryPoint = "#132")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool ShouldAppsUseDarkMode();
-        #endregion
 
         #region 来自网络
         /*
