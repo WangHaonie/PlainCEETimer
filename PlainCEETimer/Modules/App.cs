@@ -115,7 +115,7 @@ namespace PlainCEETimer.Modules
                                     /fr <版本号>
                                             强制下载并安装指定的版本，留空则当前版本，
                                             推荐在特殊情况下使用，不支持老版本。
-                                    /op   优化本程序，提升运行速度
+                                    /op  优化本程序，提升运行速度
                                     """);
                                 break;
                             case CP_AC:

@@ -15,7 +15,7 @@ namespace PlainCEETimer.Modules
 
         public void Optimize()
         {
-            MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n若弹出 UAC 对话框，请点击 是。");
+            MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n若弹出 UAC 对话框，请点击 是。\n\n请点击 确定 继续。");
 
             try
             {
@@ -74,7 +74,7 @@ namespace PlainCEETimer.Modules
             }
             else
             {
-                MessageX.Info("你已取消本次操作！");
+                Cancel();
             }
         }
 
@@ -89,11 +89,16 @@ namespace PlainCEETimer.Modules
                     App.Shutdown(true);
                 }
             }
-            catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+            catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
             {
                 MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
-                Start(path);
+                Cancel();
             }
+        }
+
+        private void Cancel()
+        {
+            MessageX.Info("你已取消本次操作！");
         }
 
         ~OptimizationHelper() => Dispose();

@@ -322,14 +322,23 @@ namespace PlainCEETimer.Forms
         {
             IsFunny = IsFunnyClick;
 
-            if (e.Button == MouseButtons.Left)
-            {
-                IsFunnyClick = false;
-            }
-            else
+            if (e.Button == MouseButtons.Right)
             {
                 UpdateSettingsArea(SettingsArea.Funny);
                 IsFunnyClick = true;
+            }
+            else
+            {
+                if (!IsFunnyClick && e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control))
+                {
+                    if (MessageX.Info("是否重启到命令行模式？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                    {
+                        ProcessHelper.Run("cmd.exe", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", ShowWindow: true);
+                        App.Shutdown();
+                    }
+                }
+
+                IsFunnyClick = false;
             }
         }
 
@@ -622,7 +631,7 @@ namespace PlainCEETimer.Forms
                 https://stackoverflow.com/a/20872219/21094697
                  
             */
-            catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+            catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
             {
                 SwitchToToolsSafe();
                 MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);

@@ -41,5 +41,7 @@
         public const string PH_P1 = $"{PH_JULI}{PH_EXAMNAME}{PH_START}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
         public const string PH_P2 = $"{PH_JULI}{PH_EXAMNAME}{PH_LEFT}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
         public const string PH_P3 = $"{PH_JULI}{PH_EXAMNAME}{PH_PAST}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
+
+        public const int ERROR_CANCELLED = 0x4C7;
     }
 }
