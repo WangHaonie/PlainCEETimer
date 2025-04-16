@@ -75,7 +75,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Name.Truncate(5), Start.ToString(App.DateTimeFormat));
+            return string.Format("{0} - {1}", Name.Truncate(6), Start.ToString(App.DateTimeFormat));
         }
 
         public override bool Equals(object obj)
