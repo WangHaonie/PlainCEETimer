@@ -48,6 +48,7 @@ namespace PlainCEETimer.Modules
         public void Dispose()
         {
             Dialog?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         private void Retry()
