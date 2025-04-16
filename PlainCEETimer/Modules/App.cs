@@ -13,13 +13,13 @@ namespace PlainCEETimer.Modules
 {
     public static class App
     {
-        public static int OSBuild { get; } = Environment.OSVersion.Version.Build;
+        public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
         public static bool CanSaveConfig { get; set; }
         public static bool AllowClosing { get; private set; }
         public static bool IsAdmin { get; private set; }
-        public static string CurrentExecutableDir { get; } = AppDomain.CurrentDomain.BaseDirectory;
-        public static string CurrentExecutablePath { get; } = Application.ExecutablePath;
-        public static string ConfigFilePath { get; } = $"{CurrentExecutableDir}{AppNameEng}.config";
+        public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
+        public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
+        public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
         public static Icon AppIcon { get; private set; }
         public static ConfigObject AppConfig
         {
@@ -61,13 +61,13 @@ namespace PlainCEETimer.Modules
         private const string CP_AC = "/ac";
         private const string CP_FR = "/fr";
         private const string CP_OP = "/op";
-
         private const string ExFileName = "UnhandledException.txt";
+
         private static bool MainInstance;
+        private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
-        private static readonly MessageBoxHelper MessageX = new();
-        private static Mutex MainMutex;
+        private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
 
         public static void StartProgram(string[] args)
         {
@@ -90,7 +90,7 @@ namespace PlainCEETimer.Modules
                 if (!CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", AutoClose: true);
-                    ProcessHelper.Run("cmd.exe", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} & start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
+                    ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} & start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
                     Exit(ExitReason.InvalidExeName);
                 }
                 else
@@ -164,12 +164,12 @@ namespace PlainCEETimer.Modules
 
         public static void CheckAdmin(out string UserName, bool QueryUserName = false)
         {
-            IsAdmin = (int)ProcessHelper.Run("cmd.exe", "/c net session", 2) == 0;
+            IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
             UserName = "";
 
             if (QueryUserName)
             {
-                UserName = (string)ProcessHelper.Run("cmd.exe", "/c whoami", 1);
+                UserName = (string)ProcessHelper.Run("whoami", Return: 1);
             }
         }
 

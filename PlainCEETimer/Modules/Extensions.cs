@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 
-namespace PlainCEETimer.Modules.Extensions
+namespace PlainCEETimer.Modules
 {
-    public static class StringExtensions
+    public static class Extensions
     {
         private static readonly char[] IllegalChars = [' ', '\n', '\r', '\t', '\v', '\f', '\b'];
 
@@ -21,5 +22,8 @@ namespace PlainCEETimer.Modules.Extensions
         public static string Truncate(this string s, int MaxLength)
             => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
         #endregion
+
+        public static int ToArgbInt(this Color color)
+            => -color.ToArgb();
     }
 }

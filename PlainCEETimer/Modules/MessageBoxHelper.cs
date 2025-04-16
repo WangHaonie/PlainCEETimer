@@ -10,10 +10,14 @@ namespace PlainCEETimer.Modules
 {
     public class MessageBoxHelper(AppForm parent = null)
     {
+        /// <summary>
+        /// 获取不指定父窗体的消息框实例
+        /// </summary>
+        public static MessageBoxHelper Instance { get; } = new();
+
         private static readonly Bitmap InfoIcon;
         private static readonly Bitmap WarningIcon;
         private static readonly Bitmap ErrorIcon;
-
         private readonly AppForm Parent = parent;
 
         static MessageBoxHelper()

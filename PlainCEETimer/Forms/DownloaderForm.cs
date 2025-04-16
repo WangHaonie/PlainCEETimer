@@ -122,7 +122,7 @@ namespace PlainCEETimer.Forms
                     await Task.Delay(2500);
                     IsCancelled = true;
                     Close();
-                    ProcessHelper.Run("cmd.exe", $"/c start \"\" \"{DownloadPath}\" /S");
+                    ProcessHelper.Run($"\"{DownloadPath}\"", "/S");
                     App.Exit(ExitReason.AppUpdating);
                 }
             }

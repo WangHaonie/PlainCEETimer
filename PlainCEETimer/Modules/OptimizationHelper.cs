@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules
         private const string Ngen = "ngen.exe";
         private readonly string NgenPath = @"C:\Windows\Microsoft.NET\Framework64\";
         private readonly string DNFVersion = "v4*";
-        private readonly MessageBoxHelper MessageX = new();
+        private readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
 
         public void Optimize()
         {

@@ -11,6 +11,11 @@ namespace PlainCEETimer.Controls
     public class AppForm : Form
     {
         /// <summary>
+        /// 获取当前 <see cref="AppForm"/> 的消息框实例。
+        /// </summary>
+        public MessageBoxHelper MessageX { get; }
+
+        /// <summary>
         /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否应在加载之前就先调用 <see cref="AdjustUI"/> 调整 UI。
         /// </summary>
         protected bool AdjustBeforeLoad { get; set; }
@@ -19,11 +24,6 @@ namespace PlainCEETimer.Controls
         /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否启用 WS_EX_COMPOSITED 样式以减少闪烁。
         /// </summary>
         protected bool CompositedStyle { get; set; }
-
-        /// <summary>
-        /// 获取当前 <see cref="AppForm"/> 的消息框实例以向用户显示消息框。
-        /// </summary>
-        protected MessageBoxHelper MessageX { get; }
 
         protected bool ShowInScreenCenter { get; set; }
 

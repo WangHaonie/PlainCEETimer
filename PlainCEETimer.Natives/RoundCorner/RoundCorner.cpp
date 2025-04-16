@@ -23,6 +23,6 @@ void SetRoundCornerRegion(HWND hWnd, int wndWidth, int wndHeight, int radius)
 
 void SetRoundCornerModern(HWND hWnd)
 {
-    DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_ROUND;
-    DwmSetWindowAttribute(hWnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
+    int type = 2;
+    DwmSetWindowAttribute(hWnd, 33, &type, sizeof(type));
 }

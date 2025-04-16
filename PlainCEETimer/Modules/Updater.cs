@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules
     {
         public void CheckForUpdate(bool IsProgramStart, AppForm OwnerForm)
         {
-            var MessageX = new MessageBoxHelper(OwnerForm);
+            var MessageX = OwnerForm.MessageX;
             using var _HttpClient = new HttpClient();
             _HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(App.RequestUA);
 
