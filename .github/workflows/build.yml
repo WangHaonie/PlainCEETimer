@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-nuget-
         
       - name: Restore & Build Project
-        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64
+        run: msbuild /r /m /v:minimal /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
 
       - name: Build Setup
         run: makensis PlainCEETimer.Setup/Setup.nsi
