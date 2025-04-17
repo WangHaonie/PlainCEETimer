@@ -1,33 +1,40 @@
 ﻿using Newtonsoft.Json;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Forms;
+using PlainCEETimer.Modules.Http;
 using System;
-using System.Net.Http;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
 {
     public sealed class Updater
     {
+        private DownloaderForm FormDownloader;
+
         public void CheckForUpdate(bool IsProgramStart, AppForm OwnerForm)
         {
             var MessageX = OwnerForm.MessageX;
-            using var _HttpClient = new HttpClient();
-            _HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(App.RequestUA);
 
             try
             {
-                var Response = JsonConvert.DeserializeObject<ResponseObject>(_HttpClient.GetAsync(App.UpdateAPI).Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result);
-
+                var Response = JsonConvert.DeserializeObject<ResponseObject>(HttpFactory.Instance.GetStringAsync(App.UpdateAPI).Result);
                 var LatestVersion = Response.Version;
-                var PublishDate = Response.PublishDate;
+                var PublishDate = Response.PublishDate.ToString(App.DateTimeFormat);
                 var UpdateLog = Response.UpdateLog;
 
                 if (Version.Parse(LatestVersion) > Version.Parse(App.AppVersion))
                 {
                     if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{App.AppVersion}\n最新版本: v{LatestVersion}\n发布日期: {PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                     {
-                        OwnerForm.BeginInvoke(() => Downloader.Start(LatestVersion, Response.UpdateSize));
+                        OwnerForm.BeginInvoke(() =>
+                        {
+                            if (FormDownloader == null || FormDownloader.IsDisposed)
+                            {
+                                FormDownloader = new(LatestVersion, Response.UpdateSize);
+                            }
+
+                            FormDownloader.ReActivate();
+                        });
                     }
                 }
                 else if (!IsProgramStart)
@@ -41,21 +48,6 @@ namespace PlainCEETimer.Modules
                 {
                     MessageX.Error("检查更新时发生错误! ", ex);
                 }
-            }
-        }
-
-        private static class Downloader
-        {
-            private static DownloaderForm FormDownloader;
-
-            public static void Start(string version, long size)
-            {
-                if (FormDownloader == null || FormDownloader.IsDisposed)
-                {
-                    FormDownloader = new(version, size);
-                }
-
-                FormDownloader.ReActivate();
             }
         }
     }

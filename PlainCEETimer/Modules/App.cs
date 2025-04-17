@@ -63,7 +63,6 @@ namespace PlainCEETimer.Modules
         private const string CP_OP = "/op";
         private const string ExFileName = "UnhandledException.txt";
 
-        private static bool MainInstance;
         private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
@@ -84,7 +83,6 @@ namespace PlainCEETimer.Modules
 
             if (IsNewProcess)
             {
-                MainInstance = true;
                 new Thread(StartPipeServer).Start();
 
                 if (!CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
@@ -253,11 +251,6 @@ namespace PlainCEETimer.Modules
 
         private static void ClearMutex()
         {
-            if (MainInstance)
-            {
-                MainMutex?.ReleaseMutex();
-            }
-
             MainMutex?.Dispose();
             MainMutex = null;
         }

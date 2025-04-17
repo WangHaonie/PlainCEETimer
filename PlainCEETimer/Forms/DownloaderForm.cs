@@ -1,10 +1,9 @@
 ﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Http;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,15 +13,15 @@ namespace PlainCEETimer.Forms
     public partial class DownloaderForm : AppForm
     {
         private bool IsCancelled;
-        private CancellationTokenSource cts;
         private string DownloadUrl;
         private string DownloadPath;
         private readonly string TargetVersion;
         private readonly long UpdateSize;
+        private readonly CancellationTokenSource cts = new();
+        private readonly Downloader UpdateDownloader = new();
 
         private DownloaderForm()
         {
-            AdjustBeforeLoad = true;
             ShowInScreenCenter = true;
             InitializeComponent();
         }
@@ -44,15 +43,17 @@ namespace PlainCEETimer.Forms
             AlignControlsREx(ButtonRetry, ButtonCancel, ProgressBarMain);
         }
 
-        protected override async void OnLoad()
+        protected override async void OnShown()
         {
             TaskbarProgress.Initialize(Handle, App.OSBuild >= WindowsBuilds.Windows7 ? 1 : 0);
             TaskbarProgress.SetState(TaskbarProgressState.Normal);
-            DownloadUrl = string.Format(App.UpdateURL, TargetVersion);
-            LinkBrowser.HyperLink = DownloadUrl;
+            LinkBrowser.HyperLink = DownloadUrl = string.Format(App.UpdateURL, TargetVersion);
             DownloadPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(new Uri(DownloadUrl).AbsolutePath));
-
-            await DownloadUpdate();
+            UpdateDownloader.Downloading += UpdateDownloader_Downloading;
+            UpdateDownloader.Error += UpdateDownloader_Error;
+            UpdateDownloader.Completed += UpdateDownloader_Completed;
+            TaskbarProgress.SetValue(0UL, 1UL);
+            await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -69,99 +70,20 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private async Task DownloadUpdate()
-        {
-            TaskbarProgress.SetValue(0UL, 1UL);
-            IsCancelled = false;
-            using var httpClient = new HttpClient();
-            cts = new();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(App.RequestUA);
-
-            try
-            {
-                using (var response = await httpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token))
-                {
-                    response.EnsureSuccessStatusCode();
-                    using var stream = await response.Content.ReadAsStreamAsync();
-                    using var fileStream = new FileStream(DownloadPath, FileMode.Create, FileAccess.Write, FileShare.None);
-                    var buffer = new byte[8192];
-                    var totalBytesRead = 0L;
-                    var bytesRead = 0L;
-                    var sw = Stopwatch.StartNew();
-                    var totalBytes = response.Content.Headers.ContentLength ?? (UpdateSize == 0 ? 378880L : UpdateSize);
-
-                    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                    {
-                        await fileStream.WriteAsync(buffer, 0, (int)bytesRead);
-                        totalBytesRead += bytesRead;
-
-                        UpdateUI(totalBytesRead / 1024, totalBytes / 1024, totalBytesRead / sw.Elapsed.TotalSeconds / 1024, (int)(totalBytesRead * 100 / totalBytes));
-
-                        if (cts.Token.IsCancellationRequested)
-                        {
-                            IsCancelled = true;
-                            fileStream.Close();
-                            if (File.Exists(DownloadPath))
-                            {
-                                File.Delete(DownloadPath);
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                if (!IsCancelled)
-                {
-                    ButtonCancel.Enabled = false;
-                    ButtonRetry.Enabled = false;
-                    LinkBrowser.Enabled = false;
-                    ProgressBarMain.Value = 100;
-                    TaskbarProgress.SetValue(1UL, 1UL);
-                    TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
-                    UpdateLabels("下载完成，请稍侯...", null, null);
-                    await Task.Delay(2500);
-                    IsCancelled = true;
-                    Close();
-                    ProcessHelper.Run($"\"{DownloadPath}\"", "/S");
-                    App.Exit(ExitReason.AppUpdating);
-                }
-            }
-            catch (Exception ex)
-            {
-                IsCancelled = true;
-
-                if (ex is not TaskCanceledException)
-                {
-                    MessageX.Error("无法下载更新文件！", ex);
-                    UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
-                    ButtonRetry.Enabled = true;
-                }
-
-                TaskbarProgress.SetValue(1UL, 1UL);
-                TaskbarProgress.SetState(TaskbarProgressState.Error);
-                return;
-            }
-            finally
-            {
-                cts?.Dispose();
-            }
-        }
-
         private async void ButtonRetry_Click(object sender, EventArgs e)
         {
             ButtonRetry.Enabled = false;
             ProgressBarMain.Value = 0;
             UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
-
-            await DownloadUpdate();
+            await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
         {
-            if (!IsCancelled && cts != null && !cts.Token.IsCancellationRequested)
+            if (!IsCancelled)
             {
                 ButtonCancel.Enabled = false;
-                cts?.Cancel();
+                cts.Cancel();
                 UpdateLabels("用户已取消下载。", null, null);
                 IsCancelled = true;
                 TaskbarProgress.SetState(TaskbarProgressState.Error);
@@ -171,11 +93,36 @@ namespace PlainCEETimer.Forms
             Close();
         }
 
-        private void UpdateUI(long Downloaded, long Total, double Speed, int Progress)
+        private void UpdateDownloader_Downloading(DownloadReport report)
         {
-            UpdateLabels(null, $"已下载/总共: {Downloaded} KB / {Total} KB", $"下载速度: {Speed:0.00} KB/s");
-            ProgressBarMain.Value = Progress;
-            TaskbarProgress.SetValue((ulong)Downloaded, (ulong)Total);
+            UpdateLabels(null, $"已下载/总共: {report.Downloaded} KB / {report.Total} KB", $"下载速度: {report.Speed:0.00} KB/s");
+            ProgressBarMain.Value = report.Progress;
+            TaskbarProgress.SetValue((ulong)report.Downloaded, (ulong)report.Total);
+        }
+
+        private void UpdateDownloader_Error(Exception ex)
+        {
+            MessageX.Error("无法下载更新文件！", ex);
+            UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
+            ButtonRetry.Enabled = true;
+            TaskbarProgress.SetValue(1UL, 1UL);
+            TaskbarProgress.SetState(TaskbarProgressState.Error);
+        }
+
+        private async void UpdateDownloader_Completed()
+        {
+            ButtonCancel.Enabled = false;
+            ButtonRetry.Enabled = false;
+            LinkBrowser.Enabled = false;
+            ProgressBarMain.Value = 100;
+            TaskbarProgress.SetValue(1UL, 1UL);
+            TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
+            UpdateLabels("下载完成，请稍侯...", null, null);
+            IsCancelled = true;
+            await Task.Delay(2500);
+            Close();
+            ProcessHelper.Run(DownloadPath, "/S");
+            App.Exit(ExitReason.AppUpdating);
         }
 
         private void UpdateLabels(string Info, string Size, string Speed)
