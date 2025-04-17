@@ -13,7 +13,7 @@ namespace PlainCEETimer.Modules.Http
         public event Action<Exception> Error;
         public event Action Completed;
 
-        public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength = 378880L, int defalutBuffer = 1024 * 16)
+        public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength, int defaultBuffer = 1024 * 16)
         {
             try
             {
@@ -28,9 +28,9 @@ namespace PlainCEETimer.Modules.Http
                 }
 
                 report.Total = total / 1024L;
-                using var file = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, defalutBuffer, true);
+                using var file = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, defaultBuffer, true);
                 using var http = await response.Content.ReadAsStreamAsync();
-                var buffer = new byte[defalutBuffer];
+                var buffer = new byte[defaultBuffer];
                 var downloaded = 0L;
                 var last = 0L;
                 var read = 0;
@@ -53,6 +53,7 @@ namespace PlainCEETimer.Modules.Http
                     {
                         file.Close();
                         http.Close();
+                        File.Delete(savePath);
                         return;
                     }
                 }

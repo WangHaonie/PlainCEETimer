@@ -44,17 +44,13 @@ namespace PlainCEETimer.Modules
         public const string UxThemeDll = "uxtheme.dll";
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
-        public const string AppVersion = "3.0.8";
-        public const string AppBuildDate = "2025/04/14";
+        public const string AppVersion = "3.0.7";
+        public const string AppBuildDate = "2025/04/17";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
         public const string WarnMsg = "警告 - 高考倒计时";
         public const string ErrMsg = "错误 - 高考倒计时";
-        public const string DateTimeFormat = "yyyy'-'MM'-'dd dddd HH':'mm':'ss";
-        public const string UpdateAPI = "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json";
-        public const string UpdateURL = "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe";
-        public const string RequestUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36";
 
         private const string CP_Q = "/?";
         private const string CP_H = "/h";
@@ -133,7 +129,7 @@ namespace PlainCEETimer.Modules
                                     推荐在以下情况下使用：
                                         1. 首次运行本程序
                                         2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
-                                        3. 其他情况导致的肉眼明显感知到程序运行速度变慢
+                                        3. 其他情况导致的程序运行速度变慢
                                     """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                                 {
                                     new OptimizationHelper().Optimize();
@@ -202,6 +198,12 @@ namespace PlainCEETimer.Modules
             Process.Start(CurrentExecutableDir);
         }
 
+        public static void Exit(ExitReason Reason)
+        {
+            ClearMutex();
+            Environment.Exit((int)Reason);
+        }
+
         private static void StartPipeServer()
         {
             try
@@ -230,7 +232,7 @@ namespace PlainCEETimer.Modules
         {
             if (!AllowClosing)
             {
-                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToString(DateTimeFormat)} ==================\n{ex}";
+                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToFormatted()} ==================\n{ex}";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
 
@@ -241,12 +243,6 @@ namespace PlainCEETimer.Modules
                     Shutdown(Restart: Result == DialogResult.Yes);
                 }
             }
-        }
-
-        public static void Exit(ExitReason Reason)
-        {
-            ClearMutex();
-            Environment.Exit((int)Reason);
         }
 
         private static void ClearMutex()

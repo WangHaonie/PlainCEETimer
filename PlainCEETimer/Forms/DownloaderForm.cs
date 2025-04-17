@@ -28,6 +28,7 @@ namespace PlainCEETimer.Forms
 
         public DownloaderForm(string ManualVersion) : this()
         {
+            MainForm.IsNormalStart = true;
             TargetVersion = Version.TryParse(ManualVersion, out _) ? ManualVersion : App.AppVersion;
         }
 
@@ -43,17 +44,17 @@ namespace PlainCEETimer.Forms
             AlignControlsREx(ButtonRetry, ButtonCancel, ProgressBarMain);
         }
 
-        protected override async void OnShown()
+        protected override void OnShown()
         {
             TaskbarProgress.Initialize(Handle, App.OSBuild >= WindowsBuilds.Windows7 ? 1 : 0);
             TaskbarProgress.SetState(TaskbarProgressState.Normal);
-            LinkBrowser.HyperLink = DownloadUrl = string.Format(App.UpdateURL, TargetVersion);
+            LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
             DownloadPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(new Uri(DownloadUrl).AbsolutePath));
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;
             UpdateDownloader.Completed += UpdateDownloader_Completed;
             TaskbarProgress.SetValue(0UL, 1UL);
-            await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
+            DownloadUpdate();
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -70,11 +71,16 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private async void ButtonRetry_Click(object sender, EventArgs e)
+        private void ButtonRetry_Click(object sender, EventArgs e)
         {
             ButtonRetry.Enabled = false;
             ProgressBarMain.Value = 0;
             UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
+            DownloadUpdate();
+        }
+
+        private async void DownloadUpdate()
+        {
             await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
         }
 

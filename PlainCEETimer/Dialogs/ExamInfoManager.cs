@@ -11,7 +11,7 @@ namespace PlainCEETimer.Dialogs
 
         protected override void AddItem(ExamInfoObject Data, bool IsSelected = false)
         {
-            AddItem(new ListViewItem([Data.Name, Data.Start.ToString(App.DateTimeFormat), Data.End.ToString(App.DateTimeFormat)])
+            AddItem(new ListViewItem([Data.Name, Data.Start.ToFormatted(), Data.End.ToFormatted()])
             {
                 Tag = Data,
                 Selected = IsSelected,

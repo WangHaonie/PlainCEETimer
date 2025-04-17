@@ -408,9 +408,9 @@ namespace PlainCEETimer.Forms
                 ]);
             }
 
-            LabelPreviewColor1.Text = $"{Constants.PH_JULI}...{Constants.PH_START}...";
-            LabelPreviewColor2.Text = $"{Constants.PH_JULI}...{Constants.PH_LEFT}...";
-            LabelPreviewColor3.Text = $"{Constants.PH_JULI}...{Constants.PH_PAST}...";
+            LabelPreviewColor1.Text = $"距离...{Constants.PH_START}...";
+            LabelPreviewColor2.Text = $"距离...{Constants.PH_LEFT}...";
+            LabelPreviewColor3.Text = $"距离...{Constants.PH_PAST}...";
 
             BindComboData(ComboBoxAutoSwitchIntervel,
             [
