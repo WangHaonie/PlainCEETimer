@@ -11,18 +11,14 @@ namespace PlainCEETimer.Controls
 
         private bool IsUserChanged;
 
-        private AppDialog()
+        protected AppDialog(AppFormParam param) : base(param)
         {
             PanelMain = new();
             ButtonA = new();
             ButtonB = new();
             ButtonA.Click += (_, _) => ButtonA_Click();
             ButtonB.Click += (_, _) => ButtonB_Click();
-        }
-
-        protected AppDialog(AppDialogProp Prop) : this()
-        {
-            SetProperties(Prop);
+            SetProperties();
         }
 
         protected override void OnClosing(FormClosingEventArgs e)
@@ -60,15 +56,15 @@ namespace PlainCEETimer.Controls
             });
         }
 
-        private void SetProperties(AppDialogProp Prop)
+        private void SetProperties()
         {
-            if ((Prop & AppDialogProp.BindButtons) != 0)
+            if (CheckParam(AppFormParam.BindButtons))
             {
                 AcceptButton = ButtonA;
                 CancelButton = ButtonB;
             }
 
-            if ((Prop & AppDialogProp.KeyPreview) != 0)
+            if (CheckParam(AppFormParam.KeyPreview))
             {
                 KeyPreview = true;
             }

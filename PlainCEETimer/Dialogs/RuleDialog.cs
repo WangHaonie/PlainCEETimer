@@ -24,9 +24,8 @@ namespace PlainCEETimer.Dialogs
             public string Text = text;
         }
 
-        public RuleDialog() : base(AppDialogProp.All)
+        public RuleDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle)
         {
-            CompositedStyle = true;
             InitializeComponent();
         }
 

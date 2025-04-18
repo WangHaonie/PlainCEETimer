@@ -13,9 +13,8 @@ namespace PlainCEETimer.Dialogs
         private string P3TextRaw;
         private readonly EventHandler OnUserChanged;
 
-        public CustomTextDialog() : base(AppDialogProp.BindButtons)
+        public CustomTextDialog() : base(AppFormParam.BindButtons | AppFormParam.CompositedStyle)
         {
-            CompositedStyle = true;
             InitializeComponent();
             OnUserChanged = new((_, _) => UserChanged());
         }

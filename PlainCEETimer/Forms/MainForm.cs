@@ -79,9 +79,9 @@ namespace PlainCEETimer.Forms
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
 
-        public MainForm()
+
+        public MainForm() : base(AppFormParam.Special)
         {
-            Special = true;
             InitializeComponent();
         }
 

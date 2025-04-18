@@ -10,9 +10,8 @@ namespace PlainCEETimer.Forms
     {
         private bool IsCheckingUpdate;
 
-        public AboutForm()
+        public AboutForm() : base(AppFormParam.CenterScreen)
         {
-            ShowInScreenCenter = true;
             InitializeComponent();
         }
 

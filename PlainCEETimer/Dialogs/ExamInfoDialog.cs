@@ -15,7 +15,7 @@ namespace PlainCEETimer.Dialogs
         private string CurrentExamName;
         private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
-        public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppDialogProp.BindButtons)
+        public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppFormParam.BindButtons)
         {
             InitializeComponent();
 

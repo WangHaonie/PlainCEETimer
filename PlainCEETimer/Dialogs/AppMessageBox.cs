@@ -15,7 +15,7 @@ namespace PlainCEETimer.Dialogs
         private readonly MessageButtons ButtonsEx;
         private readonly SystemSound DialogSound;
 
-        public AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : base(AppDialogProp.KeyPreview)
+        public AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : base(AppFormParam.KeyPreview)
         {
             InitializeComponent();
             DialogSound = Sound;
@@ -35,7 +35,7 @@ namespace PlainCEETimer.Dialogs
             }
             else
             {
-                ShowInScreenCenter = true;
+                AddParam(AppFormParam.CenterScreen);
             }
 
             ShowDialog(OwnerForm);

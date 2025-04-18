@@ -20,9 +20,8 @@ namespace PlainCEETimer.Forms
         private readonly CancellationTokenSource cts = new();
         private readonly Downloader UpdateDownloader = new();
 
-        private DownloaderForm()
+        private DownloaderForm() : base(AppFormParam.CenterScreen)
         {
-            ShowInScreenCenter = true;
             InitializeComponent();
         }
 

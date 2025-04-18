@@ -39,10 +39,8 @@ namespace PlainCEETimer.Forms
         private readonly ConfigObject AppConfig = App.AppConfig;
         private readonly StartUp StartUp = new();
 
-        public SettingsForm()
+        public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen)
         {
-            CompositedStyle = true;
-            ShowInScreenCenter = true;
             InitializeComponent();
         }
 

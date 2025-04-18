@@ -1,5 +1,4 @@
-﻿using PlainCEETimer.Dialogs;
-using PlainCEETimer.Forms;
+﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using System;
@@ -15,31 +14,17 @@ namespace PlainCEETimer.Controls
         /// </summary>
         public MessageBoxHelper MessageX { get; }
 
-        /// <summary>
-        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否应在加载之前就先调用 <see cref="AdjustUI"/> 调整 UI。
-        /// </summary>
-        protected bool AdjustBeforeLoad { get; set; }
-
-        /// <summary>
-        /// 获取或设置一个值，该值指示 <see cref="AppForm"/> 是否启用 WS_EX_COMPOSITED 样式以减少闪烁。
-        /// </summary>
-        protected bool CompositedStyle { get; set; }
-
-        protected bool ShowInScreenCenter { get; set; }
-
-        protected bool Special { private get; set; }
         protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
+        private AppFormParam Params;
+        private readonly bool Special;
         private static readonly float CurrentDpiRatio;
 
-        protected AppForm()
+        protected AppForm(AppFormParam param)
         {
-            if (this is not AppMessageBox)
-            {
-                MessageX = new(this);
-            }
-
+            Params = param;
+            Special = CheckParam(AppFormParam.Special);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
             AppLauncher_UniTopMostStateChanged();
@@ -63,21 +48,12 @@ namespace PlainCEETimer.Controls
 
         protected sealed override void OnLoad(EventArgs e)
         {
-            if (AdjustBeforeLoad)
-            {
-                AdjustUI();
-            }
-
             OnLoad();
-
-            if (!AdjustBeforeLoad)
-            {
-                AdjustUI();
-            }
+            AdjustUI();
 
             base.OnLoad(e);
 
-            if (ShowInScreenCenter)
+            if (CheckParam(AppFormParam.CenterScreen))
             {
                 Location = GetScreenCenter(GetCurrentScreenRect());
             }
@@ -119,7 +95,7 @@ namespace PlainCEETimer.Controls
             {
                 var cp = base.CreateParams;
 
-                if (CompositedStyle)
+                if (CheckParam(AppFormParam.CompositedStyle))
                 {
                     cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
                 }
@@ -402,6 +378,16 @@ namespace PlainCEETimer.Controls
             {
                 LocationRefreshed?.Invoke();
             }
+        }
+
+        protected bool CheckParam(AppFormParam param)
+        {
+            return (Params & param) != 0;
+        }
+
+        protected void AddParam(AppFormParam param)
+        {
+            Params |= param;
         }
 
         protected int ScaleToDpi(int px)

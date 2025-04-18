@@ -31,10 +31,8 @@ namespace PlainCEETimer.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        private ListViewDialog() : base(AppDialogProp.All)
+        private ListViewDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle)
         {
-            AdjustBeforeLoad = true;
-            CompositedStyle = true;
             InitializeComponent();
         }
 
