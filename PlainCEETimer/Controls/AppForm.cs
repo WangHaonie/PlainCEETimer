@@ -28,6 +28,7 @@ namespace PlainCEETimer.Controls
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
             AppLauncher_UniTopMostStateChanged();
+            MessageX = new(this);
         }
 
         static AppForm()
