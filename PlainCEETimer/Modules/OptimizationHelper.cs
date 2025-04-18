@@ -85,7 +85,7 @@ namespace PlainCEETimer.Modules
             {
                 var code = (int)ProcessHelper.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", 2, AdminRequired: true);
 
-                if (MessageX.Info($"优化完成！\n命令返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Shutdown(true);
                 }
