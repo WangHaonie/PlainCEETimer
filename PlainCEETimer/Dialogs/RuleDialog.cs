@@ -57,9 +57,9 @@ namespace PlainCEETimer.Dialogs
             else
             {
                 GetNewData();
-                ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
             }
 
+            ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
             TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
         }
 
