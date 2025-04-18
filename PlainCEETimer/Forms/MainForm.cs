@@ -718,21 +718,21 @@ namespace PlainCEETimer.Forms
                 if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
                 {
                     SetPhase(CountdownPhase.P1);
-                    ApplyCustomRule(0, ExamEnd - Now);
+                    ApplyCustomRule((int)CountdownPhase.P1, ExamStart - Now);
                     return;
                 }
 
                 if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
                 {
                     SetPhase(CountdownPhase.P2);
-                    ApplyCustomRule(1, ExamEnd - Now);
+                    ApplyCustomRule((int)CountdownPhase.P2, ExamEnd - Now);
                     return;
                 }
 
                 if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
                 {
                     SetPhase(CountdownPhase.P3);
-                    ApplyCustomRule(2, Now - ExamEnd);
+                    ApplyCustomRule((int)CountdownPhase.P3, Now - ExamEnd);
                     return;
                 }
             }
@@ -751,7 +751,7 @@ namespace PlainCEETimer.Forms
                 {
                     foreach (var Rule in CurrentRules)
                     {
-                        if (Phase == 2 ? (Span >= Rule.Tick) : (Span <= Rule.Tick + new TimeSpan(0, 0, 0, 1)))
+                        if (Phase == (int)CountdownPhase.P3 ? (Span >= Rule.Tick) : (Span <= Rule.Tick))
                         {
                             UpdateCountdown(SetCustomRule(Span, Rule.Text), Rule.Colors);
                             return;
@@ -881,8 +881,7 @@ namespace PlainCEETimer.Forms
 
         private void RefreshCustomRules(CountdownPhase phase)
         {
-            CurrentRules = CustomRules.Where(x => x.Phase == phase);
-            CurrentRuleCount = CurrentRules.Count();
+            CurrentRuleCount = (CurrentRules = CustomRules.Where(x => x.Phase == phase).OrderByDescending(x => x)).Count();
         }
 
         private void SaveConfig()

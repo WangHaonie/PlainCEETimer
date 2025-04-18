@@ -33,7 +33,7 @@ namespace PlainCEETimer.Modules.Configuration
 
             int TickOrder = other.Tick.CompareTo(Tick);
 
-            return Phase == CountdownPhase.P2 ? TickOrder : -TickOrder;
+            return Phase == CountdownPhase.P3 ? -TickOrder : TickOrder;
         }
 
         public bool Equals(CustomRuleObject other)
