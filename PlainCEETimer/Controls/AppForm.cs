@@ -401,15 +401,20 @@ namespace PlainCEETimer.Controls
             return new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
         }
 
-        protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
+        protected ContextMenu CreateNew(MenuItem[] Items)
+            => new(Items);
 
-        protected MenuItem AddItem(string Text) => new(Text);
+        protected MenuItem AddItem(string Text)
+            => new(Text);
 
-        protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
+        protected MenuItem AddItem(string Text, EventHandler OnClickHandler)
+            => new(Text, OnClickHandler);
 
-        protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
+        protected MenuItem AddSubMenu(string Text, MenuItem[] Items)
+            => new(Text, Items);
 
-        protected MenuItem AddSeparator() => new("-");
+        protected MenuItem AddSeparator()
+            => new("-");
 
         protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
         {
@@ -424,9 +429,11 @@ namespace PlainCEETimer.Controls
             return Strip;
         }
 
-        protected ToolStripMenuItem AddStripItem(string Text) => new(Text);
+        protected ToolStripMenuItem AddStripItem(string Text)
+            => new(Text);
 
-        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler) => new(Text, null, OnClickHandler);
+        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler)
+            => new(Text, null, OnClickHandler);
 
         protected ToolStripMenuItem AddSubStrip(string Text, ToolStripItem[] SubItems)
         {
@@ -435,7 +442,8 @@ namespace PlainCEETimer.Controls
             return Item;
         }
 
-        protected ToolStripSeparator AddStripSeparator() => new();
+        protected ToolStripSeparator AddStripSeparator()
+            => new();
 
         protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
         {
