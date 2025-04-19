@@ -1,15 +1,14 @@
-﻿using Microsoft.Win32;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using PlainCEETimer.Controls;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Forms
 {
@@ -19,6 +18,7 @@ namespace PlainCEETimer.Forms
         public static bool UniTopMost { get; private set; } = true;
         public static bool UseClassicContextMenu { get; private set; }
         public static bool ValidateNeeded { get; private set; } = true;
+        public static event Action UniTopMostChanged;
 
         private bool AutoSwitch;
         private bool CanUseRules;
@@ -289,7 +289,7 @@ namespace PlainCEETimer.Forms
             CompatibleWithPPTService();
             LoadContextMenu();
             LoadTrayIcon();
-            App.OnUniTopMostStateChanged();
+            UniTopMostChanged?.Invoke();
             SetLabelCountdownAutoWrap();
             TopMost = false;
             TopMost = AppConfig.General.TopMost;

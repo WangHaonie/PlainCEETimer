@@ -1,13 +1,13 @@
-﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Configuration;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
+using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules
 {
@@ -33,8 +33,6 @@ namespace PlainCEETimer.Modules
 
         public static event Action TrayMenuShowAllClicked;
         public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke();
-        public static event Action UniTopMostStateChanged;
-        public static void OnUniTopMostStateChanged() => UniTopMostStateChanged?.Invoke();
 
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
@@ -44,19 +42,13 @@ namespace PlainCEETimer.Modules
         public const string UxThemeDll = "uxtheme.dll";
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
-        public const string AppVersion = "3.0.8";
+        public const string AppVersion = "5.0.0";
         public const string AppBuildDate = "2025/04/18";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
         public const string WarnMsg = "警告 - 高考倒计时";
         public const string ErrMsg = "错误 - 高考倒计时";
-
-        private const string CP_Q = "/?";
-        private const string CP_H = "/h";
-        private const string CP_AC = "/ac";
-        private const string CP_FR = "/fr";
-        private const string CP_OP = "/op";
         private const string ExFileName = "UnhandledException.txt";
 
         private static Mutex MainMutex;
@@ -98,8 +90,8 @@ namespace PlainCEETimer.Modules
                     {
                         switch (Args[0])
                         {
-                            case CP_Q:
-                            case CP_H:
+                            case "/?":
+                            case "/h":
                                 MessageX.Info(
                                     """
                                     可用的命令行参数: 
@@ -112,15 +104,15 @@ namespace PlainCEETimer.Modules
                                     /op  优化本程序，提升运行速度
                                     """);
                                 break;
-                            case CP_AC:
+                            case "/ac":
                                 CheckAdmin(out string UserName, true);
                                 MessageX.Info($"当前用户 {UserName} {(IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
-                            case CP_FR:
+                            case "/fr":
                                 var version = Args.Length > 1 ? Args[1] : null;
                                 Application.Run(new DownloaderForm(version));
                                 break;
-                            case CP_OP:
+                            case "/op":
                                 if (MessageX.Warn(
                                     """
                                     确认对本程序进行优化？此操作将有助于提升一定的运行速度。

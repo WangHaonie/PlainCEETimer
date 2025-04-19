@@ -1,5 +1,5 @@
-﻿using PlainCEETimer.Modules;
-using System;
+﻿using System;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer
 {

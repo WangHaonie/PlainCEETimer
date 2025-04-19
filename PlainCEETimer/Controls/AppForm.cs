@@ -1,9 +1,9 @@
-﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
@@ -26,9 +26,13 @@ namespace PlainCEETimer.Controls
             Params = param;
             Special = CheckParam(AppFormParam.Special);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
-            App.UniTopMostStateChanged += AppLauncher_UniTopMostStateChanged;
-            AppLauncher_UniTopMostStateChanged();
             MessageX = new(this);
+
+            if (!Special)
+            {
+                MainForm.UniTopMostChanged += MainForm_UniTopMostChanged;
+                MainForm_UniTopMostChanged();
+            }
         }
 
         static AppForm()
@@ -401,15 +405,20 @@ namespace PlainCEETimer.Controls
             return new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
         }
 
-        protected ContextMenu CreateNew(MenuItem[] Items) => new(Items);
+        protected ContextMenu CreateNew(MenuItem[] Items)
+            => new(Items);
 
-        protected MenuItem AddItem(string Text) => new(Text);
+        protected MenuItem AddItem(string Text)
+            => new(Text);
 
-        protected MenuItem AddItem(string Text, EventHandler OnClickHandler) => new(Text, OnClickHandler);
+        protected MenuItem AddItem(string Text, EventHandler OnClickHandler)
+            => new(Text, OnClickHandler);
 
-        protected MenuItem AddSubMenu(string Text, MenuItem[] Items) => new(Text, Items);
+        protected MenuItem AddSubMenu(string Text, MenuItem[] Items)
+            => new(Text, Items);
 
-        protected MenuItem AddSeparator() => new("-");
+        protected MenuItem AddSeparator()
+            => new("-");
 
         protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
         {
@@ -424,9 +433,11 @@ namespace PlainCEETimer.Controls
             return Strip;
         }
 
-        protected ToolStripMenuItem AddStripItem(string Text) => new(Text);
+        protected ToolStripMenuItem AddStripItem(string Text)
+            => new(Text);
 
-        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler) => new(Text, null, OnClickHandler);
+        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler)
+            => new(Text, null, OnClickHandler);
 
         protected ToolStripMenuItem AddSubStrip(string Text, ToolStripItem[] SubItems)
         {
@@ -435,7 +446,8 @@ namespace PlainCEETimer.Controls
             return Item;
         }
 
-        protected ToolStripSeparator AddStripSeparator() => new();
+        protected ToolStripSeparator AddStripSeparator()
+            => new();
 
         protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
         {
@@ -452,9 +464,9 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void AppLauncher_UniTopMostStateChanged()
+        private void MainForm_UniTopMostChanged()
         {
-            TopMost = !IsDisposed && !Special && MainForm.UniTopMost;
+            TopMost = !IsDisposed && MainForm.UniTopMost;
         }
 
         private void SetLabelAutoWrapCore(Label Target, Size NewSize)

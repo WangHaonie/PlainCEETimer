@@ -1,7 +1,7 @@
-﻿using PlainCEETimer.Forms;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PlainCEETimer.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {

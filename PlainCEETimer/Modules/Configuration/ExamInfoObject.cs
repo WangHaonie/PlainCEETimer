@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using PlainCEETimer.Forms;
 using PlainCEETimer.Modules.JsonConverters;
-using System;
 
 namespace PlainCEETimer.Modules.Configuration
 {

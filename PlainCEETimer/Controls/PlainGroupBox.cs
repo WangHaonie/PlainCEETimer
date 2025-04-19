@@ -1,6 +1,6 @@
-﻿using PlainCEETimer.Interop;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {

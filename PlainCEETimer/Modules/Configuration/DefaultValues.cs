@@ -1,7 +1,7 @@
-﻿using PlainCEETimer.Interop;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules.Configuration
 {

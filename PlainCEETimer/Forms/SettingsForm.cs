@@ -1,15 +1,15 @@
-﻿using PlainCEETimer.Controls;
-using PlainCEETimer.Dialogs;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Win32Registry;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PlainCEETimer.Controls;
+using PlainCEETimer.Dialogs;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Win32Registry;
 
 namespace PlainCEETimer.Forms
 {
