@@ -21,6 +21,7 @@ namespace PlainCEETimer.Forms
         public static bool ValidateNeeded { get; private set; } = true;
 
         private bool AutoSwitch;
+        private bool CanUseRules;
         private bool ContextMenuStyleChanged;
         private bool IsCeiling;
         private bool IsCountdownReady;
@@ -39,7 +40,6 @@ namespace PlainCEETimer.Forms
         private bool UseClassicContextMenuBak;
         private bool UseCustomText;
         private int AutoSwitchInterval;
-        private int CurrentRuleCount;
         private int CurrentTheme;
         private int ExamIndex;
         private int ScreenIndex;
@@ -747,7 +747,7 @@ namespace PlainCEETimer.Forms
         {
             if (UseCustomText)
             {
-                if (CurrentRuleCount != 0)
+                if (CanUseRules)
                 {
                     foreach (var Rule in CurrentRules)
                     {
@@ -882,7 +882,7 @@ namespace PlainCEETimer.Forms
         private void RefreshCustomRules(CountdownPhase phase)
         {
             CurrentRules = [.. CustomRules.Where(rule => rule.Phase == phase).OrderByDescending(x => x)];
-            CurrentRuleCount = CurrentRules.Length;
+            CanUseRules = CurrentRules.Length != 0;
         }
 
         private void SaveConfig()
