@@ -122,7 +122,7 @@ namespace PlainCEETimer.Controls
         }
 
         /// <summary>
-        /// 在 ButtonOperation 的右侧添加一个新的按钮
+        /// 在 <see cref="ButtonOperation"/> 的右侧添加一个新的按钮
         /// </summary>
         /// <param name="Btn">新按钮的实例</param>
         /// <param name="cxTweak">与 ButtonOperation 水平方向上的间距</param>

@@ -26,9 +26,8 @@ namespace PlainCEETimer.Dialogs
             Controls.Add(ButtonGlobal);
         }
 
-        protected override void OnLoad()
+        protected override void OnShown()
         {
-            base.OnLoad();
             AddNewButton(ButtonGlobal, 6);
         }
 
