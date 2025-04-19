@@ -53,7 +53,6 @@ namespace PlainCEETimer.Forms
         private CountdownPosition CountdownPos;
         private CountdownPhase CurrentPhase = CountdownPhase.None;
         private CountdownState SelectedState;
-        private IEnumerable<CustomRuleObject> CurrentRules;
         private ColorSetObject[] CountdownColors;
         private DateTime ExamEnd;
         private DateTime ExamStart;
@@ -67,6 +66,7 @@ namespace PlainCEETimer.Forms
         private ContextMenuStrip ContextMenuStripMain;
         private ContextMenuStrip ContextMenuStripTray;
         private CustomRuleObject[] CustomRules;
+        private CustomRuleObject[] CurrentRules;
         private ExamInfoObject CurrentExam;
         private ExamInfoObject[] Exams;
         private Menu.MenuItemCollection ExamSwitchMain;
@@ -881,7 +881,8 @@ namespace PlainCEETimer.Forms
 
         private void RefreshCustomRules(CountdownPhase phase)
         {
-            CurrentRuleCount = (CurrentRules = CustomRules.Where(x => x.Phase == phase).OrderByDescending(x => x)).Count();
+            CurrentRules = [.. CustomRules.Where(rule => rule.Phase == phase).OrderByDescending(x => x)];
+            CurrentRuleCount = CurrentRules.Length;
         }
 
         private void SaveConfig()
