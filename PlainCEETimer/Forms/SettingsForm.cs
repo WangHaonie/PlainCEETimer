@@ -90,7 +90,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (App.AllowClosing)
+            if (App.AllowUIClosing)
             {
                 e.Cancel = false;
             }
@@ -654,6 +654,7 @@ namespace PlainCEETimer.Forms
             {
                 case SettingsArea.SyncTime:
                     IsSyncingTime = IsWorking;
+                    App.AllowShutdown = !IsWorking;
                     ButtonSyncTime.Enabled = !IsWorking;
                     ComboBoxNtpServers.Enabled = !IsWorking;
                     ButtonRestart.Enabled = !IsWorking;

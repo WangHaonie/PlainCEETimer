@@ -23,7 +23,7 @@ namespace PlainCEETimer.Controls
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (App.AllowClosing)
+            if (App.AllowUIClosing)
             {
                 e.Cancel = false;
             }

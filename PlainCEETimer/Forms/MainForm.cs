@@ -107,7 +107,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (App.AllowClosing || e.CloseReason == CloseReason.WindowsShutDown)
+            if (App.AllowUIClosing || e.CloseReason == CloseReason.WindowsShutDown)
             {
                 if (App.CanSaveConfig)
                 {

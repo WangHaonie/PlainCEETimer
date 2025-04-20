@@ -15,7 +15,8 @@ namespace PlainCEETimer.Modules
     {
         public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
         public static bool CanSaveConfig { get; set; }
-        public static bool AllowClosing { get; private set; }
+        public static bool AllowUIClosing { get; private set; }
+        public static bool AllowShutdown { get; set; } = true;
         public static bool IsAdmin { get; private set; }
         public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
         public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
@@ -161,28 +162,31 @@ namespace PlainCEETimer.Modules
 
         public static void Shutdown(bool Restart = false)
         {
-            AllowClosing = true;
-
-            if (CanSaveConfig)
+            if (AllowShutdown)
             {
-                ConfigHandler.Save();
-            }
+                AllowUIClosing = true;
 
-            Application.Exit();
-            Application.ExitThread();
+                if (CanSaveConfig)
+                {
+                    ConfigHandler.Save();
+                }
 
-            if (Restart)
-            {
-                ClearMutex();
-                ProcessHelper.Run(CurrentExecutablePath);
-                Exit(ExitReason.UserRestart);
-            }
-            else
-            {
-                Exit(ExitReason.UserShutdown);
-            }
+                Application.Exit();
+                Application.ExitThread();
 
-            AllowClosing = false;
+                if (Restart)
+                {
+                    ClearMutex();
+                    ProcessHelper.Run(CurrentExecutablePath);
+                    Exit(ExitReason.UserRestart);
+                }
+                else
+                {
+                    Exit(ExitReason.UserShutdown);
+                }
+
+                AllowUIClosing = false;
+            }
         }
 
         public static void OpenInstallDir()
@@ -222,7 +226,7 @@ namespace PlainCEETimer.Modules
 
         private static void HandleException(Exception ex)
         {
-            if (!AllowClosing)
+            if (!AllowUIClosing)
             {
                 var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToFormatted()} ==================\n{ex}";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
