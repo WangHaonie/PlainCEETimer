@@ -618,7 +618,7 @@ namespace PlainCEETimer.Forms
         {
             try
             {
-                var ExitCode = (int)ProcessHelper.Run("cmd", string.Format("/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{0} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", Server), 2, true);
+                var ExitCode = (int)ProcessHelper.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{Server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", 2, true);
                 SwitchToToolsSafe();
                 MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
             }

@@ -18,7 +18,7 @@ namespace PlainCEETimer.Modules.Http
             try
             {
                 var report = new DownloadReport();
-                using var response = await HttpFactory.Instance.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
+                using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
                 response.EnsureSuccessStatusCode();
                 var total = 0L;
 
@@ -36,12 +36,13 @@ namespace PlainCEETimer.Modules.Http
                 var read = 0;
                 var sw = Stopwatch.StartNew();
                 var lastReport = sw.Elapsed;
+                var elapsed = new TimeSpan(0L);
 
                 while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
                 {
                     await file.WriteAsync(buffer, 0, read, token);
                     downloaded += read;
-                    var elapsed = sw.Elapsed;
+                    elapsed = sw.Elapsed;
                     report.Downloaded = downloaded / 1024L;
                     report.Progress = (int)(downloaded * 100 / total);
                     report.Speed = (downloaded - last) / (elapsed - lastReport).TotalSeconds / 1024D;
