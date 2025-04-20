@@ -19,7 +19,9 @@ namespace PlainCEETimer.Controls
         private bool IsLoading = true;
         private AppFormParam Params;
         private readonly bool Special;
+
         private static readonly float CurrentDpiRatio;
+        private static readonly bool IsHighDpi;
 
         protected AppForm(AppFormParam param)
         {
@@ -37,7 +39,7 @@ namespace PlainCEETimer.Controls
 
         static AppForm()
         {
-            CurrentDpiRatio = NativeInterop.GetDpiForSystem() / 96F;
+            IsHighDpi = (CurrentDpiRatio = NativeInterop.GetDpiForSystem() / 96F) > 1F;
         }
 
         public void ReActivate()
@@ -182,7 +184,7 @@ namespace PlainCEETimer.Controls
         /// </summary>
         protected void WhenHighDpi(Action Method)
         {
-            if (CurrentDpiRatio > 1F)
+            if (IsHighDpi)
             {
                 Method();
             }
@@ -308,9 +310,9 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void AlignControlsX(Control[] Targets, Control Reference, int Tweak = 0)
         {
-            foreach (var Target in Targets)
+            for (int i = 0; i < Targets.Length; i++)
             {
-                AlignControlsX(Target, Reference, Tweak);
+                AlignControlsX(Targets[i], Reference, Tweak);
             }
         }
 

@@ -237,7 +237,7 @@
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
     <Compile Include="Modules\ComboData.cs" />
     <Compile Include="Modules\OptimizationHelper.cs" />
-    <Compile Include="Modules\PlainListViewComparer.cs" />
+    <Compile Include="Modules\ListViewItemComparer.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\Win32Registry\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />

@@ -218,7 +218,7 @@ namespace PlainCEETimer.Interop
         private static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        private struct RECT
         {
             public int Left;
             public int Top;

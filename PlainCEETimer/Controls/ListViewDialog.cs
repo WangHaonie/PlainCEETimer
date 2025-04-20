@@ -328,7 +328,7 @@ namespace PlainCEETimer.Controls
                 ContextMenuStripMain.Opening += (_, _) => HandleMenuItemEnabling();
             }
 
-            ListViewMain.ListViewItemSorter = new PlainListViewComparer<TData>();
+            ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
         }
 
         private void HandleMenuItemEnabling()

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
 {
-    public sealed class PlainListViewComparer<T> : IComparer
+    public sealed class ListViewItemComparer<T> : IComparer
         where T : IListViewObject<T>
     {
         public int Compare(object x, object y)
