@@ -95,7 +95,7 @@ namespace PlainCEETimer.Forms
         {
             RefreshSettings();
             ValidateNeeded = false;
-            Task.Run(() => new Updater().CheckForUpdate(true, this));
+            Task.Run(() => new Updater().CheckForUpdate(false, this));
             IsNormalStart = true;
         }
 
@@ -202,35 +202,6 @@ namespace PlainCEETimer.Forms
             IsReadyToMove = false;
         }
         #endregion
-
-        private void ContextSettings_Click(object sender, EventArgs e)
-        {
-            if (FormSettings == null || FormSettings.IsDisposed)
-            {
-                FormSettings = new();
-
-                FormSettings.FormClosed += (_, _) =>
-                {
-                    if (FormSettings.RefreshNeeded)
-                    {
-                        RealSaveConfig();
-                        RefreshSettings();
-                    }
-                };
-            }
-
-            FormSettings.ReActivate();
-        }
-
-        private void ContextAbout_Click(object sender, EventArgs e)
-        {
-            if (FormAbout == null || FormAbout.IsDisposed)
-            {
-                FormAbout = new();
-            }
-
-            FormAbout.ReActivate();
-        }
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
         {
@@ -457,17 +428,46 @@ namespace PlainCEETimer.Forms
 
             */
 
-            ContextMenu BaseContextMenu() => CreateNew
-            ([
-                AddSubMenu("切换(&Q)",
+            ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
+            [
+                b.AddSubMenu("切换(&Q)",
                 [
-                    AddItem("请先添加考试信息")
+                    b.AddItem("请先添加考试信息")
                 ]),
-                AddSeparator(),
-                AddItem("设置(&S)", ContextSettings_Click),
-                AddItem("关于(&A)", ContextAbout_Click),
-                AddSeparator(),
-                AddItem("安装目录(&D)", (_, _) => App.OpenInstallDir())
+
+                b.AddSeparator(),
+
+                b.AddItem("设置(&S)", (_, _) =>
+                {
+                    if (FormSettings == null || FormSettings.IsDisposed)
+                    {
+                        FormSettings = new();
+
+                        FormSettings.FormClosed += (_, _) =>
+                        {
+                            if (FormSettings.RefreshNeeded)
+                            {
+                                RealSaveConfig();
+                                RefreshSettings();
+                            }
+                        };
+                    }
+
+                    FormSettings.ReActivate();
+                }),
+
+                b.AddItem("关于(&A)", (_, _) =>
+                {
+                    if (FormAbout == null || FormAbout.IsDisposed)
+                    {
+                        FormAbout = new();
+                    }
+
+                    FormAbout.ReActivate();
+                }),
+
+                b.AddSeparator(),
+                b.AddItem("安装目录(&D)", (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -495,18 +495,17 @@ namespace PlainCEETimer.Forms
                         Visible = true,
                         Text = Text,
                         Icon = App.AppIcon,
-                    };
-
-                    TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
-                    ([
-                        AddSeparator(),
-                        AddItem("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
-                        AddSubMenu("关闭(&C)",
+                        ContextMenu = ContextMenuBuilder.Merge(ContextMenuTray, ContextMenuBuilder.Build(b =>
                         [
-                            AddItem("重启(&R)", (_, _) => App.Shutdown(true)),
-                            AddItem("退出(&Q)", (_, _) => App.Shutdown())
-                        ])
-                    ]));
+                            b.AddSeparator(),
+                            b.AddItem("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                            b.AddSubMenu("关闭(&C)",
+                            [
+                                b.AddItem("重启(&R)", (_, _) => App.Shutdown(true)),
+                                b.AddItem("退出(&Q)", (_, _) => App.Shutdown())
+                            ])
+                        ]))
+                    };
 
                     TrayIcon.MouseClick -= TrayIcon_MouseClick;
                     TrayIcon.MouseClick += TrayIcon_MouseClick;

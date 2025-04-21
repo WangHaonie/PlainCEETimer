@@ -142,16 +142,6 @@ namespace PlainCEETimer.Controls
             ContextMenuMain.Show(ButtonOperation, new Point(0, ButtonOperation.Height));
         }
 
-        private void ContextAdd_Click(object sender, EventArgs e)
-        {
-            var SubDialog = GetSubDialogInstance();
-
-            if (SubDialog.ShowDialog() == DialogResult.OK)
-            {
-                AddItemSafe(SubDialog.Data);
-            }
-        }
-
         private void ContextEdit_Click(object sender, EventArgs e)
         {
             var TargetItem = ListViewMain.SelectedItems[0];
@@ -291,14 +281,23 @@ namespace PlainCEETimer.Controls
             PanelMain.ResumeLayout(false);
             ResumeLayout(false);
 
-            ContextMenuMain = CreateNew
-            ([
-                AddItem("添加(&A)", ContextAdd_Click),
-                AddSeparator(),
-                ContextEdit = AddItem("编辑(&E)", ContextEdit_Click),
-                ContextDelete = AddItem("删除(&D)", ContextDelete_Click),
-                AddSeparator(),
-                ContextSelectAll = AddItem("全选(&Q)", ContextSelectAll_Click)
+            ContextMenuMain = ContextMenuBuilder.Build(b =>
+            [
+                b.AddItem("添加(&A)", (_, _) =>
+                {
+                    var SubDialog = GetSubDialogInstance();
+
+                    if (SubDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        AddItemSafe(SubDialog.Data);
+                    }
+                }),
+
+                b.AddSeparator(),
+                ContextEdit = b.AddItem("编辑(&E)", ContextEdit_Click),
+                ContextDelete = b.AddItem("删除(&D)", ContextDelete_Click),
+                b.AddSeparator(),
+                ContextSelectAll = b.AddItem("全选(&Q)", ContextSelectAll_Click)
             ]);
 
             ListViewMain.ContextMenu = ContextMenuMain;

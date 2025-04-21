@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules
     {
         private DownloaderForm FormDownloader;
 
-        public void CheckForUpdate(bool IsProgramStart, AppForm OwnerForm)
+        public void CheckForUpdate(bool ShowMsg, AppForm OwnerForm)
         {
             var MessageX = OwnerForm.MessageX;
 
@@ -37,14 +37,14 @@ namespace PlainCEETimer.Modules
                         });
                     }
                 }
-                else if (!IsProgramStart)
+                else if (ShowMsg)
                 {
                     MessageX.Info($"当前 v{App.AppVersion} 已是最新版本。\n\n获取到的版本: v{LatestVersion}\n发布日期: {PublishDate}\n\n当前版本更新日志: {UpdateLog}");
                 }
             }
             catch (Exception ex)
             {
-                if (!IsProgramStart)
+                if (ShowMsg)
                 {
                     MessageX.Error("检查更新时发生错误! ", ex);
                 }

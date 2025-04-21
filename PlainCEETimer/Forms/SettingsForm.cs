@@ -292,18 +292,6 @@ namespace PlainCEETimer.Forms
             ContextMenuDefaultColor.Show(ButtonDefaultColor, new Point(0, ButtonDefaultColor.Height));
         }
 
-        private void ContextDark_Click(object sender, EventArgs e)
-        {
-            SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
-            SettingsChanged(sender, e);
-        }
-
-        private void ContextLight_Click(object sender, EventArgs e)
-        {
-            SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
-            SettingsChanged(sender, e);
-        }
-
         private void ButtonSyncTime_Click(object sender, EventArgs e)
         {
             if (!App.IsAdmin)
@@ -387,10 +375,19 @@ namespace PlainCEETimer.Forms
                 GBoxTheme.Visible = false;
             }
 
-            ContextMenuDefaultColor = CreateNew
-            ([
-                AddItem("白底(&L)", ContextLight_Click),
-                AddItem("黑底(&D)", ContextDark_Click)
+            ContextMenuDefaultColor = ContextMenuBuilder.Build(b =>
+            [
+                b.AddItem("白底(&L)", (_, _) =>
+                {
+                    SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
+                    SettingsChanged(null, null);
+                }),
+
+                b.AddItem("黑底(&D)", (_, _) =>
+                {
+                    SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
+                    SettingsChanged(null, null);
+                })
             ]);
 
             LabelPreviewColor1.Text = $"距离...{Constants.PH_START}...";

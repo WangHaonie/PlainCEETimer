@@ -393,27 +393,6 @@ namespace PlainCEETimer.Controls
             return new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
         }
 
-        protected ContextMenu CreateNew(MenuItem[] Items)
-            => new(Items);
-
-        protected MenuItem AddItem(string Text)
-            => new(Text);
-
-        protected MenuItem AddItem(string Text, EventHandler OnClickHandler)
-            => new(Text, OnClickHandler);
-
-        protected MenuItem AddSubMenu(string Text, MenuItem[] Items)
-            => new(Text, Items);
-
-        protected MenuItem AddSeparator()
-            => new("-");
-
-        protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
-        {
-            Target.MergeMenu(Reference);
-            return Target;
-        }
-
         private void AppLauncher_TrayMenuShowAllClicked()
         {
             if (!IsDisposed)
