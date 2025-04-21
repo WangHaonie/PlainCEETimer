@@ -389,8 +389,8 @@ namespace PlainCEETimer.Forms
 
             ContextMenuDefaultColor = CreateNew
             ([
-                AddItem(Constants.Light, ContextLight_Click),
-                AddItem(Constants.Dark, ContextDark_Click)
+                AddItem("白底(&L)", ContextLight_Click),
+                AddItem("黑底(&D)", ContextDark_Click)
             ]);
 
             LabelPreviewColor1.Text = $"距离...{Constants.PH_START}...";

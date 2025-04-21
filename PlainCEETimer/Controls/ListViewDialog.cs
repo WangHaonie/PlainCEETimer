@@ -293,12 +293,12 @@ namespace PlainCEETimer.Controls
 
             ContextMenuMain = CreateNew
             ([
-                AddItem(Constants.Add, ContextAdd_Click),
+                AddItem("添加(&A)", ContextAdd_Click),
                 AddSeparator(),
-                ContextEdit = AddItem(Constants.Edit, ContextEdit_Click),
-                ContextDelete = AddItem(Constants.Delete, ContextDelete_Click),
+                ContextEdit = AddItem("编辑(&E)", ContextEdit_Click),
+                ContextDelete = AddItem("删除(&D)", ContextDelete_Click),
                 AddSeparator(),
-                ContextSelectAll = AddItem(Constants.SelectAll, ContextSelectAll_Click)
+                ContextSelectAll = AddItem("全选(&Q)", ContextSelectAll_Click)
             ]);
 
             ListViewMain.ContextMenu = ContextMenuMain;

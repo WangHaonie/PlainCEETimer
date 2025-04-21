@@ -459,15 +459,15 @@ namespace PlainCEETimer.Forms
 
             ContextMenu BaseContextMenu() => CreateNew
             ([
-                AddSubMenu(Constants.Switch,
+                AddSubMenu("切换(&Q)",
                 [
-                    AddItem(Constants.AddExamInfo)
+                    AddItem("请先添加考试信息")
                 ]),
                 AddSeparator(),
-                AddItem(Constants.Settings, ContextSettings_Click),
-                AddItem(Constants.About, ContextAbout_Click),
+                AddItem("设置(&S)", ContextSettings_Click),
+                AddItem("关于(&A)", ContextAbout_Click),
                 AddSeparator(),
-                AddItem(Constants.InstallDir, (_, _) => App.OpenInstallDir())
+                AddItem("安装目录(&D)", (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -500,11 +500,11 @@ namespace PlainCEETimer.Forms
                     TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
                     ([
                         AddSeparator(),
-                        AddItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
-                        AddSubMenu(Constants.Close,
+                        AddItem("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                        AddSubMenu("关闭(&C)",
                         [
-                            AddItem(Constants.Restart, (_, _) => App.Shutdown(true)),
-                            AddItem(Constants.Quit, (_, _) => App.Shutdown())
+                            AddItem("重启(&R)", (_, _) => App.Shutdown(true)),
+                            AddItem("退出(&Q)", (_, _) => App.Shutdown())
                         ])
                     ]));
 
