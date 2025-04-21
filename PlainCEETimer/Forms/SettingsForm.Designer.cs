@@ -39,7 +39,6 @@
             this.ButtonExamInfo = new PlainCEETimer.Controls.PlainButton();
             this.GBoxOthers = new PlainCEETimer.Controls.PlainGroupBox();
             this.CheckBoxTrayText = new PlainCEETimer.Controls.PlainCheckBox();
-            this.CheckBoxWCCMS = new PlainCEETimer.Controls.PlainCheckBox();
             this.CheckBoxMemClean = new PlainCEETimer.Controls.PlainCheckBox();
             this.CheckBoxTrayIcon = new PlainCEETimer.Controls.PlainCheckBox();
             this.CheckBoxUniTopMost = new PlainCEETimer.Controls.PlainCheckBox();
@@ -218,7 +217,6 @@
             // GBoxOthers
             // 
             this.GBoxOthers.Controls.Add(this.CheckBoxTrayText);
-            this.GBoxOthers.Controls.Add(this.CheckBoxWCCMS);
             this.GBoxOthers.Controls.Add(this.CheckBoxMemClean);
             this.GBoxOthers.Controls.Add(this.CheckBoxTrayIcon);
             this.GBoxOthers.Controls.Add(this.CheckBoxUniTopMost);
@@ -226,7 +224,7 @@
             this.GBoxOthers.Controls.Add(this.CheckBoxStartup);
             this.GBoxOthers.Location = new System.Drawing.Point(5, 76);
             this.GBoxOthers.Name = "GBoxOthers";
-            this.GBoxOthers.Size = new System.Drawing.Size(323, 167);
+            this.GBoxOthers.Size = new System.Drawing.Size(323, 148);
             this.GBoxOthers.TabIndex = 44;
             this.GBoxOthers.TabStop = false;
             this.GBoxOthers.Text = "其他";
@@ -242,17 +240,6 @@
             this.CheckBoxTrayText.Text = "鼠标悬停在通知图标上时显示倒计时内容(&N)";
             this.CheckBoxTrayText.UseVisualStyleBackColor = true;
             this.CheckBoxTrayText.CheckedChanged += new System.EventHandler(this.SettingsChanged);
-            // 
-            // CheckBoxWCCMS
-            // 
-            this.CheckBoxWCCMS.AutoSize = true;
-            this.CheckBoxWCCMS.Location = new System.Drawing.Point(9, 144);
-            this.CheckBoxWCCMS.Name = "CheckBoxWCCMS";
-            this.CheckBoxWCCMS.Size = new System.Drawing.Size(228, 19);
-            this.CheckBoxWCCMS.TabIndex = 19;
-            this.CheckBoxWCCMS.Text = "使用 Windows 经典右键菜单样式(&Q)";
-            this.CheckBoxWCCMS.UseVisualStyleBackColor = true;
-            this.CheckBoxWCCMS.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // CheckBoxMemClean
             // 
@@ -1005,7 +992,6 @@
         private PlainCEETimer.Controls.PlainCheckBox CheckBoxUniTopMost;
         private PlainCEETimer.Controls.PlainCheckBox CheckBoxTopMost;
         private PlainCEETimer.Controls.PlainCheckBox CheckBoxStartup;
-        private PlainCEETimer.Controls.PlainCheckBox CheckBoxWCCMS;
         private System.Windows.Forms.Label LabelExamInfo;
         private PlainCEETimer.Controls.ComboBoxEx ComboBoxAutoSwitchIntervel;
         private PlainCEETimer.Controls.PlainCheckBox CheckBoxAutoSwitch;

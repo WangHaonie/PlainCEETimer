@@ -26,9 +26,7 @@ namespace PlainCEETimer.Forms
         private bool ChangingCheckBox;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
-        private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private ContextMenu ContextMenuDefaultColor;
-        private ContextMenuStrip ContextMenuStripDefaultColor;
         private CustomRuleObject[] EditedCustomRules;
         private ExamInfoObject[] EditedExamInfo;
         private Font SelectedFont;
@@ -291,7 +289,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonDefaultColor_Click(object sender, EventArgs e)
         {
-            ShowContextMenu(ButtonDefaultColor, ContextMenuDefaultColor, ContextMenuStripDefaultColor, UseClassicContextMenu);
+            ContextMenuDefaultColor.Show(ButtonDefaultColor, new Point(0, ButtonDefaultColor.Height));
         }
 
         private void ContextDark_Click(object sender, EventArgs e)
@@ -389,22 +387,11 @@ namespace PlainCEETimer.Forms
                 GBoxTheme.Visible = false;
             }
 
-            if (UseClassicContextMenu)
-            {
-                ContextMenuDefaultColor = CreateNew
-                ([
-                    AddItem(Constants.Light, ContextLight_Click),
-                    AddItem(Constants.Dark, ContextDark_Click)
-                ]);
-            }
-            else
-            {
-                ContextMenuStripDefaultColor = CreateNewStrip
-                ([
-                    AddStripItem(Constants.Light, ContextLight_Click),
-                    AddStripItem(Constants.Dark, ContextDark_Click)
-                ]);
-            }
+            ContextMenuDefaultColor = CreateNew
+            ([
+                AddItem(Constants.Light, ContextLight_Click),
+                AddItem(Constants.Dark, ContextDark_Click)
+            ]);
 
             LabelPreviewColor1.Text = $"距离...{Constants.PH_START}...";
             LabelPreviewColor2.Text = $"距离...{Constants.PH_LEFT}...";
@@ -502,7 +489,6 @@ namespace PlainCEETimer.Forms
             CheckBoxStartup.Checked = (bool)StartUp.Operate(0);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
-            CheckBoxWCCMS.Checked = AppConfig.General.WCCMS;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
             CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
             CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
@@ -719,8 +705,7 @@ namespace PlainCEETimer.Forms
                     TrayText = CheckBoxTrayText.Checked,
                     MemClean = CheckBoxMemClean.Checked,
                     TopMost = CheckBoxTopMost.Checked,
-                    UniTopMost = CheckBoxUniTopMost.Checked,
-                    WCCMS = CheckBoxWCCMS.Checked
+                    UniTopMost = CheckBoxUniTopMost.Checked
                 },
 
                 Display = new()

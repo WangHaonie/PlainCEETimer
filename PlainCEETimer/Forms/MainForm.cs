@@ -16,13 +16,11 @@ namespace PlainCEETimer.Forms
     {
         public static bool IsNormalStart { get; set; }
         public static bool UniTopMost { get; private set; } = true;
-        public static bool UseClassicContextMenu { get; private set; }
         public static bool ValidateNeeded { get; private set; } = true;
         public static event Action UniTopMostChanged;
 
         private bool AutoSwitch;
         private bool CanUseRules;
-        private bool ContextMenuStyleChanged;
         private bool IsCeiling;
         private bool IsCountdownReady;
         private bool IsCountdownRunning;
@@ -37,7 +35,6 @@ namespace PlainCEETimer.Forms
         private bool ShowTrayIcon;
         private bool ShowTrayText;
         private bool TrayIconReopen;
-        private bool UseClassicContextMenuBak;
         private bool UseCustomText;
         private int AutoSwitchInterval;
         private int CurrentTheme;
@@ -63,8 +60,6 @@ namespace PlainCEETimer.Forms
         private ConfigObject AppConfig;
         private ContextMenu ContextMenuMain;
         private ContextMenu ContextMenuTray;
-        private ContextMenuStrip ContextMenuStripMain;
-        private ContextMenuStrip ContextMenuStripTray;
         private CustomRuleObject[] CustomRules;
         private CustomRuleObject[] CurrentRules;
         private ExamInfoObject CurrentExam;
@@ -75,7 +70,6 @@ namespace PlainCEETimer.Forms
         private System.Threading.Timer MemCleaner;
         private System.Threading.Timer Countdown;
         private System.Windows.Forms.Timer AutoSwitchHandler;
-        private ToolStripItemCollection ExamSwitchMainStrip;
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
 
@@ -149,26 +143,10 @@ namespace PlainCEETimer.Forms
         private void ExamItems_Click(object sender, EventArgs e)
         {
             int ItemIndex;
-            MenuItem Sender = null;
-            ToolStripMenuItem SenderStrip = null;
+            var Sender = (MenuItem)sender;
+            ItemIndex = Sender.Index;
 
-            if (UseClassicContextMenu)
-            {
-                Sender = (MenuItem)sender;
-                ItemIndex = Sender.Index;
-            }
-            else
-            {
-                SenderStrip = (ToolStripMenuItem)sender;
-                ItemIndex = (int)SenderStrip.Tag;
-            }
-
-            if (SenderStrip != null && SenderStrip.Checked)
-            {
-                SenderStrip.Checked = true;
-            }
-
-            if ((SenderStrip != null && !SenderStrip.Checked) || (Sender != null && !Sender.Checked))
+            if (Sender != null && !Sender.Checked)
             {
                 UnselectAllExamItems();
                 ExamIndex = ItemIndex;
@@ -325,19 +303,6 @@ namespace PlainCEETimer.Forms
 
         private void LoadConfig()
         {
-            var tmp = AppConfig.General.WCCMS;
-
-            if (UseClassicContextMenu != tmp && !ValidateNeeded)
-            {
-                UseClassicContextMenuBak = UseClassicContextMenu;
-                ContextMenuStyleChanged = true;
-            }
-            else if (tmp == UseClassicContextMenuBak)
-            {
-                ContextMenuStyleChanged = false;
-            }
-
-            UseClassicContextMenu = tmp;
             GlobalTexts = AppConfig.GlobalCustomTexts;
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
@@ -446,86 +411,37 @@ namespace PlainCEETimer.Forms
 
         private void LoadContextMenu()
         {
-            if (ContextMenuStyleChanged)
-            {
-                UseClassicContextMenu = UseClassicContextMenuBak;
+            ContextMenuMain = BaseContextMenu();
+            ExamSwitchMain = ContextMenuMain.MenuItems[0].MenuItems;
 
-                if (MessageX.Warn("由于系统限制，切换右键菜单样式需要重启应用程序后才能生效。\n\n是否立即重启？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
-                {
-                    App.Shutdown(true);
-                }
+            if (ShowTrayIcon)
+            {
+                var tmp = BaseContextMenu();
+                tmp.MenuItems.RemoveAt(0);
+                tmp.MenuItems.RemoveAt(0);
+                ContextMenuTray = tmp;
             }
 
-            if (UseClassicContextMenu)
+            ContextMenu = ContextMenuMain;
+            LabelCountdown.ContextMenu = ContextMenuMain;
+
+            if (Exams.Length != 0)
             {
-                ContextMenuMain = BaseContextMenu();
-                ExamSwitchMain = ContextMenuMain.MenuItems[0].MenuItems;
+                ExamSwitchMain.Clear();
+                var ItemIndex = 0;
 
-                if (ShowTrayIcon)
+                foreach (var Exam in Exams)
                 {
-                    var tmp = BaseContextMenu();
-                    tmp.MenuItems.RemoveAt(0);
-                    tmp.MenuItems.RemoveAt(0);
-                    ContextMenuTray = tmp;
-                }
-
-                ContextMenu = ContextMenuMain;
-                LabelCountdown.ContextMenu = ContextMenuMain;
-
-                if (Exams.Length != 0)
-                {
-                    ExamSwitchMain.Clear();
-                    var ItemIndex = 0;
-
-                    foreach (var Exam in Exams)
+                    var Item = new MenuItem()
                     {
-                        var Item = new MenuItem()
-                        {
-                            Text = $"{ItemIndex + 1}. {Exam}",
-                            RadioCheck = true,
-                            Checked = ItemIndex == ExamIndex
-                        };
+                        Text = $"{ItemIndex + 1}. {Exam}",
+                        RadioCheck = true,
+                        Checked = ItemIndex == ExamIndex
+                    };
 
-                        Item.Click += ExamItems_Click;
-                        ExamSwitchMain.Add(Item);
-                        ItemIndex++;
-                    }
-                }
-            }
-            else
-            {
-                ContextMenuStripMain = BaseContextMenuStrip();
-                ExamSwitchMainStrip = ((ToolStripMenuItem)ContextMenuStripMain.Items[0]).DropDownItems;
-
-                if (ShowTrayIcon)
-                {
-                    var tmp = BaseContextMenuStrip();
-                    tmp.Items.RemoveAt(0);
-                    tmp.Items.RemoveAt(0);
-                    ContextMenuStripTray = tmp;
-                }
-
-                ContextMenuStrip = ContextMenuStripMain;
-                LabelCountdown.ContextMenuStrip = ContextMenuStripMain;
-
-                if (Exams.Length != 0)
-                {
-                    ExamSwitchMainStrip.Clear();
-                    var ItemIndex = 0;
-
-                    foreach (var Exam in Exams)
-                    {
-                        var Item = new ToolStripMenuItem()
-                        {
-                            Text = $"{ItemIndex + 1}. {Exam}",
-                            Checked = ItemIndex == ExamIndex,
-                            Tag = ItemIndex
-                        };
-
-                        Item.Click += ExamItems_Click;
-                        ExamSwitchMainStrip.Add(Item);
-                        ItemIndex++;
-                    }
+                    Item.Click += ExamItems_Click;
+                    ExamSwitchMain.Add(Item);
+                    ItemIndex++;
                 }
             }
 
@@ -552,19 +468,6 @@ namespace PlainCEETimer.Forms
                 AddItem(Constants.About, ContextAbout_Click),
                 AddSeparator(),
                 AddItem(Constants.InstallDir, (_, _) => App.OpenInstallDir())
-            ]);
-
-            ContextMenuStrip BaseContextMenuStrip() => CreateNewStrip
-            ([
-                AddSubStrip(Constants.Switch,
-                [
-                    AddStripItem(Constants.AddExamInfo)
-                ]),
-                AddStripSeparator(),
-                AddStripItem(Constants.Settings, ContextSettings_Click),
-                AddStripItem(Constants.About, ContextAbout_Click),
-                AddStripSeparator(),
-                AddStripItem(Constants.InstallDir, (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -594,32 +497,16 @@ namespace PlainCEETimer.Forms
                         Icon = App.AppIcon,
                     };
 
-                    if (UseClassicContextMenu)
-                    {
-                        TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
-                        ([
-                            AddSeparator(),
-                            AddItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
-                            AddSubMenu(Constants.Close,
-                            [
-                                AddItem(Constants.Restart, (_, _) => App.Shutdown(true)),
-                                AddItem(Constants.Quit, (_, _) => App.Shutdown())
-                            ])
-                        ]));
-                    }
-                    else
-                    {
-                        TrayIcon.ContextMenuStrip = MergeStrip(ContextMenuStripTray,
+                    TrayIcon.ContextMenu = Merge(ContextMenuTray, CreateNew
+                    ([
+                        AddSeparator(),
+                        AddItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
+                        AddSubMenu(Constants.Close,
                         [
-                            AddStripSeparator(),
-                            AddStripItem(Constants.Show, (_, _) => App.OnTrayMenuShowAllClicked()),
-                            AddSubStrip(Constants.Close,
-                            [
-                                AddStripItem(Constants.Restart, (_, _) => App.Shutdown(true)),
-                                AddStripItem(Constants.Quit, (_, _) => App.Shutdown())
-                            ])
-                        ]);
-                    }
+                            AddItem(Constants.Restart, (_, _) => App.Shutdown(true)),
+                            AddItem(Constants.Quit, (_, _) => App.Shutdown())
+                        ])
+                    ]));
 
                     TrayIcon.MouseClick -= TrayIcon_MouseClick;
                     TrayIcon.MouseClick += TrayIcon_MouseClick;
@@ -647,19 +534,9 @@ namespace PlainCEETimer.Forms
 
         private void UnselectAllExamItems()
         {
-            if (UseClassicContextMenu)
+            foreach (MenuItem Item in ExamSwitchMain)
             {
-                foreach (MenuItem Item in ExamSwitchMain)
-                {
-                    Item.Checked = false;
-                }
-            }
-            else
-            {
-                foreach (ToolStripMenuItem Item in ExamSwitchMainStrip)
-                {
-                    Item.Checked = false;
-                }
+                Item.Checked = false;
             }
         }
 
@@ -667,29 +544,13 @@ namespace PlainCEETimer.Forms
         {
             if (ExamIndex != -1)
             {
-                if (UseClassicContextMenu)
-                {
-                    ExamSwitchMain[ExamIndex].Checked = true;
-                }
-                else
-                {
-                    ((ToolStripMenuItem)ExamSwitchMainStrip[ExamIndex]).Checked = true;
-                }
+                ExamSwitchMain[ExamIndex].Checked = true;
             }
             else
             {
-                if (UseClassicContextMenu)
-                {
-                    var Item = ExamSwitchMain[0];
-                    Item.Checked = false;
-                    Item.Enabled = false;
-                }
-                else
-                {
-                    var Item = (ToolStripMenuItem)ExamSwitchMainStrip[0];
-                    Item.Checked = false;
-                    Item.Enabled = false;
-                }
+                var Item = ExamSwitchMain[0];
+                Item.Checked = false;
+                Item.Enabled = false;
             }
 
             if (!UpdateOnly && AutoSwitch)

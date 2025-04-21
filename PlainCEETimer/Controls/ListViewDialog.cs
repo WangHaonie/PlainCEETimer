@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
@@ -14,15 +13,10 @@ namespace PlainCEETimer.Controls
     {
         public TData[] Data { get; set; }
         private ContextMenu ContextMenuMain;
-        private ContextMenuStrip ContextMenuStripMain;
         private PlainButton ButtonOperation;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
-        private ToolStripMenuItem StripEdit;
-        private ToolStripMenuItem StripDelete;
-        private ToolStripMenuItem StripSelectAll;
-        private readonly bool UseClassicContextMenu = MainForm.UseClassicContextMenu;
         private readonly string ContentDescription;
         private readonly HashSet<TData> ListViewItemsSet = [];
         private readonly ListViewEx ListViewMain = new()
@@ -145,7 +139,7 @@ namespace PlainCEETimer.Controls
 
         private void ButtonOperation_Click(object sender, EventArgs e)
         {
-            ShowContextMenu(ButtonOperation, ContextMenuMain, ContextMenuStripMain, UseClassicContextMenu);
+            ContextMenuMain.Show(ButtonOperation, new Point(0, ButtonOperation.Height));
         }
 
         private void ContextAdd_Click(object sender, EventArgs e)
@@ -297,59 +291,27 @@ namespace PlainCEETimer.Controls
             PanelMain.ResumeLayout(false);
             ResumeLayout(false);
 
-            if (UseClassicContextMenu)
-            {
-                ContextMenuMain = CreateNew
-                ([
-                    AddItem(Constants.Add, ContextAdd_Click),
-                    AddSeparator(),
-                    ContextEdit = AddItem(Constants.Edit, ContextEdit_Click),
-                    ContextDelete = AddItem(Constants.Delete, ContextDelete_Click),
-                    AddSeparator(),
-                    ContextSelectAll = AddItem(Constants.SelectAll, ContextSelectAll_Click)
-                ]);
+            ContextMenuMain = CreateNew
+            ([
+                AddItem(Constants.Add, ContextAdd_Click),
+                AddSeparator(),
+                ContextEdit = AddItem(Constants.Edit, ContextEdit_Click),
+                ContextDelete = AddItem(Constants.Delete, ContextDelete_Click),
+                AddSeparator(),
+                ContextSelectAll = AddItem(Constants.SelectAll, ContextSelectAll_Click)
+            ]);
 
-                ListViewMain.ContextMenu = ContextMenuMain;
-                ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
-            }
-            else
-            {
-                ContextMenuStripMain = CreateNewStrip
-                ([
-                    AddStripItem(Constants.Add, ContextAdd_Click),
-                    AddStripSeparator(),
-                    StripEdit = AddStripItem(Constants.Edit, ContextEdit_Click),
-                    StripDelete = AddStripItem(Constants.Delete, ContextDelete_Click),
-                    AddStripSeparator(),
-                    StripSelectAll = AddStripItem(Constants.SelectAll, ContextSelectAll_Click)
-                ]);
-
-                ListViewMain.ContextMenuStrip = ContextMenuStripMain;
-                ContextMenuStripMain.Opening += (_, _) => HandleMenuItemEnabling();
-            }
-
+            ListViewMain.ContextMenu = ContextMenuMain;
+            ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
             ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
         }
 
         private void HandleMenuItemEnabling()
         {
             var SelectedCount = ListViewMain.SelectedItemsCount;
-            var EnableDelete = SelectedCount != 0;
-            var EnableEdit = SelectedCount == 1;
-            var EnableSelectAll = ListViewMain.ItemsCount != 0;
-
-            if (UseClassicContextMenu)
-            {
-                ContextDelete.Enabled = EnableDelete;
-                ContextEdit.Enabled = EnableEdit;
-                ContextSelectAll.Enabled = EnableSelectAll;
-            }
-            else
-            {
-                StripDelete.Enabled = EnableDelete;
-                StripEdit.Enabled = EnableEdit;
-                StripSelectAll.Enabled = EnableSelectAll;
-            }
+            ContextDelete.Enabled = SelectedCount != 0;
+            ContextEdit.Enabled = SelectedCount == 1;
+            ContextSelectAll.Enabled = ListViewMain.ItemsCount != 0;
         }
     }
 }

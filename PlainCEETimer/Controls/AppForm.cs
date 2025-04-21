@@ -338,20 +338,6 @@ namespace PlainCEETimer.Controls
             Target.Top = Reference.Top + Reference.Height + ScaleToDpi(Tweak);
         }
 
-        protected void ShowContextMenu(Control Target, ContextMenu Menu, ContextMenuStrip Strip, bool IsClassic)
-        {
-            var Pos = new Point(0, Target.Height);
-
-            if (IsClassic)
-            {
-                Menu.Show(Target, Pos);
-            }
-            else
-            {
-                Strip.Show(Target, Pos);
-            }
-        }
-
         protected void KeepOnScreen()
         {
             var ValidArea = GetCurrentScreenRect();
@@ -425,35 +411,6 @@ namespace PlainCEETimer.Controls
         protected ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
         {
             Target.MergeMenu(Reference);
-            return Target;
-        }
-
-        protected ContextMenuStrip CreateNewStrip(ToolStripItem[] Items)
-        {
-            var Strip = new ContextMenuStrip();
-            Strip.Items.AddRange(Items);
-            return Strip;
-        }
-
-        protected ToolStripMenuItem AddStripItem(string Text)
-            => new(Text);
-
-        protected ToolStripMenuItem AddStripItem(string Text, EventHandler OnClickHandler)
-            => new(Text, null, OnClickHandler);
-
-        protected ToolStripMenuItem AddSubStrip(string Text, ToolStripItem[] SubItems)
-        {
-            var Item = new ToolStripMenuItem(Text);
-            Item.DropDownItems.AddRange(SubItems);
-            return Item;
-        }
-
-        protected ToolStripSeparator AddStripSeparator()
-            => new();
-
-        protected ContextMenuStrip MergeStrip(ContextMenuStrip Target, ToolStripItem[] Reference)
-        {
-            Target.Items.AddRange(Reference);
             return Target;
         }
 

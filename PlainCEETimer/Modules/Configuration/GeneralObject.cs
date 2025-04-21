@@ -20,8 +20,5 @@ namespace PlainCEETimer.Modules.Configuration
 
         [DefaultValue(true)]
         public bool UniTopMost { get; set; } = true;
-
-        [DefaultValue(true)]
-        public bool WCCMS { get; set; } = true;
     }
 }
