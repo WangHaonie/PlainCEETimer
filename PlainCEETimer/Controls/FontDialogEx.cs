@@ -26,20 +26,20 @@ namespace PlainCEETimer.Controls
             ShowEffects = false;
         }
 
+        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+        {
+            return Helper.HookProc(this, hWnd, msg, wparam, lparam);
+        }
+
         public DialogResult ShowDialog(AppForm owner)
         {
             Helper = new CommonDialogHelper(owner);
             return ShowDialog();
         }
 
-        public IntPtr BaseHookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
             return base.HookProc(hWnd, msg, wParam, lParam);
-        }
-
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-        {
-            return Helper.HookProc(this, hWnd, msg, wparam, lparam);
         }
     }
 }

@@ -8,6 +8,6 @@ namespace PlainCEETimer.Modules
 
         CommonDialogKind DialogKind { get; }
 
-        IntPtr BaseHookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }

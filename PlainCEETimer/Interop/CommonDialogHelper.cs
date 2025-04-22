@@ -87,7 +87,7 @@ namespace PlainCEETimer.Interop
                     PostMessage(hWnd, WM_SETFOCUS, 0, 0);
                     break;
                 case WM_COMMAND:
-                    return Dialog.BaseHookProc(hWnd, WM_COMMAND, wParam, lParam);
+                    return Dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
             }
             #endregion
 

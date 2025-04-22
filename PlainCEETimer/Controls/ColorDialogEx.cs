@@ -39,11 +39,6 @@ namespace PlainCEETimer.Controls
             return Result;
         }
 
-        public IntPtr BaseHookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
-        {
-            return base.HookProc(hWnd, msg, wParam, lParam);
-        }
-
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
         {
             return Helper.HookProc(this, hWnd, msg, wparam, lparam);
@@ -57,6 +52,11 @@ namespace PlainCEETimer.Controls
                 ExistingConfig.CustomColors = CustomColorCollection;
                 App.AppConfig = ExistingConfig;
             }
+        }
+
+        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        {
+            return base.HookProc(hWnd, msg, wParam, lParam);
         }
     }
 }

@@ -84,7 +84,7 @@ namespace PlainCEETimer.Modules
                 {
                     if (Args.Length == 0)
                     {
-                        new Thread(() => CheckAdmin(out _)).Start();
+                        new Thread(() => CheckAdmin()).Start();
                         Application.Run(new MainForm());
                     }
                     else
@@ -106,8 +106,7 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/ac":
-                                CheckAdmin(out string UserName, true);
-                                MessageX.Info($"当前用户 {UserName} {(IsAdmin ? "" : "不")}具有管理员权限。");
+                                MessageX.Info($"当前用户 {CheckAdmin(true)} {(IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
                             case "/fr":
                                 var version = Args.Length > 1 ? Args[1] : null;
@@ -146,17 +145,6 @@ namespace PlainCEETimer.Modules
 
                 StartPipeClient();
                 Exit(ExitReason.AnotherInstanceIsRunning);
-            }
-        }
-
-        public static void CheckAdmin(out string UserName, bool QueryUserName = false)
-        {
-            IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
-            UserName = "";
-
-            if (QueryUserName)
-            {
-                UserName = (string)ProcessHelper.Run("whoami", Return: 1);
             }
         }
 
@@ -245,6 +233,18 @@ namespace PlainCEETimer.Modules
         {
             MainMutex?.Dispose();
             MainMutex = null;
+        }
+
+        private static string CheckAdmin(bool QueryUserName = false)
+        {
+            IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
+
+            if (QueryUserName)
+            {
+                return (string)ProcessHelper.Run("whoami", Return: 1);
+            }
+
+            return null;
         }
     }
 }

@@ -5,15 +5,6 @@ namespace PlainCEETimer.Modules
 {
     public class ContextMenuBuilder
     {
-        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> Builder)
-            => new(Builder(new()));
-
-        public static ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
-        {
-            Target.MergeMenu(Reference);
-            return Target;
-        }
-
         public MenuItem AddItem(string Text)
             => new(Text);
 
@@ -25,5 +16,14 @@ namespace PlainCEETimer.Modules
 
         public MenuItem AddSeparator()
             => new("-");
+
+        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> Builder)
+            => new(Builder(new()));
+
+        public static ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
+        {
+            Target.MergeMenu(Reference);
+            return Target;
+        }
     }
 }

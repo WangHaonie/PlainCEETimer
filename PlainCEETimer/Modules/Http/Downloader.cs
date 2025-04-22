@@ -13,7 +13,7 @@ namespace PlainCEETimer.Modules.Http
         public event Action<Exception> Error;
         public event Action Completed;
 
-        public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength, int defaultBuffer = 1024 * 16)
+        public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength = 0L, int defaultBuffer = 1024 * 16)
         {
             try
             {
