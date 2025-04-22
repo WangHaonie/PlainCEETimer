@@ -5,16 +5,16 @@ namespace PlainCEETimer.Modules
 {
     public class ContextMenuBuilder
     {
-        public MenuItem AddItem(string Text)
+        public MenuItem Item(string Text)
             => new(Text);
 
-        public MenuItem AddItem(string Text, EventHandler OnClickHandler)
+        public MenuItem Item(string Text, EventHandler OnClickHandler)
             => new(Text, OnClickHandler);
 
-        public MenuItem AddSubMenu(string Text, MenuItem[] Items)
+        public MenuItem Menu(string Text, MenuItem[] Items)
             => new(Text, Items);
 
-        public MenuItem AddSeparator()
+        public MenuItem Separator()
             => new("-");
 
         public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> Builder)

@@ -19,7 +19,7 @@ https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/Sys
 
 */
 
-void SelectAllItems(HWND hLV, int isSelected)
+void SelectAllItems(HWND hLV, int selected)
 {
-	ListView_SetItemState(hLV, -1, isSelected == 0 ? 0 : LVIS_SELECTED, LVIS_SELECTED);
+	ListView_SetItemState(hLV, -1, selected == 0 ? 0 : LVIS_SELECTED, LVIS_SELECTED);
 }

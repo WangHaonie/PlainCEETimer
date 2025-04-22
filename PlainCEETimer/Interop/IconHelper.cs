@@ -9,8 +9,9 @@ namespace PlainCEETimer.Interop
     {
         public static Icon GetIcon(string file, int index = 0)
         {
-            ExtractIconEx(file, index, out IntPtr hIcon, out _, 1);
+            ExtractIconEx(file, index, out IntPtr hIcon, out IntPtr x, 1);
             var result = (Icon)Icon.FromHandle(hIcon).Clone();
+            DestroyIcon(x);
             DestroyIcon(hIcon);
             return result;
         }

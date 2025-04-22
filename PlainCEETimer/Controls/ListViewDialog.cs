@@ -67,9 +67,9 @@ namespace PlainCEETimer.Controls
             {
                 ListViewMain.Suspend(() =>
                 {
-                    foreach (var Info in Data)
+                    for (int i = 0; i < Data.Length; i++)
                     {
-                        AddItem(Info);
+                        AddItem(Data[i]);
                     }
 
                     ListViewMain.AutoAdjustColumnWidth();
@@ -283,7 +283,7 @@ namespace PlainCEETimer.Controls
 
             ContextMenuMain = ContextMenuBuilder.Build(b =>
             [
-                b.AddItem("添加(&A)", (_, _) =>
+                b.Item("添加(&A)", (_, _) =>
                 {
                     var SubDialog = GetSubDialogInstance();
 
@@ -293,11 +293,11 @@ namespace PlainCEETimer.Controls
                     }
                 }),
 
-                b.AddSeparator(),
-                ContextEdit = b.AddItem("编辑(&E)", ContextEdit_Click),
-                ContextDelete = b.AddItem("删除(&D)", ContextDelete_Click),
-                b.AddSeparator(),
-                ContextSelectAll = b.AddItem("全选(&Q)", ContextSelectAll_Click)
+                b.Separator(),
+                ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
+                ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
+                b.Separator(),
+                ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
             ]);
 
             ListViewMain.ContextMenu = ContextMenuMain;

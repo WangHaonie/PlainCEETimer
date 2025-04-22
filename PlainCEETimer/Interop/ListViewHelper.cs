@@ -7,6 +7,6 @@ namespace PlainCEETimer.Interop
     public static class ListViewHelper
     {
         [DllImport(App.NativesDll, EntryPoint = "#1")]
-        public static extern void SelectAllItems(IntPtr hLV, int isSelected);
+        public static extern void SelectAllItems(IntPtr hLV, int selected);
     }
 }

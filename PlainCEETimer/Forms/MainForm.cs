@@ -16,7 +16,7 @@ namespace PlainCEETimer.Forms
     {
         public static bool IsNormalStart { get; set; }
         public static bool UniTopMost { get; private set; } = true;
-        public static bool ValidateNeeded { get; private set; } = true;
+        public static bool ValidateNeeded = true;
         public static event Action UniTopMostChanged;
 
         private bool AutoSwitch;
@@ -430,14 +430,14 @@ namespace PlainCEETimer.Forms
 
             ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
             [
-                b.AddSubMenu("切换(&Q)",
+                b.Menu("切换(&Q)",
                 [
-                    b.AddItem("请先添加考试信息")
+                    b.Item("请先添加考试信息")
                 ]),
 
-                b.AddSeparator(),
+                b.Separator(),
 
-                b.AddItem("设置(&S)", (_, _) =>
+                b.Item("设置(&S)", (_, _) =>
                 {
                     if (FormSettings == null || FormSettings.IsDisposed)
                     {
@@ -456,7 +456,7 @@ namespace PlainCEETimer.Forms
                     FormSettings.ReActivate();
                 }),
 
-                b.AddItem("关于(&A)", (_, _) =>
+                b.Item("关于(&A)", (_, _) =>
                 {
                     if (FormAbout == null || FormAbout.IsDisposed)
                     {
@@ -466,8 +466,8 @@ namespace PlainCEETimer.Forms
                     FormAbout.ReActivate();
                 }),
 
-                b.AddSeparator(),
-                b.AddItem("安装目录(&D)", (_, _) => App.OpenInstallDir())
+                b.Separator(),
+                b.Item("安装目录(&D)", (_, _) => App.OpenInstallDir())
             ]);
             #endregion
         }
@@ -497,12 +497,12 @@ namespace PlainCEETimer.Forms
                         Icon = App.AppIcon,
                         ContextMenu = ContextMenuBuilder.Merge(ContextMenuTray, ContextMenuBuilder.Build(b =>
                         [
-                            b.AddSeparator(),
-                            b.AddItem("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
-                            b.AddSubMenu("关闭(&C)",
+                            b.Separator(),
+                            b.Item("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                            b.Menu("关闭(&C)",
                             [
-                                b.AddItem("重启(&R)", (_, _) => App.Shutdown(true)),
-                                b.AddItem("退出(&Q)", (_, _) => App.Shutdown())
+                                b.Item("重启(&R)", (_, _) => App.Shutdown(true)),
+                                b.Item("退出(&Q)", (_, _) => App.Shutdown())
                             ])
                         ]))
                     };

@@ -377,13 +377,13 @@ namespace PlainCEETimer.Forms
 
             ContextMenuDefaultColor = ContextMenuBuilder.Build(b =>
             [
-                b.AddItem("白底(&L)", (_, _) =>
+                b.Item("白底(&L)", (_, _) =>
                 {
                     SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
                     SettingsChanged(null, null);
                 }),
 
-                b.AddItem("黑底(&D)", (_, _) =>
+                b.Item("黑底(&D)", (_, _) =>
                 {
                     SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
                     SettingsChanged(null, null);

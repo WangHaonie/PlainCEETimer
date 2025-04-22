@@ -17,15 +17,12 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (value != null)
+                if (MainForm.ValidateNeeded)
                 {
-                    if (MainForm.ValidateNeeded)
-                    {
-                        Validator.Validate(value);
-                    }
-
-                    field = value;
+                    Validator.Validate(value);
                 }
+
+                field = value;
             }
         } = [];
 
@@ -68,12 +65,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (MainForm.ValidateNeeded && value.Length < 4)
                 {
-                    if (value.Length < 4)
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 field = value;
@@ -87,15 +81,12 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (value != null)
+                if (MainForm.ValidateNeeded)
                 {
-                    if (MainForm.ValidateNeeded)
-                    {
-                        Validator.Validate(value);
-                    }
-
-                    field = value;
+                    Validator.Validate(value);
                 }
+
+                field = value;
             }
         } = [];
 
@@ -110,12 +101,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (MainForm.ValidateNeeded && (value is < 0 or > 3))
                 {
-                    if (value is < 0 or > 3)
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 field = value;
@@ -126,12 +114,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (MainForm.ValidateNeeded && (value is < 0 or > 2))
                 {
-                    if (value is < 0 or > 2)
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 field = value;

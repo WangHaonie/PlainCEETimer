@@ -14,12 +14,9 @@ namespace PlainCEETimer.Modules.Configuration
             {
                 value = value.RemoveIllegalChars();
 
-                if (MainForm.ValidateNeeded)
+                if (MainForm.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
                 {
-                    if (!Validator.IsValidExamLength(value.Length))
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 field = value;

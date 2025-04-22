@@ -109,23 +109,10 @@ namespace PlainCEETimer.Modules
                                 MessageX.Info($"当前用户 {CheckAdmin(true)} {(IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
                             case "/fr":
-                                var version = Args.Length > 1 ? Args[1] : null;
-                                Application.Run(new DownloaderForm(version));
+                                Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
                                 break;
                             case "/op":
-                                if (MessageX.Warn(
-                                    """
-                                    确认对本程序进行优化？此操作将有助于提升一定的运行速度。
-                                    (需要管理员权限，无则自动尝试提权。)
-                                    
-                                    推荐在以下情况下使用：
-                                        1. 首次运行本程序
-                                        2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
-                                        3. 其他情况导致的程序运行速度变慢
-                                    """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
-                                {
-                                    new OptimizationHelper().Optimize();
-                                }
+                                new OptimizationHelper().Optimize();
                                 break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", AutoClose: true);

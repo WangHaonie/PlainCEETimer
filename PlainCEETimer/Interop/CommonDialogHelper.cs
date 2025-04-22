@@ -93,13 +93,13 @@ namespace PlainCEETimer.Interop
 
             if (UseDark)
             {
-                return DarkProc(hWnd, msg, wParam);
+                return DarkUIProc(hWnd, msg, wParam);
             }
 
             return IntPtr.Zero;
         }
 
-        private IntPtr DarkProc(IntPtr hWnd, int msg, IntPtr wParam)
+        private IntPtr DarkUIProc(IntPtr hWnd, int msg, IntPtr wParam)
         {
             switch (msg)
             {
@@ -140,7 +140,6 @@ namespace PlainCEETimer.Interop
                         break;
                 }
                 return true;
-
             }, IntPtr.Zero);
         }
 

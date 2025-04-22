@@ -15,33 +15,46 @@ namespace PlainCEETimer.Modules
 
         public void Optimize()
         {
-            MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n若弹出 UAC 对话框，请点击 是。\n\n请点击 确定 继续。");
-
-            try
+            if (MessageX.Warn(
+                """
+                确认对本程序进行优化？此操作将有助于提升一定的运行速度。
+                (需要管理员权限，无则自动尝试提权。)
+                
+                推荐在以下情况下使用：
+                    1. 首次运行本程序
+                    2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
+                    3. 其他情况导致的程序运行速度变慢
+                
+                """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
-                var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
-                var length = dirs.Length;
+                MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n若弹出 UAC 对话框，请点击 是。\n\n>> 点击 确定 继续。");
 
-                if (length != 0)
+                try
                 {
-                    for (int i = length - 1; i < length; i--)
-                    {
-                        var path = Path.Combine(dirs[i], Ngen);
+                    var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
+                    var length = dirs.Length;
 
-                        if (File.Exists(path))
+                    if (length != 0)
+                    {
+                        for (int i = length - 1; i < length; i--)
                         {
-                            Start(path);
-                            return;
+                            var path = Path.Combine(dirs[i], Ngen);
+
+                            if (File.Exists(path))
+                            {
+                                Start(path);
+                                return;
+                            }
                         }
                     }
-                }
 
-                throw new Exception();
-            }
-            catch
-            {
-                MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
-                Retry();
+                    throw new Exception();
+                }
+                catch
+                {
+                    MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
+                    Retry();
+                }
             }
         }
 
