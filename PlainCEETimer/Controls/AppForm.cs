@@ -57,7 +57,6 @@ namespace PlainCEETimer.Controls
         {
             OnLoad();
             AdjustUI();
-
             base.OnLoad(e);
 
             if (CheckParam(AppFormParam.CenterScreen))

@@ -329,7 +329,7 @@ namespace PlainCEETimer.Forms
 
             if (IsCountdownReady && CurrentPhase != CountdownPhase.None)
             {
-                RefreshCustomRules(CurrentPhase);
+                RefreshCustomRules();
             }
         }
 
@@ -671,12 +671,8 @@ namespace PlainCEETimer.Forms
         {
             if (CurrentPhase != phase)
             {
-                if (UseCustomText)
-                {
-                    RefreshCustomRules(phase);
-                }
-
                 CurrentPhase = phase;
+                RefreshCustomRules();
             }
         }
 
@@ -739,10 +735,9 @@ namespace PlainCEETimer.Forms
             SelectedScreenRect = Screen.AllScreens[ScreenIndex].WorkingArea;
         }
 
-        private void RefreshCustomRules(CountdownPhase phase)
+        private void RefreshCustomRules()
         {
-            CurrentRules = [.. CustomRules.Where(rule => rule.Phase == phase).OrderByDescending(x => x)];
-            CanUseRules = CurrentRules.Length != 0;
+            CanUseRules = UseCustomText && (CurrentRules = [.. CustomRules.Where(rule => rule.Phase == CurrentPhase).OrderByDescending(x => x)]).Length != 0;
         }
 
         private void SaveConfig()

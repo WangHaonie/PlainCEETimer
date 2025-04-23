@@ -46,13 +46,11 @@ namespace PlainCEETimer.Forms
         protected override void OnShown()
         {
             TaskbarProgress.Initialize(Handle, App.OSBuild >= WindowsBuilds.Windows7 ? 1 : 0);
-            TaskbarProgress.SetState(TaskbarProgressState.Normal);
             LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
-            DownloadPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(new Uri(DownloadUrl).AbsolutePath));
+            DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;
             UpdateDownloader.Completed += UpdateDownloader_Completed;
-            TaskbarProgress.SetValue(0UL, 1UL);
             DownloadUpdate();
         }
 

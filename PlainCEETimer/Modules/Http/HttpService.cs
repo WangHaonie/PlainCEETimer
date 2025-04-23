@@ -11,7 +11,7 @@ namespace PlainCEETimer.Modules.Http
         static HttpService()
         {
             Client = new();
-            Client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36");
+            Client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{App.AppVersion} (Windows NT; Win64; x64)");
         }
 
         public static Task<HttpResponseMessage> GetAsync(string requestUri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
