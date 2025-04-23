@@ -7,7 +7,7 @@ using PlainCEETimer.Modules.Http;
 
 namespace PlainCEETimer.Modules
 {
-    public sealed class Updater
+    public class Updater
     {
         private DownloaderForm FormDownloader;
 

@@ -10,7 +10,7 @@ using PlainCEETimer.Modules.Http;
 
 namespace PlainCEETimer.Forms
 {
-    public partial class DownloaderForm : AppForm
+    public sealed partial class DownloaderForm : AppForm
     {
         private bool IsCancelled;
         private string DownloadUrl;

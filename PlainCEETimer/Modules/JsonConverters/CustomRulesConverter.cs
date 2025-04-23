@@ -5,7 +5,7 @@ using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class CustomRulesConverter : JsonConverter<CustomRuleObject>
+    public sealed class CustomRulesConverter : JsonConverter<CustomRuleObject>
     {
         public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {

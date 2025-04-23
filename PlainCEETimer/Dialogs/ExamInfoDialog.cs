@@ -8,7 +8,7 @@ using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class ExamInfoDialog : AppDialog, ISubDialog<ExamInfoObject>
+    public sealed partial class ExamInfoDialog : AppDialog, ISubDialog<ExamInfoObject>
     {
         public ExamInfoObject Data { get; set; }
 

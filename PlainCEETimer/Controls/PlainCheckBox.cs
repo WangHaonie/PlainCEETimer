@@ -5,7 +5,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
-    public class PlainCheckBox : CheckBox
+    public sealed class PlainCheckBox : CheckBox
     {
         public PlainCheckBox()
         {

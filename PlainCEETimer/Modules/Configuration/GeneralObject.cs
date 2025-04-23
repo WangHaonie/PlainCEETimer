@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class GeneralObject
+    public class GeneralObject
     {
         public bool AutoSwitch { get; set; }
 

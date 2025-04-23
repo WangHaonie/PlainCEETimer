@@ -5,7 +5,7 @@ using PlainCEETimer.Modules.JsonConverters;
 namespace PlainCEETimer.Modules.Configuration
 {
     [JsonConverter(typeof(CustomRulesConverter))]
-    public sealed class CustomRuleObject : IListViewObject<CustomRuleObject>
+    public class CustomRuleObject : IListViewObject<CustomRuleObject>
     {
         public CountdownPhase Phase { get; set; }
 

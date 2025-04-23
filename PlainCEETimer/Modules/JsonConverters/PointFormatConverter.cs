@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class PointFormatConverter : JsonConverter<Point>
+    public sealed class PointFormatConverter : JsonConverter<Point>
     {
         public override Point ReadJson(JsonReader reader, Type objectType, Point existingValue, bool hasExistingValue, JsonSerializer serializer)
         {

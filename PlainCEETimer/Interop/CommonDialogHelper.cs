@@ -8,7 +8,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
 {
-    public sealed class CommonDialogHelper
+    public class CommonDialogHelper
     {
         private const int SW_HIDE = 0x0000;
         private const int BM_TRANSPARENT = 0x0001;

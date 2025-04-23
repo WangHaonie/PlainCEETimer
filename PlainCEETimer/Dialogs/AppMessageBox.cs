@@ -8,7 +8,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class AppMessageBox : AppDialog
+    public sealed partial class AppMessageBox : AppDialog
     {
         private DialogResult Result;
         private readonly bool AutoCloseRequired;

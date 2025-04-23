@@ -4,7 +4,7 @@ using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
-    public class PlainGroupBox : GroupBox
+    public sealed class PlainGroupBox : GroupBox
     {
         public PlainGroupBox()
         {

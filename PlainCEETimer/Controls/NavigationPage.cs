@@ -4,7 +4,7 @@ using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
-    public sealed class NavigationPage : Panel
+    public class NavigationPage : Panel
     {
         /// <summary>
         /// 该页面关联的索引。此项不应手动设置。

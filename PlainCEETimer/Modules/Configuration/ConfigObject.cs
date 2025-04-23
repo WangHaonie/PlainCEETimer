@@ -6,7 +6,7 @@ using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class ConfigObject
+    public class ConfigObject
     {
         public GeneralObject General { get; set; } = new();
 

@@ -12,7 +12,7 @@ using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Forms
 {
-    public partial class MainForm : AppForm
+    public sealed partial class MainForm : AppForm
     {
         public static bool IsNormalStart { get; set; }
         public static bool UniTopMost { get; private set; } = true;

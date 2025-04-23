@@ -13,7 +13,7 @@ using PlainCEETimer.Modules.Win32Registry;
 
 namespace PlainCEETimer.Forms
 {
-    public partial class SettingsForm : AppForm
+    public sealed partial class SettingsForm : AppForm
     {
         public bool RefreshNeeded { get; private set; }
 

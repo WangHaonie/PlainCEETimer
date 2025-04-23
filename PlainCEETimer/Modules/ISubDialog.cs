@@ -6,7 +6,6 @@ namespace PlainCEETimer.Modules
         where T : IListViewObject<T>
     {
         T Data { get; set; }
-
         DialogResult ShowDialog();
     }
 }

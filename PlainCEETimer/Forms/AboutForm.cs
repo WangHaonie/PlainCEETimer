@@ -6,7 +6,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Forms
 {
-    public partial class AboutForm : AppForm
+    public sealed partial class AboutForm : AppForm
     {
         private bool IsCheckingUpdate;
 

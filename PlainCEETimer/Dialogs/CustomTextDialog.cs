@@ -4,7 +4,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Dialogs
 {
-    public partial class CustomTextDialog : AppDialog
+    public sealed partial class CustomTextDialog : AppDialog
     {
         public string[] CustomTexts { get; set; } = [];
 

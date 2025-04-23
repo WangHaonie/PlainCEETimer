@@ -5,7 +5,7 @@ using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class ExamInfoObject : IListViewObject<ExamInfoObject>
+    public class ExamInfoObject : IListViewObject<ExamInfoObject>
     {
         public string Name
         {

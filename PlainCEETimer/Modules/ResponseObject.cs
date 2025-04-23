@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace PlainCEETimer.Modules
 {
-    public sealed class ResponseObject
+    public class ResponseObject
     {
         [JsonProperty("name")]
         public string Version { get; set; }

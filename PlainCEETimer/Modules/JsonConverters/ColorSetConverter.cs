@@ -4,7 +4,7 @@ using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class ColorSetConverter : JsonConverter<ColorSetObject>
+    public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
     {
         public override ColorSetObject ReadJson(JsonReader reader, Type objectType, ColorSetObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {

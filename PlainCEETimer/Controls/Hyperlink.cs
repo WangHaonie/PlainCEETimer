@@ -7,7 +7,7 @@ namespace PlainCEETimer.Controls
     {
         public string HyperLink { get; set; }
 
-        protected sealed override void OnLinkClicked(LinkLabelLinkClickedEventArgs e)
+        protected override void OnLinkClicked(LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(HyperLink);
             base.OnLinkClicked(e);

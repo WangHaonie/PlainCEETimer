@@ -5,7 +5,7 @@ using PlainCEETimer.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public sealed class DisplayObject
+    public class DisplayObject
     {
         public bool ShowXOnly { get; set; }
 

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class FontFormatConverter : JsonConverter<Font>
+    public sealed class FontFormatConverter : JsonConverter<Font>
     {
         public override Font ReadJson(JsonReader reader, Type objectType, Font existingValue, bool hasExistingValue, JsonSerializer serializer)
         {

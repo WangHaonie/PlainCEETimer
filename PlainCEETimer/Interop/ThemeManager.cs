@@ -52,15 +52,15 @@ namespace PlainCEETimer.Interop
 
         public static void FlushDarkControl(IntPtr hWnd, NativeStyle type)
         {
-            SetWindowTheme(hWnd, GetPszSubAppName(type), null);
-        }
+            var name = type switch
+            {
+                NativeStyle.Explorer => "DarkMode_Explorer",
+                NativeStyle.CFD => "DarkMode_CFD",
+                _ => "Explorer"
+            };
 
-        private static string GetPszSubAppName(NativeStyle type) => type switch
-        {
-            NativeStyle.Explorer => "DarkMode_Explorer",
-            NativeStyle.CFD => "DarkMode_CFD",
-            _ => "Explorer"
-        };
+            SetWindowTheme(hWnd, name, null);
+        }
 
         #region 来自网络
         /*
