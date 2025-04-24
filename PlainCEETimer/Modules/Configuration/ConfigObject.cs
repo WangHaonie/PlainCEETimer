@@ -109,6 +109,7 @@ namespace PlainCEETimer.Modules.Configuration
                 field = value;
             }
         }
+
         public int Dark
         {
             get;

@@ -22,6 +22,7 @@ namespace PlainCEETimer.Modules
         public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
         public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
         public static Icon AppIcon { get; private set; }
+        public static Version AppVersionObject => field ??= Version.Parse(AppVersion);
         public static ConfigObject AppConfig
         {
             get => field ??= ConfigHandler.Read();
@@ -44,7 +45,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "3.0.8";
-        public const string AppBuildDate = "2025/04/23";
+        public const string AppBuildDate = "2025/04/24";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
