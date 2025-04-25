@@ -50,10 +50,7 @@ namespace PlainCEETimer.Modules.Configuration
             {
                 if (MainForm.ValidateNeeded)
                 {
-                    foreach (var Text in value)
-                    {
-                        Validator.EnsureCustomTextLength(Text);
-                    }
+                    ArrayHelper.ForLoop(value, (_, text) => Validator.EnsureCustomTextLength(text));
                 }
 
                 field = value;

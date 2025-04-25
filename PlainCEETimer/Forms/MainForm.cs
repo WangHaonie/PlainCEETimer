@@ -399,21 +399,18 @@ namespace PlainCEETimer.Forms
             if (Exams.Length != 0)
             {
                 ExamSwitchMain.Clear();
-                var ItemIndex = 0;
-
-                foreach (var Exam in Exams)
+                ArrayHelper.ForLoop(Exams, (index, exam) =>
                 {
                     var Item = new MenuItem()
                     {
-                        Text = $"{ItemIndex + 1}. {Exam}",
+                        Text = $"{index + 1}. {exam}",
                         RadioCheck = true,
-                        Checked = ItemIndex == ExamIndex
+                        Checked = index == ExamIndex
                     };
 
                     Item.Click += ExamItems_Click;
                     ExamSwitchMain.Add(Item);
-                    ItemIndex++;
-                }
+                });
             }
 
             UpdateExamSelection();
@@ -609,8 +606,10 @@ namespace PlainCEETimer.Forms
             {
                 if (CanUseRules)
                 {
-                    foreach (var Rule in CurrentRules)
+                    for (int i = 0; i < CurrentRules.Length; i++)
                     {
+                        var Rule = CurrentRules[i];
+
                         if (Phase == (int)CountdownPhase.P3 ? (Span >= Rule.Tick) : (Span <= Rule.Tick))
                         {
                             UpdateCountdown(SetCustomRule(Span, Rule.Text), Rule.Colors);

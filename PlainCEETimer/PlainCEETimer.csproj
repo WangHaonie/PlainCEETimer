@@ -206,6 +206,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Interop\CommonDialogHelper.cs" />
+    <Compile Include="Modules\ArrayHelper.cs" />
     <Compile Include="Modules\ContextMenuBuilder.cs" />
     <Compile Include="Interop\IconHelper.cs" />
     <Compile Include="Interop\ListViewHelper.cs" />

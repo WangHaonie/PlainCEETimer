@@ -30,14 +30,13 @@ namespace PlainCEETimer.Controls
             {
                 var collection = pagePresenter.Controls;
 
-                for (int i = 0; i < ItemsCount; i++)
+                ArrayHelper.ForLoop(pages, (index, page) =>
                 {
-                    var page = pages[i];
                     page.Dock = DockStyle.Fill;
-                    page.Index = i;
-                    Nodes.Add(navItems[i]);
+                    page.Index = index;
+                    Nodes.Add(navItems[index]);
                     collection.Add(page);
-                }
+                });
 
                 Pages = pages;
             }
@@ -76,10 +75,7 @@ namespace PlainCEETimer.Controls
 
         private void SwitchTo(int pageIndex)
         {
-            for (int i = 0; i < ItemsCount; i++)
-            {
-                Pages[i].Visible = i == pageIndex;
-            }
+            ArrayHelper.ForLoop(Pages, (index, page) => page.Visible = index == pageIndex);
         }
     }
 }
