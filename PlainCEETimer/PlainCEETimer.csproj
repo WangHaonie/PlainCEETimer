@@ -247,7 +247,6 @@
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />
-    <Compile Include="Interop\NativeInterop.cs" />
     <Compile Include="Modules\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="Controls\PlainLinkLabel.cs">

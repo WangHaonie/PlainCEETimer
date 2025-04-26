@@ -20,8 +20,8 @@ namespace PlainCEETimer.Controls
         private AppFormParam Params;
         private readonly bool Special;
 
-        private static readonly float CurrentDpiRatio;
-        private static readonly bool IsHighDpi;
+        private static float CurrentDpiRatio;
+        private static bool IsHighDpi;
 
         protected AppForm(AppFormParam param)
         {
@@ -39,7 +39,6 @@ namespace PlainCEETimer.Controls
 
         static AppForm()
         {
-            IsHighDpi = (CurrentDpiRatio = NativeInterop.GetDpiForSystem() / 96F) > 1F;
         }
 
         public void ReActivate()
@@ -113,6 +112,13 @@ namespace PlainCEETimer.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
+            if (CurrentDpiRatio == 0F)
+            {
+                var g = CreateGraphics();
+                IsHighDpi = (CurrentDpiRatio = g.DpiX / 96F) > 1F;
+                g.Dispose();
+            }
+
             if (ThemeManager.ShouldUseDarkMode)
             {
                 if (!Special)
