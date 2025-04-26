@@ -9,9 +9,8 @@ namespace PlainCEETimer.Interop
     {
         public static Icon GetIcon(string file, int index = 0)
         {
-            ExtractIconEx(file, index, out IntPtr hIcon, out IntPtr x, 1);
+            ExtractIconEx(file, index, out IntPtr hIcon, IntPtr.Zero, 1);
             var result = (Icon)Icon.FromHandle(hIcon).Clone();
-            DestroyIcon(x);
             DestroyIcon(hIcon);
             return result;
         }
@@ -26,7 +25,7 @@ namespace PlainCEETimer.Interop
 
         */
         [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
-        private static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, out IntPtr phiconSmall, int nIcons);
+        private static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, IntPtr phiconSmall, int nIcons);
         #endregion
 
         [DllImport(App.User32Dll)]
