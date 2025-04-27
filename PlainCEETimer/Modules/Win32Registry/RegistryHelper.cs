@@ -5,13 +5,17 @@ namespace PlainCEETimer.Modules.Win32Registry
 {
     public class RegistryHelper : IDisposable
     {
+        private readonly RegistryKey BaseKey;
         private readonly RegistryKey OpenedKey;
 
-        private RegistryHelper(string path)
-            => OpenedKey = Registry.CurrentUser.OpenSubKey(path, true);
+        private RegistryHelper(string path, bool isReadonly, RegistryHive rootKey)
+            => OpenedKey = (BaseKey = RegistryKey.OpenBaseKey(rootKey, RegistryView.Registry64)).OpenSubKey(path, !isReadonly);
 
-        public static RegistryHelper Open(string path)
-            => new(path);
+        public static RegistryHelper Open(string path, bool isReadonly = true, RegistryHive rootKey = RegistryHive.CurrentUser)
+            => new(path, isReadonly, rootKey);
+
+        public object GetValue(string key, int defaultValue)
+            => OpenedKey?.GetValue(key, defaultValue);
 
         public bool GetState(string key, string expectation, string defaultValue)
             => OpenedKey?.GetValue(key, defaultValue) is string tmp && tmp.Equals(expectation, StringComparison.OrdinalIgnoreCase);
@@ -28,6 +32,7 @@ namespace PlainCEETimer.Modules.Win32Registry
         public void Dispose()
         {
             OpenedKey?.Dispose();
+            BaseKey?.Dispose();
             GC.SuppressFinalize(this);
         }
 

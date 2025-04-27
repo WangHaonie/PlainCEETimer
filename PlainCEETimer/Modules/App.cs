@@ -17,7 +17,6 @@ namespace PlainCEETimer.Modules
         public static bool CanSaveConfig { get; set; }
         public static bool AllowUIClosing { get; private set; }
         public static bool AllowShutdown { get; set; } = true;
-        public static bool IsAdmin { get; private set; }
         public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
         public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
         public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
@@ -45,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "3.0.8";
-        public const string AppBuildDate = "2025/04/26";
+        public const string AppBuildDate = "2025/04/27";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -85,7 +84,7 @@ namespace PlainCEETimer.Modules
                 {
                     if (Args.Length == 0)
                     {
-                        new Thread(() => CheckAdmin()).Start();
+                        new Thread(() => UACHelper.CheckAdmin()).Start();
                         Application.Run(new MainForm());
                     }
                     else
@@ -107,12 +106,13 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/ac":
-                                MessageX.Info($"当前用户 {CheckAdmin(true)} {(IsAdmin ? "" : "不")}具有管理员权限。");
+                                MessageX.Info($"当前用户 {UACHelper.CheckAdmin(true)} {(UACHelper.IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
                             case "/fr":
                                 Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
                                 break;
                             case "/op":
+                                UACHelper.CheckAdmin();
                                 new OptimizationHelper().Optimize();
                                 break;
                             default:
@@ -221,18 +221,6 @@ namespace PlainCEETimer.Modules
         {
             MainMutex?.Dispose();
             MainMutex = null;
-        }
-
-        private static string CheckAdmin(bool QueryUserName = false)
-        {
-            IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
-
-            if (QueryUserName)
-            {
-                return (string)ProcessHelper.Run("whoami", Return: 1);
-            }
-
-            return null;
         }
     }
 }

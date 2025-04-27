@@ -135,4 +135,13 @@ namespace PlainCEETimer.Modules
         Light,
         Dark
     }
+
+    public enum UACNotifyLevel
+    {
+        AllDimming,
+        AppsOnlyDimming,
+        AppsOnlyNoDimming,
+        Never,
+        Unknown
+    }
 }

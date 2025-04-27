@@ -11,7 +11,7 @@
         {
             var KeyName = App.AppNameEngOld;
             var AppPath = $"\"{App.CurrentExecutablePath}\"";
-            using var Helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+            using var Helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 
             switch (Operation)
             {

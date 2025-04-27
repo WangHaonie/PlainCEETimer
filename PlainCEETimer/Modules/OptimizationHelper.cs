@@ -18,7 +18,6 @@ namespace PlainCEETimer.Modules
             if (MessageX.Warn(
                 """
                 确认对本程序进行优化？此操作将有助于提升一定的运行速度。
-                (需要管理员权限，无则自动尝试提权。)
                 
                 推荐在以下情况下使用：
                     1. 首次运行本程序
@@ -27,33 +26,40 @@ namespace PlainCEETimer.Modules
                 
                 """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
-                MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n若弹出 UAC 对话框，请点击 是。\n\n>> 点击 确定 继续。");
+                MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n\n>> 点击 确定 继续。");
 
-                try
+                if (UACHelper.EnsureUAC(MessageX))
                 {
-                    var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
-                    var length = dirs.Length;
-
-                    if (length != 0)
+                    try
                     {
-                        for (int i = length - 1; i < length; i--)
-                        {
-                            var path = Path.Combine(dirs[i], Ngen);
+                        var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
+                        var length = dirs.Length;
 
-                            if (File.Exists(path))
+                        if (length != 0)
+                        {
+                            for (int i = length - 1; i < length; i--)
                             {
-                                Start(path);
-                                return;
+                                var path = Path.Combine(dirs[i], Ngen);
+
+                                if (File.Exists(path))
+                                {
+                                    Start(path);
+                                    return;
+                                }
                             }
                         }
-                    }
 
-                    throw new Exception();
+                        throw new Exception();
+                    }
+                    catch
+                    {
+                        MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
+                        Retry();
+                    }
                 }
-                catch
+                else
                 {
-                    MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
-                    Retry();
+                    Cancel();
                 }
             }
         }
@@ -112,7 +118,8 @@ namespace PlainCEETimer.Modules
 
         private void Cancel()
         {
-            MessageX.Info("你已取消本次操作！");
+            MessageX.Info("本次操作已被取消！");
+            App.Shutdown();
         }
 
         ~OptimizationHelper() => Dispose();
