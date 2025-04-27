@@ -11,19 +11,19 @@
 PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持自定义考试名称和时间等。
 
 > [!IMPORTANT]
-> 本项目原名 [CEETimerCSharpWinForms](https://github.com/WangHaonie/CEETimerCSharpWinForms/), 当前最新版 v3.0.8 及以前仍使用原名, 新名将在 v5.0.0 及以后被应用。
+> 本项目原名 [CEETimerCSharpWinForms](https://github.com/WangHaonie/CEETimerCSharpWinForms/), 当前最新版 v3.0.8 及以前仍使用原名, 新名在 v5.0.0 及以后被应用。
 
 ## 📷 运行截图
-> v3.0.8, Windows 11, 1920x1080, 125% 缩放
+> v5.0.0, Windows 11, 1920x1080, 125% 缩放，开启自定义文本
 
-![主窗口](./.github/Screenshot.png)
+![主窗口](./.github/Screenshot.jpg)
 
 ## 🔥 主要功能
 + 🔥 自定义考试名称
 + 🔥 自定义考试开始/结束日期时间
 + 🔥 自定义倒计时字体颜色、大小
 + 🔥 自定义不同时刻的倒计时内容格式、颜色等
-+ 🔥 支持添加多个考试，以及自动/手动切换进行倒计时 **【v5.0.0 即将推出】**
++ 🔥 支持添加多个考试，以及自动/手动切换进行倒计时
 + 🔥 顶置显示倒计时
 + 🔥 防误关闭倒计时
 + 🔥 <更多功能等你来探索>
@@ -32,8 +32,8 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ 可拖动、固定倒计时
 + ✅ 禁止多开
 + ✅ 一键开机自启
-+ ✅ 深色 UI 支持 **(Win10 1903 及以上)** **【v5.0.0 即将推出】**
-+ ✅ 托盘图标 **【v5.0.0 即将推出】**
++ ✅ 深色 UI 支持 **(Win10 1903 及以上)**
++ ✅ 托盘图标
 + ✅ 后台内存自动清理
 + ✅ 启动时自动检查更新，确认后自动安装
 + ✅ 与网络同步系统时钟
@@ -46,7 +46,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + 查看开发进程。[点此](./.github/InProgress.md)进入。
 
 ## 💻 开发环境
-+ Windows 11 Pro x64 (26120.3872)
++ Windows 11 Pro x64 (26120.3941)
 + Visual Studio 2022 (17.13.6)
 + .NET Framework (4.8)
 + WinForms

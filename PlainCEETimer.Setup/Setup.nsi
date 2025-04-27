@@ -43,7 +43,7 @@ launch:
 
 !include "MUI2.nsh"
 !define PRODUCT_NAME "高考倒计时"
-!define SETUP_FILENAME_NO_V "3.0.8"
+!define SETUP_FILENAME_NO_V "5.0.0"
 !define PRODUCT_VERSION "${SETUP_FILENAME_NO_V}"
 !define PRODUCT_TITLE "${PRODUCT_NAME} by ${PRODUCT_PUBLISHER}"
 !define PRODUCT_PUBLISHER "WangHaonie"

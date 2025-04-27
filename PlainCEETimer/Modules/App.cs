@@ -43,7 +43,7 @@ namespace PlainCEETimer.Modules
         public const string UxThemeDll = "uxtheme.dll";
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
-        public const string AppVersion = "3.0.8";
+        public const string AppVersion = "5.0.0";
         public const string AppBuildDate = "2025/04/27";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
