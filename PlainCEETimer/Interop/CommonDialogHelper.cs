@@ -26,14 +26,18 @@ namespace PlainCEETimer.Interop
 
         private RECT DialogRect;
         private readonly int BackCrColor;
+        private readonly string DialogTitle;
+        private readonly CommonDialogKind DialogKind;
         private readonly IntPtr hBrush;
         private readonly AppForm Parent;
         private readonly StringBuilder builder = new(256);
         private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-        public CommonDialogHelper(AppForm owner)
+        public CommonDialogHelper(string dialogTitle, CommonDialogKind kind, AppForm owner)
         {
+            DialogTitle = dialogTitle;
+            DialogKind = kind;
             Parent = owner;
             Parent.ReActivate();
             BackCrColor = ColorTranslator.ToWin32(ThemeManager.DarkBack);
@@ -62,12 +66,12 @@ namespace PlainCEETimer.Interop
                     SetFocus(wParam);
                     break;
                 case WM_INITDIALOG:
-                    if (Dialog.DialogTitle != null)
+                    if (DialogTitle != null)
                     {
-                        SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, Dialog.DialogTitle);
+                        SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, DialogTitle);
                     }
 
-                    if (Dialog.DialogKind == CommonDialogKind.Font && !((FontDialogEx)Dialog).ShowColor)
+                    if (DialogKind == CommonDialogKind.Font && !((FontDialogEx)Dialog).ShowColor)
                     {
                         IntPtr hSelectorStatic;
 
@@ -164,6 +168,7 @@ namespace PlainCEETimer.Interop
         private NativeControl GetNativeControl(IntPtr hWnd)
         {
             GetClassName(hWnd, builder, 256);
+
             return builder.ToString() switch
             {
                 "Button" => NativeControl.Button,

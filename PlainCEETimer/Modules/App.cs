@@ -204,7 +204,7 @@ namespace PlainCEETimer.Modules
         {
             if (!AllowUIClosing)
             {
-                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.ToFormatted()} ==================\n{ex}";
+                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.Format()} ==================\n{ex}";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
 

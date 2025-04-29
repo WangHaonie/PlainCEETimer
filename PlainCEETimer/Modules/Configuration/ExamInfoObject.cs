@@ -72,7 +72,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Name.Truncate(6), Start.ToFormatted());
+            return string.Format("{0} - {1}", Name.Truncate(6), Start.Format());
         }
 
         public override bool Equals(object obj)

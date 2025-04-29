@@ -59,13 +59,12 @@ namespace PlainCEETimer.Modules
         private static UACNotifyLevel GetUACNotifyLevel()
         {
             using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", rootKey: RegistryHive.LocalMachine);
-            var tmp = ((int)reg.GetValue("ConsentPromptBehaviorAdmin", 0), (int)reg.GetValue("EnableLUA", 0), (int)reg.GetValue("PromptOnSecureDesktop", 0));
 
-            return tmp switch
+            return ((int)reg.GetValue("EnableLUA", 0), (int)reg.GetValue("ConsentPromptBehaviorAdmin", 0), (int)reg.GetValue("PromptOnSecureDesktop", 0)) switch
             {
-                (2, 1, 1) => UACNotifyLevel.AllDimming,
-                (5, 1, 1) => UACNotifyLevel.AppsOnlyDimming,
-                (5, 1, 0) => UACNotifyLevel.AppsOnlyNoDimming,
+                (1, 2, 1) => UACNotifyLevel.AllDimming,
+                (1, 5, 1) => UACNotifyLevel.AppsOnlyDimming,
+                (1, 5, 0) => UACNotifyLevel.AppsOnlyNoDimming,
                 (0, 0, 0) => UACNotifyLevel.Never,
                 _ => UACNotifyLevel.Unknown
             };

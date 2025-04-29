@@ -19,7 +19,7 @@ namespace PlainCEETimer.Modules
             {
                 var Response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
                 var LatestVersion = Response.Version;
-                var PublishDate = Response.PublishDate.ToFormatted();
+                var PublishDate = Response.PublishDate.Format();
                 var UpdateLog = Response.UpdateLog;
 
                 if (Version.Parse(LatestVersion) > App.AppVersionObject)

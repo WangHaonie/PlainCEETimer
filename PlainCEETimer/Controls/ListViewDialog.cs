@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,6 +12,15 @@ namespace PlainCEETimer.Controls
         where TData : IListViewObject<TData>
         where TSubDialog : AppDialog, ISubDialog<TData>
     {
+        private class ListViewItemComparer<T> : IComparer
+            where T : IListViewObject<T>
+        {
+            public int Compare(object x, object y)
+            {
+                return ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
+            }
+        }
+
         public TData[] Data { get; set; }
         private ContextMenu ContextMenuMain;
         private PlainButton ButtonOperation;

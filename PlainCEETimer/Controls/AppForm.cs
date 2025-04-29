@@ -37,10 +37,6 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        static AppForm()
-        {
-        }
-
         public void ReActivate()
         {
             var tmp = TopMost;
