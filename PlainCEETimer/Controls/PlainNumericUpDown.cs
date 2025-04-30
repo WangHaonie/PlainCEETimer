@@ -4,7 +4,7 @@ using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
-    public class PlainNumericUpDown : NumericUpDown
+    public sealed class PlainNumericUpDown : NumericUpDown
     {
         public PlainNumericUpDown()
         {
