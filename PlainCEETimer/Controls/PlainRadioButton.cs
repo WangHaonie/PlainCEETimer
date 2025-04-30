@@ -1,16 +1,19 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
-    public class PlainRadioButton : RadioButton
+    public sealed class PlainRadioButton : RadioButton
     {
-        public PlainRadioButton()
+        protected override void OnHandleCreated(EventArgs e)
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
                 ThemeManager.FlushDarkControl(this, Modules.NativeStyle.Explorer);
             }
+
+            base.OnHandleCreated(e);
         }
     }
 }

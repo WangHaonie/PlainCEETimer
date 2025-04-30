@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
-    public class PlainTextBox : TextBox
+    public sealed class PlainTextBox : TextBox
     {
         public PlainTextBox()
         {
@@ -12,10 +13,19 @@ namespace PlainCEETimer.Controls
             {
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
-                ThemeManager.FlushDarkControl(this, NativeStyle.CFD);
             }
 
             MaxLength = Validator.MaxCustomTextLength;
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                ThemeManager.FlushDarkControl(this, NativeStyle.CFD);
+            }
+
+            base.OnHandleCreated(e);
         }
     }
 }
