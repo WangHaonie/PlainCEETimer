@@ -15,8 +15,6 @@ namespace PlainCEETimer.Modules.Configuration
 
         public ColorSetObject Colors { get; set; }
 
-        public bool CanExecute() => true;
-
         public int CompareTo(CustomRuleObject other)
         {
             if (other == null)

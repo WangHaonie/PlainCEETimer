@@ -53,8 +53,6 @@ namespace PlainCEETimer.Modules.Configuration
             }
         } = DateTime.Now;
 
-        public bool CanExecute() => true;
-
         public int CompareTo(ExamInfoObject other)
         {
             return other == null ? 1 : Start.CompareTo(other.Start);
