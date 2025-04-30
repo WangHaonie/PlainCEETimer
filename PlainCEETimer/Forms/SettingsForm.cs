@@ -456,13 +456,14 @@ namespace PlainCEETimer.Forms
             BindComboData(ComboBoxScreens, Monitors);
 
             ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
-            ArrayHelper.ForLoop(ColorLabels = [LabelColor11, LabelColor21, LabelColor31, LabelColor41, LabelColor12, LabelColor22, LabelColor32, LabelColor42], (_, label) =>
+            for (int i = 0; i < (ColorLabels = [LabelColor11, LabelColor21, LabelColor31, LabelColor41, LabelColor12, LabelColor22, LabelColor32, LabelColor42]).Length; i++)
             {
+                var label = ColorLabels[i];
                 label.Click += ColorLabels_Click;
                 label.MouseDown += ColorLabels_MouseDown;
                 label.MouseMove += ColorLabels_MouseMove;
                 label.MouseUp += ColorLabels_MouseUp;
-            });
+            }
 
             RadioButtonThemeSystem.Tag = 0;
             RadioButtonThemeLight.Tag = 1;

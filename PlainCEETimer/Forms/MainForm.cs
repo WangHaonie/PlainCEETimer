@@ -399,18 +399,19 @@ namespace PlainCEETimer.Forms
             if (Exams.Length != 0)
             {
                 ExamSwitchMain.Clear();
-                ArrayHelper.ForLoop(Exams, (index, exam) =>
+
+                for (int i = 0; i < Exams.Length; i++)
                 {
                     var Item = new MenuItem()
                     {
-                        Text = $"{index + 1}. {exam}",
+                        Text = $"{i + 1}. {Exams[i]}",
                         RadioCheck = true,
-                        Checked = index == ExamIndex
+                        Checked = i == ExamIndex
                     };
 
                     Item.Click += ExamItems_Click;
                     ExamSwitchMain.Add(Item);
-                });
+                }
             }
 
             UpdateExamSelection();

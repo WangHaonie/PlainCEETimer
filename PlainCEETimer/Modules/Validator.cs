@@ -121,13 +121,13 @@ namespace PlainCEETimer.Modules
         {
             HashSet<T> set = [];
 
-            ArrayHelper.ForLoop(value, (index, _) =>
+            for (int i = 0; i < value.Length; i++)
             {
-                if (!set.Add(value[index]))
+                if (!set.Add(value[i]))
                 {
                     throw new Exception();
                 }
-            });
+            }
 
             Array.Sort(value);
         }

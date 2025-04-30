@@ -311,7 +311,10 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void AlignControlsX(Control[] Targets, Control Reference, int Tweak = 0)
         {
-            ArrayHelper.ForLoop(Targets, (_, target) => AlignControlsX(target, Reference, Tweak));
+            for (int i = 0; i < Targets.Length; i++)
+            {
+                AlignControlsX(Targets[i], Reference, Tweak);
+            }
         }
 
         /// <summary>
