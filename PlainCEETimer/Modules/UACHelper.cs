@@ -65,7 +65,8 @@ namespace PlainCEETimer.Modules
                 (1, 2, 1) => UACNotifyLevel.AllDimming,
                 (1, 5, 1) => UACNotifyLevel.AppsOnlyDimming,
                 (1, 5, 0) => UACNotifyLevel.AppsOnlyNoDimming,
-                (0, 0, 0) => UACNotifyLevel.Never,
+                (1 or 0, 0, 0) => UACNotifyLevel.Never,
+                (0, _, _) => UACNotifyLevel.Disabled,
                 _ => UACNotifyLevel.Unknown
             };
         }

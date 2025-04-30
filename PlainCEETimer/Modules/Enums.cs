@@ -142,6 +142,7 @@ namespace PlainCEETimer.Modules
         AppsOnlyDimming,
         AppsOnlyNoDimming,
         Never,
+        Disabled,
         Unknown
     }
 }
