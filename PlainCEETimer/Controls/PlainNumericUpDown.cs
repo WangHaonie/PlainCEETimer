@@ -19,9 +19,9 @@ namespace PlainCEETimer.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                for (int i = 0; i < Controls.Count; i++)
+                foreach (Control udbutton in Controls)
                 {
-                    ThemeManager.FlushDarkControl(Controls[i], Modules.NativeStyle.Explorer);
+                    ThemeManager.FlushDarkControl(udbutton, Modules.NativeStyle.Explorer);
                 }
             }
 

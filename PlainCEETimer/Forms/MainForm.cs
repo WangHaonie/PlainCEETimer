@@ -607,13 +607,11 @@ namespace PlainCEETimer.Forms
             {
                 if (CanUseRules)
                 {
-                    for (int i = 0; i < CurrentRules.Length; i++)
+                    foreach (var rule in CurrentRules)
                     {
-                        var Rule = CurrentRules[i];
-
-                        if (Phase == (int)CountdownPhase.P3 ? (Span >= Rule.Tick) : (Span <= Rule.Tick))
+                        if (Phase == (int)CountdownPhase.P3 ? (Span >= rule.Tick) : (Span <= rule.Tick))
                         {
-                            UpdateCountdown(SetCustomRule(Span, Rule.Text), Rule.Colors);
+                            UpdateCountdown(SetCustomRule(Span, rule.Text), rule.Colors);
                             return;
                         }
                     }

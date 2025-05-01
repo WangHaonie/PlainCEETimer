@@ -77,9 +77,9 @@ namespace PlainCEETimer.Controls
             {
                 ListViewMain.Suspend(() =>
                 {
-                    for (int i = 0; i < Data.Length; i++)
+                    foreach (var data in Data)
                     {
-                        AddItem(Data[i]);
+                        AddItem(data);
                     }
 
                     ListViewMain.AutoAdjustColumnWidth();

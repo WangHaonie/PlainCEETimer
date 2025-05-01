@@ -21,9 +21,9 @@ namespace PlainCEETimer.Controls
                 {
                     Columns.Clear();
 
-                    foreach (var Title in value)
+                    foreach (var title in value)
                     {
-                        Columns.Add(new ColumnHeader() { Text = Title });
+                        Columns.Add(new ColumnHeader() { Text = title });
                     }
                 }
 

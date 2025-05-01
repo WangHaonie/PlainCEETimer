@@ -121,9 +121,9 @@ namespace PlainCEETimer.Modules
         {
             HashSet<T> set = [];
 
-            for (int i = 0; i < value.Length; i++)
+            foreach (var item in value)
             {
-                if (!set.Add(value[i]))
+                if (!set.Add(item))
                 {
                     throw new Exception();
                 }

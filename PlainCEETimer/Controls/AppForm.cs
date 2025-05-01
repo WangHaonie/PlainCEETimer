@@ -311,9 +311,9 @@ namespace PlainCEETimer.Controls
         /// <param name="Tweak">[可选] 微调</param>
         protected void AlignControlsX(Control[] Targets, Control Reference, int Tweak = 0)
         {
-            for (int i = 0; i < Targets.Length; i++)
+            foreach (var target in Targets)
             {
-                AlignControlsX(Targets[i], Reference, Tweak);
+                AlignControlsX(target, Reference, Tweak);
             }
         }
 
