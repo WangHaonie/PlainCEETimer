@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using System;
 
-namespace PlainCEETimer.Modules.Win32Registry
+namespace PlainCEETimer.Modules
 {
     public class RegistryHelper : IDisposable
     {

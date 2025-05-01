@@ -1,8 +1,8 @@
-﻿using System;
-using System.Windows.Forms;
-using PlainCEETimer.Controls;
+﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using System;
+using System.Windows.Forms;
 
 namespace PlainCEETimer.Dialogs
 {
@@ -34,7 +34,7 @@ namespace PlainCEETimer.Dialogs
         protected override void AddItem(CustomRuleObject Data, bool IsSelected = false)
         {
             var tmp = Data.Colors;
-            var Item = new ListViewItem([Validator.GetPhaseText(Data.Phase), Validator.GetTickText(Data.Tick)])
+            var Item = new ListViewItem([GetPhaseText(Data.Phase), GetTickText(Data.Tick)])
             {
                 Tag = Data,
                 Selected = IsSelected,
@@ -69,5 +69,15 @@ namespace PlainCEETimer.Dialogs
                 UserChanged();
             }
         }
+
+        private string GetTickText(TimeSpan timeSpan)
+            => $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
+
+        private string GetPhaseText(CountdownPhase i) => i switch
+        {
+            CountdownPhase.P2 => Constants.PH_RTP2,
+            CountdownPhase.P3 => Constants.PH_RTP3,
+            _ => Constants.PH_RTP1
+        };
     }
 }

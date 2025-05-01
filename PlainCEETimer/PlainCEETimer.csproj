@@ -240,9 +240,8 @@
     <Compile Include="Modules\OptimizationHelper.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\UACHelper.cs" />
-    <Compile Include="Modules\Win32Registry\RegistryHelper.cs" />
+    <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
-    <Compile Include="Modules\Win32Registry\StartUp.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="Modules\MessageBoxHelper.cs" />

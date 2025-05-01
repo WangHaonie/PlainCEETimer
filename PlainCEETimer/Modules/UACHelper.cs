@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using PlainCEETimer.Modules.Win32Registry;
 
 namespace PlainCEETimer.Modules
 {
@@ -19,6 +18,7 @@ namespace PlainCEETimer.Modules
     {
         public static bool IsUACDisabled { get; }
         public static bool IsAdmin { get; private set; }
+        public static string UserName { get; private set; }
 
         private static readonly UACNotifyLevel Level;
 
@@ -44,16 +44,14 @@ namespace PlainCEETimer.Modules
             return true;
         }
 
-        public static string CheckAdmin(bool QueryUserName = false)
+        public static void CheckAdmin(bool QueryUserName = false)
         {
             IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
 
             if (QueryUserName)
             {
-                return (string)ProcessHelper.Run("whoami", Return: 1);
+                UserName = (string)ProcessHelper.Run("whoami", Return: 1);
             }
-
-            return null;
         }
 
         private static UACNotifyLevel GetUACNotifyLevel()

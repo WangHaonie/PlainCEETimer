@@ -24,7 +24,7 @@ namespace PlainCEETimer.Modules
             => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
         #endregion
 
-        public static int ToArgbInt(this Color color)
+        public static int ToInt32(this Color color)
             => -color.ToArgb();
 
         public static string Format(this DateTime dateTime)

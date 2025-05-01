@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using PlainCEETimer.Forms;
+﻿using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {
@@ -123,7 +123,7 @@ namespace PlainCEETimer.Controls
                     BackColor = ThemeManager.DarkBack;
                 }
 
-                ThemeManager.FlushDarkWindow(Handle);
+                ThemeManager.FlushDarkTitleBar(Handle);
             }
 
             base.OnHandleCreated(e);

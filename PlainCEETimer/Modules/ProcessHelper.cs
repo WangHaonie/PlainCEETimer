@@ -5,7 +5,7 @@ namespace PlainCEETimer.Modules
     public static class ProcessHelper
     {
         /// <summary>
-        /// 启动一个进程。若要打开文件夹请改用 Process.Start()
+        /// 启动一个进程。若要打开文件夹请改用 <see cref="Process.Start()"/>
         /// </summary>
         /// <param name="ProcessPath">文件路径</param>
         /// <param name="Args">启动参数</param>

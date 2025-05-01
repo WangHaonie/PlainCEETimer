@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Dialogs;
+using PlainCEETimer.Interop;
+using System;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Dialogs;
-using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules
 {

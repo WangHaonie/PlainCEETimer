@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PlainCEETimer.Controls;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Forms
 {
@@ -307,7 +307,7 @@ namespace PlainCEETimer.Forms
         private void LoadExams()
         {
             AutoSwitch = AppConfig.General.AutoSwitch;
-            AutoSwitchInterval = Validator.GetAutoSwitchInterval(AppConfig.General.Interval);
+            AutoSwitchInterval = GetAutoSwitchInterval(AppConfig.General.Interval);
             Exams = AppConfig.Exams;
             var i = AppConfig.ExamIndex;
             ExamIndex = i < Exams.Length ? i : 0;
@@ -639,6 +639,23 @@ namespace PlainCEETimer.Forms
             CustomTextBuilder.Replace(Constants.PH_TOTALSECONDS, $"{ExamSpan.TotalSeconds:0}");
             return CustomTextBuilder.ToString();
         }
+
+        private int GetAutoSwitchInterval(int Index) => Index switch
+        {
+            1 => 15_000, // 15 s
+            2 => 30_000, // 30 s
+            3 => 45_000, // 45 s
+            4 => 60_000, // 1 min
+            5 => 120_000, // 2 min
+            6 => 180_000, // 3 min
+            7 => 300_000, // 5 min
+            8 => 600_000, // 10 min
+            9 => 900_000, // 15 min
+            10 => 1800_000, // 30 min
+            11 => 2700_000, // 45 min
+            12 => 3600_000, // 1 h
+            _ => 10_000 // 10 s
+        };
 
         private string GetCountdown(TimeSpan Span, string Hint) => SelectedState switch
         {

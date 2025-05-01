@@ -1,6 +1,7 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
@@ -21,7 +22,7 @@ namespace PlainCEETimer.Controls
             {
                 foreach (Control udbutton in Controls)
                 {
-                    ThemeManager.FlushDarkControl(udbutton, Modules.NativeStyle.Explorer);
+                    ThemeManager.FlushDarkControl(udbutton, NativeStyle.Explorer);
                 }
             }
 

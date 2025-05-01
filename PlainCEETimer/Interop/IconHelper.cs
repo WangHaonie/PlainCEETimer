@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PlainCEETimer.Modules;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
 {

@@ -1,15 +1,14 @@
-﻿using System;
+﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Dialogs;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Dialogs;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Win32Registry;
 
 namespace PlainCEETimer.Forms
 {
@@ -35,7 +34,6 @@ namespace PlainCEETimer.Forms
         private NavigationBar NavBar;
         private ColorSetObject[] SelectedColors;
         private readonly ConfigObject AppConfig = App.AppConfig;
-        private readonly StartUp StartUp = new();
 
         public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen)
         {
@@ -480,7 +478,7 @@ namespace PlainCEETimer.Forms
 
         private void RefreshSettings()
         {
-            CheckBoxStartup.Checked = (bool)StartUp.Operate(0);
+            CheckBoxStartup.Checked = (bool)OperateStartUp(0);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
@@ -687,7 +685,7 @@ namespace PlainCEETimer.Forms
 
         private void SaveSettings()
         {
-            StartUp.Operate(CheckBoxStartup.Checked ? 1 : 2);
+            OperateStartUp(CheckBoxStartup.Checked ? 1 : 2);
 
             App.AppConfig = new()
             {
@@ -728,6 +726,25 @@ namespace PlainCEETimer.Forms
             };
 
             RefreshNeeded = true;
+        }
+
+        private object OperateStartUp(int Operation)
+        {
+            var KeyName = App.AppNameEngOld;
+            var AppPath = $"\"{App.CurrentExecutablePath}\"";
+            using var Helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+
+            switch (Operation)
+            {
+                case 0:
+                    return Helper.GetState(KeyName, AppPath, "");
+                case 1:
+                    Helper.Set(KeyName, AppPath);
+                    return null;
+                default:
+                    Helper.Delete(KeyName);
+                    return null;
+            }
         }
     }
 }

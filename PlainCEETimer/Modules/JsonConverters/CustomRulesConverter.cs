@@ -1,7 +1,7 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlainCEETimer.Modules.Configuration;
+using System;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
@@ -44,8 +44,8 @@ namespace PlainCEETimer.Modules.JsonConverters
             {
                 { nameof(value.Phase), (int)value.Phase },
                 { nameof(value.Tick), (long)value.Tick.TotalSeconds },
-                { nameof(value.Colors.Fore), value.Colors.Fore.ToArgbInt() },
-                { nameof(value.Colors.Back), value.Colors.Back.ToArgbInt() },
+                { nameof(value.Colors.Fore), value.Colors.Fore.ToInt32() },
+                { nameof(value.Colors.Back), value.Colors.Back.ToInt32() },
                 { nameof(value.Text), value.Text }
             }.WriteTo(writer);
         }

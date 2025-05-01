@@ -1,6 +1,7 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Controls
 {
@@ -15,7 +16,7 @@ namespace PlainCEETimer.Controls
             {
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
-                ThemeManager.FlushDarkControl(this, Modules.NativeStyle.CFD);
+                ThemeManager.FlushDarkControl(this, NativeStyle.CFD);
             }
 
             base.OnHandleCreated(e);

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Configuration;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
-using PlainCEETimer.Forms;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules
 {
@@ -44,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.0";
-        public const string AppBuildDate = "2025/04/30";
+        public const string AppBuildDate = "2025/5/2";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -74,13 +74,7 @@ namespace PlainCEETimer.Modules
             {
                 new Thread(StartPipeServer).Start();
 
-                if (!CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
-                {
-                    MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", AutoClose: true);
-                    ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
-                    Exit(ExitReason.InvalidExeName);
-                }
-                else
+                if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (Args.Length == 0)
                     {
@@ -106,7 +100,8 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/ac":
-                                MessageX.Info($"当前用户 {UACHelper.CheckAdmin(true)} {(UACHelper.IsAdmin ? "" : "不")}具有管理员权限。");
+                                UACHelper.CheckAdmin(true);
+                                MessageX.Info($"当前用户 {UACHelper.UserName} {(UACHelper.IsAdmin ? "" : "不")}具有管理员权限。");
                                 break;
                             case "/fr":
                                 Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
@@ -122,6 +117,12 @@ namespace PlainCEETimer.Modules
                     }
 
                     Exit(ExitReason.NormalExit);
+                }
+                else
+                {
+                    MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", AutoClose: true);
+                    ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
+                    Exit(ExitReason.InvalidExeName);
                 }
             }
             else

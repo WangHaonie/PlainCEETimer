@@ -1,6 +1,6 @@
-﻿using System;
-using PlainCEETimer.Controls;
+﻿using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using System;
 
 namespace PlainCEETimer.Dialogs
 {

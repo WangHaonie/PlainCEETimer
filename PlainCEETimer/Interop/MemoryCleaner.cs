@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules;
+using System.Runtime.InteropServices;
 
 namespace PlainCEETimer.Interop
 {

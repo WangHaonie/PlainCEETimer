@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
@@ -49,6 +49,8 @@ namespace PlainCEETimer.Controls
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
             }
+
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         public void SelectAll(bool IsSelected)
@@ -77,9 +79,6 @@ namespace PlainCEETimer.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            UpdateStyles();
-
             if (UseDark)
             {
                 ThemeManager.FlushDarkControl(this, NativeStyle.Explorer);

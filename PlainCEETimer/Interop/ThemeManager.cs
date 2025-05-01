@@ -1,9 +1,8 @@
-﻿using System;
+﻿using PlainCEETimer.Modules;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Win32Registry;
 
 namespace PlainCEETimer.Interop
 {
@@ -40,7 +39,7 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        public static void FlushDarkWindow(IntPtr hWnd)
+        public static void FlushDarkTitleBar(IntPtr hWnd)
         {
             FlushDarkWindow(hWnd, DarkDwmaType);
         }

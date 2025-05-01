@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules;
+using System.Windows.Forms;
 
 namespace PlainCEETimer.Controls
 {

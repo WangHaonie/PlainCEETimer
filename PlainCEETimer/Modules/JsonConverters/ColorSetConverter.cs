@@ -1,6 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PlainCEETimer.Modules.Configuration;
+using System;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
@@ -26,7 +26,7 @@ namespace PlainCEETimer.Modules.JsonConverters
 
         public override void WriteJson(JsonWriter writer, ColorSetObject value, JsonSerializer serializer)
         {
-            serializer.Serialize(writer, new int[] { value.Fore.ToArgbInt(), value.Back.ToArgbInt() });
+            serializer.Serialize(writer, new int[] { value.Fore.ToInt32(), value.Back.ToInt32() });
         }
     }
 }

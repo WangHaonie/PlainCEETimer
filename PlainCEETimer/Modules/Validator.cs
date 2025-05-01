@@ -81,33 +81,6 @@ namespace PlainCEETimer.Modules
         public static bool IsValidExamLength(int ExamLength)
             => ExamLength is >= MinExamNameLength and <= MaxExamNameLength;
 
-        public static int GetAutoSwitchInterval(int Index) => Index switch
-        {
-            1 => 15_000, // 15 s
-            2 => 30_000, // 30 s
-            3 => 45_000, // 45 s
-            4 => 60_000, // 1 min
-            5 => 120_000, // 2 min
-            6 => 180_000, // 3 min
-            7 => 300_000, // 5 min
-            8 => 600_000, // 10 min
-            9 => 900_000, // 15 min
-            10 => 1800_000, // 30 min
-            11 => 2700_000, // 45 min
-            12 => 3600_000, // 1 h
-            _ => 10_000 // 10 s
-        };
-
-        public static string GetTickText(TimeSpan timeSpan)
-            => $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
-
-        public static string GetPhaseText(CountdownPhase i) => i switch
-        {
-            CountdownPhase.P2 => Constants.PH_RTP2,
-            CountdownPhase.P3 => Constants.PH_RTP3,
-            _ => Constants.PH_RTP1
-        };
-
         public static void EnsureCustomTextLength(string Text)
         {
             if (Text.Length > MaxCustomTextLength)

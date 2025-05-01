@@ -1,10 +1,10 @@
-﻿using System.Drawing;
+﻿using PlainCEETimer.Controls;
+using PlainCEETimer.Forms;
+using PlainCEETimer.Modules;
+using System.Drawing;
 using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Forms;
-using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Dialogs
 {
