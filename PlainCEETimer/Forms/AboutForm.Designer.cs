@@ -31,7 +31,7 @@ namespace PlainCEETimer.Forms
         private void InitializeComponent()
         {
             this.LabelInfo = new System.Windows.Forms.Label();
-            this.ButtonClose = new PlainCEETimer.Controls.PlainButton();
+            this.ButtonOK = new PlainCEETimer.Controls.PlainButton();
             this.LabelLicense = new System.Windows.Forms.Label();
             this.PanelMain = new System.Windows.Forms.Panel();
             this.LinkTutorial = new PlainCEETimer.Controls.Hyperlink();
@@ -53,15 +53,15 @@ namespace PlainCEETimer.Forms
             // 
             // ButtonClose
             // 
-            this.ButtonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ButtonClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonClose.Location = new System.Drawing.Point(130, 66);
-            this.ButtonClose.Name = "ButtonClose";
-            this.ButtonClose.Size = new System.Drawing.Size(75, 25);
-            this.ButtonClose.TabIndex = 5;
-            this.ButtonClose.Text = "确定(&C)";
-            this.ButtonClose.UseVisualStyleBackColor = true;
-            this.ButtonClose.Click += new System.EventHandler(this.ButtonClose_Click);
+            this.ButtonOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.ButtonOK.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ButtonOK.Location = new System.Drawing.Point(130, 66);
+            this.ButtonOK.Name = "ButtonClose";
+            this.ButtonOK.Size = new System.Drawing.Size(75, 25);
+            this.ButtonOK.TabIndex = 5;
+            this.ButtonOK.Text = "确定(&O)";
+            this.ButtonOK.UseVisualStyleBackColor = true;
+            this.ButtonOK.Click += new System.EventHandler(this.ButtonClose_Click);
             // 
             // LabelLicense
             // 
@@ -81,7 +81,7 @@ namespace PlainCEETimer.Forms
             this.PanelMain.Controls.Add(this.PicBoxLogo);
             this.PanelMain.Controls.Add(this.LinkGitHub);
             this.PanelMain.Controls.Add(this.LabelInfo);
-            this.PanelMain.Controls.Add(this.ButtonClose);
+            this.PanelMain.Controls.Add(this.ButtonOK);
             this.PanelMain.Controls.Add(this.LabelLicense);
             this.PanelMain.Location = new System.Drawing.Point(0, 0);
             this.PanelMain.Name = "PanelMain";
@@ -140,12 +140,12 @@ namespace PlainCEETimer.Forms
             // 
             // AboutForm
             // 
-            this.AcceptButton = this.ButtonClose;
+            this.AcceptButton = this.ButtonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CancelButton = this.ButtonClose;
+            this.CancelButton = this.ButtonOK;
             this.ClientSize = new System.Drawing.Size(208, 94);
             this.Controls.Add(this.PanelMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -164,7 +164,7 @@ namespace PlainCEETimer.Forms
 
         #endregion
         private System.Windows.Forms.Label LabelInfo;
-        private PlainCEETimer.Controls.PlainButton ButtonClose;
+        private PlainCEETimer.Controls.PlainButton ButtonOK;
         private System.Windows.Forms.Label LabelLicense;
         private System.Windows.Forms.Panel PanelMain;
         private PlainCEETimer.Controls.Hyperlink LinkGitHub;

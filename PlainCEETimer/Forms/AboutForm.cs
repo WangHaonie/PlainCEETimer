@@ -23,10 +23,11 @@ namespace PlainCEETimer.Forms
 
             WhenHighDpi(() =>
             {
-                CompactControlsY(ButtonClose, LabelLicense);
-                AlignControlsX([LinkGitHub, LinkFeedback, LinkTutorial], ButtonClose);
+                CompactControlsY(ButtonOK, LabelLicense);
                 CompactControlsX(LinkFeedback, LinkGitHub);
                 CompactControlsX(LinkTutorial, LinkFeedback);
+                AlignControlsX([LinkGitHub, LinkFeedback, LinkTutorial], ButtonOK);
+                AlignControlsR(ButtonOK, LabelLicense);
             });
         }
 
