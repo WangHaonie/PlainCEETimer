@@ -34,7 +34,7 @@ namespace PlainCEETimer.Controls
                 {
                     var page = pages[i];
                     page.Dock = DockStyle.Fill;
-                    page.Index = i;
+                    page.Tag = i;
                     Nodes.Add(navItems[i]);
                     collection.Add(page);
                 }
@@ -49,7 +49,7 @@ namespace PlainCEETimer.Controls
         /// <param name="page"></param>
         public void SwitchTo(NavigationPage page)
         {
-            SwitchTo(page.Index);
+            SwitchTo(Nodes[(int)page.Tag]);
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -70,15 +70,18 @@ namespace PlainCEETimer.Controls
 
         protected override void OnAfterSelect(TreeViewEventArgs e)
         {
-            SwitchTo(e.Node.Index);
+            SwitchTo(e.Node);
             base.OnAfterSelect(e);
         }
 
-        private void SwitchTo(int pageIndex)
+        private void SwitchTo(TreeNode navItem)
         {
+            var index = navItem.Index;
+            SelectedNode = navItem;
+
             for (int i = 0; i < ItemsCount; i++)
             {
-                Pages[i].Visible = i == pageIndex;
+                Pages[i].Visible = i == index;
             }
         }
     }

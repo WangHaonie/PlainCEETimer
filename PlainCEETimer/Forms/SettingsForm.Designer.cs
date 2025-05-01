@@ -794,7 +794,6 @@
             // 
             this.PageGeneral.Controls.Add(this.GBoxExamInfo);
             this.PageGeneral.Controls.Add(this.GBoxOthers);
-            this.PageGeneral.Index = 0;
             this.PageGeneral.Location = new System.Drawing.Point(400, 0);
             this.PageGeneral.Name = "PageGeneral";
             this.PageGeneral.Size = new System.Drawing.Size(332, 254);
@@ -806,7 +805,6 @@
             this.PageDisplay.Controls.Add(this.GBoxPptsvc);
             this.PageDisplay.Controls.Add(this.GBoxContent);
             this.PageDisplay.Controls.Add(this.GBoxDraggable);
-            this.PageDisplay.Index = 0;
             this.PageDisplay.Location = new System.Drawing.Point(738, 0);
             this.PageDisplay.Name = "PageDisplay";
             this.PageDisplay.Size = new System.Drawing.Size(332, 261);
@@ -817,7 +815,6 @@
             // 
             this.PageAppearance.Controls.Add(this.GBoxColors);
             this.PageAppearance.Controls.Add(this.GBoxFont);
-            this.PageAppearance.Index = 0;
             this.PageAppearance.Location = new System.Drawing.Point(400, 262);
             this.PageAppearance.Name = "PageAppearance";
             this.PageAppearance.Size = new System.Drawing.Size(332, 254);
@@ -829,7 +826,6 @@
             this.PageTools.Controls.Add(this.GBoxTheme);
             this.PageTools.Controls.Add(this.GBoxRestart);
             this.PageTools.Controls.Add(this.GBoxSyncTime);
-            this.PageTools.Index = 0;
             this.PageTools.Location = new System.Drawing.Point(738, 269);
             this.PageTools.Name = "PageTools";
             this.PageTools.Size = new System.Drawing.Size(332, 245);
