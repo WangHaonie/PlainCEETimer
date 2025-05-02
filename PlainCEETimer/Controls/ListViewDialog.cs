@@ -100,13 +100,14 @@ namespace PlainCEETimer.Controls
             if (e.Control && e.KeyCode == Keys.A)
             {
                 ContextSelectAll_Click(null, null);
+                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
             {
                 ContextDelete_Click(null, null);
+                e.Handled = true;
             }
 
-            e.Handled = true;
             base.OnKeyDown(e);
         }
 
