@@ -21,11 +21,13 @@ namespace PlainCEETimer.Interop
         private const int WM_CTLCOLOREDIT = 0x0133;
         private const int WM_CTLCOLORSTATIC = 0x0138;
         private const int WM_CTLCOLORLISTBOX = 0x0134;
+        private const int WM_CTLCOLORBTN = 0x0135;
         private const int stc4 = 0x0443;
         private const int cmb4 = 0x0473;
 
         private RECT DialogRect;
         private readonly int BackCrColor;
+        private readonly int ForeCrColor;
         private readonly string DialogTitle;
         private readonly CommonDialogKind DialogKind;
         private readonly IntPtr hBrush;
@@ -41,6 +43,7 @@ namespace PlainCEETimer.Interop
             Parent = owner;
             Parent.ReActivate();
             BackCrColor = ColorTranslator.ToWin32(ThemeManager.DarkBack);
+            ForeCrColor = ColorTranslator.ToWin32(ThemeManager.DarkFore);
             hBrush = CreateSolidBrush(BackCrColor);
         }
 
@@ -86,43 +89,37 @@ namespace PlainCEETimer.Interop
                         }
                     }
 
+                    if (UseDark)
+                    {
+                        ThemeManager.FlushDarkTitleBar(hWnd);
+                        FlushDark(hWnd);
+                    }
+
                     GetWindowRect(hWnd, ref DialogRect);
                     KeepOnScreen(hWnd);
                     PostMessage(hWnd, WM_SETFOCUS, 0, 0);
-                    break;
-                case WM_COMMAND:
-                    return Dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
-            }
-            #endregion
-
-            if (UseDark)
-            {
-                return DarkUIProc(hWnd, msg, wParam);
-            }
-
-            return IntPtr.Zero;
-        }
-
-        private IntPtr DarkUIProc(IntPtr hWnd, int msg, IntPtr wParam)
-        {
-            switch (msg)
-            {
-                case WM_INITDIALOG:
-                    ThemeManager.FlushDarkTitleBar(hWnd);
-                    FlushDark(hWnd);
                     break;
                 case WM_CTLCOLORDLG:
                 case WM_CTLCOLOREDIT:
                 case WM_CTLCOLORSTATIC:
                 case WM_CTLCOLORLISTBOX:
+                case WM_CTLCOLORBTN:
+                    if (!UseDark)
+                    {
+                        break;
+                    }
+
                     SetBkMode(wParam, BM_TRANSPARENT);
-                    SetTextColor(wParam, ColorTranslator.ToWin32(ThemeManager.DarkFore));
+                    SetTextColor(wParam, ForeCrColor);
                     SetBkColor(wParam, BackCrColor);
                     return hBrush;
+                case WM_COMMAND:
+                    return Dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
                     DeleteObject(hBrush);
                     break;
             }
+            #endregion
 
             return IntPtr.Zero;
         }
