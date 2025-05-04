@@ -238,6 +238,7 @@
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
     <Compile Include="Modules\ComboData.cs" />
     <Compile Include="Modules\OptimizationHelper.cs" />
+    <Compile Include="Modules\PlainButtonBase.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\UACHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />

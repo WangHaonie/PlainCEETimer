@@ -1,6 +1,6 @@
-﻿using PlainCEETimer.Modules;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using PlainCEETimer.Modules;
 
 [assembly: AssemblyTitle(App.AppName)]
 [assembly: AssemblyDescription(App.AppName)]

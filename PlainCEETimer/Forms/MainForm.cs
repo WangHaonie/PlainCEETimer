@@ -1,14 +1,14 @@
-﻿using Microsoft.Win32;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using PlainCEETimer.Controls;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Forms
 {

@@ -1,7 +1,7 @@
-﻿using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {

@@ -1,13 +1,13 @@
-﻿using PlainCEETimer.Forms;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Configuration;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
+using PlainCEETimer.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules
 {
