@@ -36,7 +36,7 @@ namespace PlainCEETimer.Modules.Http
                 var read = 0;
                 var sw = Stopwatch.StartNew();
                 var lastReport = sw.Elapsed;
-                var elapsed = new TimeSpan(0L);
+                var elapsed = new TimeSpan();
 
                 while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
                 {
@@ -66,7 +66,7 @@ namespace PlainCEETimer.Modules.Http
             }
             catch (Exception ex)
             {
-                if (!token.IsCancellationRequested && (ex is not TaskCanceledException or IOException))
+                if (!token.IsCancellationRequested && ex is not TaskCanceledException)
                 {
                     Error?.Invoke(ex);
                 }
