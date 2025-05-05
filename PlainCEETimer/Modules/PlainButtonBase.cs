@@ -28,5 +28,7 @@ namespace PlainCEETimer.Modules
                 ThemeManager.FlushDarkControl(button, NativeStyle.Explorer);
             }
         }
+
+        ~PlainButtonBase() => button.EnabledChanged -= Button_EnabledChanged;
     }
 }

@@ -71,18 +71,18 @@ namespace PlainCEETimer.Dialogs
 
             if (AutoCloseRequired)
             {
-                Task.Run(() => Task.Delay(3200)).ContinueWith(t => BeginInvoke(Close));
+                Task.Run(() => Task.Delay(3200)).ContinueWith(_ => BeginInvoke(Close));
             }
         }
 
-        protected override bool ButtonA_Click()
+        protected override bool OnClickButtonA()
         {
             Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
             return true;
         }
 
-        protected override void ButtonB_Click()
+        protected override void OnClickButtonB()
         {
             Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();

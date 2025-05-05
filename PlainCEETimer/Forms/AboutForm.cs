@@ -44,7 +44,7 @@ namespace PlainCEETimer.Forms
                 IsCheckingUpdate = true;
                 PicBoxLogo.Enabled = false;
                 LabelInfo.Text = $"{App.AppName}\n正在检查更新，请稍候...";
-                Task.Run(() => new Updater().CheckForUpdate(true, this)).ContinueWith(t => BeginInvoke(() =>
+                Task.Run(() => new Updater().CheckForUpdate(true, this)).ContinueWith(_ => BeginInvoke(() =>
                 {
                     LabelInfo.Text = OriginalVersionString;
                     PicBoxLogo.Enabled = true;

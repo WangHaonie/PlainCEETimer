@@ -31,26 +31,23 @@ namespace PlainCEETimer.Dialogs
             AddNewButton(ButtonGlobal, 6);
         }
 
-        protected override void AddItem(CustomRuleObject Data, bool IsSelected = false)
+        protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
-            var tmp = Data.Colors;
-            var Item = new ListViewItem([GetPhaseText(Data.Phase), GetTickText(Data.Tick)])
+            var tmp = data.Colors;
+            var item = new ListViewItem([GetPhaseText(data.Phase), GetTickText(data.Tick)])
             {
-                Tag = Data,
-                Selected = IsSelected,
-                Focused = IsSelected,
                 UseItemStyleForSubItems = false
             };
 
-            Item.SubItems.Add(new ListViewItem.ListViewSubItem(Item, Data.Text, tmp.Fore, tmp.Back, null));
-            AddItem(Item, Data);
+            item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
+            return item;
         }
 
-        protected override ISubDialog<CustomRuleObject> GetSubDialogInstance(CustomRuleObject Existing = null)
+        protected override ISubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null)
         {
             return new RuleDialog()
             {
-                Data = Existing,
+                Data = data,
                 GlobalColors = ColorPresets,
                 GlobalTexts = CustomTextPreset
             };

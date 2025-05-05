@@ -41,7 +41,7 @@ namespace PlainCEETimer.Dialogs
             AlignControlsX(ButtonReset, ButtonA);
         }
 
-        protected override bool ButtonA_Click()
+        protected override bool OnClickButtonA()
         {
             P1TextRaw = RemoveInvalid(TextBoxP1.Text);
             P2TextRaw = RemoveInvalid(TextBoxP2.Text);
@@ -58,7 +58,7 @@ namespace PlainCEETimer.Dialogs
             }
 
             CustomTexts = tmp;
-            return base.ButtonA_Click();
+            return base.OnClickButtonA();
         }
 
         private void ButtonReset_Click(object sender, EventArgs e)

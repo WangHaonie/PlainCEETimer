@@ -42,7 +42,7 @@ namespace PlainCEETimer.Dialogs
             });
         }
 
-        protected override bool ButtonA_Click()
+        protected override bool OnClickButtonA()
         {
             if (string.IsNullOrWhiteSpace(CurrentExamName) || !Validator.IsValidExamLength(CurrentExamName.Length))
             {
@@ -55,7 +55,7 @@ namespace PlainCEETimer.Dialogs
             var ExamSpan = EndTime - StartTime;
             var TotalSeconds = ExamSpan.TotalSeconds;
 
-            if (EndTime <= StartTime || TotalSeconds < 1D)
+            if (EndTime <= StartTime)
             {
                 MessageX.Error("考试结束时间必须在开始时间之后！");
                 return false;
@@ -91,7 +91,7 @@ namespace PlainCEETimer.Dialogs
                 End = EndTime
             };
 
-            return base.ButtonA_Click();
+            return base.OnClickButtonA();
         }
 
         private void DTP_ValueChanged(object sender, EventArgs e)

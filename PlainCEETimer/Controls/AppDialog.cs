@@ -16,8 +16,8 @@ namespace PlainCEETimer.Controls
             PanelMain = new();
             ButtonA = new();
             ButtonB = new();
-            ButtonA.Click += (_, _) => ButtonA_Click();
-            ButtonB.Click += (_, _) => ButtonB_Click();
+            ButtonA.Click += (_, _) => OnClickButtonA();
+            ButtonB.Click += (_, _) => OnClickButtonB();
             SetProperties();
         }
 
@@ -29,11 +29,11 @@ namespace PlainCEETimer.Controls
             }
             else if (IsUserChanged)
             {
-                ShowUnsavedWarning("是否保存当前更改？", e, ButtonA_Click, ref IsUserChanged);
+                ShowUnsavedWarning("是否保存当前更改？", e, OnClickButtonA, ref IsUserChanged);
             }
         }
 
-        protected virtual bool ButtonA_Click()
+        protected virtual bool OnClickButtonA()
         {
             IsUserChanged = false;
             DialogResult = DialogResult.OK;
@@ -41,7 +41,7 @@ namespace PlainCEETimer.Controls
             return true;
         }
 
-        protected virtual void ButtonB_Click()
+        protected virtual void OnClickButtonB()
         {
             DialogResult = DialogResult.Cancel;
             Close();

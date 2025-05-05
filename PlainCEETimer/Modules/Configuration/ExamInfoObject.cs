@@ -31,9 +31,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded && !Validator.IsValidExamDate(value))
+                if (MainForm.ValidateNeeded)
                 {
-                    throw new Exception();
+                    Validator.EnsureExamDate(value);
                 }
 
                 field = value;
@@ -46,9 +46,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded && !Validator.IsValidExamDate(value))
+                if (MainForm.ValidateNeeded)
                 {
-                    throw new Exception();
+                    Validator.EnsureExamDate(value);
                 }
 
                 field = value;

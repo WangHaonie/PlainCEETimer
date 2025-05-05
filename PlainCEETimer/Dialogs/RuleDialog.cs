@@ -76,7 +76,7 @@ namespace PlainCEETimer.Dialogs
             });
         }
 
-        protected override bool ButtonA_Click()
+        protected override bool OnClickButtonA()
         {
             var d = (int)NUDDays.Value;
             var h = (int)NUDHours.Value;
@@ -114,7 +114,7 @@ namespace PlainCEETimer.Dialogs
                 Colors = new(Fore, Back)
             };
 
-            return base.ButtonA_Click();
+            return base.OnClickButtonA();
         }
 
         private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)

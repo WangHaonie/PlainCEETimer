@@ -9,19 +9,14 @@ namespace PlainCEETimer.Dialogs
     {
         public ExamInfoManager() : base(440, "管理考试信息 - 高考倒计时", "考试信息", ["考试名称", "开始日期和时间", "结束日期和时间"]) { }
 
-        protected override void AddItem(ExamInfoObject Data, bool IsSelected = false)
+        protected override ListViewItem GetListViewItem(ExamInfoObject data)
         {
-            AddItem(new ListViewItem([Data.Name, Data.Start.Format(), Data.End.Format()])
-            {
-                Tag = Data,
-                Selected = IsSelected,
-                Focused = IsSelected
-            }, Data);
+            return new([data.Name, data.Start.Format(), data.End.Format()]);
         }
 
-        protected override ISubDialog<ExamInfoObject> GetSubDialogInstance(ExamInfoObject Existing = null)
+        protected override ISubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)
         {
-            return new ExamInfoDialog(Existing);
+            return new ExamInfoDialog(data);
         }
     }
 }

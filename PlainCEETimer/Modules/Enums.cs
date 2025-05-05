@@ -92,10 +92,10 @@ namespace PlainCEETimer.Modules
     {
         BindButtons = 0b00001,
         KeyPreview = 0b00010,
-        AllControl = BindButtons | KeyPreview,
         Special = 0b00100,
         CompositedStyle = 0b01000,
-        CenterScreen = 0b10000
+        CenterScreen = 0b10000,
+        AllControl = BindButtons | KeyPreview
     }
 
     public enum TaskbarProgressState

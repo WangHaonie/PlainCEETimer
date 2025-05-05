@@ -48,19 +48,29 @@ namespace PlainCEETimer.Controls
             ContentDescription = content;
         }
 
-        /// <summary>
-        /// 实现向 ListView 添加新项的逻辑。请务必在此调用基类 <see cref="AddItem(ListViewItem, TData)"/> 方法以完成添加。
-        /// </summary>
-        /// <param name="Data">该项包含的数据</param>
-        /// <param name="IsSelected">是否选中该项</param>
-        protected abstract void AddItem(TData Data, bool IsSelected = false);
+        private void AddItem(TData data, bool IsSelected = false)
+        {
+            var item = GetListViewItem(data);
+            item.Tag = data;
+            item.Selected = IsSelected;
+            item.Focused = IsSelected;
+            ListViewMain.Items.Add(item);
+            ListViewItemsSet.Add(data);
+        }
 
         /// <summary>
-        /// 获取用于向用户显示 添加、更改、重试 的对话框实例。
+        /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 示例 
         /// </summary>
-        /// <param name="Existing">现有数据</param>
-        /// <returns><see cref="ISubDialog{TData}"/> 实例</returns>
-        protected abstract ISubDialog<TData> GetSubDialogInstance(TData Existing = default);
+        /// <param name="data">给定的数据</param>
+        /// <returns><see cref="ListViewItem"/></returns>
+        protected abstract ListViewItem GetListViewItem(TData data);
+
+        /// <summary>
+        /// 获取用于向用户显示 添加、更改、重试 的 <see cref="ISubDialog{T}"/> 对话框实例。
+        /// </summary>
+        /// <param name="data">现有数据</param>
+        /// <returns><see cref="ISubDialog{TData}"/></returns>
+        protected abstract ISubDialog<TData> GetSubDialog(TData data = default);
 
         protected override void AdjustUI()
         {
@@ -111,7 +121,7 @@ namespace PlainCEETimer.Controls
             base.OnKeyDown(e);
         }
 
-        protected sealed override bool ButtonA_Click()
+        protected sealed override bool OnClickButtonA()
         {
             var length = ListViewMain.ItemsCount;
             var tmp = new TData[length];
@@ -123,7 +133,7 @@ namespace PlainCEETimer.Controls
             }
 
             Data = tmp;
-            return base.ButtonA_Click();
+            return base.OnClickButtonA();
         }
 
         /// <summary>
@@ -137,17 +147,6 @@ namespace PlainCEETimer.Controls
             CompactControlsX(Btn, ButtonOperation, cxTweak);
         }
 
-        /// <summary>
-        /// 向 ListView 添加项。该方法应当在 <see cref="AddItem(TData, bool)"/> 中被调用
-        /// </summary>
-        /// <param name="Item">ListView 项</param>
-        /// <param name="Data">包含的数据</param>
-        protected void AddItem(ListViewItem Item, TData Data)
-        {
-            ListViewMain.Items.Add(Item);
-            ListViewItemsSet.Add(Data);
-        }
-
         private void ButtonOperation_Click(object sender, EventArgs e)
         {
             ContextMenuMain.Show(ButtonOperation, new Point(0, ButtonOperation.Height));
@@ -156,7 +155,7 @@ namespace PlainCEETimer.Controls
         private void ContextEdit_Click(object sender, EventArgs e)
         {
             var TargetItem = ListViewMain.SelectedItems[0];
-            var SubDialog = GetSubDialogInstance((TData)TargetItem.Tag);
+            var SubDialog = GetSubDialog((TData)TargetItem.Tag);
 
             if (SubDialog.ShowDialog() == DialogResult.OK)
             {
@@ -198,21 +197,21 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void AddItemSafe(TData Info, ListViewItem Item = null)
+        private void AddItemSafe(TData data, ListViewItem item = null)
         {
-            var EditMode = Item != null;
+            var EditMode = item != null;
 
-            if (ListViewItemsSet.Add(Info) || EditMode)
+            if (ListViewItemsSet.Add(data) || EditMode)
             {
                 if (EditMode)
                 {
-                    RemoveItem(Item, Info);
+                    RemoveItem(item, data);
                 }
 
                 ListViewMain.Suspend(() =>
                 {
                     ListViewMain.SelectAll(false);
-                    AddItem(Info, true);
+                    AddItem(data, true);
                     ListViewMain.Sort();
                     ListViewMain.AutoAdjustColumnWidth();
                 });
@@ -224,13 +223,13 @@ namespace PlainCEETimer.Controls
                 MessageX.Error(EditMode
                     ? $"检测到此{ContentDescription}在编辑后与现有的重复。\n\n请重新编辑！"
                     : $"检测待添加的{ContentDescription}与现有的重复。\n\n请重新添加！");
-                OpenRetryDialog(Info);
+                OpenRetryDialog(data);
             }
         }
 
-        private void OpenRetryDialog(TData Data)
+        private void OpenRetryDialog(TData data)
         {
-            var SubDialog = GetSubDialogInstance(Data);
+            var SubDialog = GetSubDialog(data);
 
             if (SubDialog.ShowDialog() == DialogResult.OK)
             {
@@ -238,10 +237,10 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void RemoveItem(ListViewItem Item, TData TagData)
+        private void RemoveItem(ListViewItem item, TData data)
         {
-            ListViewMain.Items.Remove(Item);
-            ListViewItemsSet.Remove(TagData);
+            ListViewMain.Items.Remove(item);
+            ListViewItemsSet.Remove(data);
         }
 
         private void InitializeComponent()
@@ -296,7 +295,7 @@ namespace PlainCEETimer.Controls
             [
                 b.Item("添加(&A)", (_, _) =>
                 {
-                    var SubDialog = GetSubDialogInstance();
+                    var SubDialog = GetSubDialog();
 
                     if (SubDialog.ShowDialog() == DialogResult.OK)
                     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PlainCEETimer.Modules
@@ -20,8 +19,6 @@ namespace PlainCEETimer.Modules
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
 
-        private static readonly string[] AllPHs = [Constants.PH_EXAMNAME, Constants.PH_DAYS, Constants.PH_HOURS, Constants.PH_MINUTES, Constants.PH_SECONDS, Constants.PH_CEILINGDAYS, Constants.PH_TOTALHOURS, Constants.PH_TOTALMINUTES, Constants.PH_TOTALSECONDS];
-
         public static bool VerifyCustomText(string CustomText, out string Warning, int Index = 0)
         {
             var IndexHint = Index != 0 ? $"第{Index}个自定义文本" : "自定义文本";
@@ -32,20 +29,7 @@ namespace PlainCEETimer.Modules
                 return false;
             }
 
-            var Matches = Regex.Matches(CustomText, @"\{.*?\}");
-
-            foreach (Match m in Matches)
-            {
-                var mv = m.Value;
-
-                if (!AllPHs.Contains(mv))
-                {
-                    Warning = $"在{IndexHint}中检测到了无效的占位符 {mv}，请重新设置！";
-                    return false;
-                }
-            }
-
-            if (Matches.Count == 0)
+            if (Regex.Matches(CustomText, @"\{.*?\}").Count == 0)
             {
                 Warning = $"请在{IndexHint}中至少使用一个占位符！";
                 return false;
@@ -75,11 +59,16 @@ namespace PlainCEETimer.Modules
             return (L1 + 0.05) / (L2 + 0.05) >= 3;
         }
 
-        public static bool IsValidExamDate(DateTime ExamTime)
-            => ExamTime.Ticks is >= MinDate and <= MaxDate;
-
         public static bool IsValidExamLength(int ExamLength)
             => ExamLength is >= MinExamNameLength and <= MaxExamNameLength;
+
+        public static void EnsureExamDate(DateTime ExamTime)
+        {
+            if (ExamTime.Ticks is < MinDate or > MaxDate)
+            {
+                throw new Exception();
+            }
+        }
 
         public static void EnsureCustomTextLength(string Text)
         {
