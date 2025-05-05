@@ -50,7 +50,8 @@ namespace PlainCEETimer.Modules
 
             if (QueryUserName)
             {
-                UserName = (string)ProcessHelper.Run("whoami", Return: 1);
+                using var reg = RegistryHelper.Open("Volatile Environment");
+                UserName = (string)reg.GetValue("USERDOMAIN", "") + "\\" + (string)reg.GetValue("USERNAME", "");
             }
         }
 
