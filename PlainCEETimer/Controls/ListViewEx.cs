@@ -67,22 +67,9 @@ namespace PlainCEETimer.Controls
 
         public void AutoAdjustColumnWidth()
         {
-            var count = Columns.Count;
-            var w = 0;
-
-            for (int i = 0; i < Columns.Count; i++)
+            foreach (ColumnHeader column in Columns)
             {
-                var col = Columns[i];
-
-                if (i == count - 1)
-                {
-                    col.Width = Width - w - ThemeManager.VScrollBarWidth - 8;
-                }
-                else
-                {
-                    col.Width = -2;
-                    w += col.Width;
-                }
+                column.Width = -2;
             }
         }
 

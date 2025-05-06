@@ -12,7 +12,7 @@ namespace PlainCEETimer.Interop
             if (useDark)
             {
                 FlushHeaderTheme(hLV, ColorTranslator.ToWin32(ThemeManager.DarkFore));
-                ThemeManager.FlushDarkControl(hLV, NativeStyle.ItemsView);
+                ThemeManager.FlushDarkControl(hLV, NativeStyle.Explorer);
                 ThemeManager.FlushDarkControl(GetToolTips(hLV), NativeStyle.Explorer);
                 ThemeManager.FlushDarkControl(GetHeader(hLV), NativeStyle.ItemsView);
             }
