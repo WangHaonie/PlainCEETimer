@@ -1,9 +1,9 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "ThemeManager.h"
 
 /*
 
-´°Ìå±êÌâÀ¸ÉîÉ«ÑùÊ½ ²Î¿¼£º
+çª—ä½“æ ‡é¢˜æ æ·±è‰²æ ·å¼ å‚è€ƒï¼š
 
 c# - WinForms Dark title bar on Windows 10 - Stack Overflow
 https://stackoverflow.com/a/62811758

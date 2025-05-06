@@ -1,9 +1,9 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "ListViewHelper.h"
 
 /*
 
-Ê¹ÓÃ WinAPI ¸ßĞ§È«Ñ¡ ListView ËùÓĞÏî ²Î¿¼£º
+ä½¿ç”¨ WinAPI é«˜æ•ˆå…¨é€‰ ListView æ‰€æœ‰é¡¹ å‚è€ƒï¼š
 
 c# - Setting ListViewItem's Checked state using WinAPI - Stack Overflow
 https://stackoverflow.com/a/37146677
@@ -11,7 +11,7 @@ https://stackoverflow.com/a/37146677
 c - how to select a line in listview using win32API - Stack Overflow
 https://stackoverflow.com/q/22177635
 
-ListView_SetItemState ºê £¨commctrl.h£© - Win32 apps | Microsoft Learn
+ListView_SetItemState å® ï¼ˆcommctrl.hï¼‰ - Win32 apps | Microsoft Learn
 https://learn.microsoft.com/zh-cn/windows/win32/api/commctrl/nf-commctrl-listview_setitemstate
 
 ListViewItem.cs

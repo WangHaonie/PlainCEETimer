@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
+
+#define LV_INITNOW WM_USER + 13
 
 #include <CommCtrl.h>
 #include <Windows.h>
 #include <Uxtheme.h>
 #include <vssym32.h>
 #include <cstdint>
-
-#define LV_INITNOW WM_USER + 13
 
 extern "C"
 {
@@ -17,9 +17,9 @@ extern "C"
 
 /*
 
-ListView ÉîÉ«Ö÷Ìâ ²Î¿¼£º
+ListView æ·±è‰²ä¸»é¢˜ å‚è€ƒï¼š
 
-win32-darkmode/win32-darkmode/ListViewUtil.h at master ¡¤ ysc3839/win32-darkmode
+win32-darkmode/win32-darkmode/ListViewUtil.h at master Â· ysc3839/win32-darkmode
 https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUtil.h
 
 */
