@@ -8,9 +8,10 @@
 
 extern "C"
 {
-	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int isSelected);
 	__declspec(dllexport) HWND __stdcall GetHeader(HWND hLV);
+	__declspec(dllexport) HWND __stdcall GetToolTips(HWND hLV);
 	__declspec(dllexport) void __stdcall FlushHeaderTheme(HWND hLV, int hFColor);
+	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int isSelected);
 }
 
 /*

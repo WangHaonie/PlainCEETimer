@@ -11,3 +11,4 @@ EXPORTS
 	FlushDarkWindow @9 NONAME
 	GetHeader @10 NONAME
 	FlushHeaderTheme @11 NONAME
+	GetToolTips @12 NONAME

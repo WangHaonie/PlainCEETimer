@@ -8,7 +8,7 @@ namespace PlainCEETimer.Controls
     public sealed class ComboBoxEx : ComboBox
     {
         private bool Calculated;
-        private static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
+        private static readonly int VerticalScrollBarWidth = ThemeManager.VScrollBarWidth;
 
         protected override void OnHandleCreated(EventArgs e)
         {

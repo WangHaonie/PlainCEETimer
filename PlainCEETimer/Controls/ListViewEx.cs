@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
@@ -39,6 +38,7 @@ namespace PlainCEETimer.Controls
             GridLines = false;
             HeaderStyle = ColumnHeaderStyle.Nonclickable;
             HideSelection = false;
+            ShowItemToolTips = true;
 
             if (UseDark)
             {
@@ -67,23 +67,28 @@ namespace PlainCEETimer.Controls
 
         public void AutoAdjustColumnWidth()
         {
-            foreach (ColumnHeader column in Columns)
+            var count = Columns.Count;
+            var w = 0;
+
+            for (int i = 0; i < Columns.Count; i++)
             {
-                column.Width = -2;
+                var col = Columns[i];
+
+                if (i == count - 1)
+                {
+                    col.Width = Width - w - ThemeManager.VScrollBarWidth - 8;
+                }
+                else
+                {
+                    col.Width = -2;
+                    w += col.Width;
+                }
             }
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            if (UseDark)
-            {
-                ListViewHelper.FlushTheme(Handle);
-            }
-            else
-            {
-                ThemeManager.FlushDarkControl(Handle, NativeStyle.ExplorerLight);
-            }
-
+            ListViewHelper.FlushTheme(Handle, UseDark);
             base.OnHandleCreated(e);
         }
 
