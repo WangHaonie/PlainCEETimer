@@ -42,8 +42,8 @@ namespace PlainCEETimer.Interop
             DialogKind = kind;
             Parent = owner;
             Parent.ReActivate();
-            BackCrColor = ColorTranslator.ToWin32(ThemeManager.DarkBack);
-            ForeCrColor = ColorTranslator.ToWin32(ThemeManager.DarkFore);
+            BackCrColor = ThemeManager.DarkBack.ToWin32();
+            ForeCrColor = ThemeManager.DarkFore.ToWin32();
             hBrush = CreateSolidBrush(BackCrColor);
         }
 
@@ -104,15 +104,14 @@ namespace PlainCEETimer.Interop
                 case WM_CTLCOLORSTATIC:
                 case WM_CTLCOLORLISTBOX:
                 case WM_CTLCOLORBTN:
-                    if (!UseDark)
+                    if (UseDark)
                     {
-                        break;
+                        SetBkMode(wParam, BM_TRANSPARENT);
+                        SetTextColor(wParam, ForeCrColor);
+                        SetBkColor(wParam, BackCrColor);
+                        return hBrush;
                     }
-
-                    SetBkMode(wParam, BM_TRANSPARENT);
-                    SetTextColor(wParam, ForeCrColor);
-                    SetBkColor(wParam, BackCrColor);
-                    return hBrush;
+                    break;
                 case WM_COMMAND:
                     return Dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:

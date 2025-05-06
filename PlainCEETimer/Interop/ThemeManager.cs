@@ -14,7 +14,6 @@ namespace PlainCEETimer.Interop
         public static Color DarkFore { get; } = Color.White;
         public static Color DarkForeLink { get; } = Color.FromArgb(95, 197, 255);
         public static Color DarkBack { get; } = Color.FromArgb(32, 32, 32);
-        public static Color DarkBackSelection { get; } = Color.FromArgb(77, 77, 77);
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;

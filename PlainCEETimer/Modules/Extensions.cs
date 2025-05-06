@@ -27,6 +27,9 @@ namespace PlainCEETimer.Modules
         public static int ToInt32(this Color color)
             => -color.ToArgb();
 
+        public static int ToWin32(this Color color)
+            => ColorTranslator.ToWin32(color);
+
         public static string Format(this DateTime dateTime)
             => dateTime.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss");
     }
