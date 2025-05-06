@@ -44,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.0";
-        public const string AppBuildDate = "2025/5/5";
+        public const string AppBuildDate = "2025/5/6";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";

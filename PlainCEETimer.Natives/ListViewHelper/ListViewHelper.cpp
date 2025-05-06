@@ -23,3 +23,15 @@ void SelectAllItems(HWND hLV, int selected)
 {
 	ListView_SetItemState(hLV, -1, selected == 0 ? 0 : LVIS_SELECTED, LVIS_SELECTED);
 }
+
+HWND GetHeader(HWND hLV)
+{
+	return ListView_GetHeader(hLV);
+}
+
+void FlushHeaderTheme(HWND hLV, HWND hLVH)
+{
+	auto data = new ListViewSubClassData{};
+	data->hHeader = hLVH;
+	SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), reinterpret_cast<DWORD_PTR>(data));
+}

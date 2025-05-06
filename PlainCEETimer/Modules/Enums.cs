@@ -111,6 +111,7 @@ namespace PlainCEETimer.Modules
     {
         Explorer,
         CFD,
+        ItemsView,
         ExplorerLight
     }
 

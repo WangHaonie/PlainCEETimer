@@ -55,6 +55,7 @@ namespace PlainCEETimer.Interop
             {
                 NativeStyle.Explorer => "DarkMode_Explorer",
                 NativeStyle.CFD => "DarkMode_CFD",
+                NativeStyle.ItemsView => "DarkMode_ItemsView",
                 _ => "Explorer"
             };
 
@@ -69,10 +70,10 @@ namespace PlainCEETimer.Interop
         Win32 Dark Mode
         https://gist.github.com/rounk-ctrl/b04e5622e30e0d62956870d5c22b7017
         
-        【MIT】BlueMystical/Dark-Mode-Forms: Apply Dark Mode to all Controls in a Form [WinForms]
+        BlueMystical/Dark-Mode-Forms: Apply Dark Mode to all Controls in a Form [WinForms]
         https://github.com/BlueMystical/Dark-Mode-Forms
         
-        【MIT】ysc3839/win32-darkmode: Example application shows how to use undocumented dark mode API introduced in Windows 10 1809.
+        ysc3839/win32-darkmode: Example application shows how to use undocumented dark mode API introduced in Windows 10 1809.
         https://github.com/ysc3839/win32-darkmode
 
         */
