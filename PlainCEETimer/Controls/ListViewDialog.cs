@@ -91,8 +91,6 @@ namespace PlainCEETimer.Controls
                     {
                         AddItem(data);
                     }
-
-                    ListViewMain.AutoAdjustColumnWidth();
                 });
             }
 
@@ -241,6 +239,7 @@ namespace PlainCEETimer.Controls
         {
             ListViewMain.Items.Remove(item);
             ListViewItemsSet.Remove(data);
+            ListViewMain.AutoAdjustColumnWidth();
         }
 
         private void InitializeComponent()
