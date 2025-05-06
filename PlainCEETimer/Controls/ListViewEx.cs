@@ -77,7 +77,7 @@ namespace PlainCEETimer.Controls
         {
             if (UseDark)
             {
-                ListViewHelper.FlushTheme(Handle, ListViewHelper.GetHeader(Handle));
+                ListViewHelper.FlushTheme(Handle);
             }
             else
             {

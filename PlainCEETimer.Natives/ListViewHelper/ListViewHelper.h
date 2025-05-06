@@ -5,14 +5,12 @@
 #include <CommCtrl.h>
 #include <Windows.h>
 #include <Uxtheme.h>
-#include <vssym32.h>
-#include <cstdint>
 
 extern "C"
 {
 	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int isSelected);
 	__declspec(dllexport) HWND __stdcall GetHeader(HWND hLV);
-	__declspec(dllexport) void __stdcall FlushHeaderTheme(HWND hLV, HWND hLVH);
+	__declspec(dllexport) void __stdcall FlushHeaderTheme(HWND hLV, int hFColor);
 }
 
 /*
@@ -24,16 +22,10 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUti
 
 */
 
-struct ListViewSubClassData
-{
-	HWND hHeader;
-	COLORREF HeaderTextColor;
-};
+static COLORREF LVHForeColor;
 
-static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR)
 {
-	auto data = reinterpret_cast<ListViewSubClassData*>(dwRefData);
-
 	switch (uMsg)
 	{
 		case WM_NOTIFY:
@@ -48,7 +40,7 @@ static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam
 						return CDRF_NOTIFYITEMDRAW;
 					case CDDS_ITEMPREPAINT:
 					{
-						SetTextColor(nmcd->hdc, data->HeaderTextColor);
+						SetTextColor(nmcd->hdc, LVHForeColor);
 						return CDRF_DODEFAULT;
 					}
 				}
@@ -56,42 +48,9 @@ static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam
 		}
 		break;
 
-		case LV_INITNOW:
-		{
-			HTHEME hTheme = OpenThemeData(nullptr, L"DarkMode_ItemsView");
-
-			if (hTheme)
-			{
-				COLORREF color;
-
-				if (SUCCEEDED(GetThemeColor(hTheme, 0, 0, TMT_TEXTCOLOR, &color)))
-				{
-					ListView_SetTextColor(hWnd, color);
-				}
-
-				if (SUCCEEDED(GetThemeColor(hTheme, 0, 0, TMT_FILLCOLOR, &color)))
-				{
-					ListView_SetTextBkColor(hWnd, color);
-					ListView_SetBkColor(hWnd, color);
-				}
-
-				CloseThemeData(hTheme);
-			}
-
-			hTheme = OpenThemeData(data->hHeader, L"Header");
-
-			if (hTheme)
-			{
-				GetThemeColor(hTheme, HP_HEADERITEM, 0, TMT_TEXTCOLOR, &(data->HeaderTextColor));
-				CloseThemeData(hTheme);
-			}
-		}
-		break;
-
 		case WM_NCDESTROY:
 		{
 			RemoveWindowSubclass(hWnd, ListViewNativeWindow, uIdSubclass);
-			delete data;
 		}
 		break;
 	}

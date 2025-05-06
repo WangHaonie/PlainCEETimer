@@ -29,9 +29,8 @@ HWND GetHeader(HWND hLV)
 	return ListView_GetHeader(hLV);
 }
 
-void FlushHeaderTheme(HWND hLV, HWND hLVH)
+void FlushHeaderTheme(HWND hLV, int hFColor)
 {
-	auto data = new ListViewSubClassData{};
-	data->hHeader = hLVH;
-	SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), reinterpret_cast<DWORD_PTR>(data));
+	LVHForeColor = (COLORREF)hFColor;
+	SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
 }

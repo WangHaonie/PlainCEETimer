@@ -216,7 +216,7 @@ namespace PlainCEETimer.Interop
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
 
         [DllImport(App.User32Dll)]
-        public static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+        private static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
