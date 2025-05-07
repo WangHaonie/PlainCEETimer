@@ -16,7 +16,7 @@ namespace PlainCEETimer.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                ThemeManager.FlushDarkControl(this, NativeStyle.Explorer);
+                ThemeManager.FlushControl(this, NativeStyle.Explorer);
             }
 
             base.OnHandleCreated(e);

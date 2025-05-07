@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Controls
 {
@@ -53,7 +54,7 @@ namespace PlainCEETimer.Controls
         {
             if (ItemsCount != 0)
             {
-                ListViewHelper.SelectAllItems(Handle, IsSelected ? 1 : 0);
+                ListViewHelper.SelectAllItems(Handle, IsSelected.ToWin32());
             }
         }
 

@@ -3,3 +3,5 @@
 #include "framework.h"
 #endif 
 #include <sdkddkver.h>
+#define cexport extern "C" __declspec(dllexport)
+#define stdcall WINAPI

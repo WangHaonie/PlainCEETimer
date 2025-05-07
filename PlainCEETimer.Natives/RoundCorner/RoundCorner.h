@@ -2,8 +2,5 @@
 
 #include <dwmapi.h>
 
-extern "C"
-{
-	__declspec(dllexport) void __stdcall SetRoundCornerRegion(HWND hWnd, int wndWidth, int wndHeight, int radius);
-	__declspec(dllexport) void __stdcall SetRoundCornerModern(HWND hWnd);
-}
+cexport void stdcall SetRoundCornerRegion(HWND hWnd, int wndWidth, int wndHeight, int radius);
+cexport void stdcall SetRoundCornerModern(HWND hWnd);

@@ -30,6 +30,9 @@ namespace PlainCEETimer.Modules
         public static int ToWin32(this Color color)
             => ColorTranslator.ToWin32(color);
 
+        public static int ToWin32(this bool flag)
+            => flag ? 1 : 0;
+
         public static string Format(this DateTime dateTime)
             => dateTime.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss");
     }

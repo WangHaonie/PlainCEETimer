@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -91,7 +90,7 @@ namespace PlainCEETimer.Interop
 
                     if (UseDark)
                     {
-                        ThemeManager.FlushDarkTitleBar(hWnd);
+                        ThemeManager.FlushWindow(hWnd);
                         FlushDark(hWnd);
                     }
 
@@ -131,12 +130,12 @@ namespace PlainCEETimer.Interop
                 {
                     case NativeControl.Button:
                     case NativeControl.ComboLBox:
-                        ThemeManager.FlushDarkControl(child, NativeStyle.Explorer);
+                        ThemeManager.FlushControl(child, NativeStyle.Explorer);
                         break;
                     case NativeControl.Label:
                     case NativeControl.TextBox:
                     case NativeControl.ComboBox:
-                        ThemeManager.FlushDarkControl(child, NativeStyle.CFD);
+                        ThemeManager.FlushControl(child, NativeStyle.CFD);
                         break;
                 }
                 return true;

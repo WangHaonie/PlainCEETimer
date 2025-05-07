@@ -30,11 +30,11 @@ void InitilizeTaskbarList(HWND hWnd, int enable)
 	}
 }
 
-void SetTaskbarProgressState(int tbpFlags)
+void SetTaskbarProgressState(TBPFLAG tbpFlags)
 {
 	if (_enable)
 	{
-		taskbarList->SetProgressState(handle, (TBPFLAG)tbpFlags);
+		taskbarList->SetProgressState(handle, tbpFlags);
 	}
 }
 

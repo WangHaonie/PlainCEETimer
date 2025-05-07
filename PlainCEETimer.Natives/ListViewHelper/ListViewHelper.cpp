@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ListViewHelper.h"
+#include "ThemeManager/ThemeManager.h"
 
 /*
 
@@ -19,25 +20,27 @@ https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/Sys
 
 */
 
-HWND GetHeader(HWND hLV)
-{
-	return ListView_GetHeader(hLV);
-}
-
-HWND GetToolTips(HWND hLV)
+void FlushHeaderTheme(HWND hLV, COLORREF hFColor, int enable)
 {
 	HWND hTT = ListView_GetToolTips(hLV);
-	SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-	return hTT;
-}
+	LVHForeColor = hFColor;
+	
+	if (enable)
+	{
+		SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
+		SetTheme(hLV, 0);
+		SetTheme(ListView_GetHeader(hLV), 2);
+		SetTheme(hTT, 0);
+	}
+	else
+	{
+		SetTheme(hLV, 3);
+	}
 
-void FlushHeaderTheme(HWND hLV, int hFColor)
-{
-	LVHForeColor = (COLORREF)hFColor;
-	SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
+	SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 void SelectAllItems(HWND hLV, int selected)
 {
-	ListView_SetItemState(hLV, -1, selected == 0 ? 0 : LVIS_SELECTED, LVIS_SELECTED);
+	ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }

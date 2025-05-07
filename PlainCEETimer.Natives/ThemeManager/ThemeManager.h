@@ -2,7 +2,6 @@
 
 #include <dwmapi.h>
 
-extern "C"
-{
-	__declspec(dllexport) void __stdcall FlushDarkWindow(HWND hWnd, int type);
-}
+cexport void stdcall FlushWindow(HWND hWnd, int type);
+cexport void stdcall FlushApp(int preferredAppMode);
+cexport void stdcall SetTheme(HWND hWnd, int type);

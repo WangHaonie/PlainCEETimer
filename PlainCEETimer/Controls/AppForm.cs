@@ -123,7 +123,7 @@ namespace PlainCEETimer.Controls
                     BackColor = ThemeManager.DarkBack;
                 }
 
-                ThemeManager.FlushDarkTitleBar(Handle);
+                ThemeManager.FlushWindow(Handle);
             }
 
             base.OnHandleCreated(e);

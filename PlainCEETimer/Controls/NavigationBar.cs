@@ -58,11 +58,11 @@ namespace PlainCEETimer.Controls
             {
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
-                ThemeManager.FlushDarkControl(this, NativeStyle.Explorer);
+                ThemeManager.FlushControl(this, NativeStyle.Explorer);
             }
             else
             {
-                ThemeManager.FlushDarkControl(this, NativeStyle.ExplorerLight);
+                ThemeManager.FlushControl(this, NativeStyle.ExplorerLight);
             }
 
             base.OnHandleCreated(e);

@@ -111,8 +111,7 @@ namespace PlainCEETimer.Modules
     {
         Explorer,
         CFD,
-        ItemsView,
-        ExplorerLight
+        ExplorerLight = 3
     }
 
     public enum CommonDialogKind

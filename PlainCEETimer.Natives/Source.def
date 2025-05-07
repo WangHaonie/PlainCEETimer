@@ -8,7 +8,7 @@ EXPORTS
 	SetTaskbarProgressState @6 NONAME
 	SetTaskbarProgressValue @7 NONAME
 	ReleaseTaskbarList @8 NONAME
-	FlushDarkWindow @9 NONAME
-	GetHeader @10 NONAME
-	FlushHeaderTheme @11 NONAME
-	GetToolTips @12 NONAME
+	FlushWindow @9 NONAME
+	FlushHeaderTheme @10 NONAME
+	FlushApp @11 NONAME
+	SetTheme @12 NONAME

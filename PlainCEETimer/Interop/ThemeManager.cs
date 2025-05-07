@@ -17,7 +17,7 @@ namespace PlainCEETimer.Interop
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
-        private static readonly int DarkDwmaType;
+        private static readonly int DwmaType;
 
         static ThemeManager()
         {
@@ -29,37 +29,29 @@ namespace PlainCEETimer.Interop
 
                 if (App.OSBuild >= WindowsBuilds.Windows10_20H1)
                 {
-                    DarkDwmaType = 1;
+                    DwmaType = 1;
                 }
 
                 if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
                 {
-                    SetPreferredAppMode(2);
+                    FlushApp(2);
                 }
             }
         }
 
-        public static void FlushDarkTitleBar(IntPtr hWnd)
+        public static void FlushWindow(IntPtr hWnd)
         {
-            FlushDarkWindow(hWnd, DarkDwmaType);
+            FlushWindow(hWnd, DwmaType);
         }
 
-        public static void FlushDarkControl(Control control, NativeStyle type)
+        public static void FlushControl(Control control, NativeStyle type)
         {
-            FlushDarkControl(control.Handle, type);
+            FlushControl(control.Handle, type);
         }
 
-        public static void FlushDarkControl(IntPtr hWnd, NativeStyle type)
+        public static void FlushControl(IntPtr hWnd, NativeStyle type)
         {
-            var name = type switch
-            {
-                NativeStyle.Explorer => "DarkMode_Explorer",
-                NativeStyle.CFD => "DarkMode_CFD",
-                NativeStyle.ItemsView => "DarkMode_ItemsView",
-                _ => "Explorer"
-            };
-
-            SetWindowTheme(hWnd, name, null);
+            SetTheme(hWnd, type);
         }
 
         #region 来自网络
@@ -78,14 +70,14 @@ namespace PlainCEETimer.Interop
 
         */
 
-        [DllImport(App.UxThemeDll, EntryPoint = "#135")]
-        private static extern int SetPreferredAppMode(int preferredAppMode);
-
-        [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
-
         [DllImport(App.NativesDll, EntryPoint = "#9")]
-        private static extern int FlushDarkWindow(IntPtr hWnd, int type);
+        private static extern void FlushWindow(IntPtr hWnd, int type);
+
+        [DllImport(App.NativesDll, EntryPoint = "#11")]
+        private static extern void FlushApp(int preferredAppMode);
+
+        [DllImport(App.NativesDll, EntryPoint = "#12")]
+        private static extern void SetTheme(IntPtr hWnd, NativeStyle type);
         #endregion
     }
 }

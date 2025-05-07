@@ -1,18 +1,11 @@
 ﻿#pragma once
 
-#define LV_INITNOW WM_USER + 13
-
 #include <CommCtrl.h>
 #include <Windows.h>
 #include <Uxtheme.h>
 
-extern "C"
-{
-	__declspec(dllexport) HWND __stdcall GetHeader(HWND hLV);
-	__declspec(dllexport) HWND __stdcall GetToolTips(HWND hLV);
-	__declspec(dllexport) void __stdcall FlushHeaderTheme(HWND hLV, int hFColor);
-	__declspec(dllexport) void __stdcall SelectAllItems(HWND hLV, int isSelected);
-}
+cexport void stdcall FlushHeaderTheme(HWND hLV, COLORREF hFColor, int enable);
+cexport void stdcall SelectAllItems(HWND hLV, int isSelected);
 
 /*
 

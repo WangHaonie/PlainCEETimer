@@ -30,7 +30,7 @@ namespace PlainCEETimer.Modules
         private void UpdateStyle()
         {
             button.FlatStyle = button.Enabled ? FlatStyle.Standard : FlatStyle.System;
-            ThemeManager.FlushDarkControl(button, NativeStyle.Explorer);
+            ThemeManager.FlushControl(button, NativeStyle.Explorer);
         }
 
         ~PlainButtonBase()
