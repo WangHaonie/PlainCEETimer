@@ -9,10 +9,7 @@ namespace PlainCEETimer.Controls
     {
         public PlainButton()
         {
-            if (ThemeManager.ShouldUseDarkMode)
-            {
-                FlatStyle = FlatStyle.System;
-            }
+            FlatStyle = FlatStyle.System;
         }
 
         protected override void OnHandleCreated(EventArgs e)

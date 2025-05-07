@@ -10,9 +10,16 @@ namespace PlainCEETimer.Modules
 
         public PlainButtonBase(ButtonBase target)
         {
-            button = target;
-            button.EnabledChanged += Button_EnabledChanged;
-            UpdateStyle();
+            if (ThemeManager.ShouldUseDarkMode)
+            {
+                button = target;
+                button.EnabledChanged += Button_EnabledChanged;
+                UpdateStyle();
+            }
+            else
+            {
+                target.FlatStyle = FlatStyle.System;
+            }
         }
 
         private void Button_EnabledChanged(object sender, EventArgs e)
@@ -22,13 +29,16 @@ namespace PlainCEETimer.Modules
 
         private void UpdateStyle()
         {
-            if (ThemeManager.ShouldUseDarkMode)
-            {
-                button.FlatStyle = button.Enabled ? FlatStyle.Standard : FlatStyle.System;
-                ThemeManager.FlushDarkControl(button, NativeStyle.Explorer);
-            }
+            button.FlatStyle = button.Enabled ? FlatStyle.Standard : FlatStyle.System;
+            ThemeManager.FlushDarkControl(button, NativeStyle.Explorer);
         }
 
-        ~PlainButtonBase() => button.EnabledChanged -= Button_EnabledChanged;
+        ~PlainButtonBase()
+        {
+            if (button != null)
+            {
+                button.EnabledChanged -= Button_EnabledChanged;
+            }
+        }
     }
 }
