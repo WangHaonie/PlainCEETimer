@@ -44,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.0";
-        public const string AppBuildDate = "2025/5/7";
+        public const string AppBuildDate = "2025/5/8";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -53,6 +53,7 @@ namespace PlainCEETimer.Modules
         private const string ExFileName = "UnhandledException.txt";
 
         private static Mutex MainMutex;
+        private static bool IsMainProcess;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
         private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
@@ -70,7 +71,7 @@ namespace PlainCEETimer.Modules
             AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
             MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
 
-            if (IsNewProcess)
+            if (IsMainProcess = IsNewProcess)
             {
                 new Thread(StartPipeServer).Start();
 
@@ -149,7 +150,6 @@ namespace PlainCEETimer.Modules
                 }
 
                 Application.Exit();
-                Application.ExitThread();
 
                 if (Restart)
                 {
@@ -220,8 +220,12 @@ namespace PlainCEETimer.Modules
 
         private static void ClearMutex()
         {
-            MainMutex?.Dispose();
-            MainMutex = null;
+            if (IsMainProcess && MainMutex != null)
+            {
+                MainMutex.ReleaseMutex();
+                MainMutex.Dispose();
+                MainMutex = null;
+            }
         }
     }
 }
