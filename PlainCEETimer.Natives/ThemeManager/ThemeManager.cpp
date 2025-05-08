@@ -28,6 +28,21 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 using fnSetPreferredAppMode = int(WINAPI*)(int preferredAppMode);
 fnSetPreferredAppMode SetPreferredAppMode = nullptr;
 
+static LPCWSTR GetPszSubAppName(int id)
+{
+	switch (id)
+	{
+		case 0:
+			return L"DarkMode_Explorer";
+		case 1:
+			return L"DarkMode_CFD";
+		case 2:
+			return L"DarkMode_ItemsView";
+		default:
+			return L"Explorer";
+	}
+}
+
 void FlushApp(int preferredAppMode)
 {
 	if (!SetPreferredAppMode)
@@ -48,21 +63,6 @@ void FlushApp(int preferredAppMode)
 	if (SetPreferredAppMode)
 	{
 		SetPreferredAppMode(preferredAppMode);
-	}
-}
-
-static LPCWSTR GetPszSubAppName(int id)
-{
-	switch (id)
-	{
-		case 0:
-			return L"DarkMode_Explorer";
-		case 1:
-			return L"DarkMode_CFD";
-		case 2:
-			return L"DarkMode_ItemsView";
-		default:
-			return L"Explorer";
 	}
 }
 

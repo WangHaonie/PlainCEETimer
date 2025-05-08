@@ -60,6 +60,12 @@ namespace PlainCEETimer.Modules
 
         public static void StartProgram(string[] args)
         {
+            if (!File.Exists($"{CurrentExecutableDir}{NativesDll}"))
+            {
+                MessageBox.Show($"由于找不到 {NativesDll}，无法继续执行代码。重新安装程序可能会解决此问题。", $"{CurrentExecutableName} - 系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
             _ = ThemeManager.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());

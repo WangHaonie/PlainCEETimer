@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-  <assemblyIdentity version="5.0.0.0" name="WangHaonie.PlainCEETimer_6ae7bcwxasyye"/>
+  <assemblyIdentity type="win32" name="WangHaonie.PlainCEETimer_6ae7bcwxasyye" version="5.0.1.0"/>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
       <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />

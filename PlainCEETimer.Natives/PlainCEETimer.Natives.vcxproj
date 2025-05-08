@@ -74,6 +74,7 @@
     <OutDir>..\.output\</OutDir>
     <IncludePath>..\PlainCEETimer.Natives;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\.output</OutDir>
