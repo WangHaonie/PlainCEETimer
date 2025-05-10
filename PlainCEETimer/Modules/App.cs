@@ -211,7 +211,7 @@ namespace PlainCEETimer.Modules
             if (!AllowUIClosing)
             {
                 var Now = DateTime.Now;
-                var ExOutput = $"================== v{AppVersion} - {Now.Format()} ==================\n{ex}";
+                var ExOutput = $"—————————————————— {AppNameEng} v{AppVersion} - {Now.Format()} ——————————————————\n{ex}";
                 var ExFileName = $"UnhandledException_{Now:yyyyMMddHHmmss}.txt";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
