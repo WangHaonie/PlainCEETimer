@@ -14,7 +14,6 @@ namespace PlainCEETimer.Forms
 {
     public sealed partial class MainForm : AppForm
     {
-        public static bool IsNormalStart { get; set; }
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded = true;
         public static event Action UniTopMostChanged;
@@ -96,7 +95,6 @@ namespace PlainCEETimer.Forms
             RefreshSettings();
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(false, this));
-            IsNormalStart = true;
         }
 
         protected override void OnClosing(FormClosingEventArgs e)

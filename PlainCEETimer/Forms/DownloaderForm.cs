@@ -27,7 +27,6 @@ namespace PlainCEETimer.Forms
 
         public DownloaderForm(string ManualVersion) : this()
         {
-            MainForm.IsNormalStart = true;
             TargetVersion = Version.TryParse(ManualVersion, out _) ? ManualVersion : App.AppVersion;
         }
 

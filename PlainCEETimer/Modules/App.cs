@@ -44,13 +44,12 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.0";
-        public const string AppBuildDate = "2025/5/8";
+        public const string AppBuildDate = "2025/5/10";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
         public const string WarnMsg = "警告 - 高考倒计时";
         public const string ErrMsg = "错误 - 高考倒计时";
-        private const string ExFileName = "UnhandledException.txt";
 
         private static Mutex MainMutex;
         private static bool IsMainProcess;
@@ -211,13 +210,15 @@ namespace PlainCEETimer.Modules
         {
             if (!AllowUIClosing)
             {
-                var ExOutput = $"\n\n================== v{AppVersion} - {DateTime.Now.Format()} ==================\n{ex}";
+                var Now = DateTime.Now;
+                var ExOutput = $"================== v{AppVersion} - {Now.Format()} ==================\n{ex}";
+                var ExFileName = $"UnhandledException_{Now:yyyyMMddHHmmss}.txt";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
 
-                var Result = MessageX.Error($"程序出现意外错误，非常抱歉给您带来不便！相关错误信息已写入到安装文件夹中的 {ExFileName} 文件，建议您将相关信息发送给开发者以帮助我们定位并解决问题。\n现在您可以点击右上角【关闭】来忽略本次错误,【是】重启应用程序,【否】关闭应用程序。", ex, Buttons: MessageButtons.YesNo);
+                var Result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！详细错误信息已写入安装目录中的 {ExFileName} 文件，建议您将其发送给开发者以帮助我们定位并解决问题。\n\n现在您可以点击【是】重启应用程序,【否】关闭应用程序，【取消】忽略本次错误。\n\n错误信息：\n{ex.Message}", "意外错误 - 高考倒计时", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
 
-                if (Result != DialogResult.None)
+                if (Result != DialogResult.Cancel)
                 {
                     Shutdown(Restart: Result == DialogResult.Yes);
                 }

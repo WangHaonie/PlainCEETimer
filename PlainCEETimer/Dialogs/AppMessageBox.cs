@@ -29,13 +29,13 @@ namespace PlainCEETimer.Dialogs
             Text = Title;
             PicBoxIcon.Image = AppMessageBoxIcon;
 
-            if (OwnerForm != null && MainForm.IsNormalStart)
+            if (OwnerForm == null)
             {
-                StartPosition = FormStartPosition.CenterParent;
+                AddParam(AppFormParam.CenterScreen);
             }
             else
             {
-                AddParam(AppFormParam.CenterScreen);
+                StartPosition = FormStartPosition.CenterParent;
             }
 
             ShowDialog(OwnerForm);
