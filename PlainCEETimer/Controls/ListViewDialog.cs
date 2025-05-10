@@ -35,7 +35,7 @@ namespace PlainCEETimer.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        private ListViewDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle)
+        private ListViewDialog() : base(AppFormParam.AllControl)
         {
             InitializeComponent();
         }
@@ -56,6 +56,7 @@ namespace PlainCEETimer.Controls
             item.Focused = IsSelected;
             ListViewMain.Items.Add(item);
             ListViewItemsSet.Add(data);
+            item.EnsureVisible();
         }
 
         /// <summary>
@@ -71,6 +72,15 @@ namespace PlainCEETimer.Controls
         /// <param name="data">现有数据</param>
         /// <returns><see cref="ISubDialog{TData}"/></returns>
         protected abstract ISubDialog<TData> GetSubDialog(TData data = default);
+
+        protected void SetGroups(ListViewGroup[] groups)
+        {
+            if (groups != null && groups.Length != 0)
+            {
+                ListViewMain.ShowGroups = true;
+                ListViewMain.Groups.AddRange(groups);
+            }
+        }
 
         protected override void AdjustUI()
         {
@@ -91,6 +101,8 @@ namespace PlainCEETimer.Controls
                     {
                         AddItem(data);
                     }
+
+                    ListViewMain.Items[0].EnsureVisible();
                 });
             }
 

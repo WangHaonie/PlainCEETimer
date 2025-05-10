@@ -75,7 +75,7 @@ void FlushHeaderTheme(HWND hLV, COLORREF hFColor, int enable)
 	if (enable)
 	{
 		SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
-		SetTheme(hLV, 0);
+		SetTheme(hLV, 2);
 		SetTheme(ListView_GetHeader(hLV), 2);
 		SetTheme(hTT, 0);
 	}

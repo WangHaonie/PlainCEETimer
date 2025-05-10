@@ -12,8 +12,9 @@ namespace PlainCEETimer.Dialogs
         public ColorSetObject[] ColorPresets { private get; set; }
 
         private readonly PlainButton ButtonGlobal;
+        private readonly ListViewGroup[] Groups;
 
-        public RulesManager() : base(500, "管理自定义规则 - 高考倒计时", "规则", ["类别", "时刻", "效果预览"])
+        public RulesManager() : base(500, "管理自定义规则 - 高考倒计时", "规则", ["时刻", "效果预览"])
         {
             ButtonGlobal = new PlainButton()
             {
@@ -24,6 +25,12 @@ namespace PlainCEETimer.Dialogs
 
             ButtonGlobal.Click += ButtonGlobal_Click;
             Controls.Add(ButtonGlobal);
+            SetGroups(Groups =
+            [
+                new(Constants.PH_RTP1),
+                new(Constants.PH_RTP2),
+                new(Constants.PH_RTP3)
+            ]);
         }
 
         protected override void OnShown()
@@ -34,9 +41,10 @@ namespace PlainCEETimer.Dialogs
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
-            var item = new ListViewItem([GetPhaseText(data.Phase), GetTickText(data.Tick)])
+            var item = new ListViewItem(GetTickText(data.Tick))
             {
-                UseItemStyleForSubItems = false
+                UseItemStyleForSubItems = false,
+                Group = Groups[(int)data.Phase]
             };
 
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
@@ -69,12 +77,5 @@ namespace PlainCEETimer.Dialogs
 
         private string GetTickText(TimeSpan timeSpan)
             => $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
-
-        private string GetPhaseText(CountdownPhase i) => i switch
-        {
-            CountdownPhase.P2 => Constants.PH_RTP2,
-            CountdownPhase.P3 => Constants.PH_RTP3,
-            _ => Constants.PH_RTP1
-        };
     }
 }
