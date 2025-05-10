@@ -3,7 +3,6 @@ using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Dialogs
