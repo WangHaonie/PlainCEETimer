@@ -33,18 +33,18 @@ namespace PlainCEETimer.Dialogs
             ]);
         }
 
-        protected override void OnShown()
+        protected override void AdjustUI()
         {
-            AddNewButton(ButtonGlobal, 6);
+            base.AdjustUI();
+            AddNewButton(ButtonGlobal);
         }
 
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
-            var item = new ListViewItem(GetTickText(data.Tick))
+            var item = new ListViewItem(GetTickText(data.Tick), Groups[(int)data.Phase])
             {
-                UseItemStyleForSubItems = false,
-                Group = Groups[(int)data.Phase]
+                UseItemStyleForSubItems = false
             };
 
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);

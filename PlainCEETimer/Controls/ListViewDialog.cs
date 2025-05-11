@@ -22,6 +22,7 @@ namespace PlainCEETimer.Controls
         }
 
         public TData[] Data { get; set; }
+
         private ContextMenu ContextMenuMain;
         private PlainButton ButtonOperation;
         private MenuItem ContextEdit;
@@ -48,19 +49,8 @@ namespace PlainCEETimer.Controls
             ContentDescription = content;
         }
 
-        private void AddItem(TData data, bool IsSelected = false)
-        {
-            var item = GetListViewItem(data);
-            item.Tag = data;
-            item.Selected = IsSelected;
-            item.Focused = IsSelected;
-            ListViewMain.Items.Add(item);
-            ListViewItemsSet.Add(data);
-            item.EnsureVisible();
-        }
-
         /// <summary>
-        /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 示例 
+        /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 实例 
         /// </summary>
         /// <param name="data">给定的数据</param>
         /// <returns><see cref="ListViewItem"/></returns>
@@ -73,15 +63,6 @@ namespace PlainCEETimer.Controls
         /// <returns><see cref="ISubDialog{TData}"/></returns>
         protected abstract ISubDialog<TData> GetSubDialog(TData data = default);
 
-        protected void SetGroups(ListViewGroup[] groups)
-        {
-            if (groups != null && groups.Length != 0)
-            {
-                ListViewMain.ShowGroups = true;
-                ListViewMain.Groups.AddRange(groups);
-            }
-        }
-
         protected override void AdjustUI()
         {
             CompactControlsY(ButtonA, PanelMain);
@@ -91,7 +72,7 @@ namespace PlainCEETimer.Controls
             AlignControlsL(ButtonOperation, ButtonA, PanelMain);
         }
 
-        protected override void OnLoad()
+        protected sealed override void OnLoad()
         {
             if (Data?.Count() != 0)
             {
@@ -108,11 +89,6 @@ namespace PlainCEETimer.Controls
 
             ListViewMain.AutoAdjustColumnWidth();
             ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
-        }
-
-        protected override void OnShown()
-        {
-            ListViewMain.Focus();
         }
 
         protected sealed override void OnKeyDown(KeyEventArgs e)
@@ -151,10 +127,23 @@ namespace PlainCEETimer.Controls
         /// </summary>
         /// <param name="Btn">新按钮的实例</param>
         /// <param name="cxTweak">与 ButtonOperation 水平方向上的间距</param>
-        protected void AddNewButton(Button Btn, int cxTweak = 0)
+        protected void AddNewButton(Button Btn)
         {
             AlignControlsX(Btn, ButtonOperation);
-            CompactControlsX(Btn, ButtonOperation, cxTweak);
+            CompactControlsX(Btn, ButtonOperation, 6);
+        }
+
+        /// <summary>
+        /// 指定 <see cref="ListView"/> 的分组
+        /// </summary>
+        /// <param name="groups"><see cref="ListViewGroup"/> 数组</param>
+        protected void SetGroups(ListViewGroup[] groups)
+        {
+            if (groups != null && groups.Length != 0)
+            {
+                ListViewMain.ShowGroups = true;
+                ListViewMain.Groups.AddRange(groups);
+            }
         }
 
         private void ButtonOperation_Click(object sender, EventArgs e)
@@ -183,6 +172,8 @@ namespace PlainCEETimer.Controls
                     {
                         RemoveItem(Item, (TData)Item.Tag);
                     }
+
+                    ListViewMain.AutoAdjustColumnWidth();
                 });
 
                 UserChanged();
@@ -216,6 +207,7 @@ namespace PlainCEETimer.Controls
                 if (EditMode)
                 {
                     RemoveItem(item, data);
+                    ListViewMain.AutoAdjustColumnWidth();
                 }
 
                 ListViewMain.Suspend(() =>
@@ -237,6 +229,27 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        private void AddItem(TData data, bool IsSelected = false)
+        {
+            var item = GetListViewItem(data);
+            item.Tag = data;
+            item.Selected = IsSelected;
+            item.Focused = IsSelected;
+            ListViewMain.Items.Add(item);
+            ListViewItemsSet.Add(data);
+
+            if (IsSelected)
+            {
+                item.EnsureVisible();
+            }
+        }
+
+        private void RemoveItem(ListViewItem item, TData data)
+        {
+            ListViewMain.Items.Remove(item);
+            ListViewItemsSet.Remove(data);
+        }
+
         private void OpenRetryDialog(TData data)
         {
             var SubDialog = GetSubDialog(data);
@@ -245,13 +258,6 @@ namespace PlainCEETimer.Controls
             {
                 AddItemSafe(SubDialog.Data);
             }
-        }
-
-        private void RemoveItem(ListViewItem item, TData data)
-        {
-            ListViewMain.Items.Remove(item);
-            ListViewItemsSet.Remove(data);
-            ListViewMain.AutoAdjustColumnWidth();
         }
 
         private void InitializeComponent()

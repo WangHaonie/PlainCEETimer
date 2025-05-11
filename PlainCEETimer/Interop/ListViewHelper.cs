@@ -8,7 +8,16 @@ namespace PlainCEETimer.Interop
     {
         public static void FlushTheme(IntPtr hLV, bool useDark)
         {
-            FlushHeaderTheme(hLV, ThemeManager.DarkFore.ToWin32(), useDark.ToWin32());
+            if (useDark)
+            {
+                ThemeManager.FlushControl(hLV, NativeStyle.ItemsView);
+                FlushHeaderTheme(hLV, ThemeManager.DarkFore.ToWin32(), useDark.ToWin32());
+            }
+            else
+            {
+                ThemeManager.FlushControl(hLV, NativeStyle.ExplorerLight);
+            }
+
         }
 
         [DllImport(App.NativesDll, EntryPoint = "#10")]
