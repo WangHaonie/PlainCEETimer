@@ -14,9 +14,9 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 > 自 v5.0.0 起，本项目名称由 [CEETimerCSharpWinForms](https://github.com/WangHaonie/CEETimerCSharpWinForms/) 更名为 PlainCEETimer。
 
 ## 📷 运行截图
-> v5.0.0, Windows 11, 1920x1080, 125% 缩放，开启自定义文本
+> v5.0.1, Windows 11, 1920x1080, 125% 缩放，开启自定义文本
 
-![主窗口](./.github/Screenshot.jpg)
+![主窗口](./.github/Screenshot.png)
 
 ## 🔥 主要功能
 + 🔥 自定义考试名称
