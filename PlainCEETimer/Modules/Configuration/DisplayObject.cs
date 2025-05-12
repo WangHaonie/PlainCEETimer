@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 using PlainCEETimer.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
@@ -48,22 +47,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public bool CustomText { get; set; }
 
-        public int ScreenIndex
-        {
-            get;
-            set
-            {
-                if (MainForm.ValidateNeeded)
-                {
-                    if (value < 0 || value > Screen.AllScreens.Length)
-                    {
-                        throw new Exception();
-                    }
-                }
-
-                field = value;
-            }
-        }
+        public int ScreenIndex { get; set; }
 
         [DefaultValue(CountdownPosition.TopCenter)]
         public CountdownPosition Position { get; set; } = CountdownPosition.TopCenter;

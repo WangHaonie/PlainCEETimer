@@ -745,7 +745,15 @@ namespace PlainCEETimer.Forms
 
         private void RefreshScreen()
         {
-            SelectedScreenRect = Screen.AllScreens[ScreenIndex].WorkingArea;
+            var screens = Screen.AllScreens;
+
+            if (ScreenIndex < 0 || ScreenIndex >= screens.Length)
+            {
+                ScreenIndex = 0;
+                AppConfig.Display.ScreenIndex = 0;
+            }
+
+            SelectedScreenRect = screens[ScreenIndex].WorkingArea;
         }
 
         private void RefreshCustomRules()
