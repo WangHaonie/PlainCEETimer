@@ -32,13 +32,14 @@ static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam
 						return CDRF_DODEFAULT;
 				}
 			}
-
-			break;
 		}
+		break;
 
 		case WM_NCDESTROY:
+		{
 			RemoveWindowSubclass(hWnd, ListViewNativeWindow, uIdSubclass);
-			break;
+		}
+		break;
 	}
 
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam);

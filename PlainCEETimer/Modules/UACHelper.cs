@@ -51,7 +51,7 @@ namespace PlainCEETimer.Modules
             if (QueryUserName)
             {
                 using var reg = RegistryHelper.Open("Volatile Environment");
-                UserName = (string)reg.GetValue("USERDOMAIN", "") + "\\" + (string)reg.GetValue("USERNAME", "");
+                UserName = reg.GetValue("USERDOMAIN", "") + "\\" + reg.GetValue("USERNAME", "");
             }
         }
 
@@ -59,7 +59,7 @@ namespace PlainCEETimer.Modules
         {
             using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", rootKey: RegistryHive.LocalMachine);
 
-            return ((int)reg.GetValue("EnableLUA", 0), (int)reg.GetValue("ConsentPromptBehaviorAdmin", 0), (int)reg.GetValue("PromptOnSecureDesktop", 0)) switch
+            return (reg.GetValue("EnableLUA", 0), reg.GetValue("ConsentPromptBehaviorAdmin", 0), reg.GetValue("PromptOnSecureDesktop", 0)) switch
             {
                 (1, 2, 1) => UACNotifyLevel.AllDimming,
                 (1, 5, 1) => UACNotifyLevel.AppsOnlyDimming,

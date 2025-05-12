@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
@@ -44,7 +45,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.1";
-        public const string AppBuildDate = "2025/5/11";
+        public const string AppBuildDate = "2025/5/12";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -59,12 +60,6 @@ namespace PlainCEETimer.Modules
 
         public static void StartProgram(string[] args)
         {
-            if (!File.Exists($"{CurrentExecutableDir}{NativesDll}"))
-            {
-                MessageBox.Show($"由于找不到 {NativesDll}，无法继续执行代码。重新安装程序可能会解决此问题。", $"{CurrentExecutableName} - 系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
             _ = ThemeManager.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
@@ -84,7 +79,7 @@ namespace PlainCEETimer.Modules
                 {
                     if (Args.Length == 0)
                     {
-                        new Thread(() => UACHelper.CheckAdmin()).Start();
+                        Task.Run(() => UACHelper.CheckAdmin());
                         Application.Run(new MainForm());
                     }
                     else

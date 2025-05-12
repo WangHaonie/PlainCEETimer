@@ -14,8 +14,8 @@ namespace PlainCEETimer.Modules
         public static RegistryHelper Open(string path, bool isReadonly = true, RegistryHive rootKey = RegistryHive.CurrentUser)
             => new(path, isReadonly, rootKey);
 
-        public object GetValue(string key, object defaultValue)
-            => OpenedKey?.GetValue(key, defaultValue);
+        public T GetValue<T>(string key, T defaultValue)
+            => (T)OpenedKey?.GetValue(key, defaultValue);
 
         public bool GetState(string key, string expectation, string defaultValue)
             => OpenedKey?.GetValue(key, defaultValue) is string tmp && tmp.Equals(expectation, StringComparison.OrdinalIgnoreCase);
