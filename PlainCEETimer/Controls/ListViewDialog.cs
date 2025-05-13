@@ -148,7 +148,7 @@ namespace PlainCEETimer.Controls
 
         private void ButtonOperation_Click(object sender, EventArgs e)
         {
-            ContextMenuMain.Show(ButtonOperation, new Point(0, ButtonOperation.Height));
+            ContextMenuMain.Show(ButtonOperation, new(0, ButtonOperation.Height));
         }
 
         private void ContextEdit_Click(object sender, EventArgs e)

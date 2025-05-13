@@ -376,7 +376,7 @@ namespace PlainCEETimer.Controls
 
         protected bool CheckParam(AppFormParam param)
         {
-            return (Params & param) != 0;
+            return (Params & param) == param;
         }
 
         protected void AddParam(AppFormParam param)

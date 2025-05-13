@@ -274,8 +274,7 @@ namespace PlainCEETimer.Forms
 
             var LabelSender = (Label)sender;
             var ParentContainer = LabelSender.Parent;
-            var CursorPosition = ParentContainer.PointToClient(Cursor.Position);
-            var TargetControl = ParentContainer.GetChildAtPoint(CursorPosition);
+            var TargetControl = ParentContainer.GetChildAtPoint(ParentContainer.PointToClient(Cursor.Position));
 
             if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
             {
@@ -287,7 +286,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonDefaultColor_Click(object sender, EventArgs e)
         {
-            ContextMenuDefaultColor.Show(ButtonDefaultColor, new Point(0, ButtonDefaultColor.Height));
+            ContextMenuDefaultColor.Show(ButtonDefaultColor, new(0, ButtonDefaultColor.Height));
         }
 
         private void ButtonSyncTime_Click(object sender, EventArgs e)
@@ -311,7 +310,7 @@ namespace PlainCEETimer.Forms
             }
             else
             {
-                if (!IsFunnyClick && e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control))
+                if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
                 {
                     if (MessageX.Info("是否重启到命令行模式？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                     {
@@ -329,27 +328,15 @@ namespace PlainCEETimer.Forms
             App.Shutdown(!IsFunny);
         }
 
+        private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
+        {
+            SelectedTheme = (int)((RadioButton)sender).Tag;
+            SettingsChanged(null, null);
+        }
+
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             Save();
-        }
-
-        private bool Save()
-        {
-            if (IsSyncingTime)
-            {
-                MessageX.Warn("无法执行此操作，请等待同步网络时钟完成！");
-                return false;
-            }
-
-            if (IsSettingsFormatValid())
-            {
-                InvokeChangeRequired = true;
-                UserChanged = false;
-                Close();
-            }
-
-            return true;
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
@@ -468,12 +455,6 @@ namespace PlainCEETimer.Forms
             RadioButtonThemeSystem.CheckedChanged += RadioButtonTheme_CheckedChanged;
             RadioButtonThemeLight.CheckedChanged += RadioButtonTheme_CheckedChanged;
             RadioButtonThemeDark.CheckedChanged += RadioButtonTheme_CheckedChanged;
-        }
-
-        private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
-        {
-            SelectedTheme = (int)((RadioButton)sender).Tag;
-            SettingsChanged(null, null);
         }
 
         private void RefreshSettings()
@@ -681,6 +662,24 @@ namespace PlainCEETimer.Forms
         private void SwitchToToolsSafe()
         {
             BeginInvoke(() => NavBar.SwitchTo(PageTools));
+        }
+
+        private bool Save()
+        {
+            if (IsSyncingTime)
+            {
+                MessageX.Warn("无法执行此操作，请等待同步网络时钟完成！");
+                return false;
+            }
+
+            if (IsSettingsFormatValid())
+            {
+                InvokeChangeRequired = true;
+                UserChanged = false;
+                Close();
+            }
+
+            return true;
         }
 
         private void SaveSettings()
