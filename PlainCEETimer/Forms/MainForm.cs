@@ -445,6 +445,7 @@ namespace PlainCEETimer.Forms
                             {
                                 RealSaveConfig();
                                 RefreshSettings();
+                                CountdownCallback(null);
                             }
                         };
                     }
