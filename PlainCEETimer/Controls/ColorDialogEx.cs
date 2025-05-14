@@ -24,7 +24,7 @@ namespace PlainCEETimer.Controls
         {
             Color = Default;
             PreviousCustomColors = CustomColorCollection;
-            Helper = new CommonDialogHelper("选取颜色 - 高考倒计时", CommonDialogKind.Color, owner);
+            Helper = new CommonDialogHelper(this, "选取颜色 - 高考倒计时", CommonDialogKind.Color, owner);
             var Result = ShowDialog();
 
             if (Result == DialogResult.OK)
@@ -36,10 +36,9 @@ namespace PlainCEETimer.Controls
             return Result;
         }
 
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-        {
-            return Helper.HookProc(this, hWnd, msg, wparam, lparam);
-        }
+        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) => Helper.HookProc(hWnd, msg, wparam, lparam);
+
+        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) => base.HookProc(hWnd, msg, wParam, lParam);
 
         private void SaveCustomColors()
         {
@@ -49,11 +48,6 @@ namespace PlainCEETimer.Controls
                 ExistingConfig.CustomColors = CustomColorCollection;
                 App.AppConfig = ExistingConfig;
             }
-        }
-
-        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
-        {
-            return base.HookProc(hWnd, msg, wParam, lParam);
         }
     }
 }

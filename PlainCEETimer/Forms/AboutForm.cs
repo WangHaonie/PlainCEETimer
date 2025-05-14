@@ -31,10 +31,7 @@ namespace PlainCEETimer.Forms
             });
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
-        {
-            e.Cancel = IsCheckingUpdate;
-        }
+        protected override void OnClosing(FormClosingEventArgs e) => e.Cancel = IsCheckingUpdate;
 
         private void PicBoxLogo_MouseClick(object sender, MouseEventArgs e)
         {
@@ -53,9 +50,6 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void ButtonClose_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+        private void ButtonClose_Click(object sender, EventArgs e) => Close();
     }
 }

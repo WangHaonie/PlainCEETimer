@@ -72,7 +72,6 @@ namespace PlainCEETimer.Dialogs
             {
                 AlignControlsX([ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds], LabelChar1);
                 AlignControlsX(TextBoxCustomText, LabelCustomText);
-
             });
         }
 
@@ -141,10 +140,7 @@ namespace PlainCEETimer.Dialogs
             UserChanged();
         }
 
-        private void NUD_TextChanged(object sender, EventArgs e)
-        {
-            UserChanged();
-        }
+        private void NUD_TextChanged(object sender, EventArgs e) => UserChanged();
 
         private void ColorLabels_Click(object sender, EventArgs e)
         {

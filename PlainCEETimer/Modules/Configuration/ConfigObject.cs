@@ -31,12 +31,9 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (MainForm.ValidateNeeded && (value < 0 || value > Exams.Length))
                 {
-                    if (value < 0 || value > Exams.Length)
-                    {
-                        throw new Exception();
-                    }
+                    throw new Exception();
                 }
 
                 field = value;

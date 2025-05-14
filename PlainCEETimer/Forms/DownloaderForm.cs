@@ -53,10 +53,7 @@ namespace PlainCEETimer.Forms
             DownloadUpdate();
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
-        {
-            e.Cancel = !IsCancelled;
-        }
+        protected override void OnClosing(FormClosingEventArgs e) => e.Cancel = !IsCancelled;
 
         protected override void OnClosed()
         {

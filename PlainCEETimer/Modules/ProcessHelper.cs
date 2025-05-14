@@ -25,13 +25,13 @@ namespace PlainCEETimer.Modules
                 Verb = AdminRequired ? "runas" : ""
             });
 
-            if (Return != 0)
+            if (Return == 0)
             {
-                process.WaitForExit();
+                return null;
             }
             else
             {
-                return null;
+                process.WaitForExit();
             }
 
             return Return == 1 ? process.StandardOutput.ReadToEnd().Trim() : process.ExitCode;

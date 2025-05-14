@@ -69,9 +69,6 @@ namespace PlainCEETimer.Dialogs
             UserChanged();
         }
 
-        private string RemoveInvalid(string s)
-        {
-            return s.RemoveIllegalChars();
-        }
+        private string RemoveInvalid(string s) => s.RemoveIllegalChars();
     }
 }

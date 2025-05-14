@@ -15,10 +15,7 @@ namespace PlainCEETimer.Controls
         private class ListViewItemComparer<T> : IComparer
             where T : IListViewObject<T>
         {
-            int IComparer.Compare(object x, object y)
-            {
-                return ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
-            }
+            int IComparer.Compare(object x, object y) => ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
         }
 
         public TData[] Data { get; set; }

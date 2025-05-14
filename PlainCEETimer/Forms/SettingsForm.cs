@@ -79,10 +79,7 @@ namespace PlainCEETimer.Forms
             });
         }
 
-        protected override void OnShown()
-        {
-            NavBar.Focus();
-        }
+        protected override void OnShown() => NavBar.Focus();
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
@@ -334,15 +331,9 @@ namespace PlainCEETimer.Forms
             SettingsChanged(null, null);
         }
 
-        private void ButtonSave_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
+        private void ButtonSave_Click(object sender, EventArgs e) => Save();
 
-        private void ButtonCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+        private void ButtonCancel_Click(object sender, EventArgs e) => Close();
 
         private void InitializeExtra()
         {
@@ -659,10 +650,7 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void SwitchToToolsSafe()
-        {
-            BeginInvoke(() => NavBar.SwitchTo(PageTools));
-        }
+        private void SwitchToToolsSafe() => BeginInvoke(() => NavBar.SwitchTo(PageTools));
 
         private bool Save()
         {

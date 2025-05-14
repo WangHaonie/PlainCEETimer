@@ -51,15 +51,12 @@ namespace PlainCEETimer.Dialogs
             return item;
         }
 
-        protected override ISubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null)
+        protected override ISubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null) => new RuleDialog()
         {
-            return new RuleDialog()
-            {
-                Data = data,
-                GlobalColors = ColorPresets,
-                GlobalTexts = CustomTextPreset
-            };
-        }
+            Data = data,
+            GlobalColors = ColorPresets,
+            GlobalTexts = CustomTextPreset
+        };
 
         private void ButtonGlobal_Click(object sender, EventArgs e)
         {

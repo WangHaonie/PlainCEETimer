@@ -70,4 +70,3 @@ void SetTheme(HWND hWnd, int type)
 {
 	SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
 }
-

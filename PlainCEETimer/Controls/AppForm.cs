@@ -132,42 +132,27 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 用于计算并调整 UI 控件布局。该方法没有默认实现，可不调用 base.AdjustUI();
         /// </summary>
-        protected virtual void AdjustUI()
-        {
-
-        }
+        protected virtual void AdjustUI() { }
 
         /// <summary>
         /// 在 AppForm 加载时触发。该方法没有默认实现，可不调用 base.OnLoad();
         /// </summary>
-        protected virtual void OnLoad()
-        {
-
-        }
+        protected virtual void OnLoad() { }
 
         /// <summary>
         /// 在 AppForm 已向用户显示时触发。该方法没有默认实现，可不调用 base.OnShown();
         /// </summary>
-        protected virtual void OnShown()
-        {
-
-        }
+        protected virtual void OnShown() { }
 
         /// <summary>
         /// 在 AppForm 被关闭时触发。该方法没有默认实现，可不调用 base.OnClosing(FormClosingEventArgs);
         /// </summary>
-        protected virtual void OnClosing(FormClosingEventArgs e)
-        {
-
-        }
+        protected virtual void OnClosing(FormClosingEventArgs e) { }
 
         /// <summary>
         /// 在 AppForm 关闭后触发。该方法没有默认实现，可不调用 base.OnClosed();
         /// </summary>
-        protected virtual void OnClosed()
-        {
-
-        }
+        protected virtual void OnClosed() { }
 
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
@@ -374,25 +359,14 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        protected bool CheckParam(AppFormParam param)
-        {
-            return (Params & param) == param;
-        }
+        protected bool CheckParam(AppFormParam param) => (Params & param) == param;
 
-        protected void AddParam(AppFormParam param)
-        {
-            Params |= param;
-        }
+        protected void AddParam(AppFormParam param) => Params |= param;
 
-        protected int ScaleToDpi(int px)
-        {
-            return (int)(px * CurrentDpiRatio);
-        }
+        protected int ScaleToDpi(int px) => (int)(px * CurrentDpiRatio);
 
         protected Point GetScreenCenter(Rectangle screenRect)
-        {
-            return new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
-        }
+            => new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
 
         private void AppLauncher_TrayMenuShowAllClicked()
         {
@@ -431,8 +405,6 @@ namespace PlainCEETimer.Controls
         }
 
         private Rectangle GetCurrentScreenRect()
-        {
-            return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
-        }
+            => Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
     }
 }

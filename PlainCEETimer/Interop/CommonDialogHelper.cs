@@ -25,31 +25,36 @@ namespace PlainCEETimer.Interop
         private const int cmb4 = 0x0473;
 
         private RECT DialogRect;
-        private readonly int BackCrColor;
-        private readonly int ForeCrColor;
         private readonly string DialogTitle;
         private readonly CommonDialogKind DialogKind;
+        private readonly ICommonDialog Dialog;
         private readonly IntPtr hBrush;
         private readonly AppForm Parent;
         private readonly StringBuilder builder = new(256);
-        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
+        private static readonly int BackCrColor;
+        private static readonly int ForeCrColor;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-        public CommonDialogHelper(string dialogTitle, CommonDialogKind kind, AppForm owner)
+        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
+
+        public CommonDialogHelper(ICommonDialog dialog, string dialogTitle, CommonDialogKind kind, AppForm owner)
         {
+            Dialog = dialog;
             DialogTitle = dialogTitle;
             DialogKind = kind;
             Parent = owner;
             Parent.ReActivate();
-            BackCrColor = ThemeManager.DarkBack.ToWin32();
-            ForeCrColor = ThemeManager.DarkFore.ToWin32();
             hBrush = CreateSolidBrush(BackCrColor);
         }
 
-        public IntPtr HookProc(ICommonDialog Dialog, IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        static CommonDialogHelper()
         {
-            #region 来自网络
+            BackCrColor = ThemeManager.DarkBack.ToWin32();
+            ForeCrColor = ThemeManager.DarkFore.ToWin32();
+        }
 
+        public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        {
             /*
             
             获取非托管 CommonDialog 的消息钩子并更改其窗口样式 灵感来自：
@@ -117,7 +122,6 @@ namespace PlainCEETimer.Interop
                     DeleteObject(hBrush);
                     break;
             }
-            #endregion
 
             return IntPtr.Zero;
         }

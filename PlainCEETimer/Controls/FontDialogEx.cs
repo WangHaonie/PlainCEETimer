@@ -23,20 +23,14 @@ namespace PlainCEETimer.Controls
             ShowEffects = false;
         }
 
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-        {
-            return Helper.HookProc(this, hWnd, msg, wparam, lparam);
-        }
-
         public DialogResult ShowDialog(AppForm owner)
         {
-            Helper = new CommonDialogHelper("选择字体 - 高考倒计时", CommonDialogKind.Font, owner);
+            Helper = new CommonDialogHelper(this, "选择字体 - 高考倒计时", CommonDialogKind.Font, owner);
             return ShowDialog();
         }
 
-        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
-        {
-            return base.HookProc(hWnd, msg, wParam, lParam);
-        }
+        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) => Helper.HookProc(hWnd, msg, wparam, lparam);
+
+        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) => base.HookProc(hWnd, msg, wParam, lParam);
     }
 }

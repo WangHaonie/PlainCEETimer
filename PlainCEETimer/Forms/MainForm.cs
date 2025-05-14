@@ -575,21 +575,21 @@ namespace PlainCEETimer.Forms
                 if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
                 {
                     SetPhase(CountdownPhase.P1);
-                    ApplyCustomRule((int)CountdownPhase.P1, ExamStart - Now);
+                    ApplyCustomRule(0, ExamStart - Now);
                     return;
                 }
 
                 if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
                 {
                     SetPhase(CountdownPhase.P2);
-                    ApplyCustomRule((int)CountdownPhase.P2, ExamEnd - Now);
+                    ApplyCustomRule(1, ExamEnd - Now);
                     return;
                 }
 
                 if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
                 {
                     SetPhase(CountdownPhase.P3);
-                    ApplyCustomRule((int)CountdownPhase.P3, Now - ExamEnd);
+                    ApplyCustomRule(2, Now - ExamEnd);
                     return;
                 }
             }
