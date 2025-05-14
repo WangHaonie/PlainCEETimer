@@ -568,10 +568,10 @@ namespace PlainCEETimer.Forms
 
         private void CountdownCallback(object state)
         {
-            var Now = DateTime.Now;
-
             if (IsCountdownReady)
             {
+                var Now = DateTime.Now;
+
                 if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
                 {
                     SetPhase(CountdownPhase.P1);
@@ -608,7 +608,7 @@ namespace PlainCEETimer.Forms
                 {
                     foreach (var rule in CurrentRules)
                     {
-                        if (Phase == (int)CountdownPhase.P3 ? (Span >= rule.Tick) : (Span <= rule.Tick))
+                        if (Phase == 2 ? (Span >= rule.Tick) : (Span <= rule.Tick))
                         {
                             UpdateCountdown(SetCustomRule(Span, rule.Text), rule.Colors);
                             return;

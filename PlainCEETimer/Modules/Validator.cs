@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules
 {
     public static class Validator
     {
-        public const int MaxExamNameLength = 10;
+        public const int MaxExamNameLength = 15;
         public const int MinExamNameLength = 2;
         public const int MaxFontSize = 36;
         public const int MinFontSize = 10;
