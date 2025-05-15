@@ -152,13 +152,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib</AdditionalDependencies>
       <NoEntryPoint>true</NoEntryPoint>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="IATHook.h" />
     <ClInclude Include="ListViewHelper\ListViewHelper.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
     <ClInclude Include="pch.h" />

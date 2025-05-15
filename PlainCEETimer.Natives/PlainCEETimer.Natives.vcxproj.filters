@@ -39,6 +39,9 @@
     <ClInclude Include="ThemeManager\ThemeManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="IATHook.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

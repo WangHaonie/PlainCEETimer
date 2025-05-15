@@ -34,6 +34,7 @@ namespace PlainCEETimer.Interop
                 if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
                 {
                     FlushApp(2);
+                    FixScrollBar();
                 }
             }
         }
@@ -77,6 +78,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#12")]
         private static extern void SetTheme(IntPtr hWnd, NativeStyle type);
+
+        [DllImport(App.NativesDll, EntryPoint = "#13")]
+        private static extern void FixScrollBar();
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ThemeManager.h"
+#include "..\IATHook.h"
 
 /*
 
@@ -26,7 +27,9 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 */
 
 using fnSetPreferredAppMode = int(WINAPI*)(int preferredAppMode);
+using fnOpenNcThemeData = HTHEME(WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 fnSetPreferredAppMode SetPreferredAppMode = nullptr;
+fnOpenNcThemeData _OpenNcThemeData = nullptr;
 
 static LPCWSTR GetPszSubAppName(int id)
 {
@@ -57,6 +60,8 @@ void FlushApp(int preferredAppMode)
 			{
 				SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
 			}
+
+			_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)));
 		}
 	}
 
@@ -69,4 +74,51 @@ void FlushApp(int preferredAppMode)
 void SetTheme(HWND hWnd, int type)
 {
 	SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
+}
+
+/*
+
+将非 Explorer 主题的 ScrollBar 应用深色主题 参考：
+
+win32-darkmode/win32-darkmode/DarkMode.h at cc26549b65b25d6f3168a80238792545bd401271 · ysc3839/win32-darkmode
+https://github.com/ysc3839/win32-darkmode/blob/cc26549b65b25d6f3168a80238792545bd401271/win32-darkmode/DarkMode.h#L152
+
+
+非常感谢 ysc3839 的耐心协助：
+
+【C# WinForms】IATHook causes System.AccessViolationException · Issue #32 · ysc3839/win32-darkmode
+https://github.com/ysc3839/win32-darkmode/issues/32
+
+*/
+
+void FixScrollBar()
+{
+	HMODULE hComctl = LoadLibraryExW(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+
+	if (hComctl)
+	{
+		auto* addr = FindDelayLoadThunkInModule(hComctl, "uxtheme.dll", 49);
+
+		if (addr != nullptr)
+		{
+			DWORD oldProtect;
+
+			if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect) == TRUE)
+			{
+				auto MyOpenThemeData = [](HWND hWnd, LPCWSTR classList) -> HTHEME
+				{
+					if (wcscmp(classList, L"ScrollBar") == 0)
+					{
+						hWnd = nullptr;
+						classList = L"DarkMode_Explorer::ScrollBar";
+					}
+
+					return _OpenNcThemeData(hWnd, classList);
+				};
+
+				addr->u1.Function = reinterpret_cast<ULONG_PTR>(static_cast<fnOpenNcThemeData>(MyOpenThemeData));
+				VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), oldProtect, &oldProtect);
+			}
+		}
+	}
 }

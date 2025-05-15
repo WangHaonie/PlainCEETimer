@@ -12,3 +12,4 @@ EXPORTS
 	FlushHeaderTheme @10 NONAME
 	FlushApp @11 NONAME
 	SetTheme @12 NONAME
+	FixScrollBar @13 NONAME

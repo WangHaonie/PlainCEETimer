@@ -64,7 +64,6 @@ namespace PlainCEETimer.Modules
             _ = ThemeManager.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
-            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (_, e) => HandleException(e.Exception);
