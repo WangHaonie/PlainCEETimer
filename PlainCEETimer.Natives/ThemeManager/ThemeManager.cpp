@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "ThemeManager.h"
-#include "..\IATHook.h"
+#include "IATHook.h"
 
 /*
 
@@ -26,10 +26,10 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 */
 
-using fnSetPreferredAppMode = int(WINAPI*)(int preferredAppMode);
-using fnOpenNcThemeData = HTHEME(WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
+using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
+using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 fnSetPreferredAppMode SetPreferredAppMode = nullptr;
-fnOpenNcThemeData _OpenNcThemeData = nullptr;
+fnOpenNcThemeData OpenNcThemeData = nullptr;
 
 static LPCWSTR GetPszSubAppName(int id)
 {
@@ -61,7 +61,10 @@ void FlushApp(int preferredAppMode)
 				SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
 			}
 
-			_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)));
+			if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
+			{
+				OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+			}
 		}
 	}
 
@@ -103,7 +106,7 @@ void FixScrollBar()
 		{
 			DWORD oldProtect;
 
-			if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect) == TRUE)
+			if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect))
 			{
 				auto MyOpenThemeData = [](HWND hWnd, LPCWSTR classList) -> HTHEME
 				{
@@ -113,7 +116,7 @@ void FixScrollBar()
 						classList = L"DarkMode_Explorer::ScrollBar";
 					}
 
-					return _OpenNcThemeData(hWnd, classList);
+					return OpenNcThemeData(hWnd, classList);
 				};
 
 				addr->u1.Function = reinterpret_cast<ULONG_PTR>(static_cast<fnOpenNcThemeData>(MyOpenThemeData));

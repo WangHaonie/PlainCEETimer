@@ -159,13 +159,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
-    <ClInclude Include="IATHook.h" />
     <ClInclude Include="ListViewHelper\ListViewHelper.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
     <ClInclude Include="TaskbarProgress\TaskbarProgress.h" />
+    <ClInclude Include="ThemeManager\IATHook.h" />
     <ClInclude Include="ThemeManager\ThemeManager.h" />
   </ItemGroup>
   <ItemGroup>
