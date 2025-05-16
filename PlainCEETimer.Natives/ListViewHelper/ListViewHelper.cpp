@@ -15,34 +15,34 @@ static COLORREF LVHForeColor;
 
 static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR)
 {
-	switch (uMsg)
-	{
-		case WM_NOTIFY:
-		{
-			if (reinterpret_cast<LPNMHDR>(lParam)->code == NM_CUSTOMDRAW)
-			{
-				LPNMCUSTOMDRAW nmcd = reinterpret_cast<LPNMCUSTOMDRAW>(lParam);
+    switch (uMsg)
+    {
+        case WM_NOTIFY:
+        {
+            if (reinterpret_cast<LPNMHDR>(lParam)->code == NM_CUSTOMDRAW)
+            {
+                LPNMCUSTOMDRAW nmcd = reinterpret_cast<LPNMCUSTOMDRAW>(lParam);
 
-				switch (nmcd->dwDrawStage)
-				{
-					case CDDS_PREPAINT:
-						return CDRF_NOTIFYITEMDRAW;
-					case CDDS_ITEMPREPAINT:
-						SetTextColor(nmcd->hdc, LVHForeColor);
-						return CDRF_DODEFAULT;
-				}
-			}
-		}
-		break;
+                switch (nmcd->dwDrawStage)
+                {
+                    case CDDS_PREPAINT:
+                        return CDRF_NOTIFYITEMDRAW;
+                    case CDDS_ITEMPREPAINT:
+                        SetTextColor(nmcd->hdc, LVHForeColor);
+                        return CDRF_DODEFAULT;
+                }
+            }
+        }
+        break;
 
-		case WM_NCDESTROY:
-		{
-			RemoveWindowSubclass(hWnd, ListViewNativeWindow, uIdSubclass);
-		}
-		break;
-	}
+        case WM_NCDESTROY:
+        {
+            RemoveWindowSubclass(hWnd, ListViewNativeWindow, uIdSubclass);
+        }
+        break;
+    }
 
-	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 /*
@@ -65,15 +65,15 @@ https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/Sys
 
 void SelectAllItems(HWND hLV, int selected)
 {
-	ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
+    ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }
 
 void FlushHeaderTheme(HWND hLV, COLORREF hFColor)
 {
-	HWND hTT = ListView_GetToolTips(hLV);
-	LVHForeColor = hFColor;
-	SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
-	SetTheme(ListView_GetHeader(hLV), 2);
-	SetTheme(hTT, 0);
-	SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    HWND hTT = ListView_GetToolTips(hLV);
+    LVHForeColor = hFColor;
+    SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
+    SetTheme(ListView_GetHeader(hLV), 2);
+    SetTheme(hTT, 0);
+    SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }

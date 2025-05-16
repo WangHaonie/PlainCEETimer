@@ -19,39 +19,39 @@ static int _enable = 0;
 
 void InitilizeTaskbarList(HWND hWnd, int enable)
 {
-	if (enable)
-	{
-		if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&taskbarList)))
-		{
-			handle = hWnd;
-			taskbarList->HrInit();
-			_enable = enable;
-		}
-	}
+    if (enable)
+    {
+        if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&taskbarList)))
+        {
+            handle = hWnd;
+            taskbarList->HrInit();
+            _enable = enable;
+        }
+    }
 }
 
 void SetTaskbarProgressState(TBPFLAG tbpFlags)
 {
-	if (_enable)
-	{
-		taskbarList->SetProgressState(handle, tbpFlags);
-	}
+    if (_enable)
+    {
+        taskbarList->SetProgressState(handle, tbpFlags);
+    }
 }
 
 void SetTaskbarProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
-	if (_enable)
-	{
-		taskbarList->SetProgressValue(handle, ullCompleted, ullTotal);
-	}
+    if (_enable)
+    {
+        taskbarList->SetProgressValue(handle, ullCompleted, ullTotal);
+    }
 }
 
 void ReleaseTaskbarList()
 {
-	if (_enable)
-	{
-		taskbarList->Release();
-		taskbarList = nullptr;
-		handle = nullptr;
-	}
+    if (_enable)
+    {
+        taskbarList->Release();
+        taskbarList = nullptr;
+        handle = nullptr;
+    }
 }

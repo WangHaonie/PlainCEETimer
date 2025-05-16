@@ -13,8 +13,8 @@ https://stackoverflow.com/a/62811758
 
 void FlushWindow(HWND hWnd, int type)
 {
-	int enabled = 1;
-	DwmSetWindowAttribute(hWnd, type == 0 ? 19 : 20, &enabled, sizeof(enabled));
+    int enabled = 1;
+    DwmSetWindowAttribute(hWnd, type == 0 ? 19 : 20, &enabled, sizeof(enabled));
 }
 
 /*
@@ -33,50 +33,50 @@ fnOpenNcThemeData OpenNcThemeData = nullptr;
 
 static LPCWSTR GetPszSubAppName(int id)
 {
-	switch (id)
-	{
-		case 0:
-			return L"DarkMode_Explorer";
-		case 1:
-			return L"DarkMode_CFD";
-		case 2:
-			return L"DarkMode_ItemsView";
-		default:
-			return L"Explorer";
-	}
+    switch (id)
+    {
+        case 0:
+            return L"DarkMode_Explorer";
+        case 1:
+            return L"DarkMode_CFD";
+        case 2:
+            return L"DarkMode_ItemsView";
+        default:
+            return L"Explorer";
+    }
 }
 
 void FlushApp(int preferredAppMode)
 {
-	if (!SetPreferredAppMode)
-	{
-		HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if (!SetPreferredAppMode)
+    {
+        HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
-		if (hUxtheme)
-		{
-			auto addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+        if (hUxtheme)
+        {
+            auto addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
 
-			if (addr)
-			{
-				SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
-			}
+            if (addr)
+            {
+                SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
+            }
 
-			if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
-			{
-				OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
-			}
-		}
-	}
+            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
+            {
+                OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+            }
+        }
+    }
 
-	if (SetPreferredAppMode)
-	{
-		SetPreferredAppMode(preferredAppMode);
-	}
+    if (SetPreferredAppMode)
+    {
+        SetPreferredAppMode(preferredAppMode);
+    }
 }
 
 void SetTheme(HWND hWnd, int type)
 {
-	SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
+    SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
 }
 
 /*
@@ -96,32 +96,32 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 void FixScrollBar()
 {
-	HMODULE hComctl = LoadLibraryExW(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    HMODULE hComctl = LoadLibraryExW(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
-	if (hComctl)
-	{
-		auto* addr = FindDelayLoadThunkInModule(hComctl, "uxtheme.dll", 49);
+    if (hComctl)
+    {
+        auto* addr = FindDelayLoadThunkInModule(hComctl, "uxtheme.dll", 49);
 
-		if (addr != nullptr)
-		{
-			DWORD oldProtect;
+        if (addr != nullptr)
+        {
+            DWORD oldProtect;
 
-			if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect))
-			{
-				auto MyOpenThemeData = [](HWND hWnd, LPCWSTR classList) -> HTHEME
-				{
-					if (wcscmp(classList, L"ScrollBar") == 0)
-					{
-						hWnd = nullptr;
-						classList = L"DarkMode_Explorer::ScrollBar";
-					}
+            if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect))
+            {
+                auto MyOpenThemeData = [](HWND hWnd, LPCWSTR classList) -> HTHEME
+                {
+                    if (wcscmp(classList, L"ScrollBar") == 0)
+                    {
+                        hWnd = nullptr;
+                        classList = L"DarkMode_Explorer::ScrollBar";
+                    }
 
-					return OpenNcThemeData(hWnd, classList);
-				};
+                    return OpenNcThemeData(hWnd, classList);
+                };
 
-				addr->u1.Function = reinterpret_cast<ULONG_PTR>(static_cast<fnOpenNcThemeData>(MyOpenThemeData));
-				VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), oldProtect, &oldProtect);
-			}
-		}
-	}
+                addr->u1.Function = reinterpret_cast<ULONG_PTR>(static_cast<fnOpenNcThemeData>(MyOpenThemeData));
+                VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), oldProtect, &oldProtect);
+            }
+        }
+    }
 }
