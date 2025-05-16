@@ -14,7 +14,7 @@ https://stackoverflow.com/a/62811758
 void FlushWindow(HWND hWnd, int type)
 {
     int enabled = 1;
-    DwmSetWindowAttribute(hWnd, type == 0 ? 19 : 20, &enabled, sizeof(enabled));
+    DwmSetWindowAttribute(hWnd, type ? 20 : 19, &enabled, sizeof(enabled));
 }
 
 /*

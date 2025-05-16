@@ -76,7 +76,7 @@ namespace PlainCEETimer.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            ListViewHelper.FlushTheme(Handle, UseDark);
+            ListViewHelper.FlushTheme(Handle, ThemeManager.DarkFore.ToWin32(), UseDark.ToWin32());
             base.OnHandleCreated(e);
         }
 

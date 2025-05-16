@@ -4,5 +4,5 @@
 #include <Windows.h>
 #include <Uxtheme.h>
 
-cexport(void) FlushHeaderTheme(HWND hLV, COLORREF hFColor);
+cexport(void) FlushListViewTheme(HWND hLV, COLORREF colorHFore, int enable);
 cexport(void) SelectAllItems(HWND hLV, int isSelected);

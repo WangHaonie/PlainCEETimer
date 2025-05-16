@@ -68,12 +68,22 @@ void SelectAllItems(HWND hLV, int selected)
     ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }
 
-void FlushHeaderTheme(HWND hLV, COLORREF hFColor)
+void FlushListViewTheme(HWND hLV, COLORREF colorHFore, int enable)
 {
     HWND hTT = ListView_GetToolTips(hLV);
-    LVHForeColor = hFColor;
-    SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
-    SetTheme(ListView_GetHeader(hLV), 2);
-    SetTheme(hTT, 0);
+
+    if (enable)
+    {
+        LVHForeColor = colorHFore;
+        SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
+        SetTheme(hLV, 2);
+        SetTheme(ListView_GetHeader(hLV), 2);
+        SetTheme(hTT, 0);
+    }
+    else
+    {
+        SetTheme(hLV, 3);
+    }
+
     SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }

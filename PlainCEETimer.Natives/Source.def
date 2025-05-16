@@ -9,7 +9,7 @@ EXPORTS
     SetTaskbarProgressValue @7 NONAME
     ReleaseTaskbarList @8 NONAME
     FlushWindow @9 NONAME
-    FlushHeaderTheme @10 NONAME
+    FlushListViewTheme @10 NONAME
     FlushApp @11 NONAME
     SetTheme @12 NONAME
     FixScrollBar @13 NONAME
