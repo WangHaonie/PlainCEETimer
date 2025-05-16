@@ -121,15 +121,6 @@ namespace PlainCEETimer.Modules
         Font
     }
 
-    public enum NativeControl
-    {
-        Label,
-        Button,
-        ComboBox,
-        ComboLBox,
-        TextBox
-    }
-
     public enum SystemTheme
     {
         None,

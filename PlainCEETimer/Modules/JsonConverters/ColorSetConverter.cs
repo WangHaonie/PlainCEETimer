@@ -8,7 +8,7 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override ColorSetObject ReadJson(JsonReader reader, Type objectType, ColorSetObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            int[] Colors = serializer.Deserialize<int[]>(reader);
+            var Colors = serializer.Deserialize<int[]>(reader);
 
             if (Colors.Length == 2)
             {

@@ -130,18 +130,7 @@ namespace PlainCEETimer.Interop
         {
             EnumChildWindows(hWnd, (child, _) =>
             {
-                switch (GetNativeControl(child))
-                {
-                    case NativeControl.Button:
-                    case NativeControl.ComboLBox:
-                        ThemeManager.FlushControl(child, NativeStyle.Explorer);
-                        break;
-                    case NativeControl.Label:
-                    case NativeControl.TextBox:
-                    case NativeControl.ComboBox:
-                        ThemeManager.FlushControl(child, NativeStyle.CFD);
-                        break;
-                }
+                ThemeManager.FlushControl(child, GetNativeStyle(child));
                 return true;
             }, IntPtr.Zero);
         }
@@ -164,17 +153,15 @@ namespace PlainCEETimer.Interop
             MoveWindow(hWnd, X, Y, DialogWidth, DialogHeight, false);
         }
 
-        private NativeControl GetNativeControl(IntPtr hWnd)
+        private NativeStyle GetNativeStyle(IntPtr hWnd)
         {
             GetClassName(hWnd, builder, 256);
 
             return builder.ToString() switch
             {
-                "Button" => NativeControl.Button,
-                "ComboBox" => NativeControl.ComboBox,
-                "ComboLBox" => NativeControl.ComboLBox,
-                "Edit" => NativeControl.TextBox,
-                _ => NativeControl.Label
+                "ComboBox" => NativeStyle.CFD,
+                "Edit" => NativeStyle.CFD,
+                _ => NativeStyle.Explorer
             };
         }
 

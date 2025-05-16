@@ -9,8 +9,7 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override Font ReadJson(JsonReader reader, Type objectType, Font existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            string[] FontParts = reader.Value.ToString().Split(Validator.ValueSeparator);
-
+            var FontParts = reader.Value.ToString().Split(Validator.ValueSeparator);
             var FontPart1 = (Font)new FontConverter().ConvertFromString(string.Join(Validator.ValueSeparatorString, FontParts.Take(2)));
             var FontPart2 = (FontStyle)Enum.Parse(typeof(FontStyle), string.Join(Validator.ValueSeparatorString, FontParts.Skip(2)));
             var FontPart1Size = FontPart1.Size;
