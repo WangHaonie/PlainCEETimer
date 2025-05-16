@@ -220,7 +220,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonFont_Click(object sender, EventArgs e)
         {
-            FontDialogEx Dialog = new(AppConfig.Font);
+            FontDialogEx Dialog = new(SelectedFont);
 
             if (Dialog.ShowDialog(this) == DialogResult.OK)
             {
