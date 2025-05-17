@@ -90,11 +90,11 @@ namespace PlainCEETimer.Modules
     [Flags]
     public enum AppFormParam
     {
-        BindButtons = 0b00001,
-        KeyPreview = 0b00010,
-        Special = 0b00100,
-        CompositedStyle = 0b01000,
-        CenterScreen = 0b10000,
+        BindButtons = 1,
+        KeyPreview = 1 << 1,
+        Special = 1 << 2,
+        CompositedStyle = 1 << 3,
+        CenterScreen = 1 << 4,
         AllControl = BindButtons | KeyPreview
     }
 

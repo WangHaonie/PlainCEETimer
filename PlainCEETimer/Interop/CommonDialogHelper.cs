@@ -156,13 +156,14 @@ namespace PlainCEETimer.Interop
         private NativeStyle GetNativeStyle(IntPtr hWnd)
         {
             GetClassName(hWnd, builder, 256);
+            var className = builder.ToString();
 
-            return builder.ToString() switch
+            if (className.Has("ComboBox") || className.Has("Edit"))
             {
-                "ComboBox" => NativeStyle.CFD,
-                "Edit" => NativeStyle.CFD,
-                _ => NativeStyle.Explorer
-            };
+                return NativeStyle.CFD;
+            }
+
+            return NativeStyle.Explorer;
         }
 
         [DllImport(App.User32Dll, CharSet = CharSet.Auto)]
