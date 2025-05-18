@@ -42,6 +42,8 @@ launch:
 !macroend
 
 !include "MUI2.nsh"
+!include "FileFunc.nsh"
+!include "WinMessages.nsh"
 !define PRODUCT_NAME "高考倒计时"
 !define SETUP_FILENAME_NO_V "5.0.1"
 !define PRODUCT_VERSION "${SETUP_FILENAME_NO_V}"
@@ -57,11 +59,15 @@ launch:
 
 SetCompressor lzma
 
+!define MUI_PAGE_CUSTOMFUNCTION_PRE "AutoSkip"
 !insertmacro MUI_PAGE_DIRECTORY
+!define MUI_PAGE_CUSTOMFUNCTION_PRE "AutoSkip"
 !insertmacro MUI_PAGE_LICENSE ".\LicenseLink"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "SimpChinese"
+
+Var /GLOBAL IsSkip
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "PlainCEETimer_${SETUP_FILENAME_NO_V}_x64_Setup.exe"
@@ -74,8 +80,9 @@ BrandingText "Copyright (C) 2023-2025 WangHaonie"
 Section -POST
   SetOverwrite on
   SetOutPath "$INSTDIR"
-  nsExec::Exec '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
-  nsExec::Exec '"taskkill" /F /IM "PlainCEETimer.exe"'
+  System::Call 'USER32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 0x0001|0x0002)'
+  nsExec::ExecToLog '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
+  nsExec::ExecToLog '"taskkill" /F /IM "PlainCEETimer.exe"'
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\高考倒计时"
   Delete "$INSTDIR\GitHub.url"
   Delete "$INSTDIR\uninst.exe"
@@ -106,6 +113,9 @@ Section -POST
   CreateShortCut "$DESKTOP\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
   CreateShortCut "$SMPROGRAMS\高考倒计时\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\高考倒计时\卸载 高考倒计时.lnk" "$INSTDIR\uninst.exe"
+  DetailPrint "正在优化程序集以提高运行速度，请稍候..."
+  MessageBox MB_OK|MB_ICONINFORMATION "即将开始优化程序集，该操作可以提高一定的运行速度，需要管理员权限，若弹出 UAC 对话框，请点击 是 以授权。$\n$\n>>现在点击 确定 继续"
+  ExecWait '"$INSTDIR\PlainCEETimer.exe" /op /auto'
   SetAutoClose true
 SectionEnd
 
@@ -133,8 +143,19 @@ Section Uninstall
   SetAutoClose true
 SectionEnd
 
+Function AutoSkip
+  StrCmp $IsSkip "1" +2
+    Abort
+FunctionEnd
+
 Function .onInit
   !insertmacro SingleInstanceMutex
+  StrCpy $IsSkip "1"
+  ${GetParameters} $R0
+  ClearErrors
+  ${GetOptions} '$R0' "/Skip" $R1
+  IfErrors +2
+    StrCpy $IsSkip "0"
 FunctionEnd
 
 Function .onInstSuccess
