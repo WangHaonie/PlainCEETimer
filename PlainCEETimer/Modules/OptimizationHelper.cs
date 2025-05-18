@@ -5,8 +5,9 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules
 {
-    public class OptimizationHelper : IDisposable
+    public class OptimizationHelper(bool isAuto) : IDisposable
     {
+        private readonly bool Auto = isAuto;
         private OpenFileDialog Dialog;
         private const string Ngen = "ngen.exe";
         private readonly string NgenPath = @"C:\Windows\Microsoft.NET\Framework64\";
@@ -15,7 +16,7 @@ namespace PlainCEETimer.Modules
 
         public void Optimize()
         {
-            if (MessageX.Warn(
+            if (Auto || MessageX.Warn(
                 """
                 确认对本程序进行优化？此操作将有助于提升一定的运行速度。
                 
@@ -26,9 +27,12 @@ namespace PlainCEETimer.Modules
                 
                 """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
-                MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n\n>> 点击 确定 继续。");
+                if (!Auto)
+                {
+                    MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n\n>> 点击 确定 继续。");
+                }
 
-                if (UACHelper.EnsureUAC(MessageX))
+                if (Auto || UACHelper.EnsureUAC(MessageX))
                 {
                     try
                     {
@@ -53,8 +57,11 @@ namespace PlainCEETimer.Modules
                     }
                     catch
                     {
-                        MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
-                        Retry();
+                        if (!Auto)
+                        {
+                            MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
+                            Retry();
+                        }
                     }
                 }
                 else
@@ -104,22 +111,24 @@ namespace PlainCEETimer.Modules
             {
                 var code = (int)ProcessHelper.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", 2, AdminRequired: true);
 
-                if (MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                if (!Auto && MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Shutdown(true);
                 }
             }
             catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
             {
-                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
-                Cancel();
+                if (!Auto)
+                {
+                    MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
+                    Cancel();
+                }
             }
         }
 
         private void Cancel()
         {
             MessageX.Info("本次操作已被取消！");
-            App.Shutdown();
         }
 
         ~OptimizationHelper() => Dispose();

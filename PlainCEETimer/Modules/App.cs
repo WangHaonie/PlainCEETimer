@@ -45,7 +45,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.1";
-        public const string AppBuildDate = "2025/5/17";
+        public const string AppBuildDate = "2025/5/18";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -108,7 +108,7 @@ namespace PlainCEETimer.Modules
                                 break;
                             case "/op":
                                 UACHelper.CheckAdmin();
-                                new OptimizationHelper().Optimize();
+                                new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", AutoClose: true);

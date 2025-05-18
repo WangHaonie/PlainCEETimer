@@ -120,7 +120,7 @@ namespace PlainCEETimer.Forms
             IsCancelled = true;
             await Task.Delay(2500);
             Close();
-            ProcessHelper.Run(DownloadPath, "/S");
+            ProcessHelper.Run(DownloadPath, "/Skip");
             App.Exit(ExitReason.AppUpdating);
         }
 
