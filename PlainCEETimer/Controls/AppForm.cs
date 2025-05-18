@@ -200,6 +200,9 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        protected bool IsUIClosing(FormClosingEventArgs e)
+            => App.AllowUIClosing || e.CloseReason == CloseReason.WindowsShutDown;
+
         /// <summary>
         /// 为 ComboBox 绑定统一类型的 DataSource, DisplayMember 和 ValueMember。
         /// </summary>
