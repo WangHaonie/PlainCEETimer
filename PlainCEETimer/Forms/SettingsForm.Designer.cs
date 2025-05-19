@@ -326,7 +326,7 @@
             this.LabelPptsvc.Name = "LabelPptsvc";
             this.LabelPptsvc.Size = new System.Drawing.Size(358, 15);
             this.LabelPptsvc.TabIndex = 0;
-            this.LabelPptsvc.Text = "用于解决个别机型在内置白板打开后底部工具栏消失的情况。";
+            this.LabelPptsvc.Text = "(仅个别机型) 用于修复希沃PPT小工具的内置白板打开后底部工具栏消失的问题。";
             // 
             // GBoxContent
             // 
