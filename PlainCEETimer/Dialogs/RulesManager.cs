@@ -42,11 +42,7 @@ namespace PlainCEETimer.Dialogs
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
-            var item = new ListViewItem(GetTickText(data.Tick), Groups[(int)data.Phase])
-            {
-                UseItemStyleForSubItems = false
-            };
-
+            var item = new ListViewItem(GetTickText(data.Tick), Groups[(int)data.Phase]) { UseItemStyleForSubItems = false };
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
             return item;
         }
@@ -73,6 +69,8 @@ namespace PlainCEETimer.Dialogs
         }
 
         private string GetTickText(TimeSpan timeSpan)
-            => $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
+        {
+            return $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
+        }
     }
 }
