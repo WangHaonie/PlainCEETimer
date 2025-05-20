@@ -19,7 +19,8 @@ namespace PlainCEETimer.Modules
             {
                 var Response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
                 var LatestVersion = Response.Version;
-                var PublishDate = Response.PublishDate.Format();
+                var pub = Response.PublishDate;
+                var PublishDate = $"{GetDescription(pub)} ({pub.Format()})";
                 var UpdateLog = Response.UpdateLog;
 
                 if (Version.Parse(LatestVersion) > App.AppVersionObject)
@@ -49,6 +50,18 @@ namespace PlainCEETimer.Modules
                     MessageX.Error("检查更新时发生错误! ", ex);
                 }
             }
+        }
+
+        private string GetDescription(DateTime pub)
+        {
+            var span = DateTime.Now - pub;
+            var tm = (int)span.TotalMinutes;
+            var th = (int)span.TotalHours;
+
+            if ((int)span.TotalSeconds < 60) return "刚刚";
+            if (tm < 60) return $"{tm} 分钟前";
+            if (th < 24) return $"{th} 小时前";
+            return $"{(int)span.TotalDays} 天前";
         }
     }
 }
