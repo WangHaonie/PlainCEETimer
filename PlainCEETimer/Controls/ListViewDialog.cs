@@ -27,6 +27,7 @@ namespace PlainCEETimer.Controls
         private MenuItem ContextSelectAll;
         private readonly string ContentDescription;
         private readonly HashSet<TData> ListViewItemsSet = [];
+        private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
         {
             Location = new(3, 3),
@@ -38,12 +39,23 @@ namespace PlainCEETimer.Controls
             InitializeComponent();
         }
 
-        protected ListViewDialog(int listViewWidth, string title, string content, string[] headers) : this()
+        protected ListViewDialog(int listViewWidth, string title, string content, string[] headers, string[] groups) : this()
         {
             Text = title;
             ListViewMain.Headers = headers;
             ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
             ContentDescription = content;
+
+            if (groups?.Length != 0)
+            {
+                ListViewMain.ShowGroups = true;
+                Groups = ListViewMain.Groups;
+
+                for (int i = 0; i < groups.Length; i++)
+                {
+                    Groups.Add(new(groups[i]));
+                }
+            }
         }
 
         /// <summary>
@@ -52,6 +64,13 @@ namespace PlainCEETimer.Controls
         /// <param name="data">给定的数据</param>
         /// <returns><see cref="ListViewItem"/></returns>
         protected abstract ListViewItem GetListViewItem(TData data);
+
+        /// <summary>
+        /// 获取项目关联的分组的索引
+        /// </summary>
+        /// <param name="data">给定的数据</param>
+        /// <returns>表示索引的 <see cref="int"/></returns>
+        protected abstract int GetGroupIndex(TData data);
 
         /// <summary>
         /// 获取用于向用户显示 添加、更改、重试 的 <see cref="ISubDialog{T}"/> 对话框实例。
@@ -130,19 +149,6 @@ namespace PlainCEETimer.Controls
             CompactControlsX(Btn, ButtonOperation, 6);
         }
 
-        /// <summary>
-        /// 指定 <see cref="ListView"/> 的分组
-        /// </summary>
-        /// <param name="groups"><see cref="ListViewGroup"/> 数组</param>
-        protected void SetGroups(ListViewGroup[] groups)
-        {
-            if (groups != null && groups.Length != 0)
-            {
-                ListViewMain.ShowGroups = true;
-                ListViewMain.Groups.AddRange(groups);
-            }
-        }
-
         private void ButtonOperation_Click(object sender, EventArgs e)
         {
             ContextMenuMain.Show(ButtonOperation, new(0, ButtonOperation.Height));
@@ -204,7 +210,6 @@ namespace PlainCEETimer.Controls
                 if (EditMode)
                 {
                     RemoveItem(item, data);
-                    ListViewMain.AutoAdjustColumnWidth();
                 }
 
                 ListViewMain.Suspend(() =>
@@ -229,6 +234,7 @@ namespace PlainCEETimer.Controls
         private void AddItem(TData data, bool IsSelected = false)
         {
             var item = GetListViewItem(data);
+            item.Group = Groups[GetGroupIndex(data)];
             item.Tag = data;
             item.Selected = IsSelected;
             item.Focused = IsSelected;

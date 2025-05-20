@@ -103,9 +103,9 @@ namespace PlainCEETimer.Modules
                                 UACHelper.CheckAdmin();
                                 MessageX.Info(
                                     $"""
-                                    当前会话用户：{UACHelper.CurrentUserName}
+                                    用户名：{UACHelper.CurrentUserName}
                                     进程所有者：{UACHelper.UserName}
-                                    是否具有管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
+                                    是否获取到管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
                                     """);
                                 break;
                             case "/fr":
