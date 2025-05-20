@@ -726,10 +726,10 @@ namespace PlainCEETimer.Forms
                 case 0:
                     return Helper.GetState(KeyName, AppPath, "");
                 case 1:
-                    Helper.Set(KeyName, AppPath);
+                    if (UACHelper.NotElevated) Helper.Set(KeyName, AppPath);
                     return null;
                 default:
-                    Helper.Delete(KeyName);
+                    if (UACHelper.NotElevated) Helper.Delete(KeyName);
                     return null;
             }
         }

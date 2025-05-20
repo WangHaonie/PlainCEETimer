@@ -45,7 +45,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.1";
-        public const string AppBuildDate = "2025/5/19";
+        public const string AppBuildDate = "2025/5/20";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -100,14 +100,19 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/ac":
-                                UACHelper.CheckAdmin(true);
-                                MessageX.Info($"当前用户 {UACHelper.UserName} {(UACHelper.IsAdmin ? "" : "不")}具有管理员权限。");
+                                UACHelper.CheckAdmin();
+                                MessageX.Info(
+                                    $"""
+                                    当前会话用户：{UACHelper.CurrentUserName}
+                                    进程所有者：{UACHelper.UserName}
+                                    是否具有管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
+                                    """);
                                 break;
                             case "/fr":
                                 Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
                                 break;
                             case "/op":
-                                UACHelper.CheckAdmin();
+                                UACHelper.CheckAdmin(false);
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
                             default:
