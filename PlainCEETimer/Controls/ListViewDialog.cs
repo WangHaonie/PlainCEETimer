@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
@@ -46,7 +45,7 @@ namespace PlainCEETimer.Controls
             ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
             ContentDescription = content;
 
-            if (groups?.Length != 0)
+            if (groups != null && groups.Length != 0)
             {
                 ListViewMain.ShowGroups = true;
                 Groups = ListViewMain.Groups;
@@ -66,7 +65,7 @@ namespace PlainCEETimer.Controls
         protected abstract ListViewItem GetListViewItem(TData data);
 
         /// <summary>
-        /// 获取项目关联的分组的索引
+        /// 获取展示该 <see cref="TData"/> 的 <see cref="ListViewItem"/> 关联的分组的索引
         /// </summary>
         /// <param name="data">给定的数据</param>
         /// <returns>表示索引的 <see cref="int"/></returns>
@@ -90,7 +89,7 @@ namespace PlainCEETimer.Controls
 
         protected sealed override void OnLoad()
         {
-            if (Data?.Count() != 0)
+            if (Data != null && Data.Length != 0)
             {
                 ListViewMain.Suspend(() =>
                 {
@@ -205,7 +204,7 @@ namespace PlainCEETimer.Controls
         {
             var EditMode = item != null;
 
-            if (ListViewItemsSet.Add(data) || EditMode)
+            if (EditMode || ListViewItemsSet.Add(data))
             {
                 if (EditMode)
                 {
