@@ -17,7 +17,7 @@ namespace PlainCEETimer.Modules.JsonConverters
 
                 if (Validator.IsNiceContrast(Fore, Back))
                 {
-                    return new ColorSetObject(Fore, Back);
+                    return new(Fore, Back);
                 }
             }
 

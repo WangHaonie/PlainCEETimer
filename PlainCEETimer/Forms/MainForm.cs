@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -99,20 +100,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (IsUIClosing(e))
-            {
-                if (App.CanSaveConfig)
-                {
-                    RealSaveConfig();
-                }
-
-                Countdown?.Dispose();
-                e.Cancel = false;
-            }
-            else
-            {
-                e.Cancel = true;
-            }
+            e.Cancel = e.CloseReason != CloseReason.WindowsShutDown;
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
@@ -246,7 +234,7 @@ namespace PlainCEETimer.Forms
             if (ShowThemeChangedWarning)
             {
                 MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
-                App.Shutdown(true);
+                App.Exit(ExitReason.UserRestart);
             }
         }
 
@@ -443,7 +431,7 @@ namespace PlainCEETimer.Forms
                         {
                             if (FormSettings.RefreshNeeded)
                             {
-                                RealSaveConfig();
+                                ConfigHandler.Save();
                                 RefreshSettings();
                                 CountdownCallback(null);
                             }
@@ -464,7 +452,7 @@ namespace PlainCEETimer.Forms
                 }),
 
                 b.Separator(),
-                b.Item("安装目录(&D)", (_, _) => App.OpenInstallDir())
+                b.Item("安装目录(&D)", (_, _) => Process.Start(App.CurrentExecutableDir))
             ]);
             #endregion
         }
@@ -479,7 +467,7 @@ namespace PlainCEETimer.Forms
                     {
                         if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                         {
-                            App.Shutdown(true);
+                            App.Exit(ExitReason.UserRestart);
                         }
                         else
                         {
@@ -498,8 +486,8 @@ namespace PlainCEETimer.Forms
                             b.Item("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
                             b.Menu("关闭(&C)",
                             [
-                                b.Item("重启(&R)", (_, _) => App.Shutdown(true)),
-                                b.Item("退出(&Q)", (_, _) => App.Shutdown())
+                                b.Item("重启(&R)", (_, _) => App.Exit(ExitReason.UserRestart)),
+                                b.Item("退出(&Q)", (_, _) => App.Exit(ExitReason.UserShutdown))
                             ])
                         ]))
                     };
@@ -765,11 +753,6 @@ namespace PlainCEETimer.Forms
         private void SaveConfig()
         {
             App.AppConfig = AppConfig;
-        }
-
-        private void RealSaveConfig()
-        {
-            ConfigHandler.Save();
         }
 
         private void SetRoundCorners()

@@ -79,12 +79,12 @@ namespace PlainCEETimer.Modules
 
     public enum ExitReason
     {
-        NormalExit,
-        AppUpdating,
+        Normal,
         UserShutdown,
         UserRestart,
+        AppUpdating,
         InvalidExeName,
-        AnotherInstanceIsRunning
+        MultipleInstance
     }
 
     [Flags]

@@ -113,7 +113,7 @@ namespace PlainCEETimer.Modules
 
                 if (!Auto && MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
-                    App.Shutdown(true);
+                    App.Exit(ExitReason.UserRestart);
                 }
             }
             catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)

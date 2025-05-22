@@ -15,9 +15,6 @@ namespace PlainCEETimer.Modules
     public static class App
     {
         public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
-        public static bool CanSaveConfig { get; set; }
-        public static bool AllowUIClosing { get; private set; }
-        public static bool AllowShutdown { get; set; } = true;
         public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
         public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
         public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
@@ -54,6 +51,8 @@ namespace PlainCEETimer.Modules
 
         private static Mutex MainMutex;
         private static bool IsMainProcess;
+        private static bool IsClosing;
+        private static bool CanSaveConfig;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
         private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
@@ -121,7 +120,7 @@ namespace PlainCEETimer.Modules
                         }
                     }
 
-                    Exit(ExitReason.NormalExit);
+                    Exit(ExitReason.Normal);
                 }
                 else
                 {
@@ -138,47 +137,23 @@ namespace PlainCEETimer.Modules
                 }
 
                 StartPipeClient();
-                Exit(ExitReason.AnotherInstanceIsRunning);
+                Exit(ExitReason.MultipleInstance);
             }
         }
 
-        public static void Shutdown(bool Restart = false)
+        public static void Exit(ExitReason reason)
         {
-            if (AllowShutdown)
+            IsClosing = true;
+            var Restart = reason == ExitReason.UserRestart;
+
+            if (CanSaveConfig)
             {
-                AllowUIClosing = true;
-
-                if (CanSaveConfig)
-                {
-                    ConfigHandler.Save();
-                }
-
-                Application.Exit();
-
-                if (Restart)
-                {
-                    ClearMutex();
-                    ProcessHelper.Run(CurrentExecutablePath);
-                    Exit(ExitReason.UserRestart);
-                }
-                else
-                {
-                    Exit(ExitReason.UserShutdown);
-                }
-
-                AllowUIClosing = false;
+                ConfigHandler.Save();
             }
-        }
 
-        public static void OpenInstallDir()
-        {
-            Process.Start(CurrentExecutableDir);
-        }
-
-        public static void Exit(ExitReason Reason)
-        {
             ClearMutex();
-            Environment.Exit((int)Reason);
+            ProcessHelper.Run("cmd.exe", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(Restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
+            Environment.Exit((int)reason);
         }
 
         private static void StartPipeServer()
@@ -207,7 +182,7 @@ namespace PlainCEETimer.Modules
 
         private static void HandleException(Exception ex)
         {
-            if (!AllowUIClosing)
+            if (!IsClosing)
             {
                 var Now = DateTime.Now;
                 var ExOutput = $"—————————————————— {AppNameEng} v{AppVersion} - {Now.Format()} ——————————————————\n{ex}";
@@ -215,11 +190,11 @@ namespace PlainCEETimer.Modules
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
 
-                var Result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！详细错误信息已写入安装目录中的 {ExFileName} 文件，建议您将其发送给开发者以帮助我们定位并解决问题。\n\n现在您可以点击【是】重启应用程序,【否】关闭应用程序，【取消】忽略本次错误。\n\n错误信息：\n{ex.Message}", "意外错误 - 高考倒计时", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+                var Result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！详细错误信息已写入安装目录中的 {ExFileName} 文件，建议您将其发送给开发者以帮助我们定位并解决问题。\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。\n\n错误信息：\n{ex.Message}", "意外错误 - 高考倒计时", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
 
-                if (Result != DialogResult.Cancel)
+                if (Result != DialogResult.Ignore)
                 {
-                    Shutdown(Restart: Result == DialogResult.Yes);
+                    Exit(Result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
                 }
             }
         }

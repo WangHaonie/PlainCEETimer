@@ -23,11 +23,7 @@ namespace PlainCEETimer.Controls
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (App.AllowUIClosing)
-            {
-                e.Cancel = false;
-            }
-            else if (IsUserChanged)
+            if (IsUserChanged)
             {
                 ShowUnsavedWarning("是否保存当前更改？", e, OnClickButtonA, ref IsUserChanged);
             }

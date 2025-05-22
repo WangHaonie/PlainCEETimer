@@ -83,11 +83,7 @@ namespace PlainCEETimer.Forms
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
-            if (IsUIClosing(e))
-            {
-                e.Cancel = false;
-            }
-            else if (IsSyncingTime)
+            if (IsSyncingTime)
             {
                 e.Cancel = true;
             }
@@ -312,7 +308,7 @@ namespace PlainCEETimer.Forms
                     if (MessageX.Info("是否重启到命令行模式？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                     {
                         ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", ShowWindow: true);
-                        App.Shutdown();
+                        App.Exit(ExitReason.Normal);
                     }
                 }
 
@@ -322,7 +318,7 @@ namespace PlainCEETimer.Forms
 
         private void ButtonRestart_Click(object sender, EventArgs e)
         {
-            App.Shutdown(!IsFunny);
+            App.Exit(IsFunny ? ExitReason.UserShutdown : ExitReason.UserRestart);
         }
 
         private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
@@ -604,7 +600,6 @@ namespace PlainCEETimer.Forms
             {
                 case SettingsArea.SyncTime:
                     IsSyncingTime = IsWorking;
-                    App.AllowShutdown = !IsWorking;
                     ButtonSyncTime.Enabled = !IsWorking;
                     ComboBoxNtpServers.Enabled = !IsWorking;
                     ButtonRestart.Enabled = !IsWorking;
