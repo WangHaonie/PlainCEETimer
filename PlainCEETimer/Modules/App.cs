@@ -102,16 +102,18 @@ namespace PlainCEETimer.Modules
                                 UACHelper.CheckAdmin();
                                 MessageX.Info(
                                     $"""
-                                    用户名：{UACHelper.CurrentUserName}
-                                    进程所有者：{UACHelper.UserName}
+                                    当前用户名：{Win32User.CurrentSessionUserName}
+                                    进程所有者：{Win32User.CurrentProcessUserName}
+
                                     是否获取到管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
+                                    当前进程是否提权运行：{(Win32User.NotElevated ? "否" : "是")}
                                     """);
                                 break;
                             case "/fr":
                                 Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
                                 break;
                             case "/op":
-                                UACHelper.CheckAdmin(false);
+                                UACHelper.CheckAdmin();
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
                             default:

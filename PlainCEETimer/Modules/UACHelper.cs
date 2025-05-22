@@ -18,9 +18,6 @@ namespace PlainCEETimer.Modules
     {
         public static bool IsUACDisabled { get; }
         public static bool IsAdmin { get; private set; }
-        public static bool NotElevated { get; private set; }
-        public static string UserName { get; private set; }
-        public static string CurrentUserName { get; private set; }
 
         private static readonly UACNotifyLevel Level;
 
@@ -46,26 +43,9 @@ namespace PlainCEETimer.Modules
             return true;
         }
 
-        public static void CheckAdmin(bool QueryUserName = true)
+        public static void CheckAdmin()
         {
             IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
-
-            if (QueryUserName)
-            {
-                UserName = (string)ProcessHelper.Run("whoami", Return: 1);
-
-                /*
-                
-                获取当前系统会话用户名 参考：
-
-                Windows Batch - Get name of currently logged-in user - Server Fault
-                https://serverfault.com/a/1026585
-
-                */
-
-                CurrentUserName = ((string)ProcessHelper.Run("cmd", "/c echo off & for /f \"tokens=2 delims==\" %f in ('wmic computersystem get username /value ^| find \"=\"') do echo %f", Return: 1)).ToLower();
-                NotElevated = UserName.Equals(CurrentUserName, System.StringComparison.OrdinalIgnoreCase);
-            }
         }
 
         private static UACNotifyLevel GetUACNotifyLevel()

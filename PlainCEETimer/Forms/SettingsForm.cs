@@ -23,6 +23,7 @@ namespace PlainCEETimer.Forms
         private bool IsFunny;
         private bool IsFunnyClick;
         private bool ChangingCheckBox;
+        private bool IsSetStartUp;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
         private ContextMenu ContextMenuDefaultColor;
@@ -446,7 +447,7 @@ namespace PlainCEETimer.Forms
 
         private void RefreshSettings()
         {
-            CheckBoxStartup.Checked = (bool)OperateStartUp(0);
+            CheckBoxStartup.Checked = IsSetStartUp = (bool)OperateStartUp(0);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
@@ -667,7 +668,12 @@ namespace PlainCEETimer.Forms
 
         private void SaveSettings()
         {
-            OperateStartUp(CheckBoxStartup.Checked ? 1 : 2);
+            var b = IsSetStartUp;
+
+            if ((IsSetStartUp = CheckBoxStartup.Checked) != b)
+            {
+                OperateStartUp(IsSetStartUp ? 1 : 2);
+            }
 
             App.AppConfig = new()
             {
@@ -721,10 +727,10 @@ namespace PlainCEETimer.Forms
                 case 0:
                     return Helper.GetState(KeyName, AppPath, "");
                 case 1:
-                    if (UACHelper.NotElevated) Helper.Set(KeyName, AppPath);
+                    if (Win32User.NotElevated) Helper.Set(KeyName, AppPath);
                     return null;
                 default:
-                    if (UACHelper.NotElevated) Helper.Delete(KeyName);
+                    if (Win32User.NotElevated) Helper.Delete(KeyName);
                     return null;
             }
         }
