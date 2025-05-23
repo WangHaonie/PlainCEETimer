@@ -42,7 +42,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.1";
-        public const string AppBuildDate = "2025/5/22";
+        public const string AppBuildDate = "2025/5/23";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
@@ -104,7 +104,6 @@ namespace PlainCEETimer.Modules
                                     $"""
                                     当前用户名：{Win32User.CurrentSessionUserName}
                                     进程所有者：{Win32User.CurrentProcessUserName}
-
                                     是否获取到管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
                                     当前进程是否提权运行：{(Win32User.NotElevated ? "否" : "是")}
                                     """);
