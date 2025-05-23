@@ -114,7 +114,6 @@ Section -POST
   CreateShortCut "$SMPROGRAMS\高考倒计时\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\高考倒计时\卸载 高考倒计时.lnk" "$INSTDIR\uninst.exe"
   DetailPrint "正在优化程序集以提高运行速度，请稍候..."
-  MessageBox MB_OK|MB_ICONINFORMATION "即将开始优化程序集，该操作可以提高一定的运行速度，需要管理员权限，若弹出 UAC 对话框，请点击 是 以授权。$\n$\n>>现在点击 确定 继续"
   ExecWait '"$INSTDIR\PlainCEETimer.exe" /op /auto'
   SetAutoClose true
 SectionEnd
