@@ -29,7 +29,8 @@ namespace PlainCEETimer.Controls
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
         {
-            Location = new(3, 3),
+            Left = 3,
+            Top = 3,
             UseCompatibleStateImageBehavior = false
         };
 
@@ -189,14 +190,9 @@ namespace PlainCEETimer.Controls
 
         private void ListViewMain_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && ListViewMain.GetItemAt(e.X, e.Y) != null)
             {
-                var MouseLocation = e.Location;
-
-                if (ListViewMain.GetItemAt(MouseLocation.X, MouseLocation.Y) != null)
-                {
-                    ContextEdit_Click(null, null);
-                }
+                ContextEdit_Click(null, null);
             }
         }
 

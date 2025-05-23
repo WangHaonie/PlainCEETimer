@@ -56,7 +56,7 @@ namespace PlainCEETimer.Controls
 
             if (CheckParam(AppFormParam.CenterScreen))
             {
-                Location = GetScreenCenter(GetCurrentScreenRect());
+                MoveToScreenCenter(GetCurrentScreenRect());
             }
         }
 
@@ -212,15 +212,12 @@ namespace PlainCEETimer.Controls
             Target.ValueMember = nameof(ComboData.Value);
         }
 
-        /// <summary>
-        /// 以屏幕宽度为参考使 Label 单行内容达到一定长度时自动换行。
-        /// </summary>
-        /// <param name="Target">目标 Label 控件</param>
-        /// <param name="FullWidth">[可选] 默认 false。true 则按屏幕宽度减10px作为最大长度，false 则屏幕宽度的3/4。</param>
-        protected void SetLabelAutoWrap(Label Target, bool FullWidth = false)
+        protected Rectangle GetCurrentScreenRect()
+            => Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
+
+        protected void SetLocation(int x, int y)
         {
-            var CurrentScreenWidth = GetCurrentScreenRect().Width;
-            SetLabelAutoWrapCore(Target, new(FullWidth ? CurrentScreenWidth - 10 : (int)(CurrentScreenWidth * 0.75), 0));
+            SetBoundsCore(x, y, Width, Height, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -230,7 +227,23 @@ namespace PlainCEETimer.Controls
         /// <param name="Parent">该 Label 所在的容器</param>
         protected void SetLabelAutoWrap(Label Target, Control Parent)
         {
-            SetLabelAutoWrapCore(Target, new(Parent.Width - Target.Left, 0));
+            SetLabelAutoWrap(Target, Parent.Width - Target.Left);
+        }
+
+        protected void SetLabelAutoWrap(Label Target, int MaxWidth)
+        {
+            #region 来自网络
+            /*
+            
+            Label 控件自动换行 参考:
+
+            c# - Word wrap for a label in Windows Forms - Stack Overflow
+            https://stackoverflow.com/a/3680595/21094697
+
+            */
+            Target.MaximumSize = new(MaxWidth, 0);
+            Target.AutoSize = true;
+            #endregion
         }
 
         /// <summary>
@@ -274,7 +287,7 @@ namespace PlainCEETimer.Controls
         /// <param name="Reference">指定控件</param>
         protected void AlignControlsREx(Button Btn1, Button Btn2, Control Reference)
         {
-            AlignControlsRCore(Btn1, Btn2, Reference, Btn2.Location.Y);
+            AlignControlsRCore(Btn1, Btn2, Reference, Btn2.Top);
         }
 
         /// <summary>
@@ -365,8 +378,10 @@ namespace PlainCEETimer.Controls
 
         protected int ScaleToDpi(int px) => (int)(px * CurrentDpiRatio);
 
-        protected Point GetScreenCenter(Rectangle screenRect)
-            => new(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
+        protected void MoveToScreenCenter(Rectangle screenRect)
+        {
+            SetLocation(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
+        }
 
         private void AppLauncher_TrayMenuShowAllClicked()
         {
@@ -382,29 +397,10 @@ namespace PlainCEETimer.Controls
             TopMost = !IsDisposed && MainForm.UniTopMost;
         }
 
-        private void SetLabelAutoWrapCore(Label Target, Size NewSize)
-        {
-            #region 来自网络
-            /*
-            
-            Label 控件自动换行 参考:
-
-            c# - Word wrap for a label in Windows Forms - Stack Overflow
-            https://stackoverflow.com/a/3680595/21094697
-
-            */
-            Target.MaximumSize = NewSize;
-            Target.AutoSize = true;
-            #endregion
-        }
-
         private void AlignControlsRCore(Button Btn1, Button Btn2, Control Main, int yTweak)
         {
-            Btn2.Location = new(Main.Location.X + Main.Width - Btn2.Width, yTweak);
-            Btn1.Location = new(Btn2.Location.X - Btn1.Width - ScaleToDpi(6), Btn2.Location.Y);
+            Btn2.Location = new(Main.Left + Main.Width - Btn2.Width, yTweak);
+            Btn1.Location = new(Btn2.Left - Btn1.Width - ScaleToDpi(6), Btn2.Top);
         }
-
-        private Rectangle GetCurrentScreenRect()
-            => Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
     }
 }

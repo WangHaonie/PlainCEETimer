@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,18 +39,21 @@ namespace PlainCEETimer.Forms
         private bool UseCustomText;
         private int AutoSwitchInterval;
         private int CurrentTheme;
+        private int CountdownMaxW;
         private int ExamIndex;
         private int ScreenIndex;
         private int ShowXOnlyIndex;
         private const int BorderRadius = 13;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
+        private string CountdownContent = "正在加载中...";
         private string ExamName;
         private string[] GlobalTexts;
         private CountdownMode Mode;
         private CountdownPosition CountdownPos;
         private CountdownPhase CurrentPhase = CountdownPhase.None;
         private CountdownState SelectedState;
+        private Color CountdownForeColor;
         private ColorSetObject[] CountdownColors;
         private DateTime ExamEnd;
         private DateTime ExamStart;
@@ -64,6 +68,7 @@ namespace PlainCEETimer.Forms
         private CustomRuleObject[] CurrentRules;
         private ExamInfoObject CurrentExam;
         private ExamInfoObject[] Exams;
+        private Font CountdownFont;
         private Menu.MenuItemCollection ExamSwitchMain;
         private NotifyIcon TrayIcon;
         private SettingsForm FormSettings;
@@ -73,10 +78,10 @@ namespace PlainCEETimer.Forms
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
 
-
         public MainForm() : base(AppFormParam.Special)
         {
             InitializeComponent();
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -85,10 +90,12 @@ namespace PlainCEETimer.Forms
             SetRoundCorners();
         }
 
-        protected override void OnLoad()
+        protected override void OnPaint(PaintEventArgs e)
         {
-            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-            SizeChanged += MainForm_SizeChanged;
+            base.OnPaint(e);
+            var g = e.Graphics;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
         }
 
         protected override void OnShown()
@@ -97,6 +104,61 @@ namespace PlainCEETimer.Forms
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(false, this));
         }
+
+        #region
+        /*
+        
+        无边框窗口的拖动 参考:
+
+        C#创建无边框可拖动窗口 - 掘金
+        https://juejin.cn/post/6989144829607280648
+
+        */
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (IsDraggable && e.Button == MouseButtons.Left)
+            {
+                IsReadyToMove = true;
+                Cursor = Cursors.SizeAll;
+                LastMouseLocation = e.Location;
+                LastLocation = Location;
+            }
+
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (IsDraggable && IsReadyToMove)
+            {
+                SetLocation(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
+            }
+
+            base.OnMouseMove(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (IsDraggable)
+            {
+                Cursor = Cursors.Default;
+
+                if (IsReadyToMove && Location != LastLocation)
+                {
+                    KeepOnScreen();
+                    CompatibleWithPPTService();
+                    SetLabelCountdownAutoWrap();
+                    AppConfig.Location = Location;
+                    SaveConfig();
+                }
+
+                IsReadyToMove = false;
+            }
+
+            base.OnMouseUp(e);
+        }
+        #endregion
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
@@ -110,7 +172,7 @@ namespace PlainCEETimer.Forms
             ApplyLocation();
         }
 
-        private void MainForm_SizeChanged(object sender, EventArgs e)
+        protected override void OnSizeChanged(EventArgs e)
         {
             if (SetRoundRegion)
             {
@@ -118,6 +180,7 @@ namespace PlainCEETimer.Forms
             }
 
             ValidateLocation();
+            base.OnSizeChanged(e);
         }
 
         private void MainForm_LocationRefreshed()
@@ -144,51 +207,6 @@ namespace PlainCEETimer.Forms
                 CountdownCallback(null);
             }
         }
-
-        #region 来自网络
-        /*
-        
-        无边框窗口的拖动 参考:
-
-        C#创建无边框可拖动窗口 - 掘金
-        https://juejin.cn/post/6989144829607280648
-
-        */
-        private void LabelCountdown_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                IsReadyToMove = true;
-                Cursor = Cursors.SizeAll;
-                LastMouseLocation = e.Location;
-                LastLocation = Location;
-            }
-        }
-
-        private void LabelCountdown_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (IsReadyToMove)
-            {
-                Location = new(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
-            }
-        }
-
-        private void LabelCountdown_MouseUp(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Default;
-
-            if (IsReadyToMove && Location != LastLocation)
-            {
-                KeepOnScreen();
-                CompatibleWithPPTService();
-                SetLabelCountdownAutoWrap();
-                AppConfig.Location = Location;
-                SaveConfig();
-            }
-
-            IsReadyToMove = false;
-        }
-        #endregion
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
         {
@@ -335,18 +353,12 @@ namespace PlainCEETimer.Forms
                 };
             }
 
-            LabelCountdown.Font = AppConfig.Font;
+            CountdownFont = AppConfig.Font;
 
-            LabelCountdown.MouseDown -= LabelCountdown_MouseDown;
-            LabelCountdown.MouseMove -= LabelCountdown_MouseMove;
-            LabelCountdown.MouseUp -= LabelCountdown_MouseUp;
             LocationRefreshed -= MainForm_LocationRefreshed;
 
             if (IsDraggable)
             {
-                LabelCountdown.MouseDown += LabelCountdown_MouseDown;
-                LabelCountdown.MouseMove += LabelCountdown_MouseMove;
-                LabelCountdown.MouseUp += LabelCountdown_MouseUp;
                 LocationRefreshed += MainForm_LocationRefreshed;
                 Location = AppConfig.Location;
             }
@@ -381,7 +393,6 @@ namespace PlainCEETimer.Forms
             }
 
             ContextMenu = ContextMenuMain;
-            LabelCountdown.ContextMenu = ContextMenuMain;
 
             if (Exams.Length != 0)
             {
@@ -659,9 +670,13 @@ namespace PlainCEETimer.Forms
         {
             BeginInvoke(() =>
             {
-                LabelCountdown.Text = Content;
-                LabelCountdown.ForeColor = Colors.Fore;
+                CountdownContent = Content;
+                CountdownForeColor = Colors.Fore;
                 BackColor = Colors.Back;
+                var textSize = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
+                Width = textSize.Width;
+                Height = textSize.Height;
+                Invalidate();
 
                 if (ShowTrayText)
                 {
@@ -711,25 +726,43 @@ namespace PlainCEETimer.Forms
 
         private void SetLabelCountdownAutoWrap()
         {
-            SetLabelAutoWrap(LabelCountdown, true);
+            CountdownMaxW = GetCurrentScreenRect().Width - 10;
         }
 
         private void ApplyLocation()
         {
             if (!IsDraggable)
             {
-                Location = CountdownPos switch
+                switch (CountdownPos)
                 {
-                    CountdownPosition.LeftCenter => new(SelectedScreenRect.Left, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomLeft => new(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height),
-                    CountdownPosition.TopCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Top),
-                    CountdownPosition.Center => GetScreenCenter(SelectedScreenRect),
-                    CountdownPosition.BottomCenter => new(SelectedScreenRect.Left + SelectedScreenRect.Width / 2 - Width / 2, SelectedScreenRect.Bottom - Height),
-                    CountdownPosition.TopRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top),
-                    CountdownPosition.RightCenter => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + SelectedScreenRect.Height / 2 - Height / 2),
-                    CountdownPosition.BottomRight => new(SelectedScreenRect.Right - Width, SelectedScreenRect.Bottom - Height),
-                    _ => IsPPTService ? new(SelectedScreenRect.Location.X + PptsvcThreshold, SelectedScreenRect.Location.Y) : SelectedScreenRect.Location
-                };
+                    case CountdownPosition.LeftCenter:
+                        SetLocation(SelectedScreenRect.Left, SelectedScreenRect.Top + (SelectedScreenRect.Height - Height) / 2);
+                        break;
+                    case CountdownPosition.BottomLeft:
+                        SetLocation(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height);
+                        break;
+                    case CountdownPosition.TopCenter:
+                        SetLocation(SelectedScreenRect.Left + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Top);
+                        break;
+                    case CountdownPosition.Center:
+                        MoveToScreenCenter(SelectedScreenRect);
+                        break;
+                    case CountdownPosition.BottomCenter:
+                        SetLocation(SelectedScreenRect.Left + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Bottom - Height);
+                        break;
+                    case CountdownPosition.TopRight:
+                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Top);
+                        break;
+                    case CountdownPosition.RightCenter:
+                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + (SelectedScreenRect.Height - Height) / 2);
+                        break;
+                    case CountdownPosition.BottomRight:
+                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Bottom - Height);
+                        break;
+                    default:
+                        SetLocation(IsPPTService ? SelectedScreenRect.X + PptsvcThreshold : SelectedScreenRect.X, SelectedScreenRect.Y);
+                        break;
+                }
             }
         }
 

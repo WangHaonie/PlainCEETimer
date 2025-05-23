@@ -30,31 +30,15 @@ namespace PlainCEETimer.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.LabelCountdown = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // LabelCountdown
-            // 
-            this.LabelCountdown.AutoSize = true;
-            this.LabelCountdown.BackColor = System.Drawing.Color.Transparent;
-            this.LabelCountdown.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LabelCountdown.ForeColor = System.Drawing.Color.Black;
-            this.LabelCountdown.Location = new System.Drawing.Point(0, 0);
-            this.LabelCountdown.Name = "LabelCountdown";
-            this.LabelCountdown.Size = new System.Drawing.Size(81, 15);
-            this.LabelCountdown.TabIndex = 0;
-            this.LabelCountdown.Text = "正在加载中...";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(162, 23);
             this.ControlBox = false;
-            this.Controls.Add(this.LabelCountdown);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -65,12 +49,8 @@ namespace PlainCEETimer.Forms
             this.Text = "高考倒计时";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-
         #endregion
-
-        private System.Windows.Forms.Label LabelCountdown;
     }
 }
 

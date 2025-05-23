@@ -45,7 +45,7 @@ namespace PlainCEETimer.Dialogs
         {
             PanelMain.AutoSize = true;
             PanelMain.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            SetLabelAutoWrap(LabelMessage);
+            SetLabelAutoWrap(LabelMessage, (int)(GetCurrentScreenRect().Width * 0.75));
             AlignControlsR(ButtonA, ButtonB, PanelMain);
         }
 

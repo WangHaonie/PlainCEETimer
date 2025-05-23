@@ -59,14 +59,14 @@ namespace PlainCEETimer.Modules
 
         public static void StartProgram(string[] args)
         {
-            AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
-            _ = ThemeManager.Initialize;
-            var Args = Array.ConvertAll(args, x => x.ToLower());
-            var AllArgs = string.Join(" ", args);
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (_, e) => HandleException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
+            AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
+            _ = ThemeManager.Initialize;
+            var Args = Array.ConvertAll(args, x => x.ToLower());
+            var AllArgs = string.Join(" ", args);
             MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
 
             if (IsMainProcess = IsNewProcess)
