@@ -141,6 +141,7 @@ namespace PlainCEETimer.Forms
                 LoadExams();
                 TryRunCountdown();
                 UpdateExamSelection();
+                CountdownCallback(null);
             }
         }
 
