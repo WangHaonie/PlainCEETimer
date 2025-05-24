@@ -35,7 +35,7 @@ namespace PlainCEETimer.Dialogs
             return i;
         }
 
-        protected override ISubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)
+        protected override IListViewSubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)
         {
             return new ExamInfoDialog(data);
         }

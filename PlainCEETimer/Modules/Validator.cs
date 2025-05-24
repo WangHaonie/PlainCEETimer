@@ -79,7 +79,7 @@ namespace PlainCEETimer.Modules
         }
 
         public static void Validate<T>(T[] value)
-            where T : IListViewObject<T>
+            where T : IListViewData<T>
         {
             HashSet<T> set = [];
 

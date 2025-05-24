@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules.Configuration
 {
     [DebuggerDisplay("{Validator.GetPhaseText(Phase),nq} {Validator.GetTickText(Tick),nq} {Text,nq}")]
     [JsonConverter(typeof(CustomRulesConverter))]
-    public class CustomRuleObject : IListViewObject<CustomRuleObject>
+    public class CustomRuleObject : IListViewData<CustomRuleObject>
     {
         public CountdownPhase Phase { get; set; }
 

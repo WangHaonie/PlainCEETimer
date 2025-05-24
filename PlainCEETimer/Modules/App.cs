@@ -42,17 +42,18 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.1";
-        public const string AppBuildDate = "2025/5/23";
+        public const string AppBuildDate = "2025/5/25";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
+        public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string InfoMsg = "提示 - 高考倒计时";
         public const string WarnMsg = "警告 - 高考倒计时";
         public const string ErrMsg = "错误 - 高考倒计时";
 
-        private static Mutex MainMutex;
         private static bool IsMainProcess;
         private static bool IsClosing;
         private static bool CanSaveConfig;
+        private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
         private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
@@ -67,17 +68,17 @@ namespace PlainCEETimer.Modules
             _ = ThemeManager.Initialize;
             var Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
-            MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out bool IsNewProcess);
+            MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
-            if (IsMainProcess = IsNewProcess)
+            if (IsMainProcess)
             {
-                new Thread(StartPipeServer).Start();
+                Task.Run(StartPipeServer);
 
                 if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (Args.Length == 0)
                     {
-                        Task.Run(() => UACHelper.CheckAdmin());
+                        Task.Run(UACHelper.CheckAdmin);
                         Application.Run(new MainForm());
                     }
                     else
@@ -152,7 +153,13 @@ namespace PlainCEETimer.Modules
                 ConfigHandler.Save();
             }
 
-            ClearMutex();
+            if (IsMainProcess && MainMutex != null)
+            {
+                MainMutex.ReleaseMutex();
+                MainMutex.Dispose();
+                MainMutex = null;
+            }
+
             ProcessHelper.Run("cmd.exe", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(Restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
             Environment.Exit((int)reason);
         }
@@ -187,7 +194,7 @@ namespace PlainCEETimer.Modules
             {
                 var Now = DateTime.Now;
                 var ExOutput = $"—————————————————— {AppNameEng} v{AppVersion} - {Now.Format()} ——————————————————\n{ex}";
-                var ExFileName = $"UnhandledException_{Now:yyyyMMddHHmmss}.txt";
+                var ExFileName = $"UnhandledException_{Now.ToString(DateTimeFormat)}.txt";
                 var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
                 File.AppendAllText(ExFilePath, ExOutput);
 
@@ -197,16 +204,6 @@ namespace PlainCEETimer.Modules
                 {
                     Exit(Result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
                 }
-            }
-        }
-
-        private static void ClearMutex()
-        {
-            if (IsMainProcess && MainMutex != null)
-            {
-                MainMutex.ReleaseMutex();
-                MainMutex.Dispose();
-                MainMutex = null;
             }
         }
     }

@@ -8,11 +8,11 @@ using PlainCEETimer.Modules;
 namespace PlainCEETimer.Controls
 {
     public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
-        where TData : IListViewObject<TData>
-        where TSubDialog : AppDialog, ISubDialog<TData>
+        where TData : IListViewData<TData>
+        where TSubDialog : AppDialog, IListViewSubDialog<TData>
     {
         private class ListViewItemComparer<T> : IComparer
-            where T : IListViewObject<T>
+            where T : IListViewData<T>
         {
             int IComparer.Compare(object x, object y) => ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
         }
@@ -73,11 +73,11 @@ namespace PlainCEETimer.Controls
         protected abstract int GetGroupIndex(TData data);
 
         /// <summary>
-        /// 获取用于向用户显示 添加、更改、重试 的 <see cref="ISubDialog{T}"/> 对话框实例。
+        /// 获取用于向用户显示 添加、更改、重试 的 <see cref="IListViewSubDialog{T}"/> 对话框实例。
         /// </summary>
         /// <param name="data">现有数据</param>
-        /// <returns><see cref="ISubDialog{TData}"/></returns>
-        protected abstract ISubDialog<TData> GetSubDialog(TData data = default);
+        /// <returns><see cref="IListViewSubDialog{TData}"/></returns>
+        protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
 
         protected override void AdjustUI()
         {

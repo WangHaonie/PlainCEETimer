@@ -7,7 +7,7 @@ using PlainCEETimer.Modules.JsonConverters;
 namespace PlainCEETimer.Modules.Configuration
 {
     [DebuggerDisplay("{Name,nq}: {Start.Format(),nq}~{End.Format(),nq}")]
-    public class ExamInfoObject : IListViewObject<ExamInfoObject>
+    public class ExamInfoObject : IListViewData<ExamInfoObject>
     {
         public string Name
         {

@@ -8,7 +8,7 @@ using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed partial class RuleDialog : AppDialog, ISubDialog<CustomRuleObject>
+    public sealed partial class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
     {
         public string[] GlobalTexts { private get; set; }
         public ColorSetObject[] GlobalColors { private get; set; }

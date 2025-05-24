@@ -46,7 +46,7 @@ namespace PlainCEETimer.Dialogs
             return (int)data.Phase;
         }
 
-        protected override ISubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null) => new RuleDialog()
+        protected override IListViewSubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null) => new RuleDialog()
         {
             Data = data,
             GlobalColors = ColorPresets,

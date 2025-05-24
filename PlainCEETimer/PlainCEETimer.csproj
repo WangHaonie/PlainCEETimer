@@ -229,8 +229,8 @@
     <Compile Include="Modules\Http\DownloadReport.cs" />
     <Compile Include="Modules\Http\HttpService.cs" />
     <Compile Include="Modules\ICommonDialog.cs" />
-    <Compile Include="Modules\IListViewObject.cs" />
-    <Compile Include="Modules\ISubDialog.cs" />
+    <Compile Include="Modules\IListViewData.cs" />
+    <Compile Include="Modules\IListViewSubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
