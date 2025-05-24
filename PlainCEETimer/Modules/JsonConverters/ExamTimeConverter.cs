@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public ExamTimeConverter()
         {
-            DateTimeFormat = "yyyyMMddHHmmss";
+            DateTimeFormat = App.DateTimeFormat;
         }
     }
 }

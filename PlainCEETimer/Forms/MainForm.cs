@@ -43,6 +43,8 @@ namespace PlainCEETimer.Forms
         private int ExamIndex;
         private int ScreenIndex;
         private int ShowXOnlyIndex;
+        private int LastMouseX;
+        private int LastMouseY;
         private const int BorderRadius = 13;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
@@ -58,7 +60,6 @@ namespace PlainCEETimer.Forms
         private DateTime ExamEnd;
         private DateTime ExamStart;
         private Point LastLocation;
-        private Point LastMouseLocation;
         private Rectangle SelectedScreenRect;
         private AboutForm FormAbout;
         private ConfigObject AppConfig;
@@ -121,7 +122,8 @@ namespace PlainCEETimer.Forms
             {
                 IsReadyToMove = true;
                 Cursor = Cursors.SizeAll;
-                LastMouseLocation = e.Location;
+                LastMouseX = e.X;
+                LastMouseY = e.Y;
                 LastLocation = Location;
             }
 
@@ -132,7 +134,7 @@ namespace PlainCEETimer.Forms
         {
             if (IsDraggable && IsReadyToMove)
             {
-                SetLocation(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
+                SetLocation(MousePosition.X - LastMouseX, MousePosition.Y - LastMouseY);
             }
 
             base.OnMouseMove(e);
@@ -148,7 +150,7 @@ namespace PlainCEETimer.Forms
                 {
                     KeepOnScreen();
                     CompatibleWithPPTService();
-                    SetLabelCountdownAutoWrap();
+                    SetCountdownAutoWrap();
                     AppConfig.Location = Location;
                     SaveConfig();
                 }
@@ -168,7 +170,7 @@ namespace PlainCEETimer.Forms
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
         {
             RefreshScreen();
-            SetLabelCountdownAutoWrap();
+            SetCountdownAutoWrap();
             ApplyLocation();
         }
 
@@ -244,7 +246,7 @@ namespace PlainCEETimer.Forms
             LoadContextMenu();
             LoadTrayIcon();
             UniTopMostChanged?.Invoke();
-            SetLabelCountdownAutoWrap();
+            SetCountdownAutoWrap();
             TopMost = false;
             TopMost = AppConfig.General.TopMost;
             ShowInTaskbar = !TopMost;
@@ -724,7 +726,7 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void SetLabelCountdownAutoWrap()
+        private void SetCountdownAutoWrap()
         {
             CountdownMaxW = GetCurrentScreenRect().Width - 10;
         }
