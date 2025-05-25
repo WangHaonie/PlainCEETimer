@@ -1,12 +1,12 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.2 | 修订日期 2025/5/20</h4>
+    <h4>适用于 v5.0.2 | 修订日期 2025/5/25</h4>
 </div>
 
 # 📖 目录
 - [⬇️ 下载安装](#️-下载安装)
     * [🛠️ 运行环境准备](#️-运行环境准备)
-    * [🛠️ 下载安装程序](#️-下载安装程序)
+    * [🛠️ 安装高考倒计时](#️-安装高考倒计时)
 - [🎯 主窗口使用说明](#-主窗口使用说明)
     * [🎉 特性](#-特性)
     * [✨ 选项说明](#-选项说明)
@@ -43,15 +43,6 @@
 - [📄 致用户](#-致用户)
 
 # ⬇️ 下载安装
-## 🛠️ 运行环境准备
-+ Windows 7 SP1 x64 及以上。
-+ .NET Framework 4.8。新版 Windows 10/11 自带，其他版本系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要先安装相关系统更新及安全证书，请自行上网查询。
-
-## 🛠️ 下载安装程序
-
-+ 到 Release 页面下载 `PlainCEETimer_X.X_x64_Setup.exe`。[点此](https://github.com/WangHaonie/PlainCEETimer/releases/latest)进入。
-+ 运行安装程序按提示进行。
-+ 安装完成后会自动运行倒计时，位置默认在主显示器顶部居中。
 
 > [!TIP]
 > 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请自行到 [Release](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) 下载。
@@ -59,6 +50,16 @@
 > + 自动构建版本的功能可能不稳定，不推荐作为长期使用
 > + 自动构建版本的更新频率较高，且该渠道的版本不支持自动检查更新，需用户主动到此页面下载最新版本
 > + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新
+
+## 🛠️ 运行环境准备
++ Windows 7 SP1 x64 及以上。
++ .NET Framework 4.8。新版 Windows 10/11 自带，其他系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要预先安装相关系统更新及安全证书，请自行上网查询。
+
+## 🛠️ 安装高考倒计时
++ 到 Release 页面下载 `PlainCEETimer_X.X_x64_Setup.exe`。[点此](https://github.com/WangHaonie/PlainCEETimer/releases/latest)进入。
++ 运行安装程序按提示进行。
++ 安装完成后会自动进行优化，以提升倒计时的启动速度，可能弹出 UAC 提示框，请点击 是。
++ 优化完成后将自动运行倒计时，倒计时的位置默认在主显示器顶部居中。
 
 # 🎯 主窗口使用说明
 ## 🎉 特性
