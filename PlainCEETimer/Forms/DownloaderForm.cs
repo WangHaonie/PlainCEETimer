@@ -44,16 +44,28 @@ namespace PlainCEETimer.Forms
 
         protected override void OnShown()
         {
-            TaskbarProgress.Initialize(Handle, (App.OSBuild >= WindowsBuilds.Windows7).ToWin32());
-            LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
-            DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
-            UpdateDownloader.Downloading += UpdateDownloader_Downloading;
-            UpdateDownloader.Error += UpdateDownloader_Error;
-            UpdateDownloader.Completed += UpdateDownloader_Completed;
-            DownloadUpdate();
+            if (Win32User.NotElevated)
+            {
+                TaskbarProgress.Initialize(Handle, (App.OSBuild >= WindowsBuilds.Windows7).ToWin32());
+                LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
+                DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
+                UpdateDownloader.Downloading += UpdateDownloader_Downloading;
+                UpdateDownloader.Error += UpdateDownloader_Error;
+                UpdateDownloader.Completed += UpdateDownloader_Completed;
+                DownloadUpdate();
+            }
+            else
+            {
+                MessageX.Error("系统环境异常，无法进行更新！");
+                IsCancelled = true;
+                Close();
+            }
         }
 
-        protected override void OnClosing(FormClosingEventArgs e) => e.Cancel = !IsCancelled;
+        protected override void OnClosing(FormClosingEventArgs e)
+        {
+            e.Cancel = !IsCancelled;
+        }
 
         protected override void OnClosed()
         {
