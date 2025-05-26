@@ -84,7 +84,7 @@ namespace PlainCEETimer.Modules
         UserRestart,
         AppUpdating,
         InvalidExeName,
-        MultipleInstance
+        MultipleInstances
     }
 
     [Flags]

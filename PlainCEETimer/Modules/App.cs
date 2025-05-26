@@ -139,7 +139,7 @@ namespace PlainCEETimer.Modules
                 }
 
                 StartPipeClient();
-                Exit(ExitReason.MultipleInstance);
+                Exit(ExitReason.MultipleInstances);
             }
         }
 
