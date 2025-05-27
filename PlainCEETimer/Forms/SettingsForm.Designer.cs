@@ -183,6 +183,7 @@
             this.ComboBoxAutoSwitchIntervel.Name = "ComboBoxAutoSwitchIntervel";
             this.ComboBoxAutoSwitchIntervel.Size = new System.Drawing.Size(86, 23);
             this.ComboBoxAutoSwitchIntervel.TabIndex = 10;
+            this.ComboBoxAutoSwitchIntervel.SelectedIndexChanged += new System.EventHandler(this.SettingsChanged);
             // 
             // CheckBoxAutoSwitch
             // 
