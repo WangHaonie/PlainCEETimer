@@ -718,10 +718,11 @@ namespace PlainCEETimer.Forms
             if (IsPPTService)
             {
                 var ValidArea = SelectedScreenRect;
+                var ValidAreaX = SelectedScreenRect.X;
 
-                if (Left == ValidArea.Left && Top == ValidArea.Top)
+                if (Top == ValidArea.Y && Left == ValidAreaX)
                 {
-                    Left = ValidArea.Left + PptsvcThreshold;
+                    Left = ValidAreaX + PptsvcThreshold;
                 }
             }
         }
@@ -738,25 +739,25 @@ namespace PlainCEETimer.Forms
                 switch (CountdownPos)
                 {
                     case CountdownPosition.LeftCenter:
-                        SetLocation(SelectedScreenRect.Left, SelectedScreenRect.Top + (SelectedScreenRect.Height - Height) / 2);
+                        SetLocation(SelectedScreenRect.X, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
                         break;
                     case CountdownPosition.BottomLeft:
-                        SetLocation(SelectedScreenRect.Left, SelectedScreenRect.Bottom - Height);
+                        SetLocation(SelectedScreenRect.X, SelectedScreenRect.Bottom - Height);
                         break;
                     case CountdownPosition.TopCenter:
-                        SetLocation(SelectedScreenRect.Left + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Top);
+                        SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Y);
                         break;
                     case CountdownPosition.Center:
                         MoveToScreenCenter(SelectedScreenRect);
                         break;
                     case CountdownPosition.BottomCenter:
-                        SetLocation(SelectedScreenRect.Left + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Bottom - Height);
+                        SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Bottom - Height);
                         break;
                     case CountdownPosition.TopRight:
-                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Top);
+                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Y);
                         break;
                     case CountdownPosition.RightCenter:
-                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Top + (SelectedScreenRect.Height - Height) / 2);
+                        SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
                         break;
                     case CountdownPosition.BottomRight:
                         SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Bottom - Height);

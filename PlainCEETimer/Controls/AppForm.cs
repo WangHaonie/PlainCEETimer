@@ -380,7 +380,7 @@ namespace PlainCEETimer.Controls
 
         protected void MoveToScreenCenter(Rectangle screenRect)
         {
-            SetLocation(screenRect.Left + screenRect.Width / 2 - Width / 2, screenRect.Top + screenRect.Height / 2 - Height / 2);
+            SetLocation(screenRect.X + (screenRect.Width - Width) / 2, screenRect.Y + (screenRect.Height - Height) / 2);
         }
 
         private void AppLauncher_TrayMenuShowAllClicked()

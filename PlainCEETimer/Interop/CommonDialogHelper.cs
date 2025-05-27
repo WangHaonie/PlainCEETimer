@@ -146,8 +146,8 @@ namespace PlainCEETimer.Interop
             var t = Y;
             var r = X + DialogWidth;
             var b = Y + DialogHeight;
-            if (l < validArea.Left) X = validArea.Left;
-            if (t < validArea.Top) Y = validArea.Top;
+            if (l < validArea.X) X = validArea.X;
+            if (t < validArea.Y) Y = validArea.Y;
             if (r > validArea.Right) X = validArea.Right - DialogWidth;
             if (b > validArea.Bottom) Y = validArea.Bottom - DialogHeight;
             MoveWindow(hWnd, X, Y, DialogWidth, DialogHeight, false);
