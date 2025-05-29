@@ -43,13 +43,13 @@
             this.PanelMain.Controls.Add(this.PicBoxIcon);
             this.PanelMain.Location = new System.Drawing.Point(0, 0);
             this.PanelMain.Name = "PanelMain";
-            this.PanelMain.Size = new System.Drawing.Size(168, 40);
+            this.PanelMain.Size = new System.Drawing.Size(161, 40);
             this.PanelMain.TabIndex = 0;
             // 
             // PicBoxIcon
             // 
             this.PicBoxIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.PicBoxIcon.Location = new System.Drawing.Point(10, 3);
+            this.PicBoxIcon.Location = new System.Drawing.Point(6, 3);
             this.PicBoxIcon.Name = "PicBoxIcon";
             this.PicBoxIcon.Size = new System.Drawing.Size(32, 32);
             this.PicBoxIcon.TabIndex = 0;
@@ -58,7 +58,7 @@
             // LabelMessage
             // 
             this.LabelMessage.AutoSize = true;
-            this.LabelMessage.Location = new System.Drawing.Point(48, 3);
+            this.LabelMessage.Location = new System.Drawing.Point(41, 3);
             this.LabelMessage.Name = "LabelMessage";
             this.LabelMessage.Size = new System.Drawing.Size(0, 15);
             this.LabelMessage.TabIndex = 1;
@@ -66,7 +66,7 @@
             // 
             // ButtonA
             // 
-            this.ButtonA.Location = new System.Drawing.Point(12, 41);
+            this.ButtonA.Location = new System.Drawing.Point(8, 41);
             this.ButtonA.Name = "ButtonA";
             this.ButtonA.Size = new System.Drawing.Size(75, 23);
             this.ButtonA.TabIndex = 1;
@@ -74,7 +74,7 @@
             // 
             // ButtonB
             // 
-            this.ButtonB.Location = new System.Drawing.Point(93, 41);
+            this.ButtonB.Location = new System.Drawing.Point(89, 41);
             this.ButtonB.Name = "ButtonB";
             this.ButtonB.Size = new System.Drawing.Size(75, 23);
             this.ButtonB.TabIndex = 2;
