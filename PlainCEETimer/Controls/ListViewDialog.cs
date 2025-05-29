@@ -198,7 +198,7 @@ namespace PlainCEETimer.Controls
         {
             var EditMode = item != null;
 
-            if (EditMode || ListViewItemsSet.Add(data))
+            if ((EditMode && ListViewItemsSet.Add(data)) || ListViewItemsSet.Add(data))
             {
                 if (EditMode)
                 {

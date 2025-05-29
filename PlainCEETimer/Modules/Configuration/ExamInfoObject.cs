@@ -67,7 +67,16 @@ namespace PlainCEETimer.Modules.Configuration
                 return false;
             }
 
-            return Name == other.Name && Start == other.Start;
+            /*
+            
+            DateTime 比较时只精确到秒 参考：
+
+            C# DateTime 精确到秒/截断毫秒部分 - eshizhan - 博客园
+            https://www.cnblogs.com/eshizhan/archive/2011/11/15/2250007.html
+
+            */
+
+            return Name == other.Name && Start.Ticks / TimeSpan.TicksPerSecond == other.Start.Ticks / TimeSpan.TicksPerSecond;
         }
 
         public override string ToString()
