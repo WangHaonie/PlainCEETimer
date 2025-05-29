@@ -44,7 +44,7 @@ namespace PlainCEETimer.Interop
             FlushWindow(hWnd, DwmaType);
         }
 
-        public static void FlushControl(Control control, NativeStyle type)
+        public static void FlushControl(IWin32Window control, NativeStyle type)
         {
             FlushControl(control.Handle, type);
         }

@@ -31,7 +31,10 @@ namespace PlainCEETimer.Forms
             });
         }
 
-        protected override void OnClosing(FormClosingEventArgs e) => e.Cancel = IsCheckingUpdate;
+        protected override void OnClosing(FormClosingEventArgs e)
+        {
+            e.Cancel = IsCheckingUpdate;
+        }
 
         private void PicBoxLogo_MouseClick(object sender, MouseEventArgs e)
         {
@@ -41,7 +44,7 @@ namespace PlainCEETimer.Forms
                 IsCheckingUpdate = true;
                 PicBoxLogo.Enabled = false;
                 LabelInfo.Text = $"{App.AppName}\n正在检查更新，请稍候...";
-                Task.Run(() => new Updater().CheckForUpdate(true, this)).ContinueWith(_ => BeginInvoke(() =>
+                Task.Run(() => new Updater().CheckForUpdate(true, this)).ContinueWith(_ => Invoke(() =>
                 {
                     LabelInfo.Text = OriginalVersionString;
                     PicBoxLogo.Enabled = true;
@@ -50,6 +53,9 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void ButtonClose_Click(object sender, EventArgs e) => Close();
+        private void ButtonClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }

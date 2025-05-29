@@ -140,8 +140,6 @@ namespace PlainCEETimer.Dialogs
             UserChanged();
         }
 
-        private void NUD_TextChanged(object sender, EventArgs e) => UserChanged();
-
         private void ColorLabels_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;

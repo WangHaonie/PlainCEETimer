@@ -356,7 +356,6 @@ namespace PlainCEETimer.Forms
             }
 
             CountdownFont = AppConfig.Font;
-
             LocationRefreshed -= MainForm_LocationRefreshed;
 
             if (IsDraggable)

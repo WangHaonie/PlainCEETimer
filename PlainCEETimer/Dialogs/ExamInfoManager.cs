@@ -9,8 +9,11 @@ namespace PlainCEETimer.Dialogs
     public sealed class ExamInfoManager : ListViewDialog<ExamInfoObject, ExamInfoDialog>
     {
         public ExamInfoManager()
-            : base(420, "管理考试信息 - 高考倒计时", "考试信息", ["考试名称", "开始日期和时间", "结束日期和时间"], ["已过去的", "正在进行", "未开始的"])
-        { }
+            : base(420, ["考试名称", "开始日期和时间", "结束日期和时间"], ["已过去的", "正在进行", "未开始的"])
+        {
+            Text = "管理考试信息 - 高考倒计时";
+            ItemDescription = "考试信息";
+        }
 
         protected override ListViewItem GetListViewItem(ExamInfoObject data)
         {
@@ -19,20 +22,19 @@ namespace PlainCEETimer.Dialogs
 
         protected override int GetGroupIndex(ExamInfoObject data)
         {
-            int i = 1;
             var Now = DateTime.Now;
 
             if (Now > data.End)
             {
-                i = 0;
+                return 0;
             }
 
             if (Now < data.Start)
             {
-                i = 2;
+                return 2;
             }
 
-            return i;
+            return 1;
         }
 
         protected override IListViewSubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)

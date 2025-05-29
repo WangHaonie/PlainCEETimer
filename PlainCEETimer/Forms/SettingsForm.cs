@@ -20,9 +20,7 @@ namespace PlainCEETimer.Forms
         private bool IsSyncingTime;
         private bool UserChanged;
         private bool InvokeChangeRequired;
-        private bool IsFunny;
         private bool IsFunnyClick;
-        private bool ChangingCheckBox;
         private bool IsSetStartUp;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
@@ -80,7 +78,10 @@ namespace PlainCEETimer.Forms
             });
         }
 
-        protected override void OnShown() => NavBar.Focus();
+        protected override void OnShown()
+        {
+            NavBar.Focus();
+        }
 
         protected override void OnClosing(FormClosingEventArgs e)
         {
@@ -247,10 +248,7 @@ namespace PlainCEETimer.Forms
 
         private void ColorLabels_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                IsColorLabelsDragging = true;
-            }
+            IsColorLabelsDragging = e.Button == MouseButtons.Left;
         }
 
         private void ColorLabels_MouseMove(object sender, MouseEventArgs e)
@@ -263,18 +261,21 @@ namespace PlainCEETimer.Forms
 
         private void ColorLabels_MouseUp(object sender, MouseEventArgs e)
         {
-            IsColorLabelsDragging = false;
-            Cursor = Cursors.Default;
-
-            var LabelSender = (Label)sender;
-            var ParentContainer = LabelSender.Parent;
-            var TargetControl = ParentContainer.GetChildAtPoint(ParentContainer.PointToClient(Cursor.Position));
-
-            if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
+            if (IsColorLabelsDragging)
             {
-                TagetLabel.BackColor = LabelSender.BackColor;
-                UpdateSettingsArea(SettingsArea.SelectedColor);
-                SettingsChanged(sender, e);
+                IsColorLabelsDragging = false;
+                Cursor = Cursors.Default;
+
+                var LabelSender = (Label)sender;
+                var ParentContainer = LabelSender.Parent;
+                var TargetControl = ParentContainer.GetChildAtPoint(ParentContainer.PointToClient(Cursor.Position));
+
+                if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
+                {
+                    TagetLabel.BackColor = LabelSender.BackColor;
+                    UpdateSettingsArea(SettingsArea.SelectedColor);
+                    SettingsChanged(sender, e);
+                }
             }
         }
 
@@ -295,31 +296,25 @@ namespace PlainCEETimer.Forms
 
         private void ButtonRestart_MouseDown(object sender, MouseEventArgs e)
         {
-            IsFunny = IsFunnyClick;
-
             if (e.Button == MouseButtons.Right)
             {
                 UpdateSettingsArea(SettingsArea.Funny);
                 IsFunnyClick = true;
             }
-            else
+            else if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
             {
-                if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+                if (MessageX.Info("是否重启到命令行模式？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
-                    if (MessageX.Info("是否重启到命令行模式？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
-                    {
-                        ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", ShowWindow: true);
-                        App.Exit(ExitReason.Normal);
-                    }
+                    ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", ShowWindow: true);
+                    App.Exit(ExitReason.Normal);
                 }
-
-                IsFunnyClick = false;
             }
+
         }
 
         private void ButtonRestart_Click(object sender, EventArgs e)
         {
-            App.Exit(IsFunny ? ExitReason.UserShutdown : ExitReason.UserRestart);
+            App.Exit(IsFunnyClick ? ExitReason.UserShutdown : ExitReason.UserRestart);
         }
 
         private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
@@ -328,9 +323,15 @@ namespace PlainCEETimer.Forms
             SettingsChanged(null, null);
         }
 
-        private void ButtonSave_Click(object sender, EventArgs e) => Save();
+        private void ButtonSave_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
 
-        private void ButtonCancel_Click(object sender, EventArgs e) => Close();
+        private void ButtonCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
 
         private void InitializeExtra()
         {
@@ -486,26 +487,17 @@ namespace PlainCEETimer.Forms
 
         private void ChangeCustomTextStyle(object sender)
         {
-            if (ChangingCheckBox) return;
-            ChangingCheckBox = true;
             var cb = (CheckBox)sender;
 
-            try
+            if (cb == CheckBoxShowXOnly)
             {
-                if (cb == CheckBoxShowXOnly)
-                {
-                    CheckBoxRulesMan.Enabled = !cb.Checked;
-                    ButtonRulesMan.Enabled = false;
-                }
-                else
-                {
-                    ButtonRulesMan.Enabled = cb.Checked;
-                    CheckBoxShowXOnly.Enabled = !cb.Checked;
-                }
+                CheckBoxRulesMan.Enabled = !cb.Checked;
+                ButtonRulesMan.Enabled = false;
             }
-            finally
+            else
             {
-                ChangingCheckBox = false;
+                ButtonRulesMan.Enabled = cb.Checked;
+                CheckBoxShowXOnly.Enabled = !cb.Checked;
             }
         }
 
@@ -646,7 +638,10 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void SwitchToToolsSafe() => BeginInvoke(() => NavBar.SwitchTo(PageTools));
+        private void SwitchToToolsSafe()
+        {
+            BeginInvoke(() => NavBar.SwitchTo(PageTools));
+        }
 
         private bool Save()
         {
@@ -668,9 +663,9 @@ namespace PlainCEETimer.Forms
 
         private void SaveSettings()
         {
-            var b = IsSetStartUp;
+            var flag = IsSetStartUp;
 
-            if ((IsSetStartUp = CheckBoxStartup.Checked) != b)
+            if ((IsSetStartUp = CheckBoxStartup.Checked) != flag)
             {
                 OperateStartUp(IsSetStartUp ? 1 : 2);
             }

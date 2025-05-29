@@ -14,8 +14,11 @@ namespace PlainCEETimer.Dialogs
         private readonly PlainButton ButtonGlobal;
 
         public RulesManager()
-            : base(450, "管理自定义规则 - 高考倒计时", "规则", ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
+            : base(450, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
         {
+            Text = "管理自定义规则 - 高考倒计时";
+            ItemDescription = "规则";
+
             ButtonGlobal = new PlainButton()
             {
                 Size = new(ScaleToDpi(90), ScaleToDpi(23)),

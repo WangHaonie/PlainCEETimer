@@ -120,7 +120,7 @@ namespace PlainCEETimer.Forms
             TaskbarProgress.SetState(TaskbarProgressState.Error);
         }
 
-        private async void UpdateDownloader_Completed()
+        private void UpdateDownloader_Completed()
         {
             ButtonCancel.Enabled = false;
             ButtonRetry.Enabled = false;
@@ -130,10 +130,12 @@ namespace PlainCEETimer.Forms
             TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
             UpdateLabels("下载完成，请稍侯...", null, null);
             IsCancelled = true;
-            await Task.Delay(2500);
-            Close();
-            ProcessHelper.Run(DownloadPath, "/Skip");
-            App.Exit(ExitReason.AppUpdating);
+
+            Task.Delay(2500).ContinueWith(_ => Invoke(() =>
+            {
+                ProcessHelper.Run(DownloadPath, "/Skip");
+                App.Exit(ExitReason.AppUpdating);
+            }));
         }
 
         private void UpdateLabels(string Info, string Size, string Speed)

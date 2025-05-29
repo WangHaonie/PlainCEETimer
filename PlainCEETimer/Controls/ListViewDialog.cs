@@ -18,13 +18,13 @@ namespace PlainCEETimer.Controls
         }
 
         public TData[] Data { get; set; }
+        protected string ItemDescription { get; set; } = "项";
 
         private ContextMenu ContextMenuMain;
         private PlainButton ButtonOperation;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
-        private readonly string ContentDescription;
         private readonly HashSet<TData> ListViewItemsSet = [];
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
@@ -39,12 +39,10 @@ namespace PlainCEETimer.Controls
             InitializeComponent();
         }
 
-        protected ListViewDialog(int listViewWidth, string title, string content, string[] headers, string[] groups) : this()
+        protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : this()
         {
-            Text = title;
             ListViewMain.Headers = headers;
             ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
-            ContentDescription = content;
 
             if (groups != null && groups.Length != 0)
             {
@@ -167,7 +165,7 @@ namespace PlainCEETimer.Controls
 
         private void ContextDelete_Click(object sender, EventArgs e)
         {
-            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ContentDescription}吗？此操作将不可撤销！", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
                 ListViewMain.Suspend(() =>
                 {
@@ -220,8 +218,8 @@ namespace PlainCEETimer.Controls
             else
             {
                 MessageX.Error(EditMode
-                    ? $"检测到此{ContentDescription}在编辑后与现有的重复。\n\n请重新编辑！"
-                    : $"检测待添加的{ContentDescription}与现有的重复。\n\n请重新添加！");
+                    ? $"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！"
+                    : $"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
                 OpenRetryDialog(data);
             }
         }

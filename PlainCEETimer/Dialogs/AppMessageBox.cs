@@ -70,7 +70,7 @@ namespace PlainCEETimer.Dialogs
 
             if (AutoCloseRequired)
             {
-                Task.Run(() => Task.Delay(3200)).ContinueWith(_ => BeginInvoke(Close));
+                Task.Delay(3200).ContinueWith(_ => Invoke(Close));
             }
         }
 

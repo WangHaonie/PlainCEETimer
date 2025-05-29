@@ -12,14 +12,12 @@ namespace PlainCEETimer.Controls
 
         public FontDialogEx(Font font)
         {
-            AllowScriptChange = true;
             AllowVerticalFonts = false;
             Font = font;
             FontMustExist = true;
             MinSize = Validator.MinFontSize;
             MaxSize = Validator.MaxFontSize;
             ScriptsOnly = true;
-            ShowColor = false;
             ShowEffects = false;
         }
 

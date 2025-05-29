@@ -190,7 +190,7 @@
             this.NUDSeconds.Size = new System.Drawing.Size(40, 23);
             this.NUDSeconds.TabIndex = 30;
             this.NUDSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.NUDSeconds.TextChanged += new System.EventHandler(this.NUD_TextChanged);
+            this.NUDSeconds.TextChanged += new System.EventHandler((_, _) => this.UserChanged());
             // 
             // NUDMinutes
             // 
@@ -204,7 +204,7 @@
             this.NUDMinutes.Size = new System.Drawing.Size(40, 23);
             this.NUDMinutes.TabIndex = 29;
             this.NUDMinutes.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.NUDMinutes.TextChanged += new System.EventHandler(this.NUD_TextChanged);
+            this.NUDMinutes.TextChanged += new System.EventHandler((_, _) => this.UserChanged());
             // 
             // NUDHours
             // 
@@ -218,7 +218,7 @@
             this.NUDHours.Size = new System.Drawing.Size(40, 23);
             this.NUDHours.TabIndex = 28;
             this.NUDHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.NUDHours.TextChanged += new System.EventHandler(this.NUD_TextChanged);
+            this.NUDHours.TextChanged += new System.EventHandler((_, _) => this.UserChanged());
             // 
             // LabelChar5
             // 
@@ -259,7 +259,7 @@
             this.NUDDays.Size = new System.Drawing.Size(53, 23);
             this.NUDDays.TabIndex = 24;
             this.NUDDays.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.NUDDays.TextChanged += new System.EventHandler(this.NUD_TextChanged);
+            this.NUDDays.TextChanged += new System.EventHandler((_, _) => this.UserChanged());
             // 
             // LabelChar2
             // 
