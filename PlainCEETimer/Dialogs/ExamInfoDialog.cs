@@ -53,11 +53,11 @@ namespace PlainCEETimer.Dialogs
             var StartTime = DTPStart.Value;
             var EndTime = DTPEnd.Value;
             var ExamSpan = EndTime - StartTime;
-            var TotalSeconds = ExamSpan.TotalSeconds;
+            var TotalSeconds = (int)ExamSpan.TotalSeconds;
 
-            if (EndTime <= StartTime)
+            if (EndTime <= StartTime || TotalSeconds < 1)
             {
-                MessageX.Error("考试结束时间必须在开始时间之后！");
+                MessageX.Error("考试时长无效！请检查相应日期时间是否合理。");
                 return false;
             }
 
@@ -76,12 +76,9 @@ namespace PlainCEETimer.Dialogs
                 TimeMsg = $"{TotalSeconds:0} 秒";
             }
 
-            if (!string.IsNullOrEmpty(TimeMsg))
+            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", Buttons: MessageButtons.YesNo) != DialogResult.Yes)
             {
-                if (MessageX.Warn($"检测到设置的考试时间太长或太短！\n\n当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", Buttons: MessageButtons.YesNo) != DialogResult.Yes)
-                {
-                    return false;
-                }
+                return false;
             }
 
             Data = new()
