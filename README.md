@@ -32,7 +32,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ 可拖动、固定倒计时
 + ✅ 禁止多开
 + ✅ 一键开机自启
-+ ✅ 深色 UI 支持 **(Win10 1903 及以上)**
++ ✅ 原生深色 UI 支持 **(≥ Windows 10 1903)**
 + ✅ 托盘图标
 + ✅ 后台内存自动清理
 + ✅ 启动时自动检查更新，确认后自动安装
@@ -40,14 +40,14 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ <更多功能等你来探索>
 
 ## 📢 用户手册【墙裂建议先阅读再使用】
-+ 适用于 v5.0.2，2025/5/28 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
++ 适用于 v5.0.2，2025/5/30 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
 
 ## 🧑‍💻 正在开发
 + 查看开发进程。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/InProgress.md)进入。
 
 ## 💻 开发环境
 + Windows 11 Pro x64 (26120.4161)
-+ Visual Studio 2022 (17.14.2)
++ Visual Studio 2022 (17.14.3)
 + .NET Framework (4.8)
 + WinForms
 + C# 13 (Preview)

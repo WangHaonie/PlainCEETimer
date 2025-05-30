@@ -1,6 +1,6 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.2 | 修订日期 2025/5/28</h4>
+    <h4>适用于 v5.0.2 | 修订日期 2025/5/30</h4>
 </div>
 
 # 📖 目录
@@ -63,7 +63,7 @@
 
 # 🎯 主窗口使用说明
 ## 🎉 特性
-+ 边框圆角设计：运行在 Windows 11 上则使用系统提供的专用 API 使圆角更加光滑。若其他版本系统则使用提供的传统 API 渲染圆角，会略带锯齿，但无伤大雅。
++ 边框圆角设计：在 Windows 11 上，将采用与系统一致的圆角设计；在其他版本的 Windows 上，则使用 GDI 绘制圆角，会略带锯齿，但无伤大雅。
 + 防止使用常规方式关闭倒计时。
 + 对于 Windows 10 1903 及以上的系统，倒计时在首次运行时**文字/背景颜色**将跟随深/浅色主题使用黑/白底颜色组合，此特性会在用户点击一次设置的**保存**按钮后失效，之后将不再自动跟随。
 + 若系统安装了有 [`Noto Sans SC`](https://fonts.google.com/noto/specimen/Noto+Sans+SC)，则默认字体为 `Noto Sans SC` 而不是 `微软雅黑`，此特性会在用户点击一次设置的**保存**按钮后失效，之后将不再自动跟随。
@@ -289,19 +289,20 @@
 | 设置 | SettingsForm | `100%` |  |
 | 关于 | AboutForm | `100%` |  |
 | 消息框 | AppMessageBox | `100%` |  |
-| 规则对话框 | RuleDialog | `100%` |  |
+| 规则对话框 | RuleDialog | `100%` | `*1` |
 | 全局自定义文本 | CustomTextDialog | `100%` |  |
 | 打开文件对话框 | OpenFileDialog | `100%` |  |
 | 考试信息管理器 | ExamInfoManager | `100%` |  |
 | 规则管理器 | RulesManager | `100%` |  |
-| 颜色对话框 | ColorDialogEx | `90%`~`100%` | *1 |
+| 颜色对话框 | ColorDialogEx | `90%`~`100%` | `*2` |
 | 下载器 | DownloaderForm | `85%` | ProgressBar, HyperLink (Disabled) |
 | 考试信息对话框 | ExamInfoDialog | `80%` | DateTimePicker |
 | 字体对话框 | FontDialogEx | `70%` | ComboBox, ComboLBox, GroupBox |
 | 系统消息框 | MessageBox | `0%` |  |
 
 > [!NOTE]
-> *1: 色块选过后会出现白边，亮度三角形滑块能见度低 (可以使用滑条)
+> `*1` 在 Windows 10 上，NumericUpDown 控件的 UpDown 按钮没有深色主题为正常现象。<br>
+> `*2` 色块选过后会出现白边，亮度三角形滑块能见度低 (可以使用滑条)。
 
 # 🎯 意外错误对话框使用说明
 
