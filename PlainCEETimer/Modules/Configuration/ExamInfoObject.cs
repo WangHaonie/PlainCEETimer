@@ -37,6 +37,7 @@ namespace PlainCEETimer.Modules.Configuration
                 }
 
                 field = value;
+                TruncatedStartTicks = value.Ticks / TimeSpan.TicksPerSecond;
             }
         } = DateTime.Now;
 
@@ -55,9 +56,11 @@ namespace PlainCEETimer.Modules.Configuration
             }
         } = DateTime.Now;
 
+        private long TruncatedStartTicks;
+
         public int CompareTo(ExamInfoObject other)
         {
-            return other == null ? 1 : Start.CompareTo(other.Start);
+            return other == null ? 1 : TruncatedStartTicks.CompareTo(other.TruncatedStartTicks);
         }
 
         public bool Equals(ExamInfoObject other)
@@ -76,7 +79,7 @@ namespace PlainCEETimer.Modules.Configuration
 
             */
 
-            return Name == other.Name && Start.Ticks / TimeSpan.TicksPerSecond == other.Start.Ticks / TimeSpan.TicksPerSecond;
+            return Name == other.Name && TruncatedStartTicks == other.TruncatedStartTicks;
         }
 
         public override string ToString()
@@ -93,7 +96,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             unchecked
             {
-                return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode();
+                return (17 * 23 + Name.GetHashCode()) * 23 + TruncatedStartTicks.GetHashCode();
             }
         }
     }

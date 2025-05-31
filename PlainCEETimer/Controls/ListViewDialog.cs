@@ -34,13 +34,9 @@ namespace PlainCEETimer.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        private ListViewDialog() : base(AppFormParam.AllControl)
+        protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : base(AppFormParam.AllControl)
         {
             InitializeComponent();
-        }
-
-        protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : this()
-        {
             ListViewMain.Headers = headers;
             ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
 
@@ -155,11 +151,12 @@ namespace PlainCEETimer.Controls
         private void ContextEdit_Click(object sender, EventArgs e)
         {
             var TargetItem = ListViewMain.SelectedItems[0];
-            var SubDialog = GetSubDialog((TData)TargetItem.Tag);
+            var TargetItemData = (TData)TargetItem.Tag;
+            var SubDialog = GetSubDialog(TargetItemData);
 
             if (SubDialog.ShowDialog() == DialogResult.OK)
             {
-                AddItemSafe(SubDialog.Data, TargetItem);
+                AddItemSafe(SubDialog.Data, TargetItem, TargetItemData);
             }
         }
 
@@ -194,15 +191,16 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void AddItemSafe(TData data, ListViewItem item = null)
+        private void AddItemSafe(TData data, ListViewItem item = null, TData old = default)
         {
-            var EditMode = item != null;
+            var EditMode = item != null && old != null;
+            var CanAdd = ListViewItemsSet.Add(data);
 
-            if ((EditMode && ListViewItemsSet.Add(data)) || ListViewItemsSet.Add(data))
+            if ((EditMode && CanAdd) || CanAdd)
             {
                 if (EditMode)
                 {
-                    RemoveItem(item, data);
+                    RemoveItem(item, old);
                 }
 
                 ListViewMain.Suspend(() =>
