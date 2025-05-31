@@ -27,7 +27,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             try
             {
-                return JsonConvert.DeserializeObject<ConfigObject>(File.ReadAllText(App.ConfigFilePath));
+                return JsonConvert.DeserializeObject<ConfigObject>(File.ReadAllText(App.ConfigFilePath)) ?? new();
             }
             catch
             {
