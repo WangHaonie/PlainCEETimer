@@ -29,8 +29,7 @@ namespace PlainCEETimer.Controls
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
         {
-            Left = 3,
-            Top = 3,
+            Location = new(3, 3),
             UseCompatibleStateImageBehavior = false
         };
 
@@ -132,11 +131,6 @@ namespace PlainCEETimer.Controls
             return base.OnClickButtonA();
         }
 
-        /// <summary>
-        /// 在 <see cref="ButtonOperation"/> 的右侧添加一个新的按钮
-        /// </summary>
-        /// <param name="Btn">新按钮的实例</param>
-        /// <param name="cxTweak">与 ButtonOperation 水平方向上的间距</param>
         protected void AddNewButton(Button Btn)
         {
             AlignControlsX(Btn, ButtonOperation);
@@ -156,7 +150,7 @@ namespace PlainCEETimer.Controls
 
             if (SubDialog.ShowDialog() == DialogResult.OK)
             {
-                AddItemSafe(SubDialog.Data, TargetItem, TargetItemData);
+                EditItemSafe(TargetItem, SubDialog.Data, TargetItemData);
             }
         }
 
@@ -191,35 +185,54 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        private void AddItemSafe(TData data, ListViewItem item = null, TData old = default)
+        private void AddItemSafe(TData data)
         {
-            var EditMode = item != null && old != null;
-            var CanAdd = ListViewItemsSet.Add(data);
-
-            if ((EditMode && CanAdd) || CanAdd)
+            if (ListViewItemsSet.Add(data))
             {
-                if (EditMode)
-                {
-                    RemoveItem(item, old);
-                }
-
-                ListViewMain.Suspend(() =>
-                {
-                    ListViewMain.SelectAll(false);
-                    AddItem(data, true);
-                    ListViewMain.Sort();
-                    ListViewMain.AutoAdjustColumnWidth();
-                });
-
-                UserChanged();
+                AddItemCore(data);
             }
             else
             {
-                MessageX.Error(EditMode
-                    ? $"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！"
-                    : $"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
-                OpenRetryDialog(data);
+                MessageX.Error($"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
+                var SubDialog = GetSubDialog(data);
+
+                if (SubDialog.ShowDialog() == DialogResult.OK)
+                {
+                    AddItemSafe(SubDialog.Data);
+                }
             }
+        }
+
+        private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
+        {
+            if (ListViewItemsSet.Add(newData))
+            {
+                RemoveItem(item, oldData);
+                AddItemCore(newData);
+            }
+            else
+            {
+                MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
+                var SubDialog = GetSubDialog(newData);
+
+                if (SubDialog.ShowDialog() == DialogResult.OK)
+                {
+                    EditItemSafe(item, SubDialog.Data, oldData);
+                }
+            }
+        }
+
+        private void AddItemCore(TData data)
+        {
+            ListViewMain.Suspend(() =>
+            {
+                ListViewMain.SelectAll(false);
+                AddItem(data, true);
+                ListViewMain.Sort();
+                ListViewMain.AutoAdjustColumnWidth();
+            });
+
+            UserChanged();
         }
 
         private void AddItem(TData data, bool IsSelected = false)
@@ -242,16 +255,6 @@ namespace PlainCEETimer.Controls
         {
             ListViewMain.Items.Remove(item);
             ListViewItemsSet.Remove(data);
-        }
-
-        private void OpenRetryDialog(TData data)
-        {
-            var SubDialog = GetSubDialog(data);
-
-            if (SubDialog.ShowDialog() == DialogResult.OK)
-            {
-                AddItemSafe(SubDialog.Data);
-            }
         }
 
         private void InitializeComponent()
