@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Forms;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 
 namespace PlainCEETimer.Modules

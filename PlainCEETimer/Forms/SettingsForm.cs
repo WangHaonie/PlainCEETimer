@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Dialogs;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Forms
 {
@@ -290,7 +290,7 @@ namespace PlainCEETimer.Forms
             {
                 var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
                 UpdateSettingsArea(SettingsArea.SyncTime);
-                Task.Run(() => StartSyncTime(server));
+                new Action(() => StartSyncTime(server)).Start();
             }
         }
 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 
 namespace PlainCEETimer.Forms
@@ -131,7 +131,7 @@ namespace PlainCEETimer.Forms
             UpdateLabels("下载完成，请稍侯...", null, null);
             IsCancelled = true;
 
-            Task.Delay(2500).ContinueWith(_ => Invoke(() =>
+            2500.AsDelay(_ => Invoke(() =>
             {
                 ProcessHelper.Run(DownloadPath, "/Skip");
                 App.Exit(ExitReason.AppUpdating);

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace PlainCEETimer.Modules
+namespace PlainCEETimer.Modules.Extensions
 {
     public static class Extensions
     {
@@ -38,5 +39,11 @@ namespace PlainCEETimer.Modules
         public static string Truncate(this string s, int MaxLength)
             => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
         #endregion
+
+        public static Task Start(this Action start, Action<Task> jobAfterStart = null)
+            => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
+
+        public static Task AsDelay(this int ms, Action<Task> jobAfterDelay)
+            => Task.Delay(ms).ContinueWith(jobAfterDelay);
     }
 }

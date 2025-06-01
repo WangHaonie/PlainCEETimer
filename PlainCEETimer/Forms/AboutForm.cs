@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Forms
 {
@@ -44,7 +44,7 @@ namespace PlainCEETimer.Forms
                 IsCheckingUpdate = true;
                 PicBoxLogo.Enabled = false;
                 LabelInfo.Text = $"{App.AppName}\n正在检查更新，请稍候...";
-                Task.Run(() => new Updater().CheckForUpdate(true, this)).ContinueWith(_ => Invoke(() =>
+                new Action(() => new Updater().CheckForUpdate(true, this)).Start(_ => Invoke(() =>
                 {
                     LabelInfo.Text = OriginalVersionString;
                     PicBoxLogo.Enabled = true;

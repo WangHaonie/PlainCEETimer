@@ -4,11 +4,11 @@ using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules
 {
@@ -72,13 +72,13 @@ namespace PlainCEETimer.Modules
 
             if (IsMainProcess)
             {
-                Task.Run(StartPipeServer);
+                new Action(StartPipeServer).Start();
 
                 if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (Args.Length == 0)
                     {
-                        Task.Run(UACHelper.CheckAdmin);
+                        new Action(UACHelper.CheckAdmin).Start();
                         Application.Run(new MainForm());
                     }
                     else

@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop
 {

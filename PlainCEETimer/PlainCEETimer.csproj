@@ -225,7 +225,7 @@
     <Compile Include="Modules\Constants.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />
     <Compile Include="Modules\Enums.cs" />
-    <Compile Include="Modules\Extensions.cs" />
+    <Compile Include="Modules\Extensions\Extensions.cs" />
     <Compile Include="Modules\Http\DownloadReport.cs" />
     <Compile Include="Modules\Http\HttpService.cs" />
     <Compile Include="Modules\ICommonDialog.cs" />

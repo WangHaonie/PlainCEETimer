@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 using System.Media;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Dialogs
 {
@@ -70,7 +70,7 @@ namespace PlainCEETimer.Dialogs
 
             if (AutoCloseRequired)
             {
-                Task.Delay(3200).ContinueWith(_ => Invoke(Close));
+                3200.AsDelay(_ => Invoke(Close));
             }
         }
 
