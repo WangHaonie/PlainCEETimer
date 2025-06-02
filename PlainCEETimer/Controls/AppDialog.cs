@@ -21,17 +21,13 @@ namespace PlainCEETimer.Controls
             SetProperties();
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
+        protected override bool OnClosing(CloseReason closeReason)
         {
-            if (IsUserChanged)
-            {
-                ShowUnsavedWarning("是否保存当前更改？", e, OnClickButtonA, ref IsUserChanged);
-            }
+            return IsUserChanged && ShowUnsavedWarning("是否保存当前更改？", OnClickButtonA, ref IsUserChanged);
         }
 
         protected virtual bool OnClickButtonA()
         {
-            IsUserChanged = false;
             DialogResult = DialogResult.OK;
             Close();
             return true;

@@ -83,16 +83,9 @@ namespace PlainCEETimer.Forms
             NavBar.Focus();
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
+        protected override bool OnClosing(CloseReason closeReason)
         {
-            if (IsSyncingTime)
-            {
-                e.Cancel = true;
-            }
-            else if (UserChanged)
-            {
-                ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", e, Save, ref UserChanged);
-            }
+            return IsSyncingTime || (UserChanged && ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", Save, ref UserChanged));
         }
 
         protected override void OnClosed()

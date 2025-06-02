@@ -62,9 +62,9 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        protected override void OnClosing(FormClosingEventArgs e)
+        protected override bool OnClosing(CloseReason closeReason)
         {
-            e.Cancel = !IsCancelled;
+            return !IsCancelled;
         }
 
         protected override void OnClosed()

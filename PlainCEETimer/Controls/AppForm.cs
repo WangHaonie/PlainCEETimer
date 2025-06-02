@@ -69,7 +69,8 @@ namespace PlainCEETimer.Controls
 
         protected sealed override void OnFormClosing(FormClosingEventArgs e)
         {
-            OnClosing(e);
+            var reason = e.CloseReason;
+            e.Cancel = reason != CloseReason.WindowsShutDown && OnClosing(reason);
             base.OnFormClosing(e);
         }
 
@@ -145,9 +146,10 @@ namespace PlainCEETimer.Controls
         protected virtual void OnShown() { }
 
         /// <summary>
-        /// 在 AppForm 被关闭时触发。该方法没有默认实现，可不调用 base.OnClosing(FormClosingEventArgs);
+        /// 在 AppForm 被关闭时触发。该方法默认返回 <see langword="false"/>，可不调用 base.OnClosing(CloseReason);
         /// </summary>
-        protected virtual void OnClosing(FormClosingEventArgs e) { }
+        /// <returns><see langword="true"/> 则取消关闭窗口, <see langword="false"/> 则允许关闭窗口</returns>
+        protected virtual bool OnClosing(CloseReason closeReason) => false;
 
         /// <summary>
         /// 在 AppForm 关闭后触发。该方法没有默认实现，可不调用 base.OnClosed();
@@ -179,24 +181,18 @@ namespace PlainCEETimer.Controls
         /// <summary>
         /// 在用户未保存更改并尝试关闭窗体时显示警告。同时防止直接关闭警告时也窗体会随之关闭。
         /// </summary>
-        /// <param name="WarningMsg">警告信息</param>
-        /// <param name="e"><see cref="FormClosingEventArgs"/></param>
-        /// <param name="SaveChanges">执行 保存更改 的代码</param>
-        /// <param name="IgnoreChanges">执行 忽略更改 的代码</param>
-        protected void ShowUnsavedWarning(string WarningMsg, FormClosingEventArgs e, Func<bool> SaveChanges, ref bool userChanged)
+        protected bool ShowUnsavedWarning(string WarningMsg, Func<bool> SaveChanges, ref bool flagUserChanged)
         {
             switch (MessageX.Warn(WarningMsg, Buttons: MessageButtons.YesNo))
             {
                 case DialogResult.Yes:
-                    e.Cancel = !SaveChanges();
-                    break;
+                    return !SaveChanges();
                 case DialogResult.No:
-                    userChanged = false;
+                    flagUserChanged = false;
                     Close();
-                    break;
+                    return false;
                 default:
-                    e.Cancel = true;
-                    break;
+                    return true;
             }
         }
 

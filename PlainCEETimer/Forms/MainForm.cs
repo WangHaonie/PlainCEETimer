@@ -163,9 +163,9 @@ namespace PlainCEETimer.Forms
         }
         #endregion
 
-        protected override void OnClosing(FormClosingEventArgs e)
+        protected override bool OnClosing(CloseReason closeReason)
         {
-            e.Cancel = e.CloseReason != CloseReason.WindowsShutDown;
+            return closeReason != CloseReason.WindowsShutDown;
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
