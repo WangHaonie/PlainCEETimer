@@ -28,6 +28,7 @@ namespace PlainCEETimer.Controls
 
         protected virtual bool OnClickButtonA()
         {
+            IsUserChanged = false;
             DialogResult = DialogResult.OK;
             Close();
             return true;

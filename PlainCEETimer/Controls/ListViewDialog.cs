@@ -210,7 +210,7 @@ namespace PlainCEETimer.Controls
                 RemoveItem(item, oldData);
                 AddItemCore(newData);
             }
-            else
+            else if (!newData.Equals(oldData))
             {
                 MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
                 var SubDialog = GetSubDialog(newData);
