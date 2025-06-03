@@ -44,9 +44,9 @@ namespace PlainCEETimer.Controls
                 ListViewMain.ShowGroups = true;
                 Groups = ListViewMain.Groups;
 
-                for (int i = 0; i < groups.Length; i++)
+                foreach (var group in groups)
                 {
-                    Groups.Add(new(groups[i]));
+                    Groups.Add(new(group));
                 }
             }
         }
