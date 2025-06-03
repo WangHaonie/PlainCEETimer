@@ -37,12 +37,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public bool Equals(CustomRuleObject other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Phase == other.Phase && Tick == other.Tick;
+            return other != null && Phase == other.Phase && Tick == other.Tick;
         }
 
         public override bool Equals(object obj)

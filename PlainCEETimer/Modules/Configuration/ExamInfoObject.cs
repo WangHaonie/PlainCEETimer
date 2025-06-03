@@ -38,7 +38,7 @@ namespace PlainCEETimer.Modules.Configuration
                 }
 
                 field = value;
-                TruncatedStartTicks = value.Ticks / TimeSpan.TicksPerSecond;
+                StartInternalTicks = value.Ticks / TimeSpan.TicksPerSecond;
             }
         } = DateTime.Now;
 
@@ -54,23 +54,37 @@ namespace PlainCEETimer.Modules.Configuration
                 }
 
                 field = value;
+                EndInternalTicks = value.Ticks / TimeSpan.TicksPerSecond;
             }
         } = DateTime.Now;
 
-        private long TruncatedStartTicks;
+        private long StartInternalTicks;
+        private long EndInternalTicks;
 
         public int CompareTo(ExamInfoObject other)
         {
-            return other == null ? 1 : TruncatedStartTicks.CompareTo(other.TruncatedStartTicks);
+            if (other == null)
+            {
+                return 1;
+            }
+
+            int order = StartInternalTicks.CompareTo(other.StartInternalTicks);
+
+            if (order != 0)
+            {
+                return order;
+            }
+
+            if ((order = EndInternalTicks.CompareTo(other.EndInternalTicks)) != 0)
+            {
+                return order;
+            }
+
+            return string.Compare(Name, other.Name, StringComparison.Ordinal);
         }
 
         public bool Equals(ExamInfoObject other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
             /*
             
             DateTime 比较时只精确到秒 参考：
@@ -80,7 +94,10 @@ namespace PlainCEETimer.Modules.Configuration
 
             */
 
-            return Name == other.Name && TruncatedStartTicks == other.TruncatedStartTicks;
+            return other != null
+                && Name == other.Name
+                && StartInternalTicks == other.StartInternalTicks
+                && EndInternalTicks == other.EndInternalTicks;
         }
 
         public override string ToString()
@@ -97,7 +114,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             unchecked
             {
-                return (17 * 23 + Name.GetHashCode()) * 23 + TruncatedStartTicks.GetHashCode();
+                return (17 * 23 + Name.GetHashCode()) * 23 + StartInternalTicks.GetHashCode() + EndInternalTicks.GetHashCode();
             }
         }
     }
