@@ -5,7 +5,7 @@ using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    [DebuggerDisplay("{Validator.GetPhaseText(Phase),nq} {Validator.GetTickText(Tick),nq} {Text,nq}")]
+    [DebuggerDisplay("{Phase,nq} {Tick,nq} {Text,nq}")]
     [JsonConverter(typeof(CustomRulesConverter))]
     public class CustomRuleObject : IListViewData<CustomRuleObject>
     {

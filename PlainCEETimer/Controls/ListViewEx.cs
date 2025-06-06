@@ -7,8 +7,6 @@ namespace PlainCEETimer.Controls
 {
     public sealed class ListViewEx : ListView
     {
-        public int ItemsCount => Items.Count;
-
         public int SelectedItemsCount => SelectedItems.Count;
 
         public string[] Headers
@@ -52,7 +50,7 @@ namespace PlainCEETimer.Controls
 
         public void SelectAll(bool IsSelected)
         {
-            if (ItemsCount != 0)
+            if (Items.Count != 0)
             {
                 ListViewHelper.SelectAllItems(Handle, IsSelected.ToWin32());
             }

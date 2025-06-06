@@ -25,7 +25,8 @@ namespace PlainCEETimer.Controls
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
-        private readonly HashSet<TData> ListViewItemsSet = [];
+        private readonly HashSet<TData> ItemsSet = [];
+        private readonly ListView.ListViewItemCollection Items;
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
         {
@@ -49,6 +50,8 @@ namespace PlainCEETimer.Controls
                     Groups.Add(new(group));
                 }
             }
+
+            Items = ListViewMain.Items;
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace PlainCEETimer.Controls
                         AddItem(data);
                     }
 
-                    ListViewMain.Items[0].EnsureVisible();
+                    Items[0].EnsureVisible();
                 });
             }
 
@@ -118,13 +121,12 @@ namespace PlainCEETimer.Controls
 
         protected sealed override bool OnClickButtonA()
         {
-            var length = ListViewMain.ItemsCount;
+            var length = Items.Count;
             var tmp = new TData[length];
-            var src = ListViewMain.Items;
 
             for (int i = 0; i < length; i++)
             {
-                tmp[i] = (TData)src[i].Tag;
+                tmp[i] = (TData)Items[i].Tag;
             }
 
             Data = tmp;
@@ -187,7 +189,7 @@ namespace PlainCEETimer.Controls
 
         private void AddItemSafe(TData data)
         {
-            if (ListViewItemsSet.Add(data))
+            if (ItemsSet.Add(data))
             {
                 AddItemCore(data);
             }
@@ -205,7 +207,7 @@ namespace PlainCEETimer.Controls
 
         private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
         {
-            if (ListViewItemsSet.Add(newData))
+            if (ItemsSet.Add(newData))
             {
                 RemoveItem(item, oldData);
                 AddItemCore(newData);
@@ -242,8 +244,8 @@ namespace PlainCEETimer.Controls
             item.Tag = data;
             item.Selected = IsSelected;
             item.Focused = IsSelected;
-            ListViewMain.Items.Add(item);
-            ListViewItemsSet.Add(data);
+            Items.Add(item);
+            ItemsSet.Add(data);
 
             if (IsSelected)
             {
@@ -253,8 +255,8 @@ namespace PlainCEETimer.Controls
 
         private void RemoveItem(ListViewItem item, TData data)
         {
-            ListViewMain.Items.Remove(item);
-            ListViewItemsSet.Remove(data);
+            Items.Remove(item);
+            ItemsSet.Remove(data);
         }
 
         private void InitializeComponent()
@@ -334,7 +336,7 @@ namespace PlainCEETimer.Controls
             var SelectedCount = ListViewMain.SelectedItemsCount;
             ContextDelete.Enabled = SelectedCount != 0;
             ContextEdit.Enabled = SelectedCount == 1;
-            ContextSelectAll.Enabled = ListViewMain.ItemsCount != 0;
+            ContextSelectAll.Enabled = Items.Count != 0;
         }
     }
 }
