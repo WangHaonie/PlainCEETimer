@@ -10,6 +10,7 @@ namespace PlainCEETimer.Controls
         public PlainButton()
         {
             FlatStyle = FlatStyle.System;
+            UseVisualStyleBackColor = true;
         }
 
         protected override void OnHandleCreated(EventArgs e)

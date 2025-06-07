@@ -6,6 +6,7 @@ using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Dialogs
 {
@@ -16,6 +17,7 @@ namespace PlainCEETimer.Dialogs
         public CustomRuleObject Data { get; set; }
 
         private bool IsEditMode;
+        private EventHandler OnUserChanged;
         private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
 
         private struct Cache(Color fore, Color back, string text)
@@ -25,22 +27,12 @@ namespace PlainCEETimer.Dialogs
             public string Text = text;
         }
 
-        public RuleDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle)
-        {
-            InitializeComponent();
-        }
+        public RuleDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle) { }
 
         protected override void OnLoad()
         {
-            BindComboData(ComboBoxRuleType,
-            [
-                new(Constants.PH_RTP1, 0),
-                new(Constants.PH_RTP2, 1),
-                new(Constants.PH_RTP3, 2)
-            ]);
-
-            LabelFore.Click += ColorLabels_Click;
-            LabelBack.Click += ColorLabels_Click;
+            BlockFore.Click += ColorLabels_Click;
+            BlockBack.Click += ColorLabels_Click;
             IsEditMode = Data != null;
 
             if (IsEditMode)
@@ -59,21 +51,6 @@ namespace PlainCEETimer.Dialogs
             {
                 GetNewData();
             }
-
-            ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
-            TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
-        }
-
-        protected override void AdjustUI()
-        {
-            CompactControlsX(LabelChar7, LabelFore);
-            CompactControlsX(LabelBack, LabelChar7);
-
-            WhenHighDpi(() =>
-            {
-                AlignControlsX([ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds], LabelChar1);
-                AlignControlsX(TextBoxCustomText, LabelCustomText);
-            });
         }
 
         protected override bool OnClickButtonA()
@@ -89,8 +66,8 @@ namespace PlainCEETimer.Dialogs
                 return false;
             }
 
-            var Fore = LabelFore.BackColor;
-            var Back = LabelBack.BackColor;
+            var Fore = BlockFore.BackColor;
+            var Back = BlockBack.BackColor;
 
             if (!Validator.IsNiceContrast(Fore, Back))
             {
@@ -117,30 +94,6 @@ namespace PlainCEETimer.Dialogs
             return base.OnClickButtonA();
         }
 
-        private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!IsEditMode)
-            {
-                WhenLoaded(() =>
-                {
-                    var Index = ComboBoxRuleType.SelectedIndex;
-
-                    if (TemporaryChanges.ContainsKey(Index))
-                    {
-                        var Temp = TemporaryChanges[Index];
-                        ApplyColorBlock(Temp.Fore, Temp.Back);
-                        TextBoxCustomText.Text = Temp.Text;
-                    }
-                    else
-                    {
-                        GetNewData();
-                    }
-                });
-            }
-
-            UserChanged();
-        }
-
         private void ColorLabels_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
@@ -149,8 +102,8 @@ namespace PlainCEETimer.Dialogs
             if (ColorDialogMain.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
             {
                 LabelSender.BackColor = ColorDialogMain.Color;
-                LabelColorPreview.ForeColor = LabelFore.BackColor;
-                LabelColorPreview.BackColor = LabelBack.BackColor;
+                BlockPreview.ForeColor = BlockFore.BackColor;
+                BlockPreview.BackColor = BlockBack.BackColor;
                 UserChanged();
 
                 if (!IsEditMode)
@@ -158,16 +111,6 @@ namespace PlainCEETimer.Dialogs
                     SaveTemp();
                 }
             }
-        }
-
-        private void TextBoxCustomText_TextChanged(object sender, EventArgs e)
-        {
-            if (!IsEditMode)
-            {
-                WhenLoaded(SaveTemp);
-            }
-
-            UserChanged();
         }
 
         private void LinkReset_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -179,7 +122,7 @@ namespace PlainCEETimer.Dialogs
 
         private void SaveTemp()
         {
-            TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(LabelFore.BackColor, LabelBack.BackColor, TextBoxCustomText.Text);
+            TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(BlockFore.BackColor, BlockBack.BackColor, TextBoxCustomText.Text);
         }
 
         private void GetNewData(bool All = true, bool ColorOnly = false, bool TextOnly = false)
@@ -205,10 +148,131 @@ namespace PlainCEETimer.Dialogs
 
         private void ApplyColorBlock(Color fore, Color back)
         {
-            LabelFore.BackColor = fore;
-            LabelColorPreview.ForeColor = fore;
-            LabelBack.BackColor = back;
-            LabelColorPreview.BackColor = back;
+            BlockFore.BackColor = fore;
+            BlockPreview.ForeColor = fore;
+            BlockBack.BackColor = back;
+            BlockPreview.BackColor = back;
+        }
+
+        private ComboBoxEx ComboBoxRuleType;
+        private Label LabelCharExam;
+        private Label LabelCharDay;
+        private Label LabelCharHour;
+        private Label LabelCharMinute;
+        private Label LabelCharSecond;
+        private Label LabelFore;
+        private Label LabelBack;
+        private Label LabelCustomText;
+        private Label BlockPreview;
+        private Label BlockFore;
+        private Label BlockBack;
+        private PlainLinkLabel LinkResetColor;
+        private PlainLinkLabel LinkResetText;
+        private PlainNumericUpDown NUDDays;
+        private PlainNumericUpDown NUDHours;
+        private PlainNumericUpDown NUDMinutes;
+        private PlainNumericUpDown NUDSeconds;
+        private PlainTextBox TextBoxCustomText;
+
+        protected override void OnInitializing()
+        {
+            Text = "自定义规则 - 高考倒计时";
+            OnUserChanged = (_, _) => UserChanged();
+
+            this.AddControls(b =>
+            [
+                LabelCharExam = b.Label(3, 3, "距离考试"),
+                LabelCharDay = b.Label("天"),
+                LabelCharHour = b.Label("时"),
+                LabelCharMinute = b.Label("分"),
+                LabelCharSecond = b.Label("秒"),
+                LabelFore = b.Label("文字颜色"),
+                LabelBack = b.Label("背景颜色"),
+                LabelCustomText = b.Label("自定义文本"),
+                LinkResetColor = b.Link("重置", LinkReset_LinkClicked),
+                LinkResetText = b.Link("重置", LinkReset_LinkClicked),
+                BlockFore = b.Block(ColorLabels_Click),
+                BlockBack = b.Block(ColorLabels_Click),
+                BlockPreview = b.Block("颜色效果预览", ColorLabels_Click),
+
+                TextBoxCustomText = b.TextBox(295, (_, _) =>
+                {
+                    if (!IsEditMode)
+                    {
+                        WhenLoaded(SaveTemp);
+                    }
+
+                    UserChanged();
+                }),
+
+                ComboBoxRuleType = b.ComboBox(82, (_, _) =>
+                {
+                    if (!IsEditMode)
+                    {
+                        WhenLoaded(() =>
+                        {
+                            var Index = ComboBoxRuleType.SelectedIndex;
+
+                            if (TemporaryChanges.ContainsKey(Index))
+                            {
+                                var Temp = TemporaryChanges[Index];
+                                ApplyColorBlock(Temp.Fore, Temp.Back);
+                                TextBoxCustomText.Text = Temp.Text;
+                            }
+                            else
+                            {
+                                GetNewData();
+                            }
+                        });
+                    }
+
+                    UserChanged();
+                },
+                [
+                    new(Constants.PH_RTP1, 0),
+                    new(Constants.PH_RTP2, 1),
+                    new(Constants.PH_RTP3, 2)
+                ]),
+
+                NUDDays = b.NumericUpDown(53, 65535M, OnUserChanged),
+                NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),
+                NUDMinutes = b.NumericUpDown(40, 59M, OnUserChanged),
+                NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
+            ]);
+
+            base.OnInitializing();
+        }
+
+        protected override void StartLayout(bool isHighDpi)
+        {
+            ArrangeControlXTop(ComboBoxRuleType, LabelCharExam);
+            CenterControlY(LabelCharExam, ComboBoxRuleType);
+            ArrangeControlXTop(NUDDays, ComboBoxRuleType, 6, 0);
+            ArrangeControlXRightTop(LabelCharDay, NUDDays, LabelCharExam);
+            ArrangeControlXRightTop(NUDHours, LabelCharDay, NUDDays);
+            ArrangeControlXRightTop(LabelCharHour, NUDHours, LabelCharDay);
+            ArrangeControlXRightTop(NUDMinutes, LabelCharHour, NUDHours);
+            ArrangeControlXRightTop(LabelCharMinute, NUDMinutes, LabelCharHour);
+            ArrangeControlXRightTop(NUDSeconds, LabelCharMinute, NUDMinutes);
+            ArrangeControlXRightTop(LabelCharSecond, NUDSeconds, LabelCharMinute);
+            ArrangeControlYLeft(BlockFore, ComboBoxRuleType, 0, 3);
+            ArrangeControlXTopRtl(LabelFore, BlockFore);
+            AlignControlLeft(LabelFore, LabelCharExam);
+            CenterControlY(LabelFore, BlockFore);
+            ArrangeControlXRightTop(LabelBack, BlockFore, LabelFore);
+            ArrangeControlXRightTop(BlockBack, LabelBack, BlockFore);
+            ArrangeControlYRight(LinkResetColor, LabelCharSecond);
+            AlignControlTop(LinkResetColor, LabelBack, -1);
+            ArrangeControlXLeftTopRtl(BlockPreview, LinkResetColor, BlockBack);
+            ArrangeControlYLeft(TextBoxCustomText, BlockFore, 0, 3);
+            CenterControlY(LabelCustomText, TextBoxCustomText, isHighDpi ? 0 : -1);
+            AlignControlLeft(LabelCustomText, LabelFore);
+            CompactControlX(TextBoxCustomText, LabelCustomText);
+            ArrangeControlXTop(LinkResetText, TextBoxCustomText);
+            AlignControlTop(LinkResetText, LabelCustomText, -1);
+            ArrangeControlYRight(ButtonB, LinkResetText, -3);
+            CompactControlY(ButtonB, TextBoxCustomText, 3);
+            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
         }
     }
 }

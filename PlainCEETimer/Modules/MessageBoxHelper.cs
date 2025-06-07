@@ -27,18 +27,18 @@ namespace PlainCEETimer.Modules
             ErrorIcon = GetIcon(93);
         }
 
-        public DialogResult Info(string Message, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Info, Buttons, AutoClose);
+        public DialogResult Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+            => Popup(message, MessageLevel.Info, buttons, autoClose);
 
-        public DialogResult Warn(string Message, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
-            => Popup(Message, MessageLevel.Warning, Buttons, AutoClose);
+        public DialogResult Warn(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+            => Popup(message, MessageLevel.Warning, buttons, autoClose);
 
-        public DialogResult Error(string Message, Exception Ex = null, MessageButtons Buttons = MessageButtons.OK, bool AutoClose = false)
-            => Popup(GetExMessage(Message, Ex), MessageLevel.Error, Buttons, AutoClose);
+        public DialogResult Error(string message, Exception ex = null, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+            => Popup(GetExMessage(message, ex), MessageLevel.Error, buttons, autoClose);
 
-        private DialogResult Popup(string Message, MessageLevel Level, MessageButtons Buttons, bool AutoClose)
+        private DialogResult Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
         {
-            var (Title, AppMessageBoxIcon, Sound) = GetStuff(Level);
+            var (title, icon, sound) = GetStuff(level);
 
             if (Parent != null && Parent.InvokeRequired)
             {
@@ -61,7 +61,7 @@ namespace PlainCEETimer.Modules
             DialogResult ShowPopup()
             {
                 Parent?.ReActivate();
-                return new AppMessageBox(Sound, Buttons, AutoClose).ShowCore(Parent, Message, Title, AppMessageBoxIcon);
+                return new AppMessageBox(message, autoClose, buttons, sound, icon).ShowCore(Parent, title);
             }
         }
 

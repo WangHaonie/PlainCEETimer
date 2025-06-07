@@ -10,6 +10,8 @@ namespace PlainCEETimer.Modules
 
         public PlainButtonBase(ButtonBase target)
         {
+            target.UseVisualStyleBackColor = true;
+
             if (ThemeManager.ShouldUseDarkMode)
             {
                 button = target;

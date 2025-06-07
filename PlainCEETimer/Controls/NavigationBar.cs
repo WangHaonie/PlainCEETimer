@@ -28,15 +28,12 @@ namespace PlainCEETimer.Controls
 
             if (pages.Length == ItemsCount)
             {
-                var collection = pagePresenter.Controls;
-
                 for (int i = 0; i < ItemsCount; i++)
                 {
                     var page = pages[i];
                     page.Dock = DockStyle.Fill;
                     page.Tag = i;
                     Nodes.Add(navItems[i]);
-                    collection.Add(page);
                 }
 
                 Pages = pages;

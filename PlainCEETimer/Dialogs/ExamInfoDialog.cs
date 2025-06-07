@@ -6,41 +6,70 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed partial class ExamInfoDialog : AppDialog, IListViewSubDialog<ExamInfoObject>
+    public sealed class ExamInfoDialog(ExamInfoObject Existing) : AppDialog(AppFormParam.BindButtons), IListViewSubDialog<ExamInfoObject>
     {
-        public ExamInfoObject Data { get; set; }
+        public ExamInfoObject Data { get; set; } = Existing;
 
+        private Label LabelName;
+        private Label LabelCounter;
+        private Label LabelStart;
+        private Label LabelEnd;
+        private PlainTextBox TextBoxName;
+        private DateTimePicker DTPStart;
+        private DateTimePicker DTPEnd;
         private string CurrentExamName;
         private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
-        public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppFormParam.BindButtons)
+        protected override void OnInitializing()
         {
-            InitializeComponent();
+            Text = "考试信息 - 高考倒计时";
 
-            if (Existing != null)
-            {
-                TextBoxName.Text = Existing.Name;
-                DTPStart.Value = Existing.Start;
-                DTPEnd.Value = Existing.End;
-            }
+            this.AddControls(b =>
+            [
+                LabelName = b.Label(3, 6, "考试名称"),
+                LabelStart = b.Label("开始日期和时间"),
+                LabelEnd = b.Label("结束日期和时间"),
+                LabelCounter = b.Label("00/00"),
+                TextBoxName = b.TextBox(250, TextBoxName_TextChanged).With(c => c.MaxLength = 99),
+                DTPStart = b.DateTimePicker(250, DTP_ValueChanged),
+                DTPEnd = b.DateTimePicker(250, DTP_ValueChanged),
+            ]);
+
+            base.OnInitializing();
+        }
+
+        protected override void StartLayout(bool isHighDpi)
+        {
+            ArrangeControlXTop(TextBoxName, LabelName);
+            CenterControlY(LabelName, TextBoxName, isHighDpi ? 0 : -1);
+            ArrangeControlXRightTop(LabelCounter, TextBoxName, LabelName, 2);
+            ArrangeControlYRight(DTPStart, LabelCounter);
+            CompactControlY(DTPStart, TextBoxName, 3);
+            ArrangeControlYRight(DTPEnd, DTPStart, 0, 3);
+            AlignControlLeft(LabelStart, LabelName);
+            AlignControlLeft(LabelEnd, LabelStart);
+            CenterControlY(LabelStart, DTPStart);
+            CenterControlY(LabelEnd, DTPEnd);
+            CompactControlX(DTPStart, LabelStart);
+            CompactControlX(DTPEnd, LabelEnd);
+            ArrangeControlYRight(ButtonB, DTPEnd, 1, 3);
+            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
         }
 
         protected override void OnLoad()
         {
-            TextBoxName_TextChanged(null, null);
-        }
-
-        protected override void AdjustUI()
-        {
-            WhenHighDpi(() =>
+            if (Data != null)
             {
-                AlignControlsX(TextBoxName, LabelName);
-                AlignControlsX(DTPStart, LabelStart);
-                AlignControlsX(DTPEnd, LabelEnd);
-            });
+                TextBoxName.Text = Data.Name;
+                DTPStart.Value = Data.Start;
+                DTPEnd.Value = Data.End;
+            }
+
+            TextBoxName_TextChanged(null, null);
         }
 
         protected override bool OnClickButtonA()
@@ -77,7 +106,7 @@ namespace PlainCEETimer.Dialogs
                 TimeMsg = $"{TotalSeconds:0} 秒";
             }
 
-            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", Buttons: MessageButtons.YesNo) != DialogResult.Yes)
+            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", buttons: MessageButtons.YesNo) != DialogResult.Yes)
             {
                 return false;
             }

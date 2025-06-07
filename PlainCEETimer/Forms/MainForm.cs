@@ -15,7 +15,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Forms
 {
-    public sealed partial class MainForm : AppForm
+    public sealed class MainForm : AppForm
     {
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded = true;
@@ -80,9 +80,19 @@ namespace PlainCEETimer.Forms
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
 
-        public MainForm() : base(AppFormParam.Special)
+        public MainForm() : base(AppFormParam.Special) { }
+
+        protected override void OnInitializing()
         {
-            InitializeComponent();
+            ShowInTaskbar = false;
+            ControlBox = false;
+            DoubleBuffered = true;
+            FormBorderStyle = FormBorderStyle.None;
+            StartPosition = FormStartPosition.Manual;
+            AutoSize = false;
+            AutoSizeMode = AutoSizeMode.GrowOnly;
+            ClientSize = new(32, 32);
+            Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 
@@ -105,6 +115,7 @@ namespace PlainCEETimer.Forms
             RefreshSettings();
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(false, this));
+            new SettingsForm().ReActivate();
         }
 
         #region
@@ -479,7 +490,7 @@ namespace PlainCEETimer.Forms
                 {
                     if (TrayIconReopen)
                     {
-                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", buttons: MessageButtons.YesNo) == DialogResult.Yes)
                         {
                             App.Exit(ExitReason.UserRestart);
                         }

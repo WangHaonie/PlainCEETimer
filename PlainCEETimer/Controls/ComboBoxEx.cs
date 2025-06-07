@@ -10,6 +10,12 @@ namespace PlainCEETimer.Controls
         private bool Calculated;
         private static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
 
+        public ComboBoxEx()
+        {
+            DropDownStyle = ComboBoxStyle.DropDownList;
+            FlatStyle = FlatStyle.System;
+        }
+
         protected override void OnHandleCreated(EventArgs e)
         {
             if (ThemeManager.ShouldUseDarkMode)

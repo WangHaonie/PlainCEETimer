@@ -14,6 +14,8 @@ namespace PlainCEETimer.Controls
                 ForeColor = ThemeManager.DarkFore;
                 BackColor = ThemeManager.DarkBack;
             }
+
+            TextAlign = HorizontalAlignment.Right;
         }
 
         protected override void OnHandleCreated(EventArgs e)

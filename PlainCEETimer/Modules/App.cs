@@ -42,7 +42,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.2";
-        public const string AppBuildDate = "2025/6/3";
+        public const string AppBuildDate = "2025/6/10";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";
@@ -117,7 +117,7 @@ namespace PlainCEETimer.Modules
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
                             default:
-                                MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", AutoClose: true);
+                                MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", autoClose: true);
                                 break;
                         }
                     }
@@ -126,7 +126,7 @@ namespace PlainCEETimer.Modules
                 }
                 else
                 {
-                    MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", AutoClose: true);
+                    MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
                     ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
                     Exit(ExitReason.InvalidExeName);
                 }
@@ -135,7 +135,7 @@ namespace PlainCEETimer.Modules
             {
                 if (Args.Length != 0)
                 {
-                    MessageX.Error("请先关闭已打开的实例再使用命令行功能。", AutoClose: true);
+                    MessageX.Error("请先关闭已打开的实例再使用命令行功能。", autoClose: true);
                 }
 
                 StartPipeClient();

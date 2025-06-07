@@ -1,24 +1,37 @@
 ﻿using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Controls
 {
-    public class AppDialog : AppForm
+    public abstract class AppDialog(AppFormParam param) : AppForm(param)
     {
-        protected Panel PanelMain { get; }
-        protected PlainButton ButtonB { get; }
-        protected PlainButton ButtonA { get; }
+        protected PlainButton ButtonA { get; private set; }
+        protected PlainButton ButtonB { get; private set; }
 
         private bool IsUserChanged;
 
-        protected AppDialog(AppFormParam param) : base(param)
+        protected override void OnInitializing()
         {
-            PanelMain = new();
-            ButtonA = new();
-            ButtonB = new();
-            ButtonA.Click += (_, _) => OnClickButtonA();
-            ButtonB.Click += (_, _) => OnClickButtonB();
-            SetProperties();
+            if (CheckParam(AppFormParam.KeyPreview))
+            {
+                KeyPreview = true;
+            }
+
+            StartPosition = FormStartPosition.CenterParent;
+            MinimizeBox = false;
+
+            this.AddControls(b =>
+            [
+                ButtonA = b.Button("确定(&O)", false, (_, _) => OnClickButtonA()),
+                ButtonB = b.Button("取消(&C)", (_, _) => OnClickButtonB())
+            ]);
+
+            if (CheckParam(AppFormParam.BindButtons))
+            {
+                AcceptButton = ButtonA;
+                CancelButton = ButtonB;
+            }
         }
 
         protected override bool OnClosing(CloseReason closeReason)
@@ -47,20 +60,6 @@ namespace PlainCEETimer.Controls
                 IsUserChanged = true;
                 ButtonA.Enabled = true;
             });
-        }
-
-        private void SetProperties()
-        {
-            if (CheckParam(AppFormParam.BindButtons))
-            {
-                AcceptButton = ButtonA;
-                CancelButton = ButtonB;
-            }
-
-            if (CheckParam(AppFormParam.KeyPreview))
-            {
-                KeyPreview = true;
-            }
         }
     }
 }

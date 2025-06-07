@@ -4,31 +4,53 @@ using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed partial class AppMessageBox : AppDialog
+    public sealed class AppMessageBox(string message, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview)
     {
         private DialogResult Result;
-        private readonly bool AutoCloseRequired;
-        private readonly MessageButtons ButtonsEx;
-        private readonly SystemSound DialogSound;
+        private Label LabelMessage;
+        private PictureBox ImageIcon;
 
-        public AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : base(AppFormParam.KeyPreview)
+        protected override void OnInitializing()
         {
-            InitializeComponent();
-            DialogSound = Sound;
-            ButtonsEx = Buttons;
-            AutoCloseRequired = AutoClose;
+            this.AddControls(b =>
+            [
+                ImageIcon = b.Image(5, 3, icon),
+                LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
+            ]);
+
+            base.OnInitializing();
+
+            ButtonA.Enabled = true;
         }
 
-        public DialogResult ShowCore(AppForm OwnerForm, string Message, string Title, Bitmap AppMessageBoxIcon)
+        protected override void StartLayout(bool isHighDpi)
         {
-            LabelMessage.Text = Message;
-            Text = Title;
-            PicBoxIcon.Image = AppMessageBoxIcon;
+            ArrangeControlXTop(LabelMessage, ImageIcon, 2);
+            ArrangeControlYRight(ButtonB, LabelMessage, -3, 3);
+            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
 
-            if (OwnerForm == null)
+            if (ButtonA.Left < ImageIcon.Right)
+            {
+                ButtonA.Left = ImageIcon.Right;
+                ArrangeControlXTop(ButtonB, ButtonA, 3);
+            }
+
+            if (ButtonA.Top < ImageIcon.Bottom)
+            {
+                CompactControlY(ButtonA, ImageIcon);
+                ArrangeControlXTop(ButtonB, ButtonA, 3);
+            }
+        }
+
+        public DialogResult ShowCore(AppForm owner, string title)
+        {
+            Text = title;
+
+            if (owner == null)
             {
                 AddParam(AppFormParam.CenterScreen);
             }
@@ -37,21 +59,13 @@ namespace PlainCEETimer.Dialogs
                 StartPosition = FormStartPosition.CenterParent;
             }
 
-            ShowDialog(OwnerForm);
+            ShowDialog(owner);
             return Result;
-        }
-
-        protected override void AdjustUI()
-        {
-            PanelMain.AutoSize = true;
-            PanelMain.AutoSizeMode = AutoSizeMode.GrowOnly;
-            SetLabelAutoWrap(LabelMessage, (int)(GetCurrentScreenRect().Width * 0.75));
-            AlignControlsR(ButtonA, ButtonB, PanelMain);
         }
 
         protected override void OnLoad()
         {
-            switch (ButtonsEx)
+            switch (buttons)
             {
                 case MessageButtons.YesNo:
                     ButtonA.Text = "是(&Y)";
@@ -66,9 +80,9 @@ namespace PlainCEETimer.Dialogs
 
         protected override void OnShown()
         {
-            DialogSound.Play();
+            sound.Play();
 
-            if (AutoCloseRequired)
+            if (autoClose)
             {
                 3200.AsDelay(_ => Invoke(Close));
             }
@@ -76,14 +90,14 @@ namespace PlainCEETimer.Dialogs
 
         protected override bool OnClickButtonA()
         {
-            Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.Yes : DialogResult.None;
+            Result = buttons == MessageButtons.YesNo ? DialogResult.Yes : DialogResult.None;
             Close();
             return true;
         }
 
         protected override void OnClickButtonB()
         {
-            Result = ButtonsEx == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
+            Result = buttons == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();
         }
 

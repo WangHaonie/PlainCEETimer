@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Dialogs
 {
@@ -11,29 +12,29 @@ namespace PlainCEETimer.Dialogs
         public string[] CustomTextPreset { get; set; }
         public ColorSetObject[] ColorPresets { private get; set; }
 
-        private readonly PlainButton ButtonGlobal;
+        private PlainButton ButtonGlobal;
 
         public RulesManager()
-            : base(450, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
+            : base(480, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
         {
             Text = "管理自定义规则 - 高考倒计时";
             ItemDescription = "规则";
-
-            ButtonGlobal = new PlainButton()
-            {
-                Size = new(ScaleToDpi(90), ScaleToDpi(23)),
-                Text = "全局设置(&G)",
-                UseVisualStyleBackColor = true
-            };
-
-            ButtonGlobal.Click += ButtonGlobal_Click;
-            Controls.Add(ButtonGlobal);
         }
 
-        protected override void AdjustUI()
+        protected override void OnInitializing()
         {
-            base.AdjustUI();
-            AddNewButton(ButtonGlobal);
+            base.OnInitializing();
+
+            this.AddControls(b =>
+            [
+                ButtonGlobal = b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 25, BoundsSpecified.Size))
+            ]);
+        }
+
+        protected override void StartLayout(bool isHighDpi)
+        {
+            base.StartLayout(isHighDpi);
+            ArrangeControlXTop(ButtonGlobal, ButtonOperation, 3);
         }
 
         protected override ListViewItem GetListViewItem(CustomRuleObject data)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Controls
 {
@@ -19,9 +20,9 @@ namespace PlainCEETimer.Controls
 
         public TData[] Data { get; set; }
         protected string ItemDescription { get; set; } = "项";
+        protected PlainButton ButtonOperation { get; private set; }
 
         private ContextMenu ContextMenuMain;
-        private PlainButton ButtonOperation;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
@@ -36,9 +37,8 @@ namespace PlainCEETimer.Controls
 
         protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : base(AppFormParam.AllControl)
         {
-            InitializeComponent();
             ListViewMain.Headers = headers;
-            ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
+            ListViewMain.Size = new Size(listViewWidth, 218);
 
             if (groups != null && groups.Length != 0)
             {
@@ -75,13 +75,47 @@ namespace PlainCEETimer.Controls
         /// <returns><see cref="IListViewSubDialog{TData}"/></returns>
         protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
 
-        protected override void AdjustUI()
+        protected override void OnInitializing()
         {
-            CompactControlsY(ButtonA, PanelMain);
-            CompactControlsY(ButtonB, PanelMain);
-            CompactControlsY(ButtonOperation, PanelMain);
-            AlignControlsREx(ButtonA, ButtonB, PanelMain);
-            AlignControlsL(ButtonOperation, ButtonA, PanelMain);
+            this.AddControls(b =>
+            [
+                ListViewMain,
+                ButtonOperation = b.Button("操作(&O) ▼", (sender, _) => ShowBottonMenu(ContextMenuMain, sender))
+            ]);
+
+            ContextMenuMain = ContextMenuBuilder.Build(b =>
+            [
+                b.Item("添加(&A)", (_, _) =>
+                {
+                    var SubDialog = GetSubDialog();
+
+                    if (SubDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        AddItemSafe(SubDialog.Data);
+                    }
+                }),
+
+                b.Separator(),
+                ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
+                ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
+                b.Separator(),
+                ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
+            ]);
+
+            ListViewMain.ContextMenu = ContextMenuMain;
+            ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
+            ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
+
+            base.OnInitializing();
+        }
+
+        protected virtual void OnClickButtonExtra(object sender, EventArgs e) { }
+
+        protected override void StartLayout(bool isHighDpi)
+        {
+            ArrangeControlYRight(ButtonB, ListViewMain, 1, 3);
+            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
+            ArrangeControlYLeft(ButtonOperation, ListViewMain, -1, 3);
         }
 
         protected sealed override void OnLoad()
@@ -133,17 +167,6 @@ namespace PlainCEETimer.Controls
             return base.OnClickButtonA();
         }
 
-        protected void AddNewButton(Button Btn)
-        {
-            AlignControlsX(Btn, ButtonOperation);
-            CompactControlsX(Btn, ButtonOperation, 6);
-        }
-
-        private void ButtonOperation_Click(object sender, EventArgs e)
-        {
-            ContextMenuMain.Show(ButtonOperation, new(0, ButtonOperation.Height));
-        }
-
         private void ContextEdit_Click(object sender, EventArgs e)
         {
             var TargetItem = ListViewMain.SelectedItems[0];
@@ -158,7 +181,7 @@ namespace PlainCEETimer.Controls
 
         private void ContextDelete_Click(object sender, EventArgs e)
         {
-            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
                 ListViewMain.Suspend(() =>
                 {
@@ -257,78 +280,6 @@ namespace PlainCEETimer.Controls
         {
             Items.Remove(item);
             ItemsSet.Remove(data);
-        }
-
-        private void InitializeComponent()
-        {
-            PanelMain.SuspendLayout();
-            SuspendLayout();
-
-            PanelMain.AutoSize = true;
-            PanelMain.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            PanelMain.Controls.Add(ListViewMain);
-            PanelMain.Location = new(6, 3);
-            PanelMain.Size = new(453, 145);
-
-            ButtonA.Enabled = false;
-            ButtonA.Location = new(296, 149);
-            ButtonA.Size = new(75, 23);
-            ButtonA.Text = "保存(&S)";
-            ButtonA.UseVisualStyleBackColor = true;
-
-            ButtonB.Location = new(377, 149);
-            ButtonB.Size = new(75, 23);
-            ButtonB.Text = "取消(&C)";
-            ButtonB.UseVisualStyleBackColor = true;
-
-            ButtonOperation = new()
-            {
-                Location = new(9, 149),
-                Size = new(75, 23),
-                Text = "操作(&O) ▼",
-                UseVisualStyleBackColor = true
-            };
-
-            ButtonOperation.Click += ButtonOperation_Click;
-
-            AutoScaleDimensions = new(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
-            AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new(460, 176);
-            Controls.AddRange([ButtonOperation, ButtonB, ButtonA, PanelMain]);
-            Font = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            ShowIcon = false;
-            StartPosition = FormStartPosition.CenterParent;
-
-            PanelMain.ResumeLayout(false);
-            ResumeLayout(false);
-
-            ContextMenuMain = ContextMenuBuilder.Build(b =>
-            [
-                b.Item("添加(&A)", (_, _) =>
-                {
-                    var SubDialog = GetSubDialog();
-
-                    if (SubDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        AddItemSafe(SubDialog.Data);
-                    }
-                }),
-
-                b.Separator(),
-                ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
-                ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
-                b.Separator(),
-                ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
-            ]);
-
-            ListViewMain.ContextMenu = ContextMenuMain;
-            ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
-            ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
         }
 
         private void HandleMenuItemEnabling()

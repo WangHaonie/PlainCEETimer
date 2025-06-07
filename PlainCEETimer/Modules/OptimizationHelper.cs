@@ -25,7 +25,7 @@ namespace PlainCEETimer.Modules
                     2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
                     3. 其他情况导致的程序运行速度变慢
                 
-                """, Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                """, buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
                 if (!Auto)
                 {
@@ -111,7 +111,7 @@ namespace PlainCEETimer.Modules
             {
                 var code = (int)ProcessHelper.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", 2, AdminRequired: true);
 
-                if (!Auto && MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", Buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                if (!Auto && MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", buttons: MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Exit(ExitReason.UserRestart);
                 }
