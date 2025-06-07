@@ -122,7 +122,7 @@
             this.ButtonCancel.Name = "ButtonCancel";
             this.ButtonCancel.Size = new System.Drawing.Size(75, 25);
             this.ButtonCancel.TabIndex = 17;
-            this.ButtonCancel.Text = "取消(&C)";
+            this.ButtonCancel.Text = ;
             this.ButtonCancel.UseVisualStyleBackColor = true;
             this.ButtonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
@@ -157,7 +157,7 @@
             this.ButtonSave.Name = "ButtonSave";
             this.ButtonSave.Size = new System.Drawing.Size(75, 25);
             this.ButtonSave.TabIndex = 16;
-            this.ButtonSave.Text = "保存(&S)";
+            this.ButtonSave.Text = ;
             this.ButtonSave.UseVisualStyleBackColor = true;
             this.ButtonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
@@ -172,7 +172,7 @@
             this.GBoxExamInfo.Size = new System.Drawing.Size(323, 67);
             this.GBoxExamInfo.TabIndex = 45;
             this.GBoxExamInfo.TabStop = false;
-            this.GBoxExamInfo.Text = "考试信息";
+            this.GBoxExamInfo.Text = ;
             // 
             // ComboBoxAutoSwitchIntervel
             // 
@@ -192,7 +192,7 @@
             this.CheckBoxAutoSwitch.Name = "CheckBoxAutoSwitch";
             this.CheckBoxAutoSwitch.Size = new System.Drawing.Size(104, 19);
             this.CheckBoxAutoSwitch.TabIndex = 9;
-            this.CheckBoxAutoSwitch.Text = "启用自动切换";
+            this.CheckBoxAutoSwitch.Text = ;
             this.CheckBoxAutoSwitch.UseVisualStyleBackColor = true;
             this.CheckBoxAutoSwitch.CheckedChanged += new System.EventHandler(this.CheckBoxAutoSwitch_CheckedChanged);
             // 
@@ -203,7 +203,7 @@
             this.LabelExamInfo.Name = "LabelExamInfo";
             this.LabelExamInfo.Size = new System.Drawing.Size(202, 15);
             this.LabelExamInfo.TabIndex = 4;
-            this.LabelExamInfo.Text = "在此添加考试信息以启动倒计时。";
+            this.LabelExamInfo.Text = ;
             // 
             // ButtonExamInfo
             // 
@@ -211,7 +211,7 @@
             this.ButtonExamInfo.Name = "ButtonExamInfo";
             this.ButtonExamInfo.Size = new System.Drawing.Size(75, 23);
             this.ButtonExamInfo.TabIndex = 3;
-            this.ButtonExamInfo.Text = "管理(&G)";
+            this.ButtonExamInfo.Text = ;
             this.ButtonExamInfo.UseVisualStyleBackColor = true;
             this.ButtonExamInfo.Click += new System.EventHandler(this.ButtonExamInfo_Click);
             // 
@@ -228,7 +228,7 @@
             this.GBoxOthers.Size = new System.Drawing.Size(323, 148);
             this.GBoxOthers.TabIndex = 44;
             this.GBoxOthers.TabStop = false;
-            this.GBoxOthers.Text = "其他";
+            this.GBoxOthers.Text = ;
             // 
             // CheckBoxTrayText
             // 
@@ -238,7 +238,7 @@
             this.CheckBoxTrayText.Name = "CheckBoxTrayText";
             this.CheckBoxTrayText.Size = new System.Drawing.Size(277, 19);
             this.CheckBoxTrayText.TabIndex = 1;
-            this.CheckBoxTrayText.Text = "鼠标悬停在通知图标上时显示倒计时内容(&N)";
+            this.CheckBoxTrayText.Text = ;
             this.CheckBoxTrayText.UseVisualStyleBackColor = true;
             this.CheckBoxTrayText.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -249,7 +249,7 @@
             this.CheckBoxMemClean.Name = "CheckBoxMemClean";
             this.CheckBoxMemClean.Size = new System.Drawing.Size(227, 19);
             this.CheckBoxMemClean.TabIndex = 2;
-            this.CheckBoxMemClean.Text = "自动清理倒计时占用的运行内存(&M)";
+            this.CheckBoxMemClean.Text = ;
             this.CheckBoxMemClean.UseVisualStyleBackColor = true;
             this.CheckBoxMemClean.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -260,7 +260,7 @@
             this.CheckBoxTrayIcon.Name = "CheckBoxTrayIcon";
             this.CheckBoxTrayIcon.Size = new System.Drawing.Size(180, 19);
             this.CheckBoxTrayIcon.TabIndex = 0;
-            this.CheckBoxTrayIcon.Text = "在托盘区域显示通知图标(&I)";
+            this.CheckBoxTrayIcon.Text = ;
             this.CheckBoxTrayIcon.UseVisualStyleBackColor = true;
             this.CheckBoxTrayIcon.CheckedChanged += new System.EventHandler(this.CheckBoxTrayIcon_CheckedChanged);
             // 
@@ -271,7 +271,7 @@
             this.CheckBoxUniTopMost.Name = "CheckBoxUniTopMost";
             this.CheckBoxUniTopMost.Size = new System.Drawing.Size(120, 19);
             this.CheckBoxUniTopMost.TabIndex = 4;
-            this.CheckBoxUniTopMost.Text = "顶置其他窗口(&U)";
+            this.CheckBoxUniTopMost.Text = ;
             this.CheckBoxUniTopMost.UseVisualStyleBackColor = true;
             this.CheckBoxUniTopMost.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -284,7 +284,7 @@
             this.CheckBoxTopMost.Name = "CheckBoxTopMost";
             this.CheckBoxTopMost.Size = new System.Drawing.Size(132, 19);
             this.CheckBoxTopMost.TabIndex = 0;
-            this.CheckBoxTopMost.Text = "顶置倒计时窗口(&T)";
+            this.CheckBoxTopMost.Text = ;
             this.CheckBoxTopMost.UseVisualStyleBackColor = true;
             this.CheckBoxTopMost.CheckedChanged += new System.EventHandler(this.CheckBoxTopMost_CheckedChanged);
             // 
@@ -295,7 +295,7 @@
             this.CheckBoxStartup.Name = "CheckBoxStartup";
             this.CheckBoxStartup.Size = new System.Drawing.Size(197, 19);
             this.CheckBoxStartup.TabIndex = 18;
-            this.CheckBoxStartup.Text = "系统运行时自动启动倒计时(&B)";
+            this.CheckBoxStartup.Text = ;
             this.CheckBoxStartup.UseVisualStyleBackColor = true;
             this.CheckBoxStartup.CheckedChanged += new System.EventHandler(this.SettingsChanged);
             // 
@@ -352,7 +352,7 @@
             this.LabelCountdownEnd.Name = "LabelCountdownEnd";
             this.LabelCountdownEnd.Size = new System.Drawing.Size(117, 15);
             this.LabelCountdownEnd.TabIndex = 45;
-            this.LabelCountdownEnd.Text = "当考试开始后, 显示";
+            this.LabelCountdownEnd.Text = ;
             // 
             // ComboBoxCountdownEnd
             // 
@@ -372,7 +372,7 @@
             this.CheckBoxRulesMan.Name = "CheckBoxRulesMan";
             this.CheckBoxRulesMan.Size = new System.Drawing.Size(198, 19);
             this.CheckBoxRulesMan.TabIndex = 42;
-            this.CheckBoxRulesMan.Text = "自定义不同时刻的颜色和内容:";
+            this.CheckBoxRulesMan.Text = ;
             this.CheckBoxRulesMan.UseVisualStyleBackColor = true;
             this.CheckBoxRulesMan.CheckedChanged += new System.EventHandler(this.CheckBoxRulesMan_CheckedChanged);
             // 
@@ -385,7 +385,7 @@
             this.ButtonRulesMan.Name = "ButtonRulesMan";
             this.ButtonRulesMan.Size = new System.Drawing.Size(101, 24);
             this.ButtonRulesMan.TabIndex = 41;
-            this.ButtonRulesMan.Text = "规则管理器(&R)";
+            this.ButtonRulesMan.Text = ;
             this.ButtonRulesMan.UseVisualStyleBackColor = true;
             this.ButtonRulesMan.Click += new System.EventHandler(this.ButtonRulesMan_Click);
             // 
@@ -420,7 +420,7 @@
             this.CheckBoxShowXOnly.Name = "CheckBoxShowXOnly";
             this.CheckBoxShowXOnly.Size = new System.Drawing.Size(65, 19);
             this.CheckBoxShowXOnly.TabIndex = 0;
-            this.CheckBoxShowXOnly.Text = "只显示";
+            this.CheckBoxShowXOnly.Text = ;
             this.CheckBoxShowXOnly.UseVisualStyleBackColor = true;
             this.CheckBoxShowXOnly.CheckedChanged += new System.EventHandler(this.CheckBoxShowXOnly_CheckedChanged);
             // 

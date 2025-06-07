@@ -15,7 +15,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Forms
 {
-    public sealed partial class MainForm : AppForm
+    public sealed class MainForm : AppForm
     {
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded = true;
@@ -82,7 +82,20 @@ namespace PlainCEETimer.Forms
 
         public MainForm() : base(AppFormParam.Special)
         {
-            InitializeComponent();
+            AutoScaleDimensions = new(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new(162, 23);
+            ControlBox = false;
+            DoubleBuffered = true;
+            FormBorderStyle = FormBorderStyle.None;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "MainForm";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.Manual;
+            Text = "高考倒计时";
+
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 

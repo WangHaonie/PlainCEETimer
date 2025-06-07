@@ -7,26 +7,53 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed partial class AppMessageBox : AppDialog
+    public sealed class AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : AppDialog(AppFormParam.KeyPreview)
     {
         private DialogResult Result;
-        private readonly bool AutoCloseRequired;
-        private readonly MessageButtons ButtonsEx;
-        private readonly SystemSound DialogSound;
-
-        public AppMessageBox(SystemSound Sound, MessageButtons Buttons, bool AutoClose) : base(AppFormParam.KeyPreview)
-        {
-            InitializeComponent();
-            DialogSound = Sound;
-            ButtonsEx = Buttons;
-            AutoCloseRequired = AutoClose;
-        }
+        private readonly bool AutoCloseRequired = AutoClose;
+        private readonly MessageButtons ButtonsEx = Buttons;
+        private readonly SystemSound DialogSound = Sound;
 
         public DialogResult ShowCore(AppForm OwnerForm, string Message, string Title, Bitmap AppMessageBoxIcon)
         {
-            LabelMessage.Text = Message;
+            SuspendLayout();
+            AutoScaleDimensions = new(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ShowIcon = false;
             Text = Title;
-            PicBoxIcon.Image = AppMessageBoxIcon;
+
+            this.AddControls(b =>
+            [
+                b.Modify(PanelMain, 0, 0, 161, 40, null, c =>
+                {
+                    c.AutoSize = true;
+                    c.AutoSizeMode = AutoSizeMode.GrowOnly;
+
+                    c.AddControls(b =>
+                    [
+                        b.New<PictureBox>(6, 3, 32, 32, null, c =>
+                        {
+                            c.BackgroundImageLayout = ImageLayout.Zoom;
+                            c.Image = AppMessageBoxIcon;
+                        }),
+
+                        b.Label(41, 3, Message, c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
+                    ]);
+                }),
+
+                b.Modify(ButtonA, 8, 41, 75, 23, null),
+                b.Modify(ButtonB, 89, 41, 75, 23, null)
+            ]);
+
+            ResumeLayout(true);
+
+            AlignControlsR(ButtonA, ButtonB, PanelMain);
 
             if (OwnerForm == null)
             {
@@ -39,14 +66,6 @@ namespace PlainCEETimer.Dialogs
 
             ShowDialog(OwnerForm);
             return Result;
-        }
-
-        protected override void AdjustUI()
-        {
-            PanelMain.AutoSize = true;
-            PanelMain.AutoSizeMode = AutoSizeMode.GrowOnly;
-            SetLabelAutoWrap(LabelMessage, (int)(GetCurrentScreenRect().Width * 0.75));
-            AlignControlsR(ButtonA, ButtonB, PanelMain);
         }
 
         protected override void OnLoad()

@@ -9,6 +9,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.WinForms;
 
 namespace PlainCEETimer.Forms
 {
@@ -37,6 +38,198 @@ namespace PlainCEETimer.Forms
         public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen)
         {
             InitializeComponent();
+
+            this.AddControls(b =>
+            [
+                b.Container<Panel>(57, 0, 332, 259,
+                [
+                    b.Page(
+                    [
+                        b.Container<PlainGroupBox>(5, 3, 323, 67, "考试信息",
+                        [
+                            b.Label(6, 19, "在此添加考试信息以启动倒计时。"),
+
+                            b.Button(8, 37, "管理(&G)", (_, _) =>
+                            {
+                                ExamInfoManager ExamMan = new()
+                                {
+                                    Data = EditedExamInfo
+                                };
+
+                                if (ExamMan.ShowDialog() == DialogResult.OK)
+                                {
+                                    EditedExamInfo = ExamMan.Data;
+                                    SettingsChanged();
+                                }
+                            }),
+
+                            b.CheckBox(125, 40, "启用自动切换", (_, _) =>
+                            {
+                                ComboBoxAutoSwitchIntervel.Enabled = CheckBoxAutoSwitch.Checked;
+                                SettingsChanged();
+                            }),
+
+                            b.ComboBox(231, 37, 86, false, SettingsChanged,
+                            [
+                                new("10 秒", 0),
+                                new("15 秒", 1),
+                                new("30 秒", 2),
+                                new("45 秒", 3),
+                                new("1 分钟", 4),
+                                new("2 分钟", 5),
+                                new("3 分钟", 6),
+                                new("5 分钟", 7),
+                                new("10 分钟", 8),
+                                new("15 分钟", 9),
+                                new("30 分钟", 10),
+                                new("45 分钟", 11),
+                                new("1 小时", 12),
+                            ])
+                        ]),
+
+                        b.Container<PlainGroupBox>(5, 76, 323, 148, "其他",
+                        [
+                            b.CheckBox(9, 22, "系统运行时自动启动倒计时(&B)", SettingsChanged),
+                            b.CheckBox(9, 44, "自动清理倒计时占用的运行内存(&M)", SettingsChanged),
+
+                            b.CheckBox(9, 69, "顶置倒计时窗口(&T)", (_, _) =>
+                            {
+                                CheckBoxUniTopMost.Enabled = CheckBoxTopMost.Checked;
+
+                                if (CheckBoxUniTopMost.Checked && !CheckBoxTopMost.Checked)
+                                {
+                                    CheckBoxUniTopMost.Checked = false;
+                                    CheckBoxUniTopMost.Enabled = false;
+                                }
+
+                                ChangePptsvcStyle(null, null);
+                            }, true, true),
+
+                            b.CheckBox(157, 69, "顶置其他窗口(&U)", SettingsChanged),
+
+                            b.CheckBox(9, 94, "在托盘区域显示通知图标(&I)", (_, _) =>
+                            {
+                                CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked;
+                                CheckBoxTrayText.Checked = CheckBoxTrayIcon.Checked && AppConfig.General.TrayText;
+                                SettingsChanged();
+                            }),
+
+                            b.CheckBox(9, 119, "鼠标悬停在通知图标上时显示倒计时内容(&N)", SettingsChanged),
+                        ])
+                    ]),
+
+                    b.Page(
+                    [
+                        b.Container<PlainGroupBox>(5, 3, 323, 98, "倒计时内容",
+                        [
+                            b.Label(7, 19, "当考试开始后, 显示"),
+
+                            b.ComboBox(126, 15, 190, SettingsChanged,
+                            [
+                                new("<程序欢迎信息>", 0),
+                                new("考试还有多久结束", 1),
+                                new("考试还有多久结束 和 已过去了多久", 2)
+                            ]),
+
+                            b.CheckBox(9, 46, "只显示", (sender, _) =>
+                            {
+                                CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
+                                ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
+                                ChangeCustomTextStyle(sender);
+
+                                if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
+                                {
+                                    CheckBoxCeiling.Checked = false;
+                                    CheckBoxCeiling.Enabled = false;
+                                }
+
+                                SettingsChanged();
+                            }),
+
+                            b.ComboBox(72, 43, 38, false, (_, _) =>
+                            {
+                                var Index = ComboBoxShowXOnly.SelectedIndex;
+                                CheckBoxCeiling.Visible = Index == 0;
+                                CheckBoxCeiling.Checked = Index == 0 && AppConfig.Display.Ceiling;
+                                SettingsChanged();
+                            },
+                            [
+                                new("天", 0),
+                                new("时", 1),
+                                new("分", 2),
+                                new("秒", 3)
+                            ]),
+
+                            b.CheckBox(9, 72, "自定义不同时刻的颜色和内容:", (sender, _) =>
+                            {
+                                ChangeCustomTextStyle(sender);
+                                SettingsChanged();
+                            }),
+
+                            b.Button(219, 68, "规则管理器(&R)", false, (_, _) =>
+                            {
+                                RulesManager Manager = new()
+                                {
+                                    Data = EditedCustomRules,
+                                    ColorPresets = SelectedColors,
+                                    CustomTextPreset = EditedCustomTexts
+                                };
+
+                                if (Manager.ShowDialog() == DialogResult.OK)
+                                {
+                                    EditedCustomRules = Manager.Data;
+                                    EditedCustomTexts = Manager.CustomTextPreset;
+                                    SettingsChanged(null, null);
+                                }
+                            }).With(x =>
+                            {
+                                x.AutoSize = true;
+                                x.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                                x.Enabled = false;
+                            })
+                        ])
+                    ]),
+
+                    b.Page(
+                    [
+
+                    ])
+                ]),
+
+
+
+
+
+
+
+
+
+                //b.New<Panel>(57, 0, 332, 259, null, c => c.AddControls(b =>
+                //[
+                //    b.New<NavigationPage>(null, p => p.AddControls(b =>
+                //    [
+                //        b.New<GroupBox>(5, 3, 323, 67, "考试信息", x => x.AddControls(b =>
+                //        [
+                //            
+                //        ])),
+
+                //        b.New<GroupBox>()
+                //    ]))
+                //])),
+
+                //b.New<Panel>(3, 0, 332, 259, null, c =>
+                //{
+                //    c.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                //    c.Controls.Add(new NavigationBar(["基本", "显示", "外观", "工具"], [PageGeneral, PageDisplay, PageAppearance, PageTools], PageNavPages)
+                //    {
+                //        Indent = ScaleToDpi(5),
+                //        ItemHeight = ScaleToDpi(25)
+                //    });
+                //}),
+
+                b.Button(233, 262, "保存(&S)", false, (_, _) => Save()),
+                b.Button(314, 262, "取消(&C)")
+            ]);
         }
 
         protected override void OnLoad()
@@ -98,6 +291,11 @@ namespace PlainCEETimer.Forms
             UpdateSettingsArea(SettingsArea.Funny, false);
         }
 
+        private void SettingsChanged()
+        {
+            SettingsChanged(null, null);
+        }
+
         private void SettingsChanged(object sender, EventArgs e)
         {
             WhenLoaded(() =>
@@ -105,91 +303,6 @@ namespace PlainCEETimer.Forms
                 UserChanged = true;
                 ButtonSave.Enabled = true;
             });
-        }
-
-        private void ButtonExamInfo_Click(object sender, EventArgs e)
-        {
-            ExamInfoManager ExamMan = new()
-            {
-                Data = EditedExamInfo
-            };
-
-            if (ExamMan.ShowDialog() == DialogResult.OK)
-            {
-                EditedExamInfo = ExamMan.Data;
-                SettingsChanged(null, null);
-            }
-        }
-
-        private void CheckBoxAutoSwitch_CheckedChanged(object sender, EventArgs e)
-        {
-            ComboBoxAutoSwitchIntervel.Enabled = CheckBoxAutoSwitch.Checked;
-            SettingsChanged(null, null);
-        }
-
-        private void CheckBoxTopMost_CheckedChanged(object sender, EventArgs e)
-        {
-            ChangePptsvcStyle(null, null);
-            CheckBoxUniTopMost.Enabled = CheckBoxTopMost.Checked;
-
-            if (CheckBoxUniTopMost.Checked && !CheckBoxTopMost.Checked)
-            {
-                CheckBoxUniTopMost.Checked = false;
-                CheckBoxUniTopMost.Enabled = false;
-            }
-        }
-
-        private void CheckBoxTrayIcon_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked;
-            CheckBoxTrayText.Checked = CheckBoxTrayIcon.Checked && AppConfig.General.TrayText;
-            SettingsChanged(null, null);
-        }
-
-        private void CheckBoxShowXOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
-            ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
-            ChangeCustomTextStyle(sender);
-
-            if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
-            {
-                CheckBoxCeiling.Checked = false;
-                CheckBoxCeiling.Enabled = false;
-            }
-
-            SettingsChanged(null, null);
-        }
-
-        private void ComboBoxShowXOnly_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var Index = ComboBoxShowXOnly.SelectedIndex;
-            CheckBoxCeiling.Visible = Index == 0;
-            CheckBoxCeiling.Checked = Index == 0 && AppConfig.Display.Ceiling;
-            SettingsChanged(null, null);
-        }
-
-        private void CheckBoxRulesMan_CheckedChanged(object sender, EventArgs e)
-        {
-            ChangeCustomTextStyle(sender);
-            SettingsChanged(null, null);
-        }
-
-        private void ButtonRulesMan_Click(object sender, EventArgs e)
-        {
-            RulesManager Manager = new()
-            {
-                Data = EditedCustomRules,
-                ColorPresets = SelectedColors,
-                CustomTextPreset = EditedCustomTexts
-            };
-
-            if (Manager.ShowDialog() == DialogResult.OK)
-            {
-                EditedCustomRules = Manager.Data;
-                EditedCustomTexts = Manager.CustomTextPreset;
-                SettingsChanged(null, null);
-            }
         }
 
         private void ComboBoxScreens_SelectedIndexChanged(object sender, EventArgs e)
@@ -316,23 +429,9 @@ namespace PlainCEETimer.Forms
             SettingsChanged(null, null);
         }
 
-        private void ButtonSave_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void ButtonCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void InitializeExtra()
         {
-            PanelNav.Controls.Add(NavBar = new(["基本", "显示", "外观", "工具"], [PageGeneral, PageDisplay, PageAppearance, PageTools], PageNavPages)
-            {
-                Indent = ScaleToDpi(5),
-                ItemHeight = ScaleToDpi(25)
-            });
+            PanelNav.Controls.Add(NavBar = );
 
             if (!ThemeManager.IsDarkModeSupported)
             {
@@ -359,39 +458,11 @@ namespace PlainCEETimer.Forms
             LabelPreviewColor2.Text = $"距离...{Constants.PH_LEFT}...";
             LabelPreviewColor3.Text = $"距离...{Constants.PH_PAST}...";
 
-            BindComboData(ComboBoxAutoSwitchIntervel,
+            ComboBoxCountdownEnd.BindData(
             [
-                new("10 秒", 0),
-                new("15 秒", 1),
-                new("30 秒", 2),
-                new("45 秒", 3),
-                new("1 分钟", 4),
-                new("2 分钟", 5),
-                new("3 分钟", 6),
-                new("5 分钟", 7),
-                new("10 分钟", 8),
-                new("15 分钟", 9),
-                new("30 分钟", 10),
-                new("45 分钟", 11),
-                new("1 小时", 12),
             ]);
 
-            BindComboData(ComboBoxShowXOnly,
-            [
-                new("天", 0),
-                new("时", 1),
-                new("分", 2),
-                new("秒", 3)
-            ]);
-
-            BindComboData(ComboBoxCountdownEnd,
-            [
-                new("<程序欢迎信息>", 0),
-                new("考试还有多久结束", 1),
-                new("考试还有多久结束 和 已过去了多久", 2)
-            ]);
-
-            BindComboData(ComboBoxPosition,
+            ComboBoxPosition.BindData(
             [
                 new("左上角", 0),
                 new("左侧居中", 1),
@@ -404,7 +475,7 @@ namespace PlainCEETimer.Forms
                 new("右下角", 8)
             ]);
 
-            BindComboData(ComboBoxNtpServers,
+            ComboBoxNtpServers.BindData(
             [
                 new("time.windows.com", 0),
                 new("ntp.aliyun.com", 1),
@@ -420,7 +491,7 @@ namespace PlainCEETimer.Forms
                 var CurrentScreen = CurrentScreens[i];
                 Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i + 1, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
             }
-            BindComboData(ComboBoxScreens, Monitors);
+            ComboBoxScreens.BindData(Monitors);
 
             ColorPreviewLabels = [LabelPreviewColor1, LabelPreviewColor2, LabelPreviewColor3, LabelPreviewColor4];
             foreach (var label in ColorLabels = [LabelColor11, LabelColor21, LabelColor31, LabelColor41, LabelColor12, LabelColor22, LabelColor32, LabelColor42])

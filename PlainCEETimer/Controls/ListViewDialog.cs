@@ -274,7 +274,6 @@ namespace PlainCEETimer.Controls
             ButtonA.Location = new(296, 149);
             ButtonA.Size = new(75, 23);
             ButtonA.Text = "保存(&S)";
-            ButtonA.UseVisualStyleBackColor = true;
 
             ButtonB.Location = new(377, 149);
             ButtonB.Size = new(75, 23);

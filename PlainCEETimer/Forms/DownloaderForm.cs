@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,11 +11,18 @@ using PlainCEETimer.Modules.Http;
 
 namespace PlainCEETimer.Forms
 {
-    public sealed partial class DownloaderForm : AppForm
+    public sealed class DownloaderForm : AppForm
     {
         private bool IsCancelled;
         private string DownloadUrl;
         private string DownloadPath;
+        private Label LabelDownloading;
+        private Label LabelSize;
+        private Label LabelSpeed;
+        private ProgressBar ProgressBarMain;
+        private PlainButton ButtonRetry;
+        private PlainButton ButtonCancel;
+        private Hyperlink LinkBrowser;
         private readonly string TargetVersion;
         private readonly long UpdateSize;
         private readonly CancellationTokenSource cts = new();
@@ -22,7 +30,49 @@ namespace PlainCEETimer.Forms
 
         private DownloaderForm() : base(AppFormParam.CenterScreen)
         {
-            InitializeComponent();
+            SuspendLayout();
+            AutoScaleDimensions = new(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoSize = true;
+            ClientSize = new(354, 76);
+            Font = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            ShowIcon = false;
+            Text = "更新进度 - 高考倒计时";
+
+            this.AddControls(b =>
+            [
+                LabelDownloading = b.Label(2, 3, "正在下载更新文件，请稍侯..."),
+                LinkBrowser = b.Hyperlink("浏览器下载", DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion)),
+                ProgressBarMain = b.New<ProgressBar>(5, 20, 344, 22, null),
+                LabelSize = b.Label(2, 44, "已下载/总共: (获取中...)"),
+                LabelSpeed = b.Label(2, 59, "下载速度: (获取中...)"),
+
+                ButtonRetry = b.Button(195, 47, "重试(&R)", (_, _) =>
+                {
+                    ButtonRetry.Enabled = false;
+                    ProgressBarMain.Value = 0;
+                    UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
+                    DownloadUpdate();
+                }),
+
+                ButtonCancel = b.Button(274, 47, "取消(&C)", (_, _) =>
+                {
+                    if (!IsCancelled)
+                    {
+                        ButtonCancel.Enabled = false;
+                        cts.Cancel();
+                        UpdateLabels("用户已取消下载。", null, null);
+                        IsCancelled = true;
+                        TaskbarProgress.SetState(TaskbarProgressState.Error);
+                        MessageX.Warn("你已取消下载！\n\n稍后可以在 关于 窗口点击图标来再次检查更新。");
+                    }
+
+                    Close();
+                })
+            ]);
+            ResumeLayout(true);
         }
 
         public DownloaderForm(string ManualVersion) : this()
@@ -36,7 +86,7 @@ namespace PlainCEETimer.Forms
             UpdateSize = Size;
         }
 
-        protected override void AdjustUI()
+        protected override void OnLoad()
         {
             AlignControlsR(LinkBrowser, ProgressBarMain);
             AlignControlsREx(ButtonRetry, ButtonCancel, ProgressBarMain);
@@ -47,7 +97,6 @@ namespace PlainCEETimer.Forms
             if (Win32User.NotElevated)
             {
                 TaskbarProgress.Initialize(Handle, (App.OSBuild >= WindowsBuilds.Windows7).ToWin32());
-                LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
                 DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
                 UpdateDownloader.Downloading += UpdateDownloader_Downloading;
                 UpdateDownloader.Error += UpdateDownloader_Error;
@@ -76,32 +125,9 @@ namespace PlainCEETimer.Forms
             }
         }
 
-        private void ButtonRetry_Click(object sender, EventArgs e)
-        {
-            ButtonRetry.Enabled = false;
-            ProgressBarMain.Value = 0;
-            UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
-            DownloadUpdate();
-        }
-
         private async void DownloadUpdate()
         {
             await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
-        }
-
-        private void ButtonCancel_Click(object sender, EventArgs e)
-        {
-            if (!IsCancelled)
-            {
-                ButtonCancel.Enabled = false;
-                cts.Cancel();
-                UpdateLabels("用户已取消下载。", null, null);
-                IsCancelled = true;
-                TaskbarProgress.SetState(TaskbarProgressState.Error);
-                MessageX.Warn("你已取消下载！\n\n稍后可以在 关于 窗口点击图标来再次检查更新。");
-            }
-
-            Close();
         }
 
         private void UpdateDownloader_Downloading(DownloadReport report)

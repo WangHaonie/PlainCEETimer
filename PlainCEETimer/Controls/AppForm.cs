@@ -20,7 +20,7 @@ namespace PlainCEETimer.Controls
         private AppFormParam Params;
         private readonly bool Special;
 
-        private static float CurrentDpiRatio;
+        public static float CurrentDpiRatio;
         private static bool IsHighDpi;
 
         protected AppForm(AppFormParam param)
@@ -196,18 +196,6 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        /// <summary>
-        /// 为 ComboBox 绑定统一类型的 DataSource, DisplayMember 和 ValueMember。
-        /// </summary>
-        /// <param name="Target">目标 ComboBox 控件</param>
-        /// <param name="Data">DataSource</param>
-        protected void BindComboData(ComboBoxEx Target, ComboData[] Data)
-        {
-            Target.DataSource = Data;
-            Target.DisplayMember = nameof(ComboData.Display);
-            Target.ValueMember = nameof(ComboData.Value);
-        }
-
         protected Rectangle GetCurrentScreenRect()
             => Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
 
@@ -250,8 +238,13 @@ namespace PlainCEETimer.Controls
         /// <param name="Reference">指定控件</param>
         protected void AlignControlsL(Control Target, Button RightButton, Control Reference)
         {
-            Target.Left = Reference.Left;
+            AlignControlsL(Target, Reference);
             Target.Top = RightButton.Top;
+        }
+
+        protected void AlignControlsL(Control Target, Control Reference, int Tweak = 0)
+        {
+            Target.Left = Reference.Left + ScaleToDpi(Tweak);
         }
 
         /// <summary>

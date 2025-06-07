@@ -9,16 +9,67 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Dialogs
 {
-    public sealed partial class ExamInfoDialog : AppDialog, IListViewSubDialog<ExamInfoObject>
+    public sealed class ExamInfoDialog : AppDialog, IListViewSubDialog<ExamInfoObject>
     {
         public ExamInfoObject Data { get; set; }
 
         private string CurrentExamName;
+        private PlainLabel LabelCounter;
+        private PlainLabel LabelEnd;
+        private DateTimePicker DTPEnd;
+        private PlainLabel LabelStart;
+        private DateTimePicker DTPStart;
+        private PlainLabel LabelName;
+        private PlainTextBox TextBoxName;
         private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
         public ExamInfoDialog(ExamInfoObject Existing = null) : base(AppFormParam.BindButtons)
         {
-            InitializeComponent();
+            SuspendLayout();
+            AutoScaleDimensions = new(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ClientSize = new(367, 114);
+            Font = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ExamInfoDialog";
+            ShowIcon = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "考试信息 - 高考倒计时";
+
+            this.AddControls(b =>
+            [
+                b.Modify(PanelMain, 3, 3, 362, 87, null, c => c.AddControls(b =>
+                [
+                    LabelName = b.Label(3, 6, "考试名称: "),
+                    LabelStart = b.Label(3, 35, "开始日期和时间: "),
+                    LabelEnd = b.Label(3, 62, "结束日期和时间: "),
+                    LabelCounter = b.Label(319, 6, $"0/{Validator.MaxExamNameLength}"),
+
+                    TextBoxName = b.TextBox(69, 2, 248, TextBoxName_TextChanged),
+
+                    DTPStart = b.New<DateTimePicker>(109, 32, 246, 23, null, c =>
+                    {
+                        c.Format = DateTimePickerFormat.Custom;
+                        c.CustomFormat = "yyyy-MM-dd dddd HH:mm:ss";
+                        c.ValueChanged += DTP_ValueChanged;
+                    }),
+
+                    DTPEnd = b.New<DateTimePicker>(109, 58, 246, 23, null, c =>
+                    {
+                        c.Format = DateTimePickerFormat.Custom;
+                        c.CustomFormat = "yyyy-MM-dd dddd HH:mm:ss";
+                        c.ValueChanged += DTP_ValueChanged;
+                    })
+                ])),
+
+                b.Modify(ButtonA, 202, 90, 75, 23, "确定(&O)", c => c.Enabled = false),
+                b.Modify(ButtonB, 283, 90, 75, 23, "取消(&C)")
+            ]);
+            ResumeLayout(true);
 
             if (Existing != null)
             {

@@ -5,17 +5,17 @@ namespace PlainCEETimer.Controls
 {
     public class AppDialog : AppForm
     {
-        protected Panel PanelMain { get; }
-        protected PlainButton ButtonB { get; }
-        protected PlainButton ButtonA { get; }
+        protected readonly Panel PanelMain;
+        protected readonly PlainButton ButtonA;
+        protected readonly PlainButton ButtonB;
 
         private bool IsUserChanged;
 
         protected AppDialog(AppFormParam param) : base(param)
         {
             PanelMain = new();
-            ButtonA = new();
-            ButtonB = new();
+            ButtonA = new() { UseVisualStyleBackColor = true };
+            ButtonB = new() { UseVisualStyleBackColor = true };
             ButtonA.Click += (_, _) => OnClickButtonA();
             ButtonB.Click += (_, _) => OnClickButtonB();
             SetProperties();

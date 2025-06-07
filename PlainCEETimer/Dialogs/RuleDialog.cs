@@ -16,6 +16,20 @@ namespace PlainCEETimer.Dialogs
         public CustomRuleObject Data { get; set; }
 
         private bool IsEditMode;
+        private ComboBoxEx ComboBoxRuleType;
+        private PlainLabel LabelCustomText;
+        private PlainLabel LabelColorPreview;
+        private PlainLabel LabelFore;
+        private PlainLabel LabelBack;
+        private PlainLabel LabelChar1;
+        private PlainLabel LabelChar7;
+        private PlainLinkLabel LinkResetColor;
+        private PlainNumericUpDown NUDDays;
+        private PlainNumericUpDown NUDHours;
+        private PlainNumericUpDown NUDMinutes;
+        private PlainNumericUpDown NUDSeconds;
+        private PlainTextBox TextBoxCustomText;
+        private readonly EventHandler OnUserChanged;
         private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
 
         private struct Cache(Color fore, Color back, string text)
@@ -27,18 +41,96 @@ namespace PlainCEETimer.Dialogs
 
         public RuleDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle)
         {
-            InitializeComponent();
+            SuspendLayout();
+            OnUserChanged = (_, _) => UserChanged();
+            AutoScaleDimensions = new(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ClientSize = new(462, 102);
+            Font = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ShowIcon = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "自定义规则 - 高考倒计时";
+
+            this.AddControls(b =>
+            [
+                b.Modify(PanelMain, 0, 0, 454, 76, null, c => c.AddControls(b =>
+                [
+                    LabelChar1 = b.Label(3, 6, "当距离考试"),
+                    b.Label(220, 6, "天"),
+                    b.Label(284, 6, "时"),
+                    b.Label(348, 6, "分"),
+                    b.Label(412, 6, "秒 时,"),
+                    b.Label(3, 29, "文字颜色为"),
+                    LabelChar7 = b.Label(118, 29, ", 背景颜色为"),
+                    LabelCustomText = b.Label(3, 53, "自定义文本"),
+
+                    LinkResetColor = b.Link(412, 29, "重置", LinkReset_LinkClicked),
+                    b.Link(412, 53, "重置", LinkReset_LinkClicked),
+
+                    LabelFore = b.Block(77, 29, ColorLabels_Click),
+                    LabelBack = b.Block(198, 29, ColorLabels_Click),
+                    LabelColorPreview = b.Block(323, 29, ColorLabels_Click, "颜色效果预览"),
+
+                    TextBoxCustomText = b.TextBox(77, 50, 333, (_, _) =>
+                    {
+                        if (!IsEditMode)
+                        {
+                            WhenLoaded(SaveTemp);
+                        }
+
+                        UserChanged();
+                    }),
+
+                    ComboBoxRuleType = b.ComboBox(77, 2, 82, (_, _) =>
+                    {
+                        if (!IsEditMode)
+                        {
+                            WhenLoaded(() =>
+                            {
+                                var Index = ComboBoxRuleType.SelectedIndex;
+
+                                if (TemporaryChanges.ContainsKey(Index))
+                                {
+                                    var Temp = TemporaryChanges[Index];
+                                    ApplyColorBlock(Temp.Fore, Temp.Back);
+                                    TextBoxCustomText.Text = Temp.Text;
+                                }
+                                else
+                                {
+                                    GetNewData();
+                                }
+                            });
+                        }
+
+                        UserChanged();
+                    },
+                    [
+                        new(Constants.PH_RTP1, 0),
+                        new(Constants.PH_RTP2, 1),
+                        new(Constants.PH_RTP3, 2)
+                    ]),
+
+                    NUDDays = b.NumericUpDown(165, 2, 53, 65535M, OnUserChanged),
+                    NUDHours = b.NumericUpDown(242, 2, 40, 23M, OnUserChanged),
+                    NUDMinutes = b.NumericUpDown(306, 2, 40, 59M, OnUserChanged),
+                    NUDSeconds = b.NumericUpDown(370, 2, 40, 59M, OnUserChanged)
+                ])),
+
+                b.Modify(ButtonA, 298, 77, 75, 23, "确定(&O)", c => c.Enabled = false),
+                b.Modify(ButtonB, 379, 77, 75, 23, "取消(&C)")
+            ]);
+
+
+            ResumeLayout(true);
         }
 
         protected override void OnLoad()
         {
-            BindComboData(ComboBoxRuleType,
-            [
-                new(Constants.PH_RTP1, 0),
-                new(Constants.PH_RTP2, 1),
-                new(Constants.PH_RTP3, 2)
-            ]);
-
             LabelFore.Click += ColorLabels_Click;
             LabelBack.Click += ColorLabels_Click;
             IsEditMode = Data != null;
@@ -59,9 +151,6 @@ namespace PlainCEETimer.Dialogs
             {
                 GetNewData();
             }
-
-            ComboBoxRuleType.SelectedIndexChanged += ComboBoxRuleType_SelectedIndexChanged;
-            TextBoxCustomText.TextChanged += TextBoxCustomText_TextChanged;
         }
 
         protected override void AdjustUI()
@@ -117,30 +206,6 @@ namespace PlainCEETimer.Dialogs
             return base.OnClickButtonA();
         }
 
-        private void ComboBoxRuleType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!IsEditMode)
-            {
-                WhenLoaded(() =>
-                {
-                    var Index = ComboBoxRuleType.SelectedIndex;
-
-                    if (TemporaryChanges.ContainsKey(Index))
-                    {
-                        var Temp = TemporaryChanges[Index];
-                        ApplyColorBlock(Temp.Fore, Temp.Back);
-                        TextBoxCustomText.Text = Temp.Text;
-                    }
-                    else
-                    {
-                        GetNewData();
-                    }
-                });
-            }
-
-            UserChanged();
-        }
-
         private void ColorLabels_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
@@ -158,16 +223,6 @@ namespace PlainCEETimer.Dialogs
                     SaveTemp();
                 }
             }
-        }
-
-        private void TextBoxCustomText_TextChanged(object sender, EventArgs e)
-        {
-            if (!IsEditMode)
-            {
-                WhenLoaded(SaveTemp);
-            }
-
-            UserChanged();
         }
 
         private void LinkReset_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
