@@ -69,7 +69,7 @@ jobs:
           + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新" >content.txt
 
       - name: Upload to Pre-Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: Preview
           files: |
