@@ -548,7 +548,7 @@ namespace PlainCEETimer.Forms
             SetLabelAutoWrap(LabelPptsvc);
             CompactControlY(CheckBoxPptSvc, LabelPptsvc);
             AlignControlLeft(CheckBoxPptSvc, CheckBoxDraggable);
-            GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, isHighDpi ? 19 : 7);
+            GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 0);
 
 
             GroupBoxArrageFirst(LabelFont);

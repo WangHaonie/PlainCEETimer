@@ -144,6 +144,7 @@ namespace PlainCEETimer.Dialogs
             CompactControlX(TextBoxCustomText, LabelCustomText);
             ArrangeControlXTop(LinkResetText, TextBoxCustomText);
             AlignControlTop(LinkResetText, LabelCustomText, -1);
+            AlignControlLeft(LinkResetText, LinkResetColor);
             ArrangeControlYRight(ButtonB, LinkResetText, -3);
             CompactControlY(ButtonB, TextBoxCustomText, 3);
             ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
