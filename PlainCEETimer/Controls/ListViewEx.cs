@@ -76,7 +76,7 @@ namespace PlainCEETimer.Controls
 
             if (ListViewHelper.HasHScrollBar(Handle))
             {
-                LastColumn.Width = w -= ThemeManager.VerticalScrollBarWidth;
+                LastColumn.Width -= ThemeManager.VerticalScrollBarWidth;
             }
 
             if (ListViewHelper.HasHScrollBar(Handle))
