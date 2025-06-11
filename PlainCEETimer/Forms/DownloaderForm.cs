@@ -13,6 +13,9 @@ namespace PlainCEETimer.Forms
 {
     public sealed class DownloaderForm : AppForm
     {
+        private bool IsCancelled;
+        private string DownloadUrl;
+        private string DownloadPath;
         private Label LabelDownloading;
         private Label LabelSize;
         private Label LabelSpeed;
@@ -20,9 +23,6 @@ namespace PlainCEETimer.Forms
         private PlainButton ButtonRetry;
         private PlainButton ButtonCancel;
         private Hyperlink LinkBrowser;
-        private bool IsCancelled;
-        private string DownloadUrl;
-        private string DownloadPath;
         private readonly string TargetVersion;
         private readonly long UpdateSize;
         private readonly CancellationTokenSource cts = new();

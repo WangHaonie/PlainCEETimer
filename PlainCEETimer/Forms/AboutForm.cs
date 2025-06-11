@@ -9,6 +9,8 @@ namespace PlainCEETimer.Forms
 {
     public sealed class AboutForm : AppForm
     {
+        private bool IsCheckingUpdate;
+        private string VersionString;
         private PlainButton ButtonOK;
         private Label LabelInfo;
         private Label LabelLicense;
@@ -16,8 +18,6 @@ namespace PlainCEETimer.Forms
         private PictureBox ImageLogo;
         private Hyperlink LinkFeedback;
         private Hyperlink LinkTutorial;
-        private bool IsCheckingUpdate;
-        private string VersionString;
 
         public AboutForm() : base(AppFormParam.CenterScreen) { }
 
@@ -28,7 +28,7 @@ namespace PlainCEETimer.Forms
 
             this.AddControls(b =>
             [
-                ImageLogo = b.Image(5, 3, App.AppIcon.ToBitmap()).With(x =>
+                ImageLogo = b.Image(App.AppIcon.ToBitmap()).With(x =>
                 {
                     x.Cursor = Cursors.Help;
                     x.MouseClick += (_, e) =>

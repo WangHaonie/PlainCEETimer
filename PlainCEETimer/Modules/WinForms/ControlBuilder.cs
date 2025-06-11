@@ -136,22 +136,17 @@ namespace PlainCEETimer.Modules.WinForms
 
         public PlainTextBox TextBox(int w, EventHandler onTextChanged)
         {
-            return TextBox(0, 0, w, onTextChanged);
-        }
-
-        public PlainTextBox TextBox(int x, int y, int w, EventHandler onTextChanged)
-        {
             var ctrl = new PlainTextBox();
-            ctrl.SetBounds(x, y, w, 23);
+            ctrl.SetBounds(0, 0, w, 23);
             ctrl.MaxLength = Validator.MaxCustomTextLength;
             ctrl.TextChanged += onTextChanged;
             return ctrl;
         }
 
-        public PictureBox Image(int x, int y, Image img)
+        public PictureBox Image(Image img)
         {
             var ctrl = new PictureBox() { Image = img };
-            ctrl.SetBounds(x, y, 32, 32);
+            ctrl.SetBounds(5, 3, 32, 32);
             ctrl.SizeMode = PictureBoxSizeMode.Zoom;
             return ctrl;
         }
@@ -171,16 +166,17 @@ namespace PlainCEETimer.Modules.WinForms
             return ctrl;
         }
 
-        public TContainer Container<TContainer>(int x, int y, int w, int h, Control[] controls)
-            where TContainer : Control, new()
+        public PlainGroupBox GroupBox(string text, Control[] controls)
         {
-            return Container<TContainer>(x, y, w, h, null, controls);
+            var ctrl = new PlainGroupBox() { Text = text };
+            ctrl.SetBounds(6, 6, 323, 0);
+            ctrl.Controls.AddRange(controls);
+            return ctrl;
         }
 
-        public TContainer Container<TContainer>(int x, int y, int w, int h, string text, Control[] controls)
-            where TContainer : Control, new()
+        public Panel Panel(int x, int y, int w, int h, Control[] controls)
         {
-            var ctrl = new TContainer() { Text = text };
+            var ctrl = new Panel();
             ctrl.SetBounds(x, y, w, h);
             ctrl.Controls.AddRange(controls);
             return ctrl;

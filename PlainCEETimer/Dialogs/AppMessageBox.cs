@@ -18,7 +18,7 @@ namespace PlainCEETimer.Dialogs
         {
             this.AddControls(b =>
             [
-                ImageIcon = b.Image(5, 3, icon),
+                ImageIcon = b.Image(icon),
                 LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
             ]);
 
@@ -35,7 +35,7 @@ namespace PlainCEETimer.Dialogs
 
             if (ButtonA.Left < ImageIcon.Right)
             {
-                ButtonA.Left = ImageIcon.Right;
+                AlignControlLeft(ButtonA, LabelMessage, 2);
                 ArrangeControlXTop(ButtonB, ButtonA, 3);
             }
 
@@ -44,23 +44,6 @@ namespace PlainCEETimer.Dialogs
                 CompactControlY(ButtonA, ImageIcon);
                 ArrangeControlXTop(ButtonB, ButtonA, 3);
             }
-        }
-
-        public DialogResult ShowCore(AppForm owner, string title)
-        {
-            Text = title;
-
-            if (owner == null)
-            {
-                AddParam(AppFormParam.CenterScreen);
-            }
-            else
-            {
-                StartPosition = FormStartPosition.CenterParent;
-            }
-
-            ShowDialog(owner);
-            return Result;
         }
 
         protected override void OnLoad()
@@ -109,6 +92,23 @@ namespace PlainCEETimer.Dialogs
             }
 
             base.OnKeyDown(e);
+        }
+
+        public DialogResult ShowCore(AppForm owner, string title)
+        {
+            Text = title;
+
+            if (owner == null)
+            {
+                AddParam(AppFormParam.CenterScreen);
+            }
+            else
+            {
+                StartPosition = FormStartPosition.CenterParent;
+            }
+
+            ShowDialog(owner);
+            return Result;
         }
     }
 }

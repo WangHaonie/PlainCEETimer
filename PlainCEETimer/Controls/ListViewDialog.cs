@@ -38,7 +38,7 @@ namespace PlainCEETimer.Controls
         protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : base(AppFormParam.AllControl)
         {
             ListViewMain.Headers = headers;
-            ListViewMain.Size = new Size(listViewWidth, 218);
+            ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
 
             if (groups != null && groups.Length != 0)
             {
@@ -108,8 +108,6 @@ namespace PlainCEETimer.Controls
 
             base.OnInitializing();
         }
-
-        protected virtual void OnClickButtonExtra(object sender, EventArgs e) { }
 
         protected override void StartLayout(bool isHighDpi)
         {

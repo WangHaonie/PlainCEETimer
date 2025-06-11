@@ -49,7 +49,7 @@ namespace PlainCEETimer.Forms
         private const int BorderRadius = 13;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
-        private string CountdownContent = "正在加载中...";
+        private string CountdownContent;
         private string ExamName;
         private string[] GlobalTexts;
         private CountdownMode Mode;
@@ -91,7 +91,7 @@ namespace PlainCEETimer.Forms
             StartPosition = FormStartPosition.Manual;
             AutoSize = false;
             AutoSizeMode = AutoSizeMode.GrowOnly;
-            ClientSize = new(32, 32);
+            ClientSize = new(16, 16);
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
@@ -115,7 +115,6 @@ namespace PlainCEETimer.Forms
             RefreshSettings();
             ValidateNeeded = false;
             Task.Run(() => new Updater().CheckForUpdate(false, this));
-            new SettingsForm().ReActivate();
         }
 
         #region

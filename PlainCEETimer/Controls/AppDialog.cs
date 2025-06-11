@@ -34,11 +34,6 @@ namespace PlainCEETimer.Controls
             }
         }
 
-        protected override bool OnClosing(CloseReason closeReason)
-        {
-            return IsUserChanged && ShowUnsavedWarning("是否保存当前更改？", OnClickButtonA, ref IsUserChanged);
-        }
-
         protected virtual bool OnClickButtonA()
         {
             IsUserChanged = false;
@@ -51,6 +46,11 @@ namespace PlainCEETimer.Controls
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        protected override bool OnClosing(CloseReason closeReason)
+        {
+            return IsUserChanged && ShowUnsavedWarning("是否保存当前更改？", OnClickButtonA, ref IsUserChanged);
         }
 
         protected void UserChanged()

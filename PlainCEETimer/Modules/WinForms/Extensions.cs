@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Controls;
 
 namespace PlainCEETimer.Modules.WinForms
 {
     public static class Extensions
     {
-        public static void AddControls(this AppForm form, Func<ControlBuilder, Control[]> builder)
+        public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
         {
-            form.Controls.AddRange(builder(new()));
+            ctrl.Controls.AddRange(builder(new()));
         }
 
         public static TControl With<TControl>(this TControl control, Action<TControl> additions)
