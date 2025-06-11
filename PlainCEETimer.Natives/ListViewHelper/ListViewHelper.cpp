@@ -87,3 +87,8 @@ void FlushListViewTheme(HWND hLV, COLORREF colorHFore, int enable)
 
     SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
+
+BOOL HasHScrollBar(HWND hWnd)
+{
+    return ((GetWindowLongPtr(hWnd, GWL_STYLE)) & WS_HSCROLL) != 0;
+}

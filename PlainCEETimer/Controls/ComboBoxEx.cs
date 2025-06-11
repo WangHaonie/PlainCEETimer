@@ -8,7 +8,6 @@ namespace PlainCEETimer.Controls
     public sealed class ComboBoxEx : ComboBox
     {
         private bool Calculated;
-        private static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
 
         public ComboBoxEx()
         {
@@ -52,7 +51,7 @@ namespace PlainCEETimer.Controls
                     MaxWidth = Math.Max(MaxWidth, TextRenderer.MeasureText(GetItemText(Item), Font).Width);
                 }
 
-                DropDownWidth = MaxWidth + VerticalScrollBarWidth;
+                DropDownWidth = MaxWidth + ThemeManager.VerticalScrollBarWidth;
                 Calculated = true;
             }
 

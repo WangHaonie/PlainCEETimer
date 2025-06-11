@@ -16,6 +16,7 @@ namespace PlainCEETimer.Interop
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
+        public static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
         private static readonly int DwmaType;
 
         static ThemeManager()

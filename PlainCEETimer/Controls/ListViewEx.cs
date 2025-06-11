@@ -28,6 +28,7 @@ namespace PlainCEETimer.Controls
             }
         }
 
+        private ColumnHeader LastColumn;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public ListViewEx()
@@ -70,10 +71,23 @@ namespace PlainCEETimer.Controls
             {
                 column.Width = -2;
             }
+
+            int w = LastColumn.Width;
+
+            if (ListViewHelper.HasHScrollBar(Handle))
+            {
+                LastColumn.Width = w -= ThemeManager.VerticalScrollBarWidth;
+            }
+
+            if (ListViewHelper.HasHScrollBar(Handle))
+            {
+                LastColumn.Width = w;
+            }
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
+            LastColumn = Columns[Headers.Length - 1];
             ListViewHelper.FlushTheme(Handle, ThemeManager.DarkFore.ToWin32(), UseDark.ToWin32());
             base.OnHandleCreated(e);
         }
