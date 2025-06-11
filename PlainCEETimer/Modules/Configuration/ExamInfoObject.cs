@@ -117,5 +117,10 @@ namespace PlainCEETimer.Modules.Configuration
                 return (17 * 23 + Name.GetHashCode()) * 23 + StartInternalTicks.GetHashCode() + EndInternalTicks.GetHashCode();
             }
         }
+
+        bool IListViewData<ExamInfoObject>.InternalEquals(ExamInfoObject other)
+        {
+            return Equals(other);
+        }
     }
 }

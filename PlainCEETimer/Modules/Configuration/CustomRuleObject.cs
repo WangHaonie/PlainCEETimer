@@ -52,5 +52,10 @@ namespace PlainCEETimer.Modules.Configuration
                 return (37 * 31 + Phase.GetHashCode()) * 31 + Tick.GetHashCode();
             }
         }
+
+        bool IListViewData<CustomRuleObject>.InternalEquals(CustomRuleObject other)
+        {
+            return Equals(other) && Text == other.Text && Colors.Equals(Colors);
+        }
     }
 }

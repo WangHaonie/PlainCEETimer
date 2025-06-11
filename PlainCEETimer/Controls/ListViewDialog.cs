@@ -230,7 +230,7 @@ namespace PlainCEETimer.Controls
 
         private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
         {
-            if (ItemsSet.Add(newData))
+            if (ItemsSet.Add(newData) || !newData.InternalEquals(oldData))
             {
                 RemoveItem(item, oldData);
                 AddItemCore(newData);
