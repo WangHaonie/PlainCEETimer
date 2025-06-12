@@ -100,7 +100,6 @@ namespace PlainCEETimer.Controls
         {
             OnClosed();
             base.OnClosed(e);
-            Dispose(true);
         }
 
         #region
@@ -165,7 +164,7 @@ namespace PlainCEETimer.Controls
         protected virtual void StartLayout(bool isHighDpi) { }
 
         /// <summary>
-        /// 在 <see cref="AppForm"/> 加载时触发。该方法没有默认实现，可不调用 base.OnLoad();
+        /// 在 <see cref="AppForm"/> 加载时触发。该方法没有默认实现，直接派生自 <see cref="AppForm"/> 的类可不调用 base.OnLoad();
         /// </summary>
         protected virtual void OnLoad() { }
 

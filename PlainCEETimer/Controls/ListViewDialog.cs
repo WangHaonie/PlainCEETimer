@@ -87,7 +87,7 @@ namespace PlainCEETimer.Controls
             [
                 b.Item("添加(&A)", (_, _) =>
                 {
-                    var SubDialog = GetSubDialog();
+                    using var SubDialog = GetSubDialog();
 
                     if (SubDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -169,7 +169,7 @@ namespace PlainCEETimer.Controls
         {
             var TargetItem = ListViewMain.SelectedItems[0];
             var TargetItemData = (TData)TargetItem.Tag;
-            var SubDialog = GetSubDialog(TargetItemData);
+            using var SubDialog = GetSubDialog(TargetItemData);
 
             if (SubDialog.ShowDialog() == DialogResult.OK)
             {
@@ -188,9 +188,9 @@ namespace PlainCEETimer.Controls
                         RemoveItem(Item, (TData)Item.Tag);
                     }
 
-                    ListViewMain.AutoAdjustColumnWidth();
                 });
 
+                ListViewMain.AutoAdjustColumnWidth();
                 UserChanged();
             }
         }
@@ -217,7 +217,7 @@ namespace PlainCEETimer.Controls
             else
             {
                 MessageX.Error($"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
-                var SubDialog = GetSubDialog(data);
+                using var SubDialog = GetSubDialog(data);
 
                 if (SubDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -236,7 +236,7 @@ namespace PlainCEETimer.Controls
             else if (!newData.Equals(oldData))
             {
                 MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
-                var SubDialog = GetSubDialog(newData);
+                using var SubDialog = GetSubDialog(newData);
 
                 if (SubDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -252,9 +252,9 @@ namespace PlainCEETimer.Controls
                 ListViewMain.SelectAll(false);
                 AddItem(data, true);
                 ListViewMain.Sort();
-                ListViewMain.AutoAdjustColumnWidth();
             });
 
+            ListViewMain.AutoAdjustColumnWidth();
             UserChanged();
         }
 

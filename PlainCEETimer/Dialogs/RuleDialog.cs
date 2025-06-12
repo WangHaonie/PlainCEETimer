@@ -216,7 +216,7 @@ namespace PlainCEETimer.Dialogs
         private void ColorLabels_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
-            var ColorDialogMain = new ColorDialogEx();
+            using var ColorDialogMain = new ColorDialogEx();
 
             if (ColorDialogMain.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
             {
