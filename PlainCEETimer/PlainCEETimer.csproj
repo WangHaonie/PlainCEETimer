@@ -103,87 +103,88 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\AppForm.cs">
+    <Compile Include="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\AppDialog.cs">
+    <Compile Include="UI\Controls\AppDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\ComboBoxEx.cs">
+    <Compile Include="UI\Controls\ComboBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\FontDialogEx.cs">
+    <Compile Include="UI\Controls\FontDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\Hyperlink.cs">
+    <Compile Include="UI\Controls\Hyperlink.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\ListViewDialog.cs">
+    <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\ListViewEx.cs">
+    <Compile Include="UI\Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\NavigationBar.cs">
+    <Compile Include="UI\Controls\NavigationBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\NavigationPage.cs">
+    <Compile Include="UI\Controls\NavigationPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainButton.cs">
+    <Compile Include="UI\Controls\PlainButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainCheckBox.cs">
+    <Compile Include="UI\Controls\PlainCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainGroupBox.cs">
+    <Compile Include="UI\Controls\PlainGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainNumericUpDown.cs">
+    <Compile Include="UI\Controls\PlainNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainRadioButton.cs">
+    <Compile Include="UI\Controls\PlainRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PlainTextBox.cs">
+    <Compile Include="UI\Controls\PlainTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Dialogs\CustomTextDialog.cs">
+    <Compile Include="UI\Dialogs\CustomTextDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\ExamInfoDialog.cs">
+    <Compile Include="UI\Dialogs\ExamInfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\AppMessageBox.cs">
+    <Compile Include="UI\Dialogs\AppMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\ExamInfoManager.cs">
+    <Compile Include="UI\Dialogs\ExamInfoManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\RuleDialog.cs">
+    <Compile Include="UI\Dialogs\RuleDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\RulesManager.cs">
+    <Compile Include="UI\Dialogs\RulesManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.cs">
+    <Compile Include="UI\Enums.cs" />
+    <Compile Include="UI\Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AboutForm.cs">
+    <Compile Include="UI\Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DownloaderForm.cs">
+    <Compile Include="UI\Forms\DownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SettingsForm.cs">
+    <Compile Include="UI\Forms\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\ColorDialogEx.cs">
+    <Compile Include="UI\Controls\ColorDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Interop\CommonDialogHelper.cs" />
     <Compile Include="Interop\Win32User.cs" />
-    <Compile Include="Modules\ContextMenuBuilder.cs" />
+    <Compile Include="UI\ContextMenuBuilder.cs" />
     <Compile Include="Interop\IconHelper.cs" />
     <Compile Include="Interop\ListViewHelper.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
@@ -199,37 +200,37 @@
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
     <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
     <Compile Include="Modules\Constants.cs" />
-    <Compile Include="Modules\WinForms\ControlBuilder.cs" />
+    <Compile Include="UI\ControlBuilder.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />
     <Compile Include="Modules\Enums.cs" />
     <Compile Include="Modules\Extensions\Extensions.cs" />
     <Compile Include="Modules\Http\DownloadReport.cs" />
     <Compile Include="Modules\Http\HttpService.cs" />
-    <Compile Include="Modules\ICommonDialog.cs" />
+    <Compile Include="UI\ICommonDialog.cs" />
     <Compile Include="Modules\IListViewData.cs" />
-    <Compile Include="Modules\IListViewSubDialog.cs" />
+    <Compile Include="UI\IListViewSubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
-    <Compile Include="Modules\ComboData.cs" />
+    <Compile Include="UI\ComboData.cs" />
     <Compile Include="Modules\OptimizationHelper.cs" />
-    <Compile Include="Modules\PlainButtonBase.cs" />
+    <Compile Include="UI\PlainButtonBase.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\UACHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
-    <Compile Include="Modules\MessageBoxHelper.cs" />
+    <Compile Include="UI\MessageBoxHelper.cs" />
     <Compile Include="Modules\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
-    <Compile Include="Controls\PlainLinkLabel.cs">
+    <Compile Include="UI\Controls\PlainLinkLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Modules\WinForms\Extensions.cs" />
+    <Compile Include="UI\Extensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\app.manifest" />

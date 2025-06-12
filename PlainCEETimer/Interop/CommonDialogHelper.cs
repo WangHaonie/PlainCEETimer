@@ -2,9 +2,10 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using PlainCEETimer.Controls;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI;
+using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {

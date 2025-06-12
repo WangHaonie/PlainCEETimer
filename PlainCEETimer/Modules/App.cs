@@ -5,10 +5,11 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI;
+using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules
 {

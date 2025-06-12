@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using PlainCEETimer.Forms;
+using PlainCEETimer.UI;
+using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {

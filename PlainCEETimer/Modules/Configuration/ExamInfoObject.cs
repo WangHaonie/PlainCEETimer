@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
+using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {

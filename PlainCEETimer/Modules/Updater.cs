@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using PlainCEETimer.Controls;
-using PlainCEETimer.Forms;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
+using PlainCEETimer.UI;
+using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules
 {
