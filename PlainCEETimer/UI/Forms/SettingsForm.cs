@@ -173,7 +173,7 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonExamInfo = b.Button("管理(&G)", (_, _) =>
                             {
-                                using var ExamMan = new ExamInfoManager()
+                                var ExamMan = new ExamInfoManager()
                                 {
                                     Data = EditedExamInfo
                                 };
@@ -293,7 +293,7 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
                             {
-                                using var Manager = new RulesManager()
+                                var Manager = new RulesManager()
                                 {
                                     Data = EditedCustomRules,
                                     ColorPresets = SelectedColors,
@@ -366,7 +366,7 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonFont = b.Button("选择字体(&F)", true, true, (_, _) =>
                             {
-                                using var Dialog = new FontDialogEx(SelectedFont);
+                                var Dialog = new FontDialogEx(SelectedFont);
 
                                 if (Dialog.ShowDialog(this) == DialogResult.OK)
                                 {
@@ -636,7 +636,7 @@ namespace PlainCEETimer.UI.Forms
         private void ColorBlocks_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
-            using var Dialog = new ColorDialogEx();
+            var Dialog = new ColorDialogEx();
 
             if (Dialog.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
             {

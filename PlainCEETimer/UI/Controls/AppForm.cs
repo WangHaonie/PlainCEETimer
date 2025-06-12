@@ -100,6 +100,7 @@ namespace PlainCEETimer.UI.Controls
         {
             OnClosed();
             base.OnClosed(e);
+            Dispose(true);
         }
 
         #region

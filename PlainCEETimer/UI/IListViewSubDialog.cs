@@ -1,10 +1,9 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI
 {
-    public interface IListViewSubDialog<T> : IDisposable
+    public interface IListViewSubDialog<T>
         where T : IListViewData<T>
     {
         T Data { get; set; }
