@@ -392,7 +392,6 @@ namespace PlainCEETimer.UI.Controls
 
         protected void SetLabelAutoWrap(Label Target, int MaxWidth)
         {
-            #region 来自网络
             /*
             
             Label 控件自动换行 参考:
@@ -401,9 +400,9 @@ namespace PlainCEETimer.UI.Controls
             https://stackoverflow.com/a/3680595/21094697
 
             */
+
             Target.MaximumSize = new(MaxWidth, 0);
             Target.AutoSize = true;
-            #endregion
         }
 
         protected void KeepOnScreen()

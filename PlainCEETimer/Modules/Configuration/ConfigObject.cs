@@ -55,7 +55,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        } = [Constants.PH_P1, Constants.PH_P2, Constants.PH_P3];
+        } = DefaultValues.GlobalDefaultCustomTexts;
 
         public ColorSetObject[] GlobalColors
         {

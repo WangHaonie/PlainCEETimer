@@ -11,6 +11,7 @@ namespace PlainCEETimer.UI.Controls
         {
             FlatStyle = FlatStyle.System;
             UseVisualStyleBackColor = true;
+            DoubleBuffered = true;
         }
 
         protected override void OnHandleCreated(EventArgs e)

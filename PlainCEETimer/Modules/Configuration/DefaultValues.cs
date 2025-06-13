@@ -9,6 +9,7 @@ namespace PlainCEETimer.Modules.Configuration
     {
         public static bool AutoDarkCountdown { get; }
         public static int[] ColorDialogColors { get; }
+        public static string[] GlobalDefaultCustomTexts { get; }
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
         public static Font CountdownDefaultFont { get; }
@@ -38,6 +39,7 @@ namespace PlainCEETimer.Modules.Configuration
                 new(Color.White, Color.Black)
             ];
 
+            GlobalDefaultCustomTexts = [Constants.PH_P1, Constants.PH_P2, Constants.PH_P3];
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
             AutoDarkCountdown = !File.Exists(App.ConfigFilePath) && ThemeManager.CurrentTheme != SystemTheme.None;
         }
