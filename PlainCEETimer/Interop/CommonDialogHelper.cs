@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -26,7 +27,7 @@ namespace PlainCEETimer.Interop
         private const int stc4 = 0x0443;
         private const int cmb4 = 0x0473;
 
-        private RECT DialogRect;
+        private Rectangle DialogRect;
         private readonly string DialogTitle;
         private readonly CommonDialogKind DialogKind;
         private readonly ICommonDialog Dialog;
@@ -77,7 +78,7 @@ namespace PlainCEETimer.Interop
                 case WM_INITDIALOG:
                     if (DialogTitle != null)
                     {
-                        SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, DialogTitle);
+                        SendMessageW(hWnd, WM_SETTEXT, IntPtr.Zero, Marshal.StringToHGlobalUni(DialogTitle));
                     }
 
                     if (DialogKind == CommonDialogKind.Font && !((FontDialogEx)Dialog).ShowColor)
@@ -101,9 +102,11 @@ namespace PlainCEETimer.Interop
                         FlushDark(hWnd);
                     }
 
-                    GetWindowRect(hWnd, ref DialogRect);
+                    RECT r = new();
+                    GetWindowRect(hWnd, ref r);
+                    DialogRect = r.ToRectangle();
                     KeepOnScreen(hWnd);
-                    PostMessage(hWnd, WM_SETFOCUS, 0, 0);
+                    PostMessage(hWnd, WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
                     break;
                 case WM_CTLCOLORDLG:
                 case WM_CTLCOLOREDIT:
@@ -140,8 +143,8 @@ namespace PlainCEETimer.Interop
         private void KeepOnScreen(IntPtr hWnd)
         {
             var validArea = Screen.GetWorkingArea(Parent);
-            var DialogWidth = DialogRect.Right - DialogRect.Left;
-            var DialogHeight = DialogRect.Bottom - DialogRect.Top;
+            var DialogWidth = DialogRect.Width;
+            var DialogHeight = DialogRect.Height;
             var X = Parent.Left + (Parent.Width / 2) - (DialogWidth / 2);
             var Y = Parent.Top + (Parent.Height / 2) - (DialogHeight / 2);
             var l = X;
@@ -204,11 +207,11 @@ namespace PlainCEETimer.Interop
         [DllImport(App.User32Dll)]
         private static extern IntPtr SetFocus(IntPtr hWnd);
 
-        [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
+        [DllImport(App.User32Dll)]
+        private static extern IntPtr SendMessageW(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
-        private static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+        private static extern IntPtr PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
@@ -217,6 +220,11 @@ namespace PlainCEETimer.Interop
             public int Top;
             public int Right;
             public int Bottom;
+
+            public readonly Rectangle ToRectangle()
+            {
+                return Rectangle.FromLTRB(Left, Top, Right, Bottom);
+            }
         }
     }
 }

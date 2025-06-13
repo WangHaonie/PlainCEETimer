@@ -68,7 +68,7 @@ namespace PlainCEETimer.UI.Forms
         private NavigationPage PageAppearance;
         private NavigationPage PageDisplay;
         private NavigationPage PageGeneral;
-        private NavigationPage PageTools;
+        private NavigationPage PageAdvanced;
         private Panel PageNavPages;
         private PlainButton ButtonCancel;
         private PlainButton ButtonDefaultColor;
@@ -407,7 +407,7 @@ namespace PlainCEETimer.UI.Forms
                         ])
                     ]),
 
-                    PageTools = b.Page(
+                    PageAdvanced = b.Page(
                     [
                         GBoxSyncTime = b.GroupBox("同步网络时钟",
                         [
@@ -459,7 +459,7 @@ namespace PlainCEETimer.UI.Forms
 
                 b.Panel(1, 1, 54, 260,
                 [
-                    NavBar = new NavigationBar(["基本", "显示", "外观", "工具"], [PageGeneral, PageDisplay, PageAppearance, PageTools], PageNavPages)
+                    NavBar = new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced], PageNavPages)
                     {
                         Indent = ScaleToDpi(5),
                         ItemHeight = ScaleToDpi(25)
@@ -785,7 +785,7 @@ namespace PlainCEETimer.UI.Forms
             try
             {
                 var ExitCode = (int)ProcessHelper.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{Server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", 2, true);
-                SwitchToToolsSafe();
+                SwitchToAdvancedSafe();
                 MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
             }
             #region 来自网络
@@ -799,13 +799,13 @@ namespace PlainCEETimer.UI.Forms
             */
             catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
             {
-                SwitchToToolsSafe();
+                SwitchToAdvancedSafe();
                 MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
             }
             #endregion
             catch (Exception ex)
             {
-                SwitchToToolsSafe();
+                SwitchToAdvancedSafe();
                 MessageX.Error("命令执行时发生了错误。", ex);
             }
             finally
@@ -865,9 +865,9 @@ namespace PlainCEETimer.UI.Forms
             }
         }
 
-        private void SwitchToToolsSafe()
+        private void SwitchToAdvancedSafe()
         {
-            BeginInvoke(() => NavBar.SwitchTo(PageTools));
+            BeginInvoke(() => NavBar.SwitchTo(PageAdvanced));
         }
 
         private bool Save()
