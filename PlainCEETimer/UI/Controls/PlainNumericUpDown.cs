@@ -22,9 +22,9 @@ namespace PlainCEETimer.UI.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                foreach (Control udbutton in Controls)
+                foreach (Control control in Controls)
                 {
-                    ThemeManager.FlushControl(udbutton, NativeStyle.Explorer);
+                    ThemeManager.FlushControl(control, NativeStyle.Explorer);
                 }
             }
 

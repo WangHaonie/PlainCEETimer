@@ -7,7 +7,12 @@ namespace PlainCEETimer.UI
     {
         public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
         {
-            ctrl.Controls.AddRange(builder(new()));
+            var ctrls = builder(new());
+
+            for (int i = 0; i < ctrls.Length; i++)
+            {
+                ctrl.Controls.Add(ctrls[i]);
+            }
         }
 
         public static TControl With<TControl>(this TControl control, Action<TControl> additions)
