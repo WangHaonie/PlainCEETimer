@@ -21,7 +21,6 @@ namespace PlainCEETimer.UI.Dialogs
             ]);
 
             base.OnInitializing();
-
             ButtonA.Enabled = true;
         }
 

@@ -6,12 +6,12 @@ namespace PlainCEETimer.UI.Controls
 {
     public class NavigationPage : Panel
     {
-        /// <summary>
-        /// 初始化新的 <see cref="NavigationPage"/> 实例。
-        /// </summary>
+        public int Index { get; internal set; }
+
         public NavigationPage()
         {
             BackColor = ThemeManager.ShouldUseDarkMode ? ThemeManager.DarkBack : SystemColors.Window;
+            Dock = DockStyle.Fill;
             Visible = false;
         }
     }

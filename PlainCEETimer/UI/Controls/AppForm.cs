@@ -218,6 +218,11 @@ namespace PlainCEETimer.UI.Controls
             return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
         }
 
+        protected void ArrangeFirst(Control target, int x, int y)
+        {
+            target.SetBounds(x, y, 0, 0, BoundsSpecified.Location);
+        }
+
         /// <summary>
         /// 参考指定控件，在 X 方向上水平排列目标控件
         /// </summary>
@@ -231,16 +236,14 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlXTop(Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference.Right + ScaleToDpi(xOffset);
-            target.Top = reference.Top + ScaleToDpi(yOffset);
+            target.SetBounds(reference.Right + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
         /// <summary>
         /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
         /// </summary>
         protected void ArrangeControlXTopRtl(Control target, Control reference, int xOffset = 0)
         {
-            target.Left = reference.Left - target.Width + ScaleToDpi(xOffset);
-            target.Top = reference.Top;
+            target.SetBounds(reference.Left - target.Width + ScaleToDpi(xOffset), reference.Top, 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -248,8 +251,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlXRightTop(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference1.Right + ScaleToDpi(xOffset);
-            target.Top = reference2.Top + ScaleToDpi(yOffset);
+            target.SetBounds(reference1.Right + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -257,8 +259,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlXRightTopRtl(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference1.Right - target.Width + ScaleToDpi(xOffset);
-            target.Top = reference2.Top + ScaleToDpi(yOffset);
+            target.SetBounds(reference1.Right - target.Width + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -266,8 +267,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlXLeftTop(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference1.Left + ScaleToDpi(xOffset);
-            target.Top = reference2.Top + ScaleToDpi(yOffset);
+            target.SetBounds(reference1.Left + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -275,8 +275,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlXLeftTopRtl(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference1.Left - target.Width + ScaleToDpi(xOffset);
-            target.Top = reference2.Top + ScaleToDpi(yOffset);
+            target.SetBounds(reference1.Left - target.Width + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -284,8 +283,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlYLeft(Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference.Left + ScaleToDpi(xOffset);
-            target.Top = reference.Bottom + ScaleToDpi(yOffset);
+            target.SetBounds(reference.Left + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -293,14 +291,12 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void ArrangeControlYRight(Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = reference.Right - target.Width + ScaleToDpi(xOffset);
-            target.Top = reference.Bottom + ScaleToDpi(yOffset);
+            target.SetBounds(reference.Right - target.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         protected void GroupBoxArrageFirst(Control target, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = 6 + ScaleToDpi(xOffset);
-            target.Top = CurrentFontHeight + ScaleToDpi(yOffset);
+            target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
@@ -310,8 +306,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected void GroupBoxAlignControlRight(PlainGroupBox groupBox, Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
-            target.Left = groupBox.Width - target.Width + ScaleToDpi(xOffset);
-            target.Top = reference.Top + ScaleToDpi(yOffset);
+            target.SetBounds(groupBox.Width - target.Width + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
@@ -372,7 +367,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected void SetLocation(int x, int y)
         {
-            SetBoundsCore(x, y, Width, Height, BoundsSpecified.Location);
+            SetBounds(x, y, 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>

@@ -10,13 +10,7 @@ namespace PlainCEETimer.UI.Controls
         private readonly int ItemsCount;
         private readonly NavigationPage[] Pages;
 
-        /// <summary>
-        /// 初始化新的竖直导航栏实例。
-        /// </summary>
-        /// <param name="navItems">导航栏的项 (不支持多级)。</param>
-        /// <param name="pages">导航栏关联的相关页面。</param>
-        /// <param name="pagePresenter">用于显示页面的可滚动的控件</param>
-        public NavigationBar(string[] navItems, NavigationPage[] pages, ScrollableControl pagePresenter)
+        public NavigationBar(string[] navItems, NavigationPage[] pages)
         {
             BorderStyle = BorderStyle.None;
             Dock = DockStyle.Fill;
@@ -30,9 +24,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 for (int i = 0; i < ItemsCount; i++)
                 {
-                    var page = pages[i];
-                    page.Dock = DockStyle.Fill;
-                    page.Tag = i;
+                    pages[i].Index = i;
                     Nodes.Add(navItems[i]);
                 }
 
@@ -46,7 +38,7 @@ namespace PlainCEETimer.UI.Controls
         /// <param name="page"></param>
         public void SwitchTo(NavigationPage page)
         {
-            SwitchTo(Nodes[(int)page.Tag]);
+            SwitchTo(Nodes[page.Index]);
         }
 
         protected override void OnHandleCreated(EventArgs e)

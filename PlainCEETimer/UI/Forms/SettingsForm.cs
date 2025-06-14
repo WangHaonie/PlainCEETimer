@@ -118,13 +118,13 @@ namespace PlainCEETimer.UI.Forms
                 b.Item("白底(&L)", (_, _) =>
                 {
                     SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
-                    SettingsChanged(null, null);
+                    SettingsChanged();
                 }),
 
                 b.Item("黑底(&D)", (_, _) =>
                 {
                     SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
-                    SettingsChanged(null, null);
+                    SettingsChanged();
                 })
             ]);
 
@@ -304,7 +304,7 @@ namespace PlainCEETimer.UI.Forms
                                 {
                                     EditedCustomRules = Manager.Data;
                                     EditedCustomTexts = Manager.CustomTextPreset;
-                                    SettingsChanged(null, null);
+                                    SettingsChanged();
                                 }
                             }),
 
@@ -459,7 +459,7 @@ namespace PlainCEETimer.UI.Forms
 
                 b.Panel(1, 1, 54, 260,
                 [
-                    NavBar = new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced], PageNavPages)
+                    NavBar = new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced])
                     {
                         Indent = ScaleToDpi(5),
                         ItemHeight = ScaleToDpi(25)
@@ -642,14 +642,14 @@ namespace PlainCEETimer.UI.Forms
             {
                 LabelSender.BackColor = Dialog.Color;
                 UpdateSettingsArea(SettingsArea.SelectedColor);
-                SettingsChanged(sender, e);
+                SettingsChanged();
             }
         }
 
         private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
         {
             SelectedTheme = (int)((RadioButton)sender).Tag;
-            SettingsChanged(null, null);
+            SettingsChanged();
         }
 
         private ComboData[] GetScreensData()
@@ -747,7 +747,7 @@ namespace PlainCEETimer.UI.Forms
                 UpdateSettingsArea(SettingsArea.SetPPTService, false, 1);
             }
 
-            SettingsChanged(sender, e);
+            SettingsChanged();
         }
 
         private bool IsSettingsFormatValid()
