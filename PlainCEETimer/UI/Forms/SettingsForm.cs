@@ -26,7 +26,7 @@ namespace PlainCEETimer.UI.Forms
         private int SelectedTheme;
         private string[] EditedCustomTexts;
         private ColorSetObject[] SelectedColors;
-        private Action<Label> ColorBlocksBinding;
+        private Action<Label> ColorBlockBindings;
         private ComboBoxEx ComboBoxAutoSwitchInterval;
         private ComboBoxEx ComboBoxCountdownEnd;
         private ComboBoxEx ComboBoxNtpServers;
@@ -128,7 +128,7 @@ namespace PlainCEETimer.UI.Forms
                 })
             ]);
 
-            ColorBlocksBinding = c =>
+            ColorBlockBindings = c =>
             {
                 c.MouseDown += (_, e) => IsColorLabelsDragging = e.Button == MouseButtons.Left;
 
@@ -169,7 +169,7 @@ namespace PlainCEETimer.UI.Forms
                     [
                         GBoxExamInfo = b.GroupBox("考试信息",
                         [
-                            LabelExamInfo = b.Label(6, 19, "在此添加考试信息以启动倒计时。"),
+                            LabelExamInfo = b.Label("在此添加考试信息以启动倒计时。"),
 
                             ButtonExamInfo = b.Button("管理(&G)", (_, _) =>
                             {
@@ -391,14 +391,14 @@ namespace PlainCEETimer.UI.Forms
                             LabelColorWelcome = b.Label("[4]欢迎信息"),
                             ButtonDefaultColor = b.Button("恢复默认(&M)", true, true, (sender, _) => ShowBottonMenu(ContextMenuDefaultColor, sender)),
 
-                            BlockColor11 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor21 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor31 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor41 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor12 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor22 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor32 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
-                            BlockColor42 = b.Block(ColorBlocks_Click).With(ColorBlocksBinding),
+                            BlockColor11 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor21 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor31 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor41 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor12 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor22 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor32 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
+                            BlockColor42 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
 
                             BlockPreviewColor1 = b.Block($"距离...{Constants.PH_START}..."),
                             BlockPreviewColor2 = b.Block($"距离...{Constants.PH_LEFT}..."),
@@ -593,7 +593,7 @@ namespace PlainCEETimer.UI.Forms
             GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
 
-            ArrangeControlYRight(ButtonCancel, PageNavPages, -2, 3);
+            ArrangeControlYRight(ButtonCancel, PageNavPages, -4, 3);
             ArrangeControlXTopRtl(ButtonSave, ButtonCancel, -3);
         }
 

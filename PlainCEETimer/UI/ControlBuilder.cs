@@ -31,19 +31,6 @@ namespace PlainCEETimer.UI
             return Block(text, null);
         }
 
-        public Label Block(string text, EventHandler onClick)
-        {
-            var ctrl = Label(text);
-
-            if (onClick != null)
-            {
-                ctrl.Click += onClick;
-            }
-
-            ctrl.BorderStyle = BorderStyle.FixedSingle;
-            return ctrl;
-        }
-
         public PlainLinkLabel Link(string text, LinkLabelLinkClickedEventHandler onClick)
         {
             var ctrl = new PlainLinkLabel() { Text = text };
@@ -69,7 +56,7 @@ namespace PlainCEETimer.UI
         public PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick)
         {
             var ctrl = new PlainButton() { Text = text, Enabled = enabled };
-            ctrl.SetBounds(0, 0, 75, 25);
+            ctrl.SetBounds(0, 0, 75, 23);
 
             if (autoSize)
             {
@@ -188,6 +175,19 @@ namespace PlainCEETimer.UI
         {
             var ctrl = new TControl() { Text = text };
             ctrl.SetBounds(0, 0, w, h);
+            return ctrl;
+        }
+
+        private Label Block(string text, EventHandler onClick)
+        {
+            var ctrl = Label(text);
+
+            if (onClick != null)
+            {
+                ctrl.Click += onClick;
+            }
+
+            ctrl.BorderStyle = BorderStyle.FixedSingle;
             return ctrl;
         }
     }

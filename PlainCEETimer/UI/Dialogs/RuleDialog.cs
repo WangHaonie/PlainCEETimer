@@ -66,7 +66,7 @@ namespace PlainCEETimer.UI.Dialogs
                 LinkResetText = b.Link("重置", LinkReset_LinkClicked),
                 BlockFore = b.Block(ColorLabels_Click),
                 BlockBack = b.Block(ColorLabels_Click),
-                BlockPreview = b.Block("颜色效果预览", ColorLabels_Click),
+                BlockPreview = b.Block("颜色效果预览"),
 
                 TextBoxCustomText = b.TextBox(295, (_, _) =>
                 {

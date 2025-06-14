@@ -7,7 +7,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public class AppForm : Form
+    public abstract class AppForm : Form
     {
         /// <summary>
         /// 获取当前 <see cref="AppForm"/> 的消息框实例。
@@ -216,11 +216,6 @@ namespace PlainCEETimer.UI.Controls
         protected Rectangle GetCurrentScreenRect()
         {
             return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
-        }
-
-        protected void ArrangeFirst(Control target, int x, int y)
-        {
-            target.SetBounds(x, y, 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>

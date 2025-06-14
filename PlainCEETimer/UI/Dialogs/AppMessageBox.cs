@@ -32,7 +32,7 @@ namespace PlainCEETimer.UI.Dialogs
 
             if (ButtonA.Left < ImageIcon.Right)
             {
-                AlignControlLeft(ButtonA, LabelMessage, 2);
+                AlignControlLeft(ButtonA, LabelMessage, 3);
                 ArrangeControlXTop(ButtonB, ButtonA, 3);
             }
 
