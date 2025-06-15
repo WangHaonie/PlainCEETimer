@@ -191,22 +191,7 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            ComboBoxAutoSwitchInterval = b.ComboBox(86, false, SettingsChanged,
-                            [
-                                new("10 秒", 0),
-                                new("15 秒", 1),
-                                new("30 秒", 2),
-                                new("45 秒", 3),
-                                new("1 分钟", 4),
-                                new("2 分钟", 5),
-                                new("3 分钟", 6),
-                                new("5 分钟", 7),
-                                new("10 分钟", 8),
-                                new("15 分钟", 9),
-                                new("30 分钟", 10),
-                                new("45 分钟", 11),
-                                new("1 小时", 12),
-                            ])
+                            ComboBoxAutoSwitchInterval = b.ComboBox(86, false, SettingsChanged, "10 秒", "15 秒", "30 秒", "45 秒", "1 分钟", "2 分钟", "3 分钟", "5 分钟", "10 分钟", "15 分钟", "30 分钟", "45 分钟", "1 小时")
                         ]),
 
                         GBoxTheme = b.GroupBox("应用主题设定",
@@ -253,12 +238,7 @@ namespace PlainCEETimer.UI.Forms
                         [
                             LabelCountdownEnd = b.Label("当考试开始后, 显示"),
 
-                            ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged,
-                            [
-                                new("<程序欢迎信息>", 0),
-                                new("考试还有多久结束", 1),
-                                new("考试还有多久结束 和 已过去了多久", 2)
-                            ]),
+                            ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, "<程序欢迎信息>", "考试还有多久结束", "考试还有多久结束 和 已过去了多久"),
 
                             ComboBoxShowXOnly = b.ComboBox(38, false, (_, _) =>
                             {
@@ -266,13 +246,7 @@ namespace PlainCEETimer.UI.Forms
                                 CheckBoxCeiling.Visible = Index == 0;
                                 CheckBoxCeiling.Checked = Index == 0 && AppConfig.Display.Ceiling;
                                 SettingsChanged();
-                            },
-                            [
-                                new("天", 0),
-                                new("时", 1),
-                                new("分", 2),
-                                new("秒", 3)
-                            ]),
+                            }, "天", "时", "分", "秒"),
 
                             CheckBoxShowXOnly = b.CheckBox("只显示", (sender, _) =>
                             {
@@ -327,18 +301,7 @@ namespace PlainCEETimer.UI.Forms
 
                             LabelPosition = b.Label("位置"),
 
-                            ComboBoxPosition = b.ComboBox(84, ChangePptsvcStyle,
-                            [
-                                new("左上角", 0),
-                                new("左侧居中", 1),
-                                new("左下角", 2),
-                                new("顶部居中", 3),
-                                new("屏幕中心", 4),
-                                new("底部居中", 5),
-                                new("右上角", 6),
-                                new("右侧居中", 7),
-                                new("右下角", 8)
-                            ]),
+                            ComboBoxPosition = b.ComboBox(84, ChangePptsvcStyle, "左上角", "左侧居中", "左下角", "顶部居中", "屏幕中心", "底部居中", "右上角", "右侧居中", "右下角"),
 
                             CheckBoxDraggable = b.CheckBox("允许拖动倒计时窗口(&D)", (_, _) =>
                             {
@@ -413,13 +376,7 @@ namespace PlainCEETimer.UI.Forms
                         [
                             LabelSyncTime = b.Label("将尝试自动启动 Windows Time 服务, 并设置默认 NTP 服务器然后与之同步。"),
 
-                            ComboBoxNtpServers = b.ComboBox(130, SettingsChanged,
-                            [
-                                new("time.windows.com", 0),
-                                new("ntp.aliyun.com", 1),
-                                new("ntp.tencent.com", 2),
-                                new("time.cloudflare.com", 3)
-                            ]),
+                            ComboBoxNtpServers = b.ComboBox(130, SettingsChanged, "time.windows.com", "ntp.aliyun.com", "ntp.tencent.com", "time.cloudflare.com"),
 
                             ButtonSyncTime = b.Button("立即同步(&Y)", true, true, (_, _) =>
                             {
@@ -652,17 +609,17 @@ namespace PlainCEETimer.UI.Forms
             SettingsChanged();
         }
 
-        private ComboData[] GetScreensData()
+        private string[] GetScreensData()
         {
             var CurrentScreens = Screen.AllScreens;
             var Length = CurrentScreens.Length;
             Screen CurrentScreen;
-            var Monitors = new ComboData[Length];
+            var Monitors = new string[Length];
 
             for (int i = 0; i < Length; i++)
             {
                 CurrentScreen = CurrentScreens[i];
-                Monitors[i] = new(string.Format("{0} {1} ({2}x{3})", i + 1, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height), i);
+                Monitors[i] = string.Format("{0} {1} ({2}x{3})", i + 1, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height);
             }
 
             return Monitors;
@@ -950,11 +907,13 @@ namespace PlainCEETimer.UI.Forms
                     return Helper.GetState(KeyName, AppPath, "");
                 case 1:
                     if (Win32User.NotElevated) Helper.Set(KeyName, AppPath);
-                    return null;
+                    break;
                 default:
                     if (Win32User.NotElevated) Helper.Delete(KeyName);
-                    return null;
+                    break;
             }
+
+            return null;
         }
     }
 }
