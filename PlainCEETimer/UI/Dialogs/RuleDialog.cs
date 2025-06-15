@@ -100,12 +100,7 @@ namespace PlainCEETimer.UI.Dialogs
                     }
 
                     UserChanged();
-                },
-                [
-                    new(Constants.PH_RTP1, 0),
-                    new(Constants.PH_RTP2, 1),
-                    new(Constants.PH_RTP3, 2)
-                ]),
+                }, Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3),
 
                 NUDDays = b.NumericUpDown(53, 65535M, OnUserChanged),
                 NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),

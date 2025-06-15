@@ -26,7 +26,7 @@ namespace PlainCEETimer.UI.Dialogs
 
             this.AddControls(b =>
             [
-                ButtonGlobal = b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 25, BoundsSpecified.Size))
+                ButtonGlobal = b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 23, BoundsSpecified.Size))
             ]);
         }
 
