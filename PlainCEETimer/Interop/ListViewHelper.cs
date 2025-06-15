@@ -11,5 +11,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#10")]
         public static extern void FlushTheme(IntPtr hLV, int colorHFore, int enable);
+
+        [DllImport(App.NativesDll, EntryPoint = "#14")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool HasScrollBar(IntPtr hWnd, int isVertical);
     }
 }

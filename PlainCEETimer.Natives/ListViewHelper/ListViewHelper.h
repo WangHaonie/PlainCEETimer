@@ -6,3 +6,4 @@
 
 cexport(void) FlushListViewTheme(HWND hLV, COLORREF colorHFore, int enable);
 cexport(void) SelectAllItems(HWND hLV, int isSelected);
+cexport(BOOL) HasScrollBar(HWND hWnd, int isVertical);

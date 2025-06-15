@@ -14,7 +14,9 @@ namespace PlainCEETimer.UI.Controls
             get;
             set
             {
-                if (value != null && value.Length != 0)
+                var length = value.Length;
+
+                if (value != null && length != 0)
                 {
                     Columns.Clear();
 
@@ -22,12 +24,15 @@ namespace PlainCEETimer.UI.Controls
                     {
                         Columns.Add(new ColumnHeader() { Text = title });
                     }
+
+                    LastColumn = Columns[length - 1];
                 }
 
                 field = value;
             }
         }
 
+        private ColumnHeader LastColumn;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public ListViewEx()
@@ -70,6 +75,17 @@ namespace PlainCEETimer.UI.Controls
             {
                 column.Width = -2;
             }
+
+            if (HasScrollBar(true) && HasScrollBar(false))
+            {
+                int originalW = LastColumn.Width;
+                LastColumn.Width -= ThemeManager.VerticalScrollBarWidth;
+
+                if (HasScrollBar(false))
+                {
+                    LastColumn.Width = originalW;
+                }
+            }
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -83,6 +99,11 @@ namespace PlainCEETimer.UI.Controls
             e.NewWidth = Columns[e.ColumnIndex].Width;
             e.Cancel = true;
             base.OnColumnWidthChanging(e);
+        }
+
+        private bool HasScrollBar(bool isVertical)
+        {
+            return ListViewHelper.HasScrollBar(Handle, isVertical.ToWin32());
         }
     }
 }
