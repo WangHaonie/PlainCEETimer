@@ -60,7 +60,7 @@ namespace PlainCEETimer.UI.Forms
         protected override void StartLayout(bool isHighDpi)
         {
             ArrangeControlXTop(LabelInfo, ImageLogo, 0, isHighDpi ? -3 : 0);
-            ArrangeControlYLeft(LabelLicense, ImageLogo, -2);
+            ArrangeControlYLeft(LabelLicense, ImageLogo, isHighDpi ? -3 : -2);
             CompactControlY(LabelLicense, LabelInfo);
             ArrangeControlYRight(ButtonOK, LabelLicense, -3);
             AlignControlLeft(LinkGitHub, LabelLicense);
