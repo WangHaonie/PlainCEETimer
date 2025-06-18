@@ -56,7 +56,6 @@ namespace PlainCEETimer.UI
         public PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick)
         {
             var ctrl = new PlainButton() { Text = text, Enabled = enabled };
-            ctrl.SetBounds(0, 0, 75, 23);
 
             if (autoSize)
             {
@@ -64,24 +63,13 @@ namespace PlainCEETimer.UI
                 ctrl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             }
 
-            if (onClick != null)
-            {
-                ctrl.Click += onClick;
-            }
-
+            ctrl.Click += onClick;
             return ctrl;
         }
 
-        public PlainCheckBox CheckBox(string text, EventHandler onCheckedChanged, bool enabled = true, bool isChecked = false)
+        public PlainCheckBox CheckBox(string text, EventHandler onCheckedChanged)
         {
-            var ctrl = new PlainCheckBox { Text = text, Enabled = enabled, AutoSize = true };
-
-            if (isChecked)
-            {
-                ctrl.Checked = true;
-                ctrl.CheckState = CheckState.Checked;
-            }
-
+            var ctrl = new PlainCheckBox { Text = text, AutoSize = true };
             ctrl.CheckedChanged += onCheckedChanged;
             return ctrl;
         }
@@ -114,12 +102,7 @@ namespace PlainCEETimer.UI
             ctrl.DataSource = data;
             ctrl.DisplayMember = nameof(ComboData.Display);
             ctrl.ValueMember = nameof(ComboData.Value);
-
-            if (onSelectedIndexChanged != null)
-            {
-                ctrl.SelectedIndexChanged += onSelectedIndexChanged;
-            }
-
+            ctrl.SelectedIndexChanged += onSelectedIndexChanged;
             return ctrl;
         }
 
@@ -190,12 +173,7 @@ namespace PlainCEETimer.UI
         private Label Block(string text, EventHandler onClick)
         {
             var ctrl = Label(text);
-
-            if (onClick != null)
-            {
-                ctrl.Click += onClick;
-            }
-
+            ctrl.Click += onClick;
             ctrl.BorderStyle = BorderStyle.FixedSingle;
             return ctrl;
         }

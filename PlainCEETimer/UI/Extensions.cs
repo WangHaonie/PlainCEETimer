@@ -7,7 +7,7 @@ namespace PlainCEETimer.UI
     {
         public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
         {
-            var ctrls = builder(new());
+            var ctrls = builder?.Invoke(new());
 
             for (int i = 0; i < ctrls.Length; i++)
             {

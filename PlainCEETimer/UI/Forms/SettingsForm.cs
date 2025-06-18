@@ -217,7 +217,7 @@ namespace PlainCEETimer.UI.Forms
                                 }
 
                                 ChangePptsvcStyle(null, null);
-                            }, true, true),
+                            }),
 
                             CheckBoxUniTopMost = b.CheckBox("顶置其他窗口(&U)", SettingsChanged),
 
