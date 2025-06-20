@@ -433,21 +433,21 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void StartLayout(bool isHighDpi)
         {
-            GroupBoxArrageFirst(LabelExamInfo, 0, 2);
-            ArrangeControlYLeft(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
-            GroupBoxAlignControlRight(GBoxExamInfo, ComboBoxAutoSwitchInterval, ButtonExamInfo, -6, 1);
+            GroupBoxArrageFirstControl(LabelExamInfo, 0, 2);
+            ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
+            ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
+            CenterControlY(CheckBoxAutoSwitch, ButtonExamInfo, 1);
+            ArrangeControlXT(ComboBoxAutoSwitchInterval, CheckBoxAutoSwitch);
             CenterControlY(ComboBoxAutoSwitchInterval, ButtonExamInfo);
-            ArrangeControlXTopRtl(CheckBoxAutoSwitch, ComboBoxAutoSwitchInterval);
-            CenterControlY(CheckBoxAutoSwitch, ComboBoxAutoSwitchInterval, 1);
             GroupBoxAutoAdjustHeight(GBoxExamInfo, ButtonExamInfo, 7);
 
             if (AllowThemeChanging)
             {
-                ArrangeControlYLeft(GBoxTheme, GBoxExamInfo, 0, 2);
+                ArrangeControlYL(GBoxTheme, GBoxExamInfo, 0, 2);
 
-                GroupBoxArrageFirst(RadioButtonThemeSystem, 4);
-                ArrangeControlXTop(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
-                ArrangeControlXTop(RadioButtonThemeDark, RadioButtonThemeLight, 6);
+                GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4);
+                ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
+                ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
                 GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 5);
             }
             else
@@ -457,101 +457,98 @@ namespace PlainCEETimer.UI.Forms
                 GBoxTheme = null;
             }
 
-            ArrangeControlYLeft(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
+            ArrangeControlYL(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
 
-            GroupBoxArrageFirst(CheckBoxStartup, 3, 2);
-            ArrangeControlYLeft(CheckBoxMemClean, CheckBoxStartup, 0, 4);
-            ArrangeControlYLeft(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
-            ArrangeControlXTop(CheckBoxUniTopMost, CheckBoxTopMost);
-            ArrangeControlYLeft(CheckBoxTrayIcon, CheckBoxTopMost, 0, 4);
-            ArrangeControlYLeft(CheckBoxTrayText, CheckBoxTrayIcon, 0, 4);
-            AlignControlYRight(CheckBoxUniTopMost, CheckBoxTrayText);
+            GroupBoxArrageFirstControl(CheckBoxStartup, 3, 2);
+            ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
+            ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
+            ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
+            ArrangeControlYL(CheckBoxTrayIcon, CheckBoxTopMost, 0, 4);
+            ArrangeControlYL(CheckBoxTrayText, CheckBoxTrayIcon, 0, 4);
             GroupBoxAutoAdjustHeight(GBoxOthers, CheckBoxTrayText, 4);
 
 
-            GroupBoxArrageFirst(ComboBoxCountdownEnd);
-            GroupBoxArrageFirst(LabelCountdownEnd);
+            GroupBoxArrageFirstControl(ComboBoxCountdownEnd);
+            GroupBoxArrageFirstControl(LabelCountdownEnd);
             CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
-            ArrangeControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
+            CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
             CompactControlY(ComboBoxShowXOnly, ComboBoxCountdownEnd, 3);
-            AlignControlLeft(CheckBoxShowXOnly, LabelCountdownEnd, 3);
+            AlignControlXL(CheckBoxShowXOnly, LabelCountdownEnd, 3);
             CenterControlY(CheckBoxShowXOnly, ComboBoxShowXOnly, 1);
-            ArrangeControlX(ComboBoxShowXOnly, CheckBoxShowXOnly, -2);
-            ArrangeControlXRightTop(CheckBoxCeiling, ComboBoxShowXOnly, CheckBoxShowXOnly, 6);
-            AlignControlLeft(CheckBoxCeiling, ComboBoxCountdownEnd);
+            CompactControlX(ComboBoxShowXOnly, CheckBoxShowXOnly, -2);
+            ArrangeControlXRT(CheckBoxCeiling, ComboBoxShowXOnly, CheckBoxShowXOnly, 6);
+            AlignControlXL(CheckBoxCeiling, ComboBoxCountdownEnd);
             CompactControlY(ButtonRulesMan, ComboBoxShowXOnly, 3);
             CenterControlY(CheckBoxRulesMan, ButtonRulesMan, 1);
-            AlignControlLeft(CheckBoxRulesMan, CheckBoxShowXOnly);
-            ArrangeControlX(ButtonRulesMan, CheckBoxRulesMan, 3);
-            AlignControlYRight(ButtonRulesMan, ComboBoxCountdownEnd, 1);
+            AlignControlXL(CheckBoxRulesMan, CheckBoxShowXOnly);
+            CompactControlX(ButtonRulesMan, CheckBoxRulesMan, 3);
             GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 6);
 
-            ArrangeControlYLeft(GBoxDraggable, GBoxContent, 0, 2);
+            ArrangeControlYL(GBoxDraggable, GBoxContent, 0, 2);
 
-            GroupBoxArrageFirst(ComboBoxScreens, 0, 2);
-            GroupBoxArrageFirst(LabelScreens);
+            GroupBoxArrageFirstControl(ComboBoxScreens, 0, 2);
+            GroupBoxArrageFirstControl(LabelScreens);
             CenterControlY(LabelScreens, ComboBoxScreens);
-            ArrangeControlX(ComboBoxScreens, LabelScreens);
-            ArrangeControlXRightTop(LabelPosition, ComboBoxScreens, LabelScreens);
-            ArrangeControlXRightTop(ComboBoxPosition, LabelPosition, ComboBoxScreens);
+            CompactControlX(ComboBoxScreens, LabelScreens);
+            ArrangeControlXRT(LabelPosition, ComboBoxScreens, LabelScreens);
+            ArrangeControlXRT(ComboBoxPosition, LabelPosition, ComboBoxScreens);
             CompactControlY(CheckBoxDraggable, ComboBoxScreens, 3);
-            AlignControlLeft(CheckBoxDraggable, CheckBoxShowXOnly);
+            AlignControlXL(CheckBoxDraggable, CheckBoxShowXOnly);
             GroupBoxAutoAdjustHeight(GBoxDraggable, CheckBoxDraggable, 3);
 
-            ArrangeControlYLeft(GBoxPptsvc, GBoxDraggable, 0, 2);
+            ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
 
-            GroupBoxArrageFirst(LabelPptsvc);
+            GroupBoxArrageFirstControl(LabelPptsvc);
             SetLabelAutoWrap(LabelPptsvc);
             CompactControlY(CheckBoxPptSvc, LabelPptsvc);
-            AlignControlLeft(CheckBoxPptSvc, CheckBoxDraggable);
+            AlignControlXL(CheckBoxPptSvc, CheckBoxDraggable);
             GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 0);
 
 
-            GroupBoxArrageFirst(LabelFont);
-            ArrangeControlYLeft(ButtonFont, LabelFont, isHighDpi ? 3 : 2, 3);
-            ArrangeControlXTop(ButtonDefaultFont, ButtonFont, 3);
+            GroupBoxArrageFirstControl(LabelFont);
+            ArrangeControlYL(ButtonFont, LabelFont, isHighDpi ? 3 : 2, 3);
+            ArrangeControlXT(ButtonDefaultFont, ButtonFont, 3);
             GroupBoxAutoAdjustHeight(GBoxFont, ButtonFont, 5);
 
-            ArrangeControlYLeft(GBoxColors, GBoxFont, 0, 2);
+            ArrangeControlYL(GBoxColors, GBoxFont, 0, 2);
 
-            GroupBoxArrageFirst(LabelColor);
+            GroupBoxArrageFirstControl(LabelColor);
             SetLabelAutoWrap(LabelColor);
-            ArrangeControlYLeft(LabelColorP1, LabelColor, 0, 3);
-            ArrangeControlYLeft(LabelColorP2, LabelColorP1, 0, 6);
-            ArrangeControlYLeft(LabelColorP3, LabelColorP2, 0, 6);
-            ArrangeControlYLeft(LabelColorWelcome, LabelColorP3, 0, 6);
-            ArrangeControlYLeft(ButtonDefaultColor, LabelColorWelcome, isHighDpi ? 3 : 2, 4);
-            ArrangeControlXTop(BlockColor41, LabelColorWelcome, 3, -1);
-            ArrangeControlXLeftTop(BlockColor31, BlockColor41, LabelColorP3, 0, -1);
-            ArrangeControlXLeftTop(BlockColor21, BlockColor31, LabelColorP2, 0, -1);
-            ArrangeControlXLeftTop(BlockColor11, BlockColor21, LabelColorP1, 0, -1);
-            ArrangeControlXTop(BlockColor42, BlockColor41, 6);
-            ArrangeControlXLeftTop(BlockColor32, BlockColor42, BlockColor31);
-            ArrangeControlXLeftTop(BlockColor22, BlockColor32, BlockColor21);
-            ArrangeControlXLeftTop(BlockColor12, BlockColor22, BlockColor11);
-            ArrangeControlXTop(BlockPreviewColor4, BlockColor42, 6);
-            ArrangeControlXLeftTop(BlockPreviewColor3, BlockPreviewColor4, BlockColor32);
-            ArrangeControlXLeftTop(BlockPreviewColor2, BlockPreviewColor3, BlockColor22);
-            ArrangeControlXLeftTop(BlockPreviewColor1, BlockPreviewColor2, BlockColor12);
+            ArrangeControlYL(LabelColorP1, LabelColor, 0, 3);
+            ArrangeControlYL(LabelColorP2, LabelColorP1, 0, 6);
+            ArrangeControlYL(LabelColorP3, LabelColorP2, 0, 6);
+            ArrangeControlYL(LabelColorWelcome, LabelColorP3, 0, 6);
+            ArrangeControlYL(ButtonDefaultColor, LabelColorWelcome, isHighDpi ? 3 : 2, 4);
+            ArrangeControlXT(BlockColor41, LabelColorWelcome, 3, -1);
+            ArrangeControlXLT(BlockColor31, BlockColor41, LabelColorP3, 0, -1);
+            ArrangeControlXLT(BlockColor21, BlockColor31, LabelColorP2, 0, -1);
+            ArrangeControlXLT(BlockColor11, BlockColor21, LabelColorP1, 0, -1);
+            ArrangeControlXT(BlockColor42, BlockColor41, 6);
+            ArrangeControlXLT(BlockColor32, BlockColor42, BlockColor31);
+            ArrangeControlXLT(BlockColor22, BlockColor32, BlockColor21);
+            ArrangeControlXLT(BlockColor12, BlockColor22, BlockColor11);
+            ArrangeControlXT(BlockPreviewColor4, BlockColor42, 6);
+            ArrangeControlXLT(BlockPreviewColor3, BlockPreviewColor4, BlockColor32);
+            ArrangeControlXLT(BlockPreviewColor2, BlockPreviewColor3, BlockColor22);
+            ArrangeControlXLT(BlockPreviewColor1, BlockPreviewColor2, BlockColor12);
             GroupBoxAutoAdjustHeight(GBoxColors, ButtonDefaultColor, 5);
 
 
-            GroupBoxArrageFirst(LabelSyncTime);
+            GroupBoxArrageFirstControl(LabelSyncTime);
             SetLabelAutoWrap(LabelSyncTime);
-            ArrangeControlYLeft(ComboBoxNtpServers, LabelSyncTime, isHighDpi ? 3 : 2, 3);
-            ArrangeControlXTop(ButtonSyncTime, ComboBoxNtpServers, 3);
+            ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, isHighDpi ? 3 : 2, 3);
+            ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 3);
             GroupBoxAutoAdjustHeight(GBoxSyncTime, ComboBoxNtpServers, 6);
 
-            ArrangeControlYLeft(GBoxRestart, GBoxSyncTime, 0, 2);
-            GroupBoxArrageFirst(LabelRestart);
+            ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
+            GroupBoxArrageFirstControl(LabelRestart);
             UpdateSettingsArea(SettingsArea.Funny, false);
             SetLabelAutoWrap(LabelRestart);
-            ArrangeControlYLeft(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
+            ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
             GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
 
-            ArrangeControlYRight(ButtonCancel, PageNavPages, -4, 3);
-            ArrangeControlXTopRtl(ButtonSave, ButtonCancel, -3);
+            ArrangeCommonButtonsR(ButtonSave, ButtonCancel, PageNavPages, -4, 3);
         }
 
         protected override void OnLoad()

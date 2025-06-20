@@ -54,7 +54,7 @@ namespace PlainCEETimer.UI.Dialogs
 
             this.AddControls(b =>
             [
-                LabelCharExam = b.Label(3, 3, "距离考试"),
+                LabelCharExam = b.Label("距离考试"),
                 LabelCharDay = b.Label("天"),
                 LabelCharHour = b.Label("时"),
                 LabelCharMinute = b.Label("分"),
@@ -113,35 +113,31 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void StartLayout(bool isHighDpi)
         {
-            ArrangeControlXTop(ComboBoxRuleType, LabelCharExam);
+            ArrangeFirstControl(LabelCharExam);
+            ArrangeControlXT(ComboBoxRuleType, LabelCharExam);
             CenterControlY(LabelCharExam, ComboBoxRuleType);
-            ArrangeControlXTop(NUDDays, ComboBoxRuleType, 6, 0);
-            ArrangeControlXRightTop(LabelCharDay, NUDDays, LabelCharExam);
-            ArrangeControlXRightTop(NUDHours, LabelCharDay, NUDDays);
-            ArrangeControlXRightTop(LabelCharHour, NUDHours, LabelCharDay);
-            ArrangeControlXRightTop(NUDMinutes, LabelCharHour, NUDHours);
-            ArrangeControlXRightTop(LabelCharMinute, NUDMinutes, LabelCharHour);
-            ArrangeControlXRightTop(NUDSeconds, LabelCharMinute, NUDMinutes);
-            ArrangeControlXRightTop(LabelCharSecond, NUDSeconds, LabelCharMinute);
-            ArrangeControlYLeft(BlockFore, ComboBoxRuleType, 0, 3);
-            ArrangeControlXTopRtl(LabelFore, BlockFore);
-            AlignControlLeft(LabelFore, LabelCharExam);
+            ArrangeControlXT(NUDDays, ComboBoxRuleType, 6, 0);
+            ArrangeControlXRT(LabelCharDay, NUDDays, LabelCharExam);
+            ArrangeControlXRT(NUDHours, LabelCharDay, NUDDays);
+            ArrangeControlXRT(LabelCharHour, NUDHours, LabelCharDay);
+            ArrangeControlXRT(NUDMinutes, LabelCharHour, NUDHours);
+            ArrangeControlXRT(LabelCharMinute, NUDMinutes, LabelCharHour);
+            ArrangeControlXRT(NUDSeconds, LabelCharMinute, NUDMinutes);
+            ArrangeControlXRT(LabelCharSecond, NUDSeconds, LabelCharMinute);
+            ArrangeControlYL(LabelFore, LabelCharExam);
+            ArrangeControlYL(BlockFore, ComboBoxRuleType, 0, 3);
             CenterControlY(LabelFore, BlockFore);
-            ArrangeControlXRightTop(LabelBack, BlockFore, LabelFore);
-            ArrangeControlXRightTop(BlockBack, LabelBack, BlockFore);
-            ArrangeControlYRight(LinkResetColor, LabelCharSecond);
-            AlignControlTop(LinkResetColor, LabelBack, -1);
-            ArrangeControlXLeftTopRtl(BlockPreview, LinkResetColor, BlockBack);
-            ArrangeControlYLeft(TextBoxCustomText, BlockFore, 0, 3);
-            CenterControlY(LabelCustomText, TextBoxCustomText, isHighDpi ? 0 : -1);
-            AlignControlLeft(LabelCustomText, LabelFore);
+            ArrangeControlXRT(LabelBack, BlockFore, LabelFore);
+            ArrangeControlXRT(BlockBack, LabelBack, BlockFore);
+            ArrangeControlYL(LabelCustomText, LabelFore);
+            ArrangeControlYL(TextBoxCustomText, BlockFore, 0, 3);
+            CenterControlY(LabelCustomText, TextBoxCustomText);
             CompactControlX(TextBoxCustomText, LabelCustomText);
-            ArrangeControlXTop(LinkResetText, TextBoxCustomText);
-            AlignControlTop(LinkResetText, LabelCustomText, -1);
-            AlignControlLeft(LinkResetText, LinkResetColor);
-            ArrangeControlYRight(ButtonB, LinkResetText, -3);
-            CompactControlY(ButtonB, TextBoxCustomText, 3);
-            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
+            ArrangeControlXRT(LinkResetText, TextBoxCustomText, LabelCustomText);
+            ArrangeControlXT(BlockPreview, BlockBack);
+            AlignControlYR(BlockPreview, TextBoxCustomText);
+            ArrangeControlXRT(LinkResetColor, BlockPreview, LabelBack);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, LinkResetText, -3, 6);
         }
 
         protected override void OnLoad()

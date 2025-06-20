@@ -20,7 +20,8 @@ namespace PlainCEETimer.UI.Controls
         private AppFormParam Params;
         private readonly bool Special;
 
-        public static float CurrentDpiRatio;
+        private static float DpiRatio;
+        private static bool IsHighDpi;
         private static readonly Font AppFont;
         private static readonly int CurrentFontHeight;
 
@@ -41,7 +42,8 @@ namespace PlainCEETimer.UI.Controls
             AutoScaleDimensions = new(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AutoSizeMode = AutoSizeMode.GrowOnly;
+            ClientSize = new(16, 16);
             Font = AppFont;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -71,7 +73,7 @@ namespace PlainCEETimer.UI.Controls
         protected sealed override void OnLoad(EventArgs e)
         {
             SuspendLayout();
-            StartLayout(CurrentDpiRatio > 1F);
+            StartLayout(IsHighDpi);
             ResumeLayout(true);
             OnLoad();
             base.OnLoad(e);
@@ -131,10 +133,11 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            if (CurrentDpiRatio == 0F)
+            if (DpiRatio == 0F)
             {
                 var g = CreateGraphics();
-                CurrentDpiRatio = g.DpiX / 96F;
+                DpiRatio = g.DpiX / 96F;
+                IsHighDpi = DpiRatio > 1F;
                 g.Dispose();
             }
 
@@ -210,7 +213,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected int ScaleToDpi(int px)
         {
-            return (int)(px * CurrentDpiRatio);
+            return (int)(px * DpiRatio);
         }
 
         protected Rectangle GetCurrentScreenRect()
@@ -218,109 +221,58 @@ namespace PlainCEETimer.UI.Controls
             return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
         }
 
-        /// <summary>
-        /// 参考指定控件，在 X 方向上水平排列目标控件
-        /// </summary>
-        protected void ArrangeControlX(Control target, Control reference, int xOffset = 0)
+        protected void ArrangeFirstControl(Control control, int x = 3, int y = 3)
         {
-            target.Left = reference.Right + ScaleToDpi(xOffset);
+            control.SetBounds(x, y, 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
         /// 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
         /// </summary>
-        protected void ArrangeControlXTop(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+        protected void ArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
             target.SetBounds(reference.Right + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
-        }
-        /// <summary>
-        /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
-        /// </summary>
-        protected void ArrangeControlXTopRtl(Control target, Control reference, int xOffset = 0)
-        {
-            target.SetBounds(reference.Left - target.Width + ScaleToDpi(xOffset), reference.Top, 0, 0, BoundsSpecified.Location);
-        }
-
-        /// <summary>
-        /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 右边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
-        /// </summary>
-        protected void ArrangeControlXRightTop(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
-        {
-            target.SetBounds(reference1.Right + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
-        }
-
-        /// <summary>
-        /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 右边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
-        /// </summary>
-        protected void ArrangeControlXRightTopRtl(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
-        {
-            target.SetBounds(reference1.Right - target.Width + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
         /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 左边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
         /// </summary>
-        protected void ArrangeControlXLeftTop(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+        protected void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
             target.SetBounds(reference1.Left + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
-        /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 左边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
+        /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 右边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
         /// </summary>
-        protected void ArrangeControlXLeftTopRtl(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+        protected void ArrangeControlXRT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
         {
-            target.SetBounds(reference1.Left - target.Width + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+            target.SetBounds(reference1.Right + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
         /// 参考指定控件，在 Y 方向上竖直排列目标控件，并在 X 方向上与指定控件的左边缘对齐
         /// </summary>
-        protected void ArrangeControlYLeft(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+        protected void ArrangeControlYL(Control target, Control reference, int xOffset = 0, int yOffset = 0)
         {
             target.SetBounds(reference.Left + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         }
 
-        /// <summary>
-        /// 参考指定控件，在 Y 方向上竖直排列目标控件，并在 X 方向上与指定控件的右边缘对齐
-        /// </summary>
-        protected void ArrangeControlYRight(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+        protected void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
         {
-            target.SetBounds(reference.Right - target.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
-        }
-
-        protected void GroupBoxArrageFirst(Control target, int xOffset = 0, int yOffset = 0)
-        {
-            target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
-        }
-
-        protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
-        {
-            groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
-        }
-
-        protected void GroupBoxAlignControlRight(PlainGroupBox groupBox, Control target, Control reference, int xOffset = 0, int yOffset = 0)
-        {
-            target.SetBounds(groupBox.Width - target.Width + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+            button2.SetBounds(reference.Right - button2.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+            button1?.SetBounds(button2.Left - button1.Width - ScaleToDpi(3), button2.Top, 0, 0, BoundsSpecified.Location);
         }
 
         /// <summary>
         /// 将目标控件的左边缘在 X 方向上与参考控件的左边缘对齐
         /// </summary>
-        protected void AlignControlLeft(Control target, Control reference, int xOffset = 0)
+        protected void AlignControlXL(Control target, Control reference, int xOffset = 0)
         {
             target.Left = reference.Left + ScaleToDpi(xOffset);
         }
 
-        /// <summary>
-        /// 将目标控件的上边缘在 Y 方向上与参考控件的上边缘对齐
-        /// </summary>
-        protected void AlignControlTop(Control target, Control reference, int yOffset = 0)
-        {
-            target.Top = reference.Top + ScaleToDpi(yOffset);
-        }
-
-        protected void AlignControlYRight(Control target, Control reference, int xOffset = 0)
+        protected void AlignControlYR(Control target, Control reference, int xOffset = 0)
         {
             target.Left = reference.Right - target.Width + ScaleToDpi(xOffset);
         }
@@ -336,9 +288,9 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 将目标控件在 X 方向上与参考控件保持紧凑
         /// </summary>
-        protected void CompactControlX(Control target, Control reference)
+        protected void CompactControlX(Control target, Control reference, int xOffset = 0)
         {
-            target.Left = reference.Right;
+            target.Left = reference.Right + ScaleToDpi(xOffset); ;
         }
 
         /// <summary>
@@ -347,6 +299,16 @@ namespace PlainCEETimer.UI.Controls
         protected void CompactControlY(Control target, Control reference, int yOffset = 0)
         {
             target.Top = reference.Bottom + ScaleToDpi(yOffset);
+        }
+
+        protected void GroupBoxArrageFirstControl(Control target, int xOffset = 0, int yOffset = 0)
+        {
+            target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+        }
+
+        protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
+        {
+            groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
         }
 
         /// <summary>

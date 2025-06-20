@@ -25,15 +25,17 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnInitializing()
         {
+            ClientSize = new(32, 32);
             Text = "考试信息 - 高考倒计时";
+            AutoSizeMode = AutoSizeMode.GrowOnly;
 
             this.AddControls(b =>
             [
-                LabelName = b.Label(3, 6, "考试名称"),
-                LabelStart = b.Label("开始日期和时间"),
-                LabelEnd = b.Label("结束日期和时间"),
+                LabelName = b.Label("考试名称"),
+                LabelStart = b.Label("考试开始"),
+                LabelEnd = b.Label("考试结束"),
                 LabelCounter = b.Label("00/00"),
-                TextBoxName = b.TextBox(250, TextBoxName_TextChanged).With(c => c.MaxLength = 99),
+                TextBoxName = b.TextBox(215, TextBoxName_TextChanged).With(c => c.MaxLength = 99),
                 DTPStart = b.DateTimePicker(250, DTP_ValueChanged),
                 DTPEnd = b.DateTimePicker(250, DTP_ValueChanged),
             ]);
@@ -43,20 +45,17 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void StartLayout(bool isHighDpi)
         {
-            ArrangeControlXTop(TextBoxName, LabelName);
+            ArrangeFirstControl(LabelName, 3, 6);
+            ArrangeControlXT(TextBoxName, LabelName);
             CenterControlY(LabelName, TextBoxName, isHighDpi ? 0 : -1);
-            ArrangeControlXRightTop(LabelCounter, TextBoxName, LabelName, 2);
-            ArrangeControlYRight(DTPStart, LabelCounter);
-            CompactControlY(DTPStart, TextBoxName, 3);
-            ArrangeControlYRight(DTPEnd, DTPStart, 0, 3);
-            AlignControlLeft(LabelStart, LabelName);
-            AlignControlLeft(LabelEnd, LabelStart);
+            ArrangeControlXRT(LabelCounter, TextBoxName, LabelName, 2);
+            ArrangeControlYL(LabelStart, LabelName);
+            ArrangeControlYL(LabelEnd, LabelStart);
+            ArrangeControlYL(DTPStart, TextBoxName, 0, 3);
+            ArrangeControlYL(DTPEnd, DTPStart, 0, 3);
             CenterControlY(LabelStart, DTPStart);
             CenterControlY(LabelEnd, DTPEnd);
-            CompactControlX(DTPStart, LabelStart);
-            CompactControlX(DTPEnd, LabelEnd);
-            ArrangeControlYRight(ButtonB, DTPEnd, 1, 3);
-            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, DTPEnd, 1, 3);
         }
 
         protected override void OnLoad()

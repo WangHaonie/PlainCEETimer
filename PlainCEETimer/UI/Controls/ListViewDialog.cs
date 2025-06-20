@@ -110,9 +110,8 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void StartLayout(bool isHighDpi)
         {
-            ArrangeControlYRight(ButtonB, ListViewMain, 1, 3);
-            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
-            ArrangeControlYLeft(ButtonOperation, ListViewMain, -1, 3);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
+            ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
         }
 
         protected sealed override void OnLoad()

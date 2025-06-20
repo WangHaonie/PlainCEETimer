@@ -91,7 +91,6 @@ namespace PlainCEETimer.UI.Forms
             StartPosition = FormStartPosition.Manual;
             AutoSize = false;
             AutoSizeMode = AutoSizeMode.GrowOnly;
-            ClientSize = new(16, 16);
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
@@ -507,7 +506,7 @@ namespace PlainCEETimer.UI.Forms
                         ContextMenu = ContextMenuBuilder.Merge(ContextMenuTray, ContextMenuBuilder.Build(b =>
                         [
                             b.Separator(),
-                            b.Item("显示界面(&S)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                            b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
                             b.Menu("关闭(&C)",
                             [
                                 b.Item("重启(&R)", (_, _) => App.Exit(ExitReason.UserRestart)),

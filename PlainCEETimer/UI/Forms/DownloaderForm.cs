@@ -46,8 +46,8 @@ namespace PlainCEETimer.UI.Forms
 
             this.AddControls(b =>
             [
-                LabelDownloading = b.Label(3, 3, "正在下载更新文件，请稍侯..."),
-                LinkBrowser = b.Hyperlink("浏览器下载", DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion)),
+                LabelDownloading = b.Label("正在下载更新文件，请稍侯..."),
+                LinkBrowser = b.Hyperlink("浏览器下载", null),
                 ProgressBarMain = b.New<ProgressBar>(344, 22, null),
                 LabelSize = b.Label("已下载/总共: (获取中...)"),
                 LabelSpeed = b.Label("下载速度: (获取中...)"),
@@ -79,19 +79,20 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void StartLayout(bool isHighDpi)
         {
-            ArrangeControlYLeft(ProgressBarMain, LabelDownloading, 2);
-            ArrangeControlYLeft(LabelSize, ProgressBarMain, -2);
-            ArrangeControlYLeft(LabelSpeed, LabelSize);
-            ArrangeControlXRightTopRtl(LinkBrowser, ProgressBarMain, LabelDownloading, 3, -1);
-            ArrangeControlYRight(ButtonCancel, ProgressBarMain, 1, 3);
-            CenterControlY(ButtonCancel, LabelSpeed);
-            ArrangeControlXTopRtl(ButtonRetry, ButtonCancel, -3);
+            ArrangeFirstControl(LabelDownloading);
+            ArrangeControlYL(ProgressBarMain, LabelDownloading, 2);
+            ArrangeControlYL(LabelSize, ProgressBarMain, -2);
+            ArrangeControlYL(LabelSpeed, LabelSize);
+            ArrangeControlXT(LinkBrowser, LabelDownloading, 1);
+            AlignControlYR(LinkBrowser, ProgressBarMain, 3);
+            ArrangeCommonButtonsR(ButtonRetry, ButtonCancel, ProgressBarMain, 1, 6);
         }
 
         protected override void OnShown()
         {
             if (Win32User.NotElevated)
             {
+                LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
                 TaskbarProgress.Initialize(Handle, (App.OSBuild >= WindowsBuilds.Windows7).ToWin32());
                 DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
                 UpdateDownloader.Downloading += UpdateDownloader_Downloading;

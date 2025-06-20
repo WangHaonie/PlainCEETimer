@@ -26,20 +26,19 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void StartLayout(bool isHighDpi)
         {
-            ArrangeControlXTop(LabelMessage, ImageIcon, 2);
-            ArrangeControlYRight(ButtonB, LabelMessage, -3, 3);
-            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
+            ArrangeControlXT(LabelMessage, ImageIcon, 2);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, LabelMessage, -3, 3);
 
             if (ButtonA.Left < ImageIcon.Right)
             {
-                AlignControlLeft(ButtonA, LabelMessage, 3);
-                ArrangeControlXTop(ButtonB, ButtonA, 3);
+                AlignControlXL(ButtonA, LabelMessage, 3);
+                ArrangeControlXT(ButtonB, ButtonA, 3);
             }
 
             if (ButtonA.Top < ImageIcon.Bottom)
             {
                 CompactControlY(ButtonA, ImageIcon);
-                ArrangeControlXTop(ButtonB, ButtonA, 3);
+                ArrangeControlXT(ButtonB, ButtonA, 3);
             }
         }
 

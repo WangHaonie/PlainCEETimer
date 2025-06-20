@@ -10,15 +10,7 @@ namespace PlainCEETimer.UI
     {
         public Label Label(string text)
         {
-            return Label(0, 0, text);
-        }
-
-        public Label Label(int x, int y, string text)
-        {
-            var ctrl = new Label() { Text = text };
-            ctrl.SetBounds(x, y, 0, 0, BoundsSpecified.Location);
-            ctrl.AutoSize = true;
-            return ctrl;
+            return new Label() { Text = text, AutoSize = true };
         }
 
         public Label Block(EventHandler onClick)

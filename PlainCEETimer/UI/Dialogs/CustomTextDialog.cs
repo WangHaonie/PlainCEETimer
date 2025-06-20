@@ -46,10 +46,10 @@ namespace PlainCEETimer.UI.Dialogs
                 LabelP1 = b.Label(lp1),
                 LabelP2 = b.Label(lp2),
                 LabelP3 = b.Label(lp3),
-                TextBoxP1 = b.TextBox(310, OnUserChanged),
-                TextBoxP2 = b.TextBox(310, OnUserChanged),
-                TextBoxP3 = b.TextBox(310, OnUserChanged),
-                LabelInfo = b.Label(3, 0, null),
+                TextBoxP1 = b.TextBox(303, OnUserChanged),
+                TextBoxP2 = b.TextBox(303, OnUserChanged),
+                TextBoxP3 = b.TextBox(303, OnUserChanged),
+                LabelInfo = b.Label(null),
                 ButtonReset = b.Button("重置(R)", (sender, _) => ShowBottonMenu(ContextMenuReset, sender))
             ]);
 
@@ -59,22 +59,22 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void StartLayout(bool isHighDpi)
         {
+            ArrangeFirstControl(LabelInfo, 3, 0);
             SetLabelAutoWrap(LabelInfo, TextBoxP1.Width + LabelP1.Width + ScaleToDpi(3));
-            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Constants.PH_EXAMNAME}-考试名称 {Constants.PH_DAYS}-天 {Constants.PH_HOURS}-时 {Constants.PH_MINUTES}-分 {Constants.PH_SECONDS}-秒 {Constants.PH_CEILINGDAYS}-向上取整的天数 {Constants.PH_TOTALHOURS}-总小时数 {Constants.PH_TOTALMINUTES}-总分钟数 {Constants.PH_TOTALSECONDS}-总秒数。比如 \"{Constants.PH_EXAMNAME}还有{Constants.PH_DAYS}.{Constants.PH_HOURS}:{Constants.PH_MINUTES}:{Constants.PH_SECONDS}\"。";
-            AlignControlLeft(LabelP1, LabelInfo);
-            ArrangeControlYRight(TextBoxP1, LabelInfo, 0, 3);
+            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Constants.PH_EXAMNAME}-考试名称 {Constants.PH_DAYS}-天 {Constants.PH_HOURS}-时 {Constants.PH_MINUTES}-分 {Constants.PH_SECONDS}-秒 {Constants.PH_CEILINGDAYS}-向上取整的天数 {Constants.PH_TOTALHOURS}-总小时数 {Constants.PH_TOTALMINUTES}-总分钟数 {Constants.PH_TOTALSECONDS}-总秒数。比如 \"{Constants.PH_EXAMNAME}还有{Constants.PH_DAYS}:{Constants.PH_HOURS}:{Constants.PH_MINUTES}:{Constants.PH_SECONDS}\"。";
+            ArrangeControlYL(LabelP1, LabelInfo);
+            ArrangeControlXT(TextBoxP1, LabelP1);
+            CompactControlY(TextBoxP1, LabelInfo, 3);
             CenterControlY(LabelP1, TextBoxP1, isHighDpi ? 0 : -1);
-            CompactControlX(TextBoxP1, LabelP1);
-            ArrangeControlYRight(TextBoxP2, TextBoxP1, 0, 3);
-            ArrangeControlYRight(TextBoxP3, TextBoxP2, 0, 3);
-            AlignControlLeft(LabelP2, LabelP1);
-            AlignControlLeft(LabelP3, LabelP2);
+            ArrangeControlYL(TextBoxP2, TextBoxP1, 0, 3);
+            ArrangeControlYL(TextBoxP3, TextBoxP2, 0, 3);
+            AlignControlXL(LabelP2, LabelP1);
+            AlignControlXL(LabelP3, LabelP2);
             CenterControlY(LabelP2, TextBoxP2, isHighDpi ? 0 : -1);
             CenterControlY(LabelP3, TextBoxP3, isHighDpi ? 0 : -1);
-            ArrangeControlYRight(ButtonB, TextBoxP3, 1, 3);
-            ArrangeControlXTopRtl(ButtonA, ButtonB, -3);
-            ArrangeControlXTopRtl(ButtonReset, ButtonA);
-            AlignControlLeft(ButtonReset, LabelP1, 3);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, TextBoxP3, 1, 3);
+            ArrangeControlXT(ButtonReset, ButtonA);
+            AlignControlXL(ButtonReset, LabelP1, 3);
         }
 
         protected override void OnLoad()

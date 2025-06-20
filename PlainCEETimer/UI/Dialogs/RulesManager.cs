@@ -33,7 +33,7 @@ namespace PlainCEETimer.UI.Dialogs
         protected override void StartLayout(bool isHighDpi)
         {
             base.StartLayout(isHighDpi);
-            ArrangeControlXTop(ButtonGlobal, ButtonOperation, 3);
+            ArrangeControlXT(ButtonGlobal, ButtonOperation, 3);
         }
 
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
