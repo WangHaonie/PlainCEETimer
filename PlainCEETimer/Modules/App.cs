@@ -104,10 +104,10 @@ namespace PlainCEETimer.Modules
                                 UACHelper.CheckAdmin();
                                 MessageX.Info(
                                     $"""
-                                    当前用户名：{Win32User.CurrentSessionUserName}
-                                    进程所有者：{Win32User.CurrentProcessUserName}
-                                    是否获取到管理员权限：{(UACHelper.IsAdmin ? "是" : "否")}
-                                    当前进程是否提权运行：{(Win32User.NotElevated ? "否" : "是")}
+                                    检测结果：
+
+                                    {Win32User.CurrentSessionUserName} 为当前登入的账户。
+                                    目前高考倒计时正在以 {Win32User.CurrentProcessUserName} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UACHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
                                     """);
                                 break;
                             case "/fr":

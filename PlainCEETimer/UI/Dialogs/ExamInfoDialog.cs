@@ -25,7 +25,6 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnInitializing()
         {
-            ClientSize = new(32, 32);
             Text = "考试信息 - 高考倒计时";
             AutoSizeMode = AutoSizeMode.GrowOnly;
 
