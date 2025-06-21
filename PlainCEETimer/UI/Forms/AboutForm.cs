@@ -18,7 +18,7 @@ namespace PlainCEETimer.UI.Forms
         private Hyperlink LinkFeedback;
         private Hyperlink LinkTutorial;
 
-        public AboutForm() : base(AppFormParam.CenterScreen) { }
+        public AboutForm() : base(AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         protected override void OnInitializing()
         {

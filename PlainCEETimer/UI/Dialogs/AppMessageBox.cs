@@ -6,7 +6,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class AppMessageBox(string message, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview)
+    public sealed class AppMessageBox(string message, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview | AppFormParam.OnEscClosing)
     {
         private DialogResult Result;
         private Label LabelMessage;
@@ -78,16 +78,6 @@ namespace PlainCEETimer.UI.Dialogs
         {
             Result = buttons == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
             Close();
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Escape)
-            {
-                Close();
-            }
-
-            base.OnKeyDown(e);
         }
 
         public DialogResult ShowCore(AppForm owner, string title)

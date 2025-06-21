@@ -19,6 +19,7 @@ namespace PlainCEETimer.UI.Controls
         private bool IsLoading = true;
         private AppFormParam Params;
         private readonly bool Special;
+        private readonly bool OnEscClosing;
 
         private static float DpiRatio;
         private static bool IsHighDpi;
@@ -29,6 +30,8 @@ namespace PlainCEETimer.UI.Controls
         {
             Params = param;
             Special = CheckParam(AppFormParam.Special);
+            OnEscClosing = CheckParam(AppFormParam.OnEscClosing);
+            KeyPreview = CheckParam(AppFormParam.KeyPreview);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             MessageX = new(this);
 
@@ -42,7 +45,7 @@ namespace PlainCEETimer.UI.Controls
             AutoScaleDimensions = new(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowOnly;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new(16, 16);
             Font = AppFont;
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -89,6 +92,16 @@ namespace PlainCEETimer.UI.Controls
             IsLoading = false;
             OnShown();
             base.OnShown(e);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (OnEscClosing && e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+
+            base.OnKeyDown(e);
         }
 
         protected sealed override void OnFormClosing(FormClosingEventArgs e)

@@ -106,7 +106,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeSystem;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
-        public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen) { }
+        public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         protected override void OnInitializing()
         {

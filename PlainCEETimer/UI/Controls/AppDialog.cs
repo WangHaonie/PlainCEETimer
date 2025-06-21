@@ -11,11 +11,6 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnInitializing()
         {
-            if (CheckParam(AppFormParam.KeyPreview))
-            {
-                KeyPreview = true;
-            }
-
             StartPosition = FormStartPosition.CenterParent;
             MinimizeBox = false;
 

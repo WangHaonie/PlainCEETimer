@@ -27,7 +27,7 @@ namespace PlainCEETimer.UI.Forms
         private readonly CancellationTokenSource cts = new();
         private readonly Downloader UpdateDownloader = new();
 
-        private DownloaderForm() : base(AppFormParam.CenterScreen) { }
+        private DownloaderForm() : base(AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         public DownloaderForm(string ManualVersion) : this()
         {
