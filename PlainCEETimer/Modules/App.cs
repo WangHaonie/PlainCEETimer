@@ -61,6 +61,7 @@ namespace PlainCEETimer.Modules
 
         public static void StartProgram(string[] args)
         {
+            ExtractConfig();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (_, e) => HandleException(e.Exception);
@@ -206,6 +207,18 @@ namespace PlainCEETimer.Modules
                     Exit(Result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
                 }
             }
+        }
+
+        private static void ExtractConfig()
+        {
+            try
+            {
+                var appconfig = $"{CurrentExecutablePath}.config";
+                File.Delete(appconfig);
+                File.WriteAllText(appconfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
+                ProcessHelper.Run("cmd", $"/c attrib +s +h \"{appconfig}\"");
+            }
+            catch { }
         }
     }
 }
