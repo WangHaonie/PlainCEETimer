@@ -20,21 +20,21 @@ namespace PlainCEETimer.Interop
 
         */
 
-        public static string CurrentProcessUserName => CPUN;
-        public static string CurrentSessionUserName => CSUN;
+        public static string ProcessOwner => ProcOwner;
+        public static string SessionUser => SessionUserName;
         public static bool NotElevated { get; }
 
         private const int WTSInfoClass_WTSUserName = 5;
         private const int WTSInfoClass_WTSDomainName = 7;
 
-        private static readonly string CPUN;
-        private static readonly string CSUN;
+        private static readonly string ProcOwner;
+        private static readonly string SessionUserName;
 
         static Win32User()
         {
-            CPUN = WindowsIdentity.GetCurrent().Name;
-            CSUN = GetCurrentSessionUserName();
-            NotElevated = CPUN.Equals(CSUN, StringComparison.OrdinalIgnoreCase);
+            ProcOwner = WindowsIdentity.GetCurrent().Name;
+            SessionUserName = GetCurrentSessionUserName();
+            NotElevated = ProcOwner.Equals(SessionUserName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string GetCurrentSessionUserName()

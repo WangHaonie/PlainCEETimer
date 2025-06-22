@@ -118,16 +118,6 @@ namespace PlainCEETimer.UI.Controls
             Dispose(true);
         }
 
-        #region
-        /*
-        
-        解决窗体因控件较多导致的闪烁问题 参考:
-
-        winform窗体闪烁问题解决 - 就叫我雷人吧 - 博客园
-        https://www.cnblogs.com/guosheng/p/7417918.html
-
-         */
-
         protected sealed override CreateParams CreateParams
         {
             get
@@ -142,7 +132,6 @@ namespace PlainCEETimer.UI.Controls
                 return cp;
             }
         }
-        #endregion
 
         protected override void OnHandleCreated(EventArgs e)
         {

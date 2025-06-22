@@ -43,7 +43,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.2";
-        public const string AppBuildDate = "2025/6/21";
+        public const string AppBuildDate = "2025/6/22";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";
@@ -107,8 +107,8 @@ namespace PlainCEETimer.Modules
                                     $"""
                                     检测结果：
 
-                                    {Win32User.CurrentSessionUserName} 为当前登入的账户。
-                                    目前高考倒计时正在以 {Win32User.CurrentProcessUserName} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UACHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
+                                    {Win32User.SessionUser} 为当前登入的账户。
+                                    目前高考倒计时正在以 {Win32User.ProcessOwner} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UACHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
                                     """);
                                 break;
                             case "/fr":
@@ -211,6 +211,15 @@ namespace PlainCEETimer.Modules
 
         private static void ExtractConfig()
         {
+            /*
+            
+            使 NumericUpDown 的 UpDown 按钮在高 DPI 下自动缩放 参考：
+
+            NumericUpDown 类 (System.Windows.Forms) | Microsoft Learn
+            https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.forms.numericupdown
+
+            */
+
             try
             {
                 var appconfig = $"{CurrentExecutablePath}.config";

@@ -14,7 +14,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public bool Equals(ColorSetObject other)
         {
-            return fore == other.Fore && back == other.Back;
+            return fore.Equals(other.Fore) && back.Equals(other.Back);
         }
 
         public override bool Equals(object obj)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlainCEETimer.Modules
+namespace PlainCEETimer.UI
 {
     public interface IListViewData<T> : IComparable<T>, IEquatable<T>
     {

@@ -27,7 +27,12 @@ namespace PlainCEETimer.Modules.Extensions
         public static string Format(this DateTime dateTime)
             => dateTime.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss");
 
-        #region 来自网络
+        public static Task Start(this Action start, Action<Task> jobAfterStart = null)
+            => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
+
+        public static Task AsDelay(this int ms, Action<Task> jobAfterDelay)
+            => Task.Delay(ms).ContinueWith(jobAfterDelay);
+
         /*
 
         截断字符串 参考:
@@ -38,12 +43,5 @@ namespace PlainCEETimer.Modules.Extensions
         */
         public static string Truncate(this string s, int MaxLength)
             => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
-        #endregion
-
-        public static Task Start(this Action start, Action<Task> jobAfterStart = null)
-            => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
-
-        public static Task AsDelay(this int ms, Action<Task> jobAfterDelay)
-            => Task.Delay(ms).ContinueWith(jobAfterDelay);
     }
 }

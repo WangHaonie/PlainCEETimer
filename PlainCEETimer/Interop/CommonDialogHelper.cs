@@ -10,7 +10,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper
+    public class CommonDialogHelper(ICommonDialog dialog, string dialogTitle, CommonDialogKind kind, AppForm owner)
     {
         private const int SW_HIDE = 0x0000;
         private const int BM_TRANSPARENT = 0x0001;
@@ -27,28 +27,14 @@ namespace PlainCEETimer.Interop
         private const int stc4 = 0x0443;
         private const int cmb4 = 0x0473;
 
-        private Rectangle DialogRect;
-        private readonly string DialogTitle;
-        private readonly CommonDialogKind DialogKind;
-        private readonly ICommonDialog Dialog;
-        private readonly IntPtr hBrush;
-        private readonly AppForm Parent;
+        private Rectangle Bounds;
+        private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
         private readonly StringBuilder builder = new(256);
         private static readonly int BackCrColor;
         private static readonly int ForeCrColor;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
-
-        public CommonDialogHelper(ICommonDialog dialog, string dialogTitle, CommonDialogKind kind, AppForm owner)
-        {
-            Dialog = dialog;
-            DialogTitle = dialogTitle;
-            DialogKind = kind;
-            Parent = owner;
-            Parent.ReActivate();
-            hBrush = CreateSolidBrush(BackCrColor);
-        }
 
         static CommonDialogHelper()
         {
@@ -76,12 +62,14 @@ namespace PlainCEETimer.Interop
                     SetFocus(wParam);
                     break;
                 case WM_INITDIALOG:
-                    if (DialogTitle != null)
+                    owner.ReActivate();
+
+                    if (dialogTitle != null)
                     {
-                        SendMessageW(hWnd, WM_SETTEXT, IntPtr.Zero, Marshal.StringToHGlobalUni(DialogTitle));
+                        SendMessageW(hWnd, WM_SETTEXT, IntPtr.Zero, Marshal.StringToHGlobalUni(dialogTitle));
                     }
 
-                    if (DialogKind == CommonDialogKind.Font && !((FontDialogEx)Dialog).ShowColor)
+                    if (kind == CommonDialogKind.Font && !((FontDialogEx)dialog).ShowColor)
                     {
                         IntPtr hSelectorStatic;
 
@@ -102,9 +90,8 @@ namespace PlainCEETimer.Interop
                         FlushDark(hWnd);
                     }
 
-                    RECT r = new();
-                    GetWindowRect(hWnd, ref r);
-                    DialogRect = r.ToRectangle();
+                    GetWindowRect(hWnd, out RECT r);
+                    Bounds = r;
                     KeepOnScreen(hWnd);
                     PostMessage(hWnd, WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
                     break;
@@ -122,7 +109,7 @@ namespace PlainCEETimer.Interop
                     }
                     break;
                 case WM_COMMAND:
-                    return Dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
+                    return dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
                     DeleteObject(hBrush);
                     break;
@@ -142,20 +129,20 @@ namespace PlainCEETimer.Interop
 
         private void KeepOnScreen(IntPtr hWnd)
         {
-            var validArea = Screen.GetWorkingArea(Parent);
-            var DialogWidth = DialogRect.Width;
-            var DialogHeight = DialogRect.Height;
-            var X = Parent.Left + (Parent.Width / 2) - (DialogWidth / 2);
-            var Y = Parent.Top + (Parent.Height / 2) - (DialogHeight / 2);
+            var validArea = Screen.GetWorkingArea(owner);
+            var W = Bounds.Width;
+            var H = Bounds.Height;
+            var X = owner.Left + (owner.Width / 2) - (W / 2);
+            var Y = owner.Top + (owner.Height / 2) - (H / 2);
             var l = X;
             var t = Y;
-            var r = X + DialogWidth;
-            var b = Y + DialogHeight;
+            var r = X + W;
+            var b = Y + H;
             if (l < validArea.X) X = validArea.X;
             if (t < validArea.Y) Y = validArea.Y;
-            if (r > validArea.Right) X = validArea.Right - DialogWidth;
-            if (b > validArea.Bottom) Y = validArea.Bottom - DialogHeight;
-            MoveWindow(hWnd, X, Y, DialogWidth, DialogHeight, false);
+            if (r > validArea.Right) X = validArea.Right - W;
+            if (b > validArea.Bottom) Y = validArea.Bottom - H;
+            MoveWindow(hWnd, X, Y, W, H, false);
         }
 
         private NativeStyle GetNativeStyle(IntPtr hWnd)
@@ -190,7 +177,7 @@ namespace PlainCEETimer.Interop
         private static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
-        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport(App.User32Dll)]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -221,9 +208,9 @@ namespace PlainCEETimer.Interop
             public int Right;
             public int Bottom;
 
-            public readonly Rectangle ToRectangle()
+            public static implicit operator Rectangle(RECT r)
             {
-                return Rectangle.FromLTRB(Left, Top, Right, Bottom);
+                return Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom);
             }
         }
     }

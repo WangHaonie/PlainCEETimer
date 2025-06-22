@@ -29,13 +29,19 @@ namespace PlainCEETimer.UI
         }
 
         public DialogResult Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
-            => Popup(message, MessageLevel.Info, buttons, autoClose);
+        {
+            return Popup(message, MessageLevel.Info, buttons, autoClose);
+        }
 
         public DialogResult Warn(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
-            => Popup(message, MessageLevel.Warning, buttons, autoClose);
+        {
+            return Popup(message, MessageLevel.Warning, buttons, autoClose);
+        }
 
         public DialogResult Error(string message, Exception ex = null, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
-            => Popup(GetExMessage(message, ex), MessageLevel.Error, buttons, autoClose);
+        {
+            return Popup(GetExMessage(message, ex), MessageLevel.Error, buttons, autoClose);
+        }
 
         private DialogResult Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
         {
@@ -91,8 +97,14 @@ namespace PlainCEETimer.UI
             #endregion
         };
 
-        private string GetExMessage(string msg, Exception ex) => ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
+        private string GetExMessage(string msg, Exception ex)
+        {
+            return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
+        }
 
-        private static Bitmap GetIcon(int Index) => IconHelper.GetIcon("imageres.dll", Index).ToBitmap();
+        private static Bitmap GetIcon(int Index)
+        {
+            return IconHelper.GetIcon("imageres.dll", Index).ToBitmap();
+        }
     }
 }
