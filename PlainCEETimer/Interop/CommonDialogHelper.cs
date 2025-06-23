@@ -158,7 +158,7 @@ namespace PlainCEETimer.Interop
             return NativeStyle.Explorer;
         }
 
-        [DllImport(App.User32Dll, CharSet = CharSet.Auto)]
+        [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport(App.Gdi32Dll)]

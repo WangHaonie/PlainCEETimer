@@ -63,7 +63,7 @@ namespace PlainCEETimer.UI.Forms
             ArrangeControlXT(LabelInfo, ImageLogo, 0, isHighDpi ? -3 : 0);
             ArrangeControlYL(LabelLicense, ImageLogo, isHighDpi ? -3 : -2);
             CompactControlY(LabelLicense, LabelInfo);
-            ArrangeCommonButtonsR(null, ButtonOK, LabelLicense);
+            ArrangeCommonButtonsR(null, ButtonOK, LabelLicense, -3);
             AlignControlXL(LinkGitHub, LabelLicense);
             CenterControlY(LinkGitHub, ButtonOK);
             ArrangeControlXT(LinkFeedback, LinkGitHub);

@@ -15,7 +15,6 @@ namespace PlainCEETimer.Interop
             return result;
         }
 
-        #region 来自网络
         /*
         
         提取 DLL 里的图标参考:
@@ -26,7 +25,6 @@ namespace PlainCEETimer.Interop
         */
         [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
         private static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, IntPtr phiconSmall, int nIcons);
-        #endregion
 
         [DllImport(App.User32Dll)]
         private static extern bool DestroyIcon(IntPtr hIcon);

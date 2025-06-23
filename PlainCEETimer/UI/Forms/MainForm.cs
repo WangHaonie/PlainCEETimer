@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
@@ -113,10 +112,9 @@ namespace PlainCEETimer.UI.Forms
         {
             RefreshSettings();
             ValidateNeeded = false;
-            Task.Run(() => new Updater().CheckForUpdate(false, this));
+            new Action(() => new Updater().CheckForUpdate(false, this)).Start();
         }
 
-        #region
         /*
         
         无边框窗口的拖动 参考:
@@ -170,7 +168,6 @@ namespace PlainCEETimer.UI.Forms
 
             base.OnMouseUp(e);
         }
-        #endregion
 
         protected override bool OnClosing(CloseReason closeReason)
         {
@@ -425,7 +422,6 @@ namespace PlainCEETimer.UI.Forms
 
             UpdateExamSelection();
 
-            #region 来自网络
             /*
 
             克隆 (重用) 现有 ContextMenuStrip 实例 参考：
@@ -477,7 +473,6 @@ namespace PlainCEETimer.UI.Forms
                 b.Separator(),
                 b.Item("安装目录(&D)", (_, _) => Process.Start(App.CurrentExecutableDir))
             ]);
-            #endregion
         }
 
         private void LoadTrayIcon()
@@ -684,9 +679,7 @@ namespace PlainCEETimer.UI.Forms
                 CountdownContent = Content;
                 CountdownForeColor = Colors.Fore;
                 BackColor = Colors.Back;
-                var textSize = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
-                Width = textSize.Width;
-                Height = textSize.Height;
+                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
                 Invalidate();
 
                 if (ShowTrayText)

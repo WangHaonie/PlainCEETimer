@@ -49,7 +49,6 @@ namespace PlainCEETimer.UI
 
             if (Parent != null && Parent.InvokeRequired)
             {
-                #region 来自网络
                 /*
 
                 在 Invoke 方法内部获取到 DialogResult 返回值 参考:
@@ -59,7 +58,6 @@ namespace PlainCEETimer.UI
 
                 */
                 return (DialogResult)Parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
-                #endregion
             }
 
             return ShowPopup();
@@ -74,7 +72,6 @@ namespace PlainCEETimer.UI
 
         private (string, Bitmap, SystemSound) GetStuff(MessageLevel Level) => Level switch
         {
-            #region 来自网络
             /*
 
             获取 imageres.dll 里的 Info、Warning、Error 图标的索引参考:
@@ -93,8 +90,6 @@ namespace PlainCEETimer.UI
             MessageLevel.Warning => (App.WarnMsg, WarningIcon, SystemSounds.Exclamation),
             MessageLevel.Error => (App.ErrMsg, ErrorIcon, SystemSounds.Hand),
             _ => (App.InfoMsg, InfoIcon, SystemSounds.Asterisk)
-
-            #endregion
         };
 
         private string GetExMessage(string msg, Exception ex)

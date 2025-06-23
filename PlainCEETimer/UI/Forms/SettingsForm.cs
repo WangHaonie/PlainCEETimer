@@ -742,7 +742,6 @@ namespace PlainCEETimer.UI.Forms
                 SwitchToAdvancedSafe();
                 MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
             }
-            #region 来自网络
             /*
                  
                 检测用户是否点击了 UAC 提示框的 "否" 参考:
@@ -756,7 +755,6 @@ namespace PlainCEETimer.UI.Forms
                 SwitchToAdvancedSafe();
                 MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
             }
-            #endregion
             catch (Exception ex)
             {
                 SwitchToAdvancedSafe();

@@ -55,7 +55,6 @@ namespace PlainCEETimer.Interop
             SetTheme(hWnd, type);
         }
 
-        #region 来自网络
         /*
         
         控件使用系统内置深色外观 参考：
@@ -82,6 +81,5 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#13")]
         private static extern void FixScrollBar();
-        #endregion
     }
 }

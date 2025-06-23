@@ -29,7 +29,6 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnDropDown(EventArgs e)
         {
-            #region
             /*
              
             DropDown 自适应大小 参考:
@@ -55,7 +54,6 @@ namespace PlainCEETimer.UI.Controls
                 Calculated = true;
             }
 
-            #endregion
             base.OnDropDown(e);
         }
     }
