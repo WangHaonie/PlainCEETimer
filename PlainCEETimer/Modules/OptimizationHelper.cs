@@ -6,11 +6,10 @@ using PlainCEETimer.UI.Dialogs;
 
 namespace PlainCEETimer.Modules
 {
-    public class OptimizationHelper(bool isAuto) : IDisposable
+    public class OptimizationHelper(bool Auto) : IDisposable
     {
         private OpenFileDialog Dialog;
         private const string Ngen = "ngen.exe";
-        private readonly bool Auto = isAuto;
         private readonly string NgenPath = @"C:\Windows\Microsoft.NET\Framework64\";
         private readonly string DNFVersion = "v4*";
         private readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;

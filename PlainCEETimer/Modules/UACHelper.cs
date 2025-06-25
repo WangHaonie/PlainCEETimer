@@ -17,10 +17,10 @@ namespace PlainCEETimer.Modules
 
     public static class UACHelper
     {
-        public static bool IsUACDisabled { get; }
         public static bool IsAdmin { get; private set; }
 
         private static readonly UACNotifyLevel Level;
+        private static readonly bool IsUACDisabled;
 
         static UACHelper()
         {

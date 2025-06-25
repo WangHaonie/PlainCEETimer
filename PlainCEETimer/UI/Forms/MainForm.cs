@@ -17,7 +17,7 @@ namespace PlainCEETimer.UI.Forms
     public sealed class MainForm() : AppForm(AppFormParam.Special)
     {
         public static bool UniTopMost { get; private set; } = true;
-        public static bool ValidateNeeded = true;
+        public static bool ValidateNeeded { get; private set; } = true;
         public static event Action UniTopMostChanged;
 
         private bool AutoSwitch;

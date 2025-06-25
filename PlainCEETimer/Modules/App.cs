@@ -55,7 +55,6 @@ namespace PlainCEETimer.Modules
         private static bool IsMainProcess;
         private static bool IsClosing;
         private static bool CanSaveConfig;
-        private static readonly object Locker = new();
         private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);

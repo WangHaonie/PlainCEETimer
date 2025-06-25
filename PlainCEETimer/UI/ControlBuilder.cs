@@ -10,7 +10,11 @@ namespace PlainCEETimer.UI
     {
         public Label Label(string text)
         {
-            return new Label() { Text = text, AutoSize = true };
+            return new()
+            {
+                Text = text,
+                AutoSize = true
+            };
         }
 
         public Label Block(EventHandler onClick)

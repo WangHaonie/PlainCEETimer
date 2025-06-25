@@ -8,6 +8,7 @@ namespace PlainCEETimer.Interop
 {
     public static class ThemeManager
     {
+        public static int VerticalScrollBarWidth { get; } = SystemInformation.VerticalScrollBarWidth;
         public static bool IsDarkModeSupported { get; }
         public static bool ShouldUseDarkMode { get; }
         public static Color DarkFore { get; } = Color.White;
@@ -16,7 +17,6 @@ namespace PlainCEETimer.Interop
         public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
-        public static readonly int VerticalScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
         private static readonly int DwmaType;
 
         static ThemeManager()
@@ -40,14 +40,14 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        public static void FlushWindow(IntPtr hWnd)
-        {
-            FlushWindow(hWnd, DwmaType);
-        }
-
         public static void FlushControl(IWin32Window control, NativeStyle type)
         {
             FlushControl(control.Handle, type);
+        }
+
+        public static void FlushWindow(IntPtr hWnd)
+        {
+            FlushWindow(hWnd, DwmaType);
         }
 
         public static void FlushControl(IntPtr hWnd, NativeStyle type)

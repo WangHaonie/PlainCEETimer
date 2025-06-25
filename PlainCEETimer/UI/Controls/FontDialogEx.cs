@@ -27,8 +27,14 @@ namespace PlainCEETimer.UI.Controls
             return ShowDialog();
         }
 
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) => Helper.HookProc(hWnd, msg, wparam, lparam);
+        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+        {
+            return Helper.HookProc(hWnd, msg, wparam, lparam);
+        }
 
-        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) => base.HookProc(hWnd, msg, wParam, lParam);
+        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        {
+            return base.HookProc(hWnd, msg, wParam, lParam);
+        }
     }
 }
