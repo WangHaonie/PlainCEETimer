@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PlainCEETimer.UI;
@@ -9,9 +8,9 @@ namespace PlainCEETimer.Modules
 {
     public class OptimizationHelper(bool isAuto) : IDisposable
     {
-        private readonly bool Auto = isAuto;
         private OpenFileDialog Dialog;
         private const string Ngen = "ngen.exe";
+        private readonly bool Auto = isAuto;
         private readonly string NgenPath = @"C:\Windows\Microsoft.NET\Framework64\";
         private readonly string DNFVersion = "v4*";
         private readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
@@ -91,41 +90,25 @@ namespace PlainCEETimer.Modules
             }
             else
             {
-                Cancel();
+                MessageX.Info("本次操作已被取消！");
             }
         }
 
         private void Start(string path)
         {
-            try
+            var console = new ConsoleWindow() { AutoClose = Auto, EnableLeftButton = true };
+
+            if (!Auto)
             {
-                var console = new ConsoleWindow() { AutoClose = Auto, EnableLeftButton = true };
-
-                if (!Auto)
-                {
-                    console.Complete += () => console.UpdateState("是否重启倒计时?");
-                }
-
-                console.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose");
-
-                if (!Auto && console.DialogResult == DialogResult.OK)
-                {
-                    App.Exit(ExitReason.UserRestart);
-                }
+                console.Complete += () => console.UpdateState("是否重启倒计时?");
             }
-            catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
+
+            console.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose");
+
+            if (!Auto && console.DialogResult == DialogResult.OK)
             {
-                if (!Auto)
-                {
-                    MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
-                    Cancel();
-                }
+                App.Exit(ExitReason.UserRestart);
             }
-        }
-
-        private void Cancel()
-        {
-            MessageX.Info("本次操作已被取消！");
         }
 
         ~OptimizationHelper() => Dispose();

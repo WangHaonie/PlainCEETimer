@@ -146,7 +146,7 @@ namespace PlainCEETimer.Modules
                     }
                     else
                     {
-                        MessageX.Error("请先关闭已打开的实例再使用命令行功能。", autoClose: true);
+                        MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
                     }
                 }
 
@@ -212,39 +212,15 @@ namespace PlainCEETimer.Modules
 
                     try
                     {
-                        var proc = Process.Start(new ProcessStartInfo
+                        ProcessHelper.Run(path, args, (proc, _) =>
                         {
-                            FileName = path,
-                            Arguments = args,
-                            RedirectStandardOutput = true,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        });
-
-                        proc.EnableRaisingEvents = true;
-
-                        proc.Exited += (_, _) =>
-                        {
-                            w.WriteLine("===================================");
-                            w.WriteLine($"命令执行完成，返回值为 0x{proc.ExitCode:X}。可以关闭此窗口。");
-                            w.WriteLine("===================================");
-                            w.WriteLine("```1");
-                        };
-
-                        proc.OutputDataReceived += (_, e) =>
-                        {
-                            lock (Locker)
-                            {
-                                w.WriteLine(e.Data);
-                            }
-                        };
-
-                        proc.BeginOutputReadLine();
-                        proc.WaitForExit();
+                            w.WriteLine(ProcessHelper.GetExitMessage(proc));
+                            w.WriteLine($"```1");
+                        }, (_, e) => w.WriteLine(e.Data));
                     }
                     catch (Exception ex)
                     {
-                        w.WriteLine($"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。");
+                        w.WriteLine(ProcessHelper.GetExceptionMessage(ex));
                         w.WriteLine("```2");
                     }
                     finally

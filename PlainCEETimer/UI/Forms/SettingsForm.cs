@@ -402,7 +402,7 @@ namespace PlainCEETimer.UI.Forms
                                 {
                                     if (MessageX.Info("是否重启到命令行模式？", buttons: MessageButtons.YesNo) == DialogResult.Yes)
                                     {
-                                        ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", ShowWindow: true);
+                                        ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", true);
                                         App.Exit(ExitReason.Normal);
                                     }
                                 }

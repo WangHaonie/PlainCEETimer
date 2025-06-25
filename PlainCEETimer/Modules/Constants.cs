@@ -2,7 +2,6 @@
 {
     public static class Constants
     {
-        public const int ERROR_CANCELLED = 0x4C7;
         public const string PH_EXAMNAME = "{x}";
         public const string PH_DAYS = "{d}";
         public const string PH_HOURS = "{h}";

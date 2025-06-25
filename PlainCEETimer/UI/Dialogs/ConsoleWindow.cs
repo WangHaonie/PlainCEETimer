@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -14,25 +13,26 @@ namespace PlainCEETimer.UI.Dialogs
 {
     public sealed class ConsoleWindow() : AppDialog(AppFormParam.AllControl)
     {
-        public event Action Exit;
-        public event Action Error;
-        public event Action Complete;
         public bool AutoClose { get; set; }
         public bool EnableLeftButton { get; set; }
 
-        private RichTextBox ConsoleBox;
-        private NamedPipeServerStream Server;
-        private MenuItem ContextCopy;
-        private Label LabelMessage;
-        private readonly Timer ConsoleTimer = new();
-        private int ConsoleTimerTick;
-        private string LineFromClient;
-        private bool IsSafeThread;
-        private bool IsRunning;
-        private string[] Command;
-        private string Key;
+        public event Action Exit;
+        public event Action Error;
+        public event Action Complete;
+
         private bool ElevateNeeded;
+        private bool IsRunning;
+        private bool IsSafeThread;
+        private int ConsoleTimerTick;
+        private string Key;
+        private string LineFromClient;
+        private string[] Command;
+        private Label LabelMessage;
+        private MenuItem ContextCopy;
+        private NamedPipeServerStream Server;
         private Process ElevatedProc;
+        private RichTextBox ConsoleBox;
+        private readonly Timer ConsoleTimer = new();
 
         protected override void OnInitializing()
         {
@@ -64,29 +64,19 @@ namespace PlainCEETimer.UI.Dialogs
 
             var menu = ContextMenuBuilder.Build(b =>
             [
-                ContextCopy = b.Item("复制(&C)", (_, _) =>
-                {
-                    Clipboard.SetText(ConsoleBox.SelectedText);
-                })
+                ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
+                b.Separator(),
+                b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
             ]);
 
             menu.Popup += (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText);
             ConsoleBox.ContextMenu = menu;
         }
 
-        private void ConsoleTimer_Tick(object sender, EventArgs e)
+        protected override void StartLayout(bool isHighDpi)
         {
-            LabelMessage.Text = $"正在运行中... ({ConsoleTimerTick} s)";
-            ConsoleTimerTick++;
-
-            try
-            {
-                if (ElevateNeeded && IsRunning && ElevatedProc.HasExited)
-                {
-                    Final();
-                }
-            }
-            catch { }
+            ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
+            CenterControlY(LabelMessage, ButtonA);
         }
 
         protected override void OnShown()
@@ -107,33 +97,16 @@ namespace PlainCEETimer.UI.Dialogs
                     {
                         try
                         {
-                            var proc = Process.Start(new ProcessStartInfo()
+                            ProcessHelper.Run(name, args, (proc, _) =>
                             {
-                                FileName = name,
-                                Arguments = args,
-                                UseShellExecute = false,
-                                RedirectStandardOutput = true,
-                                CreateNoWindow = true
-                            });
-
-                            proc.EnableRaisingEvents = true;
-
-                            proc.Exited += (_, _) =>
-                            {
-                                SafeWrite("===================================");
-                                SafeWrite($"命令执行完成，返回值为 0x{proc.ExitCode:X}。可以关闭此窗口。");
-                                SafeWrite("===================================");
-                                Exit?.Invoke();
-                            };
-
-                            proc.OutputDataReceived += (_, e) => SafeWrite(e.Data);
-                            proc.BeginOutputReadLine();
-                            proc.WaitForExit();
+                                SafeWrite(ProcessHelper.GetExitMessage(proc));
+                                OnExit();
+                            }, (_, e) => SafeWrite(e.Data));
                         }
                         catch (Exception ex)
                         {
-                            SafeWrite($"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。");
-                            Error?.Invoke();
+                            SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                            OnError();
                         }
                         finally
                         {
@@ -149,41 +122,12 @@ namespace PlainCEETimer.UI.Dialogs
                     {
                         try
                         {
-                            ElevatedProc = new Process()
-                            {
-                                StartInfo = new ProcessStartInfo()
-                                {
-                                    FileName = App.CurrentExecutablePath,
-                                    Arguments = "/run " + Key + " " + name + " " + args,
-                                    Verb = "runas",
-                                    UseShellExecute = true,
-                                    CreateNoWindow = true
-                                },
-
-                                EnableRaisingEvents = true
-                            };
-
-                            ElevatedProc.Start();
-                        }
-                        catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
-                        {
-                            /*
-                            
-                            检测用户是否点击了 UAC 提示框的 "否" 参考:
-
-                            c# - Run process as administrator from a non-admin application - Stack Overflow
-                            https://stackoverflow.com/a/20872219/21094697
-
-                            */
-
-                            SafeWrite($"{ex}\n\n授权失败，请在 UAC 对话框弹出时点击 \"是\"。");
-                            Error?.Invoke();
-                            Final();
+                            ElevatedProc = ProcessHelper.RunElevated(App.CurrentExecutablePath, "/run " + Key + " " + name + " " + args);
                         }
                         catch (Exception ex)
                         {
-                            SafeWrite($"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。");
-                            Error?.Invoke();
+                            SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                            OnError();
                             Final();
                         }
                     }).Start();
@@ -198,11 +142,11 @@ namespace PlainCEETimer.UI.Dialogs
                         {
                             if (LineFromClient.Has("```1"))
                             {
-                                Exit?.Invoke();
+                                OnExit();
                             }
                             else if (LineFromClient.Has("```2"))
                             {
-                                Error?.Invoke();
+                                OnError();
                             }
                             else if (LineFromClient.Has("```3"))
                             {
@@ -221,6 +165,67 @@ namespace PlainCEETimer.UI.Dialogs
                 Final();
                 Close();
             }
+        }
+
+        protected override bool OnClosing(CloseReason closeReason)
+        {
+            return IsRunning && !ElevatedProc.HasExited;
+        }
+
+        protected override void OnClosed()
+        {
+            TaskbarProgress.Release();
+        }
+
+        public void Run(params string[] command)
+        {
+            IsSafeThread = InvokeRequired;
+            IsRunning = true;
+            Command = command;
+            Key = $"PlainCEETimer.CommandOutputRedirector_{Guid.NewGuid()}";
+            ShowDialog();
+        }
+
+        public void SafeWrite(string line)
+        {
+            if (IsSafeThread)
+            {
+                Write(line);
+            }
+            else
+            {
+                Invoke(() => Write(line));
+            }
+        }
+
+        public void UpdateState(string text)
+        {
+            SafeExecute(() => LabelMessage.Text += text);
+        }
+
+        private void ConsoleTimer_Tick(object sender, EventArgs e)
+        {
+            LabelMessage.Text = $"正在运行中... ({ConsoleTimerTick} s)";
+            ConsoleTimerTick++;
+
+            try
+            {
+                if (ElevateNeeded && IsRunning && ElevatedProc.HasExited)
+                {
+                    Final();
+                }
+            }
+            catch { }
+        }
+
+        private void OnExit()
+        {
+            Exit?.Invoke();
+        }
+
+        private void OnError()
+        {
+            Error?.Invoke();
         }
 
         private void Final()
@@ -248,38 +253,6 @@ namespace PlainCEETimer.UI.Dialogs
             });
         }
 
-        protected override void StartLayout(bool isHighDpi)
-        {
-            ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
-            CenterControlY(LabelMessage, ButtonA);
-        }
-
-        public void Run(params string[] command)
-        {
-            IsSafeThread = InvokeRequired;
-            IsRunning = true;
-            Command = command;
-            Key = $"PlainCEETimer.CommandOutputRedirector_{Guid.NewGuid()}";
-            ShowDialog();
-        }
-
-        public void SafeWrite(string line)
-        {
-            if (IsSafeThread)
-            {
-                Write(line);
-            }
-            else
-            {
-                Invoke(() => Write(line));
-            }
-        }
-
-        public void UpdateState(string text)
-        {
-            Invoke(() => LabelMessage.Text += text);
-        }
-
         private void SafeExecute(Action action)
         {
             Invoke(action);
@@ -293,16 +266,6 @@ namespace PlainCEETimer.UI.Dialogs
                 ConsoleBox.AppendText("\r\n");
                 CommonDialogHelper.SendMessageW(ConsoleBox.Handle, 0x115, (IntPtr)7, IntPtr.Zero);
             }
-        }
-
-        protected override bool OnClosing(CloseReason closeReason)
-        {
-            return IsRunning && !ElevatedProc.HasExited;
-        }
-
-        protected override void OnClosed()
-        {
-            TaskbarProgress.Release();
         }
     }
 }

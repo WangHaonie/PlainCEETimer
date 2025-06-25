@@ -1,40 +1,89 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace PlainCEETimer.Modules
 {
     public static class ProcessHelper
     {
-        /// <summary>
-        /// 启动一个进程。若要打开文件夹请改用 <see cref="Process.Start()"/>
-        /// </summary>
-        /// <param name="ProcessPath">文件路径</param>
-        /// <param name="Args">启动参数</param>
-        /// <param name="Return">返回类型：0 - 不等待, 1 - 返回进程输出, 2 - 返回进程返回值</param>
-        /// <param name="AdminRequired">是否需要管理员权限</param>
-        /// <returns><see cref="object"/> 【<see cref="string"/> (输出结果), <see cref="int"/> (返回值)】</returns>
-        public static object Run(string ProcessPath, string Args = "", int Return = 0, bool AdminRequired = false, bool ShowWindow = false)
+        public static int Run(string path, string args, bool showWindow = false, bool returnExitCode = false)
         {
-            var process = Process.Start(new ProcessStartInfo
-            {
-                FileName = ProcessPath,
-                Arguments = Args,
-                UseShellExecute = AdminRequired,
-                CreateNoWindow = !ShowWindow,
-                WindowStyle = ShowWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = Return == 1,
-                Verb = AdminRequired ? "runas" : ""
-            });
+            var proc = MakeProc(path, args, false, false, showWindow, false);
+            proc.Start();
 
-            if (Return == 0)
+            if (returnExitCode)
             {
-                return null;
-            }
-            else
-            {
-                process.WaitForExit();
+                proc.WaitForExit();
+                return proc.ExitCode;
             }
 
-            return Return == 1 ? process.StandardOutput.ReadToEnd().Trim() : process.ExitCode;
+            return -1;
+        }
+
+        public static void Run(string path, string args, EventHandler onExited, DataReceivedEventHandler onOutputDataReceived)
+        {
+            var proc = MakeProc(path, args, false, false, false, true);
+            proc.Exited += onExited;
+            proc.OutputDataReceived += onOutputDataReceived;
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.WaitForExit();
+        }
+
+        public static Process RunElevated(string path, string args)
+        {
+            var proc = MakeProc(path, args, true, true, false, false);
+            proc.Start();
+            return proc;
+        }
+
+        public static string GetExitMessage(object process)
+        {
+            return
+                $"""
+
+                ===================================
+                命令执行完成，返回值为 0x{((Process)process).ExitCode:X}。可以关闭此窗口。
+                ===================================
+                """;
+        }
+
+        public static string GetExceptionMessage(Exception ex)
+        {
+            if (ex is Win32Exception w32ex && w32ex.NativeErrorCode == 1223)
+            {
+                /*
+                            
+                检测用户是否点击了 UAC 提示框的 "否" 参考:
+
+                c# - Run process as administrator from a non-admin application - Stack Overflow
+                https://stackoverflow.com/a/20872219/21094697
+
+                */
+
+                return $"{ex}\n\n授权失败，请在 UAC 对话框弹出时点击 \"是\"。";
+            }
+
+            return $"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。";
+        }
+
+        private static Process MakeProc(string path, string args, bool elevate, bool useShExec, bool showWindow, bool redirectOutput)
+        {
+            return new()
+            {
+                StartInfo = new()
+                {
+                    FileName = path,
+                    Arguments = args,
+                    UseShellExecute = useShExec && !redirectOutput && (elevate || !showWindow),
+                    Verb = elevate ? "runas" : "",
+                    CreateNoWindow = !showWindow,
+                    RedirectStandardOutput = redirectOutput && !elevate,
+                    WindowStyle = showWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
+                },
+
+                EnableRaisingEvents = true
+            };
         }
     }
 }

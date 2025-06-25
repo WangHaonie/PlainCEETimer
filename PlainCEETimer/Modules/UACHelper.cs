@@ -36,7 +36,7 @@ namespace PlainCEETimer.Modules
 
                 if (IsUACDisabled)
                 {
-                    mx.Error("提权失败! 当前系统已禁用 UAC。");
+                    mx.Error("授权失败! 当前系统已禁用 UAC。");
                     return false;
                 }
             }
@@ -46,7 +46,7 @@ namespace PlainCEETimer.Modules
 
         public static void CheckAdmin()
         {
-            IsAdmin = (int)ProcessHelper.Run("net", "session", 2) == 0;
+            IsAdmin = ProcessHelper.Run("net", "session", returnExitCode: true) == 0;
         }
 
         private static UACNotifyLevel GetUACNotifyLevel()
