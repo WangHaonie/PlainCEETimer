@@ -49,6 +49,7 @@ namespace PlainCEETimer.UI.Forms
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
         private string CountdownContent;
+        private string CountdownContentLast = string.Empty;
         private string ExamName;
         private string[] GlobalTexts;
         private CountdownMode Mode;
@@ -674,15 +675,19 @@ namespace PlainCEETimer.UI.Forms
         {
             BeginInvoke(() =>
             {
-                CountdownContent = Content;
-                CountdownForeColor = Colors.Fore;
-                BackColor = Colors.Back;
-                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
-                Invalidate();
-
-                if (ShowTrayText)
+                if (Content != CountdownContentLast)
                 {
-                    UpdateTrayIconText(Content);
+                    CountdownContent = Content;
+                    CountdownContentLast = Content;
+                    CountdownForeColor = Colors.Fore;
+                    BackColor = Colors.Back;
+                    Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
+                    Invalidate();
+
+                    if (ShowTrayText)
+                    {
+                        UpdateTrayIconText(Content);
+                    }
                 }
             });
         }
