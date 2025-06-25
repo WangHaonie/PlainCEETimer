@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -43,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/6/23";
+        public const string AppBuildDate = "2025/6/25";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";
@@ -54,6 +55,7 @@ namespace PlainCEETimer.Modules
         private static bool IsMainProcess;
         private static bool IsClosing;
         private static bool CanSaveConfig;
+        private static readonly object Locker = new();
         private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
@@ -137,7 +139,15 @@ namespace PlainCEETimer.Modules
             {
                 if (Args.Length != 0)
                 {
-                    MessageX.Error("请先关闭已打开的实例再使用命令行功能。", autoClose: true);
+                    if (Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3))))
+                    {
+                        Exit(ExitReason.Normal);
+                        return;
+                    }
+                    else
+                    {
+                        MessageX.Error("请先关闭已打开的实例再使用命令行功能。", autoClose: true);
+                    }
                 }
 
                 StartPipeClient();
@@ -162,7 +172,7 @@ namespace PlainCEETimer.Modules
                 MainMutex = null;
             }
 
-            ProcessHelper.Run("cmd.exe", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(Restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
+            ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(Restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
             Environment.Exit((int)reason);
         }
 
@@ -172,7 +182,7 @@ namespace PlainCEETimer.Modules
             {
                 while (true)
                 {
-                    using var PipeServer = new NamedPipeServerStream(PipeName, PipeDirection.InOut);
+                    using var PipeServer = new NamedPipeServerStream(PipeName, PipeDirection.In);
                     PipeServer.WaitForConnection();
                     OnTrayMenuShowAllClicked();
                 }
@@ -180,14 +190,79 @@ namespace PlainCEETimer.Modules
             catch { }
         }
 
-        private static void StartPipeClient()
+        private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
         {
             try
             {
-                using var PipeClient = new NamedPipeClientStream(".", PipeName, PipeDirection.Out);
-                PipeClient.Connect(1000);
+                var isRedirector = pipe != null;
+                using var PipeClient = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
+
+                if (isRedirector)
+                {
+                    try
+                    {
+                        PipeClient.Connect(500);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+
+                    var w = new StreamWriter(PipeClient) { AutoFlush = true };
+
+                    try
+                    {
+                        var proc = Process.Start(new ProcessStartInfo
+                        {
+                            FileName = path,
+                            Arguments = args,
+                            RedirectStandardOutput = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        });
+
+                        proc.EnableRaisingEvents = true;
+
+                        proc.Exited += (_, _) =>
+                        {
+                            w.WriteLine("===================================");
+                            w.WriteLine($"命令执行完成，返回值为 0x{proc.ExitCode:X}。可以关闭此窗口。");
+                            w.WriteLine("===================================");
+                            w.WriteLine("```1");
+                        };
+
+                        proc.OutputDataReceived += (_, e) =>
+                        {
+                            lock (Locker)
+                            {
+                                w.WriteLine(e.Data);
+                            }
+                        };
+
+                        proc.BeginOutputReadLine();
+                        proc.WaitForExit();
+                    }
+                    catch (Exception ex)
+                    {
+                        w.WriteLine($"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。");
+                        w.WriteLine("```2");
+                    }
+                    finally
+                    {
+                        w.WriteLine("```3");
+                    }
+                }
+                else
+                {
+                    PipeClient.Connect(1000);
+                }
+
+                return true;
             }
-            catch { }
+            catch
+            {
+                return true;
+            }
         }
 
         private static void HandleException(Exception ex)

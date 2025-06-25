@@ -7,7 +7,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class CustomTextDialog : AppDialog
+    public sealed class CustomTextDialog() : AppDialog(AppFormParam.BindButtons | AppFormParam.CompositedStyle)
     {
         public string[] CustomTexts { get; set; } = new string[3];
 
@@ -23,8 +23,6 @@ namespace PlainCEETimer.UI.Dialogs
         private PlainTextBox[] TextBoxes;
         private PlainButton ButtonReset;
         private EventHandler OnUserChanged;
-
-        public CustomTextDialog() : base(AppFormParam.BindButtons | AppFormParam.CompositedStyle) { }
 
         protected override void OnInitializing()
         {

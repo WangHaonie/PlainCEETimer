@@ -195,7 +195,7 @@ namespace PlainCEETimer.Interop
         private static extern IntPtr SetFocus(IntPtr hWnd);
 
         [DllImport(App.User32Dll)]
-        private static extern IntPtr SendMessageW(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessageW(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
         private static extern IntPtr PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);

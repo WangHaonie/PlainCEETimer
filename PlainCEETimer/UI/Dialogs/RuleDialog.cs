@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
+    public sealed class RuleDialog() : AppDialog(AppFormParam.AllControl | AppFormParam.CompositedStyle), IListViewSubDialog<CustomRuleObject>
     {
         public string[] GlobalTexts { private get; set; }
         public ColorSetObject[] GlobalColors { private get; set; }
@@ -44,8 +44,6 @@ namespace PlainCEETimer.UI.Dialogs
             public Color Back = back;
             public string Text = text;
         }
-
-        public RuleDialog() : base(AppFormParam.AllControl | AppFormParam.CompositedStyle) { }
 
         protected override void OnInitializing()
         {

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 
@@ -380,12 +378,11 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonSyncTime = b.Button("立即同步(&Y)", true, true, (_, _) =>
                             {
-                                if (UACHelper.EnsureUAC(MessageX))
-                                {
-                                    var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
-                                    UpdateSettingsArea(SettingsArea.SyncTime);
-                                    new Action(() => StartSyncTime(server)).Start();
-                                }
+                                var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
+                                UpdateSettingsArea(SettingsArea.SyncTime);
+                                var console = new ConsoleWindow();
+                                console.Complete += () => Invoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false));
+                                console.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync");
                             })
                         ]),
 
@@ -734,38 +731,6 @@ namespace PlainCEETimer.UI.Forms
             return true;
         }
 
-        private void StartSyncTime(string Server)
-        {
-            try
-            {
-                var ExitCode = (int)ProcessHelper.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{Server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", 2, true);
-                SwitchToAdvancedSafe();
-                MessageX.Info($"命令执行完成！\n\n返回值为 {ExitCode} (0x{ExitCode:X})\n(0 代表成功，其他值为失败)");
-            }
-            /*
-                 
-                检测用户是否点击了 UAC 提示框的 "否" 参考:
-
-                c# - Run process as administrator from a non-admin application - Stack Overflow
-                https://stackoverflow.com/a/20872219/21094697
-                 
-            */
-            catch (Win32Exception ex) when (ex.NativeErrorCode == Constants.ERROR_CANCELLED)
-            {
-                SwitchToAdvancedSafe();
-                MessageX.Error("授权失败，请在 UAC 对话框弹出时点击 \"是\"。", ex);
-            }
-            catch (Exception ex)
-            {
-                SwitchToAdvancedSafe();
-                MessageX.Error("命令执行时发生了错误。", ex);
-            }
-            finally
-            {
-                BeginInvoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false));
-            }
-        }
-
         private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
         {
             switch (Where)
@@ -815,11 +780,6 @@ namespace PlainCEETimer.UI.Forms
                 ColorLabels[i + 4].BackColor = Colors[i].Back;
                 ColorPreviewLabels[i].BackColor = Colors[i].Back;
             }
-        }
-
-        private void SwitchToAdvancedSafe()
-        {
-            BeginInvoke(() => NavBar.SwitchTo(PageAdvanced));
         }
 
         private bool Save()

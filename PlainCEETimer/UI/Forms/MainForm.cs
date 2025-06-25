@@ -14,7 +14,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class MainForm : AppForm
+    public sealed class MainForm() : AppForm(AppFormParam.Special)
     {
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded = true;
@@ -78,8 +78,6 @@ namespace PlainCEETimer.UI.Forms
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
         private static readonly StringBuilder CustomTextBuilder = new();
-
-        public MainForm() : base(AppFormParam.Special) { }
 
         protected override void OnInitializing()
         {

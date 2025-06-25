@@ -10,7 +10,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class DownloaderForm : AppForm
+    public sealed class DownloaderForm() : AppForm(AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
     {
         private bool IsCancelled;
         private string DownloadUrl;
@@ -26,8 +26,6 @@ namespace PlainCEETimer.UI.Forms
         private readonly long UpdateSize;
         private readonly CancellationTokenSource cts = new();
         private readonly Downloader UpdateDownloader = new();
-
-        private DownloaderForm() : base(AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         public DownloaderForm(string ManualVersion) : this()
         {
@@ -93,7 +91,7 @@ namespace PlainCEETimer.UI.Forms
             if (Win32User.NotElevated)
             {
                 LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
-                TaskbarProgress.Initialize(Handle, (App.OSBuild >= WindowsBuilds.Windows7).ToWin32());
+                TaskbarProgress.Initialize(this);
                 DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
                 UpdateDownloader.Downloading += UpdateDownloader_Downloading;
                 UpdateDownloader.Error += UpdateDownloader_Error;

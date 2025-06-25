@@ -6,7 +6,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class AboutForm : AppForm
+    public sealed class AboutForm() : AppForm(AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
     {
         private bool IsCheckingUpdate;
         private string VersionString;
@@ -17,8 +17,6 @@ namespace PlainCEETimer.UI.Forms
         private PictureBox ImageLogo;
         private Hyperlink LinkFeedback;
         private Hyperlink LinkTutorial;
-
-        public AboutForm() : base(AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         protected override void OnInitializing()
         {

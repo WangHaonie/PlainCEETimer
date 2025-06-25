@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PlainCEETimer.UI;
+using PlainCEETimer.UI.Dialogs;
 
 namespace PlainCEETimer.Modules
 {
@@ -28,46 +29,34 @@ namespace PlainCEETimer.Modules
                 
                 """, buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
-                if (!Auto)
+                try
                 {
-                    MessageX.Info("稍后进行优化操作，将无界面显示进度，请耐心等待。\n\n>> 点击 确定 继续。");
-                }
+                    var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
+                    var length = dirs.Length;
 
-                if (Auto || UACHelper.EnsureUAC(MessageX))
-                {
-                    try
+                    if (length != 0)
                     {
-                        var dirs = Directory.GetDirectories(NgenPath, DNFVersion);
-                        var length = dirs.Length;
-
-                        if (length != 0)
+                        for (int i = length - 1; i < length; i--)
                         {
-                            for (int i = length - 1; i < length; i--)
-                            {
-                                var path = Path.Combine(dirs[i], Ngen);
+                            var path = Path.Combine(dirs[i], Ngen);
 
-                                if (File.Exists(path))
-                                {
-                                    Start(path);
-                                    return;
-                                }
+                            if (File.Exists(path))
+                            {
+                                Start(path);
+                                return;
                             }
                         }
+                    }
 
-                        throw new Exception();
-                    }
-                    catch
-                    {
-                        if (!Auto)
-                        {
-                            MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
-                            Retry();
-                        }
-                    }
+                    throw new Exception();
                 }
-                else
+                catch
                 {
-                    Cancel();
+                    if (!Auto)
+                    {
+                        MessageX.Warn($"无法自动搜索到 {Ngen}，请手动指定！");
+                        Retry();
+                    }
                 }
             }
         }
@@ -110,9 +99,16 @@ namespace PlainCEETimer.Modules
         {
             try
             {
-                var code = (int)ProcessHelper.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", 2, AdminRequired: true);
+                var console = new ConsoleWindow() { AutoClose = Auto, EnableLeftButton = true };
 
-                if (!Auto && MessageX.Info($"命令执行完成！\n返回值为 {code} (0x{code:X})\n(0 代表成功，其他值为失败)\n\n是否重启倒计时?", buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                if (!Auto)
+                {
+                    console.Complete += () => console.UpdateState("是否重启倒计时?");
+                }
+
+                console.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose");
+
+                if (!Auto && console.DialogResult == DialogResult.OK)
                 {
                     App.Exit(ExitReason.UserRestart);
                 }
