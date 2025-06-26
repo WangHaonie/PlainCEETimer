@@ -14,7 +14,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class MainForm() : AppForm(AppFormParam.Special)
+    public sealed class MainForm() : AppForm(AppFormParam.Special | AppFormParam.RoundCorner)
     {
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded { get; private set; } = true;
@@ -31,7 +31,6 @@ namespace PlainCEETimer.UI.Forms
         private bool IsShowXOnly;
         private bool LoadedMemCleaner;
         private bool MemClean;
-        private bool SetRoundRegion;
         private bool ShowThemeChangedWarning;
         private bool ShowTrayIcon;
         private bool ShowTrayText;
@@ -45,7 +44,6 @@ namespace PlainCEETimer.UI.Forms
         private int ShowXOnlyIndex;
         private int LastMouseX;
         private int LastMouseY;
-        private const int BorderRadius = 13;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
         private string CountdownContent;
@@ -82,26 +80,12 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void OnInitializing()
         {
-            ShowInTaskbar = false;
-            ControlBox = false;
-            DoubleBuffered = true;
-            FormBorderStyle = FormBorderStyle.None;
-            StartPosition = FormStartPosition.Manual;
-            AutoSize = false;
-            AutoSizeMode = AutoSizeMode.GrowOnly;
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            SetRoundCorners();
-        }
-
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
             var g = e.Graphics;
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
@@ -182,13 +166,8 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            if (SetRoundRegion)
-            {
-                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, ScaleToDpi(BorderRadius));
-            }
-
-            ValidateLocation();
             base.OnSizeChanged(e);
+            ValidateLocation();
         }
 
         private void MainForm_LocationRefreshed()
@@ -795,18 +774,6 @@ namespace PlainCEETimer.UI.Forms
         private void SaveConfig()
         {
             App.AppConfig = AppConfig;
-        }
-
-        private void SetRoundCorners()
-        {
-            if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
-            {
-                RoundCorner.SetRoundCornerModern(Handle);
-            }
-            else
-            {
-                SetRoundRegion = true;
-            }
         }
     }
 }

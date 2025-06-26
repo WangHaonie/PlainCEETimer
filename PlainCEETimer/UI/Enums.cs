@@ -86,6 +86,7 @@ namespace PlainCEETimer.UI
         CompositedStyle = 1 << 3,
         CenterScreen = 1 << 4,
         OnEscClosing = 1 << 5 | KeyPreview,
+        RoundCorner = 1 << 6,
         AllControl = BindButtons | KeyPreview
     }
 

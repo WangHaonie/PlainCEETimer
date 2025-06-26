@@ -17,7 +17,9 @@ namespace PlainCEETimer.UI.Controls
         protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
+        private bool SetRoundRegion;
         private AppFormParam Params;
+        private readonly bool SetRoundCorner;
         private readonly bool Special;
         private readonly bool OnEscClosing;
 
@@ -32,6 +34,7 @@ namespace PlainCEETimer.UI.Controls
             Special = CheckParam(AppFormParam.Special);
             OnEscClosing = CheckParam(AppFormParam.OnEscClosing);
             KeyPreview = CheckParam(AppFormParam.KeyPreview);
+            SetRoundCorner = CheckParam(AppFormParam.RoundCorner);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             MessageX = new(this);
 
@@ -52,6 +55,17 @@ namespace PlainCEETimer.UI.Controls
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
             ShowIcon = false;
+
+            if (SetRoundCorner)
+            {
+                AutoSize = false;
+                ControlBox = false;
+                DoubleBuffered = true;
+                StartPosition = FormStartPosition.Manual;
+                FormBorderStyle = FormBorderStyle.None;
+                ShowInTaskbar = false;
+            }
+
             OnInitializing();
             ResumeLayout(true);
         }
@@ -92,6 +106,16 @@ namespace PlainCEETimer.UI.Controls
             IsLoading = false;
             OnShown();
             base.OnShown(e);
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            if (SetRoundRegion && SetRoundCorner)
+            {
+                RoundCorner.SetRoundCornerRegion(Handle, Width, Height, ScaleToDpi(13));
+            }
+
+            base.OnSizeChanged(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -152,6 +176,18 @@ namespace PlainCEETimer.UI.Controls
                 }
 
                 ThemeManager.FlushWindow(Handle);
+            }
+
+            if (SetRoundCorner)
+            {
+                if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
+                {
+                    RoundCorner.SetRoundCornerModern(Handle);
+                }
+                else
+                {
+                    SetRoundRegion = true;
+                }
             }
 
             base.OnHandleCreated(e);

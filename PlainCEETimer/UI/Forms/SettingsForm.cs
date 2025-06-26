@@ -21,8 +21,10 @@ namespace PlainCEETimer.UI.Forms
         private bool InvokeChangeRequired;
         private bool IsFunnyClick;
         private bool IsSetStartUp;
+        private bool IsPicking;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
+        private Point CurrentMouseLocation;
         private ColorSetObject[] SelectedColors;
         private Action<Label> ColorBlockBindings;
         private ComboBoxEx ComboBoxAutoSwitchInterval;
@@ -56,6 +58,7 @@ namespace PlainCEETimer.UI.Forms
         private Label BlockPreviewColor2;
         private Label BlockPreviewColor3;
         private Label BlockPreviewColor4;
+        private Label CurrentPickingBlock;
         private Label LabelPptsvc;
         private Label LabelRestart;
         private Label LabelScreens;
@@ -102,6 +105,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeDark;
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
+        private ScreenColorPicker ColorPicker;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
         public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
@@ -128,13 +132,39 @@ namespace PlainCEETimer.UI.Forms
 
             ColorBlockBindings = c =>
             {
-                c.MouseDown += (_, e) => IsColorLabelsDragging = e.Button == MouseButtons.Left;
+                c.MouseDown += (sender, e) =>
+                {
+                    if (e.Button == MouseButtons.Left)
+                    {
+                        IsColorLabelsDragging = true;
+                        CurrentPickingBlock = (Label)sender;
+                        CurrentPickingBlock.Capture = true;
+                    }
+                };
 
                 c.MouseMove += (_, _) =>
                 {
                     if (IsColorLabelsDragging)
                     {
                         Cursor = Cursors.Cross;
+
+                        if (CurrentPickingBlock != null)
+                        {
+                            CurrentMouseLocation = Cursor.Position;
+
+                            if (!IsPicking && !Bounds.Contains(CurrentMouseLocation))
+                            {
+                                IsPicking = true;
+                                ColorPicker = new();
+                                Opacity = 0;
+                                ColorPicker.Show();
+                            }
+
+                            if (IsPicking)
+                            {
+                                ColorPicker.UpdateFrame(CurrentMouseLocation);
+                            }
+                        }
                     }
                 };
 
@@ -144,6 +174,7 @@ namespace PlainCEETimer.UI.Forms
                     {
                         IsColorLabelsDragging = false;
                         Cursor = Cursors.Default;
+                        CurrentPickingBlock.Capture = false;
 
                         var LabelSender = (Label)sender;
                         var ParentContainer = LabelSender.Parent;
@@ -154,6 +185,23 @@ namespace PlainCEETimer.UI.Forms
                             TagetLabel.BackColor = LabelSender.BackColor;
                             UpdateSettingsArea(SettingsArea.SelectedColor);
                             SettingsChanged();
+                        }
+
+                        if (CurrentPickingBlock != null)
+                        {
+                            if (IsPicking)
+                            {
+                                CurrentPickingBlock.BackColor = ColorPicker.CurrentPixelColor;
+                                UpdateSettingsArea(SettingsArea.SelectedColor);
+                                SettingsChanged();
+                                ColorPicker.Close();
+                                ColorPicker.Dispose();
+                                ColorPicker = null;
+                                IsPicking = false;
+                            }
+
+                            CurrentPickingBlock = null;
+                            Opacity = 100;
                         }
                     }
                 };
@@ -345,7 +393,7 @@ namespace PlainCEETimer.UI.Forms
 
                         GBoxColors = b.GroupBox("字体颜色",
                         [
-                            LabelColor = b.Label("点击色块来选择文字、背景颜色。将一个色块拖放到其它色块上可快速应用相同的颜色。"),
+                            LabelColor = b.Label("点击色块来选择文字、背景颜色；将一个色块拖放到其它色块上可快速应用相同的颜色；将准心拖出本窗口范围可以选取屏幕上的颜色。"),
                             LabelColorP1 = b.Label("[1]考试前"),
                             LabelColorP2 = b.Label("[2]考试中"),
                             LabelColorP3 = b.Label("[3]考试后"),
