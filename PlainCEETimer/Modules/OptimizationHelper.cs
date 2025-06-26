@@ -95,7 +95,7 @@ namespace PlainCEETimer.Modules
 
         private void Start(string path)
         {
-            var console = new ConsoleWindow() { AutoClose = Auto, EnableLeftButton = true };
+            var console = new ConsoleWindow(Auto, true, !Auto);
 
             if (!Auto)
             {

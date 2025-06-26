@@ -11,11 +11,8 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class ConsoleWindow() : AppDialog(AppFormParam.AllControl)
+    public sealed class ConsoleWindow(bool AutoClose = false, bool EnableLeftButton = false, bool ShowMenu = true) : AppDialog(AppFormParam.AllControl)
     {
-        public bool AutoClose { get; set; }
-        public bool EnableLeftButton { get; set; }
-
         public event Action Exit;
         public event Action Error;
         public event Action Complete;
@@ -62,15 +59,18 @@ namespace PlainCEETimer.UI.Dialogs
             ButtonB.Text = "关闭(&C)";
             ButtonB.Enabled = false;
 
-            var menu = ContextMenuBuilder.Build(b =>
-            [
-                ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
-                b.Separator(),
-                b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
-            ]);
+            if (ShowMenu)
+            {
+                var menu = ContextMenuBuilder.Build(b =>
+                [
+                    ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
+                    b.Separator(),
+                    b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
+                ]);
 
-            menu.Popup += (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText);
-            ConsoleBox.ContextMenu = menu;
+                menu.Popup += (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText);
+                ConsoleBox.ContextMenu = menu;
+            }
         }
 
         protected override void StartLayout(bool isHighDpi)
