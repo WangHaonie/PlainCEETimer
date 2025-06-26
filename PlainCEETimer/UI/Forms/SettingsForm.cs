@@ -117,17 +117,25 @@ namespace PlainCEETimer.UI.Forms
 
             ContextMenuDefaultColor = ContextMenuBuilder.Build(b =>
             [
-                b.Item("白底(&L)", (_, _) =>
-                {
-                    SetLabelColors(DefaultValues.CountdownDefaultColorsLight);
-                    SettingsChanged();
-                }),
+                b.Menu("白底(&L)",
+                [
+                    b.Item("所有", ItemsLight_Click),
+                    b.Separator(),
+                    b.Item("1", ItemsLight_Click),
+                    b.Item("2", ItemsLight_Click),
+                    b.Item("3", ItemsLight_Click),
+                    b.Item("4", ItemsLight_Click)
+                ]),
 
-                b.Item("黑底(&D)", (_, _) =>
-                {
-                    SetLabelColors(DefaultValues.CountdownDefaultColorsDark);
-                    SettingsChanged();
-                })
+                b.Menu("黑底(&D)",
+                [
+                    b.Item("所有", ItemsDark_Click),
+                    b.Separator(),
+                    b.Item("1", ItemsDark_Click),
+                    b.Item("2", ItemsDark_Click),
+                    b.Item("3", ItemsDark_Click),
+                    b.Item("4", ItemsDark_Click)
+                ]),
             ]);
 
             ColorBlockBindings = c =>
@@ -632,6 +640,16 @@ namespace PlainCEETimer.UI.Forms
             });
         }
 
+        private void ItemsDark_Click(object sender, EventArgs e)
+        {
+            ResetColor(true, sender);
+        }
+
+        private void ItemsLight_Click(object sender, EventArgs e)
+        {
+            ResetColor(false, sender);
+        }
+
         private void ColorBlocks_Click(object sender, EventArgs e)
         {
             var LabelSender = (Label)sender;
@@ -749,6 +767,24 @@ namespace PlainCEETimer.UI.Forms
             SettingsChanged();
         }
 
+        private void ResetColor(bool isDark, object sender)
+        {
+            var colors = isDark ? DefaultValues.CountdownDefaultColorsDark : DefaultValues.CountdownDefaultColorsLight;
+            var item = (MenuItem)sender;
+            var index = item.Index - 2;
+
+            if (index < 0)
+            {
+                ApplyColorBlocks(colors);
+            }
+            else
+            {
+                ApplyColorBlocks(colors, index);
+            }
+
+            SettingsChanged();
+        }
+
         private bool IsSettingsFormatValid()
         {
             int ColorCheckMsg = 0;
@@ -807,7 +843,7 @@ namespace PlainCEETimer.UI.Forms
                     LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
                     break;
                 case SettingsArea.LastColor:
-                    SetLabelColors(SelectedColors);
+                    ApplyColorBlocks(SelectedColors);
                     break;
                 case SettingsArea.SelectedColor:
                     for (int i = 0; i < 4; i++)
@@ -819,15 +855,20 @@ namespace PlainCEETimer.UI.Forms
             }
         }
 
-        private void SetLabelColors(ColorSetObject[] Colors)
+        private void ApplyColorBlocks(ColorSetObject[] Colors)
         {
             for (int i = 0; i < 4; i++)
             {
-                ColorLabels[i].BackColor = Colors[i].Fore;
-                ColorPreviewLabels[i].ForeColor = Colors[i].Fore;
-                ColorLabels[i + 4].BackColor = Colors[i].Back;
-                ColorPreviewLabels[i].BackColor = Colors[i].Back;
+                ApplyColorBlocks(Colors, i);
             }
+        }
+
+        private void ApplyColorBlocks(ColorSetObject[] Colors, int Index)
+        {
+            ColorLabels[Index].BackColor = Colors[Index].Fore;
+            ColorPreviewLabels[Index].ForeColor = Colors[Index].Fore;
+            ColorLabels[Index + 4].BackColor = Colors[Index].Back;
+            ColorPreviewLabels[Index].BackColor = Colors[Index].Back;
         }
 
         private bool Save()

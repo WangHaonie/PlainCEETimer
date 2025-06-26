@@ -32,8 +32,11 @@ namespace PlainCEETimer.UI.Dialogs
             Text = "全局自定义文本 - 高考倒计时";
             OnUserChanged = (_, _) => UserChanged();
             Presets = DefaultValues.GlobalDefaultCustomTexts;
+
             ContextMenuReset = ContextMenuBuilder.Build(m =>
             [
+                m.Item("所有", ItemsReset_Click),
+                m.Separator(),
                 m.Item(lp1, ItemsReset_Click),
                 m.Item(lp2, ItemsReset_Click),
                 m.Item(lp3, ItemsReset_Click)
@@ -107,9 +110,31 @@ namespace PlainCEETimer.UI.Dialogs
 
         private void ItemsReset_Click(object sender, EventArgs e)
         {
-            var itemIndex = ((MenuItem)sender).Index;
-            TextBoxes[itemIndex].Text = Presets[itemIndex];
+            var itemIndex = ((MenuItem)sender).Index - 2;
+
+            if (itemIndex < 0)
+            {
+                ResetTexts();
+            }
+            else
+            {
+                ResetTexts(itemIndex);
+            }
+
             UserChanged();
+        }
+
+        private void ResetTexts()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                ResetTexts(i);
+            }
+        }
+
+        private void ResetTexts(int Index)
+        {
+            TextBoxes[Index].Text = Presets[Index];
         }
     }
 }
