@@ -44,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/6/27";
+        public const string AppBuildDate = "2025/6/28";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";

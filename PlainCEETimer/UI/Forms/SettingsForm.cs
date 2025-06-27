@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Dialogs;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class SettingsForm : AppForm
+    public sealed class SettingsForm() : AppForm(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
     {
         public bool RefreshNeeded { get; private set; }
 
@@ -99,8 +99,6 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
         private readonly ConfigObject AppConfig = App.AppConfig;
-
-        public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
 
         protected override void OnInitializing()
         {
@@ -303,20 +301,20 @@ namespace PlainCEETimer.UI.Forms
                                 if (Dialog.ShowDialog(this) == DialogResult.OK)
                                 {
                                     SettingsChanged();
-                                    UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: Dialog.Font);
+                                    ChangeDisplayFont(Dialog.Font);
                                 }
                             }),
 
                             ButtonDefaultFont = b.Button("恢复默认(&H)", true, true, (_, _) =>
                             {
-                                UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: DefaultValues.CountdownDefaultFont);
+                                ChangeDisplayFont(DefaultValues.CountdownDefaultFont);
                                 SettingsChanged();
                             })
                         ]),
 
                         GBoxColors = b.GroupBox("字体颜色",
                         [
-                            LabelColor = b.Label("点击色块来选择文字、背景颜色；将一个色块拖放到其它色块上可快速应用相同的颜色；将准心拖出本窗口范围可以选取屏幕上的颜色。"),
+                            LabelColor = b.Label("点击色块来选择文字、背景颜色；将一个色块拖放到其它色块上可快速应用相同的颜色；将准心拖出本窗口可以选取屏幕上的颜色。"),
                             LabelColorP1 = b.Label("[1]考试前"),
                             LabelColorP2 = b.Label("[2]考试中"),
                             LabelColorP3 = b.Label("[3]考试后"),
@@ -611,7 +609,7 @@ namespace PlainCEETimer.UI.Forms
             ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
             ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-            UpdateSettingsArea(SettingsArea.ChangeFont, NewFont: AppConfig.Font);
+            ChangeDisplayFont(AppConfig.Font);
             ChangePptsvcStyle(null, null);
             SelectedColors = AppConfig.GlobalColors;
             ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
@@ -722,7 +720,7 @@ namespace PlainCEETimer.UI.Forms
             return true;
         }
 
-        private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0, Font NewFont = null)
+        private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0)
         {
             switch (Where)
             {
@@ -745,11 +743,13 @@ namespace PlainCEETimer.UI.Forms
                     CheckBoxPptSvc.Checked = IsWorking && AppConfig.Display.SeewoPptsvc;
                     CheckBoxPptSvc.Text = IsWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(SubCase == 0 ? "顶置" : "在左上角")}。";
                     break;
-                case SettingsArea.ChangeFont:
-                    SelectedFont = NewFont;
-                    LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
-                    break;
             }
+        }
+
+        private void ChangeDisplayFont(Font newFont)
+        {
+            SelectedFont = newFont;
+            LabelFont.Text = $"当前字体: {newFont.Name}, {newFont.Size}pt, {newFont.Style}";
         }
 
         private void ApplyColorBlocks(ColorSetObject[] colors)

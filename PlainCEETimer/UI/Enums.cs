@@ -58,8 +58,7 @@ namespace PlainCEETimer.UI
     {
         Funny,
         SyncTime,
-        SetPPTService,
-        ChangeFont
+        SetPPTService
     }
 
     public enum MessageLevel
