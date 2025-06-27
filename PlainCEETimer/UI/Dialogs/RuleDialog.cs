@@ -137,7 +137,7 @@ namespace PlainCEETimer.UI.Dialogs
             ArrangeControlXRT(BlockBack, LabelBack, BlockFore);
             ArrangeControlYL(LabelCustomText, LabelFore);
             ArrangeControlYL(TextBoxCustomText, BlockFore, 0, 3);
-            CenterControlY(LabelCustomText, TextBoxCustomText);
+            CenterControlY(LabelCustomText, TextBoxCustomText, -1);
             CompactControlX(TextBoxCustomText, LabelCustomText);
             ArrangeControlXRT(LinkResetText, TextBoxCustomText, LabelCustomText);
             ArrangeControlXT(BlockPreview, BlockBack);
