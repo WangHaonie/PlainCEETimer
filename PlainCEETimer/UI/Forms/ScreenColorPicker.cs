@@ -52,7 +52,7 @@ namespace PlainCEETimer.UI.Forms
             PosOffset = ScaleToDpi(WH / 4);
             CrossPen = new(Color.Red, ScaleToDpi(1));
             Size = new(HeightWidth, HeightWidth);
-            DestRect = new(0, 0, HeightWidth + 1, HeightWidth + 1);
+            DestRect = new(0, 0, HeightWidth + 2, HeightWidth + 2);
         }
 
         protected override void OnPaint(PaintEventArgs e)
