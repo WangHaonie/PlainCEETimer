@@ -16,6 +16,9 @@ namespace PlainCEETimer.UI.Dialogs
         public CustomRuleObject Data { get; set; }
 
         private bool IsEditMode;
+        private ColorBlock BlockPreview;
+        private ColorBlock BlockFore;
+        private ColorBlock BlockBack;
         private ComboBoxEx ComboBoxRuleType;
         private Label LabelCharExam;
         private Label LabelCharDay;
@@ -25,9 +28,6 @@ namespace PlainCEETimer.UI.Dialogs
         private Label LabelFore;
         private Label LabelBack;
         private Label LabelCustomText;
-        private Label BlockPreview;
-        private Label BlockFore;
-        private Label BlockBack;
         private PlainLinkLabel LinkResetColor;
         private PlainLinkLabel LinkResetText;
         private PlainNumericUpDown NUDDays;
@@ -62,9 +62,9 @@ namespace PlainCEETimer.UI.Dialogs
                 LabelCustomText = b.Label("自定义文本"),
                 LinkResetColor = b.Link("重置", LinkReset_LinkClicked),
                 LinkResetText = b.Link("重置", LinkReset_LinkClicked),
-                BlockFore = b.Block(ColorLabels_Click),
-                BlockBack = b.Block(ColorLabels_Click),
                 BlockPreview = b.Block("颜色效果预览"),
+                BlockFore = b.Block(true, BlockPreview, ColorBlocks_Click),
+                BlockBack = b.Block(false, BlockPreview, ColorBlocks_Click),
 
                 TextBoxCustomText = b.TextBox(295, (_, _) =>
                 {
@@ -105,6 +105,14 @@ namespace PlainCEETimer.UI.Dialogs
                 NUDMinutes = b.NumericUpDown(40, 59M, OnUserChanged),
                 NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
             ]);
+
+            ColorBlock[] ColorBlocks = [BlockFore, BlockBack];
+
+            foreach (var block in ColorBlocks)
+            {
+                block.Parent = this;
+                block.Fellows = ColorBlocks;
+            }
 
             base.OnInitializing();
         }
@@ -201,22 +209,13 @@ namespace PlainCEETimer.UI.Dialogs
             return base.OnClickButtonA();
         }
 
-        private void ColorLabels_Click(object sender, EventArgs e)
+        private void ColorBlocks_Click(object sender, EventArgs e)
         {
-            var LabelSender = (Label)sender;
-            var ColorDialogMain = new ColorDialogEx();
+            UserChanged();
 
-            if (ColorDialogMain.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
+            if (!IsEditMode)
             {
-                LabelSender.BackColor = ColorDialogMain.Color;
-                BlockPreview.ForeColor = BlockFore.BackColor;
-                BlockPreview.BackColor = BlockBack.BackColor;
-                UserChanged();
-
-                if (!IsEditMode)
-                {
-                    SaveTemp();
-                }
+                SaveTemp();
             }
         }
 

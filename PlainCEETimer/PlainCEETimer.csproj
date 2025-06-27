@@ -109,6 +109,9 @@
     <Compile Include="UI\Controls\AppDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Controls\ColorBlock.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\ComboBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>

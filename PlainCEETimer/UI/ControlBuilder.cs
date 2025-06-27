@@ -10,21 +10,17 @@ namespace PlainCEETimer.UI
     {
         public Label Label(string text)
         {
-            return new()
-            {
-                Text = text,
-                AutoSize = true
-            };
+            return new() { Text = text, AutoSize = true };
         }
 
-        public Label Block(EventHandler onClick)
+        public ColorBlock Block(string text)
         {
-            return Block("          ", onClick);
+            return Block(true, false, text, null, null);
         }
 
-        public Label Block(string text)
+        public ColorBlock Block(bool isFore, ColorBlock preview, EventHandler onColorChanged)
         {
-            return Block(text, null);
+            return Block(false, isFore, null, preview, onColorChanged);
         }
 
         public PlainLinkLabel Link(string text, LinkLabelLinkClickedEventHandler onClick)
@@ -166,11 +162,16 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        private Label Block(string text, EventHandler onClick)
+        private ColorBlock Block(bool isPreview, bool isFore, string text, ColorBlock preview, EventHandler onColorChanged)
         {
-            var ctrl = Label(text);
-            ctrl.Click += onClick;
-            ctrl.BorderStyle = BorderStyle.FixedSingle;
+            var ctrl = new ColorBlock(isPreview, isFore, preview);
+
+            if (text != null)
+            {
+                ctrl.Text = text;
+            }
+
+            ctrl.ColorChanged += onColorChanged;
             return ctrl;
         }
     }

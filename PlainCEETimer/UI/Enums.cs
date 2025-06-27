@@ -59,8 +59,6 @@ namespace PlainCEETimer.UI
         Funny,
         SyncTime,
         SetPPTService,
-        LastColor,
-        SelectedColor,
         ChangeFont
     }
 

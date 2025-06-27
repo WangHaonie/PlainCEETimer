@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -15,18 +14,27 @@ namespace PlainCEETimer.UI.Forms
         public bool RefreshNeeded { get; private set; }
 
         private bool AllowThemeChanging;
-        private bool IsColorLabelsDragging;
         private bool IsSyncingTime;
         private bool UserChanged;
         private bool InvokeChangeRequired;
         private bool IsFunnyClick;
         private bool IsSetStartUp;
-        private bool IsPicking;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
-        private Point CurrentMouseLocation;
         private ColorSetObject[] SelectedColors;
-        private Action<Label> ColorBlockBindings;
+        private ColorBlock BlockColor11;
+        private ColorBlock BlockColor12;
+        private ColorBlock BlockColor21;
+        private ColorBlock BlockColor22;
+        private ColorBlock BlockColor31;
+        private ColorBlock BlockColor32;
+        private ColorBlock BlockColor41;
+        private ColorBlock BlockColor42;
+        private ColorBlock BlockPreviewColor1;
+        private ColorBlock BlockPreviewColor2;
+        private ColorBlock BlockPreviewColor3;
+        private ColorBlock BlockPreviewColor4;
+        private ColorBlock[] ColorBlocks;
         private ComboBoxEx ComboBoxAutoSwitchInterval;
         private ComboBoxEx ComboBoxCountdownEnd;
         private ComboBoxEx ComboBoxNtpServers;
@@ -38,14 +46,6 @@ namespace PlainCEETimer.UI.Forms
         private ExamInfoObject[] EditedExamInfo;
         private Font SelectedFont;
         private Label LabelColor;
-        private Label BlockColor11;
-        private Label BlockColor12;
-        private Label BlockColor21;
-        private Label BlockColor22;
-        private Label BlockColor31;
-        private Label BlockColor32;
-        private Label BlockColor41;
-        private Label BlockColor42;
         private Label LabelColorP1;
         private Label LabelColorP2;
         private Label LabelColorP3;
@@ -54,17 +54,10 @@ namespace PlainCEETimer.UI.Forms
         private Label LabelExamInfo;
         private Label LabelFont;
         private Label LabelPosition;
-        private Label BlockPreviewColor1;
-        private Label BlockPreviewColor2;
-        private Label BlockPreviewColor3;
-        private Label BlockPreviewColor4;
-        private Label CurrentPickingBlock;
         private Label LabelPptsvc;
         private Label LabelRestart;
         private Label LabelScreens;
         private Label LabelSyncTime;
-        private Label[] ColorLabels;
-        private Label[] ColorPreviewLabels;
         private NavigationBar NavBar;
         private NavigationPage PageAppearance;
         private NavigationPage PageDisplay;
@@ -105,7 +98,6 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeDark;
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
-        private ScreenColorPicker ColorPicker;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
         public SettingsForm() : base(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing) { }
@@ -137,83 +129,6 @@ namespace PlainCEETimer.UI.Forms
                     b.Item("4", ItemsDark_Click)
                 ]),
             ]);
-
-            ColorBlockBindings = c =>
-            {
-                c.MouseDown += (sender, e) =>
-                {
-                    if (e.Button == MouseButtons.Left)
-                    {
-                        IsColorLabelsDragging = true;
-                        CurrentPickingBlock = (Label)sender;
-                        CurrentPickingBlock.Capture = true;
-                    }
-                };
-
-                c.MouseMove += (_, _) =>
-                {
-                    if (IsColorLabelsDragging)
-                    {
-                        Cursor = Cursors.Cross;
-
-                        if (CurrentPickingBlock != null)
-                        {
-                            CurrentMouseLocation = Cursor.Position;
-
-                            if (!IsPicking && !Bounds.Contains(CurrentMouseLocation))
-                            {
-                                IsPicking = true;
-                                ColorPicker = new();
-                                Opacity = 0;
-                                ColorPicker.Show();
-                            }
-
-                            if (IsPicking)
-                            {
-                                ColorPicker.UpdateFrame(CurrentMouseLocation);
-                            }
-                        }
-                    }
-                };
-
-                c.MouseUp += (sender, _) =>
-                {
-                    if (IsColorLabelsDragging)
-                    {
-                        IsColorLabelsDragging = false;
-                        Cursor = Cursors.Default;
-                        CurrentPickingBlock.Capture = false;
-
-                        var LabelSender = (Label)sender;
-                        var ParentContainer = LabelSender.Parent;
-                        var TargetControl = ParentContainer.GetChildAtPoint(ParentContainer.PointToClient(Cursor.Position));
-
-                        if (TargetControl != null && TargetControl is Label TagetLabel && ColorLabels.Contains(TagetLabel) && LabelSender != TagetLabel)
-                        {
-                            TagetLabel.BackColor = LabelSender.BackColor;
-                            UpdateSettingsArea(SettingsArea.SelectedColor);
-                            SettingsChanged();
-                        }
-
-                        if (CurrentPickingBlock != null)
-                        {
-                            if (IsPicking)
-                            {
-                                CurrentPickingBlock.BackColor = ColorPicker.CurrentPixelColor;
-                                UpdateSettingsArea(SettingsArea.SelectedColor);
-                                SettingsChanged();
-                                ColorPicker.Close();
-                                ColorPicker.Dispose();
-                                ColorPicker = null;
-                                IsPicking = false;
-                            }
-
-                            CurrentPickingBlock = null;
-                            Opacity = 100;
-                        }
-                    }
-                };
-            };
 
             this.AddControls(b =>
             [
@@ -408,19 +323,19 @@ namespace PlainCEETimer.UI.Forms
                             LabelColorWelcome = b.Label("[4]欢迎信息"),
                             ButtonDefaultColor = b.Button("恢复默认(&M)", true, true, (sender, _) => ShowBottonMenu(ContextMenuDefaultColor, sender)),
 
-                            BlockColor11 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor21 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor31 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor41 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor12 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor22 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor32 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-                            BlockColor42 = b.Block(ColorBlocks_Click).With(ColorBlockBindings),
-
                             BlockPreviewColor1 = b.Block($"距离...{Constants.PH_START}..."),
                             BlockPreviewColor2 = b.Block($"距离...{Constants.PH_LEFT}..."),
                             BlockPreviewColor3 = b.Block($"距离...{Constants.PH_PAST}..."),
-                            BlockPreviewColor4 = b.Block("欢迎使用...")
+                            BlockPreviewColor4 = b.Block("欢迎使用..."),
+
+                            BlockColor11 = b.Block(true, BlockPreviewColor1, SettingsChanged),
+                            BlockColor21 = b.Block(true, BlockPreviewColor2, SettingsChanged),
+                            BlockColor31 = b.Block(true, BlockPreviewColor3, SettingsChanged),
+                            BlockColor41 = b.Block(true, BlockPreviewColor4, SettingsChanged),
+                            BlockColor12 = b.Block(false, BlockPreviewColor1, SettingsChanged),
+                            BlockColor22 = b.Block(false, BlockPreviewColor2, SettingsChanged),
+                            BlockColor32 = b.Block(false, BlockPreviewColor3, SettingsChanged),
+                            BlockColor42 = b.Block(false, BlockPreviewColor4, SettingsChanged)
                         ])
                     ]),
 
@@ -480,8 +395,13 @@ namespace PlainCEETimer.UI.Forms
                 ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
             ]);
 
-            ColorPreviewLabels = [BlockPreviewColor1, BlockPreviewColor2, BlockPreviewColor3, BlockPreviewColor4];
-            ColorLabels = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
+            ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
+
+            foreach (var block in ColorBlocks)
+            {
+                block.Parent = this;
+                block.Fellows = ColorBlocks;
+            }
         }
 
         protected override void StartLayout(bool isHighDpi)
@@ -608,7 +528,6 @@ namespace PlainCEETimer.UI.Forms
         {
             RefreshNeeded = false;
             RefreshSettings();
-            UpdateSettingsArea(SettingsArea.LastColor);
         }
 
         protected override void OnShown()
@@ -648,19 +567,6 @@ namespace PlainCEETimer.UI.Forms
         private void ItemsLight_Click(object sender, EventArgs e)
         {
             ResetColor(false, sender);
-        }
-
-        private void ColorBlocks_Click(object sender, EventArgs e)
-        {
-            var LabelSender = (Label)sender;
-            var Dialog = new ColorDialogEx();
-
-            if (Dialog.ShowDialog(LabelSender.BackColor, this) == DialogResult.OK)
-            {
-                LabelSender.BackColor = Dialog.Color;
-                UpdateSettingsArea(SettingsArea.SelectedColor);
-                SettingsChanged();
-            }
         }
 
         private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
@@ -718,6 +624,7 @@ namespace PlainCEETimer.UI.Forms
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
             ComboBoxAutoSwitchInterval.SelectedIndex = AppConfig.General.Interval;
             ApplyRadios();
+            ApplyColorBlocks(SelectedColors);
         }
 
         private void ApplyRadios()
@@ -793,8 +700,8 @@ namespace PlainCEETimer.UI.Forms
 
             for (int i = 0; i < Length; i++)
             {
-                var Fore = ColorLabels[i].BackColor;
-                var Back = ColorLabels[i + Length].BackColor;
+                var Fore = ColorBlocks[i].Color;
+                var Back = ColorBlocks[i + Length].Color;
 
                 if (!Validator.IsNiceContrast(Fore, Back))
                 {
@@ -842,33 +749,21 @@ namespace PlainCEETimer.UI.Forms
                     SelectedFont = NewFont;
                     LabelFont.Text = $"当前字体: {NewFont.Name}, {NewFont.Size}pt, {NewFont.Style}";
                     break;
-                case SettingsArea.LastColor:
-                    ApplyColorBlocks(SelectedColors);
-                    break;
-                case SettingsArea.SelectedColor:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        ColorPreviewLabels[i].ForeColor = ColorLabels[i].BackColor;
-                        ColorPreviewLabels[i].BackColor = ColorLabels[i + 4].BackColor;
-                    }
-                    break;
             }
         }
 
-        private void ApplyColorBlocks(ColorSetObject[] Colors)
+        private void ApplyColorBlocks(ColorSetObject[] colors)
         {
             for (int i = 0; i < 4; i++)
             {
-                ApplyColorBlocks(Colors, i);
+                ApplyColorBlocks(colors, i);
             }
         }
 
-        private void ApplyColorBlocks(ColorSetObject[] Colors, int Index)
+        private void ApplyColorBlocks(ColorSetObject[] colors, int index)
         {
-            ColorLabels[Index].BackColor = Colors[Index].Fore;
-            ColorPreviewLabels[Index].ForeColor = Colors[Index].Fore;
-            ColorLabels[Index + 4].BackColor = Colors[Index].Back;
-            ColorPreviewLabels[Index].BackColor = Colors[Index].Back;
+            ColorBlocks[index].Color = colors[index].Fore;
+            ColorBlocks[index + 4].Color = colors[index].Back;
         }
 
         private bool Save()
