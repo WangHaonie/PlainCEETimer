@@ -461,7 +461,7 @@ namespace PlainCEETimer.UI.Forms
                 {
                     if (TrayIconReopen)
                     {
-                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                        if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == DialogResult.Yes)
                         {
                             App.Exit(ExitReason.UserRestart);
                         }

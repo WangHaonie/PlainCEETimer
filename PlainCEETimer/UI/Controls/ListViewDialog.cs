@@ -176,7 +176,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextDelete_Click(object sender, EventArgs e)
         {
-            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", buttons: MessageButtons.YesNo) == DialogResult.Yes)
+            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", MessageButtons.YesNo) == DialogResult.Yes)
             {
                 ListViewMain.Suspend(() =>
                 {

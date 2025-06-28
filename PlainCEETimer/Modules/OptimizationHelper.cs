@@ -24,7 +24,7 @@ namespace PlainCEETimer.Modules
                     1. 首次运行本程序
                     2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
                     3. 其他情况导致的程序运行速度变慢
-                """, buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                """, MessageButtons.YesNo) == DialogResult.Yes)
             {
                 try
                 {

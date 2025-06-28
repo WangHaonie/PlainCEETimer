@@ -103,7 +103,7 @@ namespace PlainCEETimer.UI.Dialogs
                 TimeMsg = $"{TotalSeconds:0} 秒";
             }
 
-            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", buttons: MessageButtons.YesNo) != DialogResult.Yes)
+            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)
             {
                 return false;
             }

@@ -236,7 +236,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected bool ShowUnsavedWarning(string WarningMsg, Func<bool> SaveChanges, ref bool flagUserChanged)
         {
-            switch (MessageX.Warn(WarningMsg, buttons: MessageButtons.YesNo))
+            switch (MessageX.Warn(WarningMsg, MessageButtons.YesNo))
             {
                 case DialogResult.Yes:
                     return !SaveChanges();

@@ -368,7 +368,7 @@ namespace PlainCEETimer.UI.Forms
                                 }
                                 else if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
                                 {
-                                    if (MessageX.Info("是否重启到命令行模式？", buttons: MessageButtons.YesNo) == DialogResult.Yes)
+                                    if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
                                     {
                                         ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.CurrentExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.CurrentExecutableDir}", true);
                                         App.Exit(ExitReason.Normal);
@@ -388,7 +388,7 @@ namespace PlainCEETimer.UI.Forms
                     }
                 ]),
 
-                ButtonSave = b.Button("保存(&S)", false, (_, _) => Save()),
+                ButtonSave = b.Button("保存(&S)", false, (_, _) => SaveChanges()),
                 ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
             ]);
 
@@ -534,7 +534,7 @@ namespace PlainCEETimer.UI.Forms
 
         protected override bool OnClosing(CloseReason closeReason)
         {
-            return IsSyncingTime || (UserChanged && ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", Save, ref UserChanged));
+            return IsSyncingTime || (UserChanged && ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", SaveChanges, ref UserChanged));
         }
 
         protected override void OnClosed()
@@ -689,36 +689,6 @@ namespace PlainCEETimer.UI.Forms
             SettingsChanged();
         }
 
-        private bool IsSettingsFormatValid()
-        {
-            int ColorCheckMsg = 0;
-            var Length = 4;
-            SelectedColors = new ColorSetObject[Length];
-
-            for (int i = 0; i < Length; i++)
-            {
-                var Fore = ColorBlocks[i].Color;
-                var Back = ColorBlocks[i + Length].Color;
-
-                if (!Validator.IsNiceContrast(Fore, Back))
-                {
-                    ColorCheckMsg = i + 1;
-                    break;
-                }
-
-                SelectedColors[i] = new(Fore, Back);
-            }
-
-            if (ColorCheckMsg != 0)
-            {
-                NavBar.SwitchTo(PageAppearance);
-                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
-                return false;
-            }
-
-            return true;
-        }
-
         private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0)
         {
             switch (Where)
@@ -765,7 +735,7 @@ namespace PlainCEETimer.UI.Forms
             ColorBlocks[index + 4].Color = colors[index].Back;
         }
 
-        private bool Save()
+        private bool SaveChanges()
         {
             if (IsSyncingTime)
             {
@@ -773,12 +743,34 @@ namespace PlainCEETimer.UI.Forms
                 return false;
             }
 
-            if (IsSettingsFormatValid())
+            int ColorCheckMsg = 0;
+            var Length = 4;
+            SelectedColors = new ColorSetObject[Length];
+
+            for (int i = 0; i < Length; i++)
             {
-                InvokeChangeRequired = true;
-                UserChanged = false;
-                Close();
+                var Fore = ColorBlocks[i].Color;
+                var Back = ColorBlocks[i + Length].Color;
+
+                if (!Validator.IsNiceContrast(Fore, Back))
+                {
+                    ColorCheckMsg = i + 1;
+                    break;
+                }
+
+                SelectedColors[i] = new(Fore, Back);
             }
+
+            if (ColorCheckMsg != 0)
+            {
+                NavBar.SwitchTo(PageAppearance);
+                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
+                return false;
+            }
+
+            InvokeChangeRequired = true;
+            UserChanged = false;
+            Close();
 
             return true;
         }
