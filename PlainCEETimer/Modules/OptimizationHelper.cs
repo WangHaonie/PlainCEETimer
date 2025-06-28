@@ -96,7 +96,7 @@ namespace PlainCEETimer.Modules
         {
             var param = ConsoleParam.ShowLeftButton;
             Action<ConsoleWindow> complete = null;
-                
+
             if (Auto)
             {
                 param |= ConsoleParam.AutoClose | ConsoleParam.NoMenu;

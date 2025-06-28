@@ -217,7 +217,8 @@ namespace PlainCEETimer.UI.Forms
 
                             CheckBoxShowXOnly = b.CheckBox("只显示", (sender, _) =>
                             {
-                                CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
+                                ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
+                                CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled;
                                 ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
                                 ChangeCustomTextStyle(sender);
 
@@ -230,7 +231,7 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            CheckBoxCeiling = b.CheckBox("不足一天按整天计算(&N)", SettingsChanged),
+                            CheckBoxCeiling = b.CheckBox("不足一天按整天计算(&N)", SettingsChanged).With(c => c.Enabled = false),
 
                             ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
                             {
