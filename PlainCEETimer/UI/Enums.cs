@@ -92,4 +92,12 @@ namespace PlainCEETimer.UI
         Color,
         Font
     }
+
+    public enum ConsoleParam
+    {
+        None,
+        AutoClose,
+        ShowLeftButton,
+        NoMenu
+    }
 }

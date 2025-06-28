@@ -11,19 +11,17 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class ConsoleWindow(bool AutoClose = false, bool EnableLeftButton = false, bool ShowMenu = true) : AppDialog(AppFormParam.AllControl)
+    public sealed class ConsoleWindow() : AppDialog(AppFormParam.AllControl)
     {
-        public event Action Exit;
-        public event Action Error;
-        public event Action Complete;
-
+        private int ConsoleTimerTick;
         private bool ElevateNeeded;
         private bool IsRunning;
-        private bool IsSafeThread;
-        private int ConsoleTimerTick;
         private string Key;
         private string LineFromClient;
-        private string[] Command;
+        private string ExePath;
+        private string ExeArgs;
+        private ConsoleParam Param;
+        private Action<ConsoleWindow> Complete;
         private Label LabelMessage;
         private MenuItem ContextCopy;
         private NamedPipeServerStream Server;
@@ -56,10 +54,11 @@ namespace PlainCEETimer.UI.Dialogs
             ConsoleTimer.Interval = 1000;
             ConsoleTimer.Tick += ConsoleTimer_Tick;
             ButtonA.Text = "确认(&O)";
+            ButtonA.Visible = false;
             ButtonB.Text = "关闭(&C)";
             ButtonB.Enabled = false;
 
-            if (ShowMenu)
+            if ((Param & ConsoleParam.NoMenu) != ConsoleParam.NoMenu)
             {
                 var menu = ContextMenuBuilder.Build(b =>
                 [
@@ -85,8 +84,6 @@ namespace PlainCEETimer.UI.Dialogs
 
             if (UACHelper.EnsureUAC(MessageX))
             {
-                var name = Command[0];
-                var args = Command[1];
                 TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
                 ConsoleTimer_Tick(null, null);
                 ConsoleTimer.Start();
@@ -97,16 +94,14 @@ namespace PlainCEETimer.UI.Dialogs
                     {
                         try
                         {
-                            ProcessHelper.Run(name, args, (proc, _) =>
+                            ProcessHelper.Run(ExePath, ExeArgs, (proc, _) =>
                             {
                                 SafeWrite(ProcessHelper.GetExitMessage(proc));
-                                OnExit();
                             }, (_, e) => SafeWrite(e.Data));
                         }
                         catch (Exception ex)
                         {
                             SafeWrite(ProcessHelper.GetExceptionMessage(ex));
-                            OnError();
                         }
                         finally
                         {
@@ -120,35 +115,13 @@ namespace PlainCEETimer.UI.Dialogs
 
                     new Action(() =>
                     {
-                        try
-                        {
-                            ElevatedProc = ProcessHelper.RunElevated(App.CurrentExecutablePath, "/run " + Key + " " + name + " " + args);
-                        }
-                        catch (Exception ex)
-                        {
-                            SafeWrite(ProcessHelper.GetExceptionMessage(ex));
-                            OnError();
-                            Final();
-                        }
-                    }).Start();
-
-                    new Action(() =>
-                    {
                         Server = new(Key, PipeDirection.In, 1, PipeTransmissionMode.Message);
                         using var reader = new StreamReader(Server);
                         Server.WaitForConnection();
 
                         while ((LineFromClient = reader.ReadLine()) != null)
                         {
-                            if (LineFromClient.Has("```1"))
-                            {
-                                OnExit();
-                            }
-                            else if (LineFromClient.Has("```2"))
-                            {
-                                OnError();
-                            }
-                            else if (LineFromClient.Has("```3"))
+                            if (LineFromClient.Equals("```3", StringComparison.Ordinal))
                             {
                                 Final();
                             }
@@ -156,6 +129,19 @@ namespace PlainCEETimer.UI.Dialogs
                             {
                                 SafeWrite(LineFromClient);
                             }
+                        }
+                    }).Start();
+
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            ElevatedProc = ProcessHelper.RunElevated(App.CurrentExecutablePath, "/run " + Key + " " + ExePath + " " + ExeArgs);
+                        }
+                        catch (Exception ex)
+                        {
+                            SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                            Final();
                         }
                     }).Start();
                 }
@@ -177,30 +163,22 @@ namespace PlainCEETimer.UI.Dialogs
             TaskbarProgress.Release();
         }
 
-        public void Run(params string[] command)
-        {
-            IsSafeThread = InvokeRequired;
-            IsRunning = true;
-            Command = command;
-            Key = $"PlainCEETimer.CommandOutputRedirector_{Guid.NewGuid()}";
-            ShowDialog();
-        }
-
-        public void SafeWrite(string line)
-        {
-            if (IsSafeThread)
-            {
-                Write(line);
-            }
-            else
-            {
-                Invoke(() => Write(line));
-            }
-        }
-
         public void UpdateState(string text)
         {
             SafeExecute(() => LabelMessage.Text += text);
+        }
+
+        public static DialogResult Run(string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
+        {
+            return new ConsoleWindow
+            {
+                Param = param,
+                Complete = onComplete,
+                IsRunning = true,
+                ExePath = path,
+                ExeArgs = args,
+                Key = $"PlainCEETimer.ShExecCommandOutputRedirector_{Guid.NewGuid()}"
+            }.ShowDialog();
         }
 
         private void ConsoleTimer_Tick(object sender, EventArgs e)
@@ -218,44 +196,47 @@ namespace PlainCEETimer.UI.Dialogs
             catch { }
         }
 
-        private void OnExit()
-        {
-            Exit?.Invoke();
-        }
-
-        private void OnError()
-        {
-            Error?.Invoke();
-        }
-
         private void Final()
         {
-            IsRunning = false;
-            ConsoleTimer.Stop();
-            LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
-            TaskbarProgress.SetState(TaskbarProgressState.Normal);
-            TaskbarProgress.SetValue(1UL, 1UL);
-            Complete?.Invoke();
-
             SafeExecute(() =>
             {
+                IsRunning = false;
+                ConsoleTimer.Stop();
+                LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
+                TaskbarProgress.SetState(TaskbarProgressState.Normal);
+                TaskbarProgress.SetValue(1UL, 1UL);
+                Complete?.Invoke(this);
+
                 ButtonB.Enabled = true;
 
-                if (EnableLeftButton)
+                if ((Param & ConsoleParam.ShowLeftButton) == ConsoleParam.ShowLeftButton)
                 {
+                    ButtonA.Visible = true;
                     ButtonA.Enabled = true;
                 }
 
-                if (AutoClose)
+                if ((Param & ConsoleParam.AutoClose) == ConsoleParam.AutoClose)
                 {
                     Close();
                 }
             });
         }
 
+        private void SafeWrite(string line)
+        {
+            SafeExecute(() => Write(line));
+        }
+
         private void SafeExecute(Action action)
         {
-            Invoke(action);
+            if (InvokeRequired)
+            {
+                Invoke(action);
+            }
+            else
+            {
+                action();
+            }
         }
 
         private void Write(string line)

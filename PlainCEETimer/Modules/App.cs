@@ -214,13 +214,11 @@ namespace PlainCEETimer.Modules
                         ProcessHelper.Run(path, args, (proc, _) =>
                         {
                             w.WriteLine(ProcessHelper.GetExitMessage(proc));
-                            w.WriteLine($"```1");
                         }, (_, e) => w.WriteLine(e.Data));
                     }
                     catch (Exception ex)
                     {
                         w.WriteLine(ProcessHelper.GetExceptionMessage(ex));
-                        w.WriteLine("```2");
                     }
                     finally
                     {

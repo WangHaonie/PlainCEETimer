@@ -24,7 +24,6 @@ namespace PlainCEETimer.Modules
                     1. 首次运行本程序
                     2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
                     3. 其他情况导致的程序运行速度变慢
-                
                 """, buttons: MessageButtons.YesNo) == DialogResult.Yes)
             {
                 try
@@ -95,16 +94,22 @@ namespace PlainCEETimer.Modules
 
         private void Start(string path)
         {
-            var console = new ConsoleWindow(Auto, true, !Auto);
+            var param = ConsoleParam.ShowLeftButton;
+            Action<ConsoleWindow> complete = null;
+                
+            if (Auto)
+            {
+                param |= ConsoleParam.AutoClose | ConsoleParam.NoMenu;
+            }
 
             if (!Auto)
             {
-                console.Complete += () => console.UpdateState("是否重启倒计时?");
+                complete = c => c.UpdateState("是否重启倒计时?");
             }
 
-            console.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose");
+            var result = ConsoleWindow.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", complete, param);
 
-            if (!Auto && console.DialogResult == DialogResult.OK)
+            if (!Auto && result == DialogResult.OK)
             {
                 App.Exit(ExitReason.UserRestart);
             }

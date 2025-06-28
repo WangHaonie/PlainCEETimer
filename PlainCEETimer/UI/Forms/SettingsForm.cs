@@ -349,9 +349,7 @@ namespace PlainCEETimer.UI.Forms
                             {
                                 var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
                                 UpdateSettingsArea(SettingsArea.SyncTime);
-                                var console = new ConsoleWindow();
-                                console.Complete += () => Invoke(() => UpdateSettingsArea(SettingsArea.SyncTime, false));
-                                console.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync");
+                                ConsoleWindow.Run("cmd", $"/c net stop w32time & sc config w32time start= auto & net start w32time && w32tm /config /manualpeerlist:{server} /syncfromflags:manual /reliable:YES /update && w32tm /resync && w32tm /resync", x => UpdateSettingsArea(SettingsArea.SyncTime, false));
                             })
                         ]),
 
