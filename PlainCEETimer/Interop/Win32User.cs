@@ -49,7 +49,7 @@ namespace PlainCEETimer.Interop
 
                 if (WTSQuerySessionInformation(IntPtr.Zero, sid, WTSInfoClass_WTSUserName, out buffer, out strLen) && strLen > 1)
                 {
-                    username += "\\" + Marshal.PtrToStringAnsi(buffer);
+                    username += @"\" + Marshal.PtrToStringAnsi(buffer);
                     WTSFreeMemory(buffer);
                 }
             }

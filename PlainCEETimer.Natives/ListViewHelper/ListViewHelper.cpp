@@ -68,13 +68,13 @@ void SelectAllItems(HWND hLV, int selected)
     ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }
 
-void FlushListViewTheme(HWND hLV, COLORREF colorHFore, int enable)
+void FlushListViewTheme(HWND hLV, COLORREF crHeaderFore, int enable)
 {
     HWND hTT = ListView_GetToolTips(hLV);
 
     if (enable)
     {
-        LVHForeColor = colorHFore;
+        LVHForeColor = crHeaderFore;
         SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
         SetTheme(hLV, 2);
         SetTheme(ListView_GetHeader(hLV), 2);
