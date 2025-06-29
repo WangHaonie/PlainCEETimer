@@ -21,6 +21,7 @@ namespace PlainCEETimer.UI.Controls
         protected PlainButton ButtonOperation { get; private set; }
 
         private ContextMenu ContextMenuMain;
+        private MenuItem ContextDuplicate;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
@@ -95,6 +96,17 @@ namespace PlainCEETimer.UI.Controls
                 }),
 
                 b.Separator(),
+
+                ContextDuplicate = b.Item("重复(&C)", (_, _) =>
+                {
+                    var dialog = GetSubDialog((TData)ListViewMain.SelectedItem.Tag);
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        AddItemSafe(dialog.Data);
+                    }
+                }),
+
                 ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
                 ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
                 b.Separator(),
@@ -165,7 +177,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextEdit_Click(object sender, EventArgs e)
         {
-            var TargetItem = ListViewMain.SelectedItems[0];
+            var TargetItem = ListViewMain.SelectedItem;
             var TargetItemData = (TData)TargetItem.Tag;
             var SubDialog = GetSubDialog(TargetItemData);
 
@@ -283,8 +295,10 @@ namespace PlainCEETimer.UI.Controls
         private void HandleMenuItemEnabling()
         {
             var SelectedCount = ListViewMain.SelectedItemsCount;
+            var enable = SelectedCount == 1;
             ContextDelete.Enabled = SelectedCount != 0;
-            ContextEdit.Enabled = SelectedCount == 1;
+            ContextDuplicate.Enabled = enable;
+            ContextEdit.Enabled = enable;
             ContextSelectAll.Enabled = Items.Count != 0;
         }
     }

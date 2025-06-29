@@ -9,6 +9,8 @@ namespace PlainCEETimer.UI.Controls
     {
         public int SelectedItemsCount => SelectedItems.Count;
 
+        public ListViewItem SelectedItem => SelectedItems[0];
+
         public string[] Headers
         {
             get;
