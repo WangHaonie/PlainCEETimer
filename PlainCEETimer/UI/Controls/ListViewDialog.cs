@@ -25,6 +25,7 @@ namespace PlainCEETimer.UI.Controls
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
         private readonly HashSet<TData> ItemsSet = [];
+        private readonly Dictionary<TData, ListViewItem> ItemsDict = [];
         private readonly ListView.ListViewItemCollection Items;
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
@@ -207,7 +208,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void AddItemSafe(TData data)
         {
-            if (ItemsSet.Add(data))
+            if (!ItemsSet.Contains(data))
             {
                 AddItemCore(data);
             }
@@ -225,12 +226,12 @@ namespace PlainCEETimer.UI.Controls
 
         private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
         {
-            if (ItemsSet.Add(newData) || !newData.InternalEquals(oldData))
+            if (!ItemsSet.Contains(newData) || (ItemsSet.TryGetValue(newData, out TData data) && ItemsDict[data] == item && !newData.InternalEquals(data)))
             {
                 RemoveItem(item, oldData);
                 AddItemCore(newData);
             }
-            else if (!newData.Equals(oldData))
+            else
             {
                 MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
                 var SubDialog = GetSubDialog(newData);
@@ -264,6 +265,7 @@ namespace PlainCEETimer.UI.Controls
             item.Focused = IsSelected;
             Items.Add(item);
             ItemsSet.Add(data);
+            ItemsDict[data] = item;
 
             if (IsSelected)
             {
@@ -275,6 +277,7 @@ namespace PlainCEETimer.UI.Controls
         {
             Items.Remove(item);
             ItemsSet.Remove(data);
+            ItemsDict.Remove(data);
         }
 
         private void HandleMenuItemEnabling()
