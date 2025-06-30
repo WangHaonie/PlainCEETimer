@@ -231,7 +231,7 @@ namespace PlainCEETimer.UI.Dialogs
         {
             if (InvokeRequired)
             {
-                Invoke(action);
+                BeginInvoke(action);
             }
             else
             {

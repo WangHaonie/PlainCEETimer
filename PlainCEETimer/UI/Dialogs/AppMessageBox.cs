@@ -63,7 +63,7 @@ namespace PlainCEETimer.UI.Dialogs
 
             if (autoClose)
             {
-                3200.AsDelay(_ => Invoke(Close));
+                3200.AsDelay(Close, this);
             }
         }
 

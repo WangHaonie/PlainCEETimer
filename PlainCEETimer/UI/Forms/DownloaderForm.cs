@@ -152,11 +152,11 @@ namespace PlainCEETimer.UI.Forms
             UpdateLabels("下载完成，请稍侯...", null, null);
             IsCancelled = true;
 
-            2500.AsDelay(_ => Invoke(() =>
+            2500.AsDelay(() =>
             {
                 ProcessHelper.Run(DownloadPath, "/Skip");
                 App.Exit(ExitReason.AppUpdating);
-            }));
+            }, this);
         }
 
         private void UpdateLabels(string Info, string Size, string Speed)

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PlainCEETimer.Modules.Extensions
 {
@@ -30,8 +31,8 @@ namespace PlainCEETimer.Modules.Extensions
         public static Task Start(this Action start, Action<Task> jobAfterStart = null)
             => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
 
-        public static Task AsDelay(this int ms, Action<Task> jobAfterDelay)
-            => Task.Delay(ms).ContinueWith(jobAfterDelay);
+        public static Task AsDelay(this int ms, Action jobAfterDelay, Control ui)
+            => Task.Delay(ms).ContinueWith(_ => ui.BeginInvoke(jobAfterDelay));
 
         /*
 
