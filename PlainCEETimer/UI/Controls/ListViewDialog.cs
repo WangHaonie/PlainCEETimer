@@ -248,19 +248,24 @@ namespace PlainCEETimer.UI.Controls
 
         private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
         {
-            if (ItemsSet.CanEdit(newData, item))
-            {
-                RemoveItem(item, oldData);
-                AddItemCore(newData);
-            }
-            else
-            {
-                MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
-                var SubDialog = GetSubDialog(newData);
+            var flag = ItemsSet.CanEdit(newData, item);
 
-                if (SubDialog.ShowDialog() == DialogResult.OK)
+            if (flag != null)
+            {
+                if (flag == true)
                 {
-                    EditItemSafe(item, SubDialog.Data, oldData);
+                    RemoveItem(item, oldData);
+                    AddItemCore(newData);
+                }
+                else
+                {
+                    MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
+                    var SubDialog = GetSubDialog(newData);
+
+                    if (SubDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        EditItemSafe(item, SubDialog.Data, oldData);
+                    }
                 }
             }
         }

@@ -45,16 +45,21 @@ namespace PlainCEETimer.UI
             return !ItemsSet.Contains(new(data));
         }
 
-        public bool CanEdit(TData newData, ListViewItem existing)
+        public bool? CanEdit(TData newData, ListViewItem existing)
         {
             if (CanAdd(newData))
             {
                 return true;
             }
 
-            return ItemsSet.TryGetValue(new(newData), out Entry actual)
-                && existing == actual.Item
-                && !newData.InternalEquals(actual.Data);
+            ItemsSet.TryGetValue(new(newData), out Entry actual);
+
+            if (existing == actual.Item)
+            {
+                return newData.InternalEquals(actual.Data) ? null : true;
+            }
+
+            return false;
         }
 
         public void Add(TData data, ListViewItem item)
