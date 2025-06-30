@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -25,8 +24,7 @@ namespace PlainCEETimer.UI.Controls
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
-        private readonly HashSet<TData> ItemsSet = [];
-        private readonly Dictionary<TData, ListViewItem> ItemsDict = [];
+        private readonly ListViewItemSet<TData> ItemsSet = new();
         private readonly ListView.ListViewItemCollection Items;
         private readonly ListViewGroupCollection Groups;
         private readonly ListViewEx ListViewMain = new()
@@ -220,7 +218,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void AddItemSafe(TData data)
         {
-            if (!ItemsSet.Contains(data))
+            if (ItemsSet.CanAdd(data))
             {
                 AddItemCore(data);
             }
@@ -238,7 +236,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
         {
-            if (!ItemsSet.Contains(newData) || (ItemsSet.TryGetValue(newData, out TData data) && ItemsDict[data] == item && !newData.InternalEquals(data)))
+            if (ItemsSet.CanEdit(newData, item))
             {
                 RemoveItem(item, oldData);
                 AddItemCore(newData);
@@ -276,8 +274,7 @@ namespace PlainCEETimer.UI.Controls
             item.Selected = IsSelected;
             item.Focused = IsSelected;
             Items.Add(item);
-            ItemsSet.Add(data);
-            ItemsDict[data] = item;
+            ItemsSet.Add(data, item);
 
             if (IsSelected)
             {
@@ -289,7 +286,6 @@ namespace PlainCEETimer.UI.Controls
         {
             Items.Remove(item);
             ItemsSet.Remove(data);
-            ItemsDict.Remove(data);
         }
 
         private void HandleMenuItemEnabling()

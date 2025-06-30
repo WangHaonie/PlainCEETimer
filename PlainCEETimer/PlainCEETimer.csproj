@@ -226,6 +226,7 @@
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
     <Compile Include="UI\ComboData.cs" />
     <Compile Include="Modules\OptimizationHelper.cs" />
+    <Compile Include="UI\ListViewItemSet.cs" />
     <Compile Include="UI\PlainButtonBase.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\UACHelper.cs" />
