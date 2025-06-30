@@ -94,17 +94,7 @@ namespace PlainCEETimer.UI.Controls
                 }),
 
                 b.Separator(),
-
-                ContextDuplicate = b.Item("重复(&C)", (_, _) =>
-                {
-                    var dialog = GetSubDialog((TData)ListViewMain.SelectedItem.Tag);
-
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        AddItemSafe(dialog.Data);
-                    }
-                }),
-
+                ContextDuplicate = b.Item("重复(&C)", ContextDuplicate_Click),
                 ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
                 ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
                 b.Separator(),
@@ -145,17 +135,25 @@ namespace PlainCEETimer.UI.Controls
 
         protected sealed override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.A)
+            var handled = false;
+
+            switch (e.Control, e.KeyCode)
             {
-                ContextSelectAll_Click(null, null);
-                e.Handled = true;
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                ContextDelete_Click(null, null);
-                e.Handled = true;
+                case (true, Keys.A):
+                    ContextSelectAll_Click(null, null);
+                    handled = true;
+                    break;
+                case (true, Keys.C):
+                    ContextDuplicate_Click(null, null);
+                    handled = true;
+                    break;
+                case (false, Keys.Delete):
+                    ContextDelete_Click(null, null);
+                    handled = true;
+                    break;
             }
 
+            e.Handled = handled;
             base.OnKeyDown(e);
         }
 
@@ -171,6 +169,20 @@ namespace PlainCEETimer.UI.Controls
 
             Data = tmp;
             return base.OnClickButtonA();
+        }
+
+        private void ContextDuplicate_Click(object sender, EventArgs e)
+        {
+            if (ListViewMain.SelectedItemsCount == 1)
+            {
+                var item = ListViewMain.SelectedItem;
+                var dialog = GetSubDialog((TData)item.Tag);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    AddItemSafe(dialog.Data);
+                }
+            }
         }
 
         private void ContextEdit_Click(object sender, EventArgs e)
