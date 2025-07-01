@@ -38,10 +38,9 @@ namespace PlainCEETimer.UI.Dialogs
         private EventHandler OnUserChanged;
         private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
 
-        private struct Cache(Color fore, Color back, string text)
+        private struct Cache(ColorSetObject colors, string text)
         {
-            public Color Fore = fore;
-            public Color Back = back;
+            public ColorSetObject Colors = colors;
             public string Text = text;
         }
 
@@ -87,7 +86,7 @@ namespace PlainCEETimer.UI.Dialogs
                             if (TemporaryChanges.ContainsKey(Index))
                             {
                                 var Temp = TemporaryChanges[Index];
-                                ApplyColorBlock(Temp.Fore, Temp.Back);
+                                ApplyColorBlock(Temp.Colors);
                                 TextBoxCustomText.Text = Temp.Text;
                             }
                             else
@@ -154,12 +153,11 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
                 var Ticks = Data.Tick;
-                var tmp = Data.Colors;
                 NUDDays.Value = Ticks.Days;
                 NUDHours.Value = Ticks.Hours;
                 NUDMinutes.Value = Ticks.Minutes;
                 NUDSeconds.Value = Ticks.Seconds;
-                ApplyColorBlock(tmp.Fore, tmp.Back);
+                ApplyColorBlock(Data.Colors);
                 TextBoxCustomText.Text = Data.Text;
             }
             else
@@ -181,8 +179,8 @@ namespace PlainCEETimer.UI.Dialogs
                 return false;
             }
 
-            var Fore = BlockFore.BackColor;
-            var Back = BlockBack.BackColor;
+            var Fore = BlockFore.Color;
+            var Back = BlockBack.Color;
 
             if (!Validator.IsNiceContrast(Fore, Back))
             {
@@ -228,7 +226,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         private void SaveTemp()
         {
-            TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(BlockFore.BackColor, BlockBack.BackColor, TextBoxCustomText.Text);
+            TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(new(BlockFore.Color, BlockBack.Color), TextBoxCustomText.Text);
         }
 
         private void GetNewData(bool All = true, bool ColorOnly = false, bool TextOnly = false)
@@ -237,8 +235,7 @@ namespace PlainCEETimer.UI.Dialogs
 
             if (All || ColorOnly)
             {
-                var Colors = GlobalColors[Index];
-                ApplyColorBlock(Colors.Fore, Colors.Back);
+                ApplyColorBlock(GlobalColors[Index]);
             }
 
             if (All || TextOnly)
@@ -252,12 +249,10 @@ namespace PlainCEETimer.UI.Dialogs
             }
         }
 
-        private void ApplyColorBlock(Color fore, Color back)
+        private void ApplyColorBlock(ColorSetObject colors)
         {
-            BlockFore.BackColor = fore;
-            BlockPreview.ForeColor = fore;
-            BlockBack.BackColor = back;
-            BlockPreview.BackColor = back;
+            BlockFore.Color = colors.Fore;
+            BlockBack.Color = colors.Back;
         }
     }
 }

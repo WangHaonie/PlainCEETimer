@@ -129,8 +129,6 @@ namespace PlainCEETimer.UI.Controls
                     Color = ColorPicker.CurrentPixelColor;
                     HideParentForm(false);
                     ColorPicker.Close();
-                    ColorPicker.Dispose();
-                    ColorPicker = null;
                     IsPicking = false;
                 }
             }
