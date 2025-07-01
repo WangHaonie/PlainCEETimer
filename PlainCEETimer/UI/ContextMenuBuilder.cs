@@ -5,25 +5,41 @@ namespace PlainCEETimer.UI
 {
     public class ContextMenuBuilder
     {
-        public MenuItem Item(string Text)
-            => new(Text);
+        public MenuItem Item(string text)
+        {
+            return new(text);
+        }
 
-        public MenuItem Item(string Text, EventHandler OnClickHandler)
-            => new(Text, OnClickHandler);
-
-        public MenuItem Menu(string Text, MenuItem[] Items)
-            => new(Text, Items);
+        public MenuItem Item(string text, EventHandler onClickHandler)
+        {
+            return new(text, onClickHandler);
+        }
+        public MenuItem Menu(string text, MenuItem[] items)
+        {
+            return new(text, items);
+        }
 
         public MenuItem Separator()
-            => new("-");
-
-        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> Builder)
-            => new(Builder(new()));
-
-        public static ContextMenu Merge(ContextMenu Target, ContextMenu Reference)
         {
-            Target.MergeMenu(Reference);
-            return Target;
+            return new("-");
+        }
+
+        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder)
+        {
+            return new(builder(new()));
+        }
+
+        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder, EventHandler onPopup)
+        {
+            var menu = Build(builder);
+            menu.Popup += onPopup;
+            return menu;
+        }
+
+        public static ContextMenu Merge(ContextMenu target, ContextMenu reference)
+        {
+            target.MergeMenu(reference);
+            return target;
         }
     }
 }

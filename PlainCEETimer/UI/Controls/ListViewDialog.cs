@@ -12,7 +12,10 @@ namespace PlainCEETimer.UI.Controls
         private class ListViewItemComparer<T> : IComparer
             where T : IListViewData<T>
         {
-            int IComparer.Compare(object x, object y) => ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
+            int IComparer.Compare(object x, object y)
+            {
+                return ((T)((ListViewItem)x).Tag).CompareTo((T)((ListViewItem)y).Tag);
+            }
         }
 
         public TData[] Data { get; set; }
@@ -78,31 +81,36 @@ namespace PlainCEETimer.UI.Controls
             this.AddControls(b =>
             [
                 ListViewMain,
-                ButtonOperation = b.Button("操作(&O) ▼", (sender, _) => ShowBottonMenu(ContextMenuMain, sender))
-            ]);
-
-            ContextMenuMain = ContextMenuBuilder.Build(b =>
-            [
-                b.Item("添加(&A)", (_, _) =>
-                {
-                    var SubDialog = GetSubDialog();
-
-                    if (SubDialog.ShowDialog() == DialogResult.OK)
+                ButtonOperation = b.Button("操作(&O) ▼", ContextMenuMain = ContextMenuBuilder.Build(b =>
+                [
+                    b.Item("添加(&A)", (_, _) =>
                     {
-                        AddItemSafe(SubDialog.Data);
-                    }
-                }),
+                        var dialog = GetSubDialog();
 
-                b.Separator(),
-                ContextDuplicate = b.Item("重复(&C)", ContextDuplicate_Click),
-                ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
-                ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
-                b.Separator(),
-                ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            AddItemSafe(dialog.Data);
+                        }
+                    }),
+
+                    b.Separator(),
+                    ContextDuplicate = b.Item("重复(&C)", ContextDuplicate_Click),
+                    ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
+                    ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
+                    b.Separator(),
+                    ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
+                ], (_, _) =>
+                {
+                    var count = ListViewMain.SelectedItemsCount;
+                    var enable = count == 1;
+                    ContextDelete.Enabled = count != 0;
+                    ContextDuplicate.Enabled = enable;
+                    ContextEdit.Enabled = enable;
+                    ContextSelectAll.Enabled = Items.Count != 0;
+                }))
             ]);
 
             ListViewMain.ContextMenu = ContextMenuMain;
-            ContextMenuMain.Popup += (_, _) => HandleMenuItemEnabling();
             ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
 
             base.OnInitializing();
@@ -187,13 +195,13 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextEdit_Click(object sender, EventArgs e)
         {
-            var TargetItem = ListViewMain.SelectedItem;
-            var TargetItemData = (TData)TargetItem.Tag;
-            var SubDialog = GetSubDialog(TargetItemData);
+            var item = ListViewMain.SelectedItem;
+            var data = (TData)item.Tag;
+            var dialog = GetSubDialog(data);
 
-            if (SubDialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                EditItemSafe(TargetItem, SubDialog.Data, TargetItemData);
+                EditItemSafe(item, dialog.Data, data);
             }
         }
 
@@ -237,11 +245,11 @@ namespace PlainCEETimer.UI.Controls
             else
             {
                 MessageX.Error($"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
-                var SubDialog = GetSubDialog(data);
+                var dialog = GetSubDialog(data);
 
-                if (SubDialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    AddItemSafe(SubDialog.Data);
+                    AddItemSafe(dialog.Data);
                 }
             }
         }
@@ -260,11 +268,11 @@ namespace PlainCEETimer.UI.Controls
                 else
                 {
                     MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
-                    var SubDialog = GetSubDialog(newData);
+                    var dialog = GetSubDialog(newData);
 
-                    if (SubDialog.ShowDialog() == DialogResult.OK)
+                    if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        EditItemSafe(item, SubDialog.Data, oldData);
+                        EditItemSafe(item, dialog.Data, oldData);
                     }
                 }
             }
@@ -283,17 +291,17 @@ namespace PlainCEETimer.UI.Controls
             UserChanged();
         }
 
-        private void AddItem(TData data, bool IsSelected = false)
+        private void AddItem(TData data, bool isSelected = false)
         {
             var item = GetListViewItem(data);
             item.Group = Groups[GetGroupIndex(data)];
             item.Tag = data;
-            item.Selected = IsSelected;
-            item.Focused = IsSelected;
+            item.Selected = isSelected;
+            item.Focused = isSelected;
             Items.Add(item);
             ItemsSet.Add(data, item);
 
-            if (IsSelected)
+            if (isSelected)
             {
                 item.EnsureVisible();
             }
@@ -303,16 +311,6 @@ namespace PlainCEETimer.UI.Controls
         {
             Items.Remove(item);
             ItemsSet.Remove(data);
-        }
-
-        private void HandleMenuItemEnabling()
-        {
-            var SelectedCount = ListViewMain.SelectedItemsCount;
-            var enable = SelectedCount == 1;
-            ContextDelete.Enabled = SelectedCount != 0;
-            ContextDuplicate.Enabled = enable;
-            ContextEdit.Enabled = enable;
-            ContextSelectAll.Enabled = Items.Count != 0;
         }
     }
 }

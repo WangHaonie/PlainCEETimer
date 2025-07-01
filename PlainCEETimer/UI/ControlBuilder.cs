@@ -37,26 +37,27 @@ namespace PlainCEETimer.UI
 
         public PlainButton Button(string text, EventHandler onClick)
         {
-            return Button(text, true, false, onClick);
+            return Button(text, true, false, onClick, null);
+        }
+
+        public PlainButton Button(string text, ContextMenu menu)
+        {
+            return Button(text, true, false, null, menu);
         }
 
         public PlainButton Button(string text, bool enabled, EventHandler onClick)
         {
-            return Button(text, enabled, false, onClick);
+            return Button(text, enabled, false, onClick, null);
+        }
+
+        public PlainButton Button(string text, bool enabled, bool autoSize, ContextMenu menu)
+        {
+            return Button(text, enabled, autoSize, null, menu);
         }
 
         public PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick)
         {
-            var ctrl = new PlainButton() { Text = text, Enabled = enabled };
-
-            if (autoSize)
-            {
-                ctrl.AutoSize = true;
-                ctrl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            }
-
-            ctrl.Click += onClick;
-            return ctrl;
+            return Button(text, enabled, autoSize, onClick, null);
         }
 
         public PlainCheckBox CheckBox(string text, EventHandler onCheckedChanged)
@@ -172,6 +173,20 @@ namespace PlainCEETimer.UI
             }
 
             ctrl.ColorChanged += onColorChanged;
+            return ctrl;
+        }
+
+        private PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick, ContextMenu menu)
+        {
+            var ctrl = new PlainButton() { Text = text, Enabled = enabled, Menu = menu };
+
+            if (autoSize)
+            {
+                ctrl.AutoSize = true;
+                ctrl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            }
+
+            ctrl.Click += onClick;
             return ctrl;
         }
     }

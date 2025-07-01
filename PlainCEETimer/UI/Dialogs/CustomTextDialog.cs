@@ -12,7 +12,6 @@ namespace PlainCEETimer.UI.Dialogs
         public string[] CustomTexts { get; set; } = new string[3];
 
         private string[] Presets;
-        private ContextMenu ContextMenuReset;
         private Label LabelInfo;
         private Label LabelP1;
         private Label LabelP2;
@@ -33,15 +32,6 @@ namespace PlainCEETimer.UI.Dialogs
             OnUserChanged = (_, _) => UserChanged();
             Presets = DefaultValues.GlobalDefaultCustomTexts;
 
-            ContextMenuReset = ContextMenuBuilder.Build(m =>
-            [
-                m.Item("所有", ItemsReset_Click),
-                m.Separator(),
-                m.Item(lp1, ItemsReset_Click),
-                m.Item(lp2, ItemsReset_Click),
-                m.Item(lp3, ItemsReset_Click)
-            ]);
-
             this.AddControls(b =>
             [
                 LabelP1 = b.Label(lp1),
@@ -51,7 +41,15 @@ namespace PlainCEETimer.UI.Dialogs
                 TextBoxP2 = b.TextBox(303, OnUserChanged),
                 TextBoxP3 = b.TextBox(303, OnUserChanged),
                 LabelInfo = b.Label(null),
-                ButtonReset = b.Button("重置(R)", (sender, _) => ShowBottonMenu(ContextMenuReset, sender))
+
+                ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
+                [
+                    m.Item("所有", ItemsReset_Click),
+                    m.Separator(),
+                    m.Item(lp1, ItemsReset_Click),
+                    m.Item(lp2, ItemsReset_Click),
+                    m.Item(lp3, ItemsReset_Click)
+                ]))
             ]);
 
             TextBoxes = [TextBoxP1, TextBoxP2, TextBoxP3];

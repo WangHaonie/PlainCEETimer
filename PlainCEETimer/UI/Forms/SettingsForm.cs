@@ -41,7 +41,6 @@ namespace PlainCEETimer.UI.Forms
         private ComboBoxEx ComboBoxPosition;
         private ComboBoxEx ComboBoxScreens;
         private ComboBoxEx ComboBoxShowXOnly;
-        private ContextMenu ContextMenuDefaultColor;
         private CustomRuleObject[] EditedCustomRules;
         private ExamInfoObject[] EditedExamInfo;
         private Font SelectedFont;
@@ -105,29 +104,6 @@ namespace PlainCEETimer.UI.Forms
             Text = "设置 - 高考倒计时";
             AllowThemeChanging = ThemeManager.IsDarkModeSupported;
 
-            ContextMenuDefaultColor = ContextMenuBuilder.Build(b =>
-            [
-                b.Menu("白底(&L)",
-                [
-                    b.Item("所有", ItemsLight_Click),
-                    b.Separator(),
-                    b.Item("1", ItemsLight_Click),
-                    b.Item("2", ItemsLight_Click),
-                    b.Item("3", ItemsLight_Click),
-                    b.Item("4", ItemsLight_Click)
-                ]),
-
-                b.Menu("黑底(&D)",
-                [
-                    b.Item("所有", ItemsDark_Click),
-                    b.Separator(),
-                    b.Item("1", ItemsDark_Click),
-                    b.Item("2", ItemsDark_Click),
-                    b.Item("3", ItemsDark_Click),
-                    b.Item("4", ItemsDark_Click)
-                ]),
-            ]);
-
             this.AddControls(b =>
             [
                 PageNavPages = b.Panel(56, 1, 334, 260,
@@ -140,14 +116,14 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonExamInfo = b.Button("管理(&G)", (_, _) =>
                             {
-                                var ExamMan = new ExamInfoManager()
+                                var dialog = new ExamInfoManager()
                                 {
                                     Data = EditedExamInfo
                                 };
 
-                                if (ExamMan.ShowDialog() == DialogResult.OK)
+                                if (dialog.ShowDialog() == DialogResult.OK)
                                 {
-                                    EditedExamInfo = ExamMan.Data;
+                                    EditedExamInfo = dialog.Data;
                                     SettingsChanged();
                                 }
                             }),
@@ -235,17 +211,17 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
                             {
-                                var Manager = new RulesManager()
+                                var dialog = new RulesManager()
                                 {
                                     Data = EditedCustomRules,
                                     ColorPresets = SelectedColors,
                                     CustomTextPreset = EditedCustomTexts
                                 };
 
-                                if (Manager.ShowDialog() == DialogResult.OK)
+                                if (dialog.ShowDialog() == DialogResult.OK)
                                 {
-                                    EditedCustomRules = Manager.Data;
-                                    EditedCustomTexts = Manager.CustomTextPreset;
+                                    EditedCustomRules = dialog.Data;
+                                    EditedCustomTexts = dialog.CustomTextPreset;
                                     SettingsChanged();
                                 }
                             }),
@@ -320,7 +296,29 @@ namespace PlainCEETimer.UI.Forms
                             LabelColorP2 = b.Label("[2]考试中"),
                             LabelColorP3 = b.Label("[3]考试后"),
                             LabelColorWelcome = b.Label("[4]欢迎信息"),
-                            ButtonDefaultColor = b.Button("恢复默认(&M)", true, true, (sender, _) => ShowBottonMenu(ContextMenuDefaultColor, sender)),
+
+                            ButtonDefaultColor = b.Button("恢复默认(&M)", true, true, ContextMenuBuilder.Build(b =>
+                            [
+                                b.Menu("白底(&L)",
+                                [
+                                    b.Item("所有", ItemsLight_Click),
+                                    b.Separator(),
+                                    b.Item("1", ItemsLight_Click),
+                                    b.Item("2", ItemsLight_Click),
+                                    b.Item("3", ItemsLight_Click),
+                                    b.Item("4", ItemsLight_Click)
+                                ]),
+
+                                b.Menu("黑底(&D)",
+                                [
+                                    b.Item("所有", ItemsDark_Click),
+                                    b.Separator(),
+                                    b.Item("1", ItemsDark_Click),
+                                    b.Item("2", ItemsDark_Click),
+                                    b.Item("3", ItemsDark_Click),
+                                    b.Item("4", ItemsDark_Click)
+                                ]),
+                            ])),
 
                             BlockPreviewColor1 = b.Block($"距离...{Constants.PH_START}..."),
                             BlockPreviewColor2 = b.Block($"距离...{Constants.PH_LEFT}..."),

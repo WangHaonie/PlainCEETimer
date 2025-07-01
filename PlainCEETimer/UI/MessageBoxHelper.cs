@@ -19,7 +19,6 @@ namespace PlainCEETimer.UI
         private static readonly Bitmap InfoIcon;
         private static readonly Bitmap WarningIcon;
         private static readonly Bitmap ErrorIcon;
-        private readonly AppForm Parent = parent;
 
         static MessageBoxHelper()
         {
@@ -47,7 +46,7 @@ namespace PlainCEETimer.UI
         {
             var (title, icon, sound) = GetStuff(level);
 
-            if (Parent != null && Parent.InvokeRequired)
+            if (parent != null && parent.InvokeRequired)
             {
                 /*
 
@@ -57,7 +56,7 @@ namespace PlainCEETimer.UI
                 https://stackoverflow.com/a/29256646/21094697
 
                 */
-                return (DialogResult)Parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
+                return (DialogResult)parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
             }
 
             return ShowPopup();
@@ -65,8 +64,8 @@ namespace PlainCEETimer.UI
 
             DialogResult ShowPopup()
             {
-                Parent?.ReActivate();
-                return new AppMessageBox(message, autoClose, buttons, sound, icon).ShowCore(Parent, title);
+                parent?.ReActivate();
+                return new AppMessageBox(message, autoClose, buttons, sound, icon).ShowCore(parent, title);
             }
         }
 

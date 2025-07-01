@@ -60,15 +60,12 @@ namespace PlainCEETimer.UI.Dialogs
 
             if ((Param & ConsoleParam.NoMenu) != ConsoleParam.NoMenu)
             {
-                var menu = ContextMenuBuilder.Build(b =>
+                ConsoleBox.ContextMenu = ContextMenuBuilder.Build(b =>
                 [
                     ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
                     b.Separator(),
                     b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
-                ]);
-
-                menu.Popup += (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText);
-                ConsoleBox.ContextMenu = menu;
+                ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText));
             }
         }
 

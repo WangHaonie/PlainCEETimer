@@ -374,12 +374,6 @@ namespace PlainCEETimer.UI.Controls
             SetLabelAutoWrap(Target, Target.Parent.Width - Target.Left);
         }
 
-        protected void ShowBottonMenu(ContextMenu menu, object sender)
-        {
-            var target = (PlainButton)sender;
-            menu.Show(target, new(0, target.Height));
-        }
-
         protected void SetLabelAutoWrap(Label Target, int MaxWidth)
         {
             /*

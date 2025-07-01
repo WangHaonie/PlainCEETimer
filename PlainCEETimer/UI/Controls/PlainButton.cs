@@ -7,6 +7,8 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainButton : Button
     {
+        public ContextMenu Menu { get; set; }
+
         public PlainButton()
         {
             FlatStyle = FlatStyle.System;
@@ -22,6 +24,16 @@ namespace PlainCEETimer.UI.Controls
             }
 
             base.OnHandleCreated(e);
+        }
+
+        protected override void OnClick(EventArgs e)
+        {
+            if (Menu != null)
+            {
+                Menu.Show(this, new(0, Height));
+            }
+
+            base.OnClick(e);
         }
     }
 }

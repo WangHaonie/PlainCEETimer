@@ -273,7 +273,7 @@ namespace PlainCEETimer.Modules
                 var appconfig = $"{CurrentExecutablePath}.config";
                 File.Delete(appconfig);
                 File.WriteAllText(appconfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
-                ProcessHelper.Run("cmd", $"/c attrib +s +h \"{appconfig}\"");
+                ProcessHelper.Run("attrib", $"+s +h \"{appconfig}\"");
             }
             catch { }
         }

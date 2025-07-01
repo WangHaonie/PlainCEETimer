@@ -41,7 +41,6 @@ namespace PlainCEETimer.UI.Controls
         {
             View = View.Details;
             FullRowSelect = true;
-            GridLines = false;
             HeaderStyle = ColumnHeaderStyle.Nonclickable;
             HideSelection = false;
             ShowItemToolTips = true;
