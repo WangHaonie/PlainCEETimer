@@ -40,7 +40,7 @@ namespace PlainCEETimer.Modules
             return true;
         }
 
-        public static bool IsNiceContrast(Color Fore, Color Back)
+        public static bool IsNiceContrast(Color fore, Color back)
         {
             //
             // 对比度判断 参考:
@@ -49,8 +49,8 @@ namespace PlainCEETimer.Modules
             // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
             //
 
-            var L1 = GetRelativeLuminance(Fore);
-            var L2 = GetRelativeLuminance(Back);
+            var L1 = GetRelativeLuminance(fore);
+            var L2 = GetRelativeLuminance(back);
 
             if (L1 < L2)
             {
@@ -61,7 +61,9 @@ namespace PlainCEETimer.Modules
         }
 
         public static bool IsValidExamLength(int length)
-            => length is >= MinExamNameLength and <= MaxExamNameLength;
+        {
+            return length is >= MinExamNameLength and <= MaxExamNameLength;
+        }
 
         public static void EnsureExamDate(DateTime time)
         {

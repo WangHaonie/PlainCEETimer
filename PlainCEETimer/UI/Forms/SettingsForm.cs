@@ -743,27 +743,27 @@ namespace PlainCEETimer.UI.Forms
             }
 
             int index = -1;
-            var Length = 4;
-            SelectedColors = new ColorSetObject[Length];
+            var length = 4;
+            SelectedColors = new ColorSetObject[length];
 
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i < length; i++)
             {
-                var Fore = ColorBlocks[i].Color;
-                var Back = ColorBlocks[i + Length].Color;
+                var fore = ColorBlocks[i].Color;
+                var back = ColorBlocks[i + length].Color;
 
-                if (!Validator.IsNiceContrast(Fore, Back))
+                if (!Validator.IsNiceContrast(fore, back))
                 {
                     index = i;
                     break;
                 }
 
-                SelectedColors[i] = new(Fore, Back);
+                SelectedColors[i] = new(fore, back);
             }
 
             if (index != -1)
             {
                 NavBar.SwitchTo(PageAppearance);
-                MessageX.Error($"第{index}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
+                MessageX.Error($"第{index + 1}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
                 return false;
             }
 
