@@ -9,16 +9,16 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override ColorSetObject ReadJson(JsonReader reader, Type objectType, ColorSetObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            var Colors = serializer.Deserialize<int[]>(reader);
+            var colors = serializer.Deserialize<int[]>(reader);
 
-            if (Colors.Length == 2)
+            if (colors.Length == 2)
             {
-                var Fore = Validator.GetColor(Colors[0]);
-                var Back = Validator.GetColor(Colors[1]);
+                var fore = Validator.GetColor(colors[0]);
+                var back = Validator.GetColor(colors[1]);
 
-                if (Validator.IsNiceContrast(Fore, Back))
+                if (Validator.IsNiceContrast(fore, back))
                 {
-                    return new(Fore, Back);
+                    return new(fore, back);
                 }
             }
 

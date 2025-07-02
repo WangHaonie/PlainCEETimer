@@ -4,6 +4,9 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainRadioButton : RadioButton
     {
-        public PlainRadioButton() => new PlainButtonBase(this);
+        public PlainRadioButton()
+        {
+            new PlainButtonBase(this);
+        }
     }
 }

@@ -234,12 +234,12 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 在用户未保存更改并尝试关闭窗体时显示警告。同时防止直接关闭警告时也窗体会随之关闭。
         /// </summary>
-        protected bool ShowUnsavedWarning(string WarningMsg, Func<bool> SaveChanges, ref bool flagUserChanged)
+        protected bool ShowUnsavedWarning(string msg, Func<bool> saveChanges, ref bool flagUserChanged)
         {
-            switch (MessageX.Warn(WarningMsg, MessageButtons.YesNo))
+            switch (MessageX.Warn(msg, MessageButtons.YesNo))
             {
                 case DialogResult.Yes:
-                    return !SaveChanges();
+                    return !saveChanges();
                 case DialogResult.No:
                     flagUserChanged = false;
                     Close();
@@ -352,11 +352,11 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
         /// </summary>
-        protected void WhenLoaded(Action Method)
+        protected void WhenLoaded(Action action)
         {
             if (!IsLoading)
             {
-                Method();
+                action();
             }
         }
 
@@ -368,13 +368,13 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 以父容器宽度为参考使 Label 单行内容达到一定长度时自动换行。
         /// </summary>
-        /// <param name="Target">目标 Label</param>
-        protected void SetLabelAutoWrap(Label Target)
+        /// <param name="target">目标 Label</param>
+        protected void SetLabelAutoWrap(Label target)
         {
-            SetLabelAutoWrap(Target, Target.Parent.Width - Target.Left);
+            SetLabelAutoWrap(target, target.Parent.Width - target.Left);
         }
 
-        protected void SetLabelAutoWrap(Label Target, int MaxWidth)
+        protected void SetLabelAutoWrap(Label target, int maxWidth)
         {
             /*
             
@@ -385,36 +385,36 @@ namespace PlainCEETimer.UI.Controls
 
             */
 
-            Target.MaximumSize = new(MaxWidth, 0);
-            Target.AutoSize = true;
+            target.MaximumSize = new(maxWidth, 0);
+            target.AutoSize = true;
         }
 
         protected void KeepOnScreen()
         {
-            var ValidArea = GetCurrentScreenRect();
+            var screen = GetCurrentScreenRect();
             bool b = false;
 
-            if (Left < ValidArea.Left)
+            if (Left < screen.Left)
             {
-                Left = ValidArea.Left;
+                Left = screen.Left;
                 b = true;
             }
 
-            if (Top < ValidArea.Top)
+            if (Top < screen.Top)
             {
-                Top = ValidArea.Top;
+                Top = screen.Top;
                 b = true;
             }
 
-            if (Right > ValidArea.Right)
+            if (Right > screen.Right)
             {
-                Left = ValidArea.Right - Width;
+                Left = screen.Right - Width;
                 b = true;
             }
 
-            if (Bottom > ValidArea.Bottom)
+            if (Bottom > screen.Bottom)
             {
-                Top = ValidArea.Bottom - Height;
+                Top = screen.Bottom - Height;
                 b = true;
             }
 

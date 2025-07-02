@@ -69,7 +69,7 @@ namespace PlainCEETimer.UI
             }
         }
 
-        private (string, Bitmap, SystemSound) GetStuff(MessageLevel Level) => Level switch
+        private (string, Bitmap, SystemSound) GetStuff(MessageLevel level) => level switch
         {
             /*
 
@@ -96,9 +96,9 @@ namespace PlainCEETimer.UI
             return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
         }
 
-        private static Bitmap GetIcon(int Index)
+        private static Bitmap GetIcon(int index)
         {
-            return IconHelper.GetIcon("imageres.dll", Index).ToBitmap();
+            return IconHelper.GetIcon("imageres.dll", index).ToBitmap();
         }
     }
 }

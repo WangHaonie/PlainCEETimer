@@ -46,7 +46,7 @@ namespace PlainCEETimer.Modules
 
         public static void CheckAdmin()
         {
-            IsAdmin = ProcessHelper.Run("net", "session", returnExitCode: true) == 0;
+            IsAdmin = ProcessHelper.Run("net", "session", getExitCode: true) == 0;
         }
 
         private static UACNotifyLevel GetUACNotifyLevel()

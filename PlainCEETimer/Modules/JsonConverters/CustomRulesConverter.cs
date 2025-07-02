@@ -11,32 +11,32 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            var Json = serializer.Deserialize<JObject>(reader);
-            var PhaseInt = int.Parse(Json[nameof(existingValue.Phase)].ToString());
+            var json = serializer.Deserialize<JObject>(reader);
+            var phaseInt = int.Parse(json[nameof(existingValue.Phase)].ToString());
 
-            if (PhaseInt is < 0 or > 2)
+            if (phaseInt is < 0 or > 2)
             {
                 throw new Exception();
             }
 
-            var Tick = TimeSpan.FromSeconds(double.Parse(Json[nameof(existingValue.Tick)].ToString()));
-            var Fore = Validator.GetColor(Json[nameof(ColorSetObject.Fore)]);
-            var Back = Validator.GetColor(Json[nameof(ColorSetObject.Back)]);
+            var tick = TimeSpan.FromSeconds(double.Parse(json[nameof(existingValue.Tick)].ToString()));
+            var fore = Validator.GetColor(json[nameof(ColorSetObject.Fore)]);
+            var back = Validator.GetColor(json[nameof(ColorSetObject.Back)]);
 
-            if (!Validator.IsNiceContrast(Fore, Back))
+            if (!Validator.IsNiceContrast(fore, back))
             {
                 throw new Exception();
             }
 
-            var Text = Json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();
-            Validator.EnsureCustomTextLength(Text);
+            var text = json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();
+            Validator.EnsureCustomTextLength(text);
 
             return new()
             {
-                Phase = (CountdownPhase)PhaseInt,
-                Tick = Tick,
-                Text = Text,
-                Colors = new(Fore, Back)
+                Phase = (CountdownPhase)phaseInt,
+                Tick = tick,
+                Text = text,
+                Colors = new(fore, back)
             };
         }
 

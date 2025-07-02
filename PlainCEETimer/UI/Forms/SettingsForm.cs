@@ -185,9 +185,9 @@ namespace PlainCEETimer.UI.Forms
 
                             ComboBoxShowXOnly = b.ComboBox(38, false, (_, _) =>
                             {
-                                var Index = ComboBoxShowXOnly.SelectedIndex;
-                                CheckBoxCeiling.Visible = Index == 0;
-                                CheckBoxCeiling.Checked = Index == 0 && AppConfig.Display.Ceiling;
+                                var index = ComboBoxShowXOnly.SelectedIndex;
+                                CheckBoxCeiling.Visible = index == 0;
+                                CheckBoxCeiling.Checked = index == 0 && AppConfig.Display.Ceiling;
                                 SettingsChanged();
                             }, "天", "时", "分", "秒"),
 
@@ -207,7 +207,7 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            CheckBoxCeiling = b.CheckBox("不足一天按整天计算(&N)", SettingsChanged).With(c => c.Enabled = false),
+                            CheckBoxCeiling = b.CheckBox("不足一天按整天计算(&N)", SettingsChanged),
 
                             ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
                             {
@@ -273,12 +273,12 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonFont = b.Button("选择字体(&F)", true, true, (_, _) =>
                             {
-                                var Dialog = new FontDialogEx(SelectedFont);
+                                var dialog = new FontDialogEx(SelectedFont);
 
-                                if (Dialog.ShowDialog(this) == DialogResult.OK)
+                                if (dialog.ShowDialog(this) == DialogResult.OK)
                                 {
                                     SettingsChanged();
-                                    ChangeDisplayFont(Dialog.Font);
+                                    ChangeDisplayFont(dialog.Font);
                                 }
                             }),
 
@@ -572,18 +572,18 @@ namespace PlainCEETimer.UI.Forms
 
         private string[] GetScreensData()
         {
-            var CurrentScreens = Screen.AllScreens;
-            var Length = CurrentScreens.Length;
-            Screen CurrentScreen;
-            var Monitors = new string[Length];
+            var screens = Screen.AllScreens;
+            var count = screens.Length;
+            var tmp = new string[count];
+            Screen current;
 
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i < count; i++)
             {
-                CurrentScreen = CurrentScreens[i];
-                Monitors[i] = string.Format("{0} {1} ({2}x{3})", i + 1, CurrentScreen.DeviceName, CurrentScreen.Bounds.Width, CurrentScreen.Bounds.Height);
+                current = screens[i];
+                tmp[i] = string.Format("{0} {1} ({2}x{3})", i + 1, current.DeviceName, current.Bounds.Width, current.Bounds.Height);
             }
 
-            return Monitors;
+            return tmp;
         }
 
         private void SettingsChanged()
@@ -596,6 +596,7 @@ namespace PlainCEETimer.UI.Forms
             CheckBoxStartup.Checked = IsSetStartUp = (bool)OperateStartUp(0);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
+            CheckBoxCeiling.Enabled = false;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
             CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
             CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
@@ -687,28 +688,28 @@ namespace PlainCEETimer.UI.Forms
             SettingsChanged();
         }
 
-        private void UpdateSettingsArea(SettingsArea Where, bool IsWorking = true, int SubCase = 0)
+        private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
         {
-            switch (Where)
+            switch (area)
             {
                 case SettingsArea.SyncTime:
-                    IsSyncingTime = IsWorking;
-                    ButtonSyncTime.Enabled = !IsWorking;
-                    ComboBoxNtpServers.Enabled = !IsWorking;
-                    ButtonRestart.Enabled = !IsWorking;
-                    ButtonSave.Enabled = !IsWorking && UserChanged;
-                    ButtonCancel.Enabled = !IsWorking;
-                    ButtonSyncTime.Text = IsWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
+                    IsSyncingTime = isWorking;
+                    ButtonSyncTime.Enabled = !isWorking;
+                    ComboBoxNtpServers.Enabled = !isWorking;
+                    ButtonRestart.Enabled = !isWorking;
+                    ButtonSave.Enabled = !isWorking && UserChanged;
+                    ButtonCancel.Enabled = !isWorking;
+                    ButtonSyncTime.Text = isWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
                     break;
                 case SettingsArea.Funny:
-                    GBoxRestart.Text = IsWorking ? "关闭倒计时" : "重启倒计时";
-                    LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(IsWorking ? "(●'◡'●)" : "")}";
-                    ButtonRestart.Text = IsWorking ? "点击关闭(&G)" : "点击重启(&R)";
+                    GBoxRestart.Text = isWorking ? "关闭倒计时" : "重启倒计时";
+                    LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(isWorking ? "(●'◡'●)" : "")}";
+                    ButtonRestart.Text = isWorking ? "点击关闭(&G)" : "点击重启(&R)";
                     break;
                 case SettingsArea.SetPPTService:
-                    CheckBoxPptSvc.Enabled = IsWorking;
-                    CheckBoxPptSvc.Checked = IsWorking && AppConfig.Display.SeewoPptsvc;
-                    CheckBoxPptSvc.Text = IsWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(SubCase == 0 ? "顶置" : "在左上角")}。";
+                    CheckBoxPptSvc.Enabled = isWorking;
+                    CheckBoxPptSvc.Checked = isWorking && AppConfig.Display.SeewoPptsvc;
+                    CheckBoxPptSvc.Text = isWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(subCase == 0 ? "顶置" : "在左上角")}。";
                     break;
             }
         }
@@ -741,7 +742,7 @@ namespace PlainCEETimer.UI.Forms
                 return false;
             }
 
-            int ColorCheckMsg = 0;
+            int index = -1;
             var Length = 4;
             SelectedColors = new ColorSetObject[Length];
 
@@ -752,17 +753,17 @@ namespace PlainCEETimer.UI.Forms
 
                 if (!Validator.IsNiceContrast(Fore, Back))
                 {
-                    ColorCheckMsg = i + 1;
+                    index = i;
                     break;
                 }
 
                 SelectedColors[i] = new(Fore, Back);
             }
 
-            if (ColorCheckMsg != 0)
+            if (index != -1)
             {
                 NavBar.SwitchTo(PageAppearance);
-                MessageX.Error($"第{ColorCheckMsg}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
+                MessageX.Error($"第{index}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
                 return false;
             }
 
@@ -823,21 +824,21 @@ namespace PlainCEETimer.UI.Forms
             RefreshNeeded = true;
         }
 
-        private object OperateStartUp(int Operation)
+        private object OperateStartUp(int type)
         {
-            var KeyName = App.AppNameEngOld;
-            var AppPath = $"\"{App.CurrentExecutablePath}\"";
-            using var Helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+            var key = App.AppNameEngOld;
+            var path = $"\"{App.CurrentExecutablePath}\"";
+            using var helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 
-            switch (Operation)
+            switch (type)
             {
                 case 0:
-                    return Helper.GetState(KeyName, AppPath, "");
+                    return helper.GetState(key, path, "");
                 case 1:
-                    if (Win32User.NotElevated) Helper.Set(KeyName, AppPath);
+                    if (Win32User.NotElevated) helper.Set(key, path);
                     break;
                 default:
-                    if (Win32User.NotElevated) Helper.Delete(KeyName);
+                    if (Win32User.NotElevated) helper.Delete(key);
                     break;
             }
 

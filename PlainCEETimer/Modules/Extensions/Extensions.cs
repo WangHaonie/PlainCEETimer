@@ -42,7 +42,7 @@ namespace PlainCEETimer.Modules.Extensions
         https://stackoverflow.com/a/2776689
 
         */
-        public static string Truncate(this string s, int MaxLength)
-            => s?.Length > MaxLength ? s.Substring(0, MaxLength) + "..." : s;
+        public static string Truncate(this string s, int maxLength)
+            => s?.Length > maxLength ? s.Substring(0, maxLength) + "..." : s;
     }
 }

@@ -43,14 +43,14 @@ namespace PlainCEETimer.UI.Controls
 
             if (!Calculated)
             {
-                int MaxWidth = 0;
+                int w = 0;
 
                 foreach (var Item in Items)
                 {
-                    MaxWidth = Math.Max(MaxWidth, TextRenderer.MeasureText(GetItemText(Item), Font).Width);
+                    w = Math.Max(w, TextRenderer.MeasureText(GetItemText(Item), Font).Width);
                 }
 
-                DropDownWidth = MaxWidth + ThemeManager.VerticalScrollBarWidth;
+                DropDownWidth = w + ThemeManager.VerticalScrollBarWidth;
                 Calculated = true;
             }
 

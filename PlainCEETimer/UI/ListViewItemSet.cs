@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.UI
 {
-    public class ListViewItemSet<TData>
+    public class ListViewItemSet<TData>()
         where TData : IListViewData<TData>
     {
         private struct Entry

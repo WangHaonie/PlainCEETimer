@@ -7,7 +7,7 @@ namespace PlainCEETimer.UI
 {
     public class PlainButtonBase
     {
-        private readonly ButtonBase button;
+        private readonly ButtonBase Target;
 
         public PlainButtonBase(ButtonBase target)
         {
@@ -15,8 +15,8 @@ namespace PlainCEETimer.UI
 
             if (ThemeManager.ShouldUseDarkMode)
             {
-                button = target;
-                button.EnabledChanged += Button_EnabledChanged;
+                Target = target;
+                Target.EnabledChanged += Button_EnabledChanged;
                 UpdateStyle();
             }
             else
@@ -32,15 +32,15 @@ namespace PlainCEETimer.UI
 
         private void UpdateStyle()
         {
-            button.FlatStyle = button.Enabled ? FlatStyle.Standard : FlatStyle.System;
-            ThemeManager.FlushControl(button, NativeStyle.Explorer);
+            Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
+            ThemeManager.FlushControl(Target, NativeStyle.Explorer);
         }
 
         ~PlainButtonBase()
         {
-            if (button != null)
+            if (Target != null)
             {
-                button.EnabledChanged -= Button_EnabledChanged;
+                Target.EnabledChanged -= Button_EnabledChanged;
             }
         }
     }

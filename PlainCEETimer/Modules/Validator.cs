@@ -20,23 +20,23 @@ namespace PlainCEETimer.Modules
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
 
-        public static bool VerifyCustomText(string CustomText, out string Warning, int Index = 0)
+        public static bool VerifyCustomText(string custom, out string warning, int index = 0)
         {
-            var IndexHint = Index != 0 ? $"第{Index}个自定义文本" : "自定义文本";
+            var i = index != 0 ? $"第{index}个自定义文本" : "自定义文本";
 
-            if (string.IsNullOrWhiteSpace(CustomText))
+            if (string.IsNullOrWhiteSpace(custom))
             {
-                Warning = $"{IndexHint}不能为空白！";
+                warning = $"{i}不能为空白！";
                 return false;
             }
 
-            if (Regex.Matches(CustomText, @"\{.*?\}").Count == 0)
+            if (Regex.Matches(custom, @"\{.*?\}").Count == 0)
             {
-                Warning = $"请在{IndexHint}中至少使用一个占位符！";
+                warning = $"请在{i}中至少使用一个占位符！";
                 return false;
             }
 
-            Warning = null;
+            warning = null;
             return true;
         }
 
@@ -49,8 +49,8 @@ namespace PlainCEETimer.Modules
             // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
             //
 
-            double L1 = GetRelativeLuminance(Fore);
-            double L2 = GetRelativeLuminance(Back);
+            var L1 = GetRelativeLuminance(Fore);
+            var L2 = GetRelativeLuminance(Back);
 
             if (L1 < L2)
             {
@@ -60,20 +60,20 @@ namespace PlainCEETimer.Modules
             return (L1 + 0.05) / (L2 + 0.05) >= 3;
         }
 
-        public static bool IsValidExamLength(int ExamLength)
-            => ExamLength is >= MinExamNameLength and <= MaxExamNameLength;
+        public static bool IsValidExamLength(int length)
+            => length is >= MinExamNameLength and <= MaxExamNameLength;
 
-        public static void EnsureExamDate(DateTime ExamTime)
+        public static void EnsureExamDate(DateTime time)
         {
-            if (ExamTime.Ticks is < MinDate or > MaxDate)
+            if (time.Ticks is < MinDate or > MaxDate)
             {
                 throw new Exception();
             }
         }
 
-        public static void EnsureCustomTextLength(string Text)
+        public static void EnsureCustomTextLength(string custom)
         {
-            if (Text.Length > MaxCustomTextLength)
+            if (custom.Length > MaxCustomTextLength)
             {
                 throw new Exception();
             }
@@ -97,23 +97,23 @@ namespace PlainCEETimer.Modules
 
         public static Color GetColor(object obj)
         {
-            int Argb;
+            int rgb;
 
             if (obj is int tmp)
             {
-                Argb = tmp;
+                rgb = tmp;
             }
             else
             {
-                Argb = int.Parse(obj.ToString());
+                rgb = int.Parse(obj.ToString());
             }
 
-            if (Argb > 0)
+            if (rgb > 0)
             {
-                Argb = -Argb;
+                rgb = -rgb;
             }
 
-            return Color.FromArgb(Argb);
+            return Color.FromArgb(rgb);
         }
 
         private static double GetRelativeLuminance(Color color)

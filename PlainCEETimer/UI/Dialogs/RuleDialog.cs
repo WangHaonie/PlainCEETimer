@@ -80,13 +80,13 @@ namespace PlainCEETimer.UI.Dialogs
                     {
                         WhenLoaded(() =>
                         {
-                            var Index = ComboBoxRuleType.SelectedIndex;
+                            var index = ComboBoxRuleType.SelectedIndex;
 
-                            if (TemporaryChanges.ContainsKey(Index))
+                            if (TemporaryChanges.ContainsKey(index))
                             {
-                                var Temp = TemporaryChanges[Index];
-                                ApplyColorBlock(Temp.Colors);
-                                TextBoxCustomText.Text = Temp.Text;
+                                var tmp = TemporaryChanges[index];
+                                ApplyColorBlock(tmp.Colors);
+                                TextBoxCustomText.Text = tmp.Text;
                             }
                             else
                             {
@@ -104,12 +104,12 @@ namespace PlainCEETimer.UI.Dialogs
                 NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
             ]);
 
-            ColorBlock[] ColorBlocks = [BlockFore, BlockBack];
+            ColorBlock[] blocks = [BlockFore, BlockBack];
 
-            foreach (var block in ColorBlocks)
+            foreach (var block in blocks)
             {
                 block.Parent = this;
-                block.Fellows = ColorBlocks;
+                block.Fellows = blocks;
             }
 
             base.OnInitializing();
@@ -151,11 +151,11 @@ namespace PlainCEETimer.UI.Dialogs
             if (IsEditMode)
             {
                 ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
-                var Ticks = Data.Tick;
-                NUDDays.Value = Ticks.Days;
-                NUDHours.Value = Ticks.Hours;
-                NUDMinutes.Value = Ticks.Minutes;
-                NUDSeconds.Value = Ticks.Seconds;
+                var tick = Data.Tick;
+                NUDDays.Value = tick.Days;
+                NUDHours.Value = tick.Hours;
+                NUDMinutes.Value = tick.Minutes;
+                NUDSeconds.Value = tick.Seconds;
                 ApplyColorBlock(Data.Colors);
                 TextBoxCustomText.Text = Data.Text;
             }
@@ -178,18 +178,18 @@ namespace PlainCEETimer.UI.Dialogs
                 return false;
             }
 
-            var Fore = BlockFore.Color;
-            var Back = BlockBack.Color;
+            var fore = BlockFore.Color;
+            var back = BlockBack.Color;
 
-            if (!Validator.IsNiceContrast(Fore, Back))
+            if (!Validator.IsNiceContrast(fore, back))
             {
                 MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
                 return false;
             }
 
-            var Text = TextBoxCustomText.Text.RemoveIllegalChars();
+            var content = TextBoxCustomText.Text.RemoveIllegalChars();
 
-            if (!Validator.VerifyCustomText(Text, out string ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
+            if (!Validator.VerifyCustomText(content, out string ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
             {
                 MessageX.Error(ErrorMsg);
                 return false;
@@ -199,8 +199,8 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 Phase = (CountdownPhase)ComboBoxRuleType.SelectedIndex,
                 Tick = new(d, h, m, s),
-                Text = Text,
-                Colors = new(Fore, Back)
+                Text = content,
+                Colors = new(fore, back)
             };
 
             return base.OnClickButtonA();
@@ -228,18 +228,18 @@ namespace PlainCEETimer.UI.Dialogs
             TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(new(BlockFore.Color, BlockBack.Color), TextBoxCustomText.Text);
         }
 
-        private void GetNewData(bool All = true, bool ColorOnly = false, bool TextOnly = false)
+        private void GetNewData(bool all = true, bool colorOnly = false, bool textOnly = false)
         {
-            var Index = ComboBoxRuleType.SelectedIndex;
+            var index = ComboBoxRuleType.SelectedIndex;
 
-            if (All || ColorOnly)
+            if (all || colorOnly)
             {
-                ApplyColorBlock(GlobalColors[Index]);
+                ApplyColorBlock(GlobalColors[index]);
             }
 
-            if (All || TextOnly)
+            if (all || textOnly)
             {
-                TextBoxCustomText.Text = GlobalTexts[Index];
+                TextBoxCustomText.Text = GlobalTexts[index];
             }
 
             if (!IsEditMode)

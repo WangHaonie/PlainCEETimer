@@ -44,7 +44,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/1";
+        public const string AppBuildDate = "2025/7/2";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
         public const string OriginalFileName = $"{AppNameEng}.exe";
@@ -157,7 +157,7 @@ namespace PlainCEETimer.Modules
         public static void Exit(ExitReason reason)
         {
             IsClosing = true;
-            var Restart = reason == ExitReason.UserRestart;
+            var restart = reason == ExitReason.UserRestart;
 
             if (CanSaveConfig)
             {
@@ -171,7 +171,7 @@ namespace PlainCEETimer.Modules
                 MainMutex = null;
             }
 
-            ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(Restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
+            ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
             Environment.Exit((int)reason);
         }
 
@@ -181,8 +181,8 @@ namespace PlainCEETimer.Modules
             {
                 while (true)
                 {
-                    using var PipeServer = new NamedPipeServerStream(PipeName, PipeDirection.In);
-                    PipeServer.WaitForConnection();
+                    using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
+                    server.WaitForConnection();
                     OnTrayMenuShowAllClicked();
                 }
             }
@@ -194,20 +194,20 @@ namespace PlainCEETimer.Modules
             try
             {
                 var isRedirector = pipe != null;
-                using var PipeClient = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
+                using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
 
                 if (isRedirector)
                 {
                     try
                     {
-                        PipeClient.Connect(500);
+                        client.Connect(500);
                     }
                     catch
                     {
                         return false;
                     }
 
-                    var w = new StreamWriter(PipeClient) { AutoFlush = true };
+                    var w = new StreamWriter(client) { AutoFlush = true };
 
                     try
                     {
@@ -227,7 +227,7 @@ namespace PlainCEETimer.Modules
                 }
                 else
                 {
-                    PipeClient.Connect(1000);
+                    client.Connect(1000);
                 }
 
                 return true;
@@ -242,17 +242,17 @@ namespace PlainCEETimer.Modules
         {
             if (!IsClosing)
             {
-                var Now = DateTime.Now;
-                var ExOutput = $"—————————————————— {AppNameEng} v{AppVersion} - {Now.Format()} ——————————————————\n{ex}";
-                var ExFileName = $"UnhandledException_{Now.ToString(DateTimeFormat)}.txt";
-                var ExFilePath = $"{CurrentExecutableDir}{ExFileName}";
-                File.AppendAllText(ExFilePath, ExOutput);
+                var now = DateTime.Now;
+                var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
+                var exFileName = $"UnhandledException_{now.ToString(DateTimeFormat)}.txt";
+                var exFilePath = $"{CurrentExecutableDir}{exFileName}";
+                File.AppendAllText(exFilePath, content);
 
-                var Result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！详细错误信息已写入安装目录中的 {ExFileName} 文件，建议您将其发送给开发者以帮助我们定位并解决问题。\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。\n\n错误信息：\n{ex.Message}", "意外错误 - 高考倒计时", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
+                var result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！详细错误信息已写入安装目录中的 {exFileName} 文件，建议您将其发送给开发者以帮助我们定位并解决问题。\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。\n\n错误信息：\n{ex.Message}", "意外错误 - 高考倒计时", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
 
-                if (Result != DialogResult.Ignore)
+                if (result != DialogResult.Ignore)
                 {
-                    Exit(Result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
+                    Exit(result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
                 }
             }
         }

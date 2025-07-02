@@ -34,8 +34,6 @@ namespace PlainCEETimer.Interop
         private static readonly int ForeCrColor;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
-
         static CommonDialogHelper()
         {
             BackCrColor = ThemeManager.DarkBack.ToWin32();
@@ -130,19 +128,19 @@ namespace PlainCEETimer.Interop
         private void KeepOnScreen(IntPtr hWnd)
         {
             var validArea = Screen.GetWorkingArea(owner);
-            var W = Bounds.Width;
-            var H = Bounds.Height;
-            var X = owner.Left + (owner.Width / 2) - (W / 2);
-            var Y = owner.Top + (owner.Height / 2) - (H / 2);
-            var l = X;
-            var t = Y;
-            var r = X + W;
-            var b = Y + H;
-            if (l < validArea.X) X = validArea.X;
-            if (t < validArea.Y) Y = validArea.Y;
-            if (r > validArea.Right) X = validArea.Right - W;
-            if (b > validArea.Bottom) Y = validArea.Bottom - H;
-            MoveWindow(hWnd, X, Y, W, H, false);
+            var w = Bounds.Width;
+            var h = Bounds.Height;
+            var x = owner.Left + (owner.Width / 2) - (w / 2);
+            var y = owner.Top + (owner.Height / 2) - (h / 2);
+            var l = x;
+            var t = y;
+            var r = x + w;
+            var b = y + h;
+            if (l < validArea.X) x = validArea.X;
+            if (t < validArea.Y) y = validArea.Y;
+            if (r > validArea.Right) x = validArea.Right - w;
+            if (b > validArea.Bottom) y = validArea.Bottom - h;
+            MoveWindow(hWnd, x, y, w, h, false);
         }
 
         private NativeStyle GetNativeStyle(IntPtr hWnd)
@@ -175,6 +173,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.User32Dll)]
         private static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
         private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);

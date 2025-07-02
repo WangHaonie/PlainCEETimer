@@ -54,18 +54,18 @@ namespace PlainCEETimer.UI.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
-        public void SelectAll(bool IsSelected)
+        public void SelectAll(bool selected)
         {
             if (Items.Count != 0)
             {
-                ListViewHelper.SelectAllItems(Handle, IsSelected.ToWin32());
+                ListViewHelper.SelectAllItems(Handle, selected.ToWin32());
             }
         }
 
-        public void Suspend(Action Method)
+        public void Suspend(Action action)
         {
             BeginUpdate();
-            Method();
+            action();
             EndUpdate();
             Focus();
         }
@@ -79,12 +79,12 @@ namespace PlainCEETimer.UI.Controls
 
             if (HasScrollBar(true) && HasScrollBar(false))
             {
-                int originalW = LastColumn.Width;
+                int w = LastColumn.Width;
                 LastColumn.Width -= ThemeManager.VerticalScrollBarWidth;
 
                 if (HasScrollBar(false))
                 {
-                    LastColumn.Width = originalW;
+                    LastColumn.Width = w;
                 }
             }
         }

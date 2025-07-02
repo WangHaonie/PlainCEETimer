@@ -6,12 +6,12 @@ namespace PlainCEETimer.Modules
 {
     public static class ProcessHelper
     {
-        public static int Run(string path, string args, bool showWindow = false, bool returnExitCode = false)
+        public static int Run(string path, string args, bool showWindow = false, bool getExitCode = false)
         {
             var proc = MakeProc(path, args, false, false, showWindow, false);
             proc.Start();
 
-            if (returnExitCode)
+            if (getExitCode)
             {
                 proc.WaitForExit();
                 return proc.ExitCode;

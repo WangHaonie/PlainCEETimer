@@ -4,6 +4,9 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainCheckBox : CheckBox
     {
-        public PlainCheckBox() => new PlainButtonBase(this);
+        public PlainCheckBox()
+        {
+            new PlainButtonBase(this);
+        }
     }
 }

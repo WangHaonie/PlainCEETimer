@@ -58,14 +58,14 @@ namespace PlainCEETimer.UI.Dialogs
 
         private void ButtonGlobal_Click(object sender, EventArgs e)
         {
-            var Dialog = new CustomTextDialog()
+            var dialog = new CustomTextDialog()
             {
                 CustomTexts = CustomTextPreset
             };
 
-            if (Dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                CustomTextPreset = Dialog.CustomTexts;
+                CustomTextPreset = dialog.CustomTexts;
                 UserChanged();
             }
         }

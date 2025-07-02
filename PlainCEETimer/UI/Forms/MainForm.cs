@@ -56,6 +56,7 @@ namespace PlainCEETimer.UI.Forms
         private CountdownState SelectedState;
         private Color CountdownForeColor;
         private ColorSetObject[] CountdownColors;
+        private DateTime Now;
         private DateTime ExamEnd;
         private DateTime ExamStart;
         private Point LastLocation;
@@ -178,15 +179,15 @@ namespace PlainCEETimer.UI.Forms
 
         private void ExamItems_Click(object sender, EventArgs e)
         {
-            int ItemIndex;
-            var Sender = (MenuItem)sender;
-            ItemIndex = Sender.Index;
+            int index;
+            var item = (MenuItem)sender;
+            index = item.Index;
 
-            if (Sender != null && !Sender.Checked)
+            if (item != null && !item.Checked)
             {
                 UnselectAllExamItems();
-                ExamIndex = ItemIndex;
-                AppConfig.ExamIndex = ItemIndex;
+                ExamIndex = index;
+                AppConfig.ExamIndex = index;
                 SaveConfig();
                 LoadExams();
                 TryRunCountdown();
@@ -197,7 +198,10 @@ namespace PlainCEETimer.UI.Forms
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left) App.OnTrayMenuShowAllClicked();
+            if (e.Button == MouseButtons.Left)
+            {
+                App.OnTrayMenuShowAllClicked();
+            }
         }
 
         private void ExamAutoSwitch(object sender, EventArgs e)
@@ -292,8 +296,8 @@ namespace PlainCEETimer.UI.Forms
                 CurrentTheme = theme;
             }
 
-            var EndIndex = AppConfig.Display.EndIndex;
-            Mode = EndIndex == 2 ? CountdownMode.Mode3 : (EndIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
+            var endIndex = AppConfig.Display.EndIndex;
+            Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
         }
 
         private void LoadExams()
@@ -386,15 +390,15 @@ namespace PlainCEETimer.UI.Forms
 
                 for (int i = 0; i < Exams.Length; i++)
                 {
-                    var Item = new MenuItem()
+                    var item = new MenuItem()
                     {
                         Text = $"{i + 1}. {Exams[i]}",
                         RadioCheck = true,
                         Checked = i == ExamIndex
                     };
 
-                    Item.Click += ExamItems_Click;
-                    ExamSwitchMain.Add(Item);
+                    item.Click += ExamItems_Click;
+                    ExamSwitchMain.Add(item);
                 }
             }
 
@@ -514,13 +518,13 @@ namespace PlainCEETimer.UI.Forms
 
         private void UnselectAllExamItems()
         {
-            foreach (MenuItem Item in ExamSwitchMain)
+            foreach (MenuItem item in ExamSwitchMain)
             {
-                Item.Checked = false;
+                item.Checked = false;
             }
         }
 
-        private void UpdateExamSelection(bool UpdateOnly = false)
+        private void UpdateExamSelection(bool canUpdate = false)
         {
             if (ExamIndex != -1)
             {
@@ -528,12 +532,12 @@ namespace PlainCEETimer.UI.Forms
             }
             else
             {
-                var Item = ExamSwitchMain[0];
-                Item.Checked = false;
-                Item.Enabled = false;
+                var item = ExamSwitchMain[0];
+                item.Checked = false;
+                item.Enabled = false;
             }
 
-            if (!UpdateOnly && AutoSwitch)
+            if (!canUpdate && AutoSwitch)
             {
                 AutoSwitchHandler?.Dispose();
 
@@ -554,7 +558,7 @@ namespace PlainCEETimer.UI.Forms
         {
             if (IsCountdownReady)
             {
-                var Now = DateTime.Now;
+                Now = DateTime.Now;
 
                 if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
                 {
@@ -584,7 +588,7 @@ namespace PlainCEETimer.UI.Forms
             IsCountdownRunning = false;
         }
 
-        private void ApplyCustomRule(int Phase, TimeSpan Span)
+        private void ApplyCustomRule(int phase, TimeSpan span)
         {
             if (UseCustomText)
             {
@@ -592,34 +596,34 @@ namespace PlainCEETimer.UI.Forms
                 {
                     foreach (var rule in CurrentRules)
                     {
-                        if (Phase == 2 ? (Span >= rule.Tick) : (Span <= rule.Tick))
+                        if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
                         {
-                            UpdateCountdown(SetCustomRule(Span, rule.Text), rule.Colors);
+                            UpdateCountdown(SetCustomRule(span, rule.Text), rule.Colors);
                             return;
                         }
                     }
                 }
 
-                UpdateCountdown(SetCustomRule(Span, GlobalTexts[Phase]), CountdownColors[Phase]);
+                UpdateCountdown(SetCustomRule(span, GlobalTexts[phase]), CountdownColors[phase]);
                 return;
             }
 
-            UpdateCountdown(GetCountdown(Span, DefaultTexts[Phase]), CountdownColors[Phase]);
+            UpdateCountdown(GetCountdown(span, DefaultTexts[phase]), CountdownColors[phase]);
         }
 
-        private string SetCustomRule(TimeSpan ExamSpan, string Custom)
+        private string SetCustomRule(TimeSpan span, string custom)
         {
             CustomTextBuilder.Clear();
-            CustomTextBuilder.Append(Custom);
+            CustomTextBuilder.Append(custom);
             CustomTextBuilder.Replace(Constants.PH_EXAMNAME, ExamName);
-            CustomTextBuilder.Replace(Constants.PH_DAYS, $"{ExamSpan.Days}");
-            CustomTextBuilder.Replace(Constants.PH_HOURS, $"{ExamSpan.Hours:00}");
-            CustomTextBuilder.Replace(Constants.PH_MINUTES, $"{ExamSpan.Minutes:00}");
-            CustomTextBuilder.Replace(Constants.PH_SECONDS, $"{ExamSpan.Seconds:00}");
-            CustomTextBuilder.Replace(Constants.PH_CEILINGDAYS, $"{ExamSpan.Days + 1}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALHOURS, $"{ExamSpan.TotalHours:0}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALMINUTES, $"{ExamSpan.TotalMinutes:0}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALSECONDS, $"{ExamSpan.TotalSeconds:0}");
+            CustomTextBuilder.Replace(Constants.PH_DAYS, $"{span.Days}");
+            CustomTextBuilder.Replace(Constants.PH_HOURS, $"{span.Hours:00}");
+            CustomTextBuilder.Replace(Constants.PH_MINUTES, $"{span.Minutes:00}");
+            CustomTextBuilder.Replace(Constants.PH_SECONDS, $"{span.Seconds:00}");
+            CustomTextBuilder.Replace(Constants.PH_CEILINGDAYS, $"{span.Days + 1}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALHOURS, $"{span.TotalHours:0}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALMINUTES, $"{span.TotalMinutes:0}");
+            CustomTextBuilder.Replace(Constants.PH_TOTALSECONDS, $"{span.TotalSeconds:0}");
             return CustomTextBuilder.ToString();
         }
 
@@ -640,32 +644,32 @@ namespace PlainCEETimer.UI.Forms
             _ => 10_000 // 10 s
         };
 
-        private string GetCountdown(TimeSpan Span, string Hint) => SelectedState switch
+        private string GetCountdown(TimeSpan span, string hint) => SelectedState switch
         {
-            CountdownState.DaysOnly => string.Format("距离{0}{1}{2}天", ExamName, Hint, Span.Days),
-            CountdownState.DaysOnlyWithCeiling => string.Format("距离{0}{1}{2}天", ExamName, Hint, Span.Days + 1),
-            CountdownState.HoursOnly => string.Format("距离{0}{1}{2:0}小时", ExamName, Hint, Span.TotalHours),
-            CountdownState.MinutesOnly => string.Format("距离{0}{1}{2:0}分钟", ExamName, Hint, Span.TotalMinutes),
-            CountdownState.SecondsOnly => string.Format("距离{0}{1}{2:0}秒", ExamName, Hint, Span.TotalSeconds),
-            _ => string.Format("距离{0}{1}{2}天{3:00}时{4:00}分{5:00}秒", ExamName, Hint, Span.Days, Span.Hours, Span.Minutes, Span.Seconds)
+            CountdownState.DaysOnly => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days),
+            CountdownState.DaysOnlyWithCeiling => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days + 1),
+            CountdownState.HoursOnly => string.Format("距离{0}{1}{2:0}小时", ExamName, hint, span.TotalHours),
+            CountdownState.MinutesOnly => string.Format("距离{0}{1}{2:0}分钟", ExamName, hint, span.TotalMinutes),
+            CountdownState.SecondsOnly => string.Format("距离{0}{1}{2:0}秒", ExamName, hint, span.TotalSeconds),
+            _ => string.Format("距离{0}{1}{2}天{3:00}时{4:00}分{5:00}秒", ExamName, hint, span.Days, span.Hours, span.Minutes, span.Seconds)
         };
 
-        private void UpdateCountdown(string Content, ColorSetObject Colors)
+        private void UpdateCountdown(string content, ColorSetObject colors)
         {
             BeginInvoke(() =>
             {
-                if (Content != CountdownContentLast)
+                if (content != CountdownContentLast)
                 {
-                    CountdownContent = Content;
-                    CountdownContentLast = Content;
-                    CountdownForeColor = Colors.Fore;
-                    BackColor = Colors.Back;
+                    CountdownContent = content;
+                    CountdownContentLast = content;
+                    CountdownForeColor = colors.Fore;
+                    BackColor = colors.Back;
                     Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
                     Invalidate();
 
                     if (ShowTrayText)
                     {
-                        UpdateTrayIconText(Content);
+                        UpdateTrayIconText(content);
                     }
                 }
             });
@@ -680,19 +684,19 @@ namespace PlainCEETimer.UI.Forms
             }
         }
 
-        private void UpdateTrayIconText(string cText, bool cInvokeRequired = false)
+        private void UpdateTrayIconText(string content, bool invokeNeeded = false)
         {
             if (TrayIcon != null)
             {
-                cText = cText.Truncate(60);
+                content = content.Truncate(60);
 
-                if (cInvokeRequired)
+                if (invokeNeeded)
                 {
-                    BeginInvoke(() => TrayIcon.Text = cText);
+                    BeginInvoke(() => TrayIcon.Text = content);
                 }
                 else
                 {
-                    TrayIcon.Text = cText;
+                    TrayIcon.Text = content;
                 }
             }
         }
@@ -701,12 +705,12 @@ namespace PlainCEETimer.UI.Forms
         {
             if (IsPPTService)
             {
-                var ValidArea = SelectedScreenRect;
-                var ValidAreaX = SelectedScreenRect.X;
+                var screenRect = SelectedScreenRect;
+                var screenRectX = screenRect.X;
 
-                if (Top == ValidArea.Y && Left == ValidAreaX)
+                if (Top == screenRect.Y && Left == screenRectX)
                 {
-                    Left = ValidAreaX + PptsvcThreshold;
+                    Left = screenRectX + PptsvcThreshold;
                 }
             }
         }

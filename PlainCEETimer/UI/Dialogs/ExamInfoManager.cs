@@ -8,6 +8,8 @@ namespace PlainCEETimer.UI.Dialogs
 {
     public sealed class ExamInfoManager : ListViewDialog<ExamInfoObject, ExamInfoDialog>
     {
+        private DateTime Now;
+
         public ExamInfoManager()
             : base(450, ["考试名称", "开始日期和时间", "结束日期和时间"], ["已过去的", "正在进行", "未开始的"])
         {
@@ -22,7 +24,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override int GetGroupIndex(ExamInfoObject data)
         {
-            var Now = DateTime.Now;
+            Now = DateTime.Now;
 
             if (Now > data.End)
             {

@@ -9,9 +9,9 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class ExamInfoDialog(ExamInfoObject Existing) : AppDialog(AppFormParam.BindButtons), IListViewSubDialog<ExamInfoObject>
+    public sealed class ExamInfoDialog(ExamInfoObject existing) : AppDialog(AppFormParam.BindButtons), IListViewSubDialog<ExamInfoObject>
     {
-        public ExamInfoObject Data { get; set; } = Existing;
+        public ExamInfoObject Data { get; set; } = existing;
 
         private Label LabelName;
         private Label LabelCounter;
@@ -77,33 +77,33 @@ namespace PlainCEETimer.UI.Dialogs
                 return false;
             }
 
-            var StartTime = DTPStart.Value;
-            var EndTime = DTPEnd.Value;
-            var ExamSpan = EndTime - StartTime;
-            var TotalSeconds = (int)ExamSpan.TotalSeconds;
+            var start = DTPStart.Value;
+            var end = DTPEnd.Value;
+            var span = end - start;
+            var ts = (int)span.TotalSeconds;
 
-            if (EndTime <= StartTime || TotalSeconds < 1)
+            if (end <= start || ts < 1)
             {
                 MessageX.Error("考试时长无效！请检查相应日期时间是否合理。");
                 return false;
             }
 
-            var TimeMsg = "";
+            var tmp = "";
 
-            if (ExamSpan.TotalDays > 4)
+            if (span.TotalDays > 4)
             {
-                TimeMsg = $"{ExamSpan.TotalDays:0} 天";
+                tmp = $"{span.TotalDays:0} 天";
             }
-            else if (ExamSpan.TotalMinutes < 40 && TotalSeconds > 60)
+            else if (span.TotalMinutes < 40 && ts > 60)
             {
-                TimeMsg = $"{ExamSpan.TotalMinutes:0} 分钟";
+                tmp = $"{span.TotalMinutes:0} 分钟";
             }
-            else if (TotalSeconds < 60)
+            else if (ts < 60)
             {
-                TimeMsg = $"{TotalSeconds:0} 秒";
+                tmp = $"{ts:0} 秒";
             }
 
-            if (!string.IsNullOrEmpty(TimeMsg) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {TimeMsg}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)
+            if (!string.IsNullOrEmpty(tmp) && MessageX.Warn($"检测到设置的考试时间较长或较短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是 继续，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)
             {
                 return false;
             }
@@ -111,8 +111,8 @@ namespace PlainCEETimer.UI.Dialogs
             Data = new()
             {
                 Name = CurrentExamName,
-                Start = StartTime,
-                End = EndTime
+                Start = start,
+                End = end
             };
 
             return base.OnClickButtonA();
@@ -126,9 +126,9 @@ namespace PlainCEETimer.UI.Dialogs
         private void TextBoxName_TextChanged(object sender, EventArgs e)
         {
             CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
-            int CharCount = CurrentExamName.Length;
-            LabelCounter.Text = $"{CharCount}/{Validator.MaxExamNameLength}";
-            LabelCounter.ForeColor = Validator.IsValidExamLength(CharCount) ? (IsDark ? ThemeManager.DarkFore : Color.Black) : Color.Red;
+            int count = CurrentExamName.Length;
+            LabelCounter.Text = $"{count}/{Validator.MaxExamNameLength}";
+            LabelCounter.ForeColor = Validator.IsValidExamLength(count) ? (IsDark ? ThemeManager.DarkFore : Color.Black) : Color.Red;
             UserChanged();
         }
     }

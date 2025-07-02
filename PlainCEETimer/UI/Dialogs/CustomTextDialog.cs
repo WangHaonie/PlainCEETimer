@@ -93,9 +93,9 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 text = TextBoxes[i].Text;
 
-                if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out string ErrorMsg, i + 1) && !string.IsNullOrEmpty(ErrorMsg))
+                if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out string msg, i + 1) && !string.IsNullOrEmpty(msg))
                 {
-                    MessageX.Error(ErrorMsg);
+                    MessageX.Error(msg);
                     return false;
                 }
 

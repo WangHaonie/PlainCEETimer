@@ -27,15 +27,15 @@ namespace PlainCEETimer.UI.Forms
         private readonly CancellationTokenSource cts = new();
         private readonly Downloader UpdateDownloader = new();
 
-        public DownloaderForm(string ManualVersion) : this()
+        public DownloaderForm(string version) : this()
         {
-            TargetVersion = Version.TryParse(ManualVersion, out _) ? ManualVersion : App.AppVersion;
+            TargetVersion = Version.TryParse(version, out _) ? version : App.AppVersion;
         }
 
-        public DownloaderForm(string Version, long Size) : this()
+        public DownloaderForm(string version, long size) : this()
         {
-            TargetVersion = Version;
-            UpdateSize = Size;
+            TargetVersion = version;
+            UpdateSize = size;
         }
 
         protected override void OnInitializing()
@@ -159,21 +159,21 @@ namespace PlainCEETimer.UI.Forms
             }, this);
         }
 
-        private void UpdateLabels(string Info, string Size, string Speed)
+        private void UpdateLabels(string info, string size, string speed)
         {
-            if (Info != null)
+            if (info != null)
             {
-                LabelDownloading.Text = Info;
+                LabelDownloading.Text = info;
             }
 
-            if (Size != null)
+            if (size != null)
             {
-                LabelSize.Text = Size;
+                LabelSize.Text = size;
             }
 
-            if (Speed != null)
+            if (speed != null)
             {
-                LabelSpeed.Text = Speed;
+                LabelSpeed.Text = speed;
             }
         }
     }
