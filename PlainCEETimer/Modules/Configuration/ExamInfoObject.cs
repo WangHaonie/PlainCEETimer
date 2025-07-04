@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules.Configuration
                 }
 
                 field = value;
-                StartInternalTicks = value.Ticks / TimeSpan.TicksPerSecond;
+                StartTotalSeconds = value.Ticks / TimeSpan.TicksPerSecond;
             }
         } = DateTime.Now;
 
@@ -55,12 +55,12 @@ namespace PlainCEETimer.Modules.Configuration
                 }
 
                 field = value;
-                EndInternalTicks = value.Ticks / TimeSpan.TicksPerSecond;
+                EndTotalSeconds = value.Ticks / TimeSpan.TicksPerSecond;
             }
         } = DateTime.Now;
 
-        private long StartInternalTicks;
-        private long EndInternalTicks;
+        private long StartTotalSeconds;
+        private long EndTotalSeconds;
 
         public int CompareTo(ExamInfoObject other)
         {
@@ -69,14 +69,14 @@ namespace PlainCEETimer.Modules.Configuration
                 return 1;
             }
 
-            int order = StartInternalTicks.CompareTo(other.StartInternalTicks);
+            int order = StartTotalSeconds.CompareTo(other.StartTotalSeconds);
 
             if (order != 0)
             {
                 return order;
             }
 
-            if ((order = EndInternalTicks.CompareTo(other.EndInternalTicks)) != 0)
+            if ((order = EndTotalSeconds.CompareTo(other.EndTotalSeconds)) != 0)
             {
                 return order;
             }
@@ -97,8 +97,8 @@ namespace PlainCEETimer.Modules.Configuration
 
             return other != null
                 && Name == other.Name
-                && StartInternalTicks == other.StartInternalTicks
-                && EndInternalTicks == other.EndInternalTicks;
+                && StartTotalSeconds == other.StartTotalSeconds
+                && EndTotalSeconds == other.EndTotalSeconds;
         }
 
         public override string ToString()
@@ -115,7 +115,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             unchecked
             {
-                return (17 * 23 + Name.GetHashCode()) * 23 + StartInternalTicks.GetHashCode() + EndInternalTicks.GetHashCode();
+                return (17 * 23 + Name.GetHashCode()) * 23 + StartTotalSeconds.GetHashCode() + EndTotalSeconds.GetHashCode();
             }
         }
 

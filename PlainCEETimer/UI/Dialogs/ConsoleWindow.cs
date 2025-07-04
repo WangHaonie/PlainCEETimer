@@ -17,14 +17,12 @@ namespace PlainCEETimer.UI.Dialogs
         private bool ElevateNeeded;
         private bool IsRunning;
         private string Key;
-        private string LineFromClient;
         private string ExePath;
         private string ExeArgs;
         private ConsoleParam Param;
         private Action<ConsoleWindow> Complete;
         private Label LabelMessage;
         private MenuItem ContextCopy;
-        private NamedPipeServerStream Server;
         private Process ElevatedProc;
         private RichTextBox ConsoleBox;
         private readonly Timer ConsoleTimer = new();
@@ -112,19 +110,20 @@ namespace PlainCEETimer.UI.Dialogs
 
                     new Action(() =>
                     {
-                        Server = new(Key, PipeDirection.In, 1, PipeTransmissionMode.Message);
-                        using var reader = new StreamReader(Server);
-                        Server.WaitForConnection();
+                        using var server = new NamedPipeServerStream(Key, PipeDirection.In, 1, PipeTransmissionMode.Message);
+                        using var reader = new StreamReader(server);
+                        server.WaitForConnection();
+                        string line;
 
-                        while ((LineFromClient = reader.ReadLine()) != null)
+                        while ((line = reader.ReadLine()) != null)
                         {
-                            if (LineFromClient.Equals("```3", StringComparison.Ordinal))
+                            if (line.Equals("```3", StringComparison.Ordinal))
                             {
                                 Final();
                             }
                             else
                             {
-                                SafeWrite(LineFromClient);
+                                SafeWrite(line);
                             }
                         }
                     }).Start();
