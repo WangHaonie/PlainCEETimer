@@ -65,7 +65,7 @@ namespace PlainCEETimer.UI
             DialogResult ShowPopup()
             {
                 parent?.ReActivate();
-                return new AppMessageBox(message, autoClose, buttons, sound, icon).ShowCore(parent, title);
+                return new AppMessageBox(message, title, autoClose, buttons, sound, icon).ShowCore(parent);
             }
         }
 

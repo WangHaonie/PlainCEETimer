@@ -14,6 +14,7 @@ namespace PlainCEETimer.UI
         {
             return new(text, onClickHandler);
         }
+
         public MenuItem Menu(string text, MenuItem[] items)
         {
             return new(text, items);

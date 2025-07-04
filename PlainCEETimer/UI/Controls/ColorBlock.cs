@@ -43,6 +43,7 @@ namespace PlainCEETimer.UI.Controls
         private bool IsDragging;
         private bool IsPicking;
         private Point MouseLocation;
+        private Rectangle ParentBounds;
         private ScreenColorPicker ColorPicker;
         private readonly bool IsPreview;
         private readonly bool IsFore;
@@ -79,6 +80,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 IsDragging = true;
                 Capture = true;
+                ParentBounds = Parent.Bounds;
             }
 
             base.OnMouseDown(e);
@@ -91,7 +93,7 @@ namespace PlainCEETimer.UI.Controls
                 Cursor = Cursors.Cross;
                 MouseLocation = Cursor.Position;
 
-                if (!IsPicking && !Parent.Bounds.Contains(MouseLocation))
+                if (!IsPicking && !ParentBounds.Contains(MouseLocation))
                 {
                     IsPicking = true;
                     ColorPicker = new();

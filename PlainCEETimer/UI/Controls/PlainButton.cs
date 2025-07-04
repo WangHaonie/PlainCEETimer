@@ -7,10 +7,11 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainButton : Button
     {
-        public ContextMenu Menu { get; set; }
+        private readonly ContextMenu Menu;
 
-        public PlainButton()
+        public PlainButton(ContextMenu menu)
         {
+            Menu = menu;
             FlatStyle = FlatStyle.System;
             UseVisualStyleBackColor = true;
             DoubleBuffered = true;
@@ -28,11 +29,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnClick(EventArgs e)
         {
-            if (Menu != null)
-            {
-                Menu.Show(this, new(0, Height));
-            }
-
+            Menu?.Show(this, new(0, Height));
             base.OnClick(e);
         }
     }

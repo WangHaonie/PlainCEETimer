@@ -6,7 +6,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class AppMessageBox(string message, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview | AppFormParam.OnEscClosing)
+    public sealed class AppMessageBox(string message, string title, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview | AppFormParam.OnEscClosing)
     {
         private DialogResult Result;
         private Label LabelMessage;
@@ -14,6 +14,8 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnInitializing()
         {
+            Text = title;
+
             this.AddControls(b =>
             [
                 ImageIcon = b.Image(icon),
@@ -80,10 +82,8 @@ namespace PlainCEETimer.UI.Dialogs
             Close();
         }
 
-        public DialogResult ShowCore(AppForm owner, string title)
+        public DialogResult ShowCore(AppForm owner)
         {
-            Text = title;
-
             if (owner == null)
             {
                 AddParam(AppFormParam.CenterScreen);

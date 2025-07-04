@@ -178,7 +178,7 @@ namespace PlainCEETimer.UI
 
         private PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick, ContextMenu menu)
         {
-            var ctrl = new PlainButton() { Text = text, Enabled = enabled, Menu = menu };
+            var ctrl = new PlainButton(menu) { Text = text, Enabled = enabled };
 
             if (autoSize)
             {
