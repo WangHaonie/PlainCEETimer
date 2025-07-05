@@ -74,22 +74,22 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        public ComboBoxEx ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] strings)
+        public ComboBoxEx ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
         {
-            return ComboBox(w, true, onSelectedIndexChanged, strings);
+            return ComboBox(w, true, onSelectedIndexChanged, items);
         }
 
-        public ComboBoxEx ComboBox(int w, bool enabled, EventHandler onSelectedIndexChanged, params string[] strings)
+        public ComboBoxEx ComboBox(int w, bool enabled, EventHandler onSelectedIndexChanged, params string[] items)
         {
             var ctrl = new ComboBoxEx() { Enabled = enabled };
             ctrl.SetBounds(0, 0, w, 23);
 
-            var dataLength = strings.Length;
+            var dataLength = items.Length;
             var data = new ComboData[dataLength];
 
             for (int i = 0; i < dataLength; i++)
             {
-                data[i] = new(strings[i], i);
+                data[i] = new(items[i], i);
             }
 
             ctrl.DataSource = data;

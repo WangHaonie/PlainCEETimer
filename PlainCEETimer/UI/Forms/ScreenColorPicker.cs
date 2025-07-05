@@ -12,31 +12,32 @@ namespace PlainCEETimer.UI.Forms
         private int MouseY;
         private int PosOffset;
         private int XY;
+        private Bitmap ScreenCut;
         private Pen CrossPen;
         private Rectangle DestRect;
-        private const int WH = 64;
-        private readonly int ScreenCutWH = 16;
-        private readonly Bitmap ScreenCut;
+        private const int HW = 64;
+        private const int ScreenCutHW = 16;
         private readonly Size ScreenCutSize;
-        private readonly Size Pixel = new(1, 1);
         private readonly Rectangle SourceRect;
 
         public Color CurrentPixelColor
         {
             get
             {
-                using var bmp = new Bitmap(1, 1);
-                using var g = Graphics.FromImage(bmp);
-                g.CopyFromScreen(MouseX, MouseY, 0, 0, Pixel);
-                return bmp.GetPixel(0, 0);
+                if (ScreenCut != null)
+                {
+                    return ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
+                }
+
+                return Color.Empty;
             }
         }
 
         public ScreenColorPicker() : base(AppFormParam.RoundCorner)
         {
-            ScreenCut = new(ScreenCutWH, ScreenCutWH);
-            ScreenCutSize = new(ScreenCutWH, ScreenCutWH);
-            SourceRect = new(0, 0, 16, 16);
+            ScreenCut = new(ScreenCutHW, ScreenCutHW);
+            ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
+            SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
         }
 
         protected override void OnInitializing()
@@ -47,9 +48,9 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void OnLoad()
         {
-            HeightWidth = ScaleToDpi(WH);
+            HeightWidth = ScaleToDpi(HW);
             XY = HeightWidth / 2;
-            PosOffset = ScaleToDpi(WH / 4);
+            PosOffset = ScaleToDpi(HW / 4);
             CrossPen = new(Color.Red, ScaleToDpi(1));
             Size = new(HeightWidth, HeightWidth);
             DestRect = new(0, 0, HeightWidth + 2, HeightWidth + 2);
@@ -59,7 +60,7 @@ namespace PlainCEETimer.UI.Forms
         {
             using var gg = Graphics.FromImage(ScreenCut);
             var g = e.Graphics;
-            gg.CopyFromScreen(MouseX - 8, MouseY - 8, 0, 0, ScreenCutSize);
+            gg.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
             g.DrawLine(CrossPen, PosOffset, XY, HeightWidth - PosOffset, XY);
@@ -70,6 +71,7 @@ namespace PlainCEETimer.UI.Forms
         {
             ScreenCut.Dispose();
             CrossPen.Dispose();
+            ScreenCut = null;
         }
 
         public void UpdateFrame(Point mp)
