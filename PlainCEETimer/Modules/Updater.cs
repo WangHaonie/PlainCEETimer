@@ -62,8 +62,8 @@ namespace PlainCEETimer.Modules
 
             if ((int)span.TotalSeconds < 60) return "刚刚";
             if (tm < 60) return $"{tm} 分钟前";
-            if (th < 24) return $"{th} 小时前";
-            return $"{span.Days} 天前";
+            if (th < 24) return $"{th:0.0} 小时前";
+            return $"{span.TotalDays:0.0} 天前";
         }
     }
 }
