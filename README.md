@@ -1,6 +1,6 @@
 <h4>⚠️注意⚠️本程序完全免费, 且仅通过此 GitHub 仓库进行发布。任何其他网站或个人提供的下载链接均未获得授权, 可能存在安全风险及功能不完整。为了保障您的权益, 请直接从此仓库获取软件及其最新版本。支持正版, 拒绝盗版！<a href="https://github.com/WangHaonie/PlainCEETimer/issues/new?template=3-report-pirate.yml" target="_blank">举报盗版</a></h4>
 <div align="center">
-    <img src="https://github.com/WangHaonie/PlainCEETimer/blob/main/PlainCEETimer/Properties/AppIcon256px.png?raw=true" height="128px"/>
+    <img src="https://github.com/WangHaonie/PlainCEETimer/blob/main/PlainCEETimer/Properties/AppIcon256px.png?raw=true" style="height: auto; width: 128px"/>
     <h2>高考倒计时 by WangHaonie</h2>
 
 [![GitHub all releases](https://img.shields.io/github/downloads/WangHaonie/PlainCEETimer/total?logo=github&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=%23DC67A5)](#) [![GitHub release (with filter)](https://img.shields.io/github/v/release/WangHaonie/PlainCEETimer?logo=github&label=%E6%9C%80%E6%96%B0%E7%89%88&color=%23178600)](https://github.com/WangHaonie/PlainCEETimer/releases/latest/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WangHaonie/PlainCEETimer/build.yml?label=CI%2FCD+Builds)](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) [![GitHub Repo stars](https://img.shields.io/github/stars/WangHaonie/PlainCEETimer?logo=github&label=Stars&color=%23E5B84E)](#) [![GitHub](https://img.shields.io/github/license/WangHaonie/PlainCEETimer?logo=github&label=%E8%AE%B8%E5%8F%AF%E8%AF%81&color=%233C9DF8)](#GPL-3.0-1-ov-file)
