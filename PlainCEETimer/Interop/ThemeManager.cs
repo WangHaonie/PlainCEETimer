@@ -12,9 +12,9 @@ namespace PlainCEETimer.Interop
         public static bool IsDarkModeSupported { get; }
         public static bool ShouldUseDarkMode { get; }
         public static Color DarkFore { get; } = Color.White;
-        public static Color DarkForeLink { get; } = Color.FromArgb(95, 197, 255);
+        public static Color DarkForeLink { get; } = Color.FromArgb(153, 235, 255);
         public static Color DarkBack { get; } = Color.FromArgb(32, 32, 32);
-        public static Color DarkBorder { get; } = Color.FromArgb(100, 100, 100);
+        public static Color DarkBorder { get; } = Color.FromArgb(60, 60, 60);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
         private static readonly int DwmaType;

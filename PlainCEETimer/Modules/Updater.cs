@@ -58,11 +58,11 @@ namespace PlainCEETimer.Modules
         {
             var span = DateTime.Now - pub;
             var tm = (int)span.TotalMinutes;
-            var th = (int)span.TotalHours;
+            var th = span.TotalHours;
 
             if ((int)span.TotalSeconds < 60) return "刚刚";
             if (tm < 60) return $"{tm} 分钟前";
-            if (th < 24) return $"{th:0.0} 小时前";
+            if (th < 24D) return $"{th:0.0} 小时前";
             return $"{span.TotalDays:0.0} 天前";
         }
     }

@@ -38,19 +38,16 @@ namespace PlainCEETimer.Modules
         public const string AppName = "高考倒计时 by WangHaonie";
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
+        public const string AppVersion = "5.0.3";
+        public const string AppBuildDate = "2025/7/6";
+        public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
+        public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
         public const string User32Dll = "user32.dll";
         public const string UxThemeDll = "uxtheme.dll";
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
-        public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/5";
-        public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
-        public const string OriginalFileName = $"{AppNameEng}.exe";
-        public const string InfoMsg = "提示 - 高考倒计时";
-        public const string WarnMsg = "警告 - 高考倒计时";
-        public const string ErrMsg = "错误 - 高考倒计时";
 
         private static bool IsMainProcess;
         private static bool IsClosing;

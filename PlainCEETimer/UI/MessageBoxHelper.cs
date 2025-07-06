@@ -86,9 +86,9 @@ namespace PlainCEETimer.UI
 
             */
 
-            MessageLevel.Warning => (App.WarnMsg, WarningIcon, SystemSounds.Exclamation),
-            MessageLevel.Error => (App.ErrMsg, ErrorIcon, SystemSounds.Hand),
-            _ => (App.InfoMsg, InfoIcon, SystemSounds.Asterisk)
+            MessageLevel.Warning => ("错误 - 高考倒计时", WarningIcon, SystemSounds.Exclamation),
+            MessageLevel.Error => ("警告 - 高考倒计时", ErrorIcon, SystemSounds.Hand),
+            _ => ("提示 - 高考倒计时", InfoIcon, SystemSounds.Asterisk)
         };
 
         private string GetExMessage(string msg, Exception ex)
