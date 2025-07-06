@@ -200,19 +200,5 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.User32Dll)]
         private static extern IntPtr PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-
-            public static implicit operator Rectangle(RECT r)
-            {
-                return Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom);
-            }
-        }
     }
 }

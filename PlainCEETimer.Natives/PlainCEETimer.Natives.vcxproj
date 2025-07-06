@@ -145,6 +145,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
       <CallingConvention>StdCall</CallingConvention>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,12 +153,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib</AdditionalDependencies>
       <NoEntryPoint>true</NoEntryPoint>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ListViewHelper\ListViewHelper.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
@@ -169,6 +171,7 @@
     <ClInclude Include="ThemeManager\ThemeManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
     <ClCompile Include="ListViewHelper\ListViewHelper.cpp" />
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
     <ClCompile Include="pch.cpp">

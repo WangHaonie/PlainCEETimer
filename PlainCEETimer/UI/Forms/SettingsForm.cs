@@ -572,17 +572,9 @@ namespace PlainCEETimer.UI.Forms
 
         private string[] GetScreensData()
         {
-            var screens = Screen.AllScreens;
-            var count = screens.Length;
+            var count = Screen.AllScreens.Length;
             var tmp = new string[count];
-            Screen current;
-
-            for (int i = 0; i < count; i++)
-            {
-                current = screens[i];
-                tmp[i] = string.Format("{0} {1} ({2}x{3})", i + 1, current.DeviceName, current.Bounds.Width, current.Bounds.Height);
-            }
-
+            DisplayHelper.EnumSystemDisplays((i, display) => tmp[i] = display.ToString(), count);
             return tmp;
         }
 

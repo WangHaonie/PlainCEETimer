@@ -14,3 +14,4 @@ EXPORTS
     SetTheme @12 NONAME
     FixScrollBar @13 NONAME
     HasScrollBar @14 NONAME
+    EnumSystemDisplays @15 NONAME

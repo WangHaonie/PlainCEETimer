@@ -103,6 +103,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interop\DisplayHelper.cs" />
+    <Compile Include="Interop\Natives.cs" />
     <Compile Include="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>

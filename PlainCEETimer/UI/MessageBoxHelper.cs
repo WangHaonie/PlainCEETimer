@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 
