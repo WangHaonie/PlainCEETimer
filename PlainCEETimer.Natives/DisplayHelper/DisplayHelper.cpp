@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DisplayHelper.h"
 #include <vector>
 #include <map>
@@ -19,13 +19,13 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
             if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr) == ERROR_SUCCESS)
             {
-                map<UINT32, DISPLAYCONFIG_SOURCE_MODE> sourceModeMap;
+                vector<const DISPLAYCONFIG_SOURCE_MODE*> sourceModes(modeCount, nullptr);
 
                 for (UINT32 i = 0; i < modeCount; ++i)
                 {
                     if (modes[i].infoType == DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE)
                     {
-                        sourceModeMap[i] = modes[i].sourceMode;
+                        sourceModes[i] = &modes[i].sourceMode;
                     }
                 }
 
@@ -36,43 +36,66 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         continue;
                     }
 
-                    LONG x = 0;
-                    LONG y = 0;
-                    LONG w = 0;
-                    LONG h = 0;
-                    UINT32 index = path.sourceInfo.modeInfoIdx;
-                    auto it = sourceModeMap.find(index);
+                    RECT rect = {};
 
-                    if (it != sourceModeMap.end())
+                    if (path.sourceInfo.modeInfoIdx < modeCount)
                     {
-                        x = it->second.position.x;
-                        y = it->second.position.y;
-                        w = static_cast<LONG>(it->second.width);
-                        h = static_cast<LONG>(it->second.height);
+                        if (auto srcMode = sourceModes[path.sourceInfo.modeInfoIdx])
+                        {
+                            rect =
+                            {
+                                srcMode->position.x,
+                                srcMode->position.y,
+                                srcMode->position.x + static_cast<LONG>(srcMode->width),
+                                srcMode->position.y + static_cast<LONG>(srcMode->height)
+                            };
+                        }
                     }
 
-                    DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceName = {};
-                    sourceName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
-                    sourceName.header.size = sizeof(sourceName);
-                    sourceName.header.adapterId = path.sourceInfo.adapterId;
-                    sourceName.header.id = path.sourceInfo.id;
+                    DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceName = 
+                    {
+                        {
+                            DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME,
+                            sizeof(sourceName),
+                            path.sourceInfo.adapterId,
+                            path.sourceInfo.id
+                        }
+                    };
 
-                    LPCWSTR dpath = L"<Unknown Path>";
-                    if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&sourceName)) == ERROR_SUCCESS)
+                    LPCWSTR dpath = L"<未知路径>";
+
+                    if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&sourceName)) == ERROR_SUCCESS && *sourceName.viewGdiDeviceName)
                     {
                         dpath = sourceName.viewGdiDeviceName;
                     }
 
-                    DISPLAYCONFIG_TARGET_DEVICE_NAME targetName = {};
-                    targetName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-                    targetName.header.size = sizeof(targetName);
-                    targetName.header.adapterId = path.targetInfo.adapterId;
-                    targetName.header.id = path.targetInfo.id;
-
-                    if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&targetName)) == ERROR_SUCCESS)
+                    DISPLAYCONFIG_TARGET_DEVICE_NAME targetName =
                     {
-                        lpfnEnum({ x, y, w + x, h + y }, targetName.monitorFriendlyDeviceName[0] ? targetName.monitorFriendlyDeviceName : L"<Unknown Model>", dpath);
+                        {
+                            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
+                            sizeof(targetName),
+                            path.targetInfo.adapterId,
+                            path.targetInfo.id
+                        }
+                    };
+
+                    LPCWSTR name = L"<未知名称>";
+
+                    if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&targetName)) == ERROR_SUCCESS && *targetName.monitorFriendlyDeviceName)
+                    {
+                        name = targetName.monitorFriendlyDeviceName;
                     }
+
+                    DISPLAY_DEVICE dd = {};
+                    dd.cb = sizeof(dd);
+                    LPCWSTR did = L"<未知型号>";
+                    
+                    if (EnumDisplayDevices(dpath, 0, &dd, 0) && *dd.DeviceID)
+                    {
+                        did = dd.DeviceID;
+                    }
+
+                    lpfnEnum(rect, name, dpath, did);
                 }
             }
         }

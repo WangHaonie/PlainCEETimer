@@ -85,8 +85,8 @@ namespace PlainCEETimer.UI
 
             */
 
-            MessageLevel.Warning => ("错误 - 高考倒计时", WarningIcon, SystemSounds.Exclamation),
-            MessageLevel.Error => ("警告 - 高考倒计时", ErrorIcon, SystemSounds.Hand),
+            MessageLevel.Warning => ("警告 - 高考倒计时", WarningIcon, SystemSounds.Exclamation),
+            MessageLevel.Error => ("错误 - 高考倒计时", ErrorIcon, SystemSounds.Hand),
             _ => ("提示 - 高考倒计时", InfoIcon, SystemSounds.Asterisk)
         };
 

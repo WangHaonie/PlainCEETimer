@@ -7,16 +7,35 @@ namespace PlainCEETimer.Interop
 {
     public static class DisplayHelper
     {
-        public readonly struct Monitor(int index, string name, string path, RECT rect)
+        public class Monitor
         {
-            public int Index { get; } = index;
-            public string Name { get; } = name;
-            public string Path { get; } = path;
-            public Rectangle Bounds { get; } = rect;
+            public int Index { get; }
+            public string Name { get; }
+            public string Path { get; }
+            public string InternalName { get; }
+            public Rectangle Bounds { get; }
 
-            public override readonly string ToString()
+            public Monitor(int index, string name, string path, string did, RECT rect)
             {
-                return $"{Index + 1}. {Name} ({Path}) ({Bounds.Width}x{Bounds.Height})";
+                Index = index;
+                Name = name;
+                Path = path;
+                Bounds = rect;
+
+                var dids = did.Split('\\');
+                var iname = string.Empty;
+
+                if (dids.Length > 2)
+                {
+                    iname = dids[1];
+                }
+
+                InternalName = iname;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0}. {1} {2} ({3}) ({4}x{5})", Index + 1, Name, InternalName, Path, Bounds.Width, Bounds.Height);
             }
         }
 
@@ -24,11 +43,11 @@ namespace PlainCEETimer.Interop
         {
             int i = 0;
 
-            EnumSystemDisplays((r, d, p) =>
+            EnumSystemDisplays((r, d, p, id) =>
             {
                 if (i < expectCount)
                 {
-                    callback(i, new(i, d, p, r));
+                    callback(i, new(i, d, p, id, r));
                     i++;
                 }
             });
@@ -40,6 +59,7 @@ namespace PlainCEETimer.Interop
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         private delegate void EnumDisplayProc(RECT lprcMonitor,
             [MarshalAs(UnmanagedType.LPWStr)] string device,
-            [MarshalAs(UnmanagedType.LPWStr)] string path);
+            [MarshalAs(UnmanagedType.LPWStr)] string path,
+            [MarshalAs(UnmanagedType.LPWStr)] string did);
     }
 }
