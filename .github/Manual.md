@@ -1,6 +1,6 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.4 | 修订日期 2025/7/3</h4>
+    <h4>适用于 v5.0.4 | 修订日期 2025/7/7</h4>
 </div>
 
 # 📖 目录
@@ -40,7 +40,7 @@
 - [🎯 Console Window 使用说明](#-console-window-使用说明)
 - [🎯 意外错误对话框使用说明](#-意外错误对话框使用说明)
 - [🎯 命令行选项](#-命令行选项)
-- [📣 可能出现的问题](#-可能出现的问题)
+- [📣 常见错误](#-常见错误)
 - [📄 致用户](#-致用户)
 
 # ⬇️ 下载安装
@@ -53,8 +53,9 @@
 > + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新
 
 ## 🛠️ 运行环境准备
-+ Windows 7 SP1 x64 及以上。
-+ .NET Framework 4.8。新版 Windows 10/11 自带，其他系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要预先安装相关系统更新及安全证书，请自行上网查询。
++ **Windows 7 SP1 x64** 及以上。
++ **Microsoft Visual C++ 2015-2022 Redistributable x64**。大多数情况下系统已内置，若没有安装请到[官网](https://aka.ms/vs/17/release/vc_redist.x64.exe)下载或直接安装`微软常用运行库合集`
++ **.NET Framework 4.8**。新版 Windows 10/11 自带，其他系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要预先安装相关系统更新及安全证书，请自行上网查询。
 
 ## 🛠️ 安装高考倒计时
 + 到 Release 页面下载 `PlainCEETimer_X.X_x64_Setup.exe`。[点此](https://github.com/WangHaonie/PlainCEETimer/releases/latest)进入。
@@ -341,15 +342,16 @@
 | `/fr <版本号>` | 强制下载并安装指定的版本，**留空**则当前版本，推荐在特殊情况下使用，不支持老版本。 | 这玩意儿在更新功能抽风的时候贼好用。比如使用 `PlainCEETimer.exe /fr` 强制下载并安装当前版本，使用 `/fr 3.0` 则下载 `3.0` 版本 (这里仅供演示，实际不能下载老版本)。 |
 | `/op` | 优化程序运行速度 | 提升一定的运行速度。推荐在以下情况下使用：首次运行本程序、清理过系统垃圾 (特别是 .NET 缓存) 之后、其他情况导致的肉眼明显感知到程序运行速度变慢 |
 
-# 📣 可能出现的问题
+# 📣 常见错误
 ## PlainCEETimer.exe 已停止运行
-1. 未安装 .NET Framework 4.8 或更高版本，请参见 [🛠️ 运行环境准备](#️-运行环境准备)。
-2. 相关组件丢失，比如 (`Newtonsoft.Json.dll`、`PlainCEETimer.Natives.dll` 等)
-## 双击打开后无界面显示且疑似闪退等异常且未弹出未知错误对话框
-1. `PlainCEETimer.Natives.dll` 丢失，请重新安装。
-2. 程序内部出错，请运行 `eventvwr.msc` 定位到 `Windows 日志` >`应用程序` 找到当时来源为 `.NET Runtime` 或 `Application Error` 的**错误**消息，点击下方的**详细信息**选项卡，复制所有日志内容，然后上报到 [Issues](https://github.com/WangHaonie/PlainCEETimer/issues/new/choose)。
-## The type initializer for 'PlainCEETimer.Interop.ThemeManager' threw an exception.
-`Newtonsoft.Json.dll` 丢失。
++ 未安装 .NET Framework 4.8 或更高版本，请参见 [🛠️ 运行环境准备](#️-运行环境准备)。
++ 相关组件丢失，比如 (`Newtonsoft.Json.dll`、`PlainCEETimer.Natives.dll` 等)
+## PlainCEETimer.Interop.ThemeManager 的类型初始值设定项引发异常
++ 未安装 Microsoft Visual C++ 2015-2022 Redistributable x64 运行库，详见 [🛠️ 运行环境准备](#️-运行环境准备)。
++ `Newtonsoft.Json.dll` 丢失。
+## 双击打开后无界面显示且疑似闪退等异常且未弹出意外错误对话框
++ `PlainCEETimer.Natives.dll` 丢失，请重新安装。
++ 程序内部出错，请运行 `eventvwr.msc` 定位到 `Windows 日志` >`应用程序` 找到当时来源为 `.NET Runtime` 或 `Application Error` 的**错误**消息，点击下方的**详细信息**选项卡，复制所有日志内容，然后上报到 [Issues](https://github.com/WangHaonie/PlainCEETimer/issues/new/choose)。
 ## 无法设置/取消开机启动 或 "系统环境异常，无法进行更新"
 请不要在不同的用户会话中运行本程序。原因最可能是用户使用 **账户1** 登入系统，却以 **账户2** 的身份运行本程序。比如在普通账户里运行本程序时选择了 以管理员身份运行。此时应该保持在同一会话中运行本程序，即直接双击运行。
 ## "提权失败 当前系统已禁用 UAC"
