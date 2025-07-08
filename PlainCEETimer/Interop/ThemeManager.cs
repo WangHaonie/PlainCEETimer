@@ -55,6 +55,21 @@ namespace PlainCEETimer.Interop
             SetTheme(hWnd, type);
         }
 
+        public static bool IsThemeChanged(int oldValue, int newValue)
+        {
+            return GetTheme(oldValue) != GetTheme(newValue);
+        }
+
+        private static SystemTheme GetTheme(int ordinal)
+        {
+            if (ordinal == 0)
+            {
+                return CurrentTheme;
+            }
+
+            return (SystemTheme)ordinal;
+        }
+
         /*
         
         控件使用系统内置深色外观 参考：

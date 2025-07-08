@@ -617,11 +617,11 @@ namespace PlainCEETimer.UI.Forms
 
         private void ApplyRadios()
         {
-            var option = AppConfig.Dark;
-
-            RadioButtonThemeSystem.Checked = option == 0;
-            RadioButtonThemeLight.Checked = option == 1;
-            RadioButtonThemeDark.Checked = option == 2 && ThemeManager.IsDarkModeSupported;
+            var value = AppConfig.Dark;
+            RadioButtonThemeSystem.Checked = value == 0;
+            RadioButtonThemeLight.Checked = value == 1;
+            RadioButtonThemeDark.Checked = value == 2 && ThemeManager.IsDarkModeSupported;
+            SelectedTheme = value;
         }
 
         private void ChangeCustomTextStyle(object sender)
