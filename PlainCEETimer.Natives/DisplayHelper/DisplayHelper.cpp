@@ -21,7 +21,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
             {
                 vector<const DISPLAYCONFIG_SOURCE_MODE*> sourceModes(modeCount, nullptr);
 
-                for (UINT32 i = 0; i < modeCount; ++i)
+                for (UINT32 i = 0; i < modeCount; i++)
                 {
                     if (modes[i].infoType == DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE)
                     {

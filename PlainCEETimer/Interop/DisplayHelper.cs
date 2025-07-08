@@ -9,11 +9,11 @@ namespace PlainCEETimer.Interop
     {
         public class Monitor
         {
-            public int Index { get; }
-            public string Name { get; }
-            public string Path { get; }
-            public string InternalName { get; }
-            public Rectangle Bounds { get; }
+            private readonly int Index;
+            private readonly string Name;
+            private readonly string InternalName;
+            private readonly string Path;
+            private readonly Rectangle Bounds;
 
             public Monitor(int index, string name, string path, string did, RECT rect)
             {
@@ -23,7 +23,7 @@ namespace PlainCEETimer.Interop
                 Bounds = rect;
 
                 var dids = did.Split('\\');
-                var iname = string.Empty;
+                var iname = did;
 
                 if (dids.Length > 2)
                 {
