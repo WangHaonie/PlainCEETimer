@@ -61,9 +61,9 @@ namespace PlainCEETimer.Interop
         private static extern int WTSGetActiveConsoleSessionId();
 
         [DllImport("wtsapi32.dll")]
-        private static extern bool WTSQuerySessionInformation(IntPtr hServer, int SessionId, int WTSInfoClass, out IntPtr ppBuffer, out int pBytesReturned);
+        private static extern void WTSFreeMemory(IntPtr pMemory);
 
         [DllImport("wtsapi32.dll")]
-        private static extern void WTSFreeMemory(IntPtr pMemory);
+        private static extern BOOL WTSQuerySessionInformation(IntPtr hServer, int SessionId, int WTSInfoClass, out IntPtr ppBuffer, out int pBytesReturned);
     }
 }

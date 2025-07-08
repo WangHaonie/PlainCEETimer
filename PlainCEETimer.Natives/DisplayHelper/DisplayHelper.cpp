@@ -95,7 +95,10 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         did = dd.DeviceID;
                     }
 
-                    lpfnEnum(rect, name, dpath, did);
+                    if (!(lpfnEnum(rect, name, dpath, did)))
+                    {
+                        return;
+                    }
                 }
             }
         }

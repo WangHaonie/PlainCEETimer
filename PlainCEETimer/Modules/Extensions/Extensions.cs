@@ -16,12 +16,6 @@ namespace PlainCEETimer.Modules.Extensions
         public static int ToInt32(this Color color)
             => -color.ToArgb();
 
-        public static int ToWin32(this Color color)
-            => ColorTranslator.ToWin32(color);
-
-        public static int ToWin32(this bool flag)
-            => flag ? 1 : 0;
-
         public static string RemoveIllegalChars(this string s)
             => new([.. s.Trim().Where(x => !IllegalChars.Contains(x))]);
 

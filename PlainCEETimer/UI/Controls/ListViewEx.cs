@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls
 {
@@ -54,11 +53,11 @@ namespace PlainCEETimer.UI.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
-        public void SelectAll(bool selected)
+        public void SelectAll(BOOL selected)
         {
             if (Items.Count != 0)
             {
-                ListViewHelper.SelectAllItems(Handle, selected.ToWin32());
+                ListViewHelper.SelectAllItems(Handle, selected);
             }
         }
 
@@ -77,12 +76,12 @@ namespace PlainCEETimer.UI.Controls
                 column.Width = -2;
             }
 
-            if (HasScrollBar(true) && HasScrollBar(false))
+            if (HasScrollBar(BOOL.TRUE) && HasScrollBar(BOOL.FALSE))
             {
                 int w = LastColumn.Width;
                 LastColumn.Width -= ThemeManager.VerticalScrollBarWidth;
 
-                if (HasScrollBar(false))
+                if (HasScrollBar(BOOL.FALSE))
                 {
                     LastColumn.Width = w;
                 }
@@ -91,7 +90,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            ListViewHelper.FlushTheme(Handle, ThemeManager.DarkFore.ToWin32(), UseDark.ToWin32());
+            ListViewHelper.FlushTheme(Handle, new(ThemeManager.DarkFore), new(UseDark));
             base.OnHandleCreated(e);
         }
 
@@ -102,9 +101,9 @@ namespace PlainCEETimer.UI.Controls
             base.OnColumnWidthChanging(e);
         }
 
-        private bool HasScrollBar(bool isVertical)
+        private bool HasScrollBar(BOOL isVertical)
         {
-            return ListViewHelper.HasScrollBar(Handle, isVertical.ToWin32());
+            return ListViewHelper.HasScrollBar(Handle, isVertical);
         }
     }
 }

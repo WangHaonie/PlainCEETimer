@@ -2,13 +2,12 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop
 {
     public static class TaskbarProgress
     {
-        private static readonly int IsWin7Above = (App.OSBuild >= WindowsBuilds.Windows7).ToWin32();
+        private static readonly BOOL IsWin7Above = new(App.OSBuild >= WindowsBuilds.Windows7);
 
         public static void Initialize(IWin32Window owner)
         {
@@ -16,7 +15,7 @@ namespace PlainCEETimer.Interop
         }
 
         [DllImport(App.NativesDll, EntryPoint = "#5")]
-        private static extern void Initialize(IntPtr hWnd, int enable);
+        private static extern void Initialize(IntPtr hWnd, BOOL enable);
 
         [DllImport(App.NativesDll, EntryPoint = "#6")]
         public static extern void SetState(TaskbarProgressState tbpFlags);

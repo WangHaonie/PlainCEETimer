@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.UI.Controls
 {
@@ -225,7 +226,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextSelectAll_Click(object sender, EventArgs e)
         {
-            ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
+            ListViewMain.Suspend(() => ListViewMain.SelectAll(BOOL.TRUE));
         }
 
         private void ListViewMain_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -282,7 +283,7 @@ namespace PlainCEETimer.UI.Controls
         {
             ListViewMain.Suspend(() =>
             {
-                ListViewMain.SelectAll(false);
+                ListViewMain.SelectAll(BOOL.FALSE);
                 AddItem(data, true);
                 ListViewMain.Sort();
             });

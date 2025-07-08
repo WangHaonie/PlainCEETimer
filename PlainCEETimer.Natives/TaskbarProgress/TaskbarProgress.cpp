@@ -17,7 +17,7 @@ static ITaskbarList3* taskbarList = nullptr;
 static HWND handle = nullptr;
 static int _enable = 0;
 
-void InitializeTaskbarList(HWND hWnd, int enable)
+void InitializeTaskbarList(HWND hWnd, BOOL enable)
 {
     if (enable)
     {

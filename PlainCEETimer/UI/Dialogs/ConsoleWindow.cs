@@ -241,7 +241,7 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 ConsoleBox.AppendText(line);
                 ConsoleBox.AppendText("\r\n");
-                CommonDialogHelper.SendMessageW(ConsoleBox.Handle, 0x115, (IntPtr)7, IntPtr.Zero);
+                Natives.SendMessageW(ConsoleBox.Handle, 0x115, (IntPtr)7, IntPtr.Zero);
             }
         }
     }

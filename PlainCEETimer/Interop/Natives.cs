@@ -1,8 +1,36 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
 {
+    public static class Natives
+    {
+        [DllImport(App.User32Dll)]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct BOOL(bool value)
+    {
+        public int Value = value ? 1 : 0;
+
+        public static readonly BOOL TRUE = new(true);
+        public static readonly BOOL FALSE = new(false);
+
+        public static implicit operator bool(BOOL b)
+        {
+            return b.Value != 0;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct COLORREF(Color color)
+    {
+        public int Value = ColorTranslator.ToWin32(color);
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {

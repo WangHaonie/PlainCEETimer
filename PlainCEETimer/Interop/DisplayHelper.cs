@@ -1,13 +1,13 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
 {
     public static class DisplayHelper
     {
-        public class Monitor
+        private class Monitor
         {
             private readonly int Index;
             private readonly string Name;
@@ -39,25 +39,33 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        public static void EnumSystemDisplays(Action<int, Monitor> callback, int expectCount)
+        public static string[] GetSystemDisplays()
         {
+            var count = Screen.AllScreens.Length;
+            var tmp = new string[count];
             int i = 0;
 
             EnumSystemDisplays((r, d, p, id) =>
             {
-                if (i < expectCount)
+                if (i < count)
                 {
-                    callback(i, new(i, d, p, id, r));
+                    tmp[i] = new Monitor(i, d, p, id, r).ToString();
                     i++;
+
+                    return BOOL.TRUE;
                 }
+
+                return BOOL.FALSE;
             });
+
+            return tmp;
         }
 
         [DllImport(App.NativesDll, EntryPoint = "#15", CharSet = CharSet.Unicode)]
         private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-        private delegate void EnumDisplayProc(RECT lprcMonitor,
+        private delegate BOOL EnumDisplayProc(RECT lprcMonitor,
             [MarshalAs(UnmanagedType.LPWStr)] string device,
             [MarshalAs(UnmanagedType.LPWStr)] string path,
             [MarshalAs(UnmanagedType.LPWStr)] string did);

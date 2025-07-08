@@ -241,7 +241,7 @@ namespace PlainCEETimer.UI.Forms
                             {
                                 ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
                                 SettingsChanged();
-                            }, GetScreensData()),
+                            }, DisplayHelper.GetSystemDisplays()),
 
                             LabelPosition = b.Label("位置"),
 
@@ -568,14 +568,6 @@ namespace PlainCEETimer.UI.Forms
         {
             SelectedTheme = (int)((RadioButton)sender).Tag;
             SettingsChanged();
-        }
-
-        private string[] GetScreensData()
-        {
-            var count = Screen.AllScreens.Length;
-            var tmp = new string[count];
-            DisplayHelper.EnumSystemDisplays((i, display) => tmp[i] = display.ToString(), count);
-            return tmp;
         }
 
         private void SettingsChanged()

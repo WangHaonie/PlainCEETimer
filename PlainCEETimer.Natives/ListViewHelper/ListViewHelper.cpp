@@ -63,16 +63,16 @@ https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/Sys
 
 */
 
-void SelectAllItems(HWND hLV, int selected)
+void SelectAllItems(HWND hLV, BOOL selected)
 {
     ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }
 
-void FlushListViewTheme(HWND hLV, COLORREF crHeaderFore, int enable)
+void FlushListViewTheme(HWND hLV, COLORREF crHeaderFore, BOOL enabled)
 {
     HWND hTT = ListView_GetToolTips(hLV);
 
-    if (enable)
+    if (enabled)
     {
         LVHForeColor = crHeaderFore;
         SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
@@ -88,7 +88,7 @@ void FlushListViewTheme(HWND hLV, COLORREF crHeaderFore, int enable)
     SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
-BOOL HasScrollBar(HWND hWnd, int isVertical)
+BOOL HasScrollBar(HWND hWnd, BOOL isVertical)
 {
     return ((GetWindowLongPtr(hWnd, GWL_STYLE)) & (isVertical ? WS_VSCROLL : WS_HSCROLL)) != 0;
 }

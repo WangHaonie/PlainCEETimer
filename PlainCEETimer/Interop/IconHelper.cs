@@ -27,6 +27,6 @@ namespace PlainCEETimer.Interop
         private static extern int ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr phiconLarge, IntPtr phiconSmall, int nIcons);
 
         [DllImport(App.User32Dll)]
-        private static extern bool DestroyIcon(IntPtr hIcon);
+        private static extern BOOL DestroyIcon(IntPtr hIcon);
     }
 }
