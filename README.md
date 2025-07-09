@@ -40,7 +40,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ <更多功能等你来探索>
 
 ## 📢 用户手册【墙裂建议先阅读再使用】
-+ 适用于 v5.0.4，2025/7/7 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
++ 适用于 v5.0.4，2025/7/9 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
 
 ## 🧑‍💻 开发环境
 + Windows 11 Pro x64 (26120.4441)
