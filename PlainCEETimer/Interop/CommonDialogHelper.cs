@@ -30,8 +30,8 @@ namespace PlainCEETimer.Interop
         private Rectangle Bounds;
         private readonly IntPtr hBrush = CreateSolidBrush(CrBack);
         private readonly StringBuilder builder = new(256);
-        private static readonly COLORREF CrBack = new(ThemeManager.DarkBack);
-        private static readonly COLORREF ForeCrColor = new(ThemeManager.DarkFore);
+        private static readonly COLORREF CrBack = ThemeManager.DarkBack;
+        private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)

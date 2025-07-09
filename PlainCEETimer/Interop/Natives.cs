@@ -23,12 +23,22 @@ namespace PlainCEETimer.Interop
         {
             return b.Value != 0;
         }
+
+        public static implicit operator BOOL(bool b)
+        {
+            return new(b);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct COLORREF(Color color)
     {
         public int Value = ColorTranslator.ToWin32(color);
+
+        public static implicit operator COLORREF(Color c)
+        {
+            return new(c);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

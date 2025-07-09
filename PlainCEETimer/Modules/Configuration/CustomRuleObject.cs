@@ -56,7 +56,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         bool IListViewData<CustomRuleObject>.InternalEquals(CustomRuleObject other)
         {
-            return Equals(other) && Text == other.Text && Colors.Equals(other.Colors);
+            return Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
         }
     }
 }

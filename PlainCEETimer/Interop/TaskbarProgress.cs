@@ -7,7 +7,7 @@ namespace PlainCEETimer.Interop
 {
     public static class TaskbarProgress
     {
-        private static readonly BOOL IsWin7Above = new(App.OSBuild >= WindowsBuilds.Windows7);
+        private static readonly BOOL IsWin7Above = App.OSBuild >= WindowsBuilds.Windows7;
 
         public static void Initialize(IWin32Window owner)
         {

@@ -90,7 +90,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            ListViewHelper.FlushTheme(Handle, new(ThemeManager.DarkFore), new(UseDark));
+            ListViewHelper.FlushTheme(Handle, ThemeManager.DarkFore, UseDark);
             base.OnHandleCreated(e);
         }
 

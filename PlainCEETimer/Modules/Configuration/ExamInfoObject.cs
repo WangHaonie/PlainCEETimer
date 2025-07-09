@@ -96,9 +96,9 @@ namespace PlainCEETimer.Modules.Configuration
             */
 
             return other != null
-                && Name == other.Name
                 && StartTotalSeconds == other.StartTotalSeconds
-                && EndTotalSeconds == other.EndTotalSeconds;
+                && EndTotalSeconds == other.EndTotalSeconds
+                && Name == other.Name;
         }
 
         public override string ToString()
