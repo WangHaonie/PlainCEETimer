@@ -116,6 +116,9 @@ namespace PlainCEETimer.Modules
                                 UACHelper.CheckAdmin();
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
+                            case "/rt":
+                                Win32TaskScheduler.DeleteStartUpTask();
+                                break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", autoClose: true);
                                 break;
