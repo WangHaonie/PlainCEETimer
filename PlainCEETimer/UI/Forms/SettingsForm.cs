@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 
@@ -16,9 +17,8 @@ namespace PlainCEETimer.UI.Forms
         private bool AllowThemeChanging;
         private bool IsSyncingTime;
         private bool UserChanged;
-        private bool InvokeChangeRequired;
+        private bool CanSaveChanges;
         private bool IsFunnyClick;
-        private bool IsSetStartUp;
         private int SelectedTheme;
         private string[] EditedCustomTexts;
         private ColorSetObject[] SelectedColors;
@@ -97,6 +97,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeDark;
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
+        private readonly bool IsTaskStartUp = Win32TaskScheduler.IsTaskSchd;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
         protected override void OnInitializing()
@@ -146,7 +147,34 @@ namespace PlainCEETimer.UI.Forms
 
                         GBoxOthers = b.GroupBox("其他",
                         [
-                            CheckBoxStartup = b.CheckBox("系统运行时自动启动倒计时(&B)", SettingsChanged),
+                            CheckBoxStartup = b.CheckBox(null, (_, _) =>
+                            {
+                                if (CheckBoxStartup.Checked)
+                                {
+                                    if (!(bool)CheckBoxStartup.Tag)
+                                    {
+                                        if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+                                        {
+                                            CheckBoxStartup.Tag = true;
+                                            UpdateSettingsArea(SettingsArea.StartUp);
+                                        }
+                                        else
+                                        {
+                                            UpdateSettingsArea(SettingsArea.StartUp, false);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if ((bool)CheckBoxStartup.Tag)
+                                    {
+                                        CheckBoxStartup.Tag = false;
+                                    }
+                                }
+
+                                SettingsChanged();
+                            }).With(x => x.Tag = IsTaskStartUp),
+
                             CheckBoxMemClean = b.CheckBox("自动清理倒计时占用的运行内存(&M)", SettingsChanged),
 
                             CheckBoxTopMost = b.CheckBox("顶置倒计时窗口(&T)", (_, _) =>
@@ -397,6 +425,8 @@ namespace PlainCEETimer.UI.Forms
                 block.Parent = this;
                 block.Fellows = ColorBlocks;
             }
+
+            UpdateSettingsArea(SettingsArea.StartUp, false);
         }
 
         protected override void StartLayout(bool isHighDpi)
@@ -537,7 +567,7 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void OnClosed()
         {
-            if (InvokeChangeRequired)
+            if (CanSaveChanges)
             {
                 SaveSettings();
             }
@@ -577,7 +607,8 @@ namespace PlainCEETimer.UI.Forms
 
         private void RefreshSettings()
         {
-            CheckBoxStartup.Checked = IsSetStartUp = (bool)OperateStartUp(0);
+            CheckBoxStartup.Checked = (bool)OperateStartUp(0) || IsTaskStartUp;
+            UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
             CheckBoxCeiling.Enabled = false;
@@ -695,6 +726,9 @@ namespace PlainCEETimer.UI.Forms
                     CheckBoxPptSvc.Checked = isWorking && AppConfig.Display.SeewoPptsvc;
                     CheckBoxPptSvc.Text = isWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(subCase == 0 ? "顶置" : "在左上角")}。";
                     break;
+                case SettingsArea.StartUp:
+                    CheckBoxStartup.Text = $"开机时自动运行倒计时{(isWorking ? "*" : "")}(&B)";
+                    break;
             }
         }
 
@@ -751,7 +785,7 @@ namespace PlainCEETimer.UI.Forms
                 return false;
             }
 
-            InvokeChangeRequired = true;
+            CanSaveChanges = true;
             UserChanged = false;
             Close();
 
@@ -760,12 +794,30 @@ namespace PlainCEETimer.UI.Forms
 
         private void SaveSettings()
         {
-            var flag = IsSetStartUp;
+            var flag = CheckBoxStartup.Checked;
+            var isTask = (bool)CheckBoxStartup.Tag;
 
-            if ((IsSetStartUp = CheckBoxStartup.Checked) != flag)
+            new Action(() =>
             {
-                OperateStartUp(IsSetStartUp ? 1 : 2);
-            }
+                if (flag)
+                {
+                    if (isTask)
+                    {
+                        OperateStartUp(2);
+                        Win32TaskScheduler.SetStartUpTask();
+                    }
+                    else
+                    {
+                        OperateStartUp(1);
+                        Win32TaskScheduler.DeleteStartUpTask();
+                    }
+                }
+                else
+                {
+                    OperateStartUp(2);
+                    Win32TaskScheduler.DeleteStartUpTask();
+                }
+            }).Start();
 
             App.AppConfig = new()
             {

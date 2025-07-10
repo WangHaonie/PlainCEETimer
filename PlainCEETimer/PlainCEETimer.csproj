@@ -101,10 +101,13 @@
     <Reference Include="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Natives.cs" />
+    <Compile Include="Modules\Win32TaskScheduler.cs" />
+    <Compile Include="Modules\Xml.cs" />
     <Compile Include="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
