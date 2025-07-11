@@ -10,7 +10,8 @@ namespace PlainCEETimer.Modules
 
         private static readonly bool IsWin7 = App.OSBuild == WindowsBuilds.Windows7;
         private static readonly string UserName = Win32User.SessionUser;
-        private static readonly string TaskName = $"\"WangHaonie\\PlainCEETimer AutoStartup for {UserName.GetHashCode()}\"";
+        private static readonly string UserNameOnly = UserName.Split('\\')[1];
+        private static readonly string TaskName = $"\"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})\"";
         private static readonly string AppPath = App.CurrentExecutablePath;
 
         public static void RefreshStartUpState()
@@ -26,16 +27,15 @@ namespace PlainCEETimer.Modules
         {
             if (Win32User.NotElevated)
             {
-                var exec = "cmd";
-                var args = $"/c chcp 437 >nul && schtasks /query /tn {TaskName} /xml";
+                var args = $"/query /tn {TaskName} /xml";
 
                 if (IsWin7)
                 {
-                    return ProcessHelper.Run(exec, args, getExitCode: true) == 0 ? 0 : 2;
+                    return ProcessHelper.Run("cmd", $"/c chcp 437 >nul && schtasks " + args, getExitCode: true) == 0 ? 0 : 2;
                 }
                 else
                 {
-                    var raw = ProcessHelper.GetOutput(exec, args);
+                    var raw = ProcessHelper.GetOutput("schtasks", args);
 
                     if (raw != "")
                     {
@@ -64,8 +64,19 @@ namespace PlainCEETimer.Modules
             if (CheckStartUpState() is 1 or 2)
             {
                 var xml = $"{AppPath}.Task.xml";
-                File.WriteAllText(xml, $@"<?xml version=""1.0"" encoding=""UTF-16""?><Task version=""1.2"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><URI>\WangHaonie\PlainCEETimer</URI></RegistrationInfo><Triggers><LogonTrigger><Enabled>true</Enabled><UserId>{UserName}</UserId></LogonTrigger></Triggers><Principals><Principal id=""Author""><UserId>{UserName}</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals><Actions Context=""Author""><Exec><Command>""{AppPath}""</Command></Exec></Actions></Task>", Encoding.Unicode);
-                ProcessHelper.Run("cmd", $"/c chcp 437 >nul && schtasks /create /tn {TaskName} /xml \"{xml}\" /f", getExitCode: true);
+                var args = $"/create /tn {TaskName} /xml \"{xml}\" /f";
+
+                File.WriteAllText(xml, $@"<?xml version=""1.0"" encoding=""UTF-16""?><Task version=""1.2"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><Description>用于在 {UserNameOnly} 登录时自动运行</Description></RegistrationInfo><Triggers><LogonTrigger><Enabled>true</Enabled><UserId>{UserName}</UserId></LogonTrigger></Triggers><Principals><Principal id=""Author""><UserId>{UserName}</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals><Actions Context=""Author""><Exec><Command>""{AppPath}""</Command></Exec></Actions></Task>", Encoding.Unicode);
+
+                if (IsWin7)
+                {
+                    ProcessHelper.Run("cmd", $"/c chcp 437 >nul && schtasks " + args, getExitCode: true);
+                }
+                else
+                {
+                    ProcessHelper.Run("schtasks", args, getExitCode: true);
+                }
+
                 File.Delete(xml);
                 RefreshStartUpState();
             }
@@ -75,7 +86,17 @@ namespace PlainCEETimer.Modules
         {
             if (CheckStartUpState() != 3)
             {
-                ProcessHelper.Run("cmd", $"/c chcp 437 >nul && schtasks /delete /tn {TaskName} /f", getExitCode: true);
+                var args = $"/delete /tn {TaskName} /f";
+
+                if (IsWin7)
+                {
+                    ProcessHelper.Run("cmd", $"/c chcp 437 >nul && schtasks ", getExitCode: true);
+                }
+                else
+                {
+                    ProcessHelper.Run("schtasks", args, getExitCode: true);
+                }
+
                 RefreshStartUpState();
             }
         }
