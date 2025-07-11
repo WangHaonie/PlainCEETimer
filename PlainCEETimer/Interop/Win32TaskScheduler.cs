@@ -49,9 +49,7 @@ namespace PlainCEETimer.Interop
         {
             if (Win32User.NotElevated)
             {
-                ExportTask(TaskName, out IntPtr pBstrXml);
-                var raw = Marshal.PtrToStringUni(pBstrXml);
-                SysFreeString(pBstrXml);
+                ExportTask(TaskName, out string raw);
 
                 if (!string.IsNullOrEmpty(raw))
                 {
@@ -80,18 +78,15 @@ namespace PlainCEETimer.Interop
         private static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#17", CharSet = CharSet.Unicode)]
-        private static extern void ImportTask(string taskName, string xml);
+        private static extern void ImportTask(string taskName, [MarshalAs(UnmanagedType.BStr)] string bstrXml);
 
         [DllImport(App.NativesDll, EntryPoint = "#18", CharSet = CharSet.Unicode)]
-        private static extern void ExportTask(string taskName, out IntPtr pBstrXml);
+        private static extern void ExportTask(string taskName, [MarshalAs(UnmanagedType.BStr)] out string pBstrXml);
 
         [DllImport(App.NativesDll, EntryPoint = "#19", CharSet = CharSet.Unicode)]
         private static extern void DeleteTask(string taskName);
 
         [DllImport(App.NativesDll, EntryPoint = "#20")]
         public static extern void Release();
-
-        [DllImport("oleaut32.dll", CharSet = CharSet.Unicode)]
-        private static extern void SysFreeString(IntPtr bstrString);
     }
 }

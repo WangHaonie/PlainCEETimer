@@ -18,11 +18,11 @@ void InitializeTaskScheduler()
     }
 }
 
-void ImportTaskFromXml(LPCWSTR taskName, LPCWSTR xml)
+void ImportTaskFromXml(LPCWSTR taskName, BSTR bstrXml)
 {
     if (initialized)
     {
-        pFolder->RegisterTask(_bstr_t(taskName), _bstr_t(xml), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pReg);
+        pFolder->RegisterTask(_bstr_t(taskName), bstrXml, TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pReg);
     }
 }
 
