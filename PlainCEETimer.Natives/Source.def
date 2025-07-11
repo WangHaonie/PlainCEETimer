@@ -15,3 +15,8 @@ EXPORTS
     FixScrollBar @13 NONAME
     HasScrollBar @14 NONAME
     EnumSystemDisplays @15 NONAME
+    InitializeTaskScheduler @16 NONAME
+    ImportTaskFromXml @17 NONAME
+    ExportTaskAsXml @18 NONAME
+    DeleteScheduleTask @19 NONAME
+    ReleaseTaskScheduler @20 NONAME

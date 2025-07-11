@@ -65,9 +65,6 @@ namespace PlainCEETimer.Interop
         private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-        private delegate BOOL EnumDisplayProc(RECT lprcMonitor,
-            [MarshalAs(UnmanagedType.LPWStr)] string device,
-            [MarshalAs(UnmanagedType.LPWStr)] string path,
-            [MarshalAs(UnmanagedType.LPWStr)] string did);
+        private delegate BOOL EnumDisplayProc(RECT lprcMonitor, string device, string path, string did);
     }
 }

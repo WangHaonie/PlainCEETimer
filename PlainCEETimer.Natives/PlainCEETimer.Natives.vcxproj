@@ -153,7 +153,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib;taskschd.lib</AdditionalDependencies>
       <NoEntryPoint>true</NoEntryPoint>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
@@ -167,6 +167,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
     <ClInclude Include="TaskbarProgress\TaskbarProgress.h" />
+    <ClInclude Include="TaskScheduler\TaskScheduler.h" />
     <ClInclude Include="ThemeManager\IATHook.h" />
     <ClInclude Include="ThemeManager\ThemeManager.h" />
   </ItemGroup>
@@ -182,6 +183,7 @@
     </ClCompile>
     <ClCompile Include="RoundCorner\RoundCorner.cpp" />
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
+    <ClCompile Include="TaskScheduler\TaskScheduler.cpp" />
     <ClCompile Include="ThemeManager\ThemeManager.cpp" />
   </ItemGroup>
   <ItemGroup>

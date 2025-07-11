@@ -30,15 +30,6 @@ namespace PlainCEETimer.Modules
             proc.WaitForExit();
         }
 
-        public static string GetOutput(string path, string args)
-        {
-            var proc = MakeProc(path, args, false, false, false, true);
-            proc.Start();
-            var output = proc.StandardOutput.ReadToEnd();
-            proc.WaitForExit();
-            return output;
-        }
-
         public static Process RunElevated(string path, string args)
         {
             var proc = MakeProc(path, args, true, true, false, false);
