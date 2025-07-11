@@ -69,7 +69,7 @@ namespace PlainCEETimer.Modules.Configuration
 
                 field = value;
             }
-        } = DefaultValues.AutoDarkCountdown
+        } = DefaultValues.AutoDarkTheme
           ? DefaultValues.CountdownDefaultColorsDark
           : DefaultValues.CountdownDefaultColorsLight;
 
