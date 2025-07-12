@@ -8,7 +8,7 @@ namespace PlainCEETimer.Interop
     public static class Natives
     {
         [DllImport(App.User32Dll)]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 
     [StructLayout(LayoutKind.Sequential)]

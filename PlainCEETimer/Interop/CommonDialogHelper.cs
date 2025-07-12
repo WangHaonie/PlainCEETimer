@@ -58,7 +58,7 @@ namespace PlainCEETimer.Interop
 
                     if (dialogTitle != null)
                     {
-                        Natives.SendMessageW(hWnd, WM_SETTEXT, IntPtr.Zero, Marshal.StringToHGlobalUni(dialogTitle));
+                        SetWindowText(hWnd, dialogTitle);
                     }
 
                     if (kind == CommonDialogKind.Font && !((FontDialogEx)dialog).ShowColor)
@@ -173,6 +173,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.User32Dll)]
         private static extern BOOL ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+        private static extern BOOL SetWindowText(IntPtr hWnd, string lpString);
 
         [DllImport(App.Gdi32Dll)]
         private static extern COLORREF SetTextColor(IntPtr hdc, COLORREF color);

@@ -25,6 +25,8 @@ namespace PlainCEETimer.UI.Dialogs
         private MenuItem ContextCopy;
         private Process ElevatedProc;
         private RichTextBox ConsoleBox;
+        private const int WM_VSCROLL = 0x0115;
+        private const int SB_BOTTOM = 7;
         private readonly Timer ConsoleTimer = new();
 
         protected override void OnInitializing()
@@ -241,7 +243,7 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 ConsoleBox.AppendText(line);
                 ConsoleBox.AppendText("\r\n");
-                Natives.SendMessageW(ConsoleBox.Handle, 0x115, (IntPtr)7, IntPtr.Zero);
+                Natives.SendMessage(ConsoleBox.Handle, WM_VSCROLL, new(SB_BOTTOM), IntPtr.Zero);
             }
         }
     }
