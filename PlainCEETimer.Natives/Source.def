@@ -18,5 +18,6 @@ EXPORTS
     InitializeTaskScheduler @16 NONAME
     ImportTaskFromXml @17 NONAME
     ExportTaskAsXml @18 NONAME
-    DeleteScheduleTask @19 NONAME
-    ReleaseTaskScheduler @20 NONAME
+    EnableScheduleTask @19 NONAME
+    DeleteScheduleTask @20 NONAME
+    ReleaseTaskScheduler @21 NONAME

@@ -53,6 +53,7 @@ namespace PlainCEETimer.Interop
                 if (!string.IsNullOrEmpty(raw))
                 {
                     var xml = Xml.FormString(raw);
+                    EnableTask(TaskName);
 
                     if (xml.Check("true", true, "Triggers", "LogonTrigger", "Enabled") &&
                         xml.Check($"\"{AppPath}\"", false, "Actions", "Exec", "Command") &&
@@ -73,6 +74,12 @@ namespace PlainCEETimer.Interop
             return 3;
         }
 
+        public static void Release()
+        {
+            EnableTask(TaskName);
+            ReleaseService();
+        }
+
         [DllImport(App.NativesDll, EntryPoint = "#16")]
         private static extern void Initialize();
 
@@ -83,9 +90,12 @@ namespace PlainCEETimer.Interop
         private static extern void ExportTask(string taskName, [MarshalAs(UnmanagedType.BStr)] out string pBstrXml);
 
         [DllImport(App.NativesDll, EntryPoint = "#19", CharSet = CharSet.Unicode)]
+        private static extern void EnableTask(string taskName);
+
+        [DllImport(App.NativesDll, EntryPoint = "#20", CharSet = CharSet.Unicode)]
         private static extern void DeleteTask(string taskName);
 
-        [DllImport(App.NativesDll, EntryPoint = "#20")]
-        public static extern void Release();
+        [DllImport(App.NativesDll, EntryPoint = "#21")]
+        private static extern void ReleaseService();
     }
 }
