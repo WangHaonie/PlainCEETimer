@@ -50,8 +50,9 @@ void EnableScheduleTask(LPCWSTR taskName)
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
     {
         VARIANT_BOOL enabled;
+        pReg->get_Enabled(&enabled);
         
-        if (SUCCEEDED(pReg->get_Enabled(&enabled)) && enabled == VARIANT_FALSE)
+        if (enabled == VARIANT_FALSE)
         {
             pReg->put_Enabled(VARIANT_TRUE);
         }

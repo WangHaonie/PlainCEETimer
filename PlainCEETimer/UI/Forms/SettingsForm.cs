@@ -288,7 +288,7 @@ namespace PlainCEETimer.UI.Forms
 
                         GBoxPptsvc = b.GroupBox("兼容希沃PPT小工具",
                         [
-                            LabelPptsvc = b.Label("(仅个别机型) 用于修复希沃PPT小工具的内置白板打开后底部工具栏消失的问题。"),
+                            LabelPptsvc = b.Label("(仅个别机型) 用于避免希沃PPT小工具内置白板打开后底部工具栏消失的情况。"),
                             CheckBoxPptSvc = b.CheckBox(null, SettingsChanged)
                         ])
                     ]),

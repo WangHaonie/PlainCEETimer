@@ -102,7 +102,7 @@ void FixScrollBar()
     {
         auto* addr = FindDelayLoadThunkInModule(hComctl, "uxtheme.dll", 49);
 
-        if (addr != nullptr)
+        if (addr)
         {
             DWORD oldProtect;
 

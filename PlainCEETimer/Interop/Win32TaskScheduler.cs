@@ -7,6 +7,7 @@ namespace PlainCEETimer.Interop
     {
         public static bool IsTaskSchd { get; private set; }
 
+        private static readonly bool NotElevated = Win32User.NotElevated;
         private static readonly string UserName = Win32User.SessionUser;
         private static readonly string UserNameOnly = UserName.Split('\\')[1];
         private static readonly string TaskName = $"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})";
@@ -33,7 +34,7 @@ namespace PlainCEETimer.Interop
 
         public static void DeleteStartUpTask()
         {
-            if (CheckStartUpState() != 3)
+            if (CheckStartUpState() is not 2 and 3)
             {
                 DeleteTask(TaskName);
                 RefreshStartUpState();
@@ -46,7 +47,7 @@ namespace PlainCEETimer.Interop
         /// <returns>0 - 已设置，1 - 设置异常，2 - 未设置，3 - 环境异常</returns>
         private static int CheckStartUpState()
         {
-            if (Win32User.NotElevated)
+            if (NotElevated)
             {
                 ExportTask(TaskName, out string raw);
 

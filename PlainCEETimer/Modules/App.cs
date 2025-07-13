@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/12";
+        public const string AppBuildDate = "2025/7/13";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -136,21 +136,22 @@ namespace PlainCEETimer.Modules
             }
             else
             {
-                if (Args.Length != 0)
+                if (Args.Length == 0)
+                {
+                    StartPipeClient();
+                    Exit(ExitReason.MultipleInstances);
+                }
+                else
                 {
                     if (Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3))))
                     {
                         Exit(ExitReason.Normal);
-                        return;
                     }
                     else
                     {
                         MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
                     }
                 }
-
-                StartPipeClient();
-                Exit(ExitReason.MultipleInstances);
             }
         }
 
@@ -193,50 +194,23 @@ namespace PlainCEETimer.Modules
 
         private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
         {
+            var isRedirector = !string.IsNullOrEmpty(pipe);
+
             try
             {
-                var isRedirector = pipe != null;
                 using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
+                client.Connect(isRedirector ? 500 : 1000);
 
                 if (isRedirector)
                 {
-                    try
-                    {
-                        client.Connect(500);
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-
-                    var w = new StreamWriter(client) { AutoFlush = true };
-
-                    try
-                    {
-                        ProcessHelper.Run(path, args, (proc, _) =>
-                        {
-                            w.WriteLine(ProcessHelper.GetExitMessage(proc));
-                        }, (_, e) => w.WriteLine(e.Data));
-                    }
-                    catch (Exception ex)
-                    {
-                        w.WriteLine(ProcessHelper.GetExceptionMessage(ex));
-                    }
-                    finally
-                    {
-                        w.WriteLine("```3");
-                    }
-                }
-                else
-                {
-                    client.Connect(1000);
+                    ProcessHelper.RunRedirector(new StreamWriter(client) { AutoFlush = true }, path, args);
                 }
 
                 return true;
             }
             catch
             {
-                return true;
+                return false;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace PlainCEETimer.Modules
 {
@@ -65,6 +66,25 @@ namespace PlainCEETimer.Modules
             }
 
             return $"{ex}\n\n出现未知错误，请及时向我们反馈相关信息。";
+        }
+
+        public static void RunRedirector(StreamWriter w, string path, string args)
+        {
+            try
+            {
+                Run(path, args, (proc, _) =>
+                {
+                    w.WriteLine(GetExitMessage(proc));
+                }, (_, e) => w.WriteLine(e.Data));
+            }
+            catch (Exception ex)
+            {
+                w.WriteLine(GetExceptionMessage(ex));
+            }
+            finally
+            {
+                w.WriteLine("```3");
+            }
         }
 
         private static Process MakeProc(string path, string args, bool elevate, bool useShExec, bool showWindow, bool redirectOutput)

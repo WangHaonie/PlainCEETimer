@@ -31,7 +31,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnInitializing()
         {
-            Text = "Console Window - 高考倒计时";
+            Text = "命令输出 - 高考倒计时";
             BackColor = Color.Black;
             base.OnInitializing();
 
@@ -122,6 +122,7 @@ namespace PlainCEETimer.UI.Dialogs
                             if (line.Equals("```3", StringComparison.Ordinal))
                             {
                                 Final();
+                                break;
                             }
                             else
                             {

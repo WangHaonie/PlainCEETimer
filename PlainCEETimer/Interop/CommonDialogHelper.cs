@@ -16,7 +16,6 @@ namespace PlainCEETimer.Interop
         private const int BM_TRANSPARENT = 0x0001;
         private const int WM_DESTROY = 0x0002;
         private const int WM_SETFOCUS = 0x0007;
-        private const int WM_SETTEXT = 0x000C;
         private const int WM_INITDIALOG = 0x0110;
         private const int WM_COMMAND = 0x0111;
         private const int WM_CTLCOLORDLG = 0x0136;
