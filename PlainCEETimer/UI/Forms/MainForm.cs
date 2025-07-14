@@ -96,7 +96,7 @@ namespace PlainCEETimer.UI.Forms
             RefreshSettings();
             ValidateNeeded = false;
             new Action(() => new Updater().CheckForUpdate(false, this)).Start();
-            new Action(Win32TaskScheduler.RefreshStartUpState).Start();
+            new Action(Startup.RefreshTaskState).Start();
         }
 
         /*

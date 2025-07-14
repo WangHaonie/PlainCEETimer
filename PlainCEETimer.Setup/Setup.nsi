@@ -123,7 +123,7 @@ SectionEnd
 Section Uninstall
   nsExec::Exec '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::Exec '"taskkill" /F /IM "PlainCEETimer.exe"'
-  ExecWait '"$INSTDIR\PlainCEETimer.exe" /rt'
+  ExecWait '"$INSTDIR\PlainCEETimer.exe" /uninst'
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "CEETimerCSharpWinForms"
   Delete "$INSTDIR\GitHub.url"

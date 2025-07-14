@@ -107,6 +107,7 @@
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Natives.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
+    <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\Xml.cs" />
     <Compile Include="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>

@@ -86,8 +86,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         name = targetName.monitorFriendlyDeviceName;
                     }
 
-                    DISPLAY_DEVICE dd = {};
-                    dd.cb = sizeof(dd);
+                    DISPLAY_DEVICE dd = { sizeof(dd) };
                     LPCWSTR did = L"<未知型号>";
                     
                     if (EnumDisplayDevices(dpath, 0, &dd, 0) && *dd.DeviceID)

@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/13";
+        public const string AppBuildDate = "2025/7/14";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -116,8 +116,8 @@ namespace PlainCEETimer.Modules
                                 UACHelper.CheckAdmin();
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
-                            case "/rt":
-                                Win32TaskScheduler.DeleteStartUpTask();
+                            case "/uninst":
+                                Startup.DeleteAll();
                                 break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", autoClose: true);
@@ -157,7 +157,7 @@ namespace PlainCEETimer.Modules
 
         public static void Exit(ExitReason reason)
         {
-            Win32TaskScheduler.Release();
+            Startup.Cleanup();
 
             IsClosing = true;
             var restart = reason == ExitReason.UserRestart;

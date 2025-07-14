@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 
@@ -97,7 +96,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeDark;
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
-        private readonly bool IsTaskStartUp = Win32TaskScheduler.IsTaskSchd;
+        private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
         protected override void OnInitializing()
@@ -607,7 +606,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void RefreshSettings()
         {
-            CheckBoxStartup.Checked = (bool)OperateStartUp(0) || IsTaskStartUp;
+            CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
             UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
@@ -794,30 +793,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void SaveSettings()
         {
-            var flag = CheckBoxStartup.Checked;
-            var isTask = (bool)CheckBoxStartup.Tag;
-
-            new Action(() =>
-            {
-                if (flag)
-                {
-                    if (isTask)
-                    {
-                        OperateStartUp(2);
-                        Win32TaskScheduler.SetStartUpTask();
-                    }
-                    else
-                    {
-                        OperateStartUp(1);
-                        Win32TaskScheduler.DeleteStartUpTask();
-                    }
-                }
-                else
-                {
-                    OperateStartUp(2);
-                    Win32TaskScheduler.DeleteStartUpTask();
-                }
-            }).Start();
+            Startup.SetAll(CheckBoxStartup.Checked, (bool)CheckBoxStartup.Tag);
 
             App.AppConfig = new()
             {
@@ -858,27 +834,6 @@ namespace PlainCEETimer.UI.Forms
             };
 
             RefreshNeeded = true;
-        }
-
-        private object OperateStartUp(int type)
-        {
-            var key = App.AppNameEngOld;
-            var path = $"\"{App.CurrentExecutablePath}\"";
-            using var helper = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
-
-            switch (type)
-            {
-                case 0:
-                    return helper.GetState(key, path, "");
-                case 1:
-                    if (Win32User.NotElevated) helper.Set(key, path);
-                    break;
-                default:
-                    if (Win32User.NotElevated) helper.Delete(key);
-                    break;
-            }
-
-            return null;
         }
     }
 }
