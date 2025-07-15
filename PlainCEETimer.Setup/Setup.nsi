@@ -124,15 +124,11 @@ Section Uninstall
   nsExec::Exec '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::Exec '"taskkill" /F /IM "PlainCEETimer.exe"'
   ExecWait '"$INSTDIR\PlainCEETimer.exe" /uninst'
-  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-  DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "CEETimerCSharpWinForms"
   Delete "$INSTDIR\GitHub.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\PlainCEETimer.exe"
   Delete "$INSTDIR\PlainCEETimer.config"
-  Delete "$INSTDIR\PlainCEETimer.exe.config"
-  Delete "$INSTDIR\UnhandledException.txt"
   Delete "$INSTDIR\CEETimerCSharpWinForms.exe"
   Delete "$INSTDIR\CEETimerCSharpWinForms.cfg"
   Delete "$INSTDIR\CEETimerCSharpWinForms.config"

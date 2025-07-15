@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/14";
+        public const string AppBuildDate = "2025/7/15";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -48,6 +48,7 @@ namespace PlainCEETimer.Modules
         public const string Shell32Dll = "shell32.dll";
         public const string Gdi32Dll = "gdi32.dll";
         public const string DateTimeFormat = "yyyyMMddHHmmss";
+        private const string UEFilePrefix = "UnhandledException_";
 
         private static bool IsMainProcess;
         private static bool IsClosing;
@@ -55,6 +56,7 @@ namespace PlainCEETimer.Modules
         private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
+        private static readonly string DotNetConfig = $"{CurrentExecutablePath}.config";
         private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
 
         public static void StartProgram(string[] args)
@@ -118,6 +120,7 @@ namespace PlainCEETimer.Modules
                                 break;
                             case "/uninst":
                                 Startup.DeleteAll();
+                                DeleteExtraFiles();
                                 break;
                             default:
                                 MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", autoClose: true);
@@ -178,6 +181,20 @@ namespace PlainCEETimer.Modules
             Environment.Exit((int)reason);
         }
 
+        private static void DeleteExtraFiles()
+        {
+            try
+            {
+                foreach (var uefile in Directory.GetFiles(CurrentExecutableDir, $"{UEFilePrefix}*.txt"))
+                {
+                    File.Delete(uefile);
+                }
+
+                File.Delete(DotNetConfig);
+            }
+            catch { }
+        }
+
         private static void StartPipeServer()
         {
             try
@@ -220,7 +237,7 @@ namespace PlainCEETimer.Modules
             {
                 var now = DateTime.Now;
                 var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
-                var exFileName = $"UnhandledException_{now.ToString(DateTimeFormat)}.txt";
+                var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
                 var exFilePath = $"{CurrentExecutableDir}{exFileName}";
                 File.AppendAllText(exFilePath, content);
 
@@ -246,10 +263,9 @@ namespace PlainCEETimer.Modules
 
             try
             {
-                var appconfig = $"{CurrentExecutablePath}.config";
-                File.Delete(appconfig);
-                File.WriteAllText(appconfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
-                ProcessHelper.Run("attrib", $"+s +h \"{appconfig}\"");
+                File.Delete(DotNetConfig);
+                File.WriteAllText(DotNetConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
+                ProcessHelper.Run("attrib", $"+s +h \"{DotNetConfig}\"");
             }
             catch { }
         }
