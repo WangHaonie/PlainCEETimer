@@ -2,6 +2,6 @@
 
 #include <Windows.h>
 
-typedef BOOL (CALLBACK *EnumDisplayProc)(RECT lprcMonitor, LPCWSTR device, LPCWSTR path, LPCWSTR did);
+using EnumDisplayProc = BOOL (CALLBACK*)(RECT lprcMonitor, LPCWSTR device, LPCWSTR path, LPCWSTR did);
 
 cexport(void) EnumSystemDisplays(EnumDisplayProc lpfnEnum);

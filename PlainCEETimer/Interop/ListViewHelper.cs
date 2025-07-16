@@ -12,7 +12,7 @@ namespace PlainCEETimer.Interop
         [DllImport(App.NativesDll, EntryPoint = "#10")]
         public static extern void FlushTheme(IntPtr hLV, COLORREF crHeaderFore, BOOL enabled);
 
-        [DllImport(App.NativesDll, EntryPoint = "#14")]
+        [DllImport(App.NativesDll, EntryPoint = "#13")]
         public static extern BOOL HasScrollBar(IntPtr hWnd, BOOL isVertical);
     }
 }

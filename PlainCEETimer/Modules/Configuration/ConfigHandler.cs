@@ -12,7 +12,6 @@ namespace PlainCEETimer.Modules.Configuration
             Settings = new JsonSerializerSettings()
             {
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                Formatting = Formatting.None,
                 NullValueHandling = NullValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto
             };
@@ -25,14 +24,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public static ConfigObject Read()
         {
-            try
-            {
-                return JsonConvert.DeserializeObject<ConfigObject>(File.ReadAllText(App.ConfigFilePath)) ?? new();
-            }
-            catch
-            {
-                return new();
-            }
+            return Json.Deserialize<ConfigObject>(File.ReadAllText(App.ConfigFilePath));
         }
     }
 }

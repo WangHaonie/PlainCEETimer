@@ -24,7 +24,7 @@ namespace PlainCEETimer.UI.Controls
         {
             Color = Default;
             PreviousCustomColors = CustomColorCollection;
-            Helper = new CommonDialogHelper(this, "选取颜色 - 高考倒计时", CommonDialogKind.Color, owner);
+            Helper = new CommonDialogHelper(this, owner, "选取颜色 - 高考倒计时", CommonDialogKind.Color);
             var Result = ShowDialog();
 
             if (Result == DialogResult.OK)

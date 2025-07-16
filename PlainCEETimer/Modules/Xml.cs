@@ -10,18 +10,18 @@ namespace PlainCEETimer.Modules
             return XDocument.Parse(raw).Root;
         }
 
-        public static bool Check(this XElement top, string expect, bool ifNull, params string[] nodes)
+        public static bool Check(this XElement top, string expect, bool returnValueIfNull, params string[] nodes)
         {
             var ns = top.GetDefaultNamespace();
             var current = top;
 
             for (int i = 0; i < nodes.Length; i++)
             {
-                current = current.Element(ns + nodes[i]);
+                current = current.Element(ns.GetName(nodes[i]));
 
                 if (current == null)
                 {
-                    return ifNull || false;
+                    return returnValueIfNull || false;
                 }
             }
 

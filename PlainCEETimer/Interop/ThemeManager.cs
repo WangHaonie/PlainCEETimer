@@ -17,25 +17,24 @@ namespace PlainCEETimer.Interop
         public static Color DarkBorder { get; } = Color.FromArgb(60, 60, 60);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
-        private static readonly int DwmaType;
+        private static readonly BOOL IsNewDwma;
 
         static ThemeManager()
         {
             if (IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
             {
-                var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").GetState("AppsUseLightTheme", 0, 1);
+                var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
                 CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
                 var option = App.AppConfig.Dark; // 顺便触发初始化 DefaultValues
 
                 if (App.OSBuild >= WindowsBuilds.Windows10_20H1)
                 {
-                    DwmaType = 1;
+                    IsNewDwma = BOOL.TRUE;
                 }
 
                 if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
                 {
-                    FlushApp(2);
-                    FixScrollBar();
+                    FlushApp();
                 }
             }
         }
@@ -47,7 +46,7 @@ namespace PlainCEETimer.Interop
 
         public static void FlushWindow(IntPtr hWnd)
         {
-            FlushWindow(hWnd, DwmaType);
+            FlushWindow(hWnd, IsNewDwma);
         }
 
         public static void FlushControl(IntPtr hWnd, NativeStyle type)
@@ -86,15 +85,12 @@ namespace PlainCEETimer.Interop
         */
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
-        private static extern void FlushWindow(IntPtr hWnd, int type);
+        private static extern void FlushWindow(IntPtr hWnd, BOOL newStyle);
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
-        private static extern void FlushApp(int preferredAppMode);
+        private static extern void FlushApp();
 
         [DllImport(App.NativesDll, EntryPoint = "#12")]
         private static extern void SetTheme(IntPtr hWnd, NativeStyle type);
-
-        [DllImport(App.NativesDll, EntryPoint = "#13")]
-        private static extern void FixScrollBar();
     }
 }

@@ -2,7 +2,6 @@
 
 #include <dwmapi.h>
 
-cexport(void) FlushWindow(HWND hWnd, int type);
-cexport(void) FlushApp(int preferredAppMode);
+cexport(void) FlushWindow(HWND hWnd, BOOL newStyle);
+cexport(void) FlushApp();
 cexport(void) SetTheme(HWND hWnd, int type);
-cexport(void) FixScrollBar();

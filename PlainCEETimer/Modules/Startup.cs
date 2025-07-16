@@ -12,7 +12,7 @@ namespace PlainCEETimer.Modules
         public static bool IsTaskSchd { get; private set; }
 
         private static readonly bool NotElevated = Win32User.NotElevated;
-        private static readonly string UserName = Win32User.SessionUser;
+        private static readonly string UserName = Win32User.LogonUser;
         private static readonly string UserNameOnly = UserName.Split('\\')[1];
         private static readonly string TaskName = $"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})";
         private static readonly string AppPath = $"\"{App.CurrentExecutablePath}\"";
@@ -21,7 +21,7 @@ namespace PlainCEETimer.Modules
 
         public static bool GetRegistryState()
         {
-            return NotElevated && Registry.GetState(StartupKey, AppPath, "");
+            return NotElevated && Registry.Check(StartupKey, AppPath, "");
         }
 
         public static void RefreshTaskState()
@@ -75,14 +75,14 @@ namespace PlainCEETimer.Modules
         {
             if (CheckStartUpState() is 1 or 2)
             {
-                Win32TaskScheduler.ImportTask(TaskName, $@"<?xml version=""1.0"" encoding=""UTF-16""?><Task version=""1.2"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><Description>用于在 {UserNameOnly} 登录时自动运行</Description></RegistrationInfo><Triggers><LogonTrigger><Enabled>true</Enabled><UserId>{UserName}</UserId></LogonTrigger></Triggers><Principals><Principal id=""Author""><UserId>{UserName}</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals><Settings><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries></Settings><Actions Context=""Author""><Exec><Command>{AppPath}</Command></Exec></Actions></Task>");
+                Win32TaskScheduler.Import(TaskName, $@"<?xml version=""1.0"" encoding=""UTF-16""?><Task version=""1.2"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><Description>用于在 {UserNameOnly} 登录时自动运行</Description></RegistrationInfo><Triggers><LogonTrigger><Enabled>true</Enabled><UserId>{UserName}</UserId></LogonTrigger></Triggers><Principals><Principal id=""Author""><UserId>{UserName}</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals><Settings><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries></Settings><Actions Context=""Author""><Exec><Command>{AppPath}</Command></Exec></Actions></Task>");
                 RefreshTaskState();
             }
         }
 
         private static void EnableTask()
         {
-            Win32TaskScheduler.EnableTask(TaskName);
+            Win32TaskScheduler.Enable(TaskName);
         }
 
         private static void DeleteRegistry()
@@ -97,7 +97,7 @@ namespace PlainCEETimer.Modules
         {
             if (CheckStartUpState() is 0 or 1)
             {
-                Win32TaskScheduler.DeleteTask(TaskName);
+                Win32TaskScheduler.Delete(TaskName);
                 RefreshTaskState();
             }
         }
@@ -110,7 +110,7 @@ namespace PlainCEETimer.Modules
         {
             if (NotElevated)
             {
-                Win32TaskScheduler.ExportTask(TaskName, out string raw);
+                Win32TaskScheduler.Export(TaskName, out string raw);
 
                 if (!string.IsNullOrEmpty(raw))
                 {

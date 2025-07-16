@@ -21,23 +21,23 @@ namespace PlainCEETimer.Interop
         */
 
         public static string ProcessOwner => ProcOwner;
-        public static string SessionUser => SessionUserName;
+        public static string LogonUser => LogonUserName;
         public static bool NotElevated { get; }
 
         private const int WTSInfoClass_WTSUserName = 5;
         private const int WTSInfoClass_WTSDomainName = 7;
 
         private static readonly string ProcOwner;
-        private static readonly string SessionUserName;
+        private static readonly string LogonUserName;
 
         static Win32User()
         {
             ProcOwner = WindowsIdentity.GetCurrent().Name;
-            SessionUserName = GetCurrentSessionUserName();
-            NotElevated = ProcOwner.Equals(SessionUserName, StringComparison.OrdinalIgnoreCase);
+            LogonUserName = GetCurrentLogonUserName();
+            NotElevated = ProcOwner.Equals(LogonUserName, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static string GetCurrentSessionUserName()
+        private static string GetCurrentLogonUserName()
         {
             var username = "";
             var sid = WTSGetActiveConsoleSessionId();

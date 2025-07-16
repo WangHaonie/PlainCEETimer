@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppVersion = "5.0.3";
-        public const string AppBuildDate = "2025/7/15";
+        public const string AppBuildDate = "2025/7/17";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -107,7 +107,7 @@ namespace PlainCEETimer.Modules
                                     $"""
                                     检测结果：
 
-                                    {Win32User.SessionUser} 为当前登入的账户。
+                                    {Win32User.LogonUser} 为当前登入的账户。
                                     目前高考倒计时正在以 {Win32User.ProcessOwner} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UACHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
                                     """);
                                 break;

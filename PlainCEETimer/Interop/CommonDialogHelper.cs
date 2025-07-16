@@ -10,7 +10,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper(ICommonDialog dialog, string dialogTitle, CommonDialogKind kind, AppForm owner)
+    public class CommonDialogHelper(ICommonDialog dialog, AppForm owner, string dialogTitle, CommonDialogKind kind)
     {
         private const int SW_HIDE = 0x0000;
         private const int BM_TRANSPARENT = 0x0001;

@@ -4,21 +4,6 @@
 
 /*
 
-窗体标题栏深色样式 参考：
-
-c# - WinForms Dark title bar on Windows 10 - Stack Overflow
-https://stackoverflow.com/a/62811758
-
-*/
-
-void FlushWindow(HWND hWnd, int type)
-{
-    int enabled = 1;
-    DwmSetWindowAttribute(hWnd, type ? 20 : 19, &enabled, sizeof(enabled));
-}
-
-/*
-
 SetPreferredAppMode 参考：
 
 win32-darkmode/win32-darkmode/DarkMode.h at master · ysc3839/win32-darkmode
@@ -46,39 +31,6 @@ static LPCWSTR GetPszSubAppName(int id)
     }
 }
 
-void FlushApp(int preferredAppMode)
-{
-    if (!SetPreferredAppMode)
-    {
-        HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-
-        if (hUxtheme)
-        {
-            auto addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
-
-            if (addr)
-            {
-                SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
-            }
-
-            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
-            {
-                OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
-            }
-        }
-    }
-
-    if (SetPreferredAppMode)
-    {
-        SetPreferredAppMode(preferredAppMode);
-    }
-}
-
-void SetTheme(HWND hWnd, int type)
-{
-    SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
-}
-
 /*
 
 将非 Explorer 主题的 ScrollBar 应用深色主题 参考：
@@ -94,9 +46,9 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 */
 
-void FixScrollBar()
+static void FixScrollBar()
 {
-    HMODULE hComctl = LoadLibraryExW(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    HMODULE hComctl = LoadLibraryEx(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     if (hComctl)
     {
@@ -124,4 +76,53 @@ void FixScrollBar()
             }
         }
     }
+}
+
+/*
+
+窗体标题栏深色样式 参考：
+
+c# - WinForms Dark title bar on Windows 10 - Stack Overflow
+https://stackoverflow.com/a/62811758
+
+*/
+
+void FlushWindow(HWND hWnd, BOOL newStyle)
+{
+    int enabled = 1;
+    DwmSetWindowAttribute(hWnd, newStyle ? 20 : 19, &enabled, sizeof(enabled));
+}
+
+void FlushApp()
+{
+    if (!SetPreferredAppMode)
+    {
+        HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+
+        if (hUxtheme)
+        {
+            auto addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+
+            if (addr)
+            {
+                SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
+            }
+
+            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
+            {
+                OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+            }
+        }
+    }
+
+    if (SetPreferredAppMode)
+    {
+        SetPreferredAppMode(2);
+        FixScrollBar();
+    }
+}
+
+void SetTheme(HWND hWnd, int type)
+{
+    SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
 }
