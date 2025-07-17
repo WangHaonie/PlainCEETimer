@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI;
@@ -18,7 +19,7 @@ namespace PlainCEETimer.Modules
 
             try
             {
-                var Response = Json.Deserialize<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
+                var Response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
                 var LatestVersion = Response.Version;
                 var pub = Response.PublishDate;
                 var PublishDate = $"发布于 {GetDescription(pub)} ({pub.Format()})";

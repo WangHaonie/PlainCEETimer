@@ -24,7 +24,14 @@ namespace PlainCEETimer.Modules.Configuration
 
         public static ConfigObject Read()
         {
-            return Json.Deserialize<ConfigObject>(File.ReadAllText(App.ConfigFilePath));
+            try
+            {
+                return JsonConvert.DeserializeObject<ConfigObject>(File.ReadAllText(App.ConfigFilePath)) ?? new();
+            }
+            catch
+            {
+                return new();
+            }
         }
     }
 }
