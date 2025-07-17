@@ -20,7 +20,7 @@ namespace PlainCEETimer.Modules.Configuration
         static DefaultValues()
         {
             var tester = new Font(NotoSansSC, 1);
-            CountdownDefaultFont = new(tester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 17.25F, FontStyle.Bold, GraphicsUnit.Point);
+            CountdownDefaultFont = new(tester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 18F, FontStyle.Bold, GraphicsUnit.Point);
             tester.Dispose();
 
             CountdownDefaultColorsLight =
