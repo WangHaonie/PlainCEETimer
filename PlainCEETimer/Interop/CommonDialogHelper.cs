@@ -22,6 +22,7 @@ namespace PlainCEETimer.Interop
         private const int WM_CTLCOLORSTATIC = 0x0138;
         private const int WM_CTLCOLORLISTBOX = 0x0134;
         private const int WM_CTLCOLORBTN = 0x0135;
+        private const int grp2 = 0x0431;
         private const int stc4 = 0x0443;
         private const int cmb4 = 0x0473;
 
@@ -34,18 +35,6 @@ namespace PlainCEETimer.Interop
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
-            /*
-            
-            获取非托管 CommonDialog 的消息钩子并更改其窗口样式 灵感来自：
-
-            systeminformer/SystemInformer/options.c at master · winsiderss/systeminformer
-            https://github.com/winsiderss/systeminformer/blob/master/SystemInformer/options.c#L3337
-
-            CommonDialog.cs
-            https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/CommonDialog.cs,146
-
-            */
-
             switch (msg)
             {
                 case WM_SETFOCUS:
@@ -59,20 +48,7 @@ namespace PlainCEETimer.Interop
                         SetWindowText(hWnd, dialogTitle);
                     }
 
-                    if (dialog is FontDialogEx f && !f.ShowColor)
-                    {
-                        IntPtr hSelectorStatic;
-
-                        if ((hSelectorStatic = GetDlgItem(hWnd, stc4)) != IntPtr.Zero)
-                        {
-                            ShowWindow(hSelectorStatic, SW_HIDE);
-                        }
-
-                        if ((hSelectorStatic = GetDlgItem(hWnd, cmb4)) != IntPtr.Zero)
-                        {
-                            ShowWindow(hSelectorStatic, SW_HIDE);
-                        }
-                    }
+                    HandleFontDialog(hWnd);
 
                     if (UseDark)
                     {
@@ -106,6 +82,32 @@ namespace PlainCEETimer.Interop
             }
 
             return IntPtr.Zero;
+        }
+
+        private void HandleFontDialog(IntPtr hWnd)
+        {
+            if (dialog is FontDialogEx f)
+            {
+                IntPtr hCtrl;
+
+                if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)) != IntPtr.Zero)
+                {
+                    new FontDialogGrp2NativeWindow(hCtrl);
+                }
+
+                if (!f.ShowColor)
+                {
+                    if ((hCtrl = GetDlgItem(hWnd, stc4)) != IntPtr.Zero)
+                    {
+                        ShowWindow(hCtrl, SW_HIDE);
+                    }
+
+                    if ((hCtrl = GetDlgItem(hWnd, cmb4)) != IntPtr.Zero)
+                    {
+                        ShowWindow(hCtrl, SW_HIDE);
+                    }
+                }
+            }
         }
 
         private void FlushDark(IntPtr hWnd)
@@ -146,6 +148,68 @@ namespace PlainCEETimer.Interop
             }
 
             return NativeStyle.Explorer;
+        }
+
+        private sealed class FontDialogGrp2NativeWindow : NativeWindow
+        {
+            private const int WM_PAINT = 0x000F;
+            private const int WM_GETFONT = 0x0031;
+
+            private bool Handled;
+
+            public FontDialogGrp2NativeWindow(IntPtr hWndGrp2)
+            {
+                AssignHandle(hWndGrp2);
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WM_PAINT)
+                {
+                    base.WndProc(ref m);
+
+                    if (!Handled)
+                    {
+                        IntPtr hdc;
+                        IntPtr hWnd = Handle;
+
+                        if ((hdc = GetWindowDC(hWnd)) != IntPtr.Zero)
+                        {
+                            using var g = Graphics.FromHdc(hdc);
+                            using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
+                            using var brush = new SolidBrush(ThemeManager.DarkFore);
+
+                            GetClientRect(hWnd, out RECT rc);
+                            rc.Left += 6;
+                            Rectangle rect = rc;
+                            var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
+                            GetWindowText(hWnd, sb, sb.Capacity);
+                            g.DrawString(sb.ToString(), font, brush, rect);
+                            ReleaseDC(hWnd, hdc);
+                            Handled = true;
+                        }
+                    }
+
+                    return;
+                }
+
+                base.WndProc(ref m);
+            }
+
+            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+            private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+            private static extern int GetWindowTextLength(IntPtr hWnd);
+
+            [DllImport(App.User32Dll)]
+            private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+            [DllImport(App.User32Dll)]
+            private static extern BOOL GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+            [DllImport(App.User32Dll)]
+            private static extern IntPtr GetWindowDC(IntPtr hWnd);
         }
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
