@@ -11,6 +11,8 @@ namespace PlainCEETimer.Interop
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 
+    public delegate IntPtr HOOKPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
     [StructLayout(LayoutKind.Sequential)]
     public struct BOOL(bool value)
     {

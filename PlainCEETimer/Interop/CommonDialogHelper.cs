@@ -5,12 +5,11 @@ using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.UI;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper(ICommonDialog dialog, AppForm owner, string dialogTitle, CommonDialogKind kind)
+    public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC hook)
     {
         private const int SW_HIDE = 0x0000;
         private const int BM_TRANSPARENT = 0x0001;
@@ -60,7 +59,7 @@ namespace PlainCEETimer.Interop
                         SetWindowText(hWnd, dialogTitle);
                     }
 
-                    if (kind == CommonDialogKind.Font && !((FontDialogEx)dialog).ShowColor)
+                    if (dialog is FontDialogEx f && !f.ShowColor)
                     {
                         IntPtr hSelectorStatic;
 
@@ -100,7 +99,7 @@ namespace PlainCEETimer.Interop
                     }
                     break;
                 case WM_COMMAND:
-                    return dialog.HookProc(hWnd, WM_COMMAND, wParam, lParam);
+                    return hook(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
                     DeleteObject(hBrush);
                     break;

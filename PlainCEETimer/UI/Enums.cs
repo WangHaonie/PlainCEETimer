@@ -88,12 +88,6 @@ namespace PlainCEETimer.UI
         AllControl = BindButtons | KeyPreview
     }
 
-    public enum CommonDialogKind
-    {
-        Color,
-        Font
-    }
-
     public enum ConsoleParam
     {
         None,

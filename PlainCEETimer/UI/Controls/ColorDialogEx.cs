@@ -7,7 +7,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class ColorDialogEx : ColorDialog, ICommonDialog
+    public sealed class ColorDialogEx : ColorDialog
     {
         private static int[] CustomColorCollection = App.AppConfig.CustomColors;
         private int[] PreviousCustomColors;
@@ -24,7 +24,7 @@ namespace PlainCEETimer.UI.Controls
         {
             Color = Default;
             PreviousCustomColors = CustomColorCollection;
-            Helper = new CommonDialogHelper(this, owner, "选取颜色 - 高考倒计时", CommonDialogKind.Color);
+            Helper = new CommonDialogHelper(this, owner, "选取颜色 - 高考倒计时", base.HookProc);
             var Result = ShowDialog();
 
             if (Result == DialogResult.OK)
@@ -49,11 +49,6 @@ namespace PlainCEETimer.UI.Controls
                 ExistingConfig.CustomColors = CustomColorCollection;
                 App.AppConfig = ExistingConfig;
             }
-        }
-
-        IntPtr ICommonDialog.HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
-        {
-            return base.HookProc(hWnd, msg, wParam, lParam);
         }
     }
 }
