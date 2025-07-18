@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,7 +12,6 @@ namespace PlainCEETimer.Interop
 {
     public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC hook)
     {
-        private const int SW_HIDE = 0x0000;
         private const int BM_TRANSPARENT = 0x0001;
         private const int WM_DESTROY = 0x0002;
         private const int WM_SETFOCUS = 0x0007;
@@ -22,9 +22,15 @@ namespace PlainCEETimer.Interop
         private const int WM_CTLCOLORSTATIC = 0x0138;
         private const int WM_CTLCOLORLISTBOX = 0x0134;
         private const int WM_CTLCOLORBTN = 0x0135;
-        private const int grp2 = 0x0431;
-        private const int stc4 = 0x0443;
+        private const int chx1 = 0x0410;
+        private const int chx2 = 0x0411;
         private const int cmb4 = 0x0473;
+        private const int grp1 = 0x0430;
+        private const int grp2 = 0x0431;
+        private const int psh3 = 0x0402;
+        private const int psh15 = 0x040e;
+        private const int stc4 = 0x0443;
+        private const int stc6 = 0x0445;
 
         private Rectangle Bounds;
         private readonly IntPtr hBrush = CreateSolidBrush(CrBack);
@@ -32,6 +38,7 @@ namespace PlainCEETimer.Interop
         private static readonly COLORREF CrBack = ThemeManager.DarkBack;
         private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+        private static readonly List<int> FontDialogUnusedCtrls = [];
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
@@ -95,16 +102,39 @@ namespace PlainCEETimer.Interop
                     new FontDialogGrp2NativeWindow(hCtrl);
                 }
 
-                if (!f.ShowColor)
+                if (FontDialogUnusedCtrls.Count == 0)
                 {
-                    if ((hCtrl = GetDlgItem(hWnd, stc4)) != IntPtr.Zero)
+                    FontDialogUnusedCtrls.Add(stc6);
+
+                    if (!f.ShowColor)
                     {
-                        ShowWindow(hCtrl, SW_HIDE);
+                        FontDialogUnusedCtrls.Add(stc4);
+                        FontDialogUnusedCtrls.Add(cmb4);
                     }
 
-                    if ((hCtrl = GetDlgItem(hWnd, cmb4)) != IntPtr.Zero)
+                    if (!f.ShowApply)
                     {
-                        ShowWindow(hCtrl, SW_HIDE);
+                        FontDialogUnusedCtrls.Add(psh3);
+                    }
+
+                    if (!f.ShowHelp)
+                    {
+                        FontDialogUnusedCtrls.Add(psh15);
+                    }
+
+                    if (!f.ShowEffects)
+                    {
+                        FontDialogUnusedCtrls.Add(grp1);
+                        FontDialogUnusedCtrls.Add(chx1);
+                        FontDialogUnusedCtrls.Add(chx2);
+                    }
+                }
+
+                foreach (var ctrl in FontDialogUnusedCtrls)
+                {
+                    if ((hCtrl = GetDlgItem(hWnd, ctrl)) != IntPtr.Zero)
+                    {
+                        DestroyWindow(hCtrl);
                     }
                 }
             }
@@ -234,7 +264,7 @@ namespace PlainCEETimer.Interop
         private static extern BOOL GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport(App.User32Dll)]
-        private static extern BOOL ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern BOOL DestroyWindow(IntPtr hWnd);
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
         private static extern BOOL SetWindowText(IntPtr hWnd, string lpString);
