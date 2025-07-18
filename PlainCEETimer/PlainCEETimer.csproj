@@ -234,7 +234,7 @@
     <Compile Include="UI\ListViewItemSet.cs" />
     <Compile Include="UI\PlainButtonBase.cs" />
     <Compile Include="Modules\ProcessHelper.cs" />
-    <Compile Include="Modules\UACHelper.cs" />
+    <Compile Include="Modules\UacHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />
     <Compile Include="Modules\ResponseObject.cs" />
     <Compile Include="Modules\Updater.cs" />

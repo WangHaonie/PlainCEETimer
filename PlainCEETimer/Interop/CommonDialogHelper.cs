@@ -12,6 +12,68 @@ namespace PlainCEETimer.Interop
 {
     public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC hook)
     {
+        private sealed class GroupBoxNativeWindow : NativeWindow
+        {
+            private const int WM_PAINT = 0x000F;
+            private const int WM_GETFONT = 0x0031;
+
+            private bool Handled;
+
+            public GroupBoxNativeWindow(IntPtr hGroupBox)
+            {
+                AssignHandle(hGroupBox);
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WM_PAINT)
+                {
+                    base.WndProc(ref m);
+
+                    if (!Handled)
+                    {
+                        IntPtr hdc;
+                        IntPtr hWnd = Handle;
+
+                        if ((hdc = GetWindowDC(hWnd)) != IntPtr.Zero)
+                        {
+                            using var g = Graphics.FromHdc(hdc);
+                            using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
+                            using var brush = new SolidBrush(ThemeManager.DarkFore);
+
+                            GetClientRect(hWnd, out RECT rc);
+                            rc.Left += 6;
+                            Rectangle rect = rc;
+                            var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
+                            GetWindowText(hWnd, sb, sb.Capacity);
+                            g.DrawString(sb.ToString(), font, brush, rect);
+                            ReleaseDC(hWnd, hdc);
+                            Handled = true;
+                        }
+                    }
+
+                    return;
+                }
+
+                base.WndProc(ref m);
+            }
+
+            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+            private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+            private static extern int GetWindowTextLength(IntPtr hWnd);
+
+            [DllImport(App.User32Dll)]
+            private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+            [DllImport(App.User32Dll)]
+            private static extern BOOL GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+            [DllImport(App.User32Dll)]
+            private static extern IntPtr GetWindowDC(IntPtr hWnd);
+        }
+
         private const int BM_TRANSPARENT = 0x0001;
         private const int WM_DESTROY = 0x0002;
         private const int WM_SETFOCUS = 0x0007;
@@ -99,7 +161,7 @@ namespace PlainCEETimer.Interop
 
                 if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)) != IntPtr.Zero)
                 {
-                    new FontDialogGrp2NativeWindow(hCtrl);
+                    new GroupBoxNativeWindow(hCtrl);
                 }
 
                 if (FontDialogUnusedCtrls.Count == 0)
@@ -178,68 +240,6 @@ namespace PlainCEETimer.Interop
             }
 
             return NativeStyle.Explorer;
-        }
-
-        private sealed class FontDialogGrp2NativeWindow : NativeWindow
-        {
-            private const int WM_PAINT = 0x000F;
-            private const int WM_GETFONT = 0x0031;
-
-            private bool Handled;
-
-            public FontDialogGrp2NativeWindow(IntPtr hWndGrp2)
-            {
-                AssignHandle(hWndGrp2);
-            }
-
-            protected override void WndProc(ref Message m)
-            {
-                if (m.Msg == WM_PAINT)
-                {
-                    base.WndProc(ref m);
-
-                    if (!Handled)
-                    {
-                        IntPtr hdc;
-                        IntPtr hWnd = Handle;
-
-                        if ((hdc = GetWindowDC(hWnd)) != IntPtr.Zero)
-                        {
-                            using var g = Graphics.FromHdc(hdc);
-                            using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
-                            using var brush = new SolidBrush(ThemeManager.DarkFore);
-
-                            GetClientRect(hWnd, out RECT rc);
-                            rc.Left += 6;
-                            Rectangle rect = rc;
-                            var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
-                            GetWindowText(hWnd, sb, sb.Capacity);
-                            g.DrawString(sb.ToString(), font, brush, rect);
-                            ReleaseDC(hWnd, hdc);
-                            Handled = true;
-                        }
-                    }
-
-                    return;
-                }
-
-                base.WndProc(ref m);
-            }
-
-            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-            private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-            [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-            private static extern int GetWindowTextLength(IntPtr hWnd);
-
-            [DllImport(App.User32Dll)]
-            private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-            [DllImport(App.User32Dll)]
-            private static extern BOOL GetClientRect(IntPtr hWnd, out RECT lpRect);
-
-            [DllImport(App.User32Dll)]
-            private static extern IntPtr GetWindowDC(IntPtr hWnd);
         }
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]

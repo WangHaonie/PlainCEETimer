@@ -79,13 +79,13 @@ namespace PlainCEETimer.UI.Dialogs
         {
             TaskbarProgress.Initialize(this);
 
-            if (UACHelper.EnsureUAC(MessageX))
+            if (UacHelper.EnsureUAC(MessageX))
             {
                 TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
                 ConsoleTimer_Tick(null, null);
                 ConsoleTimer.Start();
 
-                if (UACHelper.IsAdmin)
+                if (UacHelper.IsAdmin)
                 {
                     new Action(() =>
                     {

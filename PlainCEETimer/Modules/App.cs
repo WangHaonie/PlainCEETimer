@@ -80,7 +80,7 @@ namespace PlainCEETimer.Modules
                 {
                     if (Args.Length == 0)
                     {
-                        new Action(UACHelper.CheckAdmin).Start();
+                        new Action(UacHelper.CheckAdmin).Start();
                         Application.Run(new MainForm());
                     }
                     else
@@ -102,20 +102,20 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/ac":
-                                UACHelper.CheckAdmin();
+                                UacHelper.CheckAdmin();
                                 MessageX.Info(
                                     $"""
                                     检测结果：
 
                                     {Win32User.LogonUser} 为当前登入的账户。
-                                    目前高考倒计时正在以 {Win32User.ProcessOwner} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UACHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
+                                    目前高考倒计时正在以 {Win32User.ProcessOwner} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UacHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
                                     """);
                                 break;
                             case "/fr":
                                 Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
                                 break;
                             case "/op":
-                                UACHelper.CheckAdmin();
+                                UacHelper.CheckAdmin();
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
                                 break;
                             case "/uninst":

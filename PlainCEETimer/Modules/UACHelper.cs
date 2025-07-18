@@ -15,17 +15,17 @@ namespace PlainCEETimer.Modules
 
     */
 
-    public static class UACHelper
+    public static class UacHelper
     {
         public static bool IsAdmin { get; private set; }
 
-        private static readonly UACNotifyLevel Level;
+        private static readonly UacNotifyLevel Level;
         private static readonly bool IsUACDisabled;
 
-        static UACHelper()
+        static UacHelper()
         {
-            Level = GetUACNotifyLevel();
-            IsUACDisabled = Level >= UACNotifyLevel.Never;
+            Level = GetNotifyLevel();
+            IsUACDisabled = Level >= UacNotifyLevel.Never;
         }
 
         public static bool EnsureUAC(MessageBoxHelper mx)
@@ -49,18 +49,18 @@ namespace PlainCEETimer.Modules
             IsAdmin = ProcessHelper.Run("net", "session", getExitCode: true) == 0;
         }
 
-        private static UACNotifyLevel GetUACNotifyLevel()
+        private static UacNotifyLevel GetNotifyLevel()
         {
             using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", rootKey: RegistryHive.LocalMachine);
 
             return (reg.Get("EnableLUA", 0), reg.Get("ConsentPromptBehaviorAdmin", 0), reg.Get("PromptOnSecureDesktop", 0)) switch
             {
-                (1, 2, 1) => UACNotifyLevel.AllDimming,
-                (1, 5, 1) => UACNotifyLevel.AppsOnlyDimming,
-                (1, 5, 0) => UACNotifyLevel.AppsOnlyNoDimming,
-                (1 or 0, 0, 0) => UACNotifyLevel.Never,
-                (0, _, _) => UACNotifyLevel.Disabled,
-                _ => UACNotifyLevel.Unknown
+                (1, 2, 1) => UacNotifyLevel.AllDimming,
+                (1, 5, 1) => UacNotifyLevel.AppsOnlyDimming,
+                (1, 5, 0) => UacNotifyLevel.AppsOnlyNoDimming,
+                (1 or 0, 0, 0) => UacNotifyLevel.Never,
+                (0, _, _) => UacNotifyLevel.Disabled,
+                _ => UacNotifyLevel.Unknown
             };
         }
     }

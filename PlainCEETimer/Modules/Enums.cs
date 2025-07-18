@@ -34,7 +34,7 @@
         Dark
     }
 
-    public enum UACNotifyLevel
+    public enum UacNotifyLevel
     {
         AllDimming,
         AppsOnlyDimming,
