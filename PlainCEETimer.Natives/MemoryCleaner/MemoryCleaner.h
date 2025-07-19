@@ -3,4 +3,5 @@
 #include <windows.h>
 #include <psapi.h>
 
-cexport(void) CleanMemory(SIZE_T threshold);
+cexport(void) ClearProcessMemory();
+cexport(SIZE_T) GetProcessMemoryEx();

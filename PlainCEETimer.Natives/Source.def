@@ -1,7 +1,7 @@
 LIBRARY PlainCEETimer.Natives
 EXPORTS
     SelectAllItems @1 NONAME
-    CleanMemory @2 NONAME
+    ClearProcessMemory @2 NONAME
     SetRoundCornerRegion @3 NONAME
     SetRoundCornerModern @4 NONAME
     InitializeTaskbarList @5 NONAME
@@ -20,3 +20,4 @@ EXPORTS
     EnableScheduleTask @18 NONAME
     DeleteScheduleTask @19 NONAME
     ReleaseTaskScheduler @20 NONAME
+    GetProcessMemoryEx @21 NONAME

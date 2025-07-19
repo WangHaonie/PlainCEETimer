@@ -10,22 +10,19 @@ https://stackoverflow.com/a/223300/21094697
 
 */
 
-static HANDLE hProc = nullptr;
-
-void CleanMemory(SIZE_T threshold)
+void ClearProcessMemory()
 {
-    PROCESS_MEMORY_COUNTERS_EX pmc = {};
+    EmptyWorkingSet(GetCurrentProcess());
+}
 
-    if (!hProc)
+SIZE_T GetProcessMemoryEx()
+{
+    PROCESS_MEMORY_COUNTERS_EX2 pmc2 = {};
+
+    if (GetProcessMemoryInfo(GetCurrentProcess(), (PPROCESS_MEMORY_COUNTERS)&pmc2, sizeof(pmc2)))
     {
-        hProc = GetCurrentProcess();
+        return pmc2.PrivateWorkingSetSize;
     }
 
-    if (GetProcessMemoryInfo(hProc, (PPROCESS_MEMORY_COUNTERS)&pmc, sizeof(pmc)))
-    {
-        if (pmc.PrivateUsage > threshold)
-        {
-            EmptyWorkingSet(hProc);
-        }
-    }
+    return 0;
 }
