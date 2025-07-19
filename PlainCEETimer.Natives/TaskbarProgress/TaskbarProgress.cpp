@@ -21,7 +21,7 @@ void InitializeTaskbarList(HWND hWnd, BOOL enable)
 {
     if (enable)
     {
-        if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&pList)))
+        if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (LPVOID*)&pList)))
         {
             targetHwnd = hWnd;
             pList->HrInit();

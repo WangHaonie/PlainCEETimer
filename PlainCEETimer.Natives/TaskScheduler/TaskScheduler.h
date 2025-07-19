@@ -6,7 +6,7 @@
 
 cexport(void) InitializeTaskScheduler();
 cexport(void) ImportTaskFromXml(LPCWSTR taskName, BSTR bstrXml);
-cexport(void) ExportTaskAsXml(LPCWSTR taskName, BSTR* pBstrXml);
+cexport(void) ExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml);
 cexport(void) EnableScheduleTask(LPCWSTR taskName);
 cexport(void) DeleteScheduleTask(LPCWSTR taskName);
 cexport(void) ReleaseTaskScheduler();

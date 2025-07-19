@@ -21,7 +21,7 @@ void InitializeTaskScheduler()
 {
     if (!initialized &&
         SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)) &&
-        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService)))
+        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (LPVOID*)&pService)))
     {
         pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
         pService->GetFolder(_bstr_t(L"\\"), &pFolder);
@@ -37,11 +37,11 @@ void ImportTaskFromXml(LPCWSTR taskName, BSTR bstrXml)
     }
 }
 
-void ExportTaskAsXml(LPCWSTR taskName, BSTR* pBstrXml)
+void ExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
 {
-    if (initialized && pBstrXml && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
+    if (initialized && pbstrXml && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
     {
-        pReg->get_Xml(pBstrXml);
+        pReg->get_Xml(pbstrXml);
     }
 }
 

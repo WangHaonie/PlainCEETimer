@@ -353,7 +353,7 @@ namespace PlainCEETimer.UI.Forms
 
             if (MemClean && !LoadedMemCleaner)
             {
-                MemCleaner = new(_ => MemoryCleaner.CleanMemory(9 * 1024 * 1024), null, 3000, MemCleanerInterval);
+                MemCleaner = new(_ => MemoryCleaner.CleanMemory(new(9UL * 1024 * 1024)), null, 3000, MemCleanerInterval);
                 LoadedMemCleaner = true;
             }
 

@@ -10,9 +10,9 @@ https://stackoverflow.com/a/223300/21094697
 
 */
 
-static HANDLE hProc;
+static HANDLE hProc = nullptr;
 
-void CleanMemory(int threshold)
+void CleanMemory(SIZE_T threshold)
 {
     PROCESS_MEMORY_COUNTERS_EX pmc = {};
 
@@ -21,7 +21,7 @@ void CleanMemory(int threshold)
         hProc = GetCurrentProcess();
     }
 
-    if (GetProcessMemoryInfo(hProc, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc)))
+    if (GetProcessMemoryInfo(hProc, (PPROCESS_MEMORY_COUNTERS)&pmc, sizeof(pmc)))
     {
         if (pmc.PrivateUsage > threshold)
         {
