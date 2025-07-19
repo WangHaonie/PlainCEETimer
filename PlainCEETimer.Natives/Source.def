@@ -1,4 +1,3 @@
-LIBRARY PlainCEETimer.Natives
 EXPORTS
     SelectAllItems @1 NONAME
     ClearProcessMemory @2 NONAME
