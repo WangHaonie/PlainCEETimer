@@ -36,17 +36,17 @@ namespace PlainCEETimer.UI.Dialogs
             ArrangeControlXT(ButtonGlobal, ButtonOperation, 3);
         }
 
+        protected override int GetGroupIndex(CustomRuleObject data)
+        {
+            return (int)data.Phase;
+        }
+
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
             var item = new ListViewItem(GetTickText(data.Tick)) { UseItemStyleForSubItems = false };
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
             return item;
-        }
-
-        protected override int GetGroupIndex(CustomRuleObject data)
-        {
-            return (int)data.Phase;
         }
 
         protected override IListViewSubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null) => new RuleDialog()

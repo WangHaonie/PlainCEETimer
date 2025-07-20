@@ -155,7 +155,7 @@ namespace PlainCEETimer.UI.Forms
             2500.AsDelay(() =>
             {
                 ProcessHelper.Run(DownloadPath, "/Skip");
-                App.Exit(ExitReason.AppUpdating);
+                App.Exit();
             }, this);
         }
 

@@ -10,9 +10,6 @@ namespace PlainCEETimer.Modules.Extensions
     {
         private static readonly char[] IllegalChars = [' ', '\n', '\r', '\t', '\v', '\f', '\b'];
 
-        public static bool Has(this string str1, string str2)
-            => str1.IndexOf(str2, StringComparison.OrdinalIgnoreCase) >= 0;
-
         public static int ToInt32(this Color color)
             => -color.ToArgb();
 

@@ -1,15 +1,5 @@
 ﻿namespace PlainCEETimer.Modules
 {
-    public enum ExitReason
-    {
-        Normal,
-        UserShutdown,
-        UserRestart,
-        AppUpdating,
-        InvalidExeName,
-        MultipleInstances
-    }
-
     public enum TaskbarProgressState
     {
         None,

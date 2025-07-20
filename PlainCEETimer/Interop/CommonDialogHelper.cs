@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
@@ -234,7 +233,7 @@ namespace PlainCEETimer.Interop
             GetClassName(hWnd, builder, 256);
             var className = builder.ToString();
 
-            if (className.Has("ComboBox") || className.Has("Edit"))
+            if (className == "ComboBox" || className == "Edit")
             {
                 return NativeStyle.CFD;
             }

@@ -17,11 +17,6 @@ namespace PlainCEETimer.UI.Dialogs
             ItemDescription = "考试信息";
         }
 
-        protected override ListViewItem GetListViewItem(ExamInfoObject data)
-        {
-            return new([data.Name, data.Start.Format(), data.End.Format()]);
-        }
-
         protected override int GetGroupIndex(ExamInfoObject data)
         {
             Now = DateTime.Now;
@@ -37,6 +32,11 @@ namespace PlainCEETimer.UI.Dialogs
             }
 
             return 1;
+        }
+
+        protected override ListViewItem GetListViewItem(ExamInfoObject data)
+        {
+            return new([data.Name, data.Start.Format(), data.End.Format()]);
         }
 
         protected override IListViewSubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)

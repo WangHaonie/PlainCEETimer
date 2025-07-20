@@ -57,18 +57,18 @@ namespace PlainCEETimer.UI.Controls
         }
 
         /// <summary>
-        /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 实例 
-        /// </summary>
-        /// <param name="data">给定的数据</param>
-        /// <returns><see cref="ListViewItem"/></returns>
-        protected abstract ListViewItem GetListViewItem(TData data);
-
-        /// <summary>
         /// 获取展示该 <see cref="TData"/> 的 <see cref="ListViewItem"/> 关联的分组的索引
         /// </summary>
         /// <param name="data">给定的数据</param>
         /// <returns>表示索引的 <see cref="int"/></returns>
         protected abstract int GetGroupIndex(TData data);
+
+        /// <summary>
+        /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 实例 
+        /// </summary>
+        /// <param name="data">给定的数据</param>
+        /// <returns><see cref="ListViewItem"/></returns>
+        protected abstract ListViewItem GetListViewItem(TData data);
 
         /// <summary>
         /// 获取用于向用户显示 添加、更改、重试 的 <see cref="IListViewSubDialog{T}"/> 对话框实例。

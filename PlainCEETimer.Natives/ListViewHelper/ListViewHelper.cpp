@@ -11,8 +11,6 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUti
 
 */
 
-static COLORREF LVHForeColor;
-
 static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR)
 {
     switch (uMsg)
@@ -28,7 +26,7 @@ static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam
                     case CDDS_PREPAINT:
                         return CDRF_NOTIFYITEMDRAW;
                     case CDDS_ITEMPREPAINT:
-                        SetTextColor(nmcd->hdc, LVHForeColor);
+                        SetTextColor(nmcd->hdc, RGB(255, 255, 255));
                         return CDRF_DODEFAULT;
                 }
             }
@@ -68,13 +66,12 @@ void SelectAllItems(HWND hLV, BOOL selected)
     ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0 , LVIS_SELECTED);
 }
 
-void FlushListViewTheme(HWND hLV, COLORREF crHeaderFore, BOOL enabled)
+void FlushListViewTheme(HWND hLV, BOOL enabled)
 {
     HWND hTT = ListView_GetToolTips(hLV);
 
     if (enabled)
     {
-        LVHForeColor = crHeaderFore;
         SetWindowSubclass(hLV, ListViewNativeWindow, reinterpret_cast<UINT_PTR>(hLV), 0);
         SetTheme(hLV, 2);
         SetTheme(ListView_GetHeader(hLV), 2);

@@ -119,7 +119,7 @@ namespace PlainCEETimer.UI.Dialogs
 
                         while ((line = reader.ReadLine()) != null)
                         {
-                            if (line.Equals("```3", StringComparison.Ordinal))
+                            if (line == "```3")
                             {
                                 Final();
                                 break;

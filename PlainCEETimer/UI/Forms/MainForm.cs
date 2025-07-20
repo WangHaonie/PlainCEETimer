@@ -246,7 +246,7 @@ namespace PlainCEETimer.UI.Forms
             if (!ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
             {
                 MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
-                App.Exit(ExitReason.UserRestart);
+                App.Exit(true);
             }
 
             CurrentTheme = newTheme;
@@ -334,7 +334,7 @@ namespace PlainCEETimer.UI.Forms
                     1 => CountdownState.HoursOnly,
                     2 => CountdownState.MinutesOnly,
                     3 => CountdownState.SecondsOnly,
-                    _ => IsCeiling ? CountdownState.DaysOnlyWithCeiling : CountdownState.DaysOnly
+                    _ => IsCeiling ? CountdownState.DaysOnlyCeiling : CountdownState.DaysOnly
                 };
             }
 
@@ -461,7 +461,7 @@ namespace PlainCEETimer.UI.Forms
                     {
                         if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == DialogResult.Yes)
                         {
-                            App.Exit(ExitReason.UserRestart);
+                            App.Exit(true);
                         }
                         else
                         {
@@ -480,8 +480,8 @@ namespace PlainCEETimer.UI.Forms
                             b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
                             b.Menu("关闭(&C)",
                             [
-                                b.Item("重启(&R)", (_, _) => App.Exit(ExitReason.UserRestart)),
-                                b.Item("退出(&Q)", (_, _) => App.Exit(ExitReason.UserShutdown))
+                                b.Item("重启(&R)", (_, _) => App.Exit(true)),
+                                b.Item("退出(&Q)", (_, _) => App.Exit())
                             ])
                         ]))
                     };
@@ -641,7 +641,7 @@ namespace PlainCEETimer.UI.Forms
         private string GetCountdown(TimeSpan span, string hint) => SelectedState switch
         {
             CountdownState.DaysOnly => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days),
-            CountdownState.DaysOnlyWithCeiling => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days + 1),
+            CountdownState.DaysOnlyCeiling => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days + 1),
             CountdownState.HoursOnly => string.Format("距离{0}{1}{2:0}小时", ExamName, hint, span.TotalHours),
             CountdownState.MinutesOnly => string.Format("距离{0}{1}{2:0}分钟", ExamName, hint, span.TotalMinutes),
             CountdownState.SecondsOnly => string.Format("距离{0}{1}{2:0}秒", ExamName, hint, span.TotalSeconds),

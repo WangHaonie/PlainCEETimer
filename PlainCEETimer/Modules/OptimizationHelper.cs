@@ -111,7 +111,7 @@ namespace PlainCEETimer.Modules
 
             if (!isAuto && result == DialogResult.OK)
             {
-                App.Exit(ExitReason.UserRestart);
+                App.Exit(true);
             }
         }
 

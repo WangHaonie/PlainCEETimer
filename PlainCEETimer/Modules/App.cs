@@ -127,43 +127,29 @@ namespace PlainCEETimer.Modules
                                 break;
                         }
                     }
-
-                    Exit(ExitReason.Normal);
                 }
                 else
                 {
                     MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
                     ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
-                    Exit(ExitReason.InvalidExeName);
                 }
             }
-            else
+            else if (Args.Length == 0)
             {
-                if (Args.Length == 0)
-                {
-                    StartPipeClient();
-                    Exit(ExitReason.MultipleInstances);
-                }
-                else
-                {
-                    if (Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3))))
-                    {
-                        Exit(ExitReason.Normal);
-                    }
-                    else
-                    {
-                        MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
-                    }
-                }
+                StartPipeClient();
             }
+            else if (!(Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
+            {
+                MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
+            }
+
+            Exit();
         }
 
-        public static void Exit(ExitReason reason)
+        public static void Exit(bool restart = false)
         {
             Startup.Cleanup();
-
             IsClosing = true;
-            var restart = reason == ExitReason.UserRestart;
 
             if (CanSaveConfig)
             {
@@ -178,7 +164,7 @@ namespace PlainCEETimer.Modules
             }
 
             ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
-            Environment.Exit((int)reason);
+            Environment.Exit(0);
         }
 
         private static void DeleteExtraFiles()
@@ -245,7 +231,7 @@ namespace PlainCEETimer.Modules
 
                 if (result != DialogResult.Ignore)
                 {
-                    Exit(result == DialogResult.Retry ? ExitReason.UserRestart : ExitReason.UserShutdown);
+                    Exit(result == DialogResult.Retry);
                 }
             }
         }
