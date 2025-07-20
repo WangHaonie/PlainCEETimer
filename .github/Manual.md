@@ -1,6 +1,6 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.4 | 修订日期 2025/7/15</h4>
+    <h4>适用于 v5.0.4 ~ v5.0.5 | 修订日期 2025/7/20</h4>
 </div>
 
 # 📖 目录
@@ -307,7 +307,7 @@
 | 颜色对话框 | ColorDialogEx | `90%`~`100%` | `*2` |
 | 下载器 | DownloaderForm | `85%` | ProgressBar, HyperLink (Disabled) |
 | 考试信息对话框 | ExamInfoDialog | `80%` | DateTimePicker |
-| 字体对话框 | FontDialogEx | `70%` | ComboBox, ComboLBox, GroupBox |
+| 字体对话框 | FontDialogEx | `75%` | ComboBox, ComboLBox |
 | 系统消息框 | MessageBox | `0%` |  |
 
 > [!NOTE]
