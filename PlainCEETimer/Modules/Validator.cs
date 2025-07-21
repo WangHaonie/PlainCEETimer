@@ -12,11 +12,11 @@ namespace PlainCEETimer.Modules
         public const int MinExamNameLength = 2;
         public const int MaxFontSize = 36;
         public const int MinFontSize = 10;
-        public const double MaxTick = 5662310399D; // 65535d 23h 59m 59s
-        public const double MinTick = 1D; // 1s
-        public const long MaxDate = 3155063615990000000L; // 9998-12-31 23:59:59
-        public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
         public const int MaxCustomTextLength = 800;
+        public const long MaxTick = 56623103990000000L; // 65535d 23h 59m 59s
+        public const long MinTick = TimeSpan.TicksPerSecond; // 1s
+        public const long MaxDate = 3155378975999999999L; // DateTime.Max
+        public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
 
@@ -75,7 +75,7 @@ namespace PlainCEETimer.Modules
 
         public static void EnsureCustomTextLength(string custom)
         {
-            if (custom.Length > MaxCustomTextLength)
+            if (custom.Length is 0 or > MaxCustomTextLength)
             {
                 throw new Exception();
             }

@@ -6,43 +6,37 @@ namespace PlainCEETimer.UI
     public class ListViewItemSet<TData>()
         where TData : IListViewData<TData>
     {
-        private struct Entry
+        private struct Element(TData data, ListViewItem item)
         {
-            public TData Data;
-            public ListViewItem Item;
+            public TData Data = data;
+            public ListViewItem Item = item;
 
-            public Entry(TData data)
+            public static Element FromData(TData data)
             {
-                Data = data;
-            }
-
-            public Entry(TData data, ListViewItem item)
-            {
-                Data = data;
-                Item = item;
+                return new(data, null);
             }
         }
 
-        private class ItemSetComparer : IEqualityComparer<Entry>
+        private class ItemSetComparer : IEqualityComparer<Element>
         {
             private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
 
-            bool IEqualityComparer<Entry>.Equals(Entry x, Entry y)
+            bool IEqualityComparer<Element>.Equals(Element x, Element y)
             {
                 return Comparer.Equals(x.Data, y.Data);
             }
 
-            int IEqualityComparer<Entry>.GetHashCode(Entry obj)
+            int IEqualityComparer<Element>.GetHashCode(Element obj)
             {
                 return Comparer.GetHashCode(obj.Data);
             }
         }
 
-        private readonly HashSet<Entry> ItemsSet = new(new ItemSetComparer());
+        private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
 
         public bool CanAdd(TData data)
         {
-            return !ItemsSet.Contains(new(data));
+            return !ItemsSet.Contains(Element.FromData(data));
         }
 
         public bool? CanEdit(TData newData, ListViewItem existing)
@@ -52,7 +46,7 @@ namespace PlainCEETimer.UI
                 return true;
             }
 
-            ItemsSet.TryGetValue(new(newData), out Entry actual);
+            ItemsSet.TryGetValue(Element.FromData(newData), out Element actual);
 
             if (existing == actual.Item)
             {
@@ -69,7 +63,7 @@ namespace PlainCEETimer.UI
 
         public void Remove(TData data)
         {
-            ItemsSet.Remove(new(data));
+            ItemsSet.Remove(Element.FromData(data));
         }
 
         public void Clear()

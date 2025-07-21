@@ -20,6 +20,12 @@ namespace PlainCEETimer.Modules.JsonConverters
             }
 
             var tick = TimeSpan.FromSeconds(double.Parse(json[nameof(existingValue.Tick)].ToString()));
+
+            if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
+            {
+                throw new Exception();
+            }
+
             var fore = Validator.GetColor(json[nameof(ColorSetObject.Fore)]);
             var back = Validator.GetColor(json[nameof(ColorSetObject.Back)]);
 

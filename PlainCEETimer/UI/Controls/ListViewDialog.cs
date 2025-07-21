@@ -268,7 +268,7 @@ namespace PlainCEETimer.UI.Controls
 
             if (flag != null)
             {
-                if (flag == true)
+                if ((bool)flag)
                 {
                     RemoveItem(item, oldData);
                     AddItemCore(newData);
