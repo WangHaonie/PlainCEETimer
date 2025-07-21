@@ -8,7 +8,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    [DebuggerDisplay("{Name,nq}: {Start.Format(),nq}~{End.Format(),nq}")]
+    [DebuggerDisplay("{Name,nq}: {Start,nq}~{End,nq}")]
     public class ExamInfoObject : IListViewData<ExamInfoObject>
     {
         public string Name
@@ -38,8 +38,7 @@ namespace PlainCEETimer.Modules.Configuration
                     Validator.EnsureExamDate(value);
                 }
 
-                field = value;
-                StartTotalSeconds = value.Ticks / TimeSpan.TicksPerSecond;
+                field = value.TruncateToSecond();
             }
         } = DateTime.Now;
 
@@ -54,13 +53,9 @@ namespace PlainCEETimer.Modules.Configuration
                     Validator.EnsureExamDate(value);
                 }
 
-                field = value;
-                EndTotalSeconds = value.Ticks / TimeSpan.TicksPerSecond;
+                field = value.TruncateToSecond();
             }
         } = DateTime.Now;
-
-        private long StartTotalSeconds;
-        private long EndTotalSeconds;
 
         public int CompareTo(ExamInfoObject other)
         {
@@ -69,14 +64,14 @@ namespace PlainCEETimer.Modules.Configuration
                 return 1;
             }
 
-            int order = StartTotalSeconds.CompareTo(other.StartTotalSeconds);
+            int order = Start.CompareTo(other.Start);
 
             if (order != 0)
             {
                 return order;
             }
 
-            if ((order = EndTotalSeconds.CompareTo(other.EndTotalSeconds)) != 0)
+            if ((order = End.CompareTo(other.End)) != 0)
             {
                 return order;
             }
@@ -96,8 +91,8 @@ namespace PlainCEETimer.Modules.Configuration
             */
 
             return other != null
-                && StartTotalSeconds == other.StartTotalSeconds
-                && EndTotalSeconds == other.EndTotalSeconds
+                && Start == other.Start
+                && End == other.End
                 && Name == other.Name;
         }
 
@@ -115,7 +110,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             unchecked
             {
-                return (17 * 23 + Name.GetHashCode()) * 23 + StartTotalSeconds.GetHashCode() + EndTotalSeconds.GetHashCode();
+                return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode();
             }
         }
 

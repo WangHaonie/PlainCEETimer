@@ -35,5 +35,16 @@ namespace PlainCEETimer.Modules.Extensions
         */
         public static string Truncate(this string s, int maxLength)
             => s?.Length > maxLength ? s.Substring(0, maxLength) + "..." : s;
+
+        /*
+        
+        将 DateTime 精确至秒而不是 Tick 参考：
+
+        c# - How do I truncate milliseconds off "Ticks" without converting to datetime? - Stack Overflow
+        https://stackoverflow.com/a/35018359
+
+        */
+        public static DateTime TruncateToSecond(this DateTime dt)
+            => new(dt.Ticks / Validator.MinTick * Validator.MinTick);
     }
 }

@@ -65,6 +65,12 @@ namespace PlainCEETimer.UI.Dialogs
                 DTPStart.Value = Data.Start;
                 DTPEnd.Value = Data.End;
             }
+            else
+            {
+                var date = DateTime.Now.TruncateToSecond();
+                DTPStart.Value = date;
+                DTPEnd.Value = date;
+            }
 
             TextBoxName_TextChanged(null, null);
         }
