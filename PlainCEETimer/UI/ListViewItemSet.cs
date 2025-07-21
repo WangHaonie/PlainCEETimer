@@ -71,5 +71,10 @@ namespace PlainCEETimer.UI
         {
             ItemsSet.Remove(new(data));
         }
+
+        public void Clear()
+        {
+            ItemsSet.Clear();
+        }
     }
 }

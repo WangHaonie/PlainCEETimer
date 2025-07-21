@@ -26,7 +26,7 @@ static LRESULT CALLBACK ListViewNativeWindow(HWND hWnd, UINT uMsg, WPARAM wParam
                     case CDDS_PREPAINT:
                         return CDRF_NOTIFYITEMDRAW;
                     case CDDS_ITEMPREPAINT:
-                        SetTextColor(nmcd->hdc, RGB(255, 255, 255));
+                        SetTextColor(nmcd->hdc, RGB(222, 222, 222));
                         return CDRF_DODEFAULT;
                 }
             }

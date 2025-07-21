@@ -212,9 +212,16 @@ namespace PlainCEETimer.UI.Controls
             {
                 ListViewMain.Suspend(() =>
                 {
-                    foreach (ListViewItem Item in ListViewMain.SelectedItems)
+                    if (ListViewMain.SelectedItemsCount == Items.Count)
                     {
-                        RemoveItem(Item, (TData)Item.Tag);
+                        RemoveAllItems();
+                    }
+                    else
+                    {
+                        foreach (ListViewItem Item in ListViewMain.SelectedItems)
+                        {
+                            RemoveItem(Item, (TData)Item.Tag);
+                        }
                     }
 
                     ListViewMain.AutoAdjustColumnWidth();
@@ -312,6 +319,12 @@ namespace PlainCEETimer.UI.Controls
         {
             Items.Remove(item);
             ItemsSet.Remove(data);
+        }
+
+        private void RemoveAllItems()
+        {
+            Items.Clear();
+            ItemsSet.Clear();
         }
     }
 }
