@@ -36,7 +36,7 @@ namespace PlainCEETimer.Interop
         [DllImport(App.NativesDll, EntryPoint = "#2")]
         private static extern void ClearMemory();
 
-        [DllImport(App.NativesDll, EntryPoint = "#21")]
+        [DllImport(App.NativesDll, EntryPoint = "#13")]
         private static extern UIntPtr GetMemoryEx();
     }
 }

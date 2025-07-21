@@ -11,7 +11,7 @@ EXPORTS
     FlushListViewTheme @10 NONAME
     FlushApp @11 NONAME
     SetTheme @12 NONAME
-    HasScrollBar @13 NONAME
+    GetProcessMemoryEx @13 NONAME
     EnumSystemDisplays @14 NONAME
     InitializeTaskScheduler @15 NONAME
     ImportTaskFromXml @16 NONAME
@@ -19,4 +19,3 @@ EXPORTS
     EnableScheduleTask @18 NONAME
     DeleteScheduleTask @19 NONAME
     ReleaseTaskScheduler @20 NONAME
-    GetProcessMemoryEx @21 NONAME

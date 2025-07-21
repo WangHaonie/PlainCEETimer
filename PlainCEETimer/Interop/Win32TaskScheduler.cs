@@ -5,13 +5,8 @@ namespace PlainCEETimer.Interop
 {
     public static class Win32TaskScheduler
     {
-        static Win32TaskScheduler()
-        {
-            Initialize();
-        }
-
         [DllImport(App.NativesDll, EntryPoint = "#15")]
-        private static extern void Initialize();
+        public static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#16", CharSet = CharSet.Unicode)]
         public static extern void Import(string taskName, [MarshalAs(UnmanagedType.BStr)] string bstrXml);

@@ -6,4 +6,3 @@
 
 cexport(void) FlushListViewTheme(HWND hLV, BOOL enabled);
 cexport(void) SelectAllItems(HWND hLV, BOOL selected);
-cexport(BOOL) HasScrollBar(HWND hWnd, BOOL isVertical);

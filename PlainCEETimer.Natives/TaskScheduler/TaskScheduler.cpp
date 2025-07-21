@@ -20,7 +20,6 @@ static BOOL ResetPtrRegisteredTask()
 void InitializeTaskScheduler()
 {
     if (!initialized &&
-        SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)) &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (LPVOID*)&pService)))
     {
         pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
@@ -76,7 +75,6 @@ void ReleaseTaskScheduler()
         if (pService) pService->Release();
         pService = nullptr;
         pFolder = nullptr;
-        CoUninitialize();
         initialized = FALSE;
     }
 }

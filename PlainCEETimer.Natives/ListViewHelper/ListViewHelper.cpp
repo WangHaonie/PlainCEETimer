@@ -84,8 +84,3 @@ void FlushListViewTheme(HWND hLV, BOOL enabled)
 
     SetWindowPos(hTT, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
-
-BOOL HasScrollBar(HWND hWnd, BOOL isVertical)
-{
-    return ((GetWindowLongPtr(hWnd, GWL_STYLE)) & (isVertical ? WS_VSCROLL : WS_HSCROLL)) != 0;
-}

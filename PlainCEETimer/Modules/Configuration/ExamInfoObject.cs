@@ -81,7 +81,7 @@ namespace PlainCEETimer.Modules.Configuration
                 return order;
             }
 
-            return string.Compare(Name, other.Name, StringComparison.Ordinal);
+            return string.CompareOrdinal(Name, other.Name);
         }
 
         public bool Equals(ExamInfoObject other)

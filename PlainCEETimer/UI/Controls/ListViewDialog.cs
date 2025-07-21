@@ -135,10 +135,10 @@ namespace PlainCEETimer.UI.Controls
                     }
 
                     Items[0].EnsureVisible();
+                    ListViewMain.AutoAdjustColumnWidth();
                 });
             }
 
-            ListViewMain.AutoAdjustColumnWidth();
             ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
         }
 
@@ -217,9 +217,9 @@ namespace PlainCEETimer.UI.Controls
                         RemoveItem(Item, (TData)Item.Tag);
                     }
 
+                    ListViewMain.AutoAdjustColumnWidth();
                 });
 
-                ListViewMain.AutoAdjustColumnWidth();
                 UserChanged();
             }
         }
@@ -286,9 +286,9 @@ namespace PlainCEETimer.UI.Controls
                 ListViewMain.SelectAll(BOOL.FALSE);
                 AddItem(data, true);
                 ListViewMain.Sort();
+                ListViewMain.AutoAdjustColumnWidth();
             });
 
-            ListViewMain.AutoAdjustColumnWidth();
             UserChanged();
         }
 

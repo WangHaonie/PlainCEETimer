@@ -14,8 +14,8 @@ namespace PlainCEETimer.Modules.Configuration
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
         public static Font CountdownDefaultFont { get; }
 
-        private static readonly string NotoSansSC = "Noto Sans SC";
-        private static readonly string MicrosoftYaHei = "Microsoft YaHei";
+        private const string NotoSansSC = "Noto Sans SC";
+        private const string MicrosoftYaHei = "Microsoft YaHei";
 
         static DefaultValues()
         {

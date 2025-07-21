@@ -19,14 +19,12 @@ static BOOL initialized = FALSE;
 
 void InitializeTaskbarList(HWND hWnd, BOOL enable)
 {
-    if (enable)
+    if (enable && !initialized && hWnd &&
+        SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (LPVOID*)&pList)))
     {
-        if (hWnd && SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (LPVOID*)&pList)))
-        {
-            targetHwnd = hWnd;
-            pList->HrInit();
-            initialized = TRUE;
-        }
+        targetHwnd = hWnd;
+        pList->HrInit();
+        initialized = TRUE;
     }
 }
 
@@ -53,7 +51,6 @@ void ReleaseTaskbarList()
         if (pList) pList->Release();
         pList = nullptr;
         targetHwnd = nullptr;
-        CoUninitialize();
         initialized = FALSE;
     }
 }
