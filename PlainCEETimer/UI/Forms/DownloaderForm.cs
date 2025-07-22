@@ -82,7 +82,7 @@ namespace PlainCEETimer.UI.Forms
             ArrangeControlYL(LabelSize, ProgressBarMain, -2);
             ArrangeControlYL(LabelSpeed, LabelSize);
             ArrangeControlXT(LinkBrowser, LabelDownloading, 1);
-            AlignControlYR(LinkBrowser, ProgressBarMain, 3);
+            AlignControlXR(LinkBrowser, ProgressBarMain, 3);
             ArrangeCommonButtonsR(ButtonRetry, ButtonCancel, ProgressBarMain, 1, 6);
         }
 

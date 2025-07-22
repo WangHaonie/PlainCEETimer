@@ -310,7 +310,7 @@ namespace PlainCEETimer.UI.Controls
             target.Left = reference.Left + ScaleToDpi(xOffset);
         }
 
-        protected void AlignControlYR(Control target, Control reference, int xOffset = 0)
+        protected void AlignControlXR(Control target, Control reference, int xOffset = 0)
         {
             target.Left = reference.Right - target.Width + ScaleToDpi(xOffset);
         }

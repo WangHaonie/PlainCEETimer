@@ -139,7 +139,7 @@ namespace PlainCEETimer.UI.Dialogs
             CompactControlX(TextBoxCustomText, LabelCustomText);
             ArrangeControlXRT(LinkResetText, TextBoxCustomText, LabelCustomText);
             ArrangeControlXT(BlockPreview, BlockBack);
-            AlignControlYR(BlockPreview, TextBoxCustomText);
+            AlignControlXR(BlockPreview, TextBoxCustomText);
             ArrangeControlXRT(LinkResetColor, BlockPreview, LabelBack);
             ArrangeCommonButtonsR(ButtonA, ButtonB, LinkResetText, -3, 6);
         }

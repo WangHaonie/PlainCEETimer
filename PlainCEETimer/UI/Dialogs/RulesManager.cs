@@ -11,29 +11,11 @@ namespace PlainCEETimer.UI.Dialogs
         public string[] CustomTextPreset { get; set; }
         public ColorSetObject[] ColorPresets { private get; set; }
 
-        private PlainButton ButtonGlobal;
-
         public RulesManager()
-            : base(480, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
+            : base(460, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
         {
             Text = "管理自定义规则 - 高考倒计时";
             ItemDescription = "规则";
-        }
-
-        protected override void OnInitializing()
-        {
-            base.OnInitializing();
-
-            this.AddControls(b =>
-            [
-                ButtonGlobal = b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 23, BoundsSpecified.Size))
-            ]);
-        }
-
-        protected override void StartLayout(bool isHighDpi)
-        {
-            base.StartLayout(isHighDpi);
-            ArrangeControlXT(ButtonGlobal, ButtonOperation, 3);
         }
 
         protected override int GetGroupIndex(CustomRuleObject data)
@@ -44,17 +26,25 @@ namespace PlainCEETimer.UI.Dialogs
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
-            var item = new ListViewItem(GetTickText(data.Tick)) { UseItemStyleForSubItems = false };
+            var item = new ListViewItem(data.Tick.ToString(@"d'天'h'时'm'分's'秒'")) { UseItemStyleForSubItems = false };
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
             return item;
         }
 
-        protected override IListViewSubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null) => new RuleDialog()
+        protected override IListViewSubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null)
         {
-            Data = data,
-            GlobalColors = ColorPresets,
-            GlobalTexts = CustomTextPreset
-        };
+            return new RuleDialog()
+            {
+                Data = data,
+                GlobalColors = ColorPresets,
+                GlobalTexts = CustomTextPreset
+            };
+        }
+
+        protected override PlainButton AddButton(ControlBuilder b)
+        {
+            return b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 23, BoundsSpecified.Size));
+        }
 
         private void ButtonGlobal_Click(object sender, EventArgs e)
         {
@@ -68,11 +58,6 @@ namespace PlainCEETimer.UI.Dialogs
                 CustomTextPreset = dialog.CustomTexts;
                 UserChanged();
             }
-        }
-
-        private string GetTickText(TimeSpan timeSpan)
-        {
-            return $"{timeSpan.Days}天{timeSpan.Hours}时{timeSpan.Minutes}分{timeSpan.Seconds}秒";
         }
     }
 }

@@ -381,8 +381,9 @@ namespace PlainCEETimer.UI.Forms
             if (Exams.Length != 0)
             {
                 ExamSwitchMain.Clear();
+                var examCount = Exams.Length;
 
-                for (int i = 0; i < Exams.Length; i++)
+                for (int i = 0; i < examCount; i++)
                 {
                     var item = new MenuItem()
                     {
@@ -512,9 +513,11 @@ namespace PlainCEETimer.UI.Forms
 
         private void UnselectAllExamItems()
         {
-            foreach (MenuItem item in ExamSwitchMain)
+            var length = ExamSwitchMain.Count;
+
+            for (int i = 0; i < length; i++)
             {
-                item.Checked = false;
+                ExamSwitchMain[i].Checked = false;
             }
         }
 

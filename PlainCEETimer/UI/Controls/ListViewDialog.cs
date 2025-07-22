@@ -21,13 +21,14 @@ namespace PlainCEETimer.UI.Controls
 
         public TData[] Data { get; set; }
         protected string ItemDescription { get; set; } = "项";
-        protected PlainButton ButtonOperation { get; private set; }
 
         private ContextMenu ContextMenuMain;
         private MenuItem ContextDuplicate;
         private MenuItem ContextEdit;
         private MenuItem ContextDelete;
         private MenuItem ContextSelectAll;
+        private PlainButton ButtonOperation;
+        private PlainButton NewButton;
         private readonly ListViewItemSet<TData> ItemsSet = new();
         private readonly ListView.ListViewItemCollection Items;
         private readonly ListViewGroupCollection Groups;
@@ -77,11 +78,17 @@ namespace PlainCEETimer.UI.Controls
         /// <returns><see cref="IListViewSubDialog{TData}"/></returns>
         protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
 
-        protected override void OnInitializing()
+        /// <summary>
+        /// 在 操作 按钮的右侧添加一个新按钮。
+        /// </summary>
+        protected virtual PlainButton AddButton(ControlBuilder b) => null;
+
+        protected sealed override void OnInitializing()
         {
             this.AddControls(b =>
             [
                 ListViewMain,
+
                 ButtonOperation = b.Button("操作(&O) ▼", ContextMenuMain = ContextMenuBuilder.Build(b =>
                 [
                     b.Item("添加(&A)", (_, _) =>
@@ -108,7 +115,9 @@ namespace PlainCEETimer.UI.Controls
                     ContextDuplicate.Enabled = enable;
                     ContextEdit.Enabled = enable;
                     ContextSelectAll.Enabled = Items.Count != 0;
-                }))
+                })),
+
+                NewButton = AddButton(b)
             ]);
 
             ListViewMain.ContextMenu = ContextMenuMain;
@@ -117,10 +126,15 @@ namespace PlainCEETimer.UI.Controls
             base.OnInitializing();
         }
 
-        protected override void StartLayout(bool isHighDpi)
+        protected sealed override void StartLayout(bool isHighDpi)
         {
             ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
             ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
+
+            if (NewButton != null)
+            {
+                ArrangeControlXT(NewButton, ButtonOperation, 3);
+            }
         }
 
         protected sealed override void OnLoad()
@@ -129,9 +143,12 @@ namespace PlainCEETimer.UI.Controls
             {
                 ListViewMain.Suspend(() =>
                 {
-                    foreach (var data in Data)
+                    var data = Data;
+                    var length = data.Length;
+
+                    for (int i = 0; i < length; i++)
                     {
-                        AddItem(data);
+                        AddItem(data[i]);
                     }
 
                     Items[0].EnsureVisible();
@@ -218,9 +235,14 @@ namespace PlainCEETimer.UI.Controls
                     }
                     else
                     {
-                        foreach (ListViewItem Item in ListViewMain.SelectedItems)
+                        var items = ListViewMain.SelectedItems;
+                        var length = items.Count;
+                        ListViewItem item;
+
+                        for (int i = 0; i < length; i++)
                         {
-                            RemoveItem(Item, (TData)Item.Tag);
+                            item = items[i];
+                            RemoveItem(item, (TData)item.Tag);
                         }
                     }
 
