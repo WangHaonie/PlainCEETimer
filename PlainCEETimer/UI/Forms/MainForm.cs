@@ -381,9 +381,8 @@ namespace PlainCEETimer.UI.Forms
             if (Exams.Length != 0)
             {
                 ExamSwitchMain.Clear();
-                var examCount = Exams.Length;
 
-                for (int i = 0; i < examCount; i++)
+                for (int i = 0; i < Exams.Length; i++)
                 {
                     var item = new MenuItem()
                     {

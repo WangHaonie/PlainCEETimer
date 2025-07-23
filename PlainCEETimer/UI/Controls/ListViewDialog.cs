@@ -144,9 +144,8 @@ namespace PlainCEETimer.UI.Controls
                 ListViewMain.Suspend(() =>
                 {
                     var data = Data;
-                    var length = data.Length;
 
-                    for (int i = 0; i < length; i++)
+                    for (int i = 0; i < data.Length; i++)
                     {
                         AddItem(data[i]);
                     }

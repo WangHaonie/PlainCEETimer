@@ -91,7 +91,7 @@ namespace PlainCEETimer.UI.Forms
             if (Win32User.NotElevated)
             {
                 LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
-                TaskbarProgress.Initialize(this);
+                TaskbarProgress.Initialize(Handle);
                 DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
                 UpdateDownloader.Downloading += UpdateDownloader_Downloading;
                 UpdateDownloader.Error += UpdateDownloader_Error;

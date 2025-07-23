@@ -14,9 +14,8 @@ namespace PlainCEETimer.Modules
         {
             var ns = top.GetDefaultNamespace();
             var current = top;
-            var length = nodes.Length;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < nodes.Length; i++)
             {
                 current = current.Element(ns.GetName(nodes[i]));
 

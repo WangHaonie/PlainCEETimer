@@ -99,7 +99,7 @@ namespace PlainCEETimer.Interop
         private static readonly COLORREF CrBack = ThemeManager.DarkBack;
         private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
-        private static readonly List<int> FontDialogUnusedCtrls = [];
+        private static readonly List<int> FontDialogUnusedCtrls = new(8);
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {

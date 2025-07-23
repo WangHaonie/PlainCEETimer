@@ -8,11 +8,11 @@ namespace PlainCEETimer.UI
         public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
         {
             var ctrls = builder?.Invoke(new());
-            var length = ctrls.Length;
+            var collection = ctrl.Controls;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < ctrls.Length; i++)
             {
-                ctrl.Controls.Add(ctrls[i]);
+                collection.Add(ctrls[i]);
             }
         }
 

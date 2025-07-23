@@ -17,9 +17,9 @@ static ITaskbarList3* pList = nullptr;
 static HWND targetHwnd = nullptr;
 static BOOL initialized = FALSE;
 
-void InitializeTaskbarList(HWND hWnd, BOOL enable)
+void InitializeTaskbarList(HWND hWnd)
 {
-    if (enable && !initialized && hWnd &&
+    if (!initialized && hWnd &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (LPVOID*)&pList)))
     {
         targetHwnd = hWnd;

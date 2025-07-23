@@ -77,7 +77,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnShown()
         {
-            TaskbarProgress.Initialize(this);
+            TaskbarProgress.Initialize(Handle);
 
             if (UacHelper.EnsureUAC(MessageX))
             {
