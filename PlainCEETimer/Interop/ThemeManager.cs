@@ -37,6 +37,8 @@ namespace PlainCEETimer.Interop
                     FlushApp();
                 }
             }
+
+            Application.EnableVisualStyles();
         }
 
         public static void FlushControl(IWin32Window control, NativeStyle type)

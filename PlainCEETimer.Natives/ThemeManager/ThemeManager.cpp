@@ -97,7 +97,7 @@ void FlushApp()
 {
     if (!SetPreferredAppMode)
     {
-        HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        HMODULE hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
         if (hUxtheme)
         {

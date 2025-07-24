@@ -29,7 +29,7 @@ namespace PlainCEETimer.UI.Controls
                 var client = ClientSize;
                 var text = Text;
                 var font = Font;
-                var textHeight = TextRenderer.MeasureText(g, text, font, client).Height / 2 + 2;
+                var textHeight = Font.Height / 2 + 2;
                 var rect = new Rectangle(0, textHeight, client.Width, client.Height - textHeight);
                 var textRect = Rectangle.Inflate(ClientRectangle, -4, 0);
 
