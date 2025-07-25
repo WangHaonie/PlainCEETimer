@@ -13,7 +13,6 @@ namespace PlainCEETimer.Interop
 
     public delegate IntPtr HOOKPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-    [StructLayout(LayoutKind.Sequential)]
     public struct BOOL(bool value)
     {
         public int Value = value ? 1 : 0;
@@ -26,13 +25,17 @@ namespace PlainCEETimer.Interop
             return b.Value != 0;
         }
 
+        public static implicit operator IntPtr(BOOL b)
+        {
+            return new(b.Value);
+        }
+
         public static implicit operator BOOL(bool b)
         {
             return new(b);
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
     public struct COLORREF(Color color)
     {
         public int Value = ColorTranslator.ToWin32(color);

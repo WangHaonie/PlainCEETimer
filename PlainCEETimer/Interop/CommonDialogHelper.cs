@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC hook)
+    public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC DefHookProc)
     {
         private sealed class GroupBoxNativeWindow : NativeWindow
         {
@@ -74,7 +74,6 @@ namespace PlainCEETimer.Interop
         }
 
         private const int WM_DESTROY = 0x0002;
-        private const int WM_SETFOCUS = 0x0007;
         private const int WM_INITDIALOG = 0x0110;
         private const int WM_COMMAND = 0x0111;
         private const int WM_CTLCOLORDLG = 0x0136;
@@ -93,21 +92,17 @@ namespace PlainCEETimer.Interop
         private const int stc4 = 0x0443;
         private const int stc6 = 0x0445;
 
-        private Rectangle Bounds;
+        private static int[] UnusedCtrls;
         private readonly IntPtr hBrush = CreateSolidBrush(CrBack);
         private readonly StringBuilder builder = new(256);
         private static readonly COLORREF CrBack = ThemeManager.DarkBack;
         private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
-        private static readonly List<int> FontDialogUnusedCtrls = new(8);
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
             switch (msg)
             {
-                case WM_SETFOCUS:
-                    SetFocus(wParam);
-                    break;
                 case WM_INITDIALOG:
                     owner.ReActivate();
 
@@ -125,10 +120,8 @@ namespace PlainCEETimer.Interop
                     }
 
                     GetWindowRect(hWnd, out RECT r);
-                    Bounds = r;
-                    KeepOnScreen(hWnd);
-                    PostMessage(hWnd, WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
-                    break;
+                    KeepOnScreen(hWnd, r);
+                    return BOOL.TRUE;
                 case WM_CTLCOLORDLG:
                 case WM_CTLCOLOREDIT:
                 case WM_CTLCOLORSTATIC:
@@ -143,7 +136,7 @@ namespace PlainCEETimer.Interop
                     }
                     break;
                 case WM_COMMAND:
-                    return hook(hWnd, WM_COMMAND, wParam, lParam);
+                    return DefHookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
                     DeleteObject(hBrush);
                     break;
@@ -163,35 +156,37 @@ namespace PlainCEETimer.Interop
                     new GroupBoxNativeWindow(hCtrl);
                 }
 
-                if (FontDialogUnusedCtrls.Count == 0)
+                if (UnusedCtrls == null)
                 {
-                    FontDialogUnusedCtrls.Add(stc6);
+                    UnusedCtrls = new int[8];
+                    UnusedCtrls[0] = stc6;
 
                     if (!f.ShowColor)
                     {
-                        FontDialogUnusedCtrls.Add(stc4);
-                        FontDialogUnusedCtrls.Add(cmb4);
+                        UnusedCtrls[1] = stc4;
+                        UnusedCtrls[2] = cmb4;
                     }
 
                     if (!f.ShowApply)
                     {
-                        FontDialogUnusedCtrls.Add(psh3);
+                        UnusedCtrls[3] = psh3;
                     }
 
                     if (!f.ShowHelp)
                     {
-                        FontDialogUnusedCtrls.Add(psh15);
+                        UnusedCtrls[4] = psh15;
                     }
 
                     if (!f.ShowEffects)
                     {
-                        FontDialogUnusedCtrls.Add(grp1);
-                        FontDialogUnusedCtrls.Add(chx1);
-                        FontDialogUnusedCtrls.Add(chx2);
+                        UnusedCtrls[5] = grp1;
+                        UnusedCtrls[6] = chx1;
+                        UnusedCtrls[7] = chx2;
                     }
                 }
 
-                foreach (var ctrl in FontDialogUnusedCtrls)
+
+                foreach (var ctrl in UnusedCtrls)
                 {
                     if ((hCtrl = GetDlgItem(hWnd, ctrl)) != IntPtr.Zero)
                     {
@@ -210,11 +205,11 @@ namespace PlainCEETimer.Interop
             }, IntPtr.Zero);
         }
 
-        private void KeepOnScreen(IntPtr hWnd)
+        private void KeepOnScreen(IntPtr hWnd, Rectangle bounds)
         {
             var validArea = Screen.GetWorkingArea(owner);
-            var w = Bounds.Width;
-            var h = Bounds.Height;
+            var w = bounds.Width;
+            var h = bounds.Height;
             var x = owner.Left + (owner.Width / 2) - (w / 2);
             var y = owner.Top + (owner.Height / 2) - (h / 2);
             var l = x;
@@ -279,11 +274,5 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.User32Dll)]
         private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
-
-        [DllImport(App.User32Dll)]
-        private static extern IntPtr SetFocus(IntPtr hWnd);
-
-        [DllImport(App.User32Dll)]
-        private static extern IntPtr PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }

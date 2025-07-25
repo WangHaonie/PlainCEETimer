@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
@@ -7,38 +6,6 @@ namespace PlainCEETimer.Interop
 {
     public static class DisplayHelper
     {
-        private class Monitor
-        {
-            private readonly int Index;
-            private readonly string Name;
-            private readonly string InternalName;
-            private readonly string Path;
-            private readonly Rectangle Bounds;
-
-            public Monitor(int index, string name, string path, string did, RECT rect)
-            {
-                Index = index;
-                Name = name;
-                Path = path;
-                Bounds = rect;
-
-                var dids = did.Split('\\');
-                var iname = did;
-
-                if (dids.Length > 2)
-                {
-                    iname = dids[1];
-                }
-
-                InternalName = iname;
-            }
-
-            public override string ToString()
-            {
-                return string.Format("{0}. {1} {2} ({3}) ({4}x{5})", Index + 1, Name, InternalName, Path, Bounds.Width, Bounds.Height);
-            }
-        }
-
         public static string[] GetSystemDisplays()
         {
             var count = Screen.AllScreens.Length;
@@ -49,7 +16,7 @@ namespace PlainCEETimer.Interop
             {
                 if (i < count)
                 {
-                    tmp[i] = new Monitor(i, d, p, id, r).ToString();
+                    tmp[i] = string.Format("{0}. {1} {2} ({3}) ({4}x{5})", i + 1, d, GetInternalName(id), p, r.Right - r.Left, r.Bottom - r.Top);
                     i++;
 
                     return BOOL.TRUE;
@@ -59,6 +26,19 @@ namespace PlainCEETimer.Interop
             });
 
             return tmp;
+        }
+
+        private static string GetInternalName(string did)
+        {
+            var dids = did.Split('\\');
+            var iname = did;
+
+            if (dids.Length > 2)
+            {
+                iname = dids[1];
+            }
+
+            return iname;
         }
 
         [DllImport(App.NativesDll, EntryPoint = "#14", CharSet = CharSet.Unicode)]
