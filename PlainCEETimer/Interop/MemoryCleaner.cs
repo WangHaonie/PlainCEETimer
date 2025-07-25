@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
@@ -15,16 +15,12 @@ namespace PlainCEETimer.Interop
 
         public static void Clean()
         {
-            var mem = GetMemoryEx().ToUInt64();
+            var mem = GetMemoryEx();
 
             if (mem == 0)
             {
                 WmiSearcher ??= new($"SELECT WorkingSetPrivate FROM Win32_PerfFormattedData_PerfProc_Process WHERE IDProcess = {PID}");
-
-                foreach (var mo in WmiSearcher.Get())
-                {
-                    mem = (ulong)mo["WorkingSetPrivate"];
-                }
+                mem = (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().FirstOrDefault().GetPropertyValue("WorkingSetPrivate");
             }
 
             if (mem > Threshold)
@@ -37,6 +33,6 @@ namespace PlainCEETimer.Interop
         private static extern void ClearMemory();
 
         [DllImport(App.NativesDll, EntryPoint = "#13")]
-        private static extern UIntPtr GetMemoryEx();
+        private static extern ulong GetMemoryEx();
     }
 }
