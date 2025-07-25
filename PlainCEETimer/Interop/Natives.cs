@@ -8,14 +8,14 @@ namespace PlainCEETimer.Interop
     public static class Natives
     {
         [DllImport(App.User32Dll)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(HWND hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 
     public delegate IntPtr HOOKPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-    public struct BOOL(bool value)
+    public readonly struct BOOL(bool value)
     {
-        public int Value = value ? 1 : 0;
+        private readonly int Value = value ? 1 : 0;
 
         public static readonly BOOL TRUE = new(true);
         public static readonly BOOL FALSE = new(false);
@@ -36,13 +36,48 @@ namespace PlainCEETimer.Interop
         }
     }
 
-    public struct COLORREF(Color color)
+    public readonly struct HWND(IntPtr value)
     {
-        public int Value = ColorTranslator.ToWin32(color);
+        private readonly IntPtr Value = value;
+
+        public static implicit operator HWND(IntPtr ptr)
+        {
+            return new(ptr);
+        }
+
+        public static implicit operator bool(HWND hWnd)
+        {
+            return hWnd.Value != IntPtr.Zero;
+        }
+
+        public IntPtr ToIntPtr()
+        {
+            return Value;
+        }
+    }
+
+    public readonly struct COLORREF(Color color)
+    {
+        private readonly int Value = ColorTranslator.ToWin32(color);
 
         public static implicit operator COLORREF(Color c)
         {
             return new(c);
+        }
+    }
+
+    public readonly struct HDC(IntPtr value)
+    {
+        private readonly IntPtr Value = value;
+
+        public static implicit operator bool(HDC HDC)
+        {
+            return HDC.Value != IntPtr.Zero;
+        }
+
+        public IntPtr ToIntPtr()
+        {
+            return Value;
         }
     }
 

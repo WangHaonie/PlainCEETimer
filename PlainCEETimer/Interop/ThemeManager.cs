@@ -43,17 +43,12 @@ namespace PlainCEETimer.Interop
 
         public static void FlushControl(IWin32Window control, NativeStyle type)
         {
-            FlushControl(control.Handle, type);
+            SetTheme(control.Handle, type);
         }
 
-        public static void FlushWindow(IntPtr hWnd)
+        public static void FlushWindow(HWND hWnd)
         {
             FlushWindow(hWnd, IsNewDwma);
-        }
-
-        public static void FlushControl(IntPtr hWnd, NativeStyle type)
-        {
-            SetTheme(hWnd, type);
         }
 
         public static bool IsThemeChanged(int oldValue, int newValue)
@@ -87,12 +82,12 @@ namespace PlainCEETimer.Interop
         */
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
-        private static extern void FlushWindow(IntPtr hWnd, BOOL newStyle);
+        private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
         private static extern void FlushApp();
 
         [DllImport(App.NativesDll, EntryPoint = "#12")]
-        private static extern void SetTheme(IntPtr hWnd, NativeStyle type);
+        public static extern void SetTheme(HWND hWnd, NativeStyle type);
     }
 }

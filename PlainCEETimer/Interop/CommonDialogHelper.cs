@@ -31,12 +31,12 @@ namespace PlainCEETimer.Interop
 
                     if (!Handled)
                     {
-                        IntPtr hdc;
-                        IntPtr hWnd = Handle;
+                        HDC hdc;
+                        HWND hWnd = Handle;
 
-                        if ((hdc = GetWindowDC(hWnd)) != IntPtr.Zero)
+                        if (hdc = GetWindowDC(hWnd))
                         {
-                            using var g = Graphics.FromHdc(hdc);
+                            using var g = Graphics.FromHdc(hdc.ToIntPtr());
                             using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
                             using var brush = new SolidBrush(ThemeManager.DarkFore);
 
@@ -58,19 +58,19 @@ namespace PlainCEETimer.Interop
             }
 
             [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-            private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+            private static extern int GetWindowText(HWND hWnd, StringBuilder lpString, int nMaxCount);
 
             [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-            private static extern int GetWindowTextLength(IntPtr hWnd);
+            private static extern int GetWindowTextLength(HWND hWnd);
 
             [DllImport(App.User32Dll)]
-            private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+            private static extern int ReleaseDC(HWND hWnd, HDC hDC);
 
             [DllImport(App.User32Dll)]
-            private static extern BOOL GetClientRect(IntPtr hWnd, out RECT lpRect);
+            private static extern BOOL GetClientRect(HWND hWnd, out RECT lpRect);
 
             [DllImport(App.User32Dll)]
-            private static extern IntPtr GetWindowDC(IntPtr hWnd);
+            private static extern HDC GetWindowDC(HWND hWnd);
         }
 
         private const int WM_DESTROY = 0x0002;
@@ -93,10 +93,10 @@ namespace PlainCEETimer.Interop
         private const int stc6 = 0x0445;
 
         private static int[] UnusedCtrls;
-        private readonly IntPtr hBrush = CreateSolidBrush(CrBack);
+        private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
         private readonly StringBuilder builder = new(256);
-        private static readonly COLORREF CrBack = ThemeManager.DarkBack;
-        private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
+        private static readonly COLORREF BackCrColor = new(ThemeManager.DarkBack);
+        private static readonly COLORREF ForeCrColor = new(ThemeManager.DarkFore);
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
@@ -104,37 +104,13 @@ namespace PlainCEETimer.Interop
             switch (msg)
             {
                 case WM_INITDIALOG:
-                    owner.ReActivate();
-
-                    if (dialogTitle != null)
-                    {
-                        SetWindowText(hWnd, dialogTitle);
-                    }
-
-                    HandleFontDialog(hWnd);
-
-                    if (UseDark)
-                    {
-                        ThemeManager.FlushWindow(hWnd);
-                        FlushDark(hWnd);
-                    }
-
-                    GetWindowRect(hWnd, out RECT r);
-                    KeepOnScreen(hWnd, r);
-                    return BOOL.TRUE;
+                    return WmInitDialog(hWnd);
                 case WM_CTLCOLORDLG:
                 case WM_CTLCOLOREDIT:
                 case WM_CTLCOLORSTATIC:
                 case WM_CTLCOLORLISTBOX:
                 case WM_CTLCOLORBTN:
-                    if (UseDark)
-                    {
-                        SetBkMode(wParam, TRANSPARENT);
-                        SetTextColor(wParam, ForeCrColor);
-                        SetBkColor(wParam, CrBack);
-                        return hBrush;
-                    }
-                    break;
+                    return WmCtlColor(new(wParam));
                 case WM_COMMAND:
                     return DefHookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
@@ -145,15 +121,22 @@ namespace PlainCEETimer.Interop
             return IntPtr.Zero;
         }
 
-        private void HandleFontDialog(IntPtr hWnd)
+        private BOOL WmInitDialog(HWND hWnd)
         {
+            owner.ReActivate();
+
+            if (dialogTitle != null)
+            {
+                SetWindowText(hWnd, dialogTitle);
+            }
+
             if (dialog is FontDialogEx f)
             {
-                IntPtr hCtrl;
+                HWND hCtrl;
 
-                if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)) != IntPtr.Zero)
+                if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)))
                 {
-                    new GroupBoxNativeWindow(hCtrl);
+                    new GroupBoxNativeWindow(hCtrl.ToIntPtr());
                 }
 
                 if (UnusedCtrls == null)
@@ -188,30 +171,34 @@ namespace PlainCEETimer.Interop
 
                 foreach (var ctrl in UnusedCtrls)
                 {
-                    if ((hCtrl = GetDlgItem(hWnd, ctrl)) != IntPtr.Zero)
+                    if (hCtrl = GetDlgItem(hWnd, ctrl))
                     {
                         DestroyWindow(hCtrl);
                     }
                 }
             }
-        }
 
-        private void FlushDark(IntPtr hWnd)
-        {
-            EnumChildWindows(hWnd, (child, _) =>
+            if (UseDark)
             {
-                ThemeManager.FlushControl(child, GetNativeStyle(child));
-                return BOOL.TRUE;
-            }, IntPtr.Zero);
-        }
+                ThemeManager.FlushWindow(hWnd);
 
-        private void KeepOnScreen(IntPtr hWnd, Rectangle bounds)
-        {
+                EnumChildWindows(hWnd, (child, _) =>
+                {
+                    ThemeManager.SetTheme(child, GetNativeStyle(child));
+                    return BOOL.TRUE;
+                }, IntPtr.Zero);
+            }
+
+            GetWindowRect(hWnd, out RECT rect);
+
+            Rectangle bounds = rect;
             var validArea = Screen.GetWorkingArea(owner);
+
             var w = bounds.Width;
             var h = bounds.Height;
             var x = owner.Left + (owner.Width / 2) - (w / 2);
             var y = owner.Top + (owner.Height / 2) - (h / 2);
+
             var l = x;
             var t = y;
             var r = x + w;
@@ -220,7 +207,22 @@ namespace PlainCEETimer.Interop
             if (t < validArea.Y) y = validArea.Y;
             if (r > validArea.Right) x = validArea.Right - w;
             if (b > validArea.Bottom) y = validArea.Bottom - h;
+
             MoveWindow(hWnd, x, y, w, h, BOOL.FALSE);
+            return BOOL.TRUE;
+        }
+
+        private IntPtr WmCtlColor(HDC hDC)
+        {
+            if (UseDark)
+            {
+                SetBkMode(hDC, TRANSPARENT);
+                SetTextColor(hDC, ForeCrColor);
+                SetBkColor(hDC, BackCrColor);
+                return hBrush;
+            }
+
+            return IntPtr.Zero;
         }
 
         private NativeStyle GetNativeStyle(IntPtr hWnd)
@@ -240,39 +242,39 @@ namespace PlainCEETimer.Interop
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport(App.Gdi32Dll)]
-        private static extern int SetBkMode(IntPtr hdc, int mode);
+        private static extern int SetBkMode(HDC hdc, int mode);
 
         [DllImport(App.User32Dll)]
-        private static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
+        private static extern void MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
 
         [DllImport(App.Gdi32Dll)]
         private static extern BOOL DeleteObject(IntPtr hObject);
 
         [DllImport(App.User32Dll)]
-        private static extern BOOL EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
+        private static extern BOOL EnumChildWindows(HWND hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate BOOL EnumChildProc(IntPtr hWnd, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
-        private static extern BOOL GetWindowRect(IntPtr hWnd, out RECT lpRect);
+        private static extern BOOL GetWindowRect(HWND hWnd, out RECT lpRect);
 
         [DllImport(App.User32Dll)]
-        private static extern BOOL DestroyWindow(IntPtr hWnd);
+        private static extern BOOL DestroyWindow(HWND hWnd);
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern BOOL SetWindowText(IntPtr hWnd, string lpString);
+        private static extern BOOL SetWindowText(HWND hWnd, string lpString);
 
         [DllImport(App.Gdi32Dll)]
-        private static extern COLORREF SetTextColor(IntPtr hdc, COLORREF color);
+        private static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
 
         [DllImport(App.Gdi32Dll)]
-        private static extern COLORREF SetBkColor(IntPtr hdc, COLORREF color);
+        private static extern COLORREF SetBkColor(HDC hdc, COLORREF color);
 
         [DllImport(App.Gdi32Dll)]
         private static extern IntPtr CreateSolidBrush(COLORREF color);
 
         [DllImport(App.User32Dll)]
-        private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        private static extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
     }
 }
