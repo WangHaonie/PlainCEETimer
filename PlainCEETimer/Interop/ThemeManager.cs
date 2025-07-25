@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
@@ -81,13 +80,13 @@ namespace PlainCEETimer.Interop
 
         */
 
+        [DllImport(App.NativesDll, EntryPoint = "#12")]
+        public static extern void SetTheme(HWND hWnd, NativeStyle type);
+
         [DllImport(App.NativesDll, EntryPoint = "#9")]
         private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
         private static extern void FlushApp();
-
-        [DllImport(App.NativesDll, EntryPoint = "#12")]
-        public static extern void SetTheme(HWND hWnd, NativeStyle type);
     }
 }

@@ -49,7 +49,6 @@ namespace PlainCEETimer.UI.Controls
             AutoScaleMode = AutoScaleMode.Dpi;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new(16, 16);
             Font = AppFont;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -66,6 +65,7 @@ namespace PlainCEETimer.UI.Controls
                 ShowInTaskbar = false;
             }
 
+            ClientSize = new();
             OnInitializing();
             ResumeLayout(true);
         }
