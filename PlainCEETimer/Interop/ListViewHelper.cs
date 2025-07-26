@@ -9,7 +9,7 @@ namespace PlainCEETimer.Interop
         [DllImport(App.NativesDll, EntryPoint = "#1")]
         public static extern void SelectAllItems(IntPtr hLV, BOOL selected);
 
-        [DllImport(App.NativesDll, EntryPoint = "#10")]
-        public static extern void FlushTheme(IntPtr hLV, BOOL enabled);
+        [DllImport(App.User32Dll)]
+        public static extern BOOL SetWindowPos(HWND hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
     }
 }

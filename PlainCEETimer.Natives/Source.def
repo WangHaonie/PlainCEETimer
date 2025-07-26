@@ -8,14 +8,12 @@ EXPORTS
     SetTaskbarProgressValue @7 NONAME
     ReleaseTaskbarList @8 NONAME
     FlushWindow @9 NONAME
-    FlushListViewTheme @10 NONAME
+    ReleaseTaskScheduler @10 NONAME
     FlushApp @11 NONAME
-    SetTheme @12 NONAME
+    DeleteScheduleTask @12 NONAME
     GetProcessMemoryEx @13 NONAME
     EnumSystemDisplays @14 NONAME
     InitializeTaskScheduler @15 NONAME
     ImportTaskFromXml @16 NONAME
     ExportTaskAsXml @17 NONAME
     EnableScheduleTask @18 NONAME
-    DeleteScheduleTask @19 NONAME
-    ReleaseTaskScheduler @20 NONAME

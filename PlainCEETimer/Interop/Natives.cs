@@ -9,6 +9,9 @@ namespace PlainCEETimer.Interop
     {
         [DllImport(App.User32Dll)]
         public static extern IntPtr SendMessage(HWND hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport(App.Gdi32Dll)]
+        public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
     }
 
     public delegate IntPtr HOOKPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
@@ -93,5 +96,25 @@ namespace PlainCEETimer.Interop
         {
             return Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom);
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct NMHDR
+    {
+        public IntPtr hWndFrom;
+        public IntPtr idFrom;
+        public int code;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct NMCUSTOMDRAW
+    {
+        public NMHDR hdr;
+        public int dwDrawStage;
+        public HDC hdc;
+        public RECT rc;
+        public IntPtr dwItemSpec;
+        public uint uItemState;
+        public IntPtr lItemlParam;
     }
 }

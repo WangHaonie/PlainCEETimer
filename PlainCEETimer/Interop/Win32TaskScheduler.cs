@@ -17,10 +17,10 @@ namespace PlainCEETimer.Interop
         [DllImport(App.NativesDll, EntryPoint = "#18", CharSet = CharSet.Unicode)]
         public static extern void Enable(string taskName);
 
-        [DllImport(App.NativesDll, EntryPoint = "#19", CharSet = CharSet.Unicode)]
+        [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
         public static extern void Delete(string taskName);
 
-        [DllImport(App.NativesDll, EntryPoint = "#20")]
+        [DllImport(App.NativesDll, EntryPoint = "#10")]
         public static extern void Release();
     }
 }

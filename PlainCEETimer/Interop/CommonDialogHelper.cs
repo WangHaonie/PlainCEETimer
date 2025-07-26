@@ -183,7 +183,7 @@ namespace PlainCEETimer.Interop
 
                 EnumChildWindows(hWnd, (child, _) =>
                 {
-                    ThemeManager.SetTheme(child, GetNativeStyle(child));
+                    ThemeManager.FlushControl(child, GetNativeStyle(child));
                     return BOOL.TRUE;
                 }, IntPtr.Zero);
             }
@@ -191,7 +191,7 @@ namespace PlainCEETimer.Interop
             GetWindowRect(hWnd, out RECT rect);
 
             Rectangle bounds = rect;
-            var validArea = Screen.GetWorkingArea(owner);
+            var screen = Screen.GetWorkingArea(owner);
 
             var w = bounds.Width;
             var h = bounds.Height;
@@ -202,10 +202,10 @@ namespace PlainCEETimer.Interop
             var t = y;
             var r = x + w;
             var b = y + h;
-            if (l < validArea.X) x = validArea.X;
-            if (t < validArea.Y) y = validArea.Y;
-            if (r > validArea.Right) x = validArea.Right - w;
-            if (b > validArea.Bottom) y = validArea.Bottom - h;
+            if (l < screen.X) x = screen.X;
+            if (t < screen.Y) y = screen.Y;
+            if (r > screen.Right) x = screen.Right - w;
+            if (b > screen.Bottom) y = screen.Bottom - h;
 
             MoveWindow(hWnd, x, y, w, h, BOOL.FALSE);
             return BOOL.TRUE;
@@ -216,8 +216,8 @@ namespace PlainCEETimer.Interop
             if (UseDark)
             {
                 SetBkMode(hDC, TRANSPARENT);
-                SetTextColor(hDC, ForeCrColor);
                 SetBkColor(hDC, BackCrColor);
+                Natives.SetTextColor(hDC, ForeCrColor);
                 return hBrush;
             }
 
@@ -263,9 +263,6 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
         private static extern BOOL SetWindowText(HWND hWnd, string lpString);
-
-        [DllImport(App.Gdi32Dll)]
-        private static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
 
         [DllImport(App.Gdi32Dll)]
         private static extern COLORREF SetBkColor(HDC hdc, COLORREF color);

@@ -12,6 +12,7 @@ namespace PlainCEETimer.Interop
         public static bool ShouldUseDarkMode { get; }
         public static Color DarkFore { get; } = Color.White;
         public static Color DarkForeLink { get; } = Color.FromArgb(153, 235, 255);
+        public static Color DarkForeHeader { get; } = Color.FromArgb(222, 222, 222);
         public static Color DarkBack { get; } = Color.FromArgb(32, 32, 32);
         public static Color DarkBorder { get; } = Color.FromArgb(60, 60, 60);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
@@ -40,19 +41,35 @@ namespace PlainCEETimer.Interop
             Application.EnableVisualStyles();
         }
 
-        public static void FlushControl(IWin32Window control, NativeStyle type)
-        {
-            SetTheme(control.Handle, type);
-        }
-
         public static void FlushWindow(HWND hWnd)
         {
             FlushWindow(hWnd, IsNewDwma);
         }
 
+        public static void FlushControl(IWin32Window control, NativeStyle type)
+        {
+            FlushControl(control.Handle, type);
+        }
+
+        public static void FlushControl(HWND hWnd, NativeStyle type)
+        {
+            SetWindowTheme(hWnd, GetPszSubAppName(type), null);
+        }
+
         public static bool IsThemeChanged(int oldValue, int newValue)
         {
             return GetTheme(oldValue) != GetTheme(newValue);
+        }
+
+        private static string GetPszSubAppName(NativeStyle style)
+        {
+            return style switch
+            {
+                NativeStyle.Explorer => "DarkMode_Explorer",
+                NativeStyle.CFD => "DarkMode_CFD",
+                NativeStyle.ItemsView => "DarkMode_ItemsView",
+                _ => "Explorer",
+            };
         }
 
         private static SystemTheme GetTheme(int ordinal)
@@ -80,8 +97,8 @@ namespace PlainCEETimer.Interop
 
         */
 
-        [DllImport(App.NativesDll, EntryPoint = "#12")]
-        public static extern void SetTheme(HWND hWnd, NativeStyle type);
+        [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(HWND hWnd, string pszSubAppName, string pszSubIdList);
 
         [DllImport(App.NativesDll, EntryPoint = "#9")]
         private static extern void FlushWindow(HWND hWnd, BOOL newStyle);

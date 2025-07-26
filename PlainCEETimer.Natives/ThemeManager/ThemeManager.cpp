@@ -16,21 +16,6 @@ using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 fnSetPreferredAppMode SetPreferredAppMode = nullptr;
 fnOpenNcThemeData OpenNcThemeData = nullptr;
 
-static LPCWSTR GetPszSubAppName(int id)
-{
-    switch (id)
-    {
-        case 0:
-            return L"DarkMode_Explorer";
-        case 1:
-            return L"DarkMode_CFD";
-        case 2:
-            return L"DarkMode_ItemsView";
-        default:
-            return L"Explorer";
-    }
-}
-
 /*
 
 将非 Explorer 主题的 ScrollBar 应用深色主题 参考：
@@ -120,9 +105,4 @@ void FlushApp()
         SetPreferredAppMode(2);
         FixScrollBar();
     }
-}
-
-void SetTheme(HWND hWnd, int type)
-{
-    SetWindowTheme(hWnd, GetPszSubAppName(type), nullptr);
 }

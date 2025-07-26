@@ -1,9 +1,21 @@
 ﻿using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls
 {
+    /*
+
+    ListView 深色主题 参考：
+
+    win32-darkmode/win32-darkmode/ListViewUtil.h at master · ysc3839/win32-darkmode
+    https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUtil.h
+
+    */
+
     public sealed class ListViewEx : ListView
     {
         public int SelectedItemsCount => SelectedItems.Count;
@@ -30,6 +42,16 @@ namespace PlainCEETimer.UI.Controls
                 field = value;
             }
         }
+
+        private const int WM_NOTIFY = 0x004E;
+        private const int NM_CUSTOMDRAW = -12;
+        private const int CDDS_PREPAINT = 0x00000001;
+        private const int CDRF_NOTIFYITEMDRAW = 0x00000020;
+        private const int CDDS_ITEMPREPAINT = 0x00010000 | CDDS_PREPAINT;
+        private const int CDRF_DODEFAULT = 0x00000000;
+        private const int LVM_FIRST = 0x1000;
+        private const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
+        private const int LVM_GETHEADER = LVM_FIRST + 31;
 
         private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
@@ -81,7 +103,18 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            ListViewHelper.FlushTheme(Handle, UseDark);
+            HWND hListView = Handle;
+            HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
+
+            if (UseDark)
+            {
+                ThemeManager.FlushControl(hListView, NativeStyle.ItemsView);
+                ThemeManager.FlushControl(Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero), NativeStyle.ItemsView);
+            }
+
+            ThemeManager.FlushControl(hToolTips, UseDark ? NativeStyle.Explorer : NativeStyle.ExplorerLight);
+            ListViewHelper.SetWindowPos(hToolTips, new(-1), 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U); // HWND_TOPMOST, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+
             base.OnHandleCreated(e);
         }
 
@@ -90,6 +123,28 @@ namespace PlainCEETimer.UI.Controls
             e.NewWidth = Columns[e.ColumnIndex].Width;
             e.Cancel = true;
             base.OnColumnWidthChanging(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (UseDark && m.Msg == WM_NOTIFY &&
+                Marshal.PtrToStructure<NMHDR>(m.LParam).code == NM_CUSTOMDRAW)
+            {
+                var nmcd = Marshal.PtrToStructure<NMCUSTOMDRAW>(m.LParam);
+
+                switch (nmcd.dwDrawStage)
+                {
+                    case CDDS_PREPAINT:
+                        m.Result = new(CDRF_NOTIFYITEMDRAW);
+                        return;
+                    case CDDS_ITEMPREPAINT:
+                        Natives.SetTextColor(nmcd.hdc, ThemeManager.DarkForeHeader);
+                        m.Result = new(CDRF_DODEFAULT);
+                        return;
+                }
+            }
+
+            base.WndProc(ref m);
         }
     }
 }
