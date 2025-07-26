@@ -6,16 +6,16 @@ namespace PlainCEETimer.Interop
 {
     public static class TaskbarProgress
     {
-        [DllImport(App.NativesDll, EntryPoint = "#5")]
+        [DllImport(App.NativesDll, EntryPoint = "#6")]
         public static extern void Initialize(IntPtr hWnd);
 
-        [DllImport(App.NativesDll, EntryPoint = "#6")]
+        [DllImport(App.NativesDll, EntryPoint = "#7")]
         public static extern void SetState(TaskbarProgressState tbpFlags);
 
-        [DllImport(App.NativesDll, EntryPoint = "#7")]
+        [DllImport(App.NativesDll, EntryPoint = "#8")]
         public static extern void SetValue(ulong ullCompleted, ulong ullTotal);
 
-        [DllImport(App.NativesDll, EntryPoint = "#8")]
+        [DllImport(App.NativesDll, EntryPoint = "#9")]
         public static extern void Release();
     }
 }

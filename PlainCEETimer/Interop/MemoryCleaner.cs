@@ -29,10 +29,10 @@ namespace PlainCEETimer.Interop
             }
         }
 
-        [DllImport(App.NativesDll, EntryPoint = "#2")]
-        private static extern void ClearMemory();
-
-        [DllImport(App.NativesDll, EntryPoint = "#13")]
+        [DllImport(App.NativesDll, EntryPoint = "#4")]
         private static extern ulong GetMemoryEx();
+
+        [DllImport(App.NativesDll, EntryPoint = "#5")]
+        private static extern void ClearMemory();
     }
 }

@@ -100,10 +100,10 @@ namespace PlainCEETimer.Interop
         [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
         private static extern int SetWindowTheme(HWND hWnd, string pszSubAppName, string pszSubIdList);
 
-        [DllImport(App.NativesDll, EntryPoint = "#9")]
-        private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
+        [DllImport(App.NativesDll, EntryPoint = "#10")]
+        private static extern void FlushApp();
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
-        private static extern void FlushApp();
+        private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
     }
 }

@@ -3,4 +3,4 @@
 #include <CommCtrl.h>
 #include <Windows.h>
 
-cexport(void) SelectAllItems(HWND hLV, BOOL selected);
+cexport(void) ListViewSelectAllItems(HWND hLV, BOOL selected);
