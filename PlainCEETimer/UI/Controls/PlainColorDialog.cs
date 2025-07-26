@@ -7,13 +7,13 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class ColorDialogEx : ColorDialog
+    public sealed class PlainColorDialog : ColorDialog
     {
         private static int[] CustomColorCollection = App.AppConfig.CustomColors;
         private int[] PreviousCustomColors;
         private CommonDialogHelper Helper;
 
-        public ColorDialogEx()
+        public PlainColorDialog()
         {
             AllowFullOpen = true;
             FullOpen = true;

@@ -28,17 +28,17 @@ void InitializeTaskScheduler()
     }
 }
 
-void ImportTaskFromXml(LPCWSTR taskName, BSTR bstrXml)
+void ImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
 {
     if (initialized && ResetPtrRegisteredTask())
     {
-        pFolder->RegisterTask(_bstr_t(taskName), bstrXml, TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pReg);
+        pFolder->RegisterTask(_bstr_t(taskName), _bstr_t(strXml), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pReg);
     }
 }
 
 void ExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
 {
-    if (initialized && pbstrXml && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
+    if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
     {
         pReg->get_Xml(pbstrXml);
     }

@@ -74,14 +74,14 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        public ComboBoxEx ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
+        public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
         {
             return ComboBox(w, true, onSelectedIndexChanged, items);
         }
 
-        public ComboBoxEx ComboBox(int w, bool enabled, EventHandler onSelectedIndexChanged, params string[] items)
+        public PlainComboBox ComboBox(int w, bool enabled, EventHandler onSelectedIndexChanged, params string[] items)
         {
-            var ctrl = new ComboBoxEx() { Enabled = enabled };
+            var ctrl = new PlainComboBox() { Enabled = enabled };
             ctrl.SetBounds(0, 0, w, 23);
 
             var dataLength = items.Length;

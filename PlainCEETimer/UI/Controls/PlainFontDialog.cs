@@ -6,11 +6,11 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class FontDialogEx : FontDialog
+    public sealed class PlainFontDialog : FontDialog
     {
         private CommonDialogHelper Helper;
 
-        public FontDialogEx(Font font)
+        public PlainFontDialog(Font font)
         {
             AllowVerticalFonts = false;
             Font = font;

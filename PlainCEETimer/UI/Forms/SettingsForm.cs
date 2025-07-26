@@ -34,12 +34,12 @@ namespace PlainCEETimer.UI.Forms
         private ColorBlock BlockPreviewColor3;
         private ColorBlock BlockPreviewColor4;
         private ColorBlock[] ColorBlocks;
-        private ComboBoxEx ComboBoxAutoSwitchInterval;
-        private ComboBoxEx ComboBoxCountdownEnd;
-        private ComboBoxEx ComboBoxNtpServers;
-        private ComboBoxEx ComboBoxPosition;
-        private ComboBoxEx ComboBoxScreens;
-        private ComboBoxEx ComboBoxShowXOnly;
+        private PlainComboBox ComboBoxAutoSwitchInterval;
+        private PlainComboBox ComboBoxCountdownEnd;
+        private PlainComboBox ComboBoxNtpServers;
+        private PlainComboBox ComboBoxPosition;
+        private PlainComboBox ComboBoxScreens;
+        private PlainComboBox ComboBoxShowXOnly;
         private CustomRuleObject[] EditedCustomRules;
         private ExamInfoObject[] EditedExamInfo;
         private Font SelectedFont;
@@ -300,7 +300,7 @@ namespace PlainCEETimer.UI.Forms
 
                             ButtonFont = b.Button("选择字体(&F)", true, true, (_, _) =>
                             {
-                                var dialog = new FontDialogEx(SelectedFont);
+                                var dialog = new PlainFontDialog(SelectedFont);
 
                                 if (dialog.ShowDialog(this) == DialogResult.OK)
                                 {

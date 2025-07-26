@@ -63,7 +63,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (!IsPreview)
             {
-                var dialog = new ColorDialogEx();
+                var dialog = new PlainColorDialog();
 
                 if (dialog.ShowDialog(Color, Parent) == DialogResult.OK)
                 {

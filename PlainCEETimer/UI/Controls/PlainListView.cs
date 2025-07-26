@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -16,7 +15,7 @@ namespace PlainCEETimer.UI.Controls
 
     */
 
-    public sealed class ListViewEx : ListView
+    public sealed class PlainListView : ListView
     {
         public int SelectedItemsCount => SelectedItems.Count;
 
@@ -56,7 +55,7 @@ namespace PlainCEETimer.UI.Controls
         private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-        public ListViewEx()
+        public PlainListView()
         {
             View = View.Details;
             FullRowSelect = true;

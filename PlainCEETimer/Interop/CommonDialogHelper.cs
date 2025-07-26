@@ -129,7 +129,7 @@ namespace PlainCEETimer.Interop
                 SetWindowText(hWnd, dialogTitle);
             }
 
-            if (dialog is FontDialogEx f)
+            if (dialog is PlainFontDialog f)
             {
                 HWND hCtrl;
 

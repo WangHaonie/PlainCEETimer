@@ -5,11 +5,11 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class ComboBoxEx : ComboBox
+    public sealed class PlainComboBox : ComboBox
     {
         private bool Calculated;
 
-        public ComboBoxEx()
+        public PlainComboBox()
         {
             DropDownStyle = ComboBoxStyle.DropDownList;
             FlatStyle = FlatStyle.System;

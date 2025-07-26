@@ -9,7 +9,7 @@ namespace PlainCEETimer.Interop
         public static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#16", CharSet = CharSet.Unicode)]
-        public static extern void Import(string taskName, [MarshalAs(UnmanagedType.BStr)] string bstrXml);
+        public static extern void Import(string taskName, string strXml);
 
         [DllImport(App.NativesDll, EntryPoint = "#17", CharSet = CharSet.Unicode)]
         public static extern void Export(string taskName, [MarshalAs(UnmanagedType.BStr)] out string pbstrXml);

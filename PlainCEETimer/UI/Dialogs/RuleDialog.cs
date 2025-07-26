@@ -18,7 +18,7 @@ namespace PlainCEETimer.UI.Dialogs
         private ColorBlock BlockPreview;
         private ColorBlock BlockFore;
         private ColorBlock BlockBack;
-        private ComboBoxEx ComboBoxRuleType;
+        private PlainComboBox ComboBoxRuleType;
         private Label LabelCharExam;
         private Label LabelCharDay;
         private Label LabelCharHour;

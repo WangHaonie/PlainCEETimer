@@ -119,10 +119,10 @@
     <Compile Include="UI\Controls\ColorBlock.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ComboBoxEx.cs">
+    <Compile Include="UI\Controls\PlainComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\FontDialogEx.cs">
+    <Compile Include="UI\Controls\PlainFontDialog.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\Hyperlink.cs">
@@ -131,7 +131,7 @@
     <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ListViewEx.cs">
+    <Compile Include="UI\Controls\PlainListView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\NavigationBar.cs">
@@ -195,7 +195,7 @@
     <Compile Include="UI\Forms\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ColorDialogEx.cs">
+    <Compile Include="UI\Controls\PlainColorDialog.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Interop\CommonDialogHelper.cs" />
