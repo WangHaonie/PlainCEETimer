@@ -1,6 +1,6 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.4 ~ v5.0.5 | 修订日期 2025/7/20</h4>
+    <h4>适用于 v5.0.5.1 | 修订日期 2025/7/27</h4>
 </div>
 
 # 📖 目录
@@ -301,13 +301,12 @@
 | 命令输出对话框 | ConsoleWindow | `100%` |  |
 | 规则对话框 | RuleDialog | `100%` | `*1` |
 | 全局自定义文本 | CustomTextDialog | `100%` |  |
-| 打开文件对话框 | OpenFileDialog | `100%` |  |
 | 考试信息管理器 | ExamInfoManager | `100%` |  |
 | 规则管理器 | RulesManager | `100%` |  |
-| 颜色对话框 | ColorDialogEx | `90%`~`100%` | `*2` |
+| 颜色对话框 | PlainColorDialog | `90%`~`100%` | `*2` |
 | 下载器 | DownloaderForm | `85%` | ProgressBar, HyperLink (Disabled) |
 | 考试信息对话框 | ExamInfoDialog | `80%` | DateTimePicker |
-| 字体对话框 | FontDialogEx | `75%` | ComboBox, ComboLBox |
+| 字体对话框 | PlainFontDialog | `75%` | ComboBox |
 | 系统消息框 | MessageBox | `0%` |  |
 
 > [!NOTE]
