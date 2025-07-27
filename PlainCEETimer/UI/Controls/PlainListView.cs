@@ -103,16 +103,23 @@ namespace PlainCEETimer.UI.Controls
         protected override void OnHandleCreated(EventArgs e)
         {
             HWND hListView = Handle;
+            HWND hHeader = Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
             HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
+
+            var LVstyle = NativeStyle.ItemsViewLight;
+            var TTstyle = NativeStyle.ExplorerLight;
 
             if (UseDark)
             {
-                ThemeManager.FlushControl(hListView, NativeStyle.ItemsView);
-                ThemeManager.FlushControl(Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero), NativeStyle.ItemsView);
+                LVstyle = NativeStyle.ItemsView;
+                TTstyle = NativeStyle.Explorer;
             }
 
-            ThemeManager.FlushControl(hToolTips, UseDark ? NativeStyle.Explorer : NativeStyle.ExplorerLight);
-            ListViewHelper.SetWindowPos(hToolTips, new(-1), 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U); // HWND_TOPMOST, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+            ThemeManager.FlushControl(hListView, LVstyle);
+            ThemeManager.FlushControl(hHeader, LVstyle);
+            ThemeManager.FlushControl(hToolTips, TTstyle);
+            ListViewHelper.SetWindowPos(hToolTips, new(-1), 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U);
+            //                                   HWND_TOPMOST      SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
 
             base.OnHandleCreated(e);
         }
@@ -126,7 +133,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void WndProc(ref Message m)
         {
-            if (UseDark && m.Msg == WM_NOTIFY &&
+            if (m.Msg == WM_NOTIFY &&
                 Marshal.PtrToStructure<NMHDR>(m.LParam).code == NM_CUSTOMDRAW)
             {
                 var nmcd = Marshal.PtrToStructure<NMCUSTOMDRAW>(m.LParam);
@@ -137,7 +144,7 @@ namespace PlainCEETimer.UI.Controls
                         m.Result = new(CDRF_NOTIFYITEMDRAW);
                         return;
                     case CDDS_ITEMPREPAINT:
-                        Natives.SetTextColor(nmcd.hdc, ThemeManager.DarkForeHeader);
+                        Natives.SetTextColor(nmcd.hdc, UseDark ? ThemeManager.DarkForeHeader : ThemeManager.LightForeHeader);
                         m.Result = new(CDRF_DODEFAULT);
                         return;
                 }
