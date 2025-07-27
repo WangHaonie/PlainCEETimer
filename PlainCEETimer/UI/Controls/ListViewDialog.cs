@@ -139,21 +139,22 @@ namespace PlainCEETimer.UI.Controls
 
         protected sealed override void OnLoad()
         {
-            if (Data != null && Data.Length != 0)
+            ListViewMain.Suspend(() =>
             {
-                ListViewMain.Suspend(() =>
-                {
-                    var data = Data;
+                var data = Data;
 
+                if (data != null && data.Length != 0)
+                {
                     for (int i = 0; i < data.Length; i++)
                     {
                         AddItem(data[i]);
                     }
 
                     Items[0].EnsureVisible();
-                    ListViewMain.AutoAdjustColumnWidth();
-                });
-            }
+                }
+
+                ListViewMain.AutoAdjustColumnWidth();
+            });
 
             ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
         }
