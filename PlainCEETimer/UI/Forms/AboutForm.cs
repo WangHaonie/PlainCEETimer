@@ -11,8 +11,8 @@ namespace PlainCEETimer.UI.Forms
         private bool IsCheckingUpdate;
         private string VersionString;
         private PlainButton ButtonOK;
-        private Label LabelInfo;
-        private Label LabelLicense;
+        private PlainLabel LabelInfo;
+        private PlainLabel LabelLicense;
         private Hyperlink LinkGitHub;
         private PictureBox ImageLogo;
         private Hyperlink LinkFeedback;

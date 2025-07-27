@@ -12,9 +12,10 @@
     public enum NativeStyle
     {
         Explorer,
+        ExplorerLight,
         CFD,
         ItemsView,
-        ExplorerLight
+        ItemsViewLight
     }
 
     public enum SystemTheme

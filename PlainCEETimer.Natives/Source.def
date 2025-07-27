@@ -18,8 +18,8 @@ EXPORTS
     EnumSystemDisplays @12 NONAME
 
     InitializeTaskScheduler @13 NONAME
-    ImportTaskFromXml @14 NONAME
-    ExportTaskAsXml @15 NONAME
+    ImportTaskFromXmlString @14 NONAME
+    ExportTaskAsXmlString @15 NONAME
     EnableScheduleTask @16 NONAME
     DeleteScheduleTask @17 NONAME
     ReleaseTaskScheduler @18 NONAME

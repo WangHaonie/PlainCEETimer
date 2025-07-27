@@ -6,7 +6,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class ColorBlock : Label
+    public sealed class ColorBlock : PlainLabel
     {
         public new AppForm Parent { get; set; }
 
@@ -49,11 +49,10 @@ namespace PlainCEETimer.UI.Controls
         private readonly bool IsFore;
         private readonly ColorBlock PreviewBlock;
 
-        public ColorBlock(bool isPreview, bool isFore, ColorBlock preview)
+        public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
         {
             AutoSize = true;
             BorderStyle = BorderStyle.FixedSingle;
-            Text = "          ";
             IsPreview = isPreview;
             IsFore = isFore;
             PreviewBlock = preview;

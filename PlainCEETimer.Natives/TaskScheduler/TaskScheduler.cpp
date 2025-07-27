@@ -28,7 +28,7 @@ void InitializeTaskScheduler()
     }
 }
 
-void ImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
+void ImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml)
 {
     if (initialized && ResetPtrRegisteredTask())
     {
@@ -36,7 +36,7 @@ void ImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
     }
 }
 
-void ExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
+void ExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml)
 {
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
     {

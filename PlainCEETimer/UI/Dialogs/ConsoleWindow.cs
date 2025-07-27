@@ -21,7 +21,7 @@ namespace PlainCEETimer.UI.Dialogs
         private string ExeArgs;
         private ConsoleParam Param;
         private Action<ConsoleWindow> Complete;
-        private Label LabelMessage;
+        private PlainLabel LabelMessage;
         private MenuItem ContextCopy;
         private Process ElevatedProc;
         private RichTextBox ConsoleBox;

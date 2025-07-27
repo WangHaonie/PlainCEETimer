@@ -15,9 +15,9 @@ namespace PlainCEETimer.UI.Forms
         private bool IsCancelled;
         private string DownloadUrl;
         private string DownloadPath;
-        private Label LabelDownloading;
-        private Label LabelSize;
-        private Label LabelSpeed;
+        private PlainLabel LabelDownloading;
+        private PlainLabel LabelSize;
+        private PlainLabel LabelSpeed;
         private ProgressBar ProgressBarMain;
         private PlainButton ButtonRetry;
         private PlainButton ButtonCancel;

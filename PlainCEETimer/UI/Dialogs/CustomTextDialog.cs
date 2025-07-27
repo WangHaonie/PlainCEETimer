@@ -12,10 +12,10 @@ namespace PlainCEETimer.UI.Dialogs
         public string[] CustomTexts { get; set; } = new string[3];
 
         private string[] Presets;
-        private Label LabelInfo;
-        private Label LabelP1;
-        private Label LabelP2;
-        private Label LabelP3;
+        private PlainLabel LabelInfo;
+        private PlainLabel LabelP1;
+        private PlainLabel LabelP2;
+        private PlainLabel LabelP3;
         private PlainTextBox TextBoxP1;
         private PlainTextBox TextBoxP2;
         private PlainTextBox TextBoxP3;

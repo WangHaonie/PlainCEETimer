@@ -8,9 +8,9 @@ namespace PlainCEETimer.UI
 {
     public class ControlBuilder
     {
-        public Label Label(string text)
+        public PlainLabel Label(string text)
         {
-            return new() { Text = text, AutoSize = true };
+            return new PlainLabel(text);
         }
 
         public ColorBlock Block(string text)

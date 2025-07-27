@@ -131,6 +131,9 @@
     <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Controls\PlainLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\PlainListView.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -369,12 +369,12 @@ namespace PlainCEETimer.UI.Controls
         /// 以父容器宽度为参考使 Label 单行内容达到一定长度时自动换行。
         /// </summary>
         /// <param name="target">目标 Label</param>
-        protected void SetLabelAutoWrap(Label target)
+        protected void SetLabelAutoWrap(PlainLabel target)
         {
             SetLabelAutoWrap(target, target.Parent.Width - target.Left);
         }
 
-        protected void SetLabelAutoWrap(Label target, int maxWidth)
+        protected void SetLabelAutoWrap(PlainLabel target, int maxWidth)
         {
             /*
             

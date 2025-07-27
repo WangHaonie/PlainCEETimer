@@ -224,7 +224,7 @@ namespace PlainCEETimer.Interop
             return IntPtr.Zero;
         }
 
-        private NativeStyle GetNativeStyle(IntPtr hWnd)
+        private NativeStyle GetNativeStyle(HWND hWnd)
         {
             GetClassName(hWnd, builder, 256);
             var className = builder.ToString();
@@ -238,7 +238,7 @@ namespace PlainCEETimer.Interop
         }
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        private static extern int GetClassName(HWND hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport(App.Gdi32Dll)]
         private static extern int SetBkMode(HDC hdc, int mode);
@@ -253,7 +253,7 @@ namespace PlainCEETimer.Interop
         private static extern BOOL EnumChildWindows(HWND hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate BOOL EnumChildProc(IntPtr hWnd, IntPtr lParam);
+        private delegate BOOL EnumChildProc(HWND hWnd, IntPtr lParam);
 
         [DllImport(App.User32Dll)]
         private static extern BOOL GetWindowRect(HWND hWnd, out RECT lpRect);

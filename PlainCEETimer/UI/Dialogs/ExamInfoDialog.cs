@@ -13,10 +13,10 @@ namespace PlainCEETimer.UI.Dialogs
     {
         public ExamInfoObject Data { get; set; } = existing;
 
-        private Label LabelName;
-        private Label LabelCounter;
-        private Label LabelStart;
-        private Label LabelEnd;
+        private PlainLabel LabelName;
+        private PlainLabel LabelCounter;
+        private PlainLabel LabelStart;
+        private PlainLabel LabelEnd;
         private PlainTextBox TextBoxName;
         private DateTimePicker DTPStart;
         private DateTimePicker DTPEnd;

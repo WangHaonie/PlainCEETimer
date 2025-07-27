@@ -9,7 +9,7 @@ namespace PlainCEETimer.UI.Dialogs
     public sealed class AppMessageBox(string message, string title, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview | AppFormParam.OnEscClosing)
     {
         private DialogResult Result;
-        private Label LabelMessage;
+        private PlainLabel LabelMessage;
         private PictureBox ImageIcon;
 
         protected override void OnInitializing()
