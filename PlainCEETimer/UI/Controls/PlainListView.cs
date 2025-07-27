@@ -119,7 +119,7 @@ namespace PlainCEETimer.UI.Controls
             ThemeManager.FlushControl(hHeader, LVstyle);
             ThemeManager.FlushControl(hToolTips, TTstyle);
             ListViewHelper.SetWindowPos(hToolTips, new(-1), 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U);
-            //                                   HWND_TOPMOST      SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+                                              // HWND_TOPMOST      SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
 
             base.OnHandleCreated(e);
         }
