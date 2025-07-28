@@ -14,14 +14,19 @@ namespace PlainCEETimer.Interop
         public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
     }
 
-    public delegate IntPtr HOOKPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    public delegate IntPtr WNDPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-    public readonly struct BOOL(bool value)
+    public readonly struct BOOL
     {
-        private readonly int Value = value ? 1 : 0;
+        private readonly int Value;
 
         public static readonly BOOL TRUE = new(true);
         public static readonly BOOL FALSE = new(false);
+
+        private BOOL(bool value)
+        {
+            Value = value ? 1 : 0;
+        }
 
         public static implicit operator bool(BOOL b)
         {
@@ -32,20 +37,15 @@ namespace PlainCEETimer.Interop
         {
             return new(b.Value);
         }
-
-        public static implicit operator BOOL(bool b)
-        {
-            return new(b);
-        }
     }
 
-    public readonly struct HWND(IntPtr value)
+    public readonly struct HWND
     {
-        private readonly IntPtr Value = value;
+        private readonly IntPtr Value;
 
-        public static implicit operator HWND(IntPtr ptr)
+        private HWND(IntPtr value)
         {
-            return new(ptr);
+            Value = value;
         }
 
         public static implicit operator bool(HWND hWnd)
@@ -53,15 +53,25 @@ namespace PlainCEETimer.Interop
             return hWnd.Value != IntPtr.Zero;
         }
 
-        public IntPtr ToIntPtr()
+        public static implicit operator HWND(IntPtr ptr)
         {
-            return Value;
+            return new(ptr);
+        }
+
+        public static explicit operator IntPtr(HWND hWnd)
+        {
+            return hWnd.Value;
         }
     }
 
-    public readonly struct COLORREF(Color color)
+    public readonly struct COLORREF
     {
-        private readonly int Value = ColorTranslator.ToWin32(color);
+        private readonly int Value;
+
+        private COLORREF(Color color)
+        {
+            Value = ColorTranslator.ToWin32(color);
+        }
 
         public static implicit operator COLORREF(Color c)
         {
@@ -69,18 +79,28 @@ namespace PlainCEETimer.Interop
         }
     }
 
-    public readonly struct HDC(IntPtr value)
+    public readonly struct HDC
     {
-        private readonly IntPtr Value = value;
+        private readonly IntPtr Value;
 
-        public static implicit operator bool(HDC HDC)
+        private HDC(IntPtr value)
         {
-            return HDC.Value != IntPtr.Zero;
+            Value = value;
         }
 
-        public IntPtr ToIntPtr()
+        public static implicit operator bool(HDC hDC)
         {
-            return Value;
+            return hDC.Value != IntPtr.Zero;
+        }
+
+        public static implicit operator HDC(IntPtr ptr)
+        {
+            return new(ptr);
+        }
+
+        public static explicit operator IntPtr(HDC hDC)
+        {
+            return hDC.Value;
         }
     }
 
@@ -101,7 +121,7 @@ namespace PlainCEETimer.Interop
     [StructLayout(LayoutKind.Sequential)]
     public struct NMHDR
     {
-        public IntPtr hWndFrom;
+        public HWND hWndFrom;
         public IntPtr idFrom;
         public int code;
     }

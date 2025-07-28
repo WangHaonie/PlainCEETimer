@@ -106,20 +106,20 @@ namespace PlainCEETimer.UI.Controls
             HWND hHeader = Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
             HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
 
-            var LVstyle = NativeStyle.ItemsViewLight;
-            var TTstyle = NativeStyle.ExplorerLight;
+            var LVstyle = NativeStyle.ItemsView;
+            var TTstyle = NativeStyle.Explorer;
 
             if (UseDark)
             {
-                LVstyle = NativeStyle.ItemsView;
-                TTstyle = NativeStyle.Explorer;
+                LVstyle = NativeStyle.ItemsViewDark;
+                TTstyle = NativeStyle.ExplorerDark;
             }
 
             ThemeManager.FlushControl(hListView, LVstyle);
             ThemeManager.FlushControl(hHeader, LVstyle);
             ThemeManager.FlushControl(hToolTips, TTstyle);
             ListViewHelper.SetWindowPos(hToolTips, new(-1), 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U);
-                                              // HWND_TOPMOST      SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+            // HWND_TOPMOST      SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
 
             base.OnHandleCreated(e);
         }

@@ -8,7 +8,7 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
 {
-    public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, HOOKPROC DefHookProc)
+    public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialogTitle, WNDPROC DefHookProc)
     {
         private sealed class GroupBoxNativeWindow : NativeWindow
         {
@@ -17,9 +17,9 @@ namespace PlainCEETimer.Interop
 
             private bool Handled;
 
-            public GroupBoxNativeWindow(IntPtr hGroupBox)
+            public GroupBoxNativeWindow(HWND hGroupBox)
             {
-                AssignHandle(hGroupBox);
+                AssignHandle((IntPtr)hGroupBox);
             }
 
             protected override void WndProc(ref Message m)
@@ -30,12 +30,11 @@ namespace PlainCEETimer.Interop
 
                     if (!Handled)
                     {
-                        HDC hdc;
                         HWND hWnd = Handle;
 
-                        if (hdc = GetWindowDC(hWnd))
+                        if (hWnd)
                         {
-                            using var g = Graphics.FromHdc(hdc.ToIntPtr());
+                            using var g = Graphics.FromHwnd((IntPtr)hWnd);
                             using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
                             using var brush = new SolidBrush(ThemeManager.DarkFore);
 
@@ -45,7 +44,6 @@ namespace PlainCEETimer.Interop
                             var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
                             GetWindowText(hWnd, sb, sb.Capacity);
                             g.DrawString(sb.ToString(), font, brush, rect);
-                            ReleaseDC(hWnd, hdc);
                             Handled = true;
                         }
                     }
@@ -63,13 +61,7 @@ namespace PlainCEETimer.Interop
             private static extern int GetWindowTextLength(HWND hWnd);
 
             [DllImport(App.User32Dll)]
-            private static extern int ReleaseDC(HWND hWnd, HDC hDC);
-
-            [DllImport(App.User32Dll)]
             private static extern BOOL GetClientRect(HWND hWnd, out RECT lpRect);
-
-            [DllImport(App.User32Dll)]
-            private static extern HDC GetWindowDC(HWND hWnd);
         }
 
         private const int WM_DESTROY = 0x0002;
@@ -94,8 +86,8 @@ namespace PlainCEETimer.Interop
         private static int[] UnusedCtrls;
         private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
         private readonly StringBuilder builder = new(256);
-        private static readonly COLORREF BackCrColor = new(ThemeManager.DarkBack);
-        private static readonly COLORREF ForeCrColor = new(ThemeManager.DarkFore);
+        private static readonly COLORREF BackCrColor = ThemeManager.DarkBack;
+        private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
@@ -109,7 +101,7 @@ namespace PlainCEETimer.Interop
                 case WM_CTLCOLORSTATIC:
                 case WM_CTLCOLORLISTBOX:
                 case WM_CTLCOLORBTN:
-                    return WmCtlColor(new(wParam));
+                    return WmCtlColor(wParam);
                 case WM_COMMAND:
                     return DefHookProc(hWnd, WM_COMMAND, wParam, lParam);
                 case WM_DESTROY:
@@ -135,7 +127,7 @@ namespace PlainCEETimer.Interop
 
                 if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)))
                 {
-                    new GroupBoxNativeWindow(hCtrl.ToIntPtr());
+                    new GroupBoxNativeWindow(hCtrl);
                 }
 
                 if (UnusedCtrls == null)
@@ -231,10 +223,10 @@ namespace PlainCEETimer.Interop
 
             if (className == "ComboBox" || className == "Edit")
             {
-                return NativeStyle.CFD;
+                return NativeStyle.CfdDark;
             }
 
-            return NativeStyle.Explorer;
+            return NativeStyle.ExplorerDark;
         }
 
         [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]

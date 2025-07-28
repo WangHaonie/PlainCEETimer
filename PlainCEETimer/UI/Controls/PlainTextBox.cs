@@ -22,7 +22,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                ThemeManager.FlushControl(this, NativeStyle.CFD);
+                ThemeManager.FlushControl(this, NativeStyle.CfdDark);
             }
 
             base.OnHandleCreated(e);

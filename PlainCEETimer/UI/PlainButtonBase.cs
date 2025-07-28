@@ -33,7 +33,7 @@ namespace PlainCEETimer.UI
         private void UpdateStyle()
         {
             Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
-            ThemeManager.FlushControl(Target, NativeStyle.Explorer);
+            ThemeManager.FlushControl(Target, NativeStyle.ExplorerDark);
         }
 
         ~PlainButtonBase()

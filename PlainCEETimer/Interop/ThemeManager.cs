@@ -66,10 +66,10 @@ namespace PlainCEETimer.Interop
         {
             return style switch
             {
-                NativeStyle.Explorer => "DarkMode_Explorer",
-                NativeStyle.CFD => "DarkMode_CFD",
-                NativeStyle.ItemsView => "DarkMode_ItemsView",
-                NativeStyle.ItemsViewLight => "ItemsView",
+                NativeStyle.ExplorerDark => "DarkMode_Explorer",
+                NativeStyle.CfdDark => "DarkMode_CFD",
+                NativeStyle.ItemsViewDark => "DarkMode_ItemsView",
+                NativeStyle.ItemsView => "ItemsView",
                 _ => "Explorer",
             };
         }

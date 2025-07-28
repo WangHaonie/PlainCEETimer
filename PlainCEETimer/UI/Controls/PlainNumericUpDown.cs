@@ -24,7 +24,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 foreach (Control control in Controls)
                 {
-                    ThemeManager.FlushControl(control, NativeStyle.Explorer);
+                    ThemeManager.FlushControl(control, NativeStyle.ExplorerDark);
                 }
             }
 
