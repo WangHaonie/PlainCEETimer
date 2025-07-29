@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
@@ -10,12 +9,6 @@ namespace PlainCEETimer.Interop
         public static int VerticalScrollBarWidth { get; } = SystemInformation.VerticalScrollBarWidth;
         public static bool IsDarkModeSupported { get; }
         public static bool ShouldUseDarkMode { get; }
-        public static Color DarkFore { get; } = Color.White;
-        public static Color DarkForeLink { get; } = Color.FromArgb(153, 235, 255);
-        public static Color DarkForeHeader { get; } = Color.FromArgb(222, 222, 222);
-        public static Color LightForeHeader { get; } = Color.FromArgb(76, 96, 122);
-        public static Color DarkBack { get; } = Color.FromArgb(32, 32, 32);
-        public static Color DarkBorder { get; } = Color.FromArgb(60, 60, 60);
         public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
         public static int Initialize;
         private static readonly BOOL IsNewDwma;

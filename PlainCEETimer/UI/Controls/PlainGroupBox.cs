@@ -10,7 +10,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                ForeColor = ThemeManager.DarkFore;
+                ForeColor = Colors.DarkForeText;
             }
         }
 
@@ -33,7 +33,7 @@ namespace PlainCEETimer.UI.Controls
                 var rect = new Rectangle(0, textHeight, client.Width, client.Height - textHeight);
                 var textRect = Rectangle.Inflate(ClientRectangle, -4, 0);
 
-                ControlPaint.DrawBorder(g, rect, ThemeManager.DarkBorder, ButtonBorderStyle.Solid);
+                ControlPaint.DrawBorder(g, rect, Colors.DarkBorder, ButtonBorderStyle.Solid);
                 TextRenderer.DrawText(g, text, font, textRect, ForeColor, BackColor, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.LeftAndRightPadding | TextFormatFlags.EndEllipsis);
             }
             else

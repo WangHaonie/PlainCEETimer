@@ -4,7 +4,6 @@ using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI.Controls;
 
@@ -150,13 +149,13 @@ namespace PlainCEETimer.UI.Forms
             TaskbarProgress.SetValue(1UL, 1UL);
             TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
             UpdateLabels("下载完成，请稍侯...", null, null);
-            IsCancelled = true;
+            //IsCancelled = true;
 
-            2500.AsDelay(() =>
-            {
-                ProcessHelper.Run(DownloadPath, "/Skip");
-                App.Exit();
-            }, this);
+            //2500.AsDelay(() =>
+            //{
+            //    ProcessHelper.Run(DownloadPath, "/Skip");
+            //    App.Exit();
+            //}, this);
         }
 
         private void UpdateLabels(string info, string size, string speed)

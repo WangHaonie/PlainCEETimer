@@ -134,7 +134,7 @@ namespace PlainCEETimer.UI.Dialogs
             CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
             int count = CurrentExamName.Length;
             LabelCounter.Text = $"{count}/{Validator.MaxExamNameLength}";
-            LabelCounter.ForeColor = Validator.IsValidExamLength(count) ? (IsDark ? ThemeManager.DarkFore : Color.Black) : Color.Red;
+            LabelCounter.ForeColor = Validator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
             UserChanged();
         }
     }

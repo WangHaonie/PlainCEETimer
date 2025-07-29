@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.UI;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.Interop
@@ -34,7 +35,7 @@ namespace PlainCEETimer.Interop
 
                         using var g = Graphics.FromHwnd((IntPtr)hWnd);
                         using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
-                        using var brush = new SolidBrush(ThemeManager.DarkFore);
+                        using var brush = new SolidBrush(Colors.DarkForeText);
 
                         GetClientRect(hWnd, out RECT rc);
                         rc.Left += 6;
@@ -83,8 +84,8 @@ namespace PlainCEETimer.Interop
         private static int[] UnusedCtrls;
         private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
         private readonly StringBuilder builder = new(256);
-        private static readonly COLORREF BackCrColor = ThemeManager.DarkBack;
-        private static readonly COLORREF ForeCrColor = ThemeManager.DarkFore;
+        private static readonly COLORREF BackCrColor = Colors.DarkBackText;
+        private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
         private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
         public IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)

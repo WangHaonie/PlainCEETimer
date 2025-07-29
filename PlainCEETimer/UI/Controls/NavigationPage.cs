@@ -10,7 +10,7 @@ namespace PlainCEETimer.UI.Controls
 
         public NavigationPage()
         {
-            BackColor = ThemeManager.ShouldUseDarkMode ? ThemeManager.DarkBack : SystemColors.Window;
+            BackColor = ThemeManager.ShouldUseDarkMode ? Colors.DarkBackText : SystemColors.Window;
             Dock = DockStyle.Fill;
             Visible = false;
         }

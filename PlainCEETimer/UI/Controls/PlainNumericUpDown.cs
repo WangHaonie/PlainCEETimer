@@ -11,8 +11,8 @@ namespace PlainCEETimer.UI.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                ForeColor = ThemeManager.DarkFore;
-                BackColor = ThemeManager.DarkBack;
+                ForeColor = Colors.DarkForeText;
+                BackColor = Colors.DarkBackText;
             }
 
             TextAlign = HorizontalAlignment.Right;

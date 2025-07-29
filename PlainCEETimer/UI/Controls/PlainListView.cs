@@ -65,8 +65,8 @@ namespace PlainCEETimer.UI.Controls
 
             if (UseDark)
             {
-                ForeColor = ThemeManager.DarkFore;
-                BackColor = ThemeManager.DarkBack;
+                ForeColor = Colors.DarkForeText;
+                BackColor = Colors.DarkBackText;
             }
 
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -144,7 +144,7 @@ namespace PlainCEETimer.UI.Controls
                         m.Result = new(CDRF_NOTIFYITEMDRAW);
                         return;
                     case CDDS_ITEMPREPAINT:
-                        Natives.SetTextColor(nmcd.hdc, UseDark ? ThemeManager.DarkForeHeader : ThemeManager.LightForeHeader);
+                        Natives.SetTextColor(nmcd.hdc, UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
                         m.Result = new(CDRF_DODEFAULT);
                         return;
                 }

@@ -171,8 +171,8 @@ namespace PlainCEETimer.UI.Controls
             {
                 if (!Special)
                 {
-                    ForeColor = ThemeManager.DarkFore;
-                    BackColor = ThemeManager.DarkBack;
+                    ForeColor = Colors.DarkForeText;
+                    BackColor = Colors.DarkBackText;
                 }
 
                 ThemeManager.FlushWindow(Handle);
