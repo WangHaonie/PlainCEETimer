@@ -23,7 +23,7 @@ namespace PlainCEETimer.UI.Controls
 
         public DialogResult ShowDialog(AppForm owner)
         {
-            Helper = new CommonDialogHelper(this, owner, "选择字体 - 高考倒计时", base.HookProc);
+            Helper = new(this, owner, "选择字体 - 高考倒计时", base.HookProc);
             return ShowDialog();
         }
 

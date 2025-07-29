@@ -32,20 +32,17 @@ namespace PlainCEETimer.Interop
                     {
                         HWND hWnd = Handle;
 
-                        if (hWnd)
-                        {
-                            using var g = Graphics.FromHwnd((IntPtr)hWnd);
-                            using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
-                            using var brush = new SolidBrush(ThemeManager.DarkFore);
+                        using var g = Graphics.FromHwnd((IntPtr)hWnd);
+                        using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
+                        using var brush = new SolidBrush(ThemeManager.DarkFore);
 
-                            GetClientRect(hWnd, out RECT rc);
-                            rc.Left += 6;
-                            Rectangle rect = rc;
-                            var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
-                            GetWindowText(hWnd, sb, sb.Capacity);
-                            g.DrawString(sb.ToString(), font, brush, rect);
-                            Handled = true;
-                        }
+                        GetClientRect(hWnd, out RECT rc);
+                        rc.Left += 6;
+                        Rectangle rect = rc;
+                        var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
+                        GetWindowText(hWnd, sb, sb.Capacity);
+                        g.DrawString(sb.ToString(), font, brush, rect);
+                        Handled = true;
                     }
 
                     return;
