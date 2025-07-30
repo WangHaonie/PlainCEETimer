@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
@@ -69,19 +70,27 @@ namespace PlainCEETimer.UI.Forms
         private ExamInfoObject CurrentExam;
         private ExamInfoObject[] Exams;
         private Font CountdownFont;
+        private MatchEvaluator DefaultMatchEvaluator;
         private Menu.MenuItemCollection ExamSwitchMain;
         private NotifyIcon TrayIcon;
         private SettingsForm FormSettings;
         private System.Threading.Timer MemCleaner;
         private System.Threading.Timer Countdown;
         private System.Windows.Forms.Timer AutoSwitchHandler;
+        private readonly Dictionary<string, string> CDPlaceholders = new(10);
+        private readonly Regex CDRegEx = new(@"\{(\w+)\}", RegexOptions.Compiled);
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
-        private static readonly StringBuilder CustomTextBuilder = new();
 
         protected override void OnInitializing()
         {
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+            DefaultMatchEvaluator = m =>
+            {
+                var key = m.Groups[1].Value;
+                return CDPlaceholders.TryGetValue(key, out string value) ? value : m.Value;
+            };
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -586,42 +595,48 @@ namespace PlainCEETimer.UI.Forms
 
         private void ApplyCustomRule(int phase, TimeSpan span)
         {
-            if (UseCustomText)
-            {
-                if (CanUseRules)
-                {
-                    foreach (var rule in CurrentRules)
-                    {
-                        if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
-                        {
-                            UpdateCountdown(SetCustomRule(span, rule.Text), rule.Colors);
-                            return;
-                        }
-                    }
-                }
+            CDPlaceholders["x"] = ExamName;
+            CDPlaceholders["d"] = $"{span.Days}";
+            CDPlaceholders["h"] = $"{span.Hours:00}";
+            CDPlaceholders["m"] = $"{span.Minutes:00}";
+            CDPlaceholders["s"] = $"{span.Seconds:00}";
+            CDPlaceholders["cd"] = $"{span.Days + 1}";
+            CDPlaceholders["th"] = $"{span.TotalHours:0}";
+            CDPlaceholders["tm"] = $"{span.TotalMinutes:0}";
+            CDPlaceholders["ts"] = $"{span.TotalSeconds:0}";
 
-                UpdateCountdown(SetCustomRule(span, GlobalTexts[phase]), CountdownColors[phase]);
+            if (!UseCustomText)
+            {
+                CDPlaceholders["ht"] = DefaultTexts[phase];
+                UpdateCountdown(CDRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
                 return;
             }
 
-            UpdateCountdown(GetCountdown(span, DefaultTexts[phase]), CountdownColors[phase]);
+            if (!CanUseRules)
+            {
+                UpdateCountdown(CDRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
+                return;
+            }
+
+            foreach (var rule in CurrentRules)
+            {
+                if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
+                {
+                    UpdateCountdown(CDRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
+                    return;
+                }
+            }
         }
 
-        private string SetCustomRule(TimeSpan span, string custom)
+        private string GetDefaultText() => SelectedState switch
         {
-            CustomTextBuilder.Clear();
-            CustomTextBuilder.Append(custom);
-            CustomTextBuilder.Replace(Constants.PH_EXAMNAME, ExamName);
-            CustomTextBuilder.Replace(Constants.PH_DAYS, $"{span.Days}");
-            CustomTextBuilder.Replace(Constants.PH_HOURS, $"{span.Hours:00}");
-            CustomTextBuilder.Replace(Constants.PH_MINUTES, $"{span.Minutes:00}");
-            CustomTextBuilder.Replace(Constants.PH_SECONDS, $"{span.Seconds:00}");
-            CustomTextBuilder.Replace(Constants.PH_CEILINGDAYS, $"{span.Days + 1}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALHOURS, $"{span.TotalHours:0}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALMINUTES, $"{span.TotalMinutes:0}");
-            CustomTextBuilder.Replace(Constants.PH_TOTALSECONDS, $"{span.TotalSeconds:0}");
-            return CustomTextBuilder.ToString();
-        }
+            CountdownState.DaysOnly => "距离{x}{ht}{d}天",
+            CountdownState.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
+            CountdownState.HoursOnly => "距离{x}{ht}{th}小时",
+            CountdownState.MinutesOnly => "距离{x}{ht}{tm}分钟",
+            CountdownState.SecondsOnly => "距离{x}{ht}{ts}秒",
+            _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
+        };
 
         private int GetAutoSwitchInterval(int Index) => Index switch
         {
@@ -638,16 +653,6 @@ namespace PlainCEETimer.UI.Forms
             11 => 2700_000, // 45 min
             12 => 3600_000, // 1 h
             _ => 10_000 // 10 s
-        };
-
-        private string GetCountdown(TimeSpan span, string hint) => SelectedState switch
-        {
-            CountdownState.DaysOnly => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days),
-            CountdownState.DaysOnlyCeiling => string.Format("距离{0}{1}{2}天", ExamName, hint, span.Days + 1),
-            CountdownState.HoursOnly => string.Format("距离{0}{1}{2:0}小时", ExamName, hint, span.TotalHours),
-            CountdownState.MinutesOnly => string.Format("距离{0}{1}{2:0}分钟", ExamName, hint, span.TotalMinutes),
-            CountdownState.SecondsOnly => string.Format("距离{0}{1}{2:0}秒", ExamName, hint, span.TotalSeconds),
-            _ => string.Format("距离{0}{1}{2}天{3:00}时{4:00}分{5:00}秒", ExamName, hint, span.Days, span.Hours, span.Minutes, span.Seconds)
         };
 
         private void UpdateCountdown(string content, ColorSetObject colors)

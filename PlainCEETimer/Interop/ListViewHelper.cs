@@ -21,10 +21,11 @@ namespace PlainCEETimer.Interop
                 if (m.Msg == WM_SETCURSOR)
                 {
                     m.Result = BOOL.TRUE;
-                    return;
                 }
-
-                base.WndProc(ref m);
+                else
+                {
+                    base.WndProc(ref m);
+                }
             }
         }
 
