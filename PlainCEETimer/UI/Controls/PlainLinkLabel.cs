@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.UI.Controls
@@ -14,13 +15,28 @@ namespace PlainCEETimer.UI.Controls
         public PlainLinkLabel()
         {
             AutoSize = true;
+            LinkBehavior = LinkBehavior.HoverUnderline;
+
+            Color normal;
+            Color click;
+            Color disabled;
 
             if (ThemeManager.ShouldUseDarkMode)
             {
-                LinkColor = Colors.DarkForeLinkNormal;
-                ActiveLinkColor = Colors.DarkForeLinkOnClick;
-                DisabledLinkColor = Colors.DarkForeLinkDisabled;
+                normal = Colors.DarkForeLinkNormal;
+                click = Colors.DarkForeLinkOnClick;
+                disabled = Colors.DarkForeLinkDisabled;
             }
+            else
+            {
+                normal = Colors.LightForeLinkNormal;
+                click = Colors.LightForeLinkOnClick;
+                disabled = Colors.LightForeLinkDisabled;
+            }
+
+            LinkColor = normal;
+            ActiveLinkColor = click;
+            DisabledLinkColor = disabled;
         }
     }
 }
