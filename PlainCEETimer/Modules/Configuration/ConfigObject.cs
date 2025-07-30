@@ -49,7 +49,7 @@ namespace PlainCEETimer.Modules.Configuration
                 {
                     foreach (var text in value)
                     {
-                        Validator.EnsureCustomTextLength(text);
+                        Validator.EnsureCustomText(text);
                     }
                 }
 

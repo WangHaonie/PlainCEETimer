@@ -7,7 +7,7 @@ using PlainCEETimer.UI;
 namespace PlainCEETimer.Modules.Configuration
 {
     [DebuggerDisplay("{Phase,nq} {Tick,nq} {Text,nq}")]
-    [JsonConverter(typeof(CustomRulesConverter))]
+    [JsonConverter(typeof(CustomRuleConverter))]
     public class CustomRuleObject : IListViewData<CustomRuleObject>
     {
         public CountdownPhase Phase { get; set; }

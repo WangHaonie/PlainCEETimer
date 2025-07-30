@@ -7,7 +7,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public sealed class CustomRulesConverter : JsonConverter<CustomRuleObject>
+    public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
     {
         public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
@@ -35,7 +35,7 @@ namespace PlainCEETimer.Modules.JsonConverters
             }
 
             var text = json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();
-            Validator.EnsureCustomTextLength(text);
+            Validator.EnsureCustomText(text);
 
             return new()
             {

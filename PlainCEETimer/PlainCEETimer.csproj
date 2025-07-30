@@ -230,7 +230,7 @@
     <Compile Include="UI\IListViewSubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
-    <Compile Include="Modules\JsonConverters\CustomRulesConverter.cs" />
+    <Compile Include="Modules\JsonConverters\CustomRuleConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />

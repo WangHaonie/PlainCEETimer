@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PlainCEETimer.UI;
 
@@ -19,6 +20,9 @@ namespace PlainCEETimer.Modules
         public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
+        public const string RegexPhPatterns = @"\{(\w+)\}";
+
+        private static readonly string[] AllPHs = [Constants.PH_EXAMNAME, Constants.PH_DAYS, Constants.PH_HOURS, Constants.PH_MINUTES, Constants.PH_SECONDS, Constants.PH_CEILINGDAYS, Constants.PH_TOTALHOURS, Constants.PH_TOTALMINUTES, Constants.PH_TOTALSECONDS];
 
         public static bool VerifyCustomText(string custom, out string warning, int index = 0)
         {
@@ -30,7 +34,23 @@ namespace PlainCEETimer.Modules
                 return false;
             }
 
-            if (Regex.Matches(custom, @"\{.*?\}").Count == 0)
+            var matches = Regex.Matches(custom, RegexPhPatterns);
+            var count = matches.Count;
+            var isEmpty = true;
+
+            if (matches.Count != 0)
+            {
+                for (int j = 0; j < count; j++)
+                {
+                    if (AllPHs.Contains(matches[j].Value))
+                    {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isEmpty)
             {
                 warning = $"请在{i}中至少使用一个占位符！";
                 return false;
@@ -73,9 +93,9 @@ namespace PlainCEETimer.Modules
             }
         }
 
-        public static void EnsureCustomTextLength(string custom)
+        public static void EnsureCustomText(string custom)
         {
-            if (custom.Length is 0 or > MaxCustomTextLength)
+            if ((custom.Length is 0 or > MaxCustomTextLength) || !VerifyCustomText(custom, out var _))
             {
                 throw new Exception();
             }

@@ -78,7 +78,7 @@ namespace PlainCEETimer.UI.Forms
         private System.Threading.Timer Countdown;
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private readonly Dictionary<string, string> CDPlaceholders = new(10);
-        private readonly Regex CDRegEx = new(@"\{(\w+)\}", RegexOptions.Compiled);
+        private readonly Regex CDRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
 
         protected override void OnInitializing()
@@ -88,8 +88,8 @@ namespace PlainCEETimer.UI.Forms
 
             DefaultMatchEvaluator = m =>
             {
-                var key = m.Groups[1].Value;
-                return CDPlaceholders.TryGetValue(key, out string value) ? value : m.Value;
+                var key = m.Value;
+                return CDPlaceholders.TryGetValue(key, out string value) ? value : key;
             };
         }
 
@@ -595,15 +595,15 @@ namespace PlainCEETimer.UI.Forms
 
         private void ApplyCustomRule(int phase, TimeSpan span)
         {
-            CDPlaceholders["x"] = ExamName;
-            CDPlaceholders["d"] = $"{span.Days}";
-            CDPlaceholders["h"] = $"{span.Hours:00}";
-            CDPlaceholders["m"] = $"{span.Minutes:00}";
-            CDPlaceholders["s"] = $"{span.Seconds:00}";
-            CDPlaceholders["cd"] = $"{span.Days + 1}";
-            CDPlaceholders["th"] = $"{span.TotalHours:0}";
-            CDPlaceholders["tm"] = $"{span.TotalMinutes:0}";
-            CDPlaceholders["ts"] = $"{span.TotalSeconds:0}";
+            CDPlaceholders[Constants.PH_EXAMNAME] = ExamName;
+            CDPlaceholders[Constants.PH_DAYS] = $"{span.Days}";
+            CDPlaceholders[Constants.PH_HOURS] = $"{span.Hours:00}";
+            CDPlaceholders[Constants.PH_MINUTES] = $"{span.Minutes:00}";
+            CDPlaceholders[Constants.PH_SECONDS] = $"{span.Seconds:00}";
+            CDPlaceholders[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
+            CDPlaceholders[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
+            CDPlaceholders[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
+            CDPlaceholders[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
 
             if (!UseCustomText)
             {
