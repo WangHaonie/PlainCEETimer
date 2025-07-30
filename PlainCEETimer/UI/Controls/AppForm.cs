@@ -352,7 +352,7 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 仅当窗体加载完成再执行指定的代码。
         /// </summary>
-        protected void WhenLoaded(Action action)
+        protected void EnsureLoaded(Action action)
         {
             if (!IsLoading)
             {

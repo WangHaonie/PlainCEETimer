@@ -68,7 +68,7 @@ namespace PlainCEETimer.UI.Dialogs
                 {
                     if (!IsEditMode)
                     {
-                        WhenLoaded(SaveTemp);
+                        EnsureLoaded(SaveTemp);
                     }
 
                     UserChanged();
@@ -78,7 +78,7 @@ namespace PlainCEETimer.UI.Dialogs
                 {
                     if (!IsEditMode)
                     {
-                        WhenLoaded(() =>
+                        EnsureLoaded(() =>
                         {
                             var index = ComboBoxRuleType.SelectedIndex;
 

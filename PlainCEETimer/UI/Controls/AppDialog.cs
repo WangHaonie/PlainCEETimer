@@ -48,7 +48,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected void UserChanged()
         {
-            WhenLoaded(() =>
+            EnsureLoaded(() =>
             {
                 IsUserChanged = true;
                 ButtonA.Enabled = true;

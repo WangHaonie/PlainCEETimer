@@ -586,7 +586,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void SettingsChanged(object sender, EventArgs e)
         {
-            WhenLoaded(() =>
+            EnsureLoaded(() =>
             {
                 UserChanged = true;
                 ButtonSave.Enabled = true;

@@ -105,6 +105,7 @@ namespace PlainCEETimer.UI.Controls
             HWND hListView = Handle;
             HWND hHeader = Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
             HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
+            new ListViewHelper.SysHeader32NativeWindow(hHeader);
 
             var LVstyle = NativeStyle.ItemsView;
             var TTstyle = NativeStyle.Explorer;
