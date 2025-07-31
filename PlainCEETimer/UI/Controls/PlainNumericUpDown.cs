@@ -22,9 +22,9 @@ namespace PlainCEETimer.UI.Controls
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
-                foreach (Control control in Controls)
+                for (int i = 0; i < 2; i++)
                 {
-                    ThemeManager.FlushControl(control, NativeStyle.ExplorerDark);
+                    ThemeManager.FlushControl(Controls[i], NativeStyle.ExplorerDark);
                 }
             }
 

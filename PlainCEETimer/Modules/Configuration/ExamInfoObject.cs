@@ -8,7 +8,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    [DebuggerDisplay("{Name,nq}: {Start,nq}~{End,nq}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class ExamInfoObject : IListViewData<ExamInfoObject>
     {
         public string Name
@@ -118,5 +118,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             return Equals(other);
         }
+
+        private string DebuggerDisplay => $"{Name}: [{Start.Format()}]~[{End.Format()}]";
     }
 }

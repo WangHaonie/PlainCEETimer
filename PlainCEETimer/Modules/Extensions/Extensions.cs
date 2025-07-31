@@ -19,6 +19,9 @@ namespace PlainCEETimer.Modules.Extensions
         public static string Format(this DateTime dateTime)
             => dateTime.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss");
 
+        public static string Format(this TimeSpan dateTime)
+            => dateTime.ToString("d'天'h'时'm'分's'秒'");
+
         public static Task Start(this Action start, Action<Task> jobAfterStart = null)
             => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
 

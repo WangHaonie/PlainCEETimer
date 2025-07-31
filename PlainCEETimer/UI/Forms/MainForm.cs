@@ -773,7 +773,8 @@ namespace PlainCEETimer.UI.Forms
 
         private void RefreshCustomRules()
         {
-            CanUseRules = UseCustomText && (CurrentRules = [.. CustomRules.Where(rule => rule.Phase == CurrentPhase).OrderByDescending(x => x)]).Length != 0;
+            CurrentRules = [.. CustomRules.Where(rule => rule.Phase == CurrentPhase).OrderByDescending(x => x)];
+            CanUseRules = UseCustomText && CurrentRules.Length != 0;
         }
 
         private void SaveConfig()

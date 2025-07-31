@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -234,12 +235,12 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 在用户未保存更改并尝试关闭窗体时显示警告。同时防止直接关闭警告时也窗体会随之关闭。
         /// </summary>
-        protected bool ShowUnsavedWarning(string msg, Func<bool> saveChanges, ref bool flagUserChanged)
+        protected bool ShowUnsavedWarning(string msg, Func<bool> SaveChanges, ref bool flagUserChanged)
         {
             switch (MessageX.Warn(msg, MessageButtons.YesNo))
             {
                 case DialogResult.Yes:
-                    return !saveChanges();
+                    return !SaveChanges();
                 case DialogResult.No:
                     flagUserChanged = false;
                     Close();
@@ -249,6 +250,7 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected int ScaleToDpi(int px)
         {
             return (int)(px * DpiRatio);

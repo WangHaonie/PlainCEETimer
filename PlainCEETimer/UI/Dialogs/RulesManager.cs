@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs
@@ -26,7 +27,7 @@ namespace PlainCEETimer.UI.Dialogs
         protected override ListViewItem GetListViewItem(CustomRuleObject data)
         {
             var tmp = data.Colors;
-            var item = new ListViewItem(data.Tick.ToString(@"d'天'h'时'm'分's'秒'")) { UseItemStyleForSubItems = false };
+            var item = new ListViewItem(data.Tick.Format()) { UseItemStyleForSubItems = false };
             item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
             return item;
         }

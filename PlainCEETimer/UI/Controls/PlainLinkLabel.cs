@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.UI.Controls
@@ -16,22 +15,15 @@ namespace PlainCEETimer.UI.Controls
         {
             AutoSize = true;
             LinkBehavior = LinkBehavior.HoverUnderline;
-
-            Color normal;
-            Color click;
-            Color disabled;
+            var normal = Colors.LightForeLinkNormal;
+            var click = Colors.LightForeLinkOnClick;
+            var disabled = Colors.LightForeLinkDisabled;
 
             if (ThemeManager.ShouldUseDarkMode)
             {
                 normal = Colors.DarkForeLinkNormal;
                 click = Colors.DarkForeLinkOnClick;
                 disabled = Colors.DarkForeLinkDisabled;
-            }
-            else
-            {
-                normal = Colors.LightForeLinkNormal;
-                click = Colors.LightForeLinkOnClick;
-                disabled = Colors.LightForeLinkDisabled;
             }
 
             LinkColor = normal;

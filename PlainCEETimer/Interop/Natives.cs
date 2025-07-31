@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
@@ -16,6 +17,7 @@ namespace PlainCEETimer.Interop
 
     public delegate IntPtr WNDPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+    [DebuggerDisplay("{(Value == 0 ? false : true)}")]
     public readonly struct BOOL
     {
         private readonly int Value;
@@ -39,6 +41,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
+    [DebuggerDisplay("{Value}")]
     public readonly struct HWND
     {
         private readonly IntPtr Value;
@@ -64,6 +67,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
+    [DebuggerDisplay("{Value}")]
     public readonly struct COLORREF
     {
         private readonly int Value;
@@ -79,6 +83,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
+    [DebuggerDisplay("{Value}")]
     public readonly struct HDC
     {
         private readonly IntPtr Value;
@@ -104,6 +109,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
+    [DebuggerDisplay("{Left}, {Top}, {Right}, {Bottom}")]
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
@@ -118,6 +124,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
+    [DebuggerDisplay("{code}")]
     [StructLayout(LayoutKind.Sequential)]
     public struct NMHDR
     {

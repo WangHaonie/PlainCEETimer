@@ -36,7 +36,7 @@ namespace PlainCEETimer.Modules
 
         public void Set(string key, object Value)
         {
-            OpenedKey.SetValue(key, Value);
+            OpenedKey?.SetValue(key, Value);
         }
 
         public void Delete(string key)

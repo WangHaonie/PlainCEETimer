@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    [DebuggerDisplay("{Phase,nq} {Tick,nq} {Text,nq}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [JsonConverter(typeof(CustomRuleConverter))]
     public class CustomRuleObject : IListViewData<CustomRuleObject>
     {
@@ -58,5 +59,7 @@ namespace PlainCEETimer.Modules.Configuration
         {
             return Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
         }
+
+        private string DebuggerDisplay => $"{Phase}: {Tick.Format()}, {Text}";
     }
 }
