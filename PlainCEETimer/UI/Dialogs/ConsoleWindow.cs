@@ -32,7 +32,6 @@ namespace PlainCEETimer.UI.Dialogs
         protected override void OnInitializing()
         {
             Text = "命令输出 - 高考倒计时";
-            BackColor = Color.Black;
             base.OnInitializing();
 
             this.AddControls(b =>
@@ -40,15 +39,20 @@ namespace PlainCEETimer.UI.Dialogs
                 ConsoleBox = b.New<RichTextBox>(600, 200, null).With(c =>
                 {
                     c.Font = new("Consolas", 9F);
-                    c.ForeColor = Color.FromArgb(204, 204, 204);
-                    c.BackColor = Color.Black;
+
+                    if (ThemeManager.ShouldUseDarkMode)
+                    {
+                        c.ForeColor = Colors.DarkForeLinkDisabled;
+                        c.BackColor = Color.Black;
+                    }
+
                     c.BorderStyle = BorderStyle.None;
                     c.ReadOnly = true;
                     c.HideSelection = false;
                     c.WordWrap = true;
                 }),
 
-                LabelMessage = b.Label("请稍候...").With(c => c.ForeColor = Color.White)
+                LabelMessage = b.Label("请稍候...")
             ]);
 
             ConsoleTimer.Interval = 1000;
