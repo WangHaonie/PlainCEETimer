@@ -236,12 +236,11 @@ namespace PlainCEETimer.UI.Controls
                     else
                     {
                         var items = ListViewMain.SelectedItems;
-                        var length = items.Count;
                         ListViewItem item;
 
-                        for (int i = 0; i < length; i++)
+                        while (items.Count > 0)
                         {
-                            item = items[i];
+                            item = items[0];
                             RemoveItem(item, (TData)item.Tag);
                         }
                     }
