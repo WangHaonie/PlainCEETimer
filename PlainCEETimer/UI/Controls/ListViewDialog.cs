@@ -156,7 +156,7 @@ namespace PlainCEETimer.UI.Controls
                 ListViewMain.AutoAdjustColumnWidth();
             });
 
-            ListViewMain.MouseDoubleClick += ListViewMain_MouseDoubleClick;
+            ListViewMain.MouseDoubleClick += ContextEdit_Click;
         }
 
         protected sealed override void OnKeyDown(KeyEventArgs e)
@@ -213,13 +213,16 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextEdit_Click(object sender, EventArgs e)
         {
-            var item = ListViewMain.SelectedItem;
-            var data = (TData)item.Tag;
-            var dialog = GetSubDialog(data);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (ListViewMain.SelectedItemsCount != 0)
             {
-                EditItemSafe(item, dialog.Data, data);
+                var item = ListViewMain.SelectedItem;
+                var data = (TData)item.Tag;
+                var dialog = GetSubDialog(data);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    EditItemSafe(item, dialog.Data, data);
+                }
             }
         }
 
@@ -255,14 +258,6 @@ namespace PlainCEETimer.UI.Controls
         private void ContextSelectAll_Click(object sender, EventArgs e)
         {
             ListViewMain.Suspend(() => ListViewMain.SelectAll(BOOL.TRUE));
-        }
-
-        private void ListViewMain_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left && ListViewMain.GetItemAt(e.X, e.Y) != null)
-            {
-                ContextEdit_Click(null, null);
-            }
         }
 
         private void AddItemSafe(TData data)
