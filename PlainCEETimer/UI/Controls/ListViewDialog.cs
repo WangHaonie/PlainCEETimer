@@ -228,11 +228,14 @@ namespace PlainCEETimer.UI.Controls
 
         private void ContextDelete_Click(object sender, EventArgs e)
         {
-            if (ListViewMain.SelectedItemsCount != 0 && MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", MessageButtons.YesNo) == DialogResult.Yes)
+            var selected = ListViewMain.SelectedItemsCount;
+
+            if (selected != 0 &&
+                MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", MessageButtons.YesNo) == DialogResult.Yes)
             {
                 ListViewMain.Suspend(() =>
                 {
-                    if (ListViewMain.SelectedItemsCount == Items.Count)
+                    if (selected == Items.Count)
                     {
                         RemoveAllItems();
                     }
@@ -241,7 +244,7 @@ namespace PlainCEETimer.UI.Controls
                         var items = ListViewMain.SelectedItems;
                         ListViewItem item;
 
-                        for (int i = items.Count - 1; i >= 0; i--)
+                        for (int i = selected - 1; i >= 0; i--)
                         {
                             item = items[i];
                             RemoveItem(item, (TData)item.Tag);

@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Dialogs
         public ColorSetObject[] ColorPresets { private get; set; }
 
         public RulesManager()
-            : base(460, ["时刻", "效果预览"], [Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3])
+            : base(460, ["时刻", "效果预览"], Constants.PH_RTs)
         {
             Text = "管理自定义规则 - 高考倒计时";
             ItemDescription = "规则";

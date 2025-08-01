@@ -35,9 +35,9 @@ namespace PlainCEETimer.UI.Dialogs
         private PlainNumericUpDown NUDSeconds;
         private PlainTextBox TextBoxCustomText;
         private EventHandler OnUserChanged;
-        private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
+        private readonly Dictionary<int, Temp> TemporaryChanges = new(3);
 
-        private struct Cache(ColorSetObject colors, string text)
+        private struct Temp(ColorSetObject colors, string text)
         {
             public ColorSetObject Colors = colors;
             public string Text = text;
@@ -96,7 +96,7 @@ namespace PlainCEETimer.UI.Dialogs
                     }
 
                     UserChanged();
-                }, Constants.PH_RTP1, Constants.PH_RTP2, Constants.PH_RTP3),
+                }, Constants.PH_RTs),
 
                 NUDDays = b.NumericUpDown(53, 65535M, OnUserChanged),
                 NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),
