@@ -29,7 +29,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnClick(EventArgs e)
         {
-            Menu?.Show(this, new(0, Height));
+            Menu?.Show(this, new(0, Height), LeftRightAlignment.Left);
             base.OnClick(e);
         }
     }
