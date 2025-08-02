@@ -83,7 +83,7 @@ Section -POST
   System::Call 'USER32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 0x0001|0x0002)'
   nsExec::ExecToLog '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::ExecToLog '"taskkill" /F /IM "PlainCEETimer.exe"'
-  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\高考倒计时"
+  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\CEETimerCSharpWinForms"
   Delete "$INSTDIR\GitHub.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
@@ -96,8 +96,11 @@ Section -POST
   Delete "$INSTDIR\PlainCEETimer.Natives.dll"
   Delete "$SMPROGRAMS\高考倒计时\卸载 高考倒计时.lnk"
   Delete "$SMPROGRAMS\高考倒计时\GitHub.lnk"
-  Delete "$DESKTOP\高考倒计时.lnk"
   Delete "$SMPROGRAMS\高考倒计时\高考倒计时.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\卸载 高考倒计时.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\GitHub.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\高考倒计时.lnk"
+  Delete "$DESKTOP\高考倒计时.lnk"
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_TITLE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
@@ -109,11 +112,11 @@ Section -POST
   File "..\.output\PlainCEETimer.exe"
   File "..\.output\Newtonsoft.Json.dll"
   File "..\.output\PlainCEETimer.Natives.dll"
-  CreateDirectory "$SMPROGRAMS\高考倒计时"
-  CreateShortCut "$SMPROGRAMS\高考倒计时\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
+  CreateDirectory "$SMPROGRAMS\高考倒计时 by WangHaonie"
+  CreateShortCut "$SMPROGRAMS\高考倒计时 by WangHaonie\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
   CreateShortCut "$DESKTOP\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
-  CreateShortCut "$SMPROGRAMS\高考倒计时\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-  CreateShortCut "$SMPROGRAMS\高考倒计时\卸载 高考倒计时.lnk" "$INSTDIR\uninst.exe"
+  CreateShortCut "$SMPROGRAMS\高考倒计时 by WangHaonie\GitHub.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\高考倒计时 by WangHaonie\卸载 高考倒计时.lnk" "$INSTDIR\uninst.exe"
   DetailPrint "正在优化程序集以提高运行速度，请稍候..."
   MessageBox MB_OK|MB_ICONINFORMATION "即将开始优化程序集，请按提示进行。$\n$\n>>现在点击 确定 继续"
   ExecWait '"$INSTDIR\PlainCEETimer.exe" /op /auto'
@@ -124,6 +127,7 @@ Section Uninstall
   nsExec::Exec '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::Exec '"taskkill" /F /IM "PlainCEETimer.exe"'
   ExecWait '"$INSTDIR\PlainCEETimer.exe" /uninst'
+  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\Microsoft\Windows\CurrentVersion\Uninstall\CEETimerCSharpWinForms"
   Delete "$INSTDIR\GitHub.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
@@ -135,8 +139,11 @@ Section Uninstall
   Delete "$INSTDIR\PlainCEETimer.Natives.dll"
   Delete "$SMPROGRAMS\高考倒计时\卸载 高考倒计时.lnk"
   Delete "$SMPROGRAMS\高考倒计时\GitHub.lnk"
-  Delete "$DESKTOP\高考倒计时.lnk"
   Delete "$SMPROGRAMS\高考倒计时\高考倒计时.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\卸载 高考倒计时.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\GitHub.lnk"
+  Delete "$SMPROGRAMS\高考倒计时 by WangHaonie\高考倒计时.lnk"
+  Delete "$DESKTOP\高考倒计时.lnk"
   RMDir "$SMPROGRAMS\高考倒计时"
   RMDir "$INSTDIR"
   SetAutoClose true
