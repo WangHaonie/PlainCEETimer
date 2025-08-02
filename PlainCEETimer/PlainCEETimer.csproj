@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Natives.cs" />
+    <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\Xml.cs" />

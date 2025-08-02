@@ -144,4 +144,16 @@ namespace PlainCEETimer.Interop
         public uint uItemState;
         public IntPtr lItemlParam;
     }
+
+    [DebuggerDisplay("{pszFile,nq} {pszArgs,nq}")]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct SHLNKINFO(string lnkPath)
+    {
+        public string pszLnkPath = lnkPath;
+        public string pszFile;
+        public string pszArgs;
+        public string pszDescr;
+        public string pszIconPath;
+        public int iIcon;
+    }
 }

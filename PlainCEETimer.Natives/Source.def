@@ -23,3 +23,8 @@ EXPORTS
     EnableScheduleTask @16 NONAME
     DeleteScheduleTask @17 NONAME
     ReleaseTaskScheduler @18 NONAME
+
+    InitializeShellLink @19 NONAME
+    ShellLinkCreateLnk @20 NONAME
+    ShellLinkExportLnk @21 NONAME
+    ReleaseShellLink @22 NONAME

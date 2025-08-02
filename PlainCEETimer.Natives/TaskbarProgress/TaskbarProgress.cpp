@@ -20,7 +20,7 @@ static BOOL initialized = FALSE;
 void InitializeTaskbarList(HWND hWnd)
 {
     if (!initialized && hWnd &&
-        SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (LPVOID*)&pList)))
+        SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID*)&pList)))
     {
         targetHwnd = hWnd;
         pList->HrInit();

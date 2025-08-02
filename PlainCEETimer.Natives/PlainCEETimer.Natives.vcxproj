@@ -166,6 +166,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
+    <ClInclude Include="ShellLink\ShellLink.h" />
     <ClInclude Include="TaskbarProgress\TaskbarProgress.h" />
     <ClInclude Include="TaskScheduler\TaskScheduler.h" />
     <ClInclude Include="ThemeManager\IATHook.h" />
@@ -182,6 +183,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RoundCorner\RoundCorner.cpp" />
+    <ClCompile Include="ShellLink\ShellLink.cpp" />
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
     <ClCompile Include="TaskScheduler\TaskScheduler.cpp" />
     <ClCompile Include="ThemeManager\ThemeManager.cpp" />

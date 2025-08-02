@@ -48,6 +48,9 @@
     <ClInclude Include="TaskScheduler\TaskScheduler.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ShellLink\ShellLink.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ShellLink\ShellLink.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

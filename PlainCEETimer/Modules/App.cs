@@ -97,9 +97,10 @@ namespace PlainCEETimer.Modules
                                     /h    显示此帮助信息
                                     /ac  检测当前用户是否具有管理员权限
                                     /fr <版本号>
-                                            强制下载并安装指定的版本，留空则当前版本，
-                                            推荐在特殊情况下使用，不支持老版本
+                                            强制下载并安装指定的版本，留空则当前版本，推荐
+                                            在特殊情况下使用，不支持老版本
                                     /op  优化本程序，提升运行速度
+                                    /lnk 向开始菜单文件夹和桌面创建指向本程序的快捷方式
                                     """);
                                 break;
                             case "/ac":
@@ -118,6 +119,14 @@ namespace PlainCEETimer.Modules
                             case "/op":
                                 UacHelper.CheckAdmin();
                                 new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
+                                break;
+                            case "/lnk":
+                                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？") == DialogResult.OK)
+                                {
+                                    ShellLink.Initialize();
+                                    ShellLink.CreateAppShortcut();
+                                    MessageX.Info("操作已完成。", autoClose: true);
+                                }
                                 break;
                             case "/uninst":
                                 Startup.DeleteAll();
@@ -149,6 +158,7 @@ namespace PlainCEETimer.Modules
 
         public static void Exit(bool restart = false)
         {
+            ShellLink.Release();
             Startup.Cleanup();
             IsClosing = true;
 
