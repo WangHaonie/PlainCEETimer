@@ -68,13 +68,10 @@ void DeleteScheduleTask(LPCWSTR taskName)
 
 void ReleaseTaskScheduler()
 {
-    if (initialized)
-    {
-        ResetPtrRegisteredTask();
-        if (pFolder) pFolder->Release();
-        if (pService) pService->Release();
-        pService = nullptr;
-        pFolder = nullptr;
-        initialized = FALSE;
-    }
+    ResetPtrRegisteredTask();
+    if (pFolder) pFolder->Release();
+    if (pService) pService->Release();
+    pService = nullptr;
+    pFolder = nullptr;
+    initialized = FALSE;
 }

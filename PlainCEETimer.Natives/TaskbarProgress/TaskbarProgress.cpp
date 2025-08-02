@@ -46,11 +46,8 @@ void SetTaskbarProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
 
 void ReleaseTaskbarList()
 {
-    if (initialized)
-    {
-        if (pList) pList->Release();
-        pList = nullptr;
-        targetHwnd = nullptr;
-        initialized = FALSE;
-    }
+    if (pList) pList->Release();
+    pList = nullptr;
+    targetHwnd = nullptr;
+    initialized = FALSE;
 }
