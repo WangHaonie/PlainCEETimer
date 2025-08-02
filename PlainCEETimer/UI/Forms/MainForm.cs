@@ -605,26 +605,26 @@ namespace PlainCEETimer.UI.Forms
             CDPlaceholders[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
             CDPlaceholders[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
 
-            if (!UseCustomText)
+            if (UseCustomText)
             {
-                CDPlaceholders["ht"] = DefaultTexts[phase];
-                UpdateCountdown(CDRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
-                return;
-            }
-
-            if (!CanUseRules)
-            {
-                UpdateCountdown(CDRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
-                return;
-            }
-
-            foreach (var rule in CurrentRules)
-            {
-                if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
+                if (CanUseRules)
                 {
-                    UpdateCountdown(CDRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
-                    return;
+                    foreach (var rule in CurrentRules)
+                    {
+                        if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
+                        {
+                            UpdateCountdown(CDRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
+                            return;
+                        }
+                    }
                 }
+
+                UpdateCountdown(CDRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
+            }
+            else
+            {
+                CDPlaceholders["{ht}"] = DefaultTexts[phase];
+                UpdateCountdown(CDRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
             }
         }
 
