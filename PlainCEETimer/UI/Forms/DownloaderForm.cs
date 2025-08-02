@@ -52,8 +52,6 @@ namespace PlainCEETimer.UI.Forms
 
                 ButtonRetry = b.Button("重试(&R)", false, (_, _) =>
                 {
-                    ButtonRetry.Enabled = false;
-                    ProgressBarMain.Value = 0;
                     UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
                     DownloadUpdate();
                 }),
@@ -122,6 +120,8 @@ namespace PlainCEETimer.UI.Forms
 
         private async void DownloadUpdate()
         {
+            IsCancelled = false;
+            ButtonRetry.Enabled = false;
             await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
         }
 
@@ -137,6 +137,7 @@ namespace PlainCEETimer.UI.Forms
             MessageX.Error("无法下载更新文件！", ex);
             UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
             ButtonRetry.Enabled = true;
+            IsCancelled = true;
             TaskbarProgress.SetValue(1UL, 1UL);
             TaskbarProgress.SetState(TaskbarProgressState.Error);
         }
