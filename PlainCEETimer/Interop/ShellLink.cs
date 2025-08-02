@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
 
@@ -10,8 +11,15 @@ namespace PlainCEETimer.Interop
 
         public static void CreateAppShortcut()
         {
+            var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
+
+            if (!Directory.Exists(programsdir))
+            {
+                Directory.CreateDirectory(programsdir);
+            }
+
             var shlnkdesktop = new SHLNKINFO($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\高考倒计时.lnk");
-            var shlnkstartmenu = new SHLNKINFO($"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\高考倒计时.lnk");
+            var shlnkstartmenu = new SHLNKINFO(programsdir + "高考倒计时.lnk");
             ResetAppShortcut(ref shlnkdesktop);
             ResetAppShortcut(ref shlnkstartmenu);
         }
