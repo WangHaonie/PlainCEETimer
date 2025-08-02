@@ -46,6 +46,8 @@ void ShellLinkCreateLnk(SHLNKINFO shLnkInfo)
     {
         pShellLink->SetPath(shLnkInfo.pszFile);
         pShellLink->SetArguments(shLnkInfo.pszArgs);
+        pShellLink->SetHotkey(shLnkInfo.wHotkey);
+        pShellLink->SetShowCmd(shLnkInfo.iShowCmd);
         pShellLink->SetDescription(shLnkInfo.pszDescr);
         pShellLink->SetIconLocation(shLnkInfo.pszIconPath, shLnkInfo.iIcon);
         pPersistFile->Save(shLnkInfo.pszLnkPath, TRUE);
@@ -66,6 +68,14 @@ void ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo)
         wstring shlargs;
         GetPropertyStore(PKEY_Link_Arguments, shlargs);
         lpshLnkInfo->pszArgs = _wcsdup(shlargs.c_str());
+
+        WORD shlkeys;
+        pShellLink->GetHotkey(&shlkeys);
+        lpshLnkInfo->wHotkey = shlkeys;
+
+        int shlshowcmd;
+        pShellLink->GetShowCmd(&shlshowcmd);
+        lpshLnkInfo->iShowCmd = shlshowcmd;
 
         wstring shldescr;
         GetPropertyStore(PKEY_Comment, shldescr);

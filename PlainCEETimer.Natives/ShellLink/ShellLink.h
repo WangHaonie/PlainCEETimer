@@ -8,6 +8,8 @@ typedef struct tagSHLNKINFO
     LPCWSTR pszLnkPath;
     LPCWSTR pszFile;
     LPCWSTR pszArgs;
+    WORD wHotkey;
+    int iShowCmd;
     LPCWSTR pszDescr;
     LPCWSTR pszIconPath;
     int iIcon;

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
@@ -13,6 +14,23 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.Gdi32Dll)]
         public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
+    }
+
+    [Flags]
+    public enum HOTKEYF : byte
+    {
+        NONE = 0x00,
+        SHIFT = 0x01,
+        CONTROL = 0x02,
+        ALT = 0x04,
+        EXT = 0x08
+    }
+
+    public enum SHWINCMD
+    {
+        NORMAL = 1,
+        MAXIMIZE = 3,
+        MINIMIZE = 7
     }
 
     public delegate IntPtr WNDPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
@@ -152,8 +170,19 @@ namespace PlainCEETimer.Interop
         public string pszLnkPath = lnkPath;
         public string pszFile;
         public string pszArgs;
+        public SHKEY wHotkey;
+        public SHWINCMD iShowCmd;
         public string pszDescr;
         public string pszIconPath;
         public int iIcon;
+    }
+
+    [DebuggerDisplay("{Modifiers} | {Key}")]
+    public readonly struct SHKEY(HOTKEYF fKeys, Keys keys)
+    {
+        private readonly ushort Value = (ushort)(((byte)fKeys << 8) | ((byte)((int)keys & 0xFF)));
+
+        public HOTKEYF Modifiers => (HOTKEYF)((Value >> 8) & 0xFF);
+        public Keys Key => (Keys)(Value & 0xFF);
     }
 }
