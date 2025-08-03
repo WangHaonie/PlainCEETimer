@@ -1,17 +1,17 @@
 #include "pch.h"
 #include "TaskScheduler.h"
 
-static ITaskService* pService = nullptr;
-static ITaskFolder* pFolder = nullptr;
-static IRegisteredTask* pReg = nullptr;
+static ITaskService* pts = nullptr;
+static ITaskFolder* ptf = nullptr;
+static IRegisteredTask* prt = nullptr;
 static BOOL initialized = FALSE;
 
 static BOOL ResetPtrRegisteredTask()
 {
-    if (pReg)
+    if (prt)
     {
-        pReg->Release();
-        pReg = nullptr;
+        prt->Release();
+        prt = nullptr;
     }
 
     return TRUE;
@@ -20,58 +20,58 @@ static BOOL ResetPtrRegisteredTask()
 void InitializeTaskScheduler()
 {
     if (!initialized &&
-        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (LPVOID*)&pService)))
+        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (LPVOID*)&pts)))
     {
-        pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
-        pService->GetFolder(_bstr_t(L"\\"), &pFolder);
+        pts->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
+        pts->GetFolder(_bstr_t(L"\\"), &ptf);
         initialized = TRUE;
     }
 }
 
-void ImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml)
+void TSchImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml)
 {
     if (initialized && ResetPtrRegisteredTask())
     {
-        pFolder->RegisterTask(_bstr_t(taskName), _bstr_t(strXml), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &pReg);
+        ptf->RegisterTask(_bstr_t(taskName), _bstr_t(strXml), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""), &prt);
     }
 }
 
-void ExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml)
+void TSchExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml)
 {
-    if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
+    if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
-        pReg->get_Xml(pbstrXml);
+        prt->get_Xml(pbstrXml);
     }
 }
 
-void EnableScheduleTask(LPCWSTR taskName)
+void TSchEnableTask(LPCWSTR taskName)
 {
-    if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(pFolder->GetTask(_bstr_t(taskName), &pReg)))
+    if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
         VARIANT_BOOL enabled;
-        pReg->get_Enabled(&enabled);
+        prt->get_Enabled(&enabled);
         
         if (enabled == VARIANT_FALSE)
         {
-            pReg->put_Enabled(VARIANT_TRUE);
+            prt->put_Enabled(VARIANT_TRUE);
         }
     }
 }
 
-void DeleteScheduleTask(LPCWSTR taskName)
+void TSchDeleteTask(LPCWSTR taskName)
 {
     if (initialized)
     {
-        pFolder->DeleteTask(_bstr_t(taskName), 0);
+        ptf->DeleteTask(_bstr_t(taskName), 0);
     }
 }
 
 void ReleaseTaskScheduler()
 {
     ResetPtrRegisteredTask();
-    if (pFolder) pFolder->Release();
-    if (pService) pService->Release();
-    pService = nullptr;
-    pFolder = nullptr;
+    if (ptf) ptf->Release();
+    if (pts) pts->Release();
+    pts = nullptr;
+    ptf = nullptr;
     initialized = FALSE;
 }

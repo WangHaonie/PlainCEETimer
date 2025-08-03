@@ -5,9 +5,9 @@
 
 using namespace std;
 
-static IShellLink* pShellLink = nullptr;
-static IPersistFile* pPersistFile = nullptr;
-static IPropertyStore* pPropertyStore = nullptr;
+static IShellLink* psh = nullptr;
+static IPersistFile* ppf = nullptr;
+static IPropertyStore* pps = nullptr;
 static BOOL initialized = FALSE;
 
 static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& out)
@@ -15,7 +15,7 @@ static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& out)
     PROPVARIANT pv;
     PropVariantInit(&pv);
 
-    auto hr = pPropertyStore->GetValue(key, &pv);
+    auto hr = pps->GetValue(key, &pv);
 
     if (SUCCEEDED(hr) && pv.vt == VT_LPWSTR)
     {
@@ -33,34 +33,34 @@ static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& out)
 void InitializeShellLink()
 {
     if (!initialized &&
-        SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&pShellLink)))
+        SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID*)&psh)))
     {
-        pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
+        psh->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf);
         initialized = TRUE;
     }
 }
 
-void ShellLinkCreateLnk(SHLNKINFO shLnkInfo)
+void ShLkCreateLnk(SHLNKINFO shLnkInfo)
 {
     if (initialized)
     {
-        pShellLink->SetPath(shLnkInfo.pszFile);
-        pShellLink->SetArguments(shLnkInfo.pszArgs);
-        pShellLink->SetWorkingDirectory(shLnkInfo.pszWorkDir);
-        pShellLink->SetHotkey(shLnkInfo.wHotkey);
-        pShellLink->SetShowCmd(shLnkInfo.iShowCmd);
-        pShellLink->SetDescription(shLnkInfo.pszDescr);
-        pShellLink->SetIconLocation(shLnkInfo.pszIconPath, shLnkInfo.iIcon);
-        pPersistFile->Save(shLnkInfo.pszLnkPath, TRUE);
+        psh->SetPath(shLnkInfo.pszFile);
+        psh->SetArguments(shLnkInfo.pszArgs);
+        psh->SetWorkingDirectory(shLnkInfo.pszWorkDir);
+        psh->SetHotkey(shLnkInfo.wHotkey);
+        psh->SetShowCmd(shLnkInfo.iShowCmd);
+        psh->SetDescription(shLnkInfo.pszDescr);
+        psh->SetIconLocation(shLnkInfo.pszIconPath, shLnkInfo.iIcon);
+        ppf->Save(shLnkInfo.pszLnkPath, TRUE);
     }
 }
 
-void ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo)
+void ShLkQueryLnk(LPSHLNKINFO lpshLnkInfo)
 {
     if (initialized &&
-        SUCCEEDED(pPersistFile->Load(lpshLnkInfo->pszLnkPath, STGM_READ)))
+        SUCCEEDED(ppf->Load(lpshLnkInfo->pszLnkPath, STGM_READ)))
     {
-        SHGetPropertyStoreFromParsingName(lpshLnkInfo->pszLnkPath, nullptr, GPS_DEFAULT, IID_IPropertyStore, (LPVOID*)&pPropertyStore);
+        SHGetPropertyStoreFromParsingName(lpshLnkInfo->pszLnkPath, nullptr, GPS_DEFAULT, IID_IPropertyStore, (LPVOID*)&pps);
 
         wstring shlpath;
         GetPropertyStore(PKEY_Link_TargetParsingPath, shlpath);
@@ -71,15 +71,15 @@ void ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo)
         lpshLnkInfo->pszArgs = _wcsdup(shlargs.c_str());
 
         WCHAR shlworkdir[MAX_PATH];
-        pShellLink->GetWorkingDirectory(shlworkdir, MAX_PATH);
+        psh->GetWorkingDirectory(shlworkdir, MAX_PATH);
         lpshLnkInfo->pszWorkDir = _wcsdup(shlworkdir);
 
         WORD shlkeys;
-        pShellLink->GetHotkey(&shlkeys);
+        psh->GetHotkey(&shlkeys);
         lpshLnkInfo->wHotkey = shlkeys;
 
         int shlshowcmd;
-        pShellLink->GetShowCmd(&shlshowcmd);
+        psh->GetShowCmd(&shlshowcmd);
         lpshLnkInfo->iShowCmd = shlshowcmd;
 
         wstring shldescr;
@@ -88,7 +88,7 @@ void ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo)
 
         WCHAR shliconloc[MAX_PATH];
         int index = 0;
-        pShellLink->GetIconLocation(shliconloc, MAX_PATH, &index);
+        psh->GetIconLocation(shliconloc, MAX_PATH, &index);
         lpshLnkInfo->pszIconPath = _wcsdup(shliconloc);
         lpshLnkInfo->iIcon = index;
     }
@@ -96,11 +96,11 @@ void ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo)
 
 void ReleaseShellLink()
 {
-    if (pPropertyStore) pPropertyStore->Release();
-    if (pPersistFile) pPersistFile->Release();
-    if (pShellLink) pShellLink->Release();
-    pPropertyStore = nullptr;
-    pPersistFile = nullptr;
-    pShellLink = nullptr;
+    if (pps) pps->Release();
+    if (ppf) ppf->Release();
+    if (psh) psh->Release();
+    pps = nullptr;
+    ppf = nullptr;
+    psh = nullptr;
     initialized = FALSE;
 }

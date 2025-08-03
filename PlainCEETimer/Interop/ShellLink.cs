@@ -18,15 +18,14 @@ namespace PlainCEETimer.Interop
                 Directory.CreateDirectory(programsdir);
             }
 
-            var shlnkdesktop = new SHLNKINFO($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\高考倒计时.lnk");
-            var shlnkstartmenu = new SHLNKINFO(programsdir + "高考倒计时.lnk");
-            ResetAppShortcut(ref shlnkdesktop);
-            ResetAppShortcut(ref shlnkstartmenu);
+            ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\高考倒计时.lnk");
+            ResetAppShortcut(programsdir + "高考倒计时.lnk");
         }
 
-        private static void ResetAppShortcut(ref SHLNKINFO shlnk)
+        private static void ResetAppShortcut(string lnk)
         {
-            Export(ref shlnk);
+            var shlnk = new SHLNKINFO(lnk);
+            Query(ref shlnk);
             var path = shlnk.pszFile;
             var args = shlnk.pszArgs;
             var needed = false;
@@ -45,9 +44,12 @@ namespace PlainCEETimer.Interop
 
             if (needed)
             {
-                shlnk.iIcon = 0;
-                shlnk.pszIconPath = string.Empty;
+                shlnk.pszWorkDir = string.Empty;
+                shlnk.wHotkey = SHKEY.NONE;
+                shlnk.iShowCmd = SWCMD.NORMAL;
                 shlnk.pszDescr = App.AppName;
+                shlnk.pszIconPath = string.Empty;
+                shlnk.iIcon = 0;
                 Create(shlnk);
             }
         }
@@ -59,7 +61,7 @@ namespace PlainCEETimer.Interop
         private static extern void Create(SHLNKINFO shLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#21", CharSet = CharSet.Unicode)]
-        private static extern void Export(ref SHLNKINFO shLnkInfo);
+        private static extern void Query(ref SHLNKINFO shLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#22")]
         public static extern void Release();

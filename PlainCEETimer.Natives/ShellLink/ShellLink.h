@@ -17,6 +17,6 @@ typedef struct tagSHLNKINFO
 } SHLNKINFO, *LPSHLNKINFO;
 
 cexport(void) InitializeShellLink();
-cexport(void) ShellLinkCreateLnk(SHLNKINFO shLnkInfo);
-cexport(void) ShellLinkExportLnk(LPSHLNKINFO lpshLnkInfo);
+cexport(void) ShLkCreateLnk(SHLNKINFO shLnkInfo);
+cexport(void) ShLkQueryLnk(LPSHLNKINFO lpshLnkInfo);
 cexport(void) ReleaseShellLink();

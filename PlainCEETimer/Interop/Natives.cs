@@ -26,7 +26,7 @@ namespace PlainCEETimer.Interop
         EXT = 0x08
     }
 
-    public enum SHWINCMD
+    public enum SWCMD
     {
         NORMAL = 1,
         MAXIMIZE = 3,
@@ -163,6 +163,16 @@ namespace PlainCEETimer.Interop
         public IntPtr lItemlParam;
     }
 
+    [DebuggerDisplay("{DebuggerDisplay}")]
+    public readonly struct SHKEY(HOTKEYF fKeys, Keys keys)
+    {
+        private readonly ushort Value = (ushort)(((byte)fKeys << 8) | ((byte)((int)keys & 0xFF)));
+
+        public static readonly SHKEY NONE = new();
+
+        private string DebuggerDisplay => $"{(HOTKEYF)((Value >> 8) & 0xFF)} | {(Keys)(Value & 0xFF)}";
+    }
+
     [DebuggerDisplay("{pszFile,nq} {pszArgs,nq}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct SHLNKINFO(string lnkPath)
@@ -172,18 +182,9 @@ namespace PlainCEETimer.Interop
         public string pszArgs;
         public string pszWorkDir;
         public SHKEY wHotkey;
-        public SHWINCMD iShowCmd;
+        public SWCMD iShowCmd;
         public string pszDescr;
         public string pszIconPath;
         public int iIcon;
-    }
-
-    [DebuggerDisplay("{Modifiers} | {Key}")]
-    public readonly struct SHKEY(HOTKEYF fKeys, Keys keys)
-    {
-        private readonly ushort Value = (ushort)(((byte)fKeys << 8) | ((byte)((int)keys & 0xFF)));
-
-        public HOTKEYF Modifiers => (HOTKEYF)((Value >> 8) & 0xFF);
-        public Keys Key => (Keys)(Value & 0xFF);
     }
 }

@@ -5,8 +5,8 @@
 #include <comdef.h>
 
 cexport(void) InitializeTaskScheduler();
-cexport(void) ImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml);
-cexport(void) ExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml);
-cexport(void) EnableScheduleTask(LPCWSTR taskName);
-cexport(void) DeleteScheduleTask(LPCWSTR taskName);
+cexport(void) TSchImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml);
+cexport(void) TSchExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml);
+cexport(void) TSchEnableTask(LPCWSTR taskName);
+cexport(void) TSchDeleteTask(LPCWSTR taskName);
 cexport(void) ReleaseTaskScheduler();
