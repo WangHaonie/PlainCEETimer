@@ -170,6 +170,7 @@ namespace PlainCEETimer.Interop
         public string pszLnkPath = lnkPath;
         public string pszFile;
         public string pszArgs;
+        public string pszWorkDir;
         public SHKEY wHotkey;
         public SHWINCMD iShowCmd;
         public string pszDescr;
