@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TaskScheduler.h"
+#include <taskschd.h>
 
 static ITaskService* pts = nullptr;
 static ITaskFolder* ptf = nullptr;
@@ -28,7 +29,7 @@ void InitializeTaskScheduler()
     }
 }
 
-void TSchImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml)
+void TaskSchdImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
 {
     if (initialized && ResetPtrRegisteredTask())
     {
@@ -36,7 +37,7 @@ void TSchImportTaskFromXmlString(LPCWSTR taskName, LPCWSTR strXml)
     }
 }
 
-void TSchExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml)
+void TaskSchdExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
 {
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
@@ -44,7 +45,7 @@ void TSchExportTaskAsXmlString(LPCWSTR taskName, BSTR* pbstrXml)
     }
 }
 
-void TSchEnableTask(LPCWSTR taskName)
+void TaskSchdEnableTask(LPCWSTR taskName)
 {
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
@@ -58,7 +59,7 @@ void TSchEnableTask(LPCWSTR taskName)
     }
 }
 
-void TSchDeleteTask(LPCWSTR taskName)
+void TaskSchdDeleteTask(LPCWSTR taskName)
 {
     if (initialized)
     {

@@ -4,6 +4,6 @@
 #include <Windows.h>
 
 cexport(void) InitializeTaskbarList(HWND hWnd);
-cexport(void) TLstSetTaskbarProgressState(TBPFLAG tbpFlags);
-cexport(void) TLstSetTaskbarProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal);
+cexport(void) TaskListSetProgressState(TBPFLAG tbpFlags);
+cexport(void) TaskListSetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal);
 cexport(void) ReleaseTaskbarList();

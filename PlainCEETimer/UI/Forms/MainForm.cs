@@ -21,6 +21,14 @@ namespace PlainCEETimer.UI.Forms
         public static bool ValidateNeeded { get; private set; } = true;
         public static event Action UniTopMostChanged;
 
+        private int AutoSwitchInterval;
+        private int CurrentTheme;
+        private int CountdownMaxW;
+        private int ExamIndex;
+        private int ScreenIndex;
+        private int ShowXOnlyIndex;
+        private int LastMouseX;
+        private int LastMouseY;
         private bool AutoSwitch;
         private bool CanUseRules;
         private bool IsCeiling;
@@ -36,16 +44,6 @@ namespace PlainCEETimer.UI.Forms
         private bool ShowTrayText;
         private bool TrayIconReopen;
         private bool UseCustomText;
-        private int AutoSwitchInterval;
-        private int CurrentTheme;
-        private int CountdownMaxW;
-        private int ExamIndex;
-        private int ScreenIndex;
-        private int ShowXOnlyIndex;
-        private int LastMouseX;
-        private int LastMouseY;
-        private const int PptsvcThreshold = 1;
-        private const int MemCleanerInterval = 300_000; // 5 min
         private string CountdownContent;
         private string CountdownContentLast = string.Empty;
         private string ExamName;
@@ -77,9 +75,11 @@ namespace PlainCEETimer.UI.Forms
         private System.Threading.Timer MemCleaner;
         private System.Threading.Timer Countdown;
         private System.Windows.Forms.Timer AutoSwitchHandler;
-        private readonly Dictionary<string, string> CDPlaceholders = new(10);
-        private readonly Regex CDRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
+        private const int PptsvcThreshold = 1;
+        private const int MemCleanerInterval = 300_000; // 5 min
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
+        private readonly Dictionary<string, string> PhCountdown = new(10);
+        private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
 
         protected override void OnInitializing()
         {
@@ -89,7 +89,7 @@ namespace PlainCEETimer.UI.Forms
             DefaultMatchEvaluator = m =>
             {
                 var key = m.Value;
-                return CDPlaceholders.TryGetValue(key, out string value) ? value : key;
+                return PhCountdown.TryGetValue(key, out string value) ? value : key;
             };
         }
 
@@ -595,15 +595,15 @@ namespace PlainCEETimer.UI.Forms
 
         private void ApplyCustomRule(int phase, TimeSpan span)
         {
-            CDPlaceholders[Constants.PH_EXAMNAME] = ExamName;
-            CDPlaceholders[Constants.PH_DAYS] = $"{span.Days}";
-            CDPlaceholders[Constants.PH_HOURS] = $"{span.Hours:00}";
-            CDPlaceholders[Constants.PH_MINUTES] = $"{span.Minutes:00}";
-            CDPlaceholders[Constants.PH_SECONDS] = $"{span.Seconds:00}";
-            CDPlaceholders[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
-            CDPlaceholders[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
-            CDPlaceholders[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
-            CDPlaceholders[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
+            PhCountdown[Constants.PH_EXAMNAME] = ExamName;
+            PhCountdown[Constants.PH_DAYS] = $"{span.Days}";
+            PhCountdown[Constants.PH_HOURS] = $"{span.Hours:00}";
+            PhCountdown[Constants.PH_MINUTES] = $"{span.Minutes:00}";
+            PhCountdown[Constants.PH_SECONDS] = $"{span.Seconds:00}";
+            PhCountdown[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
+            PhCountdown[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
+            PhCountdown[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
 
             if (UseCustomText)
             {
@@ -613,18 +613,18 @@ namespace PlainCEETimer.UI.Forms
                     {
                         if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
                         {
-                            UpdateCountdown(CDRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
+                            UpdateCountdown(CountdownRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
                             return;
                         }
                     }
                 }
 
-                UpdateCountdown(CDRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
+                UpdateCountdown(CountdownRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
             }
             else
             {
-                CDPlaceholders["{ht}"] = DefaultTexts[phase];
-                UpdateCountdown(CDRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
+                PhCountdown["{ht}"] = DefaultTexts[phase];
+                UpdateCountdown(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
             }
         }
 

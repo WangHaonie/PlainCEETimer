@@ -8,8 +8,8 @@ EXPORTS
     ClearProcessMemory @5 NONAME
 
     InitializeTaskbarList @6 NONAME
-    TLstSetTaskbarProgressState @7 NONAME
-    TLstSetTaskbarProgressValue @8 NONAME
+    TaskListSetProgressState @7 NONAME
+    TaskListSetProgressValue @8 NONAME
     ReleaseTaskbarList @9 NONAME
 
     FlushApp @10 NONAME
@@ -18,13 +18,13 @@ EXPORTS
     EnumSystemDisplays @12 NONAME
 
     InitializeTaskScheduler @13 NONAME
-    TSchImportTaskFromXmlString @14 NONAME
-    TSchExportTaskAsXmlString @15 NONAME
-    TSchEnableTask @16 NONAME
-    TSchDeleteTask @17 NONAME
+    TaskSchdImportTaskFromXml @14 NONAME
+    TaskSchdExportTaskAsXml @15 NONAME
+    TaskSchdEnableTask @16 NONAME
+    TaskSchdDeleteTask @17 NONAME
     ReleaseTaskScheduler @18 NONAME
 
     InitializeShellLink @19 NONAME
-    ShLkCreateLnk @20 NONAME
-    ShLkQueryLnk @21 NONAME
+    ShellLinkCreateLnk @20 NONAME
+    ShellLinkQueryLnk @21 NONAME
     ReleaseShellLink @22 NONAME

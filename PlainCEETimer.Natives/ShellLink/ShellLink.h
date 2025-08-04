@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ShObjIdl.h>
 #include <Windows.h>
 
 typedef struct tagSHLNKINFO
@@ -17,6 +16,6 @@ typedef struct tagSHLNKINFO
 } SHLNKINFO, *LPSHLNKINFO;
 
 cexport(void) InitializeShellLink();
-cexport(void) ShLkCreateLnk(SHLNKINFO shLnkInfo);
-cexport(void) ShLkQueryLnk(LPSHLNKINFO lpshLnkInfo);
+cexport(void) ShellLinkCreateLnk(SHLNKINFO shLnkInfo);
+cexport(void) ShellLinkQueryLnk(LPSHLNKINFO lpshLnkInfo);
 cexport(void) ReleaseShellLink();

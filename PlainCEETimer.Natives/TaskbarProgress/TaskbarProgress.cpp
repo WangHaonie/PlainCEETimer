@@ -28,7 +28,7 @@ void InitializeTaskbarList(HWND hWnd)
     }
 }
 
-void TLstSetTaskbarProgressState(TBPFLAG tbpFlags)
+void TaskListSetProgressState(TBPFLAG tbpFlags)
 {
     if (initialized)
     {
@@ -36,7 +36,7 @@ void TLstSetTaskbarProgressState(TBPFLAG tbpFlags)
     }
 }
 
-void TLstSetTaskbarProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
+void TaskListSetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
     if (initialized)
     {

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ShellLink.h"
+#include <ShObjIdl.h>
 #include <propkey.h>
 #include <string>
 
@@ -10,7 +11,7 @@ static IPersistFile* ppf = nullptr;
 static IPropertyStore* pps = nullptr;
 static BOOL initialized = FALSE;
 
-static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& out)
+static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& value)
 {
     PROPVARIANT pv;
     PropVariantInit(&pv);
@@ -19,11 +20,11 @@ static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& out)
 
     if (SUCCEEDED(hr) && pv.vt == VT_LPWSTR)
     {
-        out = pv.pwszVal;
+        value = pv.pwszVal;
     }
     else
     {
-        out.clear();
+        value.clear();
     }
 
     PropVariantClear(&pv);
@@ -40,7 +41,7 @@ void InitializeShellLink()
     }
 }
 
-void ShLkCreateLnk(SHLNKINFO shLnkInfo)
+void ShellLinkCreateLnk(SHLNKINFO shLnkInfo)
 {
     if (initialized)
     {
@@ -55,7 +56,7 @@ void ShLkCreateLnk(SHLNKINFO shLnkInfo)
     }
 }
 
-void ShLkQueryLnk(LPSHLNKINFO lpshLnkInfo)
+void ShellLinkQueryLnk(LPSHLNKINFO lpshLnkInfo)
 {
     if (initialized &&
         SUCCEEDED(ppf->Load(lpshLnkInfo->pszLnkPath, STGM_READ)))
