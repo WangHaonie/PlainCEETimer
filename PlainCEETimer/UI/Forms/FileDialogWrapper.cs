@@ -2,7 +2,7 @@
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Controls;
 
-namespace PlainCEETimer.UI.Dialogs
+namespace PlainCEETimer.UI.Forms
 {
     internal sealed class FileDialogWrapper : AppForm
     {

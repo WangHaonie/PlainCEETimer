@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules
         public const string AppNameEng = "PlainCEETimer";
         public const string AppNameEngOld = "CEETimerCSharpWinForms";
         public const string AppVersion = "5.0.5.1";
-        public const string AppBuildDate = "2025/8/4";
+        public const string AppBuildDate = "2025/8/5";
         public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
         public const string OriginalFileName = $"{AppNameEng}.exe";
         public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -104,14 +104,14 @@ namespace PlainCEETimer.Modules
                                     """);
                                 break;
                             case "/fr":
-                                Application.Run(new DownloaderForm(Args.Length > 1 ? Args[1] : null));
+                                Application.Run(new DownloaderForm(GetNextArg()));
                                 break;
                             case "/op":
                                 UacHelper.CheckAdmin();
-                                new OptimizationHelper(CheckNextArg("/auto")).Optimize();
+                                new OptimizationHelper(GetNextArg() == "/auto").Optimize();
                                 break;
                             case "/lnk":
-                                ShellLink.CreateAppShortcut(CheckNextArg("/custom"));
+                                ShellLink.CreateAppShortcut(GetNextArg() == "/custom");
                                 break;
                             case "/uninst":
                                 Startup.DeleteAll();
@@ -146,20 +146,16 @@ namespace PlainCEETimer.Modules
             MessageX.Info(
                 """
                 可用的命令行参数: 
-                                    
-                /h  
-                        显示此帮助信息
 
+                /h
+                        显示此帮助信息
                 /ac
                         检测当前用户是否具有管理员权限
-
                 /fr [版本号]
                         强制下载并安装指定的版本，留空则当前版本，推荐
                         在特殊情况下使用，不支持老版本
-
                 /op
                         优化本程序，提升运行速度
-
                 /lnk [/custom]
                         向开始菜单文件夹和桌面创建指向本程序的快捷方式
                         /custom 表示用户将自行选择保存快捷方式的文件夹
@@ -215,9 +211,14 @@ namespace PlainCEETimer.Modules
             catch { }
         }
 
-        private static bool CheckNextArg(string expectation)
+        private static string GetNextArg()
         {
-            return Args.Length > 1 && Args[1] == expectation;
+            if (Args.Length > 1)
+            {
+                return Args[1];
+            }
+
+            return null;
         }
 
         private static bool StartPipeClient(string pipe = null, string path = null, string args = null)

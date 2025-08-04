@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI;
-using PlainCEETimer.UI.Dialogs;
+using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Interop
 {
@@ -34,7 +34,7 @@ namespace PlainCEETimer.Interop
                 Dialog ??= new()
                 {
                     Title = "保存快捷方式 - 高考倒计时",
-                    Filter = FileDialogWrapper.CreateFilters([FileFilter.Shortcut]),
+                    Filter = FileDialogWrapper.CreateFilters(FileFilter.Shortcut),
                     FileName = LnkName
                 };
 
