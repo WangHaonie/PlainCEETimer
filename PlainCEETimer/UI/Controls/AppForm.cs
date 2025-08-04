@@ -29,7 +29,7 @@ namespace PlainCEETimer.UI.Controls
         private static readonly Font AppFont;
         private static readonly int CurrentFontHeight;
 
-        protected AppForm(AppFormParam param)
+        protected AppForm(AppFormParam param = AppFormParam.None)
         {
             Params = param;
             Special = CheckParam(AppFormParam.Special);

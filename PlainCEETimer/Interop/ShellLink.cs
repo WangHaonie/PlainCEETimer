@@ -1,25 +1,68 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.UI;
+using PlainCEETimer.UI.Dialogs;
 
 namespace PlainCEETimer.Interop
 {
     public static class ShellLink
     {
+        private static readonly string LnkName = "高考倒计时.lnk";
         private static readonly string AppPath = App.CurrentExecutablePath;
+        private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
+        private static SaveFileDialog Dialog;
 
-        public static void CreateAppShortcut()
+        public static void CreateAppShortcut(bool allowCustom = false)
         {
-            var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
+            Initialize();
 
-            if (!Directory.Exists(programsdir))
+            if (Create(allowCustom))
             {
-                Directory.CreateDirectory(programsdir);
+                MessageX.Info("操作已完成。", autoClose: true);
             }
 
-            ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\高考倒计时.lnk");
-            ResetAppShortcut(programsdir + "高考倒计时.lnk");
+            Release();
+        }
+
+        private static bool Create(bool allowCustom)
+        {
+            if (allowCustom)
+            {
+                Dialog ??= new()
+                {
+                    Title = "保存快捷方式 - 高考倒计时",
+                    Filter = FileDialogWrapper.CreateFilters([FileFilter.Shortcut]),
+                    FileName = LnkName
+                };
+
+                if (FileDialogWrapper.ShowDialog(Dialog) == DialogResult.OK)
+                {
+                    ResetAppShortcut(Dialog.FileName);
+                    return true;
+                }
+            }
+            else
+            {
+                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
+                {
+                    var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
+
+                    if (!Directory.Exists(programsdir))
+                    {
+                        Directory.CreateDirectory(programsdir);
+                    }
+
+                    ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{LnkName}");
+                    ResetAppShortcut(programsdir + LnkName);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ResetAppShortcut(string lnk)
@@ -55,7 +98,7 @@ namespace PlainCEETimer.Interop
         }
 
         [DllImport(App.NativesDll, EntryPoint = "#19")]
-        public static extern void Initialize();
+        private static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#20", CharSet = CharSet.Unicode)]
         private static extern void Create(SHLNKINFO shLnkInfo);
@@ -64,6 +107,6 @@ namespace PlainCEETimer.Interop
         private static extern void Query(ref SHLNKINFO shLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#22")]
-        public static extern void Release();
+        private static extern void Release();
     }
 }

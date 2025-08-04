@@ -78,6 +78,7 @@ namespace PlainCEETimer.UI
     [Flags]
     public enum AppFormParam
     {
+        None,
         BindButtons = 1,
         KeyPreview = 1 << 1,
         Special = 1 << 2,

@@ -53,6 +53,7 @@ namespace PlainCEETimer.Modules
         private static bool IsMainProcess;
         private static bool IsClosing;
         private static bool CanSaveConfig;
+        private static string[] Args;
         private static Mutex MainMutex;
         private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
@@ -68,7 +69,7 @@ namespace PlainCEETimer.Modules
             Application.ThreadException += (_, e) => HandleException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
             AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
-            var Args = Array.ConvertAll(args, x => x.ToLower());
+            Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
             MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
@@ -90,18 +91,7 @@ namespace PlainCEETimer.Modules
                         {
                             case "/?":
                             case "/h":
-                                MessageX.Info(
-                                    """
-                                    可用的命令行参数: 
-                                    
-                                    /h    显示此帮助信息
-                                    /ac  检测当前用户是否具有管理员权限
-                                    /fr <版本号>
-                                            强制下载并安装指定的版本，留空则当前版本，推荐
-                                            在特殊情况下使用，不支持老版本
-                                    /op  优化本程序，提升运行速度
-                                    /lnk 向开始菜单文件夹和桌面创建指向本程序的快捷方式
-                                    """);
+                                PopupHelp();
                                 break;
                             case "/ac":
                                 UacHelper.CheckAdmin();
@@ -118,15 +108,10 @@ namespace PlainCEETimer.Modules
                                 break;
                             case "/op":
                                 UacHelper.CheckAdmin();
-                                new OptimizationHelper(Args.Length > 1 && Args[1] == "/auto").Optimize();
+                                new OptimizationHelper(CheckNextArg("/auto")).Optimize();
                                 break;
                             case "/lnk":
-                                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？") == DialogResult.OK)
-                                {
-                                    ShellLink.Initialize();
-                                    ShellLink.CreateAppShortcut();
-                                    MessageX.Info("操作已完成。", autoClose: true);
-                                }
+                                ShellLink.CreateAppShortcut(CheckNextArg("/custom"));
                                 break;
                             case "/uninst":
                                 Startup.DeleteAll();
@@ -156,9 +141,33 @@ namespace PlainCEETimer.Modules
             Exit();
         }
 
+        private static void PopupHelp()
+        {
+            MessageX.Info(
+                """
+                可用的命令行参数: 
+                                    
+                /h  
+                        显示此帮助信息
+
+                /ac
+                        检测当前用户是否具有管理员权限
+
+                /fr [版本号]
+                        强制下载并安装指定的版本，留空则当前版本，推荐
+                        在特殊情况下使用，不支持老版本
+
+                /op
+                        优化本程序，提升运行速度
+
+                /lnk [/custom]
+                        向开始菜单文件夹和桌面创建指向本程序的快捷方式
+                        /custom 表示用户将自行选择保存快捷方式的文件夹
+                """);
+        }
+
         public static void Exit(bool restart = false)
         {
-            ShellLink.Release();
             Startup.Cleanup();
             IsClosing = true;
 
@@ -204,6 +213,11 @@ namespace PlainCEETimer.Modules
                 }
             }
             catch { }
+        }
+
+        private static bool CheckNextArg(string expectation)
+        {
+            return Args.Length > 1 && Args[1] == expectation;
         }
 
         private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
