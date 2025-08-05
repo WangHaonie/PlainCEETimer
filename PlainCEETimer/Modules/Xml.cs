@@ -10,7 +10,7 @@ namespace PlainCEETimer.Modules
             return XDocument.Parse(raw).Root;
         }
 
-        public static bool Check(this XElement top, string expect, bool returnValueIfNull, params string[] nodes)
+        public static bool Check(this XElement top, string expectation, bool returnValueIfNull, params string[] nodes)
         {
             var ns = top.GetDefaultNamespace();
             var current = top;
@@ -25,7 +25,7 @@ namespace PlainCEETimer.Modules
                 }
             }
 
-            return current.Value.Equals(expect, StringComparison.OrdinalIgnoreCase);
+            return current.Value.Equals(expectation, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

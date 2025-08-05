@@ -46,19 +46,26 @@ namespace PlainCEETimer.Interop
             }
             else
             {
-                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
+                if (Win32User.NotElevated)
                 {
-                    var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
-
-                    if (!Directory.Exists(programsdir))
+                    if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
                     {
-                        Directory.CreateDirectory(programsdir);
+                        var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
+
+                        if (!Directory.Exists(programsdir))
+                        {
+                            Directory.CreateDirectory(programsdir);
+                        }
+
+                        ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{LnkName}");
+                        ResetAppShortcut(programsdir + LnkName);
+
+                        return true;
                     }
-
-                    ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{LnkName}");
-                    ResetAppShortcut(programsdir + LnkName);
-
-                    return true;
+                }
+                else
+                {
+                    MessageX.Error("系统环境异常！请考虑加上 /custom 参数来创建快捷方式");
                 }
             }
 
