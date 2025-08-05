@@ -173,6 +173,35 @@ namespace PlainCEETimer.Interop
         private string DebuggerDisplay => $"{(HOTKEYF)((Value >> 8) & 0xFF)} | {(Keys)(Value & 0xFF)}";
     }
 
+    [DebuggerDisplay("{ToString(),nq}")]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public readonly struct SYSDISPLAY
+    {
+        private readonly int iIndex;
+        private readonly string pszDeviceName;
+        private readonly string pszDeviceId;
+        private readonly string pszDosPath;
+        private readonly RECT rcDisplay;
+
+        public readonly override string ToString()
+        {
+            return string.Format("{0}. {1} {2}, {3}, {4}x{5}", iIndex + 1, pszDeviceName, GetId(pszDeviceId), pszDosPath, rcDisplay.Right - rcDisplay.Left, rcDisplay.Bottom - rcDisplay.Top);
+        }
+
+        private readonly string GetId(string did)
+        {
+            var dids = did.Split('\\');
+            var iname = did;
+
+            if (dids.Length > 2)
+            {
+                iname = dids[1];
+            }
+
+            return iname;
+        }
+    }
+
     [DebuggerDisplay("{pszFile,nq} {pszArgs,nq}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct SHLNKINFO(string lnkPath)

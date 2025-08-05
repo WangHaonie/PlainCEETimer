@@ -19,6 +19,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
             if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr) == ERROR_SUCCESS)
             {
+                int index = 0;
                 vector<const DISPLAYCONFIG_SOURCE_MODE*> sourceModes(modeCount, nullptr);
 
                 for (UINT32 i = 0; i < modeCount; i++)
@@ -31,18 +32,18 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
                 for (const auto& path : paths)
                 {
+                    SYSDISPLAY info = { index };
+
                     if (!(path.flags & DISPLAYCONFIG_PATH_ACTIVE))
                     {
                         continue;
                     }
 
-                    RECT rect = {};
-
                     if (path.sourceInfo.modeInfoIdx < modeCount)
                     {
                         if (auto srcMode = sourceModes[path.sourceInfo.modeInfoIdx])
                         {
-                            rect =
+                            info.rcDisplay =
                             {
                                 srcMode->position.x,
                                 srcMode->position.y,
@@ -69,6 +70,8 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         dpath = sourceName.viewGdiDeviceName;
                     }
 
+                    info.pszDosPath = dpath;
+
                     DISPLAYCONFIG_TARGET_DEVICE_NAME targetName =
                     {
                         {
@@ -86,6 +89,8 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         name = targetName.monitorFriendlyDeviceName;
                     }
 
+                    info.pszDeviceName = name;
+
                     DISPLAY_DEVICE dd = { sizeof(dd) };
                     LPCWSTR did = L"<未知型号>";
                     
@@ -94,10 +99,14 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         did = dd.DeviceID;
                     }
 
-                    if (!(lpfnEnum(rect, name, dpath, did)))
+                    info.pszDeviceId = did;
+
+                    if (!(lpfnEnum(info)))
                     {
                         return;
                     }
+
+                    index++;
                 }
             }
         }
