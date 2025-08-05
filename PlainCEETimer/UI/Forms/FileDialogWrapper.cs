@@ -4,15 +4,16 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    internal sealed class FileDialogWrapper : AppForm
+    internal sealed class FileDialogWrapper(string title) : AppForm
     {
         protected override void OnInitializing()
         {
             Text = nameof(FileDialogWrapper);
             TopMost = false;
             MinimizeBox = false;
+            ControlBox = false;
             StartPosition = FormStartPosition.WindowsDefaultLocation;
-            this.AddControls(b => [b.Label("FileDialogWrapper - 高考倒计时")]);
+            this.AddControls(b => [b.Label(title)]);
         }
 
         public static string CreateFilters(params FileFilter[] filters)
@@ -22,7 +23,7 @@ namespace PlainCEETimer.UI.Forms
 
         public static DialogResult ShowDialog(FileDialog dialog)
         {
-            var wrapper = new FileDialogWrapper();
+            var wrapper = new FileDialogWrapper(dialog.Title);
             wrapper.Show();
             var result = dialog.ShowDialog(wrapper);
             wrapper.Close();
