@@ -32,16 +32,17 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
                 for (const auto& path : paths)
                 {
-                    SYSDISPLAY info = { index };
-
                     if (!(path.flags & DISPLAYCONFIG_PATH_ACTIVE))
                     {
                         continue;
                     }
 
-                    if (path.sourceInfo.modeInfoIdx < modeCount)
+                    UINT32 sourceModeInfoIdx = path.sourceInfo.modeInfoIdx;
+                    SYSDISPLAY info = { index };
+
+                    if (sourceModeInfoIdx < modeCount)
                     {
-                        if (auto srcMode = sourceModes[path.sourceInfo.modeInfoIdx])
+                        if (auto srcMode = sourceModes[sourceModeInfoIdx])
                         {
                             info.rcDisplay =
                             {
@@ -91,8 +92,29 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
                     info.pszDeviceName = name;
 
-                    DISPLAY_DEVICE dd = { sizeof(dd) };
+                    double refrate = 0.0;
+
+                    if (path.targetInfo.modeInfoIdx != DISPLAYCONFIG_PATH_MODE_IDX_INVALID)
+                    {
+                        DISPLAYCONFIG_RATIONAL rate = {};
+                        auto mode = &modes[sourceModeInfoIdx];
+
+                        if (mode->targetMode.targetVideoSignalInfo.vSyncFreq.Denominator == 0)
+                        {
+                            rate = path.targetInfo.refreshRate;
+                        }
+                        else
+                        {
+                            rate = mode->targetMode.targetVideoSignalInfo.vSyncFreq;
+                        }
+
+                        refrate = (double)rate.Numerator / (double)rate.Denominator;
+                    }
+
+                    info.dRefreshRate = refrate;
+
                     LPCWSTR did = L"<未知型号>";
+                    DISPLAY_DEVICE dd = { sizeof(dd) };
                     
                     if (EnumDisplayDevices(dpath, 0, &dd, 0) && *dd.DeviceID)
                     {

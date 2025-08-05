@@ -9,6 +9,7 @@ typedef struct tagSYSDISPLAY
 	LPCWSTR pszDeviceId;
 	LPCWSTR pszDosPath;
 	RECT rcDisplay;
+	double dRefreshRate;
 } SYSDISPLAY;
 
 using EnumDisplayProc = BOOL (CALLBACK*)(SYSDISPLAY info);

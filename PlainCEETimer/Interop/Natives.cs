@@ -182,10 +182,11 @@ namespace PlainCEETimer.Interop
         private readonly string pszDeviceId;
         private readonly string pszDosPath;
         private readonly RECT rcDisplay;
+        private readonly double dRefreshRate;
 
         public readonly override string ToString()
         {
-            return string.Format("{0}. {1} {2}, {3}, {4}x{5}", iIndex + 1, pszDeviceName, GetId(pszDeviceId), pszDosPath, rcDisplay.Right - rcDisplay.Left, rcDisplay.Bottom - rcDisplay.Top);
+            return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", iIndex + 1, pszDeviceName, GetId(pszDeviceId), pszDosPath, rcDisplay.Right - rcDisplay.Left, rcDisplay.Bottom - rcDisplay.Top, dRefreshRate);
         }
 
         private readonly string GetId(string did)
