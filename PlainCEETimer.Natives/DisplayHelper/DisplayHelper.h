@@ -2,16 +2,16 @@
 
 #include <Windows.h>
 
-typedef struct tagSYSDISPLAY
+struct SystemDisplay
 {
-	int iIndex;
-	LPCWSTR pszDeviceName;
-	LPCWSTR pszDeviceId;
-	LPCWSTR pszDosPath;
-	RECT rcDisplay;
-	double dRefreshRate;
-} SYSDISPLAY;
+	int index;
+	LPCWSTR deviceName;
+	LPCWSTR deviceId;
+	LPCWSTR dosPath;
+	RECT bounds;
+	double refreshRate;
+};
 
-using EnumDisplayProc = BOOL (CALLBACK*)(SYSDISPLAY info);
+using EnumDisplayProc = BOOL (CALLBACK*)(SystemDisplay info);
 
 cexport(void) EnumSystemDisplays(EnumDisplayProc lpfnEnum);

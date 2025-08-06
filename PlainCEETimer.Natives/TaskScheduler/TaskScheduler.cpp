@@ -21,7 +21,7 @@ static BOOL ResetPtrRegisteredTask()
 void InitializeTaskScheduler()
 {
     if (!initialized &&
-        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, (LPVOID*)&pts)))
+        SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pts))))
     {
         pts->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
         pts->GetFolder(_bstr_t(L"\\"), &ptf);

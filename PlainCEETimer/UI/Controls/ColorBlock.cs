@@ -25,11 +25,11 @@ namespace PlainCEETimer.UI.Controls
                     {
                         if (IsFore)
                         {
-                            PreviewBlock.ForeColor = Color;
+                            PreviewBlock.ForeColor = value;
                         }
                         else if (!IsPreview)
                         {
-                            PreviewBlock.BackColor = Color;
+                            PreviewBlock.BackColor = value;
                         }
                     }
 

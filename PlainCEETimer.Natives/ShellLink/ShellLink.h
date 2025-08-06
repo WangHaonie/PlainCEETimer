@@ -2,20 +2,20 @@
 
 #include <Windows.h>
 
-typedef struct tagSHLNKINFO
+struct LnkInfo
 {
-    LPCWSTR pszLnkPath;
-    LPCWSTR pszFile;
-    LPCWSTR pszArgs;
-    LPCWSTR pszWorkDir;
-    WORD wHotkey;
-    int iShowCmd;
-    LPCWSTR pszDescr;
-    LPCWSTR pszIconPath;
-    int iIcon;
-} SHLNKINFO, *LPSHLNKINFO;
+    LPCWSTR lnkPath;
+    LPCWSTR target;
+    LPCWSTR args;
+    LPCWSTR workingDir;
+    WORD hotkey;
+    int showCmd;
+    LPCWSTR description;
+    LPCWSTR iconPath;
+    int iconIndex;
+};
 
 cexport(void) InitializeShellLink();
-cexport(void) ShellLinkCreateLnk(SHLNKINFO shLnkInfo);
-cexport(void) ShellLinkQueryLnk(LPSHLNKINFO lpshLnkInfo);
+cexport(void) ShellLinkCreateLnk(LnkInfo shLnkInfo);
+cexport(void) ShellLinkQueryLnk(LnkInfo* lpshLnkInfo);
 cexport(void) ReleaseShellLink();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -130,33 +131,34 @@ namespace PlainCEETimer.Interop
 
                 if (UnusedCtrls == null)
                 {
-                    UnusedCtrls = new int[8];
-                    UnusedCtrls[0] = stc6;
+                    List<int> tmp = [];
+                    tmp.Add(stc6);
 
                     if (!f.ShowColor)
                     {
-                        UnusedCtrls[1] = stc4;
-                        UnusedCtrls[2] = cmb4;
+                        tmp.Add(stc4);
+                        tmp.Add(cmb4);
                     }
 
                     if (!f.ShowApply)
                     {
-                        UnusedCtrls[3] = psh3;
+                        tmp.Add(psh3);
                     }
 
                     if (!f.ShowHelp)
                     {
-                        UnusedCtrls[4] = psh15;
+                        tmp.Add(psh15);
                     }
 
                     if (!f.ShowEffects)
                     {
-                        UnusedCtrls[5] = grp1;
-                        UnusedCtrls[6] = chx1;
-                        UnusedCtrls[7] = chx2;
+                        tmp.Add(grp1);
+                        tmp.Add(chx1);
+                        tmp.Add(chx2);
                     }
-                }
 
+                    UnusedCtrls = [.. tmp];
+                }
 
                 foreach (var ctrl in UnusedCtrls)
                 {

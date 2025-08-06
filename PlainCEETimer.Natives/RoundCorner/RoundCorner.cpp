@@ -13,13 +13,13 @@ https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-rounde
 
 */
 
-void SetRoundCornerRegion(HWND hWnd, int wndWidth, int wndHeight, int radius)
+void SetRoundCornerRegion(HWND hWnd, int width, int height, int radius)
 {
-    SetWindowRgn(hWnd, CreateRoundRectRgn(0, 0, wndWidth, wndHeight, radius, radius), TRUE);
+    SetWindowRgn(hWnd, CreateRoundRectRgn(0, 0, width, height, radius, radius), TRUE);
 }
 
 void SetRoundCornerModern(HWND hWnd)
 {
-    int type = 2;
-    DwmSetWindowAttribute(hWnd, 33, &type, sizeof(type));
+    DWM_WINDOW_CORNER_PREFERENCE type = DWMWCP_ROUND;
+    DwmSetWindowAttribute(hWnd, DWMWA_WINDOW_CORNER_PREFERENCE, &type, sizeof(type));
 }

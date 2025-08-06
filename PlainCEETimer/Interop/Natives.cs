@@ -17,20 +17,20 @@ namespace PlainCEETimer.Interop
     }
 
     [Flags]
-    public enum HOTKEYF : byte
+    public enum HotkeyModifiers : byte
     {
-        NONE = 0x00,
-        SHIFT = 0x01,
-        CONTROL = 0x02,
-        ALT = 0x04,
-        EXT = 0x08
+        None = 0x00,
+        Shit = 0x01, // (●'◡'●)
+        Control = 0x02,
+        Alt = 0x04,
+        Ext = 0x08
     }
 
-    public enum SWCMD
+    public enum WindowShowCommand
     {
-        NORMAL = 1,
-        MAXIMIZE = 3,
-        MINIMIZE = 7
+        Normal = 1,
+        Maximize = 3,
+        Minimize = 7
     }
 
     public delegate IntPtr WNDPROC(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
@@ -85,7 +85,7 @@ namespace PlainCEETimer.Interop
         }
     }
 
-    [DebuggerDisplay("{Value}")]
+    [DebuggerDisplay("{DebuggerDisplay}")]
     public readonly struct COLORREF
     {
         private readonly int Value;
@@ -98,6 +98,15 @@ namespace PlainCEETimer.Interop
         public static implicit operator COLORREF(Color c)
         {
             return new(c);
+        }
+
+        private string DebuggerDisplay
+        {
+            get
+            {
+                var color = ColorTranslator.FromWin32(Value);
+                return $"RGB({color.R}, {color.G}, {color.B})";
+            }
         }
     }
 
@@ -164,29 +173,29 @@ namespace PlainCEETimer.Interop
     }
 
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public readonly struct SHKEY(HOTKEYF fKeys, Keys keys)
+    public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
     {
         private readonly ushort Value = (ushort)(((byte)fKeys << 8) | ((byte)((int)keys & 0xFF)));
 
-        public static readonly SHKEY NONE = new();
+        public static readonly LnkHotkey None = new();
 
-        private string DebuggerDisplay => $"{(HOTKEYF)((Value >> 8) & 0xFF)} | {(Keys)(Value & 0xFF)}";
+        private string DebuggerDisplay => $"{(HotkeyModifiers)((Value >> 8) & 0xFF)}, {(Keys)(Value & 0xFF)}";
     }
 
     [DebuggerDisplay("{ToString(),nq}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public readonly struct SYSDISPLAY
+    public readonly struct SystemDisplay
     {
-        private readonly int iIndex;
-        private readonly string pszDeviceName;
-        private readonly string pszDeviceId;
-        private readonly string pszDosPath;
-        private readonly RECT rcDisplay;
-        private readonly double dRefreshRate;
+        private readonly int index;
+        private readonly string deviceName;
+        private readonly string deviceId;
+        private readonly string dosPath;
+        private readonly RECT bounds;
+        private readonly double refreshRate;
 
         public readonly override string ToString()
         {
-            return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", iIndex + 1, pszDeviceName, GetId(pszDeviceId), pszDosPath, rcDisplay.Right - rcDisplay.Left, rcDisplay.Bottom - rcDisplay.Top, dRefreshRate);
+            return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", index + 1, deviceName, GetId(deviceId), dosPath, bounds.Right - bounds.Left, bounds.Bottom - bounds.Top, refreshRate);
         }
 
         private readonly string GetId(string did)
@@ -203,18 +212,18 @@ namespace PlainCEETimer.Interop
         }
     }
 
-    [DebuggerDisplay("{pszFile,nq} {pszArgs,nq}")]
+    [DebuggerDisplay("{Target,nq} {Args,nq}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct SHLNKINFO(string lnkPath)
+    public struct LnkInfo(string lnkPath)
     {
-        public string pszLnkPath = lnkPath;
-        public string pszFile;
-        public string pszArgs;
-        public string pszWorkDir;
-        public SHKEY wHotkey;
-        public SWCMD iShowCmd;
-        public string pszDescr;
-        public string pszIconPath;
-        public int iIcon;
+        public string LnkPath = lnkPath;
+        public string Target;
+        public string Args;
+        public string WorkingDir;
+        public LnkHotkey Hotkey;
+        public WindowShowCommand ShowCmd;
+        public string Description;
+        public string IconPath;
+        public int IconIndex;
     }
 }

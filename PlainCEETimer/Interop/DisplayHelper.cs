@@ -23,6 +23,6 @@ namespace PlainCEETimer.Interop
         private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-        private delegate BOOL EnumDisplayProc(SYSDISPLAY info);
+        private delegate BOOL EnumDisplayProc(SystemDisplay info);
     }
 }

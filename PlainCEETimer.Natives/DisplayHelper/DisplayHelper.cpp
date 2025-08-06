@@ -38,13 +38,13 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                     }
 
                     UINT32 sourceModeInfoIdx = path.sourceInfo.modeInfoIdx;
-                    SYSDISPLAY info = { index };
+                    SystemDisplay info = { index };
 
                     if (sourceModeInfoIdx < modeCount)
                     {
                         if (auto srcMode = sourceModes[sourceModeInfoIdx])
                         {
-                            info.rcDisplay =
+                            info.bounds =
                             {
                                 srcMode->position.x,
                                 srcMode->position.y,
@@ -71,7 +71,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         dpath = sourceName.viewGdiDeviceName;
                     }
 
-                    info.pszDosPath = dpath;
+                    info.dosPath = dpath;
 
                     DISPLAYCONFIG_TARGET_DEVICE_NAME targetName =
                     {
@@ -90,7 +90,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         name = targetName.monitorFriendlyDeviceName;
                     }
 
-                    info.pszDeviceName = name;
+                    info.deviceName = name;
 
                     double refrate = 0.0;
 
@@ -108,10 +108,10 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                             rate = mode->targetMode.targetVideoSignalInfo.vSyncFreq;
                         }
 
-                        refrate = (double)rate.Numerator / (double)rate.Denominator;
+                        refrate = static_cast<double>(rate.Numerator) / static_cast<double>(rate.Denominator);
                     }
 
-                    info.dRefreshRate = refrate;
+                    info.refreshRate = refrate;
 
                     LPCWSTR did = L"<未知型号>";
                     DISPLAY_DEVICE dd = { sizeof(dd) };
@@ -121,7 +121,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         did = dd.DeviceID;
                     }
 
-                    info.pszDeviceId = did;
+                    info.deviceId = did;
 
                     if (!(lpfnEnum(info)))
                     {

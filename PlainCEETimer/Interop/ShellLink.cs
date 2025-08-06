@@ -72,35 +72,35 @@ namespace PlainCEETimer.Interop
             return false;
         }
 
-        private static void ResetAppShortcut(string lnk)
+        private static void ResetAppShortcut(string lnkPath)
         {
-            var shlnk = new SHLNKINFO(lnk);
-            Query(ref shlnk);
-            var path = shlnk.pszFile;
-            var args = shlnk.pszArgs;
+            var lnk = new LnkInfo(lnkPath);
+            Query(ref lnk);
+            var path = lnk.Target;
+            var args = lnk.Args;
             var needed = false;
 
             if (path == null || !path.Equals(App.CurrentExecutablePath, StringComparison.OrdinalIgnoreCase))
             {
-                shlnk.pszFile = AppPath;
+                lnk.Target = AppPath;
                 needed = true;
             }
 
             if (!string.IsNullOrEmpty(args))
             {
-                shlnk.pszArgs = string.Empty;
+                lnk.Args = string.Empty;
                 needed = true;
             }
 
             if (needed)
             {
-                shlnk.pszWorkDir = string.Empty;
-                shlnk.wHotkey = SHKEY.NONE;
-                shlnk.iShowCmd = SWCMD.NORMAL;
-                shlnk.pszDescr = App.AppName;
-                shlnk.pszIconPath = string.Empty;
-                shlnk.iIcon = 0;
-                Create(shlnk);
+                lnk.WorkingDir = string.Empty;
+                lnk.Hotkey = LnkHotkey.None;
+                lnk.ShowCmd = WindowShowCommand.Normal;
+                lnk.Description = App.AppName;
+                lnk.IconPath = string.Empty;
+                lnk.IconIndex = 0;
+                Create(lnk);
             }
         }
 
@@ -108,10 +108,10 @@ namespace PlainCEETimer.Interop
         private static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#20", CharSet = CharSet.Unicode)]
-        private static extern void Create(SHLNKINFO shLnkInfo);
+        private static extern void Create(LnkInfo shLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#21", CharSet = CharSet.Unicode)]
-        private static extern void Query(ref SHLNKINFO shLnkInfo);
+        private static extern void Query(ref LnkInfo lpshLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#22")]
         private static extern void Release();
