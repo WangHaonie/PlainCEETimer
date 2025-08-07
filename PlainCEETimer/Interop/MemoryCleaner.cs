@@ -19,8 +19,8 @@ namespace PlainCEETimer.Interop
 
             if (mem == 0)
             {
-                WmiSearcher ??= new($"SELECT WorkingSetPrivate FROM Win32_PerfFormattedData_PerfProc_Process WHERE IDProcess = {PID}");
-                mem = (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().FirstOrDefault().GetPropertyValue("WorkingSetPrivate");
+                WmiSearcher ??= new($"select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess={PID}");
+                mem = (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().First().GetPropertyValue("WorkingSetPrivate");
             }
 
             if (mem > Threshold)

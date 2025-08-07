@@ -218,6 +218,7 @@ namespace PlainCEETimer.Interop
 
         private NativeStyle GetNativeStyle(HWND hWnd)
         {
+            builder.Clear();
             GetClassName(hWnd, builder, 256);
             var className = builder.ToString();
 

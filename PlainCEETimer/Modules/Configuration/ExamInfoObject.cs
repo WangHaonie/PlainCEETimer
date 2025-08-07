@@ -38,7 +38,7 @@ namespace PlainCEETimer.Modules.Configuration
                     Validator.EnsureExamDate(value);
                 }
 
-                field = value.TruncateToSecond();
+                field = value.TruncateToSeconds();
             }
         } = DateTime.Now;
 
@@ -53,7 +53,7 @@ namespace PlainCEETimer.Modules.Configuration
                     Validator.EnsureExamDate(value);
                 }
 
-                field = value.TruncateToSecond();
+                field = value.TruncateToSeconds();
             }
         } = DateTime.Now;
 
@@ -98,7 +98,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Name.Truncate(6), Start.Format());
+            return $"{Name.Truncate(6)} - {Start.Format()}";
         }
 
         public override bool Equals(object obj)

@@ -47,7 +47,7 @@ namespace PlainCEETimer.Modules.Extensions
         https://stackoverflow.com/a/35018359
 
         */
-        public static DateTime TruncateToSecond(this DateTime dt)
+        public static DateTime TruncateToSeconds(this DateTime dt)
             => new(dt.Ticks / Validator.MinTick * Validator.MinTick);
     }
 }

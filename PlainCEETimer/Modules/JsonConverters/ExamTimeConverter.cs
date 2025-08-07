@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
-    public class ExamTimeConverter : IsoDateTimeConverter
+    public sealed class ExamTimeConverter : IsoDateTimeConverter
     {
         public ExamTimeConverter()
         {

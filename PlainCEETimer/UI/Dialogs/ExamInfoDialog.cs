@@ -67,7 +67,7 @@ namespace PlainCEETimer.UI.Dialogs
             }
             else
             {
-                var date = DateTime.Now.TruncateToSecond();
+                var date = DateTime.Now.TruncateToSeconds();
                 DTPStart.Value = date;
                 DTPEnd.Value = date;
             }
