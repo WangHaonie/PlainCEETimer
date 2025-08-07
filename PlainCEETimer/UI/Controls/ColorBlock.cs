@@ -8,6 +8,22 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class ColorBlock : PlainLabel
     {
+        private class CancellationMessageFilter(Action onCancel) : IMessageFilter
+        {
+            private const int WM_KEYDOWN = 0x0100;
+            private static readonly IntPtr EscKey = new((int)Keys.Escape);
+
+            public bool PreFilterMessage(ref Message m)
+            {
+                if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
+                {
+                    onCancel?.Invoke();
+                }
+
+                return false;
+            }
+        }
+
         public new AppForm Parent { get; set; }
 
         public ColorBlock[] Fellows { get; set; }
@@ -42,12 +58,14 @@ namespace PlainCEETimer.UI.Controls
 
         private bool IsDragging;
         private bool IsPicking;
+        private bool IsPickingCancelled;
         private Point MouseLocation;
         private Rectangle ParentBounds;
         private ScreenColorPicker ColorPicker;
         private readonly bool IsPreview;
         private readonly bool IsFore;
         private readonly ColorBlock PreviewBlock;
+        private CancellationMessageFilter MsgFilter;
 
         public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
         {
@@ -75,11 +93,20 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (!IsPreview && e.Button == MouseButtons.Left)
+            if (!IsPreview)
             {
-                IsDragging = true;
-                Capture = true;
-                ParentBounds = Parent.Bounds;
+                var mButtom = e.Button;
+
+                if (mButtom == MouseButtons.Left)
+                {
+                    IsDragging = true;
+                    Capture = true;
+                    ParentBounds = Parent.Bounds;
+                }
+                else if (IsDragging && IsPicking && mButtom == MouseButtons.Right)
+                {
+                    CancelScreenColorPicker();
+                }
             }
 
             base.OnMouseDown(e);
@@ -95,6 +122,8 @@ namespace PlainCEETimer.UI.Controls
                 if (!IsPicking && !ParentBounds.Contains(MouseLocation))
                 {
                     IsPicking = true;
+                    MsgFilter ??= new(CancelScreenColorPicker);
+                    Application.AddMessageFilter(MsgFilter);
                     ColorPicker = new();
                     HideParentForm();
                     ColorPicker.Show();
@@ -127,7 +156,16 @@ namespace PlainCEETimer.UI.Controls
 
                 if (IsPicking)
                 {
-                    Color = ColorPicker.CurrentPixelColor;
+                    if (IsPickingCancelled)
+                    {
+                        IsPickingCancelled = false;
+                    }
+                    else
+                    {
+                        Color = ColorPicker.CurrentPixelColor;
+                    }
+
+                    Application.RemoveMessageFilter(MsgFilter);
                     HideParentForm(false);
                     ColorPicker.Close();
                     IsPicking = false;
@@ -135,6 +173,12 @@ namespace PlainCEETimer.UI.Controls
             }
 
             base.OnMouseUp(e);
+        }
+
+        private void CancelScreenColorPicker()
+        {
+            IsPickingCancelled = true;
+            OnMouseUp(null);
         }
 
         private void HideParentForm(bool hide = true)
