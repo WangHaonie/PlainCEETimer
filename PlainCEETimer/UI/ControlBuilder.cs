@@ -84,10 +84,9 @@ namespace PlainCEETimer.UI
             var ctrl = new PlainComboBox() { Enabled = enabled };
             ctrl.SetBounds(0, 0, w, 23);
 
-            var dataLength = items.Length;
-            var data = new ComboData[dataLength];
+            var data = new ComboData[items.Length];
 
-            for (int i = 0; i < dataLength; i++)
+            for (int i = 0; i < items.Length; i++)
             {
                 data[i] = new(items[i], i);
             }

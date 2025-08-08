@@ -26,9 +26,7 @@ namespace PlainCEETimer.UI.Controls
             get;
             set
             {
-                var length = value.Length;
-
-                if (value != null && length != 0)
+                if (value != null && value.Length != 0)
                 {
                     Columns.Clear();
 
