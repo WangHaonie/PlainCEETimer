@@ -22,7 +22,7 @@ namespace PlainCEETimer.Modules
         public const string ValueSeparatorString = ", ";
         public const string RegexPhPatterns = @"\{(\w+)\}";
 
-        private static readonly string[] AllPHs = [Constants.PH_EXAMNAME, Constants.PH_DAYS, Constants.PH_HOURS, Constants.PH_MINUTES, Constants.PH_SECONDS, Constants.PH_CEILINGDAYS, Constants.PH_TOTALHOURS, Constants.PH_TOTALMINUTES, Constants.PH_TOTALSECONDS];
+        private static readonly string[] AllPHs = [Constants.PH_EXAMNAME, Constants.PH_DAYS, Constants.PH_HOURS, Constants.PH_MINUTES, Constants.PH_SECONDS, Constants.PH_CEILINGDAYS, Constants.PH_TOTALHOURS, Constants.PH_TOTALMINUTES, Constants.PH_TOTALSECONDS, Constants.PH_DECIMALDAYS, Constants.PH_DECIMALHOURS];
 
         public static bool VerifyCustomText(string custom, out string warning, int index = 0)
         {

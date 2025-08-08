@@ -14,7 +14,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded && (value is < 0 or > 3))
+                if (MainForm.ValidateNeeded && (value is < 0 or > 6))
                 {
                     throw new Exception();
                 }
@@ -22,8 +22,6 @@ namespace PlainCEETimer.Modules.Configuration
                 field = value;
             }
         }
-
-        public bool Ceiling { get; set; }
 
         [DefaultValue(2)]
         public int EndIndex

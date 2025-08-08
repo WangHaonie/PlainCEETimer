@@ -73,7 +73,6 @@ namespace PlainCEETimer.UI.Forms
         private PlainButton ButtonSave;
         private PlainButton ButtonSyncTime;
         private PlainCheckBox CheckBoxAutoSwitch;
-        private PlainCheckBox CheckBoxCeiling;
         private PlainCheckBox CheckBoxDraggable;
         private PlainCheckBox CheckBoxMemClean;
         private PlainCheckBox CheckBoxPptSvc;
@@ -208,34 +207,15 @@ namespace PlainCEETimer.UI.Forms
                         GBoxContent = b.GroupBox("倒计时内容",
                         [
                             LabelCountdownEnd = b.Label("当考试开始后, 显示"),
-
                             ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, "<程序欢迎信息>", "考试还有多久结束", "考试还有多久结束 和 已过去了多久"),
+                            ComboBoxShowXOnly = b.ComboBox(130, false, SettingsChanged, "总天数", "总天数 (一位小数)", "总天数 (向上取整)", "总小时", "总小时 (一位小数)", "总分钟", "总秒数"),
 
-                            ComboBoxShowXOnly = b.ComboBox(38, false, (_, _) =>
-                            {
-                                var index = ComboBoxShowXOnly.SelectedIndex;
-                                CheckBoxCeiling.Visible = index == 0;
-                                CheckBoxCeiling.Checked = index == 0 && AppConfig.Display.Ceiling;
-                                SettingsChanged();
-                            }, "天", "时", "分", "秒"),
-
-                            CheckBoxShowXOnly = b.CheckBox("只显示", (sender, _) =>
+                            CheckBoxShowXOnly = b.CheckBox("将时间间隔更改为只显示", (sender, _) =>
                             {
                                 ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
-                                CheckBoxCeiling.Enabled = ComboBoxShowXOnly.Enabled;
-                                ComboBoxShowXOnly.SelectedIndex = CheckBoxShowXOnly.Checked ? AppConfig.Display.X : 0;
                                 ChangeCustomTextStyle(sender);
-
-                                if (CheckBoxCeiling.Checked && !CheckBoxShowXOnly.Checked)
-                                {
-                                    CheckBoxCeiling.Checked = false;
-                                    CheckBoxCeiling.Enabled = false;
-                                }
-
                                 SettingsChanged();
                             }),
-
-                            CheckBoxCeiling = b.CheckBox("不足一天按整天计算(&N)", SettingsChanged),
 
                             ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
                             {
@@ -484,8 +464,6 @@ namespace PlainCEETimer.UI.Forms
             AlignControlXL(CheckBoxShowXOnly, LabelCountdownEnd, 3);
             CenterControlY(CheckBoxShowXOnly, ComboBoxShowXOnly, 1);
             CompactControlX(ComboBoxShowXOnly, CheckBoxShowXOnly, -2);
-            ArrangeControlXRT(CheckBoxCeiling, ComboBoxShowXOnly, CheckBoxShowXOnly, 6);
-            AlignControlXL(CheckBoxCeiling, ComboBoxCountdownEnd);
             CompactControlY(ButtonRulesMan, ComboBoxShowXOnly, 3);
             CenterControlY(CheckBoxRulesMan, ButtonRulesMan, 1);
             AlignControlXL(CheckBoxRulesMan, CheckBoxShowXOnly);
@@ -621,11 +599,9 @@ namespace PlainCEETimer.UI.Forms
             UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
             CheckBoxTopMost.Checked = AppConfig.General.TopMost;
             CheckBoxMemClean.Checked = AppConfig.General.MemClean;
-            CheckBoxCeiling.Enabled = false;
             CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
             CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
             CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
-            CheckBoxCeiling.Checked = AppConfig.Display.Ceiling;
             ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
             CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
             CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
@@ -635,7 +611,6 @@ namespace PlainCEETimer.UI.Forms
             ChangeDisplayFont(AppConfig.Font);
             ChangePptsvcStyle(null, null);
             SelectedColors = AppConfig.GlobalColors;
-            ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.ShowXOnly ? AppConfig.Display.X : 0;
             ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
             EditedCustomTexts = AppConfig.GlobalCustomTexts;
             EditedCustomRules = AppConfig.CustomRules;
@@ -823,7 +798,6 @@ namespace PlainCEETimer.UI.Forms
                 {
                     ShowXOnly = CheckBoxShowXOnly.Checked,
                     X = ComboBoxShowXOnly.SelectedIndex,
-                    Ceiling = CheckBoxCeiling.Checked,
                     EndIndex = ComboBoxCountdownEnd.SelectedIndex,
                     CustomText = CheckBoxRulesMan.Checked,
                     ScreenIndex = ComboBoxScreens.SelectedIndex,

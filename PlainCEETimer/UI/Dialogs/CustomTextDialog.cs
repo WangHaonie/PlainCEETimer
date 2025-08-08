@@ -61,7 +61,7 @@ namespace PlainCEETimer.UI.Dialogs
         {
             ArrangeFirstControl(LabelInfo, 3, 0);
             SetLabelAutoWrap(LabelInfo, TextBoxP1.Width + LabelP1.Width + ScaleToDpi(3));
-            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Constants.PH_EXAMNAME}-考试名称 {Constants.PH_DAYS}-天 {Constants.PH_HOURS}-时 {Constants.PH_MINUTES}-分 {Constants.PH_SECONDS}-秒 {Constants.PH_CEILINGDAYS}-向上取整的天数 {Constants.PH_TOTALHOURS}-总小时数 {Constants.PH_TOTALMINUTES}-总分钟数 {Constants.PH_TOTALSECONDS}-总秒数。比如 \"{Constants.PH_EXAMNAME}还有{Constants.PH_DAYS}:{Constants.PH_HOURS}:{Constants.PH_MINUTES}:{Constants.PH_SECONDS}\"。";
+            LabelInfo.Text = $"用于匹配规则之外。可用的占位符: {Constants.PH_EXAMNAME}-考试名称 {Constants.PH_DAYS}-天 {Constants.PH_HOURS}-时 {Constants.PH_MINUTES}-分 {Constants.PH_SECONDS}-秒 {Constants.PH_CEILINGDAYS}-向上取整的天数 {Constants.PH_DECIMALDAYS}-总天数取一位小数 {Constants.PH_TOTALHOURS}-总小时数 {Constants.PH_DECIMALHOURS}-总小时数取一位小数 {Constants.PH_TOTALMINUTES}-总分钟数 {Constants.PH_TOTALSECONDS}-总秒数。\n比如 \"{Constants.PH_EXAMNAME}还有{Constants.PH_DAYS}:{Constants.PH_HOURS}:{Constants.PH_MINUTES}:{Constants.PH_SECONDS}\"。";
             ArrangeControlYL(LabelP1, LabelInfo);
             ArrangeControlXT(TextBoxP1, LabelP1);
             CompactControlY(TextBoxP1, LabelInfo, 3);

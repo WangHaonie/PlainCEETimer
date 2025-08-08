@@ -31,7 +31,6 @@ namespace PlainCEETimer.UI.Forms
         private int LastMouseY;
         private bool AutoSwitch;
         private bool CanUseRules;
-        private bool IsCeiling;
         private bool IsCountdownReady;
         private bool IsCountdownRunning;
         private bool IsDraggable;
@@ -78,7 +77,7 @@ namespace PlainCEETimer.UI.Forms
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
         private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
-        private readonly Dictionary<string, string> PhCountdown = new(10);
+        private readonly Dictionary<string, string> PhCountdown = new(12);
         private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
 
         protected override void OnInitializing()
@@ -274,7 +273,6 @@ namespace PlainCEETimer.UI.Forms
         {
             if (ValidateNeeded)
             {
-                AppConfig.Display.Ceiling = AppConfig.Display.Ceiling && AppConfig.Display.ShowXOnly && AppConfig.Display.X == 0;
                 AppConfig.Display.CustomText = AppConfig.Display.CustomText && !AppConfig.Display.ShowXOnly;
                 AppConfig.Display.SeewoPptsvc = AppConfig.Display.SeewoPptsvc && ((AppConfig.General.TopMost && AppConfig.Display.X == 0) || AppConfig.Display.Draggable);
                 AppConfig.General.TrayText = AppConfig.General.TrayText && AppConfig.General.TrayIcon;
@@ -286,7 +284,6 @@ namespace PlainCEETimer.UI.Forms
             GlobalTexts = AppConfig.GlobalCustomTexts;
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
-            IsCeiling = AppConfig.Display.Ceiling;
             IsDraggable = AppConfig.Display.Draggable;
             UniTopMost = AppConfig.General.UniTopMost;
             IsPPTService = AppConfig.Display.SeewoPptsvc;
@@ -334,19 +331,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void PrepareCountdown()
         {
-            SelectedState = CountdownState.Normal;
-
-            if (IsShowXOnly)
-            {
-                SelectedState = ShowXOnlyIndex switch
-                {
-                    1 => CountdownState.HoursOnly,
-                    2 => CountdownState.MinutesOnly,
-                    3 => CountdownState.SecondsOnly,
-                    _ => IsCeiling ? CountdownState.DaysOnlyCeiling : CountdownState.DaysOnly
-                };
-            }
-
+            SelectedState = IsShowXOnly ? (CountdownState)(ShowXOnlyIndex + 1) : CountdownState.Normal;
             CountdownFont = AppConfig.Font;
             LocationRefreshed -= MainForm_LocationRefreshed;
 
@@ -601,7 +586,9 @@ namespace PlainCEETimer.UI.Forms
             PhCountdown[Constants.PH_MINUTES] = $"{span.Minutes:00}";
             PhCountdown[Constants.PH_SECONDS] = $"{span.Seconds:00}";
             PhCountdown[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
+            PhCountdown[Constants.PH_DECIMALDAYS] = $"{span.TotalDays:0.0}";
             PhCountdown[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PH_DECIMALHOURS] = $"{span.TotalHours:0.0}";
             PhCountdown[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
             PhCountdown[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
 
@@ -631,8 +618,10 @@ namespace PlainCEETimer.UI.Forms
         private string GetDefaultText() => SelectedState switch
         {
             CountdownState.DaysOnly => "距离{x}{ht}{d}天",
+            CountdownState.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
             CountdownState.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
             CountdownState.HoursOnly => "距离{x}{ht}{th}小时",
+            CountdownState.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
             CountdownState.MinutesOnly => "距离{x}{ht}{tm}分钟",
             CountdownState.SecondsOnly => "距离{x}{ht}{ts}秒",
             _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"

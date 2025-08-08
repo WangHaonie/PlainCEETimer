@@ -8,7 +8,9 @@
         public const string PH_MINUTES = "{m}";
         public const string PH_SECONDS = "{s}";
         public const string PH_CEILINGDAYS = "{cd}";
+        public const string PH_DECIMALDAYS = "{dd}";
         public const string PH_TOTALHOURS = "{th}";
+        public const string PH_DECIMALHOURS = "{dh}";
         public const string PH_TOTALMINUTES = "{tm}";
         public const string PH_TOTALSECONDS = "{ts}";
         public const string PH_START = "还有";

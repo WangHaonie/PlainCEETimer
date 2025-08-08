@@ -6,8 +6,10 @@ namespace PlainCEETimer.UI
     {
         Normal,
         DaysOnly,
+        DaysOnlyOneDecimal,
         DaysOnlyCeiling,
         HoursOnly,
+        HoursOnlyOneDecimal,
         MinutesOnly,
         SecondsOnly
     }
