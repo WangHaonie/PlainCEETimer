@@ -582,14 +582,14 @@ namespace PlainCEETimer.UI.Forms
         {
             PhCountdown[Constants.PH_EXAMNAME] = ExamName;
             PhCountdown[Constants.PH_DAYS] = $"{span.Days}";
-            PhCountdown[Constants.PH_HOURS] = $"{span.Hours:00}";
-            PhCountdown[Constants.PH_MINUTES] = $"{span.Minutes:00}";
-            PhCountdown[Constants.PH_SECONDS] = $"{span.Seconds:00}";
             PhCountdown[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
             PhCountdown[Constants.PH_DECIMALDAYS] = $"{span.TotalDays:0.0}";
-            PhCountdown[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PH_HOURS] = $"{span.Hours:00}";
             PhCountdown[Constants.PH_DECIMALHOURS] = $"{span.TotalHours:0.0}";
+            PhCountdown[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PH_MINUTES] = $"{span.Minutes:00}";
             PhCountdown[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
+            PhCountdown[Constants.PH_SECONDS] = $"{span.Seconds:00}";
             PhCountdown[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
 
             if (UseCustomText)
