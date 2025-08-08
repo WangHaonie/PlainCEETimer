@@ -255,7 +255,7 @@
     <Compile Include="UI\Controls\PlainLinkLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Extensions.cs" />
+    <Compile Include="UI\Extensions\Extensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\app.manifest" />

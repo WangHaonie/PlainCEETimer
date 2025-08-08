@@ -8,8 +8,10 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class ColorBlock : PlainLabel
     {
-        private class CancellationMessageFilter(Action onCancel) : IMessageFilter
+        private class CancellationMessageFilter : IMessageFilter
         {
+            public event Action Cancel;
+
             private const int WM_KEYDOWN = 0x0100;
             private static readonly IntPtr EscKey = new((int)Keys.Escape);
 
@@ -17,7 +19,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
                 {
-                    onCancel?.Invoke();
+                    Cancel?.Invoke();
                 }
 
                 return false;
@@ -65,7 +67,8 @@ namespace PlainCEETimer.UI.Controls
         private readonly bool IsPreview;
         private readonly bool IsFore;
         private readonly ColorBlock PreviewBlock;
-        private CancellationMessageFilter MsgFilter;
+        private static CancellationMessageFilter MsgFilter;
+        private Action CacelAction;
 
         public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
         {
@@ -122,7 +125,9 @@ namespace PlainCEETimer.UI.Controls
                 if (!IsPicking && !ParentBounds.Contains(MouseLocation))
                 {
                     IsPicking = true;
-                    MsgFilter ??= new(CancelScreenColorPicker);
+                    MsgFilter ??= new();
+                    CacelAction ??= new(CancelScreenColorPicker);
+                    MsgFilter.Cancel += CacelAction;
                     Application.AddMessageFilter(MsgFilter);
                     ColorPicker = new();
                     HideParentForm();
@@ -139,6 +144,12 @@ namespace PlainCEETimer.UI.Controls
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
+        {
+            EndPicking();
+            base.OnMouseUp(e);
+        }
+
+        private void EndPicking()
         {
             if (!IsPreview && IsDragging)
             {
@@ -165,20 +176,19 @@ namespace PlainCEETimer.UI.Controls
                         Color = ColorPicker.CurrentPixelColor;
                     }
 
+                    MsgFilter.Cancel -= CacelAction;
                     Application.RemoveMessageFilter(MsgFilter);
                     HideParentForm(false);
                     ColorPicker.Close();
                     IsPicking = false;
                 }
             }
-
-            base.OnMouseUp(e);
         }
 
         private void CancelScreenColorPicker()
         {
             IsPickingCancelled = true;
-            OnMouseUp(null);
+            EndPicking();
         }
 
         private void HideParentForm(bool hide = true)

@@ -7,6 +7,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms
 {

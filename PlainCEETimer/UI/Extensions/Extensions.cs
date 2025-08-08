@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI.Extensions
 {
     public static class Extensions
     {

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms
 {

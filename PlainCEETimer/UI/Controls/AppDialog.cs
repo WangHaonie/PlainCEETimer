@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls
 {

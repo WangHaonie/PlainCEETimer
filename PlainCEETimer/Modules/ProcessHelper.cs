@@ -18,7 +18,7 @@ namespace PlainCEETimer.Modules
                 return proc.ExitCode;
             }
 
-            return -1;
+            return 0;
         }
 
         public static void Run(string path, string args, EventHandler onExited, DataReceivedEventHandler onOutputDataReceived)

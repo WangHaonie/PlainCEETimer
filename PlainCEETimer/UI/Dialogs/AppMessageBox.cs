@@ -3,6 +3,7 @@ using System.Media;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
