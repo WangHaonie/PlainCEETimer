@@ -2,27 +2,36 @@
 {
     public static class Constants
     {
-        public const string PH_EXAMNAME = "{x}";
-        public const string PH_DAYS = "{d}";
-        public const string PH_HOURS = "{h}";
-        public const string PH_MINUTES = "{m}";
-        public const string PH_SECONDS = "{s}";
-        public const string PH_CEILINGDAYS = "{cd}";
-        public const string PH_DECIMALDAYS = "{dd}";
-        public const string PH_TOTALHOURS = "{th}";
-        public const string PH_DECIMALHOURS = "{dh}";
-        public const string PH_TOTALMINUTES = "{tm}";
-        public const string PH_TOTALSECONDS = "{ts}";
-        public const string PH_START = "还有";
-        public const string PH_LEFT = "结束还有";
-        public const string PH_PAST = "已过去了";
-        public const string PH_RTP1 = $"开始{PH_START}";
-        public const string PH_RTP2 = PH_LEFT;
-        public const string PH_RTP3 = PH_PAST;
-        public const string PH_P1 = $"距离{PH_EXAMNAME}{PH_START}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
-        public const string PH_P2 = $"距离{PH_EXAMNAME}{PH_LEFT}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
-        public const string PH_P3 = $"距离{PH_EXAMNAME}{PH_PAST}{PH_DAYS}天{PH_HOURS}时{PH_MINUTES}分{PH_SECONDS}秒";
+        public const string PhExamName = "{x}";
+        public const string PhDays = "{d}";
+        public const string PhCeilingDays = "{cd}";
+        public const string PhDecimalDays = "{dd}";
+        public const string PhHours = "{h}";
+        public const string PhTotalHours = "{th}";
+        public const string PhDecimalHours = "{dh}";
+        public const string PhMinutes = "{m}";
+        public const string PhTotalMinutes = "{tm}";
+        public const string PhSeconds = "{s}";
+        public const string PhTotalSeconds = "{ts}";
+        public const string PhStart = "还有";
+        public const string PhEnd = "结束还有";
+        public const string PhPast = "已过去了";
+        public const string PhRtP1 = $"开始{PhStart}";
+        public const string PhRtP2 = PhEnd;
+        public const string PhRtP3 = PhPast;
+        public const string PhP1 = $"距离{PhExamName}{PhStart}{PhDays}天{PhHours}时{PhMinutes}分{PhSeconds}秒";
+        public const string PhP2 = $"距离{PhExamName}{PhEnd}{PhDays}天{PhHours}时{PhMinutes}分{PhSeconds}秒";
+        public const string PhP3 = $"距离{PhExamName}{PhPast}{PhDays}天{PhHours}时{PhMinutes}分{PhSeconds}秒";
 
-        public static readonly string[] PH_RTs = [PH_RTP1, PH_RTP2, PH_RTP3];
+        public static readonly string[] PhRuleTypes = [PhRtP1, PhRtP2, PhRtP3];
+        public static readonly string[] PhAllPhases = [PhP1, PhP2, PhP3];
+        public static readonly string[] AllPHs =
+        [
+            PhExamName,
+            PhDays, PhDecimalDays, PhCeilingDays,
+            PhHours, PhTotalHours, PhDecimalHours,
+            PhMinutes, PhTotalMinutes,
+            PhSeconds, PhTotalSeconds
+        ];
     }
 }

@@ -210,7 +210,7 @@ namespace PlainCEETimer.UI.Forms
                             ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, "<程序欢迎信息>", "考试还有多久结束", "考试还有多久结束 和 已过去了多久"),
                             ComboBoxShowXOnly = b.ComboBox(130, false, SettingsChanged, "总天数", "总天数 (一位小数)", "总天数 (向上取整)", "总小时", "总小时 (一位小数)", "总分钟", "总秒数"),
 
-                            CheckBoxShowXOnly = b.CheckBox("将时间间隔更改为只显示", (sender, _) =>
+                            CheckBoxShowXOnly = b.CheckBox("时间间隔格式只显示", (sender, _) =>
                             {
                                 ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
                                 ChangeCustomTextStyle(sender);
@@ -328,9 +328,9 @@ namespace PlainCEETimer.UI.Forms
                                 ]),
                             ])),
 
-                            BlockPreviewColor1 = b.Block($"距离...{Constants.PH_START}..."),
-                            BlockPreviewColor2 = b.Block($"距离...{Constants.PH_LEFT}..."),
-                            BlockPreviewColor3 = b.Block($"距离...{Constants.PH_PAST}..."),
+                            BlockPreviewColor1 = b.Block($"距离...{Constants.PhStart}..."),
+                            BlockPreviewColor2 = b.Block($"距离...{Constants.PhEnd}..."),
+                            BlockPreviewColor3 = b.Block($"距离...{Constants.PhPast}..."),
                             BlockPreviewColor4 = b.Block("欢迎使用..."),
 
                             BlockColor11 = b.Block(true, BlockPreviewColor1, SettingsChanged),

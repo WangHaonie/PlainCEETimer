@@ -45,17 +45,17 @@ namespace PlainCEETimer.UI.Dialogs
                 LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
 
                 ComboBoxPlaceholders = b.ComboBox(165, null,
-                    $"{Constants.PH_EXAMNAME} - 考试名称",
-                    $"{Constants.PH_DAYS} - 天/总天数",
-                    $"{Constants.PH_DECIMALDAYS} - 保留一位小数的总天数",
-                    $"{Constants.PH_CEILINGDAYS} - 向上取整的天数",
-                    $"{Constants.PH_HOURS} - 时",
-                    $"{Constants.PH_TOTALHOURS} - 总小时",
-                    $"{Constants.PH_DECIMALHOURS} - 保留一位小数的总小时数",
-                    $"{Constants.PH_MINUTES} - 分",
-                    $"{Constants.PH_TOTALMINUTES} - 总分钟数",
-                    $"{Constants.PH_SECONDS} - 秒",
-                    $"{Constants.PH_TOTALSECONDS} - 总秒数"
+                    $"{Constants.PhExamName} - 考试名称",
+                    $"{Constants.PhDays} - 天/总天数",
+                    $"{Constants.PhDecimalDays} - 保留一位小数的总天数",
+                    $"{Constants.PhCeilingDays} - 向上取整的天数",
+                    $"{Constants.PhHours} - 时",
+                    $"{Constants.PhTotalHours} - 总小时",
+                    $"{Constants.PhDecimalHours} - 保留一位小数的总小时数",
+                    $"{Constants.PhMinutes} - 分",
+                    $"{Constants.PhTotalMinutes} - 总分钟数",
+                    $"{Constants.PhSeconds} - 秒",
+                    $"{Constants.PhTotalSeconds} - 总秒数"
                 ),
 
                 ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
@@ -103,9 +103,9 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F2 && ActiveControl is PlainTextBox t)
+            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && ActiveControl is PlainTextBox t)
             {
-                t.AppendText(GetPlaceholder(ComboBoxPlaceholders.SelectedIndex));
+                t.AppendText(Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex]);
             }
 
             base.OnKeyDown(e);
@@ -139,40 +139,25 @@ namespace PlainCEETimer.UI.Dialogs
 
             if (itemIndex < 0)
             {
-                ResetTexts();
+                ResetAllTexts();
             }
             else
             {
-                ResetTexts(itemIndex);
+                ResetText(itemIndex);
             }
 
             UserChanged();
         }
 
-        private string GetPlaceholder(int i) => i switch
-        {
-            1 => Constants.PH_DAYS,
-            2 => Constants.PH_DECIMALDAYS,
-            3 => Constants.PH_CEILINGDAYS,
-            4 => Constants.PH_HOURS,
-            5 => Constants.PH_TOTALHOURS,
-            6 => Constants.PH_DECIMALHOURS,
-            7 => Constants.PH_MINUTES,
-            8 => Constants.PH_TOTALMINUTES,
-            9 => Constants.PH_SECONDS,
-            10 => Constants.PH_TOTALSECONDS,
-            _ => Constants.PH_EXAMNAME,
-        };
-
-        private void ResetTexts()
+        private void ResetAllTexts()
         {
             for (int i = 0; i < 3; i++)
             {
-                ResetTexts(i);
+                ResetText(i);
             }
         }
 
-        private void ResetTexts(int Index)
+        private void ResetText(int Index)
         {
             TextBoxes[Index].Text = Presets[Index];
         }

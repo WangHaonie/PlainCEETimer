@@ -39,7 +39,7 @@ namespace PlainCEETimer.Modules.Configuration
                 new(Color.White, Color.Black)
             ];
 
-            GlobalDefaultCustomTexts = [Constants.PH_P1, Constants.PH_P2, Constants.PH_P3];
+            GlobalDefaultCustomTexts = [.. Constants.PhAllPhases];
             ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
             var theme = ThemeManager.CurrentTheme;
 

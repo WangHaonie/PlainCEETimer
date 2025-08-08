@@ -76,7 +76,7 @@ namespace PlainCEETimer.UI.Forms
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
-        private readonly string[] DefaultTexts = [Constants.PH_START, Constants.PH_LEFT, Constants.PH_PAST];
+        private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
         private readonly Dictionary<string, string> PhCountdown = new(12);
         private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
 
@@ -580,17 +580,17 @@ namespace PlainCEETimer.UI.Forms
 
         private void ApplyCustomRule(int phase, TimeSpan span)
         {
-            PhCountdown[Constants.PH_EXAMNAME] = ExamName;
-            PhCountdown[Constants.PH_DAYS] = $"{span.Days}";
-            PhCountdown[Constants.PH_CEILINGDAYS] = $"{span.Days + 1}";
-            PhCountdown[Constants.PH_DECIMALDAYS] = $"{span.TotalDays:0.0}";
-            PhCountdown[Constants.PH_HOURS] = $"{span.Hours:00}";
-            PhCountdown[Constants.PH_DECIMALHOURS] = $"{span.TotalHours:0.0}";
-            PhCountdown[Constants.PH_TOTALHOURS] = $"{span.TotalHours:0}";
-            PhCountdown[Constants.PH_MINUTES] = $"{span.Minutes:00}";
-            PhCountdown[Constants.PH_TOTALMINUTES] = $"{span.TotalMinutes:0}";
-            PhCountdown[Constants.PH_SECONDS] = $"{span.Seconds:00}";
-            PhCountdown[Constants.PH_TOTALSECONDS] = $"{span.TotalSeconds:0}";
+            PhCountdown[Constants.PhExamName] = ExamName;
+            PhCountdown[Constants.PhDays] = $"{span.Days}";
+            PhCountdown[Constants.PhCeilingDays] = $"{span.Days + 1}";
+            PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
+            PhCountdown[Constants.PhHours] = $"{span.Hours:00}";
+            PhCountdown[Constants.PhDecimalHours] = $"{span.TotalHours:0.0}";
+            PhCountdown[Constants.PhTotalHours] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PhMinutes] = $"{span.Minutes:00}";
+            PhCountdown[Constants.PhTotalMinutes] = $"{span.TotalMinutes:0}";
+            PhCountdown[Constants.PhSeconds] = $"{span.Seconds:00}";
+            PhCountdown[Constants.PhTotalSeconds] = $"{span.TotalSeconds:0}";
 
             if (UseCustomText)
             {
