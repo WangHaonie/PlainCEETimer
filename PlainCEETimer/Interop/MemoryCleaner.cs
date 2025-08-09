@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
@@ -8,7 +7,6 @@ namespace PlainCEETimer.Interop
 {
     public static class MemoryCleaner
     {
-        private static readonly int PID = Process.GetCurrentProcess().Id;
         private static ManagementObjectSearcher WmiSearcher;
 
         private const ulong Threshold = 9UL * 1024 * 1024;
@@ -19,7 +17,7 @@ namespace PlainCEETimer.Interop
 
             if (mem == 0)
             {
-                WmiSearcher ??= new($"select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess={PID}");
+                WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId().ToString());
                 mem = (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().First().GetPropertyValue("WorkingSetPrivate");
             }
 
@@ -34,5 +32,8 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#5")]
         private static extern void ClearMemory();
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentProcessId();
     }
 }

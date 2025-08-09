@@ -44,7 +44,7 @@ namespace PlainCEETimer.UI.Dialogs
                 TextBoxP3 = b.TextBox(303, OnUserChanged),
                 LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
 
-                ComboBoxPlaceholders = b.ComboBox(165, null,
+                ComboBoxPlaceholders = b.ComboBox(160, null,
                     $"{Constants.PhExamName} - 考试名称",
                     $"{Constants.PhDays} - 天/总天数",
                     $"{Constants.PhDecimalDays} - 总天数 (一位小数)",

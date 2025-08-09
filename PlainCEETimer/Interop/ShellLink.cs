@@ -96,7 +96,7 @@ namespace PlainCEETimer.Interop
             {
                 lnk.WorkingDir = string.Empty;
                 lnk.Hotkey = LnkHotkey.None;
-                lnk.ShowCmd = WindowShowCommand.Normal;
+                lnk.ShowCmd = ShowWindowCommand.Normal;
                 lnk.Description = App.AppName;
                 lnk.IconPath = string.Empty;
                 lnk.IconIndex = 0;

@@ -26,7 +26,7 @@ namespace PlainCEETimer.Interop
         Ext = 0x08
     }
 
-    public enum WindowShowCommand
+    public enum ShowWindowCommand
     {
         Normal = 1,
         Maximize = 3,
@@ -62,6 +62,8 @@ namespace PlainCEETimer.Interop
     [DebuggerDisplay("{Value}")]
     public readonly struct HWND
     {
+        public static readonly HWND TOPMOST = new(new(-1));
+
         private readonly IntPtr Value;
 
         private HWND(IntPtr value)
@@ -221,7 +223,7 @@ namespace PlainCEETimer.Interop
         public string Args;
         public string WorkingDir;
         public LnkHotkey Hotkey;
-        public WindowShowCommand ShowCmd;
+        public ShowWindowCommand ShowCmd;
         public string Description;
         public string IconPath;
         public int IconIndex;

@@ -33,6 +33,6 @@ namespace PlainCEETimer.Interop
         public static extern void SelectAllItems(IntPtr hLV, BOOL selected);
 
         [DllImport(App.User32Dll)]
-        public static extern BOOL SetWindowPos(HWND hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
     }
 }
