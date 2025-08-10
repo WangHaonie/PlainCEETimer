@@ -198,9 +198,6 @@
     <Compile Include="UI\Forms\DownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Forms\ScreenColorPicker.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\Forms\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
