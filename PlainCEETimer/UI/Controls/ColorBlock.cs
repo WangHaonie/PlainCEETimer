@@ -100,7 +100,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 var mButtom = e.Button;
 
-                if (mButtom == MouseButtons.Left)
+                if (!IsDragging && mButtom == MouseButtons.Left)
                 {
                     IsDragging = true;
                     Capture = true;

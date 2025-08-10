@@ -45,7 +45,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override PlainButton AddButton(ControlBuilder b)
         {
-            return b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.SetBounds(0, 0, 90, 23, BoundsSpecified.Size));
+            return b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.Width = 90);
         }
 
         private void ButtonGlobal_Click(object sender, EventArgs e)
