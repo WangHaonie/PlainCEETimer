@@ -15,8 +15,6 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         public MessageBoxHelper MessageX { get; }
 
-        internal event EventHandler OwnerFormLocationChanged;
-
         protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
@@ -92,9 +90,7 @@ namespace PlainCEETimer.UI.Controls
 
         internal void BindOverlayWindow(AppForm overlay, Func<Point> GetPos)
         {
-            //OwnerFormLocationChanged = null;
-
-            OwnerFormLocationChanged += (_, _) =>
+            LocationChanged += (_, _) =>
             {
                 if (!overlay.IsDisposed)
                 {
@@ -132,12 +128,6 @@ namespace PlainCEETimer.UI.Controls
             }
 
             base.OnSizeChanged(e);
-        }
-
-        protected override void OnLocationChanged(EventArgs e)
-        {
-            OwnerFormLocationChanged?.Invoke(this, e);
-            base.OnLocationChanged(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

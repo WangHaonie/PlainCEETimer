@@ -10,7 +10,7 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainTextBox : TextBox
     {
-        private sealed class ExpandableTextBoxDialog(Rectangle parentBounds) : AppForm(AppFormParam.None | AppFormParam.RoundCorner | AppFormParam.OnEscClosing)
+        private sealed class ExpandableTextBox(Rectangle parentBounds) : AppForm(AppFormParam.RoundCorner | AppFormParam.OnEscClosing)
         {
             public string Content { get; set; }
 
@@ -41,7 +41,7 @@ namespace PlainCEETimer.UI.Controls
                     ContentBox = b.TextBox(default, false, ContentBox_TextChanged).With(x =>
                     {
                         x.Multiline = true;
-                        x.Height = 150;
+                        x.Height = 100;
                         x.ScrollBars = ScrollBars.Vertical;
                     }),
 
@@ -171,7 +171,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (EnabledExpandable)
             {
-                ExpandableTextBoxDialog Dialog = new(GetShowBounds())
+                ExpandableTextBox Dialog = new(GetShowBounds())
                 {
                     Content = Text
                 };

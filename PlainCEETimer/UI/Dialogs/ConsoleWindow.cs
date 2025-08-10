@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Windows.Forms;
@@ -25,7 +24,7 @@ namespace PlainCEETimer.UI.Dialogs
         private PlainLabel LabelMessage;
         private MenuItem ContextCopy;
         private Process ElevatedProc;
-        private RichTextBox ConsoleBox;
+        private PlainTextBox ConsoleBox;
         private const int WM_VSCROLL = 0x0115;
         private const int SB_BOTTOM = 7;
         private readonly Timer ConsoleTimer = new();
@@ -37,20 +36,16 @@ namespace PlainCEETimer.UI.Dialogs
 
             this.AddControls(b =>
             [
-                ConsoleBox = b.New<RichTextBox>(600, 200, null).With(c =>
+                ConsoleBox = b.TextBox(default, false, null).With(x =>
                 {
-                    c.Font = new("Consolas", 9F);
-
-                    if (ThemeManager.ShouldUseDarkMode)
-                    {
-                        c.ForeColor = Colors.DarkForeLinkDisabled;
-                        c.BackColor = Color.Black;
-                    }
-
-                    c.BorderStyle = BorderStyle.None;
-                    c.ReadOnly = true;
-                    c.HideSelection = false;
-                    c.WordWrap = true;
+                    x.Multiline = true;
+                    x.Size = new(600, 200);
+                    x.ScrollBars = ScrollBars.Vertical;
+                    x.Font = new("Consolas", 9F);
+                    x.ReadOnly = true;
+                    x.HideSelection = false;
+                    x.WordWrap = true;
+                    x.BorderStyle = BorderStyle.None;
                 }),
 
                 LabelMessage = b.Label("请稍候...")
