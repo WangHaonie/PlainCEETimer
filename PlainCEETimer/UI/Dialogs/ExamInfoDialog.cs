@@ -35,7 +35,7 @@ namespace PlainCEETimer.UI.Dialogs
                 LabelStart = b.Label("考试开始"),
                 LabelEnd = b.Label("考试结束"),
                 LabelCounter = b.Label("00/00"),
-                TextBoxName = b.TextBox(215, TextBoxName_TextChanged).With(c => c.MaxLength = 99),
+                TextBoxName = b.TextBox(215, false, TextBoxName_TextChanged).With(c => c.MaxLength = 99),
                 DTPStart = b.DateTimePicker(250, DTP_ValueChanged),
                 DTPEnd = b.DateTimePicker(250, DTP_ValueChanged),
             ]);
@@ -72,8 +72,6 @@ namespace PlainCEETimer.UI.Dialogs
                 DTPStart.Value = date;
                 DTPEnd.Value = date;
             }
-
-            TextBoxName_TextChanged(null, null);
         }
 
         protected override bool OnClickButtonA()

@@ -65,7 +65,7 @@ namespace PlainCEETimer.UI.Dialogs
                 BlockFore = b.Block(true, BlockPreview, ColorBlocks_Click),
                 BlockBack = b.Block(false, BlockPreview, ColorBlocks_Click),
 
-                TextBoxCustomText = b.TextBox(295, (_, _) =>
+                TextBoxCustomText = b.TextBox(295, true, (_, _) =>
                 {
                     if (!IsEditMode)
                     {

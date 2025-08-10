@@ -50,6 +50,14 @@ namespace PlainCEETimer.UI
             return Button(text, enabled, false, onClick, null);
         }
 
+        public PlainButton Button(string text, int maxW, int maxH, EventHandler onClick)
+        {
+            var ctrl = Button(text, true, false, onClick, null);
+            ctrl.MinimumSize = new();
+            ctrl.MaximumSize = new(maxW, maxH);
+            return ctrl;
+        }
+
         public PlainButton Button(string text, bool enabled, bool autoSize, ContextMenu menu)
         {
             return Button(text, enabled, autoSize, null, menu);
@@ -106,9 +114,9 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        public PlainTextBox TextBox(int w, EventHandler onTextChanged)
+        public PlainTextBox TextBox(int w, bool richText, EventHandler onTextChanged)
         {
-            var ctrl = new PlainTextBox();
+            var ctrl = new PlainTextBox(richText);
             ctrl.SetBounds(0, 0, w, 23);
             ctrl.MaxLength = Validator.MaxCustomTextLength;
             ctrl.TextChanged += onTextChanged;
@@ -177,7 +185,7 @@ namespace PlainCEETimer.UI
 
         private PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick, ContextMenu menu)
         {
-            var ctrl = new PlainButton(menu) { Text = text, Enabled = enabled };
+            var ctrl = new PlainButton(menu) { Text = text, Enabled = enabled, MinimumSize = new(0, 23) };
 
             if (autoSize)
             {

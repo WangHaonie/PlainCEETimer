@@ -39,9 +39,9 @@ namespace PlainCEETimer.UI.Dialogs
                 LabelP1 = b.Label(lp1),
                 LabelP2 = b.Label(lp2),
                 LabelP3 = b.Label(lp3),
-                TextBoxP1 = b.TextBox(303, OnUserChanged),
-                TextBoxP2 = b.TextBox(303, OnUserChanged),
-                TextBoxP3 = b.TextBox(303, OnUserChanged),
+                TextBoxP1 = b.TextBox(303, true, OnUserChanged),
+                TextBoxP2 = b.TextBox(303, true, OnUserChanged),
+                TextBoxP3 = b.TextBox(303, true, OnUserChanged),
                 LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
 
                 ComboBoxPlaceholders = b.ComboBox(160, null,
@@ -103,11 +103,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && ActiveControl is PlainTextBox t)
-            {
-                t.AppendText(Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex]);
-            }
-
+            TryAppendPlaceHolders(e);
             base.OnKeyDown(e);
         }
 
@@ -147,6 +143,14 @@ namespace PlainCEETimer.UI.Dialogs
             }
 
             UserChanged();
+        }
+
+        private void TryAppendPlaceHolders(KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && ActiveControl is PlainTextBox t)
+            {
+                t.AppendText(Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex]);
+            }
         }
 
         private void ResetAllTexts()

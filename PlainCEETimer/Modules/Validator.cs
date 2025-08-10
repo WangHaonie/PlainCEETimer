@@ -83,6 +83,11 @@ namespace PlainCEETimer.Modules
             return length is >= MinExamNameLength and <= MaxExamNameLength;
         }
 
+        public static bool IsInvalidCustomLength(int length)
+        {
+            return length is 0 or > MaxCustomTextLength;
+        }
+
         public static void EnsureExamDate(DateTime time)
         {
             if (time.Ticks is < MinDate or > MaxDate)
@@ -93,7 +98,7 @@ namespace PlainCEETimer.Modules
 
         public static void EnsureCustomText(string custom)
         {
-            if ((custom.Length is 0 or > MaxCustomTextLength) || !VerifyCustomText(custom, out var _))
+            if (IsInvalidCustomLength(custom.Length) || !VerifyCustomText(custom, out var _))
             {
                 throw new Exception();
             }
