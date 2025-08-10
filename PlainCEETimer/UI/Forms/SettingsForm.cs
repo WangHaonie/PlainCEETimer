@@ -412,7 +412,6 @@ namespace PlainCEETimer.UI.Forms
 
             foreach (var block in ColorBlocks)
             {
-                block.Parent = this;
                 block.Fellows = ColorBlocks;
             }
 

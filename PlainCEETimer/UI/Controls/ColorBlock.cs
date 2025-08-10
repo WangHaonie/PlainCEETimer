@@ -120,7 +120,7 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
-        public new AppForm Parent { get; set; }
+        private AppForm ParentForm;
 
         public ColorBlock[] Fellows { get; set; }
 
@@ -150,6 +150,8 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
+        public new AppForm Parent => null;
+
         public event EventHandler ColorChanged;
 
         private bool IsDragging;
@@ -173,13 +175,19 @@ namespace PlainCEETimer.UI.Controls
             PreviewBlock = preview;
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            ParentForm = (AppForm)FindForm();
+            base.OnHandleCreated(e);
+        }
+
         protected override void OnClick(EventArgs e)
         {
             if (!IsPreview)
             {
                 var dialog = new PlainColorDialog();
 
-                if (dialog.ShowDialog(Color, Parent) == DialogResult.OK)
+                if (dialog.ShowDialog(Color, ParentForm) == DialogResult.OK)
                 {
                     Color = dialog.Color;
                 }
@@ -198,7 +206,7 @@ namespace PlainCEETimer.UI.Controls
                 {
                     IsDragging = true;
                     Capture = true;
-                    ParentBounds = Parent.Bounds;
+                    ParentBounds = ParentForm.Bounds;
                 }
                 else if (IsDragging && IsPicking && mButtom == MouseButtons.Right)
                 {
@@ -287,7 +295,7 @@ namespace PlainCEETimer.UI.Controls
 
         private void HideParentForm(bool hide = true)
         {
-            Parent.Opacity = hide ? 0 : 1;
+            ParentForm.Opacity = hide ? 0 : 1;
         }
     }
 }

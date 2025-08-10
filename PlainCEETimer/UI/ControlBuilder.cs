@@ -114,9 +114,9 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        public PlainTextBox TextBox(int w, bool richText, EventHandler onTextChanged)
+        public PlainTextBox TextBox(int w, bool expandable, EventHandler onTextChanged)
         {
-            var ctrl = new PlainTextBox(richText);
+            var ctrl = new PlainTextBox(expandable);
             ctrl.SetBounds(0, 0, w, 23);
             ctrl.MaxLength = Validator.MaxCustomTextLength;
             ctrl.TextChanged += onTextChanged;

@@ -69,6 +69,15 @@ namespace PlainCEETimer.UI.Dialogs
             ]);
 
             TextBoxes = [TextBoxP1, TextBoxP2, TextBoxP3];
+
+            foreach (var tb in TextBoxes)
+            {
+                tb.OnExpandableKeyDown = (target, e, l) =>
+                {
+                    TryAppendPlaceHolders(target, e, true, l);
+                };
+            }
+
             base.OnInitializing();
         }
 
@@ -103,7 +112,8 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            TryAppendPlaceHolders(e);
+            var t = ActiveControl as PlainTextBox;
+            TryAppendPlaceHolders(t, e, t != null);
             base.OnKeyDown(e);
         }
 
@@ -145,11 +155,21 @@ namespace PlainCEETimer.UI.Dialogs
             UserChanged();
         }
 
-        private void TryAppendPlaceHolders(KeyEventArgs e)
+        private void TryAppendPlaceHolders(PlainTextBox tb, KeyEventArgs e, bool condition, int length = -1)
         {
-            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && ActiveControl is PlainTextBox t)
+            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
             {
-                t.AppendText(Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex]);
+                var ss = tb.SelectionStart;
+                var text = Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex];
+                var textLength = text.Length;
+                var after = tb.Text.Insert(ss, text);
+
+                if ((length == -1 ? after.Length : length) + textLength <= tb.MaxLength)
+                {
+                    tb.Text = after;
+                    tb.SelectionStart = ss + text.Length;
+                    tb.ScrollToCaret();
+                }
             }
         }
 

@@ -109,7 +109,6 @@ namespace PlainCEETimer.UI.Dialogs
 
             foreach (var block in blocks)
             {
-                block.Parent = this;
                 block.Fellows = blocks;
             }
 

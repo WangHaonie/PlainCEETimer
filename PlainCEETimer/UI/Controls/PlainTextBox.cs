@@ -10,21 +10,24 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainTextBox : TextBox
     {
-        private sealed class RichTextDialog(Rectangle parentBounds) : AppForm(AppFormParam.None | AppFormParam.RoundCorner | AppFormParam.OnEscClosing)
+        private sealed class ExpandableTextBoxDialog(Rectangle parentBounds) : AppForm(AppFormParam.None | AppFormParam.RoundCorner | AppFormParam.OnEscClosing)
         {
             public string Content { get; set; }
 
-            private TextBox ContentBox;
+            public event Action<PlainTextBox, KeyEventArgs, int> ExtraKeyDownHandler;
+            public event EventHandler<DialogResult> DialogResultAcquired;
+
+            private PlainTextBox ContentBox;
             private PlainButton ButtonClose;
             private PlainButton ButtonApply;
             private PlainLabel LabelCounter;
-            private DialogResult Result;
+            private int TextLength;
             private static readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
-            public new DialogResult ShowDialog()
+            public void Show(Control owner)
             {
-                base.ShowDialog();
-                return Result;
+                ContentBox.Tag = owner.Tag;
+                base.Show(owner);
             }
 
             protected override void OnInitializing()
@@ -42,24 +45,10 @@ namespace PlainCEETimer.UI.Controls
                         x.ScrollBars = ScrollBars.Vertical;
                     }),
 
-                    ButtonClose = b.Button("×", 20, 20, (_, _) => Close()),
+                    ButtonClose = b.Button("×", 20, 20, (_, _) => CloseDialog()),
                     ButtonApply = b.Button("√", 20, 20, ButtonApply_Click),
                     LabelCounter = b.Label("0/0")
                 ]);
-            }
-
-            private void ButtonApply_Click(object sender, EventArgs e)
-            {
-                Result = DialogResult.Yes;
-                Content = ContentBox.Text;
-                Close();
-            }
-
-            private void ContentBox_TextChanged(object sender, EventArgs e)
-            {
-                int count = ContentBox.Text.RemoveIllegalChars().Length;
-                LabelCounter.Text = count + "/" + Validator.MaxCustomTextLength;
-                LabelCounter.ForeColor = !Validator.IsInvalidCustomLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
             }
 
             protected override void StartLayout(bool isHighDpi)
@@ -79,18 +68,41 @@ namespace PlainCEETimer.UI.Controls
                     ButtonApply_Click(null, null);
                 }
 
+                ExtraKeyDownHandler?.Invoke(ContentBox, e, TextLength);
                 base.OnKeyDown(e);
+            }
+
+            private void ButtonApply_Click(object sender, EventArgs e)
+            {
+                Content = ContentBox.Text;
+                CloseDialog(DialogResult.Yes);
+            }
+
+            private void ContentBox_TextChanged(object sender, EventArgs e)
+            {
+                TextLength = ContentBox.Text.RemoveIllegalChars().Length;
+                LabelCounter.Text = TextLength + "/" + Validator.MaxCustomTextLength;
+                LabelCounter.ForeColor = !Validator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+            }
+
+            private void CloseDialog(DialogResult result = DialogResult.None)
+            {
+                DialogResultAcquired?.Invoke(this, result);
+                Close();
             }
         }
 
         private bool CanRemoveChars;
-        private readonly bool RichTextMode;
+        private readonly bool EnabledExpandable;
+        private AppForm ParentForm;
         private PlainButton ButtonDetails;
+
+        public Action<PlainTextBox, KeyEventArgs, int> OnExpandableKeyDown { get; set; }
 
         private const int EM_SETMARGINS = 0x00D3;
         private const int EC_RIGHTMARGIN = 0x0002;
 
-        public PlainTextBox(bool richText)
+        public PlainTextBox(bool expandable)
         {
             if (ThemeManager.ShouldUseDarkMode)
             {
@@ -100,7 +112,7 @@ namespace PlainCEETimer.UI.Controls
 
             MaxLength = Validator.MaxCustomTextLength;
 
-            if (RichTextMode = richText)
+            if (EnabledExpandable = expandable)
             {
                 this.AddControls(b => [ButtonDetails = b.Button("..", 20, 20, ButtonDetails_Click).With(x =>
                 {
@@ -119,7 +131,7 @@ namespace PlainCEETimer.UI.Controls
 
             base.OnHandleCreated(e);
 
-            if (RichTextMode)
+            if (EnabledExpandable)
             {
                 /*
                 
@@ -134,6 +146,7 @@ namespace PlainCEETimer.UI.Controls
             }
 
             OnTextChanged(EventArgs.Empty);
+            ParentForm = (AppForm)FindForm();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -156,20 +169,31 @@ namespace PlainCEETimer.UI.Controls
 
         private void ButtonDetails_Click(object sender, EventArgs e)
         {
-            if (RichTextMode)
+            if (EnabledExpandable)
             {
-                var p = Parent.PointToScreen(Location);
-
-                RichTextDialog Dialog = new(new(p.X - 4, p.Y - 4, Width, 0))
+                ExpandableTextBoxDialog Dialog = new(GetShowBounds())
                 {
                     Content = Text
                 };
 
-                if (Dialog.ShowDialog() == DialogResult.Yes)
+                Dialog.DialogResultAcquired += (_, dr) =>
                 {
-                    Text = Dialog.Content;
-                }
+                    if (dr == DialogResult.Yes)
+                    {
+                        Text = Dialog.Content;
+                    }
+                };
+
+                Dialog.ExtraKeyDownHandler += OnExpandableKeyDown;
+                ParentForm.BindOverlayWindow(Dialog, () => GetShowBounds().Location);
+                Dialog.Show(this);
             }
+        }
+
+        private Rectangle GetShowBounds()
+        {
+            var p = Parent.PointToScreen(Location);
+            return new(p.X - 4, p.Y - 4, Width, 0);
         }
     }
 }
