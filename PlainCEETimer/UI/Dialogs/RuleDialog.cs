@@ -9,11 +9,13 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class RuleDialog() : AppDialog(AppFormParam.AllControl | AppFormParam.CompositedStyle), IListViewSubDialog<CustomRuleObject>
+    public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
     {
         public string[] GlobalTexts { private get; set; }
         public ColorSetObject[] GlobalColors { private get; set; }
         public CustomRuleObject Data { get; set; }
+
+        protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
         private bool IsEditMode;
         private ColorBlock BlockPreview;

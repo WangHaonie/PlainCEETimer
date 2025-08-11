@@ -3,7 +3,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public abstract class AppDialog(AppFormParam param) : AppForm(param)
+    public abstract class AppDialog : AppForm
     {
         protected PlainButton ButtonA { get; private set; }
         protected PlainButton ButtonB { get; private set; }

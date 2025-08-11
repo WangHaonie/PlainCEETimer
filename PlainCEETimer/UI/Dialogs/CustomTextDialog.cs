@@ -8,9 +8,11 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class CustomTextDialog() : AppDialog(AppFormParam.AllControl | AppFormParam.CompositedStyle)
+    public sealed class CustomTextDialog : AppDialog
     {
         public string[] CustomTexts { get; set; } = new string[3];
+
+        protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
         private string[] Presets;
         private PlainLabel LabelInfo;

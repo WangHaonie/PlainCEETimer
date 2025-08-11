@@ -8,96 +8,25 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls
 {
-    public sealed class PlainTextBox : TextBox
+    public sealed partial class PlainTextBox : TextBox
     {
-        private sealed class ExpandableTextBox(Rectangle parentBounds) : AppForm(AppFormParam.RoundCorner | AppFormParam.OnEscClosing)
+        public new string Text
         {
-            public string Content { get; set; }
-
-            public event Action<PlainTextBox, KeyEventArgs, int> ExtraKeyDownHandler;
-            public event EventHandler<DialogResult> DialogResultAcquired;
-
-            private PlainTextBox ContentBox;
-            private PlainButton ButtonClose;
-            private PlainButton ButtonApply;
-            private PlainLabel LabelCounter;
-            private int TextLength;
-            private static readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
-
-            public void Show(Control owner)
+            get => base.Text;
+            set
             {
-                ContentBox.Tag = owner.Tag;
-                base.Show(owner);
-            }
-
-            protected override void OnInitializing()
-            {
-                base.OnInitializing();
-                AutoSize = true;
-                Location = parentBounds.Location;
-
-                this.AddControls(b =>
-                [
-                    ContentBox = b.TextBox(default, false, ContentBox_TextChanged).With(x =>
-                    {
-                        x.Multiline = true;
-                        x.Height = 100;
-                        x.ScrollBars = ScrollBars.Vertical;
-                    }),
-
-                    ButtonClose = b.Button("×", 20, 20, (_, _) => CloseDialog()),
-                    ButtonApply = b.Button("√", 20, 20, ButtonApply_Click),
-                    LabelCounter = b.Label("0/0")
-                ]);
-            }
-
-            protected override void StartLayout(bool isHighDpi)
-            {
-                ContentBox.Width = parentBounds.Width;
-                ContentBox.Text = Content;
-                ArrangeFirstControl(ContentBox, 4, 4);
-                ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
-                ArrangeControlYL(LabelCounter, ContentBox);
-                CenterControlY(LabelCounter, ButtonApply);
-            }
-
-            protected override void OnKeyDown(KeyEventArgs e)
-            {
-                if (e.KeyCode == Keys.Enter)
-                {
-                    ButtonApply_Click(null, null);
-                }
-
-                ExtraKeyDownHandler?.Invoke(ContentBox, e, TextLength);
-                base.OnKeyDown(e);
-            }
-
-            private void ButtonApply_Click(object sender, EventArgs e)
-            {
-                Content = ContentBox.Text;
-                CloseDialog(DialogResult.Yes);
-            }
-
-            private void ContentBox_TextChanged(object sender, EventArgs e)
-            {
-                TextLength = ContentBox.Text.RemoveIllegalChars().Length;
-                LabelCounter.Text = TextLength + "/" + Validator.MaxCustomTextLength;
-                LabelCounter.ForeColor = !Validator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
-            }
-
-            private void CloseDialog(DialogResult result = DialogResult.None)
-            {
-                DialogResultAcquired?.Invoke(this, result);
-                Close();
+                base.Text = value;
+                UpdateContentRequested?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public Action<PlainTextBox, KeyEventArgs, int> OnExpandableKeyDown { get; set; }
 
         private bool CanRemoveChars;
         private readonly bool EnabledExpandable;
         private AppForm ParentForm;
-        private PlainButton ButtonDetails;
-
-        public Action<PlainTextBox, KeyEventArgs, int> OnExpandableKeyDown { get; set; }
+        private PlainButton ButtonExpand;
+        private event EventHandler UpdateContentRequested;
 
         private const int EM_SETMARGINS = 0x00D3;
         private const int EC_RIGHTMARGIN = 0x0002;
@@ -114,7 +43,7 @@ namespace PlainCEETimer.UI.Controls
 
             if (EnabledExpandable = expandable)
             {
-                this.AddControls(b => [ButtonDetails = b.Button("..", 20, 20, ButtonDetails_Click).With(x =>
+                this.AddControls(b => [ButtonExpand = b.Button("..", 20, 20, ButtonDetails_Click).With(x =>
                 {
                     x.Cursor = Cursors.Arrow;
                     x.Dock = DockStyle.Right;
@@ -142,7 +71,7 @@ namespace PlainCEETimer.UI.Controls
 
                 */
 
-                Natives.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(ButtonDetails.Width << 16));
+                Natives.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(ButtonExpand.Width << 16));
             }
 
             OnTextChanged(EventArgs.Empty);

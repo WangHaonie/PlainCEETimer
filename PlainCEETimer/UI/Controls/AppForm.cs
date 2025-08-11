@@ -15,11 +15,13 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         public MessageBoxHelper MessageX { get; }
 
+        protected virtual AppFormParam Params => AppFormParam.None;
+
         protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
         private bool SetRoundRegion;
-        private AppFormParam Params;
+        private AppFormParam ParamsInternal;
         private readonly bool SetRoundCorner;
         private readonly bool Special;
         private readonly bool OnEscClosing;
@@ -29,9 +31,9 @@ namespace PlainCEETimer.UI.Controls
         private static readonly Font AppFont;
         private static readonly int CurrentFontHeight;
 
-        protected AppForm(AppFormParam param = AppFormParam.None)
+        protected AppForm()
         {
-            Params = param;
+            ParamsInternal = Params;
             Special = CheckParam(AppFormParam.Special);
             OnEscClosing = CheckParam(AppFormParam.OnEscClosing);
             KeyPreview = CheckParam(AppFormParam.KeyPreview);
@@ -240,7 +242,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected bool CheckParam(AppFormParam param)
         {
-            return (Params & param) == param;
+            return (ParamsInternal & param) == param;
         }
 
         /// <summary>
@@ -435,11 +437,6 @@ namespace PlainCEETimer.UI.Controls
             {
                 LocationRefreshed?.Invoke();
             }
-        }
-
-        protected void AddParam(AppFormParam param)
-        {
-            Params |= param;
         }
 
         protected void MoveToScreenCenter(Rectangle screenRect)

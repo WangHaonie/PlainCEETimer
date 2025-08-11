@@ -23,6 +23,8 @@ namespace PlainCEETimer.UI.Controls
         public TData[] Data { get; set; }
         protected string ItemDescription { get; set; } = "项";
 
+        protected override AppFormParam Params => AppFormParam.AllControl;
+
         private ContextMenu ContextMenuMain;
         private MenuItem ContextDuplicate;
         private MenuItem ContextEdit;
@@ -39,7 +41,7 @@ namespace PlainCEETimer.UI.Controls
             UseCompatibleStateImageBehavior = false
         };
 
-        protected ListViewDialog(int listViewWidth, string[] headers, string[] groups) : base(AppFormParam.AllControl)
+        protected ListViewDialog(int listViewWidth, string[] headers, string[] groups)
         {
             ListViewMain.Headers = headers;
             ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));

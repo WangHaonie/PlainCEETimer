@@ -15,10 +15,13 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class MainForm() : AppForm(AppFormParam.Special | AppFormParam.RoundCorner)
+    public sealed class MainForm : AppForm
     {
         public static bool UniTopMost { get; private set; } = true;
         public static bool ValidateNeeded { get; private set; } = true;
+
+        protected override AppFormParam Params => AppFormParam.Special | AppFormParam.RoundCorner;
+
         public static event Action UniTopMostChanged;
 
         private int AutoSwitchInterval;

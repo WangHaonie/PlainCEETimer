@@ -10,9 +10,11 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class ExamInfoDialog(ExamInfoObject existing) : AppDialog(AppFormParam.BindButtons), IListViewSubDialog<ExamInfoObject>
+    public sealed class ExamInfoDialog(ExamInfoObject existing) : AppDialog, IListViewSubDialog<ExamInfoObject>
     {
         public ExamInfoObject Data { get; set; } = existing;
+
+        protected override AppFormParam Params => AppFormParam.BindButtons;
 
         private PlainLabel LabelName;
         private PlainLabel LabelCounter;

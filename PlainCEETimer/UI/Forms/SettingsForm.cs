@@ -10,9 +10,11 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class SettingsForm() : AppForm(AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
+    public sealed class SettingsForm : AppForm
     {
         public bool RefreshNeeded { get; private set; }
+
+        protected override AppFormParam Params => AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
 
         private bool AllowThemeChanging;
         private bool IsSyncingTime;

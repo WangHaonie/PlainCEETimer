@@ -11,8 +11,10 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class ConsoleWindow() : AppDialog(AppFormParam.AllControl)
+    public sealed class ConsoleWindow : AppDialog
     {
+        protected override AppFormParam Params => AppFormParam.AllControl;
+
         private int ConsoleTimerTick;
         private bool ElevateNeeded;
         private bool IsRunning;

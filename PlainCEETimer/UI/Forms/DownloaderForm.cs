@@ -11,8 +11,10 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class DownloaderForm() : AppForm(AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
+    public sealed class DownloaderForm : AppForm
     {
+        protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
+
         private bool IsCancelled;
         private string DownloadUrl;
         private string DownloadPath;
@@ -28,12 +30,12 @@ namespace PlainCEETimer.UI.Forms
         private readonly CancellationTokenSource cts = new();
         private readonly Downloader UpdateDownloader = new();
 
-        public DownloaderForm(string version) : this()
+        public DownloaderForm(string version)
         {
             TargetVersion = Version.TryParse(version, out _) ? version : App.AppVersion;
         }
 
-        public DownloaderForm(string version, long size) : this()
+        public DownloaderForm(string version, long size)
         {
             TargetVersion = version;
             UpdateSize = size;

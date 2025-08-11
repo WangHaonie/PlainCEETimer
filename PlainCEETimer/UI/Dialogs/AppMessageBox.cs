@@ -7,8 +7,23 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs
 {
-    public sealed class AppMessageBox(string message, string title, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog(AppFormParam.KeyPreview | AppFormParam.OnEscClosing)
+    internal sealed class AppMessageBox(AppForm owner, string message, string title, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog
     {
+        protected override AppFormParam Params
+        {
+            get
+            {
+                var param = AppFormParam.KeyPreview | AppFormParam.OnEscClosing;
+
+                if (owner == null)
+                {
+                    param |= AppFormParam.CenterScreen;
+                }
+
+                return param;
+            }
+        }
+
         private DialogResult Result;
         private PlainLabel LabelMessage;
         private PictureBox ImageIcon;
@@ -83,13 +98,9 @@ namespace PlainCEETimer.UI.Dialogs
             Close();
         }
 
-        public DialogResult ShowCore(AppForm owner)
+        public DialogResult ShowCore()
         {
-            if (owner == null)
-            {
-                AddParam(AppFormParam.CenterScreen);
-            }
-            else
+            if (owner != null)
             {
                 StartPosition = FormStartPosition.CenterParent;
             }

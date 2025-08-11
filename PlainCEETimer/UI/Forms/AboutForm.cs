@@ -7,8 +7,10 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms
 {
-    public sealed class AboutForm() : AppForm(AppFormParam.CenterScreen | AppFormParam.OnEscClosing)
+    public sealed class AboutForm : AppForm
     {
+        protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
+
         private bool IsCheckingUpdate;
         private string VersionString;
         private PlainButton ButtonOK;
