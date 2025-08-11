@@ -25,8 +25,6 @@ namespace PlainCEETimer.UI.Dialogs
         private MenuItem ContextCopy;
         private Process ElevatedProc;
         private PlainTextBox ConsoleBox;
-        private const int WM_VSCROLL = 0x0115;
-        private const int SB_BOTTOM = 7;
         private readonly Timer ConsoleTimer = new();
 
         protected override void OnInitializing()
@@ -154,7 +152,7 @@ namespace PlainCEETimer.UI.Dialogs
 
         protected override bool OnClosing(CloseReason closeReason)
         {
-            return IsRunning && !ElevatedProc.HasExited;
+            return IsRunning || (ElevatedProc != null && !ElevatedProc.HasExited);
         }
 
         protected override void OnClosed()
@@ -244,7 +242,6 @@ namespace PlainCEETimer.UI.Dialogs
             {
                 ConsoleBox.AppendText(line);
                 ConsoleBox.AppendText("\r\n");
-                Natives.SendMessage(ConsoleBox.Handle, WM_VSCROLL, new(SB_BOTTOM), IntPtr.Zero);
             }
         }
     }
