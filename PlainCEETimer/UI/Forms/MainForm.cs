@@ -589,7 +589,7 @@ namespace PlainCEETimer.UI.Forms
             PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
             PhCountdown[Constants.PhHours] = $"{span.Hours:00}";
             PhCountdown[Constants.PhDecimalHours] = $"{span.TotalHours:0.0}";
-            PhCountdown[Constants.PhTotalHours] = $"{span.TotalHours:0}";
+            PhCountdown[Constants.PhTotalHours] = $"{Math.Truncate(span.TotalHours)}";
             PhCountdown[Constants.PhMinutes] = $"{span.Minutes:00}";
             PhCountdown[Constants.PhTotalMinutes] = $"{span.TotalMinutes:0}";
             PhCountdown[Constants.PhSeconds] = $"{span.Seconds:00}";
