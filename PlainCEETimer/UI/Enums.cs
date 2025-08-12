@@ -64,13 +64,6 @@ namespace PlainCEETimer.UI
         StartUp
     }
 
-    public enum MessageLevel
-    {
-        Info,
-        Warning,
-        Error
-    }
-
     public enum MessageButtons
     {
         OK,

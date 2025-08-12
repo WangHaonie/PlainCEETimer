@@ -10,21 +10,48 @@ namespace PlainCEETimer.UI
 {
     public class MessageBoxHelper(AppForm parent = null)
     {
+        private class MessageLevel
+        {
+            public readonly string Description;
+            public readonly Bitmap Icon;
+            public readonly SystemSound Sound;
+
+            public static MessageLevel Info => field ??= new("提示 - 高考倒计时", ref InfoIcon, 76, SystemSounds.Asterisk);
+            public static MessageLevel Warning => field ??= new("警告 - 高考倒计时", ref WarningIcon, 79, SystemSounds.Exclamation);
+            public static MessageLevel Error => field ??= new("错误 - 高考倒计时", ref ErrorIcon, 93, SystemSounds.Hand);
+
+            private static Bitmap InfoIcon;
+            private static Bitmap WarningIcon;
+            private static Bitmap ErrorIcon;
+
+            /*
+
+            获取 imageres.dll 里的 Info、Warning、Error 图标的索引参考:
+
+            Icons in imageres.dll
+            https://renenyffenegger.ch/development/Windows/PowerShell/examples/WinAPI/ExtractIconEx/imageres.html
+
+
+            播放与 MessageBox 同款音效参考:
+
+            c# - Selecting sounds from Windows and playing them - Stack Overflow
+            https://stackoverflow.com/a/5194223/21094697
+
+            */
+
+            private MessageLevel(string description, ref Bitmap icon, int iconIndex, SystemSound sound)
+            {
+                Description = description;
+                icon ??= IconHelper.GetIcon("imageres.dll", iconIndex).ToBitmap();
+                Icon = icon;
+                Sound = sound;
+            }
+        }
+
         /// <summary>
         /// 获取不指定父窗体的消息框实例
         /// </summary>
         public static MessageBoxHelper Instance { get; } = new();
-
-        private static readonly Bitmap InfoIcon;
-        private static readonly Bitmap WarningIcon;
-        private static readonly Bitmap ErrorIcon;
-
-        static MessageBoxHelper()
-        {
-            InfoIcon = GetIcon(76);
-            WarningIcon = GetIcon(79);
-            ErrorIcon = GetIcon(93);
-        }
 
         public DialogResult Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
         {
@@ -43,8 +70,6 @@ namespace PlainCEETimer.UI
 
         private DialogResult Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
         {
-            var (title, icon, sound) = GetStuff(level);
-
             if (parent != null && parent.InvokeRequired)
             {
                 /*
@@ -64,40 +89,13 @@ namespace PlainCEETimer.UI
             DialogResult ShowPopup()
             {
                 parent?.ReActivate();
-                return new AppMessageBox(parent, message, title, autoClose, buttons, sound, icon).ShowCore();
+                return new AppMessageBox(parent, message, level.Description, autoClose, buttons, level.Sound, level.Icon).ShowCore();
             }
         }
-
-        private (string, Bitmap, SystemSound) GetStuff(MessageLevel level) => level switch
-        {
-            /*
-
-            获取 imageres.dll 里的 Info、Warning、Error 图标的索引参考:
-
-            Icons in imageres.dll
-            https://renenyffenegger.ch/development/Windows/PowerShell/examples/WinAPI/ExtractIconEx/imageres.html
-
-
-            播放与 MessageBox 同款音效参考:
-
-            c# - Selecting sounds from Windows and playing them - Stack Overflow
-            https://stackoverflow.com/a/5194223/21094697
-
-            */
-
-            MessageLevel.Warning => ("警告 - 高考倒计时", WarningIcon, SystemSounds.Exclamation),
-            MessageLevel.Error => ("错误 - 高考倒计时", ErrorIcon, SystemSounds.Hand),
-            _ => ("提示 - 高考倒计时", InfoIcon, SystemSounds.Asterisk)
-        };
 
         private string GetExMessage(string msg, Exception ex)
         {
             return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
-        }
-
-        private static Bitmap GetIcon(int index)
-        {
-            return IconHelper.GetIcon("imageres.dll", index).ToBitmap();
         }
     }
 }
