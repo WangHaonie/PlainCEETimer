@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -45,10 +44,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 this.AddControls(b => [ButtonExpand = b.Button("..", 20, 20, (_, _) =>
                 {
-                    ExpandableTextBox Dialog = new(GetShowBounds())
-                    {
-                        Content = Text
-                    };
+                    ExpandableTextBox Dialog = new(this);
 
                     Dialog.DialogResultAcquired += (_, dr) =>
                     {
@@ -58,8 +54,7 @@ namespace PlainCEETimer.UI.Controls
                         }
                     };
 
-                    Dialog.ExtraKeyDownHandler += OnExpandableKeyDown;
-                    ParentForm.BindOverlayWindow(Dialog, () => GetShowBounds().Location);
+                    ParentForm.BindOverlayWindow(Dialog, () => this.LocationToScreen(-4, -4));
                     Dialog.Show(this);
                 }).With(x =>
                 {
@@ -115,12 +110,6 @@ namespace PlainCEETimer.UI.Controls
         {
             e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
             base.OnKeyDown(e);
-        }
-
-        private Rectangle GetShowBounds()
-        {
-            var p = Parent.PointToScreen(Location);
-            return new(p.X - 4, p.Y - 4, Width, 0);
         }
     }
 }

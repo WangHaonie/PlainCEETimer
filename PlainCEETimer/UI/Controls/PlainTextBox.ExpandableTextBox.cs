@@ -10,13 +10,12 @@ namespace PlainCEETimer.UI.Controls
 {
     partial class PlainTextBox
     {
-        private sealed class ExpandableTextBox(Rectangle parentBounds) : AppForm
+        private sealed class ExpandableTextBox(PlainTextBox parent) : AppForm
         {
-            public string Content { get; set; }
+            public string Content => ContentBox.Text;
 
             protected override AppFormParam Params => AppFormParam.RoundCorner | AppFormParam.OnEscClosing;
 
-            public event Action<PlainTextBox, KeyEventArgs, int> ExtraKeyDownHandler;
             public event EventHandler<DialogResult> DialogResultAcquired;
 
             private PlainTextBox ContentBox;
@@ -45,7 +44,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 base.OnInitializing();
                 AutoSize = true;
-                Location = parentBounds.Location;
+                Location = parent.LocationToScreen(-4, -4);
 
                 this.AddControls(b =>
                 [
@@ -58,8 +57,8 @@ namespace PlainCEETimer.UI.Controls
 
             protected override void StartLayout(bool isHighDpi)
             {
-                ContentBox.Width = parentBounds.Width;
-                ContentBox.Text = Content;
+                ContentBox.Width = parent.Width;
+                ContentBox.Text = parent.Text;
                 ArrangeFirstControl(ContentBox, 4, 4);
                 ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
                 ArrangeControlYL(LabelCounter, ContentBox);
@@ -73,13 +72,12 @@ namespace PlainCEETimer.UI.Controls
                     ButtonApply_Click(null, null);
                 }
 
-                ExtraKeyDownHandler?.Invoke(ContentBox, e, TextLength);
+                parent.OnExpandableKeyDown?.Invoke(ContentBox, e, TextLength);
                 base.OnKeyDown(e);
             }
 
             private void ButtonApply_Click(object sender, EventArgs e)
             {
-                Content = ContentBox.Text;
                 CloseDialog(DialogResult.Yes);
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.UI.Extensions
@@ -21,6 +22,19 @@ namespace PlainCEETimer.UI.Extensions
         {
             additions?.Invoke(control);
             return control;
+        }
+
+        public static Point LocationToScreen(this Control control, int xOffset = 0, int yOffset = 0)
+        {
+            var top = control.TopLevelControl;
+            var p = control.Location;
+
+            if (control is not Form)
+            {
+                p = top.PointToScreen(p);
+            }
+
+            return new(p.X + xOffset, p.Y + yOffset);
         }
     }
 }
