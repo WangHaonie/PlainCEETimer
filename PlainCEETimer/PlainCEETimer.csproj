@@ -178,9 +178,6 @@
     <Compile Include="UI\Dialogs\ExamInfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\AppMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\Dialogs\ExamInfoManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,7 +249,7 @@
     <Compile Include="Modules\ResponseObject.cs" />
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
-    <Compile Include="UI\MessageBoxHelper.cs" />
+    <Compile Include="UI\AppMessageBox.cs" />
     <Compile Include="Modules\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="UI\Controls\PlainLinkLabel.cs">

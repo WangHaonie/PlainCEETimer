@@ -49,13 +49,7 @@ namespace PlainCEETimer.UI.Controls
 
                 this.AddControls(b =>
                 [
-                    ContentBox = b.TextBox(default, false, ContentBox_TextChanged).With(x =>
-                    {
-                        x.Multiline = true;
-                        x.Height = 100;
-                        x.ScrollBars = ScrollBars.Vertical;
-                    }),
-
+                    ContentBox = b.TextArea(default, 100, ContentBox_TextChanged),
                     ButtonClose = b.Button("×", 20, 20, (_, _) => CloseDialog()),
                     ButtonApply = b.Button("√", 20, 20, ButtonApply_Click),
                     LabelCounter = b.Label("0/0")

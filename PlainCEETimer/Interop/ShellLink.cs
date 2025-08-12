@@ -12,7 +12,7 @@ namespace PlainCEETimer.Interop
     {
         private static readonly string LnkName = "高考倒计时.lnk";
         private static readonly string AppPath = App.CurrentExecutablePath;
-        private static readonly MessageBoxHelper MessageX = MessageBoxHelper.Instance;
+        private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
         private static SaveFileDialog Dialog;
 
         public static void CreateAppShortcut(bool allowCustom = false)

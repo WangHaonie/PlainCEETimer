@@ -28,7 +28,7 @@ namespace PlainCEETimer.Modules
             IsUACDisabled = Level >= UacNotifyLevel.Never;
         }
 
-        public static bool EnsureUAC(MessageBoxHelper mx)
+        public static bool EnsureUAC(AppMessageBox mx)
         {
             if (!IsAdmin)
             {

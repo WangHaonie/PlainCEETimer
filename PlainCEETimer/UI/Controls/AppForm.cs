@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Controls
         /// <summary>
         /// 获取当前 <see cref="AppForm"/> 的消息框实例。
         /// </summary>
-        public MessageBoxHelper MessageX { get; }
+        public AppMessageBox MessageX { get; }
 
         protected virtual AppFormParam Params => AppFormParam.None;
 

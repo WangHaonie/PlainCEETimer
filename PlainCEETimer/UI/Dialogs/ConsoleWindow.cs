@@ -36,16 +36,12 @@ namespace PlainCEETimer.UI.Dialogs
 
             this.AddControls(b =>
             [
-                ConsoleBox = b.TextBox(default, false, null).With(x =>
+                ConsoleBox = b.TextArea(600, 200, null).With(x =>
                 {
-                    x.Multiline = true;
-                    x.Size = new(600, 200);
-                    x.ScrollBars = ScrollBars.Vertical;
-                    x.Font = new("Consolas", 9F);
                     x.ReadOnly = true;
-                    x.HideSelection = false;
-                    x.WordWrap = true;
                     x.BorderStyle = BorderStyle.None;
+                    x.Font = new("Consolas", 9F);
+                    x.ForeColor = Colors.DarkForeConsole;
                 }),
 
                 LabelMessage = b.Label("请稍候...")

@@ -22,12 +22,12 @@ namespace PlainCEETimer.UI.Controls
 
         public Action<PlainTextBox, KeyEventArgs, int> OnExpandableKeyDown { get; set; }
 
-        private bool CanRemoveChars;
         private readonly bool EnabledExpandable;
         private AppForm ParentForm;
         private PlainButton ButtonExpand;
         private event EventHandler UpdateContentRequested;
 
+        private const int WM_PASTE = 0x0302;
         private const int EM_SETMARGINS = 0x00D3;
         private const int EC_RIGHTMARGIN = 0x0002;
 
@@ -43,7 +43,25 @@ namespace PlainCEETimer.UI.Controls
 
             if (EnabledExpandable = expandable)
             {
-                this.AddControls(b => [ButtonExpand = b.Button("..", 20, 20, ButtonDetails_Click).With(x =>
+                this.AddControls(b => [ButtonExpand = b.Button("..", 20, 20, (_, _) =>
+                {
+                    ExpandableTextBox Dialog = new(GetShowBounds())
+                    {
+                        Content = Text
+                    };
+
+                    Dialog.DialogResultAcquired += (_, dr) =>
+                    {
+                        if (dr == DialogResult.Yes)
+                        {
+                            Text = Dialog.Content;
+                        }
+                    };
+
+                    Dialog.ExtraKeyDownHandler += OnExpandableKeyDown;
+                    ParentForm.BindOverlayWindow(Dialog, () => GetShowBounds().Location);
+                    Dialog.Show(this);
+                }).With(x =>
                 {
                     x.Cursor = Cursors.Arrow;
                     x.Dock = DockStyle.Right;
@@ -78,45 +96,25 @@ namespace PlainCEETimer.UI.Controls
             ParentForm = (AppForm)FindForm();
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_PASTE)
+            {
+                if (Clipboard.ContainsText())
+                {
+                    SelectedText = Clipboard.GetText().RemoveIllegalChars();
+                }
+
+                return;
+            }
+
+            base.WndProc(ref m);
+        }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            CanRemoveChars = e.Modifiers == Keys.Control && e.KeyCode == Keys.V;
             e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
             base.OnKeyDown(e);
-        }
-
-        protected override void OnTextChanged(EventArgs e)
-        {
-            if (CanRemoveChars)
-            {
-                Text = Text.RemoveIllegalChars();
-                CanRemoveChars = false;
-            }
-
-            base.OnTextChanged(e);
-        }
-
-        private void ButtonDetails_Click(object sender, EventArgs e)
-        {
-            if (EnabledExpandable)
-            {
-                ExpandableTextBox Dialog = new(GetShowBounds())
-                {
-                    Content = Text
-                };
-
-                Dialog.DialogResultAcquired += (_, dr) =>
-                {
-                    if (dr == DialogResult.Yes)
-                    {
-                        Text = Dialog.Content;
-                    }
-                };
-
-                Dialog.ExtraKeyDownHandler += OnExpandableKeyDown;
-                ParentForm.BindOverlayWindow(Dialog, () => GetShowBounds().Location);
-                Dialog.Show(this);
-            }
         }
 
         private Rectangle GetShowBounds()

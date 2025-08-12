@@ -123,6 +123,17 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
+        public PlainTextBox TextArea(int w, int h, EventHandler onTextChanged)
+        {
+            var ctrl = TextBox(w, false, onTextChanged);
+            ctrl.Multiline = true;
+            ctrl.ScrollBars = ScrollBars.Vertical;
+            ctrl.WordWrap = true;
+            ctrl.HideSelection = false;
+            ctrl.SetBounds(0, 0, w, h);
+            return ctrl;
+        }
+
         public PictureBox Image(Image img)
         {
             var ctrl = new PictureBox() { Image = img };
