@@ -14,6 +14,7 @@ namespace PlainCEETimer.UI.Controls
         /// 获取当前 <see cref="AppForm"/> 的消息框实例。
         /// </summary>
         public AppMessageBox MessageX { get; }
+        public Control FocusControl { get; set; }
 
         protected virtual AppFormParam Params => AppFormParam.None;
 
@@ -21,7 +22,7 @@ namespace PlainCEETimer.UI.Controls
 
         private bool IsLoading = true;
         private bool SetRoundRegion;
-        private AppFormParam ParamsInternal;
+        private readonly AppFormParam ParamsInternal;
         private readonly bool SetRoundCorner;
         private readonly bool Special;
         private readonly bool OnEscClosing;
@@ -55,7 +56,7 @@ namespace PlainCEETimer.UI.Controls
             Font = AppFont;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.Manual;
             ShowIcon = false;
 
             if (SetRoundCorner)
@@ -63,7 +64,6 @@ namespace PlainCEETimer.UI.Controls
                 AutoSize = false;
                 ControlBox = false;
                 DoubleBuffered = true;
-                StartPosition = FormStartPosition.Manual;
                 FormBorderStyle = FormBorderStyle.None;
                 ShowInTaskbar = false;
             }
@@ -111,7 +111,7 @@ namespace PlainCEETimer.UI.Controls
 
             if (CheckParam(AppFormParam.CenterScreen))
             {
-                MoveToScreenCenter(GetCurrentScreenRect());
+                CenterToScreen();
             }
         }
 
@@ -119,6 +119,7 @@ namespace PlainCEETimer.UI.Controls
         {
             IsLoading = false;
             OnShown();
+            FocusControl?.Focus();
             base.OnShown(e);
         }
 
@@ -437,11 +438,6 @@ namespace PlainCEETimer.UI.Controls
             {
                 LocationRefreshed?.Invoke();
             }
-        }
-
-        protected void MoveToScreenCenter(Rectangle screenRect)
-        {
-            SetLocation(screenRect.X + (screenRect.Width - Width) / 2, screenRect.Y + (screenRect.Height - Height) / 2);
         }
 
         private void AppLauncher_TrayMenuShowAllClicked()

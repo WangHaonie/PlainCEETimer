@@ -11,7 +11,7 @@ namespace PlainCEETimer.UI
 {
     public class AppMessageBox(AppForm parent = null)
     {
-        private sealed class MessageBox(AppForm owner, string message, string title, bool autoClose, MessageButtons buttons, SystemSound sound, Bitmap icon) : AppDialog
+        private sealed class MessageBox(AppForm owner, MessageLevel level, string message, MessageButtons buttons, bool autoClose) : AppDialog
         {
             protected override AppFormParam Params
             {
@@ -34,11 +34,11 @@ namespace PlainCEETimer.UI
 
             protected override void OnInitializing()
             {
-                Text = title;
+                Text = level.Description;
 
                 this.AddControls(b =>
                 [
-                    ImageIcon = b.Image(icon),
+                    ImageIcon = b.Image(level.Icon),
                     LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
                 ]);
 
@@ -81,7 +81,7 @@ namespace PlainCEETimer.UI
 
             protected override void OnShown()
             {
-                sound.Play();
+                level.Sound.Play();
 
                 if (autoClose)
                 {
@@ -104,11 +104,6 @@ namespace PlainCEETimer.UI
 
             public DialogResult ShowCore()
             {
-                if (owner != null)
-                {
-                    StartPosition = FormStartPosition.CenterParent;
-                }
-
                 ShowDialog(owner);
                 return Result;
             }
@@ -193,7 +188,7 @@ namespace PlainCEETimer.UI
             DialogResult ShowPopup()
             {
                 parent?.ReActivate();
-                return new MessageBox(parent, message, level.Description, autoClose, buttons, level.Sound, level.Icon).ShowCore();
+                return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();
             }
         }
 

@@ -17,6 +17,28 @@ namespace PlainCEETimer.UI.Controls
 
     public sealed class PlainListView : ListView
     {
+        private sealed class SysHeader32NativeWindow : NativeWindow
+        {
+            private const int WM_SETCURSOR = 0x0020;
+
+            public SysHeader32NativeWindow(HWND hHeader)
+            {
+                AssignHandle((IntPtr)hHeader);
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WM_SETCURSOR)
+                {
+                    m.Result = BOOL.TRUE;
+                }
+                else
+                {
+                    base.WndProc(ref m);
+                }
+            }
+        }
+
         public int SelectedItemsCount => SelectedItems.Count;
 
         public ListViewItem SelectedItem => SelectedItems[0];
@@ -103,7 +125,7 @@ namespace PlainCEETimer.UI.Controls
             HWND hListView = Handle;
             HWND hHeader = Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
             HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
-            new ListViewHelper.SysHeader32NativeWindow(hHeader);
+            new SysHeader32NativeWindow(hHeader);
 
             var LVstyle = NativeStyle.ItemsView;
             var TTstyle = NativeStyle.Explorer;

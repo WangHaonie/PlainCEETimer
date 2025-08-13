@@ -729,7 +729,7 @@ namespace PlainCEETimer.UI.Forms
                         SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Y);
                         break;
                     case CountdownPosition.Center:
-                        MoveToScreenCenter(SelectedScreenRect);
+                        SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
                         break;
                     case CountdownPosition.BottomCenter:
                         SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Bottom - Height);

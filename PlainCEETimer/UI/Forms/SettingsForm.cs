@@ -403,7 +403,7 @@ namespace PlainCEETimer.UI.Forms
                     {
                         Indent = ScaleToDpi(5),
                         ItemHeight = ScaleToDpi(25)
-                    }
+                    }.AsFocus(this)
                 ]),
 
                 ButtonSave = b.Button("保存(&S)", false, (_, _) => SaveChanges()),
@@ -542,11 +542,6 @@ namespace PlainCEETimer.UI.Forms
         {
             RefreshNeeded = false;
             RefreshSettings();
-        }
-
-        protected override void OnShown()
-        {
-            NavBar.Focus();
         }
 
         protected override bool OnClosing(CloseReason closeReason)

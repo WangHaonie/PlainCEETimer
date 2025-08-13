@@ -75,7 +75,7 @@ namespace PlainCEETimer.UI.Dialogs
                     }
 
                     UserChanged();
-                }),
+                }).AsFocus(this),
 
                 ComboBoxRuleType = b.ComboBox(82, (_, _) =>
                 {

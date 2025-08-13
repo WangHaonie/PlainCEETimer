@@ -121,9 +121,6 @@
     <Compile Include="UI\Controls\ColorBlock.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\PlainTextBox.ExpandableTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\Controls\PlainComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -164,9 +161,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\PlainTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ColorBlock.ScreenColorPicker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Dialogs\ConsoleWindow.cs">

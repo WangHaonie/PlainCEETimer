@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Extensions
 {
@@ -8,7 +9,7 @@ namespace PlainCEETimer.UI.Extensions
     {
         public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
         {
-            var ctrls = builder?.Invoke(new());
+            var ctrls = builder(new());
             var collection = ctrl.Controls;
 
             for (int i = 0; i < ctrls.Length; i++)
@@ -20,7 +21,18 @@ namespace PlainCEETimer.UI.Extensions
         public static TControl With<TControl>(this TControl control, Action<TControl> additions)
             where TControl : Control
         {
-            additions?.Invoke(control);
+            additions(control);
+            return control;
+        }
+
+        public static TControl AsFocus<TControl>(this TControl control, AppForm parent)
+            where TControl : Control
+        {
+            if (control is not Form)
+            {
+                parent.FocusControl = control;
+            }
+
             return control;
         }
 
