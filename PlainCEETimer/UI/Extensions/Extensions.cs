@@ -7,17 +7,6 @@ namespace PlainCEETimer.UI.Extensions
 {
     public static class Extensions
     {
-        public static void AddControls(this Control ctrl, Func<ControlBuilder, Control[]> builder)
-        {
-            var ctrls = builder(new());
-            var collection = ctrl.Controls;
-
-            for (int i = 0; i < ctrls.Length; i++)
-            {
-                collection.Add(ctrls[i]);
-            }
-        }
-
         public static TControl With<TControl>(this TControl control, Action<TControl> additions)
             where TControl : Control
         {
@@ -34,6 +23,22 @@ namespace PlainCEETimer.UI.Extensions
             }
 
             return control;
+        }
+
+        public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)
+        {
+            var ctrls = builder(new());
+            var collection = control.Controls;
+
+            for (int i = 0; i < ctrls.Length; i++)
+            {
+                collection.Add(ctrls[i]);
+            }
+        }
+
+        public static AppForm FindParentForm(this Control control)
+        {
+            return (AppForm)control.FindForm();
         }
 
         public static Point LocationToScreen(this Control control, int xOffset = 0, int yOffset = 0)

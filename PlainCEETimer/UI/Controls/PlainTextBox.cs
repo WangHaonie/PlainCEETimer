@@ -174,7 +174,7 @@ namespace PlainCEETimer.UI.Controls
             }
 
             OnTextChanged(EventArgs.Empty);
-            ParentForm = (AppForm)FindForm();
+            ParentForm = this.FindParentForm();
         }
 
         protected override void WndProc(ref Message m)

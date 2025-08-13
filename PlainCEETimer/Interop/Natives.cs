@@ -216,7 +216,7 @@ namespace PlainCEETimer.Interop
 
     [DebuggerDisplay("{Target,nq} {Args,nq}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct LnkInfo(string lnkPath)
+    public struct Win32Lnk(string lnkPath)
     {
         public string LnkPath = lnkPath;
         public string Target;

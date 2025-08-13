@@ -74,7 +74,7 @@ namespace PlainCEETimer.Interop
 
         private static void ResetAppShortcut(string lnkPath)
         {
-            var lnk = new LnkInfo(lnkPath);
+            var lnk = new Win32Lnk(lnkPath);
             Query(ref lnk);
             var path = lnk.Target;
             var args = lnk.Args;
@@ -108,10 +108,10 @@ namespace PlainCEETimer.Interop
         private static extern void Initialize();
 
         [DllImport(App.NativesDll, EntryPoint = "#20", CharSet = CharSet.Unicode)]
-        private static extern void Create(LnkInfo shLnkInfo);
+        private static extern void Create(Win32Lnk shLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#21", CharSet = CharSet.Unicode)]
-        private static extern void Query(ref LnkInfo lpshLnkInfo);
+        private static extern void Query(ref Win32Lnk lpshLnkInfo);
 
         [DllImport(App.NativesDll, EntryPoint = "#22")]
         private static extern void Release();

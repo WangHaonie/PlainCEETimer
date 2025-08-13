@@ -22,7 +22,6 @@ namespace PlainCEETimer.Interop
         [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
         private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 
-        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
         private delegate BOOL EnumDisplayProc(SystemDisplay info);
     }
 }

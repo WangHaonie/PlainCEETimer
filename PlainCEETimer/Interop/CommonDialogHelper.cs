@@ -245,7 +245,6 @@ namespace PlainCEETimer.Interop
         [DllImport(App.User32Dll)]
         private static extern BOOL EnumChildWindows(HWND hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate BOOL EnumChildProc(HWND hWnd, IntPtr lParam);
 
         [DllImport(App.User32Dll)]

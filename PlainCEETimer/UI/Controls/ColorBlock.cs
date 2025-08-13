@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls
 {
@@ -179,7 +180,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            ParentForm = (AppForm)FindForm();
+            ParentForm = this.FindParentForm();
             base.OnHandleCreated(e);
         }
 

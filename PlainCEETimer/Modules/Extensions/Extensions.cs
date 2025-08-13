@@ -22,11 +22,11 @@ namespace PlainCEETimer.Modules.Extensions
         public static string Format(this TimeSpan timeSpan)
             => timeSpan.ToString("d'天'h'时'm'分's'秒'");
 
-        public static Task Start(this Action start, Action<Task> jobAfterStart = null)
-            => jobAfterStart == null ? Task.Run(start) : Task.Run(start).ContinueWith(jobAfterStart);
+        public static Task Start(this Action start, Action<Task> after = null)
+            => after == null ? Task.Run(start) : Task.Run(start).ContinueWith(after);
 
-        public static Task AsDelay(this int ms, Action jobAfterDelay, Control ui)
-            => Task.Delay(ms).ContinueWith(_ => ui.BeginInvoke(jobAfterDelay));
+        public static Task AsDelay(this int ms, Action after, Control ui)
+            => Task.Delay(ms).ContinueWith(_ => ui.BeginInvoke(after));
 
         /*
 
