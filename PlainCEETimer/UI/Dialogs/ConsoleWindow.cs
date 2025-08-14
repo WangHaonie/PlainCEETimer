@@ -41,8 +41,12 @@ namespace PlainCEETimer.UI.Dialogs
                     x.ReadOnly = true;
                     x.BorderStyle = BorderStyle.None;
                     x.Font = new("Consolas", 9F);
-                    x.ForeColor = Colors.DarkForeConsole;
-                    x.BackColor = Colors.DarkBackConsole;
+
+                    if (ThemeManager.ShouldUseDarkMode)
+                    {
+                        x.ForeColor = Colors.DarkForeConsole;
+                        x.BackColor = Colors.DarkBackConsole;
+                    }
                 }),
 
                 LabelMessage = b.Label("请稍候...")
