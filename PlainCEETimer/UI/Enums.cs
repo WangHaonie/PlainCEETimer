@@ -81,6 +81,7 @@ namespace PlainCEETimer.UI
         CenterScreen = 1 << 4,
         OnEscClosing = 1 << 5 | KeyPreview,
         RoundCorner = 1 << 6,
+        RoundCornerSmall = 1 << 7 | RoundCorner,
         AllControl = BindButtons | KeyPreview
     }
 

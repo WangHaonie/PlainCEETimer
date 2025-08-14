@@ -14,7 +14,7 @@ namespace PlainCEETimer.UI.Controls
         {
             public string Content => ContentBox.Text;
 
-            protected override AppFormParam Params => AppFormParam.RoundCorner | AppFormParam.OnEscClosing;
+            protected override AppFormParam Params => AppFormParam.RoundCornerSmall | AppFormParam.OnEscClosing;
 
             public event EventHandler<DialogResult> DialogResultAcquired;
 

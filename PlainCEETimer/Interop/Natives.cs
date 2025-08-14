@@ -53,6 +53,11 @@ namespace PlainCEETimer.Interop
             return b.Value != 0;
         }
 
+        public static explicit operator BOOL(bool b)
+        {
+            return new(b);
+        }
+
         public static implicit operator IntPtr(BOOL b)
         {
             return new(b.Value);

@@ -23,7 +23,9 @@ namespace PlainCEETimer.UI.Controls
         private bool IsLoading = true;
         private bool SetRoundRegion;
         private readonly AppFormParam ParamsInternal;
+        private readonly int RoundCornerRadius = 13;
         private readonly bool SetRoundCorner;
+        private readonly bool SmallRoundCorner;
         private readonly bool Special;
         private readonly bool OnEscClosing;
 
@@ -39,6 +41,7 @@ namespace PlainCEETimer.UI.Controls
             OnEscClosing = CheckParam(AppFormParam.OnEscClosing);
             KeyPreview = CheckParam(AppFormParam.KeyPreview);
             SetRoundCorner = CheckParam(AppFormParam.RoundCorner);
+            SmallRoundCorner = CheckParam(AppFormParam.RoundCornerSmall);
             App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
             MessageX = new(this);
 
@@ -66,6 +69,11 @@ namespace PlainCEETimer.UI.Controls
                 DoubleBuffered = true;
                 FormBorderStyle = FormBorderStyle.None;
                 ShowInTaskbar = false;
+
+                if (SmallRoundCorner)
+                {
+                    RoundCornerRadius = 7;
+                }
             }
 
             ClientSize = new();
@@ -127,7 +135,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (SetRoundRegion && SetRoundCorner)
             {
-                RoundCorner.SetRegion(Handle, Width, Height, ScaleToDpi(13));
+                RoundCorner.SetRegion(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
             }
 
             base.OnSizeChanged(e);
@@ -197,7 +205,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
                 {
-                    RoundCorner.SetModern(Handle);
+                    RoundCorner.SetModern(Handle, (BOOL)SmallRoundCorner);
                 }
                 else
                 {
