@@ -45,7 +45,7 @@ launch:
 !include "FileFunc.nsh"
 !include "WinMessages.nsh"
 !define PRODUCT_NAME "高考倒计时"
-!define SETUP_FILENAME_NO_V "5.0.5.1"
+!define SETUP_FILENAME_NO_V "5.0.6"
 !define PRODUCT_VERSION "${SETUP_FILENAME_NO_V}"
 !define PRODUCT_TITLE "${PRODUCT_NAME} by ${PRODUCT_PUBLISHER}"
 !define PRODUCT_PUBLISHER "WangHaonie"
