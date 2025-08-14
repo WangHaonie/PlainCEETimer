@@ -76,6 +76,11 @@ namespace PlainCEETimer.UI.Controls
                 base.OnKeyDown(e);
             }
 
+            protected override void OnClosed()
+            {
+                parent.Focus();
+            }
+
             private void ButtonApply_Click(object sender, EventArgs e)
             {
                 CloseDialog(DialogResult.Yes);
@@ -150,6 +155,14 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
+        public void Input(int totalLength, string text)
+        {
+            if (totalLength <= MaxLength)
+            {
+                SelectedText = text;
+            }
+        }
+
         protected override void OnHandleCreated(EventArgs e)
         {
             if (ThemeManager.ShouldUseDarkMode)
@@ -183,7 +196,8 @@ namespace PlainCEETimer.UI.Controls
             {
                 if (Clipboard.ContainsText())
                 {
-                    SelectedText = Clipboard.GetText().RemoveIllegalChars();
+                    var text = Clipboard.GetText().RemoveIllegalChars();
+                    Input(text.Length + Text.Length, text);
                 }
 
                 return;

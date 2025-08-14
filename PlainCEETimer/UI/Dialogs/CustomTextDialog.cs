@@ -161,17 +161,8 @@ namespace PlainCEETimer.UI.Dialogs
         {
             if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
             {
-                var ss = tb.SelectionStart;
                 var text = Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex];
-                var textLength = text.Length;
-                var after = tb.Text.Insert(ss, text);
-
-                if ((length == -1 ? after.Length : length) + textLength <= tb.MaxLength)
-                {
-                    tb.Text = after;
-                    tb.SelectionStart = ss + text.Length;
-                    tb.ScrollToCaret();
-                }
+                tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
             }
         }
 
