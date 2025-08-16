@@ -48,7 +48,7 @@ namespace PlainCEETimer.UI.Controls
 
                 this.AddControls(b =>
                 [
-                    ContentBox = b.TextArea(default, 100, ContentBox_TextChanged),
+                    ContentBox = b.TextArea(0, 0, ContentBox_TextChanged),
                     ButtonClose = b.Button("×", 18, 20, (_, _) => CloseDialog()),
                     ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
                     LabelCounter = b.Label("0/0")
@@ -57,8 +57,8 @@ namespace PlainCEETimer.UI.Controls
 
             protected override void StartLayout(bool isHighDpi)
             {
-                ContentBox.Width = parent.Width;
                 ContentBox.Text = parent.Text;
+                ContentBox.SetBounds(0, 0, parent.Width, ScaleToDpi(110), BoundsSpecified.Size);
                 ArrangeFirstControl(ContentBox, 4, 4);
                 ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
                 ArrangeControlYL(LabelCounter, ContentBox);
