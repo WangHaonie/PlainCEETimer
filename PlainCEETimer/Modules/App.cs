@@ -6,7 +6,6 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;

@@ -18,6 +18,7 @@ namespace PlainCEETimer.UI.Controls
 
         protected virtual AppFormParam Params => AppFormParam.None;
 
+        public event EventHandler<DialogResult> DialogEnd;
         protected event Action LocationRefreshed;
 
         private bool IsLoading = true;
@@ -98,15 +99,17 @@ namespace PlainCEETimer.UI.Controls
             KeepOnScreen();
         }
 
-        internal void BindOverlayWindow(AppForm overlay, Func<Point> GetPos)
+        internal void ShowFlyout(AppForm flyout, Func<Point> GetPos)
         {
             LocationChanged += (_, _) =>
             {
-                if (!overlay.IsDisposed)
+                if (!flyout.IsDisposed)
                 {
-                    overlay.Location = GetPos();
+                    flyout.Location = GetPos();
                 }
             };
+
+            flyout.Show(this);
         }
 
         protected sealed override void OnLoad(EventArgs e)
@@ -163,6 +166,11 @@ namespace PlainCEETimer.UI.Controls
             OnClosed();
             base.OnClosed(e);
             Dispose(true);
+
+            if (CheckParam(AppFormParam.ModelessDialog))
+            {
+                DialogEnd?.Invoke(this, DialogResult);
+            }
         }
 
         protected sealed override CreateParams CreateParams
@@ -371,6 +379,16 @@ namespace PlainCEETimer.UI.Controls
         protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
         {
             groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
+        }
+
+        protected void EndModelessDialog(bool success, bool close = true)
+        {
+            DialogResult = success ? DialogResult.OK : DialogResult.None;
+
+            if (close)
+            {
+                Close();
+            }
         }
 
         /// <summary>

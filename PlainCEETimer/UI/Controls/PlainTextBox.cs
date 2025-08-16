@@ -10,19 +10,18 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainTextBox : TextBox
     {
-        private sealed class ExpandableTextBox(PlainTextBox parent) : AppForm
+        private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm
         {
-            public string Content => ContentBox.Text;
+            public string Content => m_Text;
 
-            protected override AppFormParam Params => AppFormParam.RoundCornerSmall | AppFormParam.OnEscClosing;
-
-            public event EventHandler<DialogResult> DialogResultAcquired;
+            protected override AppFormParam Params => AppFormParam.RoundCornerSmall | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
 
             private PlainTextBox ContentBox;
             private PlainButton ButtonClose;
             private PlainButton ButtonApply;
             private PlainLabel LabelCounter;
             private int TextLength;
+            private string m_Text;
             private static readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
             public void Show(PlainTextBox owner)
@@ -49,7 +48,7 @@ namespace PlainCEETimer.UI.Controls
                 this.AddControls(b =>
                 [
                     ContentBox = b.TextArea(0, 0, ContentBox_TextChanged),
-                    ButtonClose = b.Button("×", 18, 20, (_, _) => CloseDialog()),
+                    ButtonClose = b.Button("×", 18, 20, (_, _) => EndModelessDialog(false)),
                     ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
                     LabelCounter = b.Label("0/0")
                 ]);
@@ -83,20 +82,15 @@ namespace PlainCEETimer.UI.Controls
 
             private void ButtonApply_Click(object sender, EventArgs e)
             {
-                CloseDialog(DialogResult.Yes);
+                EndModelessDialog(true);
             }
 
             private void ContentBox_TextChanged(object sender, EventArgs e)
             {
+                m_Text = ContentBox.Text;
                 TextLength = ContentBox.Text.RemoveIllegalChars().Length;
                 LabelCounter.Text = TextLength + "/" + Validator.MaxCustomTextLength;
                 LabelCounter.ForeColor = !Validator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
-            }
-
-            private void CloseDialog(DialogResult result = DialogResult.None)
-            {
-                DialogResultAcquired?.Invoke(this, result);
-                Close();
             }
         }
 
@@ -135,18 +129,17 @@ namespace PlainCEETimer.UI.Controls
             {
                 this.AddControls(b => [ButtonExpand = b.Button("..", 18, 20, (_, _) =>
                 {
-                    ExpandableTextBox Dialog = new(this);
+                    TextBoxFlyout f = new(this);
 
-                    Dialog.DialogResultAcquired += (_, dr) =>
+                    f.DialogEnd += (_, dr) =>
                     {
-                        if (dr == DialogResult.Yes)
+                        if (dr == DialogResult.OK)
                         {
-                            Text = Dialog.Content;
+                            Text = f.Content;
                         }
                     };
 
-                    ParentForm.BindOverlayWindow(Dialog, () => this.LocationToScreen(-4, -4));
-                    Dialog.Show(this);
+                    ParentForm.ShowFlyout(f, () => this.LocationToScreen(-4, -4));
                 }).With(x =>
                 {
                     x.Cursor = Cursors.Arrow;

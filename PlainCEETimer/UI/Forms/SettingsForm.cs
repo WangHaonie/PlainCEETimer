@@ -12,9 +12,7 @@ namespace PlainCEETimer.UI.Forms
 {
     public sealed class SettingsForm : AppForm
     {
-        public bool RefreshNeeded { get; private set; }
-
-        protected override AppFormParam Params => AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
+        protected override AppFormParam Params => AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
 
         private bool AllowThemeChanging;
         private bool IsSyncingTime;
@@ -540,7 +538,6 @@ namespace PlainCEETimer.UI.Forms
 
         protected override void OnLoad()
         {
-            RefreshNeeded = false;
             RefreshSettings();
         }
 
@@ -814,7 +811,7 @@ namespace PlainCEETimer.UI.Forms
                 Location = AppConfig.Location
             };
 
-            RefreshNeeded = true;
+            EndModelessDialog(true, false);
         }
     }
 }

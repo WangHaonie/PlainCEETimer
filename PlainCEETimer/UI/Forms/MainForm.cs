@@ -416,9 +416,9 @@ namespace PlainCEETimer.UI.Forms
                     {
                         FormSettings = new();
 
-                        FormSettings.FormClosed += (_, _) =>
+                        FormSettings.DialogEnd += (_, dr) =>
                         {
-                            if (FormSettings.RefreshNeeded)
+                            if (dr == DialogResult.OK)
                             {
                                 ConfigHandler.Save();
                                 RefreshSettings();
