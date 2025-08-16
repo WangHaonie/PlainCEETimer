@@ -814,6 +814,7 @@ namespace PlainCEETimer.UI.Forms
                 Location = AppConfig.Location
             };
 
+            App.CanSaveConfig = true;
             RefreshNeeded = true;
         }
     }

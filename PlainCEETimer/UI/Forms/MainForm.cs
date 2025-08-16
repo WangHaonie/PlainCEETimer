@@ -771,7 +771,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void SaveConfig()
         {
-            App.AppConfig = AppConfig;
+            App.CanSaveConfig = true;
         }
     }
 }

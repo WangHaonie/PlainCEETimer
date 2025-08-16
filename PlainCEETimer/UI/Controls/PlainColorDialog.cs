@@ -45,9 +45,8 @@ namespace PlainCEETimer.UI.Controls
         {
             if (CustomColorCollection != null && PreviousCustomColors != null && !CustomColorCollection.SequenceEqual(PreviousCustomColors))
             {
-                var ExistingConfig = App.AppConfig;
-                ExistingConfig.CustomColors = CustomColorCollection;
-                App.AppConfig = ExistingConfig;
+                App.AppConfig.CustomColors = CustomColorCollection;
+                App.CanSaveConfig = true;
             }
         }
     }
