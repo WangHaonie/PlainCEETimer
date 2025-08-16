@@ -135,7 +135,7 @@ namespace PlainCEETimer.UI.Controls
         {
             if (SetRoundRegion && SetRoundCorner)
             {
-                RoundCorner.SetRegion(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
+                RoundCorner.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
             }
 
             base.OnSizeChanged(e);
@@ -205,7 +205,7 @@ namespace PlainCEETimer.UI.Controls
             {
                 if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
                 {
-                    RoundCorner.SetModern(Handle, (BOOL)SmallRoundCorner);
+                    RoundCorner.SetRoundCornerEx(Handle, (BOOL)SmallRoundCorner);
                 }
                 else
                 {

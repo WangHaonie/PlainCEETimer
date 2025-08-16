@@ -1,6 +1,6 @@
 EXPORTS
-    SetRoundCornerModern @1 NONAME
-    SetRoundCornerRegion @2 NONAME
+    SetRoundCorner @1 NONAME
+    SetRoundCornerEx @2 NONAME
 
     ListViewSelectAllItems @3 NONAME
 

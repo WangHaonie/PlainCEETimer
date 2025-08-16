@@ -23,7 +23,6 @@ namespace PlainCEETimer.Modules
         public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
         public static Icon AppIcon { get; private set; }
         public static Version AppVersionObject => field ??= Version.Parse(AppVersion);
-        public static bool CanSaveConfig { get; set; }
 
         public static ConfigObject AppConfig
         {
@@ -66,7 +65,6 @@ namespace PlainCEETimer.Modules
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (_, e) => HandleException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-            SystemEvents.SessionEnded += (_, _) => TrySaveConfig();
             AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
             Args = Array.ConvertAll(args, x => x.ToLower());
             var AllArgs = string.Join(" ", args);
@@ -165,7 +163,7 @@ namespace PlainCEETimer.Modules
         {
             Startup.Cleanup();
             IsClosing = true;
-            TrySaveConfig();
+            ConfigHandler.Save();
             if (IsMainProcess && MainMutex != null)
             {
                 MainMutex.ReleaseMutex();
@@ -253,14 +251,6 @@ namespace PlainCEETimer.Modules
                 {
                     Exit(result == DialogResult.Retry);
                 }
-            }
-        }
-
-        private static void TrySaveConfig()
-        {
-            if (CanSaveConfig)
-            {
-                ConfigHandler.Save();
             }
         }
 

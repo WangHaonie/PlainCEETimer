@@ -87,6 +87,7 @@ namespace PlainCEETimer.UI.Forms
         {
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            SystemEvents.SessionEnding += (_, _) => ConfigHandler.Save();
 
             DefaultMatchEvaluator = m =>
             {
@@ -154,8 +155,7 @@ namespace PlainCEETimer.UI.Forms
                     KeepOnScreen();
                     CompatibleWithPPTService();
                     SetCountdownAutoWrap();
-                    AppConfig.Location = Location;
-                    SaveConfig();
+                    MainForm_LocationRefreshed();
                 }
 
                 IsReadyToMove = false;
@@ -185,7 +185,6 @@ namespace PlainCEETimer.UI.Forms
         private void MainForm_LocationRefreshed()
         {
             AppConfig.Location = Location;
-            SaveConfig();
         }
 
         private void ExamItems_Click(object sender, EventArgs e)
@@ -199,7 +198,6 @@ namespace PlainCEETimer.UI.Forms
                 UnselectAllExamItems();
                 ExamIndex = index;
                 AppConfig.ExamIndex = index;
-                SaveConfig();
                 LoadExams();
                 TryRunCountdown();
                 UpdateExamSelection();
@@ -218,7 +216,6 @@ namespace PlainCEETimer.UI.Forms
         private void ExamAutoSwitch(object sender, EventArgs e)
         {
             AppConfig.ExamIndex = (ExamIndex + 1) % Exams.Length;
-            SaveConfig();
             LoadExams();
             TryRunCountdown();
             UnselectAllExamItems();
@@ -767,11 +764,6 @@ namespace PlainCEETimer.UI.Forms
         {
             CurrentRules = [.. CustomRules.Where(rule => rule.Phase == CurrentPhase).OrderByDescending(x => x)];
             CanUseRules = UseCustomText && CurrentRules.Length != 0;
-        }
-
-        private void SaveConfig()
-        {
-            App.CanSaveConfig = true;
         }
     }
 }
