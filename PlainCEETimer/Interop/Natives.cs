@@ -111,7 +111,7 @@ namespace PlainCEETimer.Interop
         {
             get
             {
-                var color = ColorTranslator.FromWin32(Value);
+                var color = ColorTranslator.FromOle(Value);
                 return $"RGB({color.R}, {color.G}, {color.B})";
             }
         }

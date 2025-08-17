@@ -211,7 +211,7 @@ namespace PlainCEETimer.UI.Controls
 
             if (SetRoundCorner)
             {
-                if (App.OSBuild >= WindowsBuilds.Windows11_21H2)
+                if (WindowsBuilds.IsWin11)
                 {
                     RoundCorner.SetRoundCornerEx(Handle, (BOOL)SmallRoundCorner);
                 }
@@ -360,7 +360,7 @@ namespace PlainCEETimer.UI.Controls
         /// </summary>
         protected void CompactControlX(Control target, Control reference, int xOffset = 0)
         {
-            target.Left = reference.Right + ScaleToDpi(xOffset); ;
+            target.Left = reference.Right + ScaleToDpi(xOffset);
         }
 
         /// <summary>
@@ -429,6 +429,17 @@ namespace PlainCEETimer.UI.Controls
 
             target.MaximumSize = new(maxWidth, 0);
             target.AutoSize = true;
+        }
+
+        protected void RemoveControls(Control[] controls, Control parent)
+        {
+            var ctrls = parent.Controls;
+
+            foreach (var c in controls)
+            {
+                ctrls.Remove(c);
+                c.Dispose();
+            }
         }
 
         protected void KeepOnScreen()

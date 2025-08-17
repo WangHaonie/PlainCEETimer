@@ -100,5 +100,8 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
         private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
+
+        [DllImport(App.NativesDll, EntryPoint = "#23")]
+        public static extern void SetBorderColor(HWND hWnd, BOOL enabled, COLORREF color);
     }
 }

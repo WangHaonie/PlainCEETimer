@@ -38,7 +38,7 @@ namespace PlainCEETimer.UI.Extensions
 
         public static AppForm FindParentForm(this Control control)
         {
-            return (AppForm)control.FindForm();
+            return (AppForm)(control.FindForm() ?? control.TopLevelControl);
         }
 
         public static Point LocationToScreen(this Control control, int xOffset = 0, int yOffset = 0)

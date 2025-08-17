@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ThemeManager.h"
 #include "IATHook.h"
+#include <dwmapi.h>
 
 /*
 
@@ -105,4 +106,10 @@ void FlushApp()
         SetPreferredAppMode(2);
         FixScrollBar();
     }
+}
+
+void SetWindowBorderColor(HWND hWnd, BOOL enabled, COLORREF color)
+{
+    COLORREF c = enabled ? color : DWMWA_COLOR_DEFAULT;
+    DwmSetWindowAttribute(hWnd, DWMWA_BORDER_COLOR, &c, sizeof(c));
 }

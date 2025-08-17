@@ -123,9 +123,9 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
-        private AppForm ParentForm;
+        private AppForm ParentForm => field ??= this.FindParentForm();
 
-        public ColorBlock[] Fellows { get; set; }
+        public ColorBlock[] Fellows { get; set; } = [];
 
         public Color Color
         {
@@ -153,8 +153,6 @@ namespace PlainCEETimer.UI.Controls
             }
         }
 
-        public new AppForm Parent => null;
-
         public event EventHandler ColorChanged;
 
         private bool IsDragging;
@@ -176,12 +174,6 @@ namespace PlainCEETimer.UI.Controls
             IsPreview = isPreview;
             IsFore = isFore;
             PreviewBlock = preview;
-        }
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            ParentForm = this.FindParentForm();
-            base.OnHandleCreated(e);
         }
 
         protected override void OnClick(EventArgs e)

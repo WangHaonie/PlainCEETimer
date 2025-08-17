@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
+using Newtonsoft.Json;
+using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -20,5 +23,17 @@ namespace PlainCEETimer.Modules.Configuration
 
         [DefaultValue(true)]
         public bool UniTopMost { get; set; } = true;
+
+        [DefaultValue(Validator.MaxOpacity)]
+        public int Opacity
+        {
+            get;
+            set => field = (value is < Validator.MinOpacity or > Validator.MaxOpacity) ? Validator.MaxOpacity : value;
+        } = Validator.MaxOpacity;
+
+        public bool CustomColor { get; set; }
+
+        [JsonConverter(typeof(ColorFormatConverter))]
+        public Color BorderColor { get; set; }
     }
 }

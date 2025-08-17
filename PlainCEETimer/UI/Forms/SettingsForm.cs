@@ -22,6 +22,7 @@ namespace PlainCEETimer.UI.Forms
         private int SelectedTheme;
         private string[] EditedCustomTexts;
         private ColorSetObject[] SelectedColors;
+        private ColorBlock BlockBorderColor;
         private ColorBlock BlockColor11;
         private ColorBlock BlockColor12;
         private ColorBlock BlockColor21;
@@ -52,6 +53,8 @@ namespace PlainCEETimer.UI.Forms
         private PlainLabel LabelCountdownEnd;
         private PlainLabel LabelExamInfo;
         private PlainLabel LabelFont;
+        private PlainLabel LabelOpacity;
+        private PlainLabel LabelOpacityValue;
         private PlainLabel LabelPosition;
         private PlainLabel LabelPptsvc;
         private PlainLabel LabelRestart;
@@ -73,6 +76,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainButton ButtonSave;
         private PlainButton ButtonSyncTime;
         private PlainCheckBox CheckBoxAutoSwitch;
+        private PlainCheckBox CheckBoxBorderColor;
         private PlainCheckBox CheckBoxDraggable;
         private PlainCheckBox CheckBoxMemClean;
         private PlainCheckBox CheckBoxPptSvc;
@@ -88,6 +92,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainGroupBox GBoxDraggable;
         private PlainGroupBox GBoxExamInfo;
         private PlainGroupBox GBoxFont;
+        private PlainGroupBox GBoxMainForm;
         private PlainGroupBox GBoxOthers;
         private PlainGroupBox GBoxPptsvc;
         private PlainGroupBox GBoxRestart;
@@ -96,6 +101,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeDark;
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
+        private TrackBar TrackBarOpacity;
         private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
         private readonly ConfigObject AppConfig = App.AppConfig;
 
@@ -391,6 +397,31 @@ namespace PlainCEETimer.UI.Forms
                                     }
                                 }
                             })
+                        ]),
+
+                        GBoxMainForm = b.GroupBox("主窗口样式",
+                        [
+                            LabelOpacity = b.Label("不透明度: "),
+                            LabelOpacityValue = b.Label("0%"),
+
+                            TrackBarOpacity = b.New<TrackBar>(WindowsBuilds.IsWin11 ? 155 : 200, 30, null).With(x =>
+                            {
+                                x.AutoSize = false;
+                                x.Minimum = 20;
+                                x.Maximum = 100;
+                                x.TickFrequency = 10;
+                                x.SmallChange = 1;
+                                x.LargeChange = 10;
+                                x.ValueChanged += TrackBarOpacity_ValueChanged;
+                            }),
+
+                            CheckBoxBorderColor = b.CheckBox("自定义边框颜色", (_, _) =>
+                            {
+                                BlockBorderColor.Enabled = CheckBoxBorderColor.Checked;
+                                SettingsChanged();
+                            }),
+
+                            BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged)
                         ])
                     ])
                 ]),
@@ -409,6 +440,7 @@ namespace PlainCEETimer.UI.Forms
             ]);
 
             ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
+            BlockBorderColor.Enabled = false;
 
             foreach (var block in ColorBlocks)
             {
@@ -441,7 +473,6 @@ namespace PlainCEETimer.UI.Forms
             {
                 PageGeneral.Controls.Remove(GBoxTheme);
                 GBoxTheme.Dispose();
-                GBoxTheme = null;
             }
 
             ArrangeControlYL(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
@@ -532,6 +563,23 @@ namespace PlainCEETimer.UI.Forms
             ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
             GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
+            ArrangeControlYL(GBoxMainForm, GBoxRestart, 0, 2);
+            GroupBoxArrageFirstControl(LabelOpacity, 0, 1);
+            ArrangeControlXT(LabelOpacityValue, LabelOpacity);
+            TrackBarOpacity_ValueChanged(null, null);
+            ArrangeControlYL(TrackBarOpacity, LabelOpacity, -5);
+            GroupBoxAutoAdjustHeight(GBoxMainForm, TrackBarOpacity, 5);
+
+            if (WindowsBuilds.IsWin11)
+            {
+                GroupBoxArrageFirstControl(CheckBoxBorderColor);
+                CompactControlX(CheckBoxBorderColor, TrackBarOpacity);
+                ArrangeControlXT(BlockBorderColor, CheckBoxBorderColor);
+            }
+            else
+            {
+                RemoveControls([CheckBoxBorderColor, BlockBorderColor], GBoxMainForm);
+            }
 
             ArrangeCommonButtonsR(ButtonSave, ButtonCancel, PageNavPages, -4, 3);
         }
@@ -612,6 +660,9 @@ namespace PlainCEETimer.UI.Forms
             CheckBoxTrayText.Checked = AppConfig.General.TrayText;
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
             ComboBoxAutoSwitchInterval.SelectedIndex = AppConfig.General.Interval;
+            TrackBarOpacity.Value = AppConfig.General.Opacity;
+            CheckBoxBorderColor.Checked = AppConfig.General.CustomColor && WindowsBuilds.IsWin11;
+            BlockBorderColor.Color = AppConfig.General.BorderColor;
             ApplyRadios();
             ApplyColorBlocks(SelectedColors);
         }
@@ -660,6 +711,12 @@ namespace PlainCEETimer.UI.Forms
                 UpdateSettingsArea(SettingsArea.SetPPTService, false, 1);
             }
 
+            SettingsChanged();
+        }
+
+        private void TrackBarOpacity_ValueChanged(object sender, EventArgs e)
+        {
+            LabelOpacityValue.Text = TrackBarOpacity.Value.ToString() + "%";
             SettingsChanged();
         }
 
@@ -784,7 +841,10 @@ namespace PlainCEETimer.UI.Forms
                     TrayText = CheckBoxTrayText.Checked,
                     MemClean = CheckBoxMemClean.Checked,
                     TopMost = CheckBoxTopMost.Checked,
-                    UniTopMost = CheckBoxUniTopMost.Checked
+                    UniTopMost = CheckBoxUniTopMost.Checked,
+                    Opacity = TrackBarOpacity.Value,
+                    CustomColor = CheckBoxBorderColor.Checked,
+                    BorderColor = WindowsBuilds.IsWin11 ? BlockBorderColor.Color : Color.Empty,
                 },
 
                 Display = new()

@@ -46,6 +46,7 @@ namespace PlainCEETimer.UI.Forms
         private bool ShowTrayText;
         private bool TrayIconReopen;
         private bool UseCustomText;
+        private bool CustomBorderColor;
         private string CountdownContent;
         private string CountdownContentLast = string.Empty;
         private string ExamName;
@@ -246,6 +247,7 @@ namespace PlainCEETimer.UI.Forms
             SetCountdownAutoWrap();
             TopMost = false;
             TopMost = AppConfig.General.TopMost;
+            Opacity = AppConfig.General.Opacity / 100D;
             ShowInTaskbar = !TopMost;
             TryRunCountdown();
 
@@ -295,6 +297,7 @@ namespace PlainCEETimer.UI.Forms
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
             CountdownColors = AppConfig.GlobalColors;
+            CustomBorderColor = AppConfig.General.CustomColor;
 
             var endIndex = AppConfig.Display.EndIndex;
             Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
@@ -331,6 +334,7 @@ namespace PlainCEETimer.UI.Forms
 
         private void PrepareCountdown()
         {
+            ThemeManager.SetBorderColor(Handle, (BOOL)CustomBorderColor, AppConfig.General.BorderColor);
             SelectedState = IsShowXOnly ? (CountdownState)(ShowXOnlyIndex + 1) : CountdownState.Normal;
             CountdownFont = AppConfig.Font;
             LocationRefreshed -= MainForm_LocationRefreshed;
