@@ -545,7 +545,7 @@ namespace PlainCEETimer.UI.Forms
 
 
             GroupBoxArrageFirstControl(LabelOpacity);
-            GroupBoxArrageFirstControl(NudOpacity);
+            GroupBoxArrageFirstControl(NudOpacity, 0, 2);
             CenterControlY(LabelOpacity, NudOpacity);
             CompactControlX(NudOpacity, LabelOpacity);
 

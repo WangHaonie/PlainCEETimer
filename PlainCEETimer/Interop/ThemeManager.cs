@@ -9,7 +9,7 @@ namespace PlainCEETimer.Interop
         public static int VerticalScrollBarWidth { get; } = SystemInformation.VerticalScrollBarWidth;
         public static bool IsDarkModeSupported { get; }
         public static bool ShouldUseDarkMode { get; }
-        public static SystemTheme CurrentTheme { get; } = SystemTheme.None;
+        public static SystemTheme CurrentTheme { get; }
         public static int Initialize;
         private static readonly BOOL IsNewDwma;
 
