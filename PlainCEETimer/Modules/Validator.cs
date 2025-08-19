@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
-using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules
 {
@@ -104,22 +102,6 @@ namespace PlainCEETimer.Modules
             {
                 throw new Exception();
             }
-        }
-
-        public static void Validate<T>(T[] value)
-            where T : IListViewData<T>
-        {
-            HashSet<T> set = [];
-
-            foreach (var item in value)
-            {
-                if (!set.Add(item))
-                {
-                    throw new Exception();
-                }
-            }
-
-            Array.Sort(value);
         }
 
         public static Color GetColor(object obj)

@@ -49,10 +49,7 @@ namespace PlainCEETimer.Modules.Configuration
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (37 * 31 + Phase.GetHashCode()) * 31 + Tick.GetHashCode();
-            }
+            return unchecked((37 * 31 + Phase.GetHashCode()) * 31 + Tick.GetHashCode());
         }
 
         bool IListViewData<CustomRuleObject>.InternalEquals(CustomRuleObject other)

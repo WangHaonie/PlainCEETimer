@@ -18,7 +18,6 @@ namespace PlainCEETimer.UI.Forms
     public sealed class MainForm : AppForm
     {
         public static bool UniTopMost { get; private set; } = true;
-        public static bool ValidateNeeded { get; private set; } = true;
 
         protected override AppFormParam Params => AppFormParam.Special | AppFormParam.RoundCorner;
 
@@ -107,7 +106,7 @@ namespace PlainCEETimer.UI.Forms
         protected override void OnShown()
         {
             RefreshSettings();
-            ValidateNeeded = false;
+            ConfigObject.ValidateNeeded = false;
             new Action(() => new Updater().CheckForUpdate(false, this)).Start();
             new Action(Startup.RefreshTaskState).Start();
         }
@@ -235,7 +234,6 @@ namespace PlainCEETimer.UI.Forms
         private void RefreshSettings()
         {
             AppConfig = App.AppConfig;
-            ValidateConfig();
             LoadConfig();
             LoadExams();
             PrepareCountdown();
@@ -253,7 +251,7 @@ namespace PlainCEETimer.UI.Forms
 
             var newTheme = AppConfig.Dark;
 
-            if (!ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+            if (!ConfigObject.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
             {
                 MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
                 App.Exit(true);
@@ -268,16 +266,6 @@ namespace PlainCEETimer.UI.Forms
             {
                 IsCountdownRunning = true;
                 Countdown = new(CountdownCallback, null, 0, 1000);
-            }
-        }
-
-        private void ValidateConfig()
-        {
-            if (ValidateNeeded)
-            {
-                AppConfig.Display.CustomText = AppConfig.Display.CustomText && !AppConfig.Display.ShowXOnly;
-                AppConfig.Display.SeewoPptsvc = AppConfig.Display.SeewoPptsvc && ((AppConfig.General.TopMost && AppConfig.Display.X == 0) || AppConfig.Display.Draggable);
-                AppConfig.General.TrayText = AppConfig.General.TrayText && AppConfig.General.TrayIcon;
             }
         }
 

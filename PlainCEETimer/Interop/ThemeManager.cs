@@ -47,7 +47,7 @@ namespace PlainCEETimer.Interop
 
         public static void FlushControl(HWND hWnd, NativeStyle type)
         {
-            SetWindowTheme(hWnd, GetPszSubAppName(type), null);
+            SetWindowTheme(hWnd, GetSubAppName(type), null);
         }
 
         public static bool IsThemeChanged(int oldValue, int newValue)
@@ -55,7 +55,7 @@ namespace PlainCEETimer.Interop
             return GetTheme(oldValue) != GetTheme(newValue);
         }
 
-        private static string GetPszSubAppName(NativeStyle style)
+        private static string GetSubAppName(NativeStyle style)
         {
             return style switch
             {

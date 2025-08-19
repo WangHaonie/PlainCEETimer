@@ -1,44 +1,41 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 using PlainCEETimer.UI;
-using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {
     public class DisplayObject
     {
-        public bool ShowXOnly { get; set; }
-
-        public int X
+        public bool ShowXOnly
         {
             get;
             set
             {
-                if (MainForm.ValidateNeeded && (value is < 0 or > 6))
-                {
-                    throw new Exception();
-                }
-
                 field = value;
             }
+        }
+
+        public int X
+        {
+            get;
+            set => ConfigObject.SetValue(ref field, value, 6, 0);
         }
 
         [DefaultValue(2)]
         public int EndIndex
         {
             get;
-            set
-            {
-                if (MainForm.ValidateNeeded && (value is < 0 or > 2))
-                {
-                    throw new Exception();
-                }
-
-                field = value;
-            }
+            set => ConfigObject.SetValue(ref field, value, 2, 0, 2);
         } = 2;
 
-        public bool CustomText { get; set; }
+        public bool CustomText
+        {
+            get;
+            set
+            {
+                field = value;
+            }
+        }
 
         public int ScreenIndex { get; set; }
 
@@ -48,5 +45,11 @@ namespace PlainCEETimer.Modules.Configuration
         public bool Draggable { get; set; }
 
         public bool SeewoPptsvc { get; set; }
+
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            CustomText = ConfigObject.InvalidateBoolean(CustomText, !ShowXOnly);
+        }
     }
 }

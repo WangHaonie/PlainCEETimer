@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
-using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -18,7 +17,7 @@ namespace PlainCEETimer.Modules.Configuration
             {
                 value = value.RemoveIllegalChars();
 
-                if (MainForm.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
+                if (ConfigObject.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
                 {
                     throw new Exception();
                 }
@@ -33,7 +32,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (ConfigObject.ValidateNeeded)
                 {
                     Validator.EnsureExamDate(value);
                 }
@@ -48,7 +47,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (ConfigObject.ValidateNeeded)
                 {
                     Validator.EnsureExamDate(value);
                 }

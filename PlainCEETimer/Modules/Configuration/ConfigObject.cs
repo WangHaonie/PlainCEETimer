@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
-using PlainCEETimer.UI.Forms;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -15,37 +17,17 @@ namespace PlainCEETimer.Modules.Configuration
         public ExamInfoObject[] Exams
         {
             get;
-            set
-            {
-                if (MainForm.ValidateNeeded)
-                {
-                    Validator.Validate(value);
-                }
-
-                field = value;
-            }
+            set => SetValue(ref field, value);
         } = [];
 
-        public int ExamIndex
-        {
-            get;
-            set
-            {
-                if (MainForm.ValidateNeeded && (value < 0 || value > Exams.Length))
-                {
-                    throw new Exception();
-                }
-
-                field = value;
-            }
-        }
+        public int ExamIndex { get; set; }
 
         public string[] GlobalCustomTexts
         {
             get;
             set
             {
-                if (MainForm.ValidateNeeded)
+                if (ValidateNeeded)
                 {
                     foreach (var text in value)
                     {
@@ -62,7 +44,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (MainForm.ValidateNeeded && value.Length < 4)
+                if (ValidateNeeded && value.Length < 4)
                 {
                     throw new Exception();
                 }
@@ -76,15 +58,7 @@ namespace PlainCEETimer.Modules.Configuration
         public CustomRuleObject[] CustomRules
         {
             get;
-            set
-            {
-                if (MainForm.ValidateNeeded)
-                {
-                    Validator.Validate(value);
-                }
-
-                field = value;
-            }
+            set => SetValue(ref field, value);
         } = [];
 
         [JsonConverter(typeof(CustomColorsConverter))]
@@ -96,32 +70,60 @@ namespace PlainCEETimer.Modules.Configuration
         public int NtpServer
         {
             get;
-            set
-            {
-                if (MainForm.ValidateNeeded && (value is < 0 or > 3))
-                {
-                    throw new Exception();
-                }
-
-                field = value;
-            }
+            set => SetValue(ref field, value, 3, 0);
         }
 
         public int Dark
         {
             get;
-            set
-            {
-                if (MainForm.ValidateNeeded && (value is < 0 or > 2))
-                {
-                    throw new Exception();
-                }
-
-                field = value;
-            }
+            set => SetValue(ref field, value, 2, 0);
         }
 
         [JsonConverter(typeof(PointFormatConverter))]
         public Point Location { get; set; }
+
+        internal static bool ValidateNeeded { get; set; } = true;
+
+        public static readonly ConfigObject Empty = new();
+
+        public static void SetValue(ref int field, int value, int max, int min, int defvalue = 0)
+        {
+            field = (ValidateNeeded && (value > max || value < min)) ? defvalue : value;
+        }
+
+        public static bool InvalidateBoolean(bool value, bool condition)
+        {
+            return ValidateNeeded ? value && condition : value;
+        }
+
+        public static void SetValue<T>(ref T[] field, T[] value)
+            where T : IListViewData<T>
+        {
+            if (ValidateNeeded)
+            {
+                HashSet<T> set = [];
+
+                foreach (var item in value)
+                {
+                    if (!set.Add(item))
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                Array.Sort(value);
+            }
+
+            field = value;
+        }
+
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            var value = ExamIndex;
+            SetValue(ref value, value, Exams.Length, 0);
+            ExamIndex = value;
+            Display.SeewoPptsvc = InvalidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
+        }
     }
 }
