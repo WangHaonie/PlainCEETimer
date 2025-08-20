@@ -754,7 +754,13 @@ namespace PlainCEETimer.UI.Forms
 
         private void RefreshCustomRules()
         {
-            CurrentRules = [.. CustomRules.Where(rule => rule.Phase == CurrentPhase).OrderByDescending(x => x)];
+            CurrentRules =
+            [..
+                CustomRules
+                .Where(r => r.Phase == CurrentPhase)
+                .OrderByDescending(x => x)
+            ];
+
             CanUseRules = UseCustomText && CurrentRules.Length != 0;
         }
     }

@@ -9,44 +9,37 @@ namespace PlainCEETimer.UI.Controls
 {
     public sealed class PlainColorDialog : ColorDialog
     {
-        private static int[] CustomColorCollection = App.AppConfig.CustomColors;
-        private int[] PreviousCustomColors;
         private CommonDialogHelper Helper;
 
         public PlainColorDialog()
         {
-            AllowFullOpen = true;
             FullOpen = true;
-            CustomColors = CustomColorCollection;
+            CustomColors = App.AppConfig.CustomColors;
         }
 
         public DialogResult ShowDialog(Color Default, AppForm owner)
         {
             Color = Default;
-            PreviousCustomColors = CustomColorCollection;
             Helper = new(this, owner, "选取颜色 - 高考倒计时", base.HookProc);
-            var Result = ShowDialog();
+            var previous = CustomColors;
+            var result = ShowDialog();
 
-            if (Result == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                CustomColorCollection = CustomColors;
-                SaveCustomColors();
+                var tmp = CustomColors;
+
+                if (!tmp.SequenceEqual(previous))
+                {
+                    App.AppConfig.CustomColors = tmp;
+                }
             }
 
-            return Result;
+            return result;
         }
 
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
         {
             return Helper.HookProc(hWnd, msg, wparam, lparam);
-        }
-
-        private void SaveCustomColors()
-        {
-            if (CustomColorCollection != null && PreviousCustomColors != null && !CustomColorCollection.SequenceEqual(PreviousCustomColors))
-            {
-                App.AppConfig.CustomColors = CustomColorCollection;
-            }
         }
     }
 }
