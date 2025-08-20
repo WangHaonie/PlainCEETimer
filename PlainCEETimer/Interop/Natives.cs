@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop
@@ -182,11 +183,11 @@ namespace PlainCEETimer.Interop
     [DebuggerDisplay("{DebuggerDisplay}")]
     public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
     {
-        private readonly ushort Value = (ushort)(((byte)fKeys << 8) | ((byte)((int)keys & 0xFF)));
+        private readonly ushort Value = ushort.FromBytes((byte)keys, (byte)fKeys);
 
         public static readonly LnkHotkey None = new();
 
-        private string DebuggerDisplay => $"{(HotkeyModifiers)((Value >> 8) & 0xFF)}, {(Keys)(Value & 0xFF)}";
+        private string DebuggerDisplay => $"{(HotkeyModifiers)Value.HiByte}, {(Keys)Value.LoByte}";
     }
 
     [DebuggerDisplay("{ToString(),nq}")]
