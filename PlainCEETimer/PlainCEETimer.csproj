@@ -212,8 +212,7 @@
     <Compile Include="Interop\TaskbarProgress.cs" />
     <Compile Include="Interop\ThemeManager.cs" />
     <Compile Include="Modules\Configuration\ColorSetObject.cs" />
-    <Compile Include="Modules\Configuration\ConfigObject.cs" />
-    <Compile Include="Modules\Configuration\ConfigHandler.cs" />
+    <Compile Include="Modules\Configuration\AppConfig.cs" />
     <Compile Include="Modules\Configuration\DefaultValues.cs" />
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
     <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
@@ -245,7 +244,7 @@
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="UI\AppMessageBox.cs" />
-    <Compile Include="Modules\Validator.cs" />
+    <Compile Include="Modules\Configuration\Validator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="UI\Controls\PlainLinkLabel.cs">
       <SubType>Component</SubType>

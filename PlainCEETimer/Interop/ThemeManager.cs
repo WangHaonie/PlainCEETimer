@@ -19,7 +19,7 @@ namespace PlainCEETimer.Interop
             {
                 var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
                 CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
-                var option = App.AppConfig.Dark; // 顺便触发初始化 DefaultValues
+                var option = App.AppConfig.Dark;
 
                 if (App.OSBuild >= WindowsBuilds.Windows10_20H1)
                 {

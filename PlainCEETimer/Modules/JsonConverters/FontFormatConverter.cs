@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {

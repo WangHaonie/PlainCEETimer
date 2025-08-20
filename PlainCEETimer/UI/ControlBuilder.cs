@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI

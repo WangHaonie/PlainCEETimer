@@ -6,36 +6,22 @@ namespace PlainCEETimer.Modules.Configuration
 {
     public class DisplayObject
     {
-        public bool ShowXOnly
-        {
-            get;
-            set
-            {
-                field = value;
-            }
-        }
+        public bool ShowXOnly { get; set; }
 
         public int X
         {
             get;
-            set => ConfigObject.SetValue(ref field, value, 6, 0);
+            set => Validator.SetValue(ref field, value, 6, 0);
         }
 
         [DefaultValue(2)]
         public int EndIndex
         {
             get;
-            set => ConfigObject.SetValue(ref field, value, 2, 0, 2);
+            set => Validator.SetValue(ref field, value, 2, 0, 2);
         } = 2;
 
-        public bool CustomText
-        {
-            get;
-            set
-            {
-                field = value;
-            }
-        }
+        public bool CustomText { get; set; }
 
         public int ScreenIndex { get; set; }
 
@@ -49,7 +35,7 @@ namespace PlainCEETimer.Modules.Configuration
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
-            CustomText = ConfigObject.InvalidateBoolean(CustomText, !ShowXOnly);
+            CustomText = Validator.ValidateBoolean(CustomText, !ShowXOnly);
         }
     }
 }

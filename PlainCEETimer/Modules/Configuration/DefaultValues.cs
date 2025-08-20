@@ -7,9 +7,9 @@ namespace PlainCEETimer.Modules.Configuration
 {
     public static class DefaultValues
     {
-        public static bool AutoDarkTheme { get; }
         public static int[] ColorDialogColors { get; }
         public static string[] GlobalDefaultCustomTexts { get; }
+        public static ColorSetObject[] CountdownDefaultColors { get; }
         public static ColorSetObject[] CountdownDefaultColorsDark { get; }
         public static ColorSetObject[] CountdownDefaultColorsLight { get; }
         public static Font CountdownDefaultFont { get; }
@@ -19,6 +19,9 @@ namespace PlainCEETimer.Modules.Configuration
 
         static DefaultValues()
         {
+            GlobalDefaultCustomTexts = [.. Constants.PhAllPhases];
+            ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
+
             var tester = new Font(NotoSansSC, 1);
             CountdownDefaultFont = new(tester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 18F, FontStyle.Bold, GraphicsUnit.Point);
             tester.Dispose();
@@ -39,14 +42,15 @@ namespace PlainCEETimer.Modules.Configuration
                 new(Color.White, Color.Black)
             ];
 
-            GlobalDefaultCustomTexts = [.. Constants.PhAllPhases];
-            ColorDialogColors = [.. Enumerable.Repeat(16777215, 16)];
             var theme = ThemeManager.CurrentTheme;
+            var dark = false;
 
             if (!File.Exists(App.ConfigFilePath) && theme != SystemTheme.None)
             {
-                AutoDarkTheme = theme == SystemTheme.Dark;
+                dark = theme == SystemTheme.Dark;
             }
+
+            CountdownDefaultColors = dark ? CountdownDefaultColorsDark : CountdownDefaultColorsLight;
         }
     }
 }

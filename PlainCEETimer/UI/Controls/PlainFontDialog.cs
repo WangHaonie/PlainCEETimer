@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.UI.Controls
 {

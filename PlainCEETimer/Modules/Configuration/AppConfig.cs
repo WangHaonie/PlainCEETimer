@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
-using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration
 {
-    public class ConfigObject
+    public class AppConfig
     {
         public GeneralObject General { get; set; } = new();
 
@@ -17,7 +15,7 @@ namespace PlainCEETimer.Modules.Configuration
         public ExamInfoObject[] Exams
         {
             get;
-            set => SetValue(ref field, value);
+            set => Validator.SetValue(ref field, value);
         } = [];
 
         public int ExamIndex { get; set; }
@@ -27,7 +25,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (ValidateNeeded)
+                if (Validator.ValidateNeeded)
                 {
                     foreach (var text in value)
                     {
@@ -44,21 +42,19 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (ValidateNeeded && value.Length < 4)
+                if (Validator.ValidateNeeded && value.Length < 4)
                 {
                     throw new Exception();
                 }
 
                 field = value;
             }
-        } = DefaultValues.AutoDarkTheme
-          ? DefaultValues.CountdownDefaultColorsDark
-          : DefaultValues.CountdownDefaultColorsLight;
+        } = DefaultValues.CountdownDefaultColors;
 
         public CustomRuleObject[] CustomRules
         {
             get;
-            set => SetValue(ref field, value);
+            set => Validator.SetValue(ref field, value);
         } = [];
 
         [JsonConverter(typeof(CustomColorsConverter))]
@@ -70,60 +66,27 @@ namespace PlainCEETimer.Modules.Configuration
         public int NtpServer
         {
             get;
-            set => SetValue(ref field, value, 3, 0);
+            set => Validator.SetValue(ref field, value, 3, 0);
         }
 
         public int Dark
         {
             get;
-            set => SetValue(ref field, value, 2, 0);
+            set => Validator.SetValue(ref field, value, 2, 0);
         }
 
         [JsonConverter(typeof(PointFormatConverter))]
         public Point Location { get; set; }
 
-        internal static bool ValidateNeeded { get; set; } = true;
-
-        public static readonly ConfigObject Empty = new();
-
-        public static void SetValue(ref int field, int value, int max, int min, int defvalue = 0)
-        {
-            field = (ValidateNeeded && (value > max || value < min)) ? defvalue : value;
-        }
-
-        public static bool InvalidateBoolean(bool value, bool condition)
-        {
-            return ValidateNeeded ? value && condition : value;
-        }
-
-        public static void SetValue<T>(ref T[] field, T[] value)
-            where T : IListViewData<T>
-        {
-            if (ValidateNeeded)
-            {
-                HashSet<T> set = [];
-
-                foreach (var item in value)
-                {
-                    if (!set.Add(item))
-                    {
-                        throw new Exception();
-                    }
-                }
-
-                Array.Sort(value);
-            }
-
-            field = value;
-        }
+        public static readonly AppConfig Empty = new();
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
             var value = ExamIndex;
-            SetValue(ref value, value, Exams.Length, 0);
+            Validator.SetValue(ref value, value, Exams.Length, 0);
             ExamIndex = value;
-            Display.SeewoPptsvc = InvalidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
+            Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
         }
     }
 }

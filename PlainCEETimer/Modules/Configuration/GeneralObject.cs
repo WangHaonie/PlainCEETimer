@@ -29,7 +29,7 @@ namespace PlainCEETimer.Modules.Configuration
         public int Opacity
         {
             get;
-            set => ConfigObject.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
+            set => Validator.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
         } = Validator.MaxOpacity;
 
         public bool CustomColor { get; set; }
@@ -40,7 +40,7 @@ namespace PlainCEETimer.Modules.Configuration
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
-            TrayText = ConfigObject.InvalidateBoolean(TrayText, TrayIcon);
+            TrayText = Validator.ValidateBoolean(TrayText, TrayIcon);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace PlainCEETimer.UI.Forms
         private Point LastLocation;
         private Rectangle SelectedScreenRect;
         private AboutForm FormAbout;
-        private ConfigObject AppConfig;
+        private AppConfig AppConfig;
         private ContextMenu ContextMenuMain;
         private ContextMenu ContextMenuTray;
         private CustomRuleObject[] CustomRules;
@@ -87,7 +87,7 @@ namespace PlainCEETimer.UI.Forms
         {
             Text = "高考倒计时";
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-            SystemEvents.SessionEnding += (_, _) => ConfigHandler.Save();
+            SystemEvents.SessionEnding += (_, _) => Validator.Save();
 
             DefaultMatchEvaluator = m =>
             {
@@ -106,7 +106,7 @@ namespace PlainCEETimer.UI.Forms
         protected override void OnShown()
         {
             RefreshSettings();
-            ConfigObject.ValidateNeeded = false;
+            Validator.ValidateNeeded = false;
             new Action(() => new Updater().CheckForUpdate(false, this)).Start();
             new Action(Startup.RefreshTaskState).Start();
         }
@@ -251,7 +251,7 @@ namespace PlainCEETimer.UI.Forms
 
             var newTheme = AppConfig.Dark;
 
-            if (!ConfigObject.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+            if (!Validator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
             {
                 MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
                 App.Exit(true);
@@ -412,7 +412,7 @@ namespace PlainCEETimer.UI.Forms
                         {
                             if (dr == DialogResult.OK)
                             {
-                                ConfigHandler.Save();
+                                Validator.Save();
                                 RefreshSettings();
                                 CountdownCallback(null);
                             }

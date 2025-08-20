@@ -102,7 +102,7 @@ namespace PlainCEETimer.UI.Forms
         private PlainRadioButton RadioButtonThemeLight;
         private PlainRadioButton RadioButtonThemeSystem;
         private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
-        private readonly ConfigObject AppConfig = App.AppConfig;
+        private readonly AppConfig AppConfig = App.AppConfig;
 
         protected override void OnInitializing()
         {

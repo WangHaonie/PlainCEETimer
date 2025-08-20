@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules
+namespace PlainCEETimer.Modules.Configuration
 {
     public static class Validator
     {
@@ -21,6 +25,67 @@ namespace PlainCEETimer.Modules
         public const char ValueSeparator = ',';
         public const string ValueSeparatorString = ", ";
         public const string RegexPhPatterns = @"\{(\w+)\}";
+        private static readonly JsonSerializerSettings Settings;
+
+        internal static bool ValidateNeeded { get; set; } = true;
+
+        static Validator()
+        {
+            Settings = new JsonSerializerSettings()
+            {
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                NullValueHandling = NullValueHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+        }
+
+        public static void Save()
+        {
+            File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+        }
+
+        public static AppConfig Read()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(App.ConfigFilePath)) ?? AppConfig.Empty;
+            }
+            catch
+            {
+                return AppConfig.Empty;
+            }
+        }
+
+        public static void SetValue(ref int field, int value, int max, int min, int defvalue = 0)
+        {
+            field = (ValidateNeeded && (value > max || value < min)) ? defvalue : value;
+        }
+
+        public static void SetValue<T>(ref T[] field, T[] value)
+            where T : IListViewData<T>
+        {
+            if (ValidateNeeded)
+            {
+                HashSet<T> set = [];
+
+                foreach (var item in value)
+                {
+                    if (!set.Add(item))
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                Array.Sort(value);
+            }
+
+            field = value;
+        }
+
+        public static bool ValidateBoolean(bool value, bool condition)
+        {
+            return ValidateNeeded ? value && condition : value;
+        }
 
         public static bool VerifyCustomText(string custom, out string warning, int index = 0)
         {

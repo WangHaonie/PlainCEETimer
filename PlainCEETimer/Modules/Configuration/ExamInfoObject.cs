@@ -17,7 +17,7 @@ namespace PlainCEETimer.Modules.Configuration
             {
                 value = value.RemoveIllegalChars();
 
-                if (ConfigObject.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
+                if (Validator.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
                 {
                     throw new Exception();
                 }
@@ -32,7 +32,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (ConfigObject.ValidateNeeded)
+                if (Validator.ValidateNeeded)
                 {
                     Validator.EnsureExamDate(value);
                 }
@@ -47,7 +47,7 @@ namespace PlainCEETimer.Modules.Configuration
             get;
             set
             {
-                if (ConfigObject.ValidateNeeded)
+                if (Validator.ValidateNeeded)
                 {
                     Validator.EnsureExamDate(value);
                 }
