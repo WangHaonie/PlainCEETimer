@@ -37,35 +37,30 @@ namespace PlainCEETimer.UI
 
         public PlainButton Button(string text, EventHandler onClick)
         {
-            return Button(text, true, false, onClick, null);
+            return Button(text, false, onClick, null);
         }
 
         public PlainButton Button(string text, ContextMenu menu)
         {
-            return Button(text, true, false, null, menu);
-        }
-
-        public PlainButton Button(string text, bool enabled, EventHandler onClick)
-        {
-            return Button(text, enabled, false, onClick, null);
+            return Button(text, false, null, menu);
         }
 
         public PlainButton Button(string text, int maxW, int maxH, EventHandler onClick)
         {
-            var ctrl = Button(text, true, false, onClick, null);
+            var ctrl = Button(text, false, onClick, null);
             ctrl.MinimumSize = new();
             ctrl.MaximumSize = new(maxW, maxH);
             return ctrl;
         }
 
-        public PlainButton Button(string text, bool enabled, bool autoSize, ContextMenu menu)
+        public PlainButton Button(string text, bool autoSize, ContextMenu menu)
         {
-            return Button(text, enabled, autoSize, null, menu);
+            return Button(text, autoSize, null, menu);
         }
 
-        public PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick)
+        public PlainButton Button(string text, bool autoSize, EventHandler onClick)
         {
-            return Button(text, enabled, autoSize, onClick, null);
+            return Button(text, autoSize, onClick, null);
         }
 
         public PlainCheckBox CheckBox(string text, EventHandler onCheckedChanged)
@@ -84,12 +79,7 @@ namespace PlainCEETimer.UI
 
         public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
         {
-            return ComboBox(w, true, onSelectedIndexChanged, items);
-        }
-
-        public PlainComboBox ComboBox(int w, bool enabled, EventHandler onSelectedIndexChanged, params string[] items)
-        {
-            var ctrl = new PlainComboBox() { Enabled = enabled };
+            var ctrl = new PlainComboBox();
             ctrl.SetBounds(0, 0, w, 23);
 
             var data = new ComboData[items.Length];
@@ -194,9 +184,9 @@ namespace PlainCEETimer.UI
             return ctrl;
         }
 
-        private PlainButton Button(string text, bool enabled, bool autoSize, EventHandler onClick, ContextMenu menu)
+        private PlainButton Button(string text, bool autoSize, EventHandler onClick, ContextMenu menu)
         {
-            var ctrl = new PlainButton(menu) { Text = text, Enabled = enabled, MinimumSize = new(0, 23) };
+            var ctrl = new PlainButton(menu) { Text = text, MinimumSize = new(0, 23) };
 
             if (autoSize)
             {

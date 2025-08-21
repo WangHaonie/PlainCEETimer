@@ -53,11 +53,11 @@ namespace PlainCEETimer.UI.Forms
                 LabelSize = b.Label("已下载/总共: (获取中...)"),
                 LabelSpeed = b.Label("下载速度: (获取中...)"),
 
-                ButtonRetry = b.Button("重试(&R)", false, (_, _) =>
+                ButtonRetry = b.Button("重试(&R)", (_, _) =>
                 {
                     UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
                     DownloadUpdate();
-                }),
+                }).Disable(),
 
                 ButtonCancel = b.Button("取消(&C)", (_, _) =>
                 {

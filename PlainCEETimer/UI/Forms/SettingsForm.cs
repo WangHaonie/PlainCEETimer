@@ -140,7 +140,7 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            ComboBoxAutoSwitchInterval = b.ComboBox(86, false, SettingsChanged, "10 秒", "15 秒", "30 秒", "45 秒", "1 分钟", "2 分钟", "3 分钟", "5 分钟", "10 分钟", "15 分钟", "30 分钟", "45 分钟", "1 小时")
+                            ComboBoxAutoSwitchInterval = b.ComboBox(86, SettingsChanged, "10 秒", "15 秒", "30 秒", "45 秒", "1 分钟", "2 分钟", "3 分钟", "5 分钟", "10 分钟", "15 分钟", "30 分钟", "45 分钟", "1 小时").Disable()
                         ]),
 
                         GBoxTheme = b.GroupBox("应用主题设定",
@@ -214,7 +214,7 @@ namespace PlainCEETimer.UI.Forms
                         [
                             LabelCountdownEnd = b.Label("当考试开始后, 显示"),
                             ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, "<程序欢迎信息>", "考试还有多久结束", "考试还有多久结束 和 已过去了多久"),
-                            ComboBoxShowXOnly = b.ComboBox(130, false, SettingsChanged, "总天数", "总天数 (一位小数)", "总天数 (向上取整)", "总小时", "总小时 (一位小数)", "总分钟", "总秒数"),
+                            ComboBoxShowXOnly = b.ComboBox(130, SettingsChanged, "总天数", "总天数 (一位小数)", "总天数 (向上取整)", "总小时", "总小时 (一位小数)", "总分钟", "总秒数").Disable(),
 
                             CheckBoxShowXOnly = b.CheckBox("时间间隔格式只显示", (sender, _) =>
                             {
@@ -223,7 +223,7 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            ButtonRulesMan = b.Button("规则管理器(&R)", false, true, (_, _) =>
+                            ButtonRulesMan = b.Button("规则管理器(&R)", true, (_, _) =>
                             {
                                 var dialog = new RulesManager()
                                 {
@@ -238,7 +238,7 @@ namespace PlainCEETimer.UI.Forms
                                     EditedCustomTexts = dialog.CustomTextPreset;
                                     SettingsChanged();
                                 }
-                            }),
+                            }).Disable(),
 
                             CheckBoxRulesMan = b.CheckBox("自定义不同时刻的颜色和内容:", (sender, _) =>
                             {
@@ -285,7 +285,7 @@ namespace PlainCEETimer.UI.Forms
                         [
                             LabelFont = b.Label(null),
 
-                            ButtonFont = b.Button("选择字体(&F)", true, true, (_, _) =>
+                            ButtonFont = b.Button("选择字体(&F)", true, (_, _) =>
                             {
                                 var dialog = new PlainFontDialog(SelectedFont);
 
@@ -296,7 +296,7 @@ namespace PlainCEETimer.UI.Forms
                                 }
                             }),
 
-                            ButtonDefaultFont = b.Button("恢复默认(&H)", true, true, (_, _) =>
+                            ButtonDefaultFont = b.Button("恢复默认(&H)", true, (_, _) =>
                             {
                                 ChangeDisplayFont(DefaultValues.CountdownDefaultFont);
                                 SettingsChanged();
@@ -311,7 +311,7 @@ namespace PlainCEETimer.UI.Forms
                             LabelColorP3 = b.Label("[3]考试后"),
                             LabelColorWelcome = b.Label("[4]欢迎信息"),
 
-                            ButtonDefaultColor = b.Button("恢复默认(&M)", true, true, ContextMenuBuilder.Build(b =>
+                            ButtonDefaultColor = b.Button("恢复默认(&M)", true, ContextMenuBuilder.Build(b =>
                             [
                                 b.Menu("白底(&L)",
                                 [
@@ -358,7 +358,7 @@ namespace PlainCEETimer.UI.Forms
 
                             ComboBoxNtpServers = b.ComboBox(130, SettingsChanged, "time.windows.com", "ntp.aliyun.com", "ntp.tencent.com", "time.cloudflare.com"),
 
-                            ButtonSyncTime = b.Button("立即同步(&Y)", true, true, (_, _) =>
+                            ButtonSyncTime = b.Button("立即同步(&Y)", true, (_, _) =>
                             {
                                 var server = ((ComboData)ComboBoxNtpServers.SelectedItem).Display;
                                 UpdateSettingsArea(SettingsArea.SyncTime);
@@ -370,7 +370,7 @@ namespace PlainCEETimer.UI.Forms
                         [
                             LabelRestart = b.Label(null),
 
-                            ButtonRestart = b.Button(null, true, true, (_, _) =>
+                            ButtonRestart = b.Button(null, true, (_, _) =>
                             {
                                 if (IsFunnyClick)
                                 {
@@ -412,16 +412,17 @@ namespace PlainCEETimer.UI.Forms
 
                             CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                             {
-                                ComboBoxBorderColor.Enabled = CheckBoxBorderColor.Checked;
+                                var flag = CheckBoxBorderColor.Checked;
+                                ComboBoxBorderColor.Enabled = flag;
+                                BlockBorderColor.Enabled = flag;
                                 SettingsChanged();
                             }),
 
-                            ComboBoxBorderColor = b.ComboBox(110, false, (_, _) =>
+                            ComboBoxBorderColor = b.ComboBox(110, (_, _) =>
                             {
                                 BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
                                 SettingsChanged();
-                            }, "自定义", "跟随文字颜色", "跟随背景颜色")
-                            .With(x => x.EnabledChanged += (_, _) => BlockBorderColor.Enabled = ComboBoxBorderColor.Enabled),
+                            }, "自定义", "跟随文字颜色", "跟随背景颜色").Disable(),
 
                             BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged).Disable()
                         ])
@@ -437,7 +438,7 @@ namespace PlainCEETimer.UI.Forms
                     }.AsFocus(this)
                 ]),
 
-                ButtonSave = b.Button("保存(&S)", false, (_, _) => SaveChanges()),
+                ButtonSave = b.Button("保存(&S)", (_, _) => SaveChanges()).Disable(),
                 ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
             ]);
 

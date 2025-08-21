@@ -17,7 +17,7 @@ namespace PlainCEETimer.UI.Controls
 
             this.AddControls(b =>
             [
-                ButtonA = b.Button("确定(&O)", false, (_, _) => OnClickButtonA()),
+                ButtonA = b.Button("确定(&O)", (_, _) => OnClickButtonA()).Disable(),
                 ButtonB = b.Button("取消(&C)", (_, _) => OnClickButtonB())
             ]);
 

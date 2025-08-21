@@ -669,13 +669,13 @@ namespace PlainCEETimer.UI.Forms
                     {
                         UpdateTrayIconText(content);
                     }
+                }
 
-                    var type = BorderColor.Type;
+                var type = BorderColor.Type;
 
-                    if (BorderColor.Enabled && type != 0)
-                    {
-                        SetBorderColor(BOOL.TRUE, type == 1 ? colors.Fore : colors.Back);
-                    }
+                if (BorderColor.Enabled && type != 0)
+                {
+                    SetBorderColor(BOOL.TRUE, type == 1 ? colors.Fore : colors.Back);
                 }
             });
         }

@@ -14,6 +14,13 @@ namespace PlainCEETimer.UI.Extensions
             return control;
         }
 
+        public static TControl Disable<TControl>(this TControl control)
+            where TControl : Control
+        {
+            control.Enabled = false;
+            return control;
+        }
+
         public static TControl AsFocus<TControl>(this TControl control, AppForm parent)
             where TControl : Control
         {
@@ -22,13 +29,6 @@ namespace PlainCEETimer.UI.Extensions
                 parent.FocusControl = control;
             }
 
-            return control;
-        }
-
-        public static TControl Disable<TControl>(this TControl control)
-            where TControl : Control
-        {
-            control.Enabled = false;
             return control;
         }
 
