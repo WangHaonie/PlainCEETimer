@@ -311,16 +311,19 @@ namespace PlainCEETimer.UI.Forms
                 RefreshScreen();
             }
 
-            if (MemClean && !LoadedMemCleaner)
+            if (MemClean ^ LoadedMemCleaner)
             {
-                MemCleaner = new(_ => MemoryCleaner.Clean(), null, 3000, MemCleanerInterval);
-                LoadedMemCleaner = true;
+                if (MemClean)
+                {
+                    MemCleaner = new(_ => MemoryCleaner.Clean(), null, 3000, MemCleanerInterval);
+                }
+                else
+                {
+                    MemCleaner.Dispose();
+                }
             }
 
-            if (!MemClean && LoadedMemCleaner)
-            {
-                MemCleaner.Dispose();
-            }
+            LoadedMemCleaner = MemClean;
         }
 
         private void ApplyStyle()
