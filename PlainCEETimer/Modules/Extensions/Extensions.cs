@@ -56,5 +56,8 @@ namespace PlainCEETimer.Modules.Extensions
 
         public static Color ToColor(this int value)
             => ColorTranslator.FromOle(value);
+
+        public static void Destory(this IDisposable obj)
+            => obj?.Dispose();
     }
 }

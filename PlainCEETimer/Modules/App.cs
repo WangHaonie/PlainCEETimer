@@ -160,9 +160,10 @@ namespace PlainCEETimer.Modules
 
         public static void Exit(bool restart = false)
         {
-            Startup.Cleanup();
             IsClosing = true;
+            Startup.Cleanup();
             Validator.Save();
+
             if (IsMainProcess && MainMutex != null)
             {
                 MainMutex.ReleaseMutex();

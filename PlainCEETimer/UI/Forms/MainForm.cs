@@ -46,7 +46,6 @@ namespace PlainCEETimer.UI.Forms
         private bool TrayIconReopen;
         private bool UseCustomText;
         private string CountdownContent;
-        private string CountdownContentLast = string.Empty;
         private string ExamName;
         private string[] GlobalTexts;
         private CountdownMode Mode;
@@ -537,11 +536,11 @@ namespace PlainCEETimer.UI.Forms
 
             if (!AutoSwitch)
             {
-                AutoSwitchHandler?.Dispose();
+                AutoSwitchHandler.Destory();
             }
             else if (!canUpdate)
             {
-                AutoSwitchHandler?.Dispose();
+                AutoSwitchHandler.Destory();
 
                 if (IsCountdownReady && Exams.Length > 1)
                 {
@@ -656,26 +655,22 @@ namespace PlainCEETimer.UI.Forms
         {
             BeginInvoke(() =>
             {
-                if (content != CountdownContentLast)
-                {
-                    CountdownContent = content;
-                    CountdownContentLast = content;
-                    CountdownForeColor = colors.Fore;
-                    BackColor = colors.Back;
-                    Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
-                    Invalidate();
+                CountdownContent = content;
+                CountdownForeColor = colors.Fore;
+                BackColor = colors.Back;
+                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
+                Invalidate();
 
-                    if (ShowTrayText)
-                    {
-                        UpdateTrayIconText(content);
-                    }
+                if (ShowTrayText)
+                {
+                    UpdateTrayIconText(content);
                 }
 
                 var type = BorderColor.Type;
 
                 if (BorderColor.Enabled && type != 0)
                 {
-                    SetBorderColor(BOOL.TRUE, type == 1 ? colors.Fore : colors.Back);
+                    SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : BackColor);
                 }
             });
         }

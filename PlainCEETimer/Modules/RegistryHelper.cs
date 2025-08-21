@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Win32;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules
 {
@@ -46,8 +47,8 @@ namespace PlainCEETimer.Modules
 
         public void Dispose()
         {
-            OpenedKey?.Dispose();
-            BaseKey?.Dispose();
+            OpenedKey.Destory();
+            BaseKey.Destory();
             GC.SuppressFinalize(this);
         }
 

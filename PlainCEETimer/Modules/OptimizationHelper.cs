@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Forms;
@@ -61,7 +62,7 @@ namespace PlainCEETimer.Modules
 
         public void Dispose()
         {
-            Dialog?.Dispose();
+            Dialog.Destory();
             GC.SuppressFinalize(this);
         }
 
