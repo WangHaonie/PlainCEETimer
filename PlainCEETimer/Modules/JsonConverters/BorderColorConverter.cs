@@ -13,7 +13,7 @@ namespace PlainCEETimer.Modules.JsonConverters
 
         public override void WriteJson(JsonWriter writer, BorderColorObject value, JsonSerializer serializer)
         {
-            serializer.Serialize(writer, value.MakeLong());
+            serializer.Serialize(writer, WindowsBuilds.IsWin11 ? value.MakeLong() : 0);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -474,8 +473,7 @@ namespace PlainCEETimer.UI.Forms
             }
             else
             {
-                PageGeneral.Controls.Remove(GBoxTheme);
-                GBoxTheme.Dispose();
+                RemoveControls(PageGeneral, GBoxTheme);
             }
 
             ArrangeControlYL(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
@@ -571,7 +569,7 @@ namespace PlainCEETimer.UI.Forms
             }
             else
             {
-                RemoveControls([CheckBoxBorderColor, ComboBoxBorderColor, BlockBorderColor], GBoxMainForm);
+                RemoveControls(GBoxMainForm, CheckBoxBorderColor, ComboBoxBorderColor, BlockBorderColor);
             }
 
             GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
@@ -670,11 +668,16 @@ namespace PlainCEETimer.UI.Forms
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
             ComboBoxAutoSwitchInterval.SelectedIndex = AppConfig.General.Interval;
             NudOpacity.Value = AppConfig.General.Opacity;
-            var border = AppConfig.General.BorderColor;
-            CheckBoxBorderColor.Checked = border.Enabled && WindowsBuilds.IsWin11;
-            ComboBoxBorderColor.SelectedIndex = border.Type;
-            BlockBorderColor.Color = border.Color;
             ApplyRadios();
+
+            if (WindowsBuilds.IsWin11)
+            {
+                var border = AppConfig.General.BorderColor;
+                CheckBoxBorderColor.Checked = border.Enabled;
+                ComboBoxBorderColor.SelectedIndex = border.Type;
+                BlockBorderColor.Color = border.Color;
+            }
+
             ApplyColorBlocks(SelectedColors);
         }
 
@@ -848,7 +851,7 @@ namespace PlainCEETimer.UI.Forms
                     TopMost = CheckBoxTopMost.Checked,
                     UniTopMost = CheckBoxUniTopMost.Checked,
                     Opacity = (int)NudOpacity.Value,
-                    BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, WindowsBuilds.IsWin11 ? BlockBorderColor.Color : Color.Empty)
+                    BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color)
                 },
 
                 Display = new()

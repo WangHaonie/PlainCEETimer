@@ -125,13 +125,14 @@ namespace PlainCEETimer.Modules
                     ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
                 }
             }
-            else if (Args.Length == 0)
-            {
-                StartPipeClient();
-            }
             else if (!(Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
             {
                 MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
+            }
+
+            if (!IsMainProcess)
+            {
+                StartPipeClient();
             }
 
             Exit();

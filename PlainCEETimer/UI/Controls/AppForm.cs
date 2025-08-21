@@ -431,7 +431,7 @@ namespace PlainCEETimer.UI.Controls
             target.AutoSize = true;
         }
 
-        protected void RemoveControls(Control[] controls, Control parent)
+        protected void RemoveControls(Control parent, params Control[] controls)
         {
             var ctrls = parent.Controls;
 
