@@ -110,6 +110,8 @@
     <Compile Include="Interop\Natives.cs" />
     <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
+    <Compile Include="Modules\Configuration\BorderColorObject.cs" />
+    <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\JsonConverters\ColorFormatConverter.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\Xml.cs" />

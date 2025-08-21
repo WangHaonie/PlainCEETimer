@@ -7,9 +7,9 @@
             public byte LoByte => (byte)(value & 0xFF);
             public byte HiByte => (byte)(value >> 8);
 
-            public static ushort FromBytes(byte low, byte high)
+            public static ushort MakeWord(byte low, byte high)
             {
-                return (ushort)(low | (ushort)(high << 8));
+                return (ushort)(low | (high << 8));
             }
         }
     }

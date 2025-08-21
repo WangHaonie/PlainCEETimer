@@ -45,7 +45,6 @@ namespace PlainCEETimer.UI.Forms
         private bool ShowTrayText;
         private bool TrayIconReopen;
         private bool UseCustomText;
-        private bool CustomBorderColor;
         private string CountdownContent;
         private string CountdownContentLast = string.Empty;
         private string ExamName;
@@ -55,6 +54,7 @@ namespace PlainCEETimer.UI.Forms
         private CountdownPhase CurrentPhase = CountdownPhase.None;
         private CountdownState SelectedState;
         private Color CountdownForeColor;
+        private BorderColorObject BorderColor;
         private ColorSetObject[] CountdownColors;
         private DateTime Now;
         private DateTime ExamEnd;
@@ -233,44 +233,21 @@ namespace PlainCEETimer.UI.Forms
 
         private void RefreshSettings()
         {
-            AppConfig = App.AppConfig;
             LoadConfig();
             LoadExams();
             PrepareCountdown();
+            TryRunCountdown();
             ApplyLocation();
             CompatibleWithPPTService();
             LoadContextMenu();
             LoadTrayIcon();
-            UniTopMostChanged?.Invoke();
             SetCountdownAutoWrap();
-            TopMost = false;
-            TopMost = AppConfig.General.TopMost;
-            Opacity = AppConfig.General.Opacity / 100D;
-            ShowInTaskbar = !TopMost;
-            TryRunCountdown();
-
-            var newTheme = AppConfig.Dark;
-
-            if (!Validator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
-            {
-                MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
-                App.Exit(true);
-            }
-
-            CurrentTheme = newTheme;
-        }
-
-        private void TryRunCountdown()
-        {
-            if (!IsCountdownRunning)
-            {
-                IsCountdownRunning = true;
-                Countdown = new(CountdownCallback, null, 0, 1000);
-            }
+            ApplyStyle();
         }
 
         private void LoadConfig()
         {
+            AppConfig = App.AppConfig;
             GlobalTexts = AppConfig.GlobalCustomTexts;
             MemClean = AppConfig.General.MemClean;
             IsShowXOnly = AppConfig.Display.ShowXOnly;
@@ -285,16 +262,14 @@ namespace PlainCEETimer.UI.Forms
             ShowTrayText = AppConfig.General.TrayText;
             CustomRules = AppConfig.CustomRules;
             CountdownColors = AppConfig.GlobalColors;
-            CustomBorderColor = AppConfig.General.CustomColor;
-
-            var endIndex = AppConfig.Display.EndIndex;
-            Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
         }
 
         private void LoadExams()
         {
             AutoSwitch = AppConfig.General.AutoSwitch;
             AutoSwitchInterval = GetAutoSwitchInterval(AppConfig.General.Interval);
+            var endIndex = AppConfig.Display.EndIndex;
+            Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
             Exams = AppConfig.Exams;
             var i = AppConfig.ExamIndex;
             ExamIndex = i < Exams.Length ? i : 0;
@@ -322,7 +297,6 @@ namespace PlainCEETimer.UI.Forms
 
         private void PrepareCountdown()
         {
-            ThemeManager.SetBorderColor(Handle, (BOOL)CustomBorderColor, AppConfig.General.BorderColor);
             SelectedState = IsShowXOnly ? (CountdownState)(ShowXOnlyIndex + 1) : CountdownState.Normal;
             CountdownFont = AppConfig.Font;
             LocationRefreshed -= MainForm_LocationRefreshed;
@@ -346,6 +320,45 @@ namespace PlainCEETimer.UI.Forms
             if (!MemClean && LoadedMemCleaner)
             {
                 MemCleaner.Dispose();
+            }
+        }
+
+        private void ApplyStyle()
+        {
+            var topmost = AppConfig.General.TopMost;
+            BorderColor = AppConfig.General.BorderColor;
+            TopMost = false;
+            TopMost = topmost;
+            UniTopMostChanged?.Invoke();
+            ShowInTaskbar = !topmost;
+            Opacity = AppConfig.General.Opacity / 100D;
+
+            if (!BorderColor.Enabled)
+            {
+                SetBorderColor(BOOL.FALSE, default);
+            }
+            else if (BorderColor.Type == 0)
+            {
+                SetBorderColor(BOOL.TRUE, BorderColor.Color);
+            }
+
+            var newTheme = AppConfig.Dark;
+
+            if (!Validator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+            {
+                MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
+                App.Exit(true);
+            }
+
+            CurrentTheme = newTheme;
+        }
+
+        private void TryRunCountdown()
+        {
+            if (!IsCountdownRunning)
+            {
+                IsCountdownRunning = true;
+                Countdown = new(CountdownCallback, null, 0, 1000);
             }
         }
 
@@ -519,7 +532,11 @@ namespace PlainCEETimer.UI.Forms
                 item.Enabled = false;
             }
 
-            if (!canUpdate && AutoSwitch)
+            if (!AutoSwitch)
+            {
+                AutoSwitchHandler?.Dispose();
+            }
+            else if (!canUpdate)
             {
                 AutoSwitchHandler?.Dispose();
 
@@ -529,10 +546,6 @@ namespace PlainCEETimer.UI.Forms
                     AutoSwitchHandler.Tick += ExamAutoSwitch;
                     AutoSwitchHandler.Start();
                 }
-            }
-            else if (!AutoSwitch)
-            {
-                AutoSwitchHandler?.Dispose();
             }
         }
 
@@ -653,6 +666,13 @@ namespace PlainCEETimer.UI.Forms
                     {
                         UpdateTrayIconText(content);
                     }
+
+                    var type = BorderColor.Type;
+
+                    if (BorderColor.Enabled && type != 0)
+                    {
+                        SetBorderColor(BOOL.TRUE, type == 1 ? colors.Fore : colors.Back);
+                    }
                 }
             });
         }
@@ -762,6 +782,11 @@ namespace PlainCEETimer.UI.Forms
             ];
 
             CanUseRules = UseCustomText && CurrentRules.Length != 0;
+        }
+
+        private void SetBorderColor(BOOL enabled, COLORREF color)
+        {
+            ThemeManager.SetBorderColor(Handle, enabled, color);
         }
     }
 }

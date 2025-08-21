@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop
 {
@@ -47,6 +48,16 @@ namespace PlainCEETimer.Interop
         private BOOL(bool value)
         {
             Value = value ? 1 : 0;
+        }
+
+        public BOOL(int value) : this(value != 0)
+        {
+
+        }
+
+        public static implicit operator int(BOOL b)
+        {
+            return b.Value;
         }
 
         public static implicit operator bool(BOOL b)
@@ -100,7 +111,7 @@ namespace PlainCEETimer.Interop
 
         private COLORREF(Color color)
         {
-            Value = ColorTranslator.ToWin32(color);
+            Value = color.ToWin32();
         }
 
         public static implicit operator COLORREF(Color c)
@@ -112,7 +123,7 @@ namespace PlainCEETimer.Interop
         {
             get
             {
-                var color = ColorTranslator.FromOle(Value);
+                var color = Value.ToColor();
                 return $"RGB({color.R}, {color.G}, {color.B})";
             }
         }
@@ -183,7 +194,7 @@ namespace PlainCEETimer.Interop
     [DebuggerDisplay("{DebuggerDisplay}")]
     public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
     {
-        private readonly ushort Value = ushort.FromBytes((byte)keys, (byte)fKeys);
+        private readonly ushort Value = ushort.MakeWord((byte)keys, (byte)fKeys);
 
         public static readonly LnkHotkey None = new();
 

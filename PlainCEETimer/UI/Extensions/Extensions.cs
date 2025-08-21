@@ -25,6 +25,13 @@ namespace PlainCEETimer.UI.Extensions
             return control;
         }
 
+        public static TControl Disable<TControl>(this TControl control)
+            where TControl : Control
+        {
+            control.Enabled = false;
+            return control;
+        }
+
         public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)
         {
             var ctrls = builder(new());

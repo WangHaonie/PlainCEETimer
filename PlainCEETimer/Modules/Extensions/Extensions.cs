@@ -50,5 +50,11 @@ namespace PlainCEETimer.Modules.Extensions
         */
         public static DateTime TruncateToSeconds(this DateTime dt)
             => new(dt.Ticks / Validator.MinTick * Validator.MinTick);
+
+        public static int ToWin32(this Color color)
+            => ColorTranslator.ToWin32(color);
+
+        public static Color ToColor(this int value)
+            => ColorTranslator.FromOle(value);
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration
 {
@@ -32,10 +29,7 @@ namespace PlainCEETimer.Modules.Configuration
             set => Validator.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
         } = Validator.MaxOpacity;
 
-        public bool CustomColor { get; set; }
-
-        [JsonConverter(typeof(ColorFormatConverter))]
-        public Color BorderColor { get; set; }
+        public BorderColorObject BorderColor { get; set; }
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters
 {
@@ -8,12 +9,12 @@ namespace PlainCEETimer.Modules.JsonConverters
     {
         public override Color ReadJson(JsonReader reader, Type objectType, Color existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            return ColorTranslator.FromOle(serializer.Deserialize<int>(reader));
+            return serializer.Deserialize<int>(reader).ToColor();
         }
 
         public override void WriteJson(JsonWriter writer, Color value, JsonSerializer serializer)
         {
-            serializer.Serialize(writer, ColorTranslator.ToWin32(value));
+            serializer.Serialize(writer, value.ToWin32());
         }
     }
 }

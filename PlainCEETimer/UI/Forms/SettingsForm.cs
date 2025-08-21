@@ -37,6 +37,7 @@ namespace PlainCEETimer.UI.Forms
         private ColorBlock BlockPreviewColor4;
         private ColorBlock[] ColorBlocks;
         private PlainComboBox ComboBoxAutoSwitchInterval;
+        private PlainComboBox ComboBoxBorderColor;
         private PlainComboBox ComboBoxCountdownEnd;
         private PlainComboBox ComboBoxNtpServers;
         private PlainComboBox ComboBoxPosition;
@@ -400,22 +401,29 @@ namespace PlainCEETimer.UI.Forms
 
                         GBoxMainForm = b.GroupBox("主窗口样式",
                         [
-                            LabelOpacity = b.Label("不透明度: "),
+                            LabelOpacity = b.Label("窗口不透明度 "),
 
-                            NudOpacity = b.NumericUpDown(45, Validator.MaxOpacity, SettingsChanged).With(x =>
+                            NudOpacity = b.NumericUpDown(50, Validator.MaxOpacity, SettingsChanged).With(x =>
                             {
                                 x.Minimum = Validator.MinOpacity;
                                 x.Increment = 1;
                                 x.DecimalPlaces = 0;
                             }),
 
-                            CheckBoxBorderColor = b.CheckBox("自定义边框颜色", (_, _) =>
+                            CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                             {
-                                BlockBorderColor.Enabled = CheckBoxBorderColor.Checked;
+                                ComboBoxBorderColor.Enabled = CheckBoxBorderColor.Checked;
                                 SettingsChanged();
                             }),
 
-                            BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged)
+                            ComboBoxBorderColor = b.ComboBox(110, false, (_, _) =>
+                            {
+                                BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
+                                SettingsChanged();
+                            }, "自定义", "跟随文字颜色", "跟随背景颜色")
+                            .With(x => x.EnabledChanged += (_, _) => BlockBorderColor.Enabled = ComboBoxBorderColor.Enabled),
+
+                            BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged).Disable()
                         ])
                     ])
                 ]),
@@ -434,7 +442,6 @@ namespace PlainCEETimer.UI.Forms
             ]);
 
             ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
-            BlockBorderColor.Enabled = false;
 
             foreach (var block in ColorBlocks)
             {
@@ -548,19 +555,24 @@ namespace PlainCEETimer.UI.Forms
             GroupBoxArrageFirstControl(NudOpacity, 0, 2);
             CenterControlY(LabelOpacity, NudOpacity);
             CompactControlX(NudOpacity, LabelOpacity);
+            Control yLast = NudOpacity;
 
             if (WindowsBuilds.IsWin11)
             {
-                ArrangeControlXRT(CheckBoxBorderColor, NudOpacity, LabelOpacity, 15, 0);
-                CenterControlY(CheckBoxBorderColor, NudOpacity);
-                ArrangeControlXT(BlockBorderColor, CheckBoxBorderColor);
+                ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 3);
+                ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
+                CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
+                CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor);
+                ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
+                CenterControlY(BlockBorderColor, ComboBoxBorderColor);
+                yLast = ComboBoxBorderColor;
             }
             else
             {
-                RemoveControls([CheckBoxBorderColor, BlockBorderColor], GBoxMainForm);
+                RemoveControls([CheckBoxBorderColor, ComboBoxBorderColor, BlockBorderColor], GBoxMainForm);
             }
 
-            GroupBoxAutoAdjustHeight(GBoxMainForm, NudOpacity, 6);
+            GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
 
             ArrangeControlYL(GBoxSyncTime, GBoxMainForm, 0, 2);
             GroupBoxArrageFirstControl(LabelSyncTime);
@@ -656,8 +668,10 @@ namespace PlainCEETimer.UI.Forms
             CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
             ComboBoxAutoSwitchInterval.SelectedIndex = AppConfig.General.Interval;
             NudOpacity.Value = AppConfig.General.Opacity;
-            CheckBoxBorderColor.Checked = AppConfig.General.CustomColor && WindowsBuilds.IsWin11;
-            BlockBorderColor.Color = AppConfig.General.BorderColor;
+            var border = AppConfig.General.BorderColor;
+            CheckBoxBorderColor.Checked = border.Enabled && WindowsBuilds.IsWin11;
+            ComboBoxBorderColor.SelectedIndex = border.Type;
+            BlockBorderColor.Color = border.Color;
             ApplyRadios();
             ApplyColorBlocks(SelectedColors);
         }
@@ -832,8 +846,7 @@ namespace PlainCEETimer.UI.Forms
                     TopMost = CheckBoxTopMost.Checked,
                     UniTopMost = CheckBoxUniTopMost.Checked,
                     Opacity = (int)NudOpacity.Value,
-                    CustomColor = CheckBoxBorderColor.Checked,
-                    BorderColor = WindowsBuilds.IsWin11 ? BlockBorderColor.Color : Color.Empty,
+                    BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, WindowsBuilds.IsWin11 ? BlockBorderColor.Color : Color.Empty)
                 },
 
                 Display = new()
