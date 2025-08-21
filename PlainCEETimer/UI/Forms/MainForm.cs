@@ -101,7 +101,7 @@ namespace PlainCEETimer.UI.Forms
         {
             if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
             {
-                SetAccentBorder();
+                SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor(m.WParam));
             }
 
             base.WndProc(ref m);
@@ -360,7 +360,7 @@ namespace PlainCEETimer.UI.Forms
                         break;
                     case 3:
                         BorderUseAccentColor = true;
-                        SetAccentBorder();
+                        SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor());
                         break;
                 }
             }
@@ -806,11 +806,6 @@ namespace PlainCEETimer.UI.Forms
         private void SetBorderColor(BOOL enabled, COLORREF color)
         {
             ThemeManager.SetBorderColor(Handle, enabled, color);
-        }
-
-        private void SetAccentBorder()
-        {
-            SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor());
         }
     }
 }

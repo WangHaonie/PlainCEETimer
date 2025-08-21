@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
@@ -56,10 +57,20 @@ namespace PlainCEETimer.Interop
             return GetTheme(oldValue) != GetTheme(newValue);
         }
 
-        public static Color GetAccentColor()
+        public static Color GetAccentColor(IntPtr wParam = default)
         {
             var flag = BOOL.FALSE;
-            DwmGetColorizationColor(out int color, ref flag);
+            int color;
+
+            if (wParam != IntPtr.Zero)
+            {
+                color = (int)(wParam.ToInt64() & 0xFFFFFFFF);
+            }
+            else
+            {
+                DwmGetColorizationColor(out color, ref flag);
+            }
+
             return Color.FromArgb(color);
         }
 
