@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
@@ -55,6 +56,13 @@ namespace PlainCEETimer.Interop
             return GetTheme(oldValue) != GetTheme(newValue);
         }
 
+        public static Color GetAccentColor()
+        {
+            var flag = BOOL.FALSE;
+            DwmGetColorizationColor(out int color, ref flag);
+            return Color.FromArgb(color);
+        }
+
         private static string GetSubAppName(NativeStyle style)
         {
             return style switch
@@ -100,6 +108,9 @@ namespace PlainCEETimer.Interop
 
         [DllImport(App.NativesDll, EntryPoint = "#11")]
         private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
+
+        [DllImport("dwmapi.dll")]
+        private static extern void DwmGetColorizationColor(out int pcrColorization, ref BOOL pfOpaqueBlend);
 
         [DllImport(App.NativesDll, EntryPoint = "#23")]
         public static extern void SetBorderColor(HWND hWnd, BOOL enabled, COLORREF color);

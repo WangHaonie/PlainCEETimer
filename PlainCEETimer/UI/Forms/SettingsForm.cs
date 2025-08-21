@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -418,11 +419,11 @@ namespace PlainCEETimer.UI.Forms
                                 SettingsChanged();
                             }),
 
-                            ComboBoxBorderColor = b.ComboBox(110, (_, _) =>
+                            ComboBoxBorderColor = b.ComboBox(115, (_, _) =>
                             {
                                 BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
                                 SettingsChanged();
-                            }, "自定义", "跟随文字颜色", "跟随背景颜色").Disable(),
+                            }, "自定义", "跟随文字颜色", "跟随背景颜色", "跟随系统主题色").Disable(),
 
                             BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged).Disable()
                         ])
@@ -563,7 +564,7 @@ namespace PlainCEETimer.UI.Forms
                 ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 3);
                 ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
                 CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
-                CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor);
+                CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
                 ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
                 CenterControlY(BlockBorderColor, ComboBoxBorderColor);
                 yLast = ComboBoxBorderColor;

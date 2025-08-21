@@ -15,7 +15,7 @@ namespace PlainCEETimer.Modules.Configuration
         public int Type
         {
             get;
-            set => Validator.SetValue(ref field, value, 2, 0);
+            set => Validator.SetValue(ref field, value, 3, 0);
         }
 
         public Color Color { get; set; }

@@ -45,6 +45,7 @@ namespace PlainCEETimer.UI.Forms
         private bool ShowTrayText;
         private bool TrayIconReopen;
         private bool UseCustomText;
+        private bool BorderUseAccentColor;
         private string CountdownContent;
         private string ExamName;
         private string[] GlobalTexts;
@@ -78,6 +79,7 @@ namespace PlainCEETimer.UI.Forms
         private System.Windows.Forms.Timer AutoSwitchHandler;
         private const int PptsvcThreshold = 1;
         private const int MemCleanerInterval = 300_000; // 5 min
+        private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
         private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
         private readonly Dictionary<string, string> PhCountdown = new(12);
         private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
@@ -93,6 +95,16 @@ namespace PlainCEETimer.UI.Forms
                 var key = m.Value;
                 return PhCountdown.TryGetValue(key, out string value) ? value : key;
             };
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
+            {
+                SetAccentBorder();
+            }
+
+            base.WndProc(ref m);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -339,9 +351,18 @@ namespace PlainCEETimer.UI.Forms
             {
                 SetBorderColor(BOOL.FALSE, default);
             }
-            else if (BorderColor.Type == 0)
+            else
             {
-                SetBorderColor(BOOL.TRUE, BorderColor.Color);
+                switch (BorderColor.Type)
+                {
+                    case 0:
+                        SetBorderColor(BOOL.TRUE, BorderColor.Color);
+                        break;
+                    case 3:
+                        BorderUseAccentColor = true;
+                        SetAccentBorder();
+                        break;
+                }
             }
 
             var newTheme = AppConfig.Dark;
@@ -668,7 +689,7 @@ namespace PlainCEETimer.UI.Forms
 
                 var type = BorderColor.Type;
 
-                if (BorderColor.Enabled && type != 0)
+                if (BorderColor.Enabled && type is 1 or 2)
                 {
                     SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : BackColor);
                 }
@@ -785,6 +806,11 @@ namespace PlainCEETimer.UI.Forms
         private void SetBorderColor(BOOL enabled, COLORREF color)
         {
             ThemeManager.SetBorderColor(Handle, enabled, color);
+        }
+
+        private void SetAccentBorder()
+        {
+            SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor());
         }
     }
 }
