@@ -33,10 +33,11 @@ jobs:
             ${{ runner.os }}-nuget-
         
       - name: Restore & Build Project
+        working-directory: ./src/
         run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
 
       - name: Build Setup
-        run: makensis PlainCEETimer.Setup/Setup.nsi
+        run: makensis src/PlainCEETimer.Setup/Setup.nsi
       
       - name: Delete Previous Pre-Release
         uses: 8Mi-Tech/delete-release-assets-action@main

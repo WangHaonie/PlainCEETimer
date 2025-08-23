@@ -8,4 +8,4 @@
 # https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
 *.cpp linguist-language=C++
 *.h linguist-language=C++
-PlainCEETimer.Setup/** linguist-documentation
+**/PlainCEETimer.Setup/** linguist-documentation
