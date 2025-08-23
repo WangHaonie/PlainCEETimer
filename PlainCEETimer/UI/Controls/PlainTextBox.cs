@@ -13,7 +13,11 @@ namespace PlainCEETimer.UI.Controls
     {
         private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm
         {
-            public string Content => m_Text;
+            public string Content
+            {
+                get => m_Text;
+                set => ContentBox.Text = value;
+            }
 
             protected override AppFormParam Params => AppFormParam.RoundCornerSmall | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
 
@@ -28,15 +32,6 @@ namespace PlainCEETimer.UI.Controls
             public void Show(PlainTextBox owner)
             {
                 ContentBox.Tag = owner.Tag;
-
-                owner.UpdateContentRequested += (_, _) =>
-                {
-                    if (!IsDisposed)
-                    {
-                        ContentBox.Text = owner.Text;
-                    }
-                };
-
                 base.Show(owner);
             }
 
@@ -101,16 +96,20 @@ namespace PlainCEETimer.UI.Controls
             set
             {
                 base.Text = value;
-                UpdateContentRequested?.Invoke(this, EventArgs.Empty);
+
+                if (Expandable && Child != null && !Child.IsDisposed)
+                {
+                    Child.Content = value;
+                }
             }
         }
 
         public Action<PlainTextBox, KeyEventArgs, int> OnExpandableKeyDown { get; set; }
 
-        private readonly bool EnabledExpandable;
         private AppForm ParentForm;
         private PlainButton ButtonExpand;
-        private event EventHandler UpdateContentRequested;
+        private TextBoxFlyout Child;
+        private readonly bool Expandable;
 
         private const int WM_PASTE = 0x0302;
         private const int EM_SETMARGINS = 0x00D3;
@@ -126,21 +125,21 @@ namespace PlainCEETimer.UI.Controls
 
             MaxLength = Validator.MaxCustomTextLength;
 
-            if (EnabledExpandable = expandable)
+            if (Expandable = expandable)
             {
                 this.AddControls(b => [ButtonExpand = b.Button("..", 18, 20, (_, _) =>
                 {
-                    TextBoxFlyout f = new(this);
+                    Child = new(this);
 
-                    f.DialogEnd += (_, dr) =>
+                    Child.DialogEnd += (_, dr) =>
                     {
                         if (dr == DialogResult.OK)
                         {
-                            Text = f.Content;
+                            Text = Child.Content;
                         }
                     };
 
-                    ParentForm.ShowFlyout(f, () => this.LocationToScreen(-4, -4));
+                    ParentForm.ShowFlyout(Child, () => this.LocationToScreen(-4, -4));
                 }).With(x =>
                 {
                     x.Cursor = Cursors.Arrow;
@@ -166,7 +165,7 @@ namespace PlainCEETimer.UI.Controls
 
             base.OnHandleCreated(e);
 
-            if (EnabledExpandable)
+            if (Expandable)
             {
                 /*
                 
