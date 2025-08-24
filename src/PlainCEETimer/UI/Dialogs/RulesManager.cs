@@ -45,7 +45,9 @@ public sealed class RulesManager : ListViewDialog<CustomRuleObject, RuleDialog>
 
     protected override PlainButton AddButton(ControlBuilder b)
     {
-        return b.Button("全局设置(&G)", ButtonGlobal_Click).With(x => x.Width = 90);
+        var button = b.Button("全局设置(&G)", ButtonGlobal_Click);
+        button.Width = 90;
+        return button;
     }
 
     private void ButtonGlobal_Click(object sender, EventArgs e)

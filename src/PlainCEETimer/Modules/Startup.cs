@@ -124,10 +124,8 @@ internal static class Startup
                 {
                     return 0;
                 }
-                else
-                {
-                    return 1;
-                }
+
+                return 1;
             }
 
             return 2;
