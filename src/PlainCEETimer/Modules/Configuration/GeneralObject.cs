@@ -1,40 +1,39 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace PlainCEETimer.Modules.Configuration
+namespace PlainCEETimer.Modules.Configuration;
+
+public class GeneralObject
 {
-    public class GeneralObject
+    public bool AutoSwitch { get; set; }
+
+    public int Interval { get; set; }
+
+    [DefaultValue(true)]
+    public bool TrayIcon { get; set; } = true;
+
+    public bool TrayText { get; set; }
+
+    public bool MemClean { get; set; }
+
+    [DefaultValue(true)]
+    public bool TopMost { get; set; } = true;
+
+    [DefaultValue(true)]
+    public bool UniTopMost { get; set; } = true;
+
+    [DefaultValue(Validator.MaxOpacity)]
+    public int Opacity
     {
-        public bool AutoSwitch { get; set; }
+        get;
+        set => Validator.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
+    } = Validator.MaxOpacity;
 
-        public int Interval { get; set; }
+    public BorderColorObject BorderColor { get; set; }
 
-        [DefaultValue(true)]
-        public bool TrayIcon { get; set; } = true;
-
-        public bool TrayText { get; set; }
-
-        public bool MemClean { get; set; }
-
-        [DefaultValue(true)]
-        public bool TopMost { get; set; } = true;
-
-        [DefaultValue(true)]
-        public bool UniTopMost { get; set; } = true;
-
-        [DefaultValue(Validator.MaxOpacity)]
-        public int Opacity
-        {
-            get;
-            set => Validator.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
-        } = Validator.MaxOpacity;
-
-        public BorderColorObject BorderColor { get; set; }
-
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            TrayText = Validator.ValidateBoolean(TrayText, TrayIcon);
-        }
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        TrayText = Validator.ValidateBoolean(TrayText, TrayIcon);
     }
 }

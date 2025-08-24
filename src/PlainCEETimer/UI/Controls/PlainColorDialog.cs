@@ -5,41 +5,40 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public sealed class PlainColorDialog : ColorDialog
 {
-    public sealed class PlainColorDialog : ColorDialog
+    private CommonDialogHelper Helper;
+
+    public PlainColorDialog()
     {
-        private CommonDialogHelper Helper;
+        FullOpen = true;
+        CustomColors = App.AppConfig.CustomColors;
+    }
 
-        public PlainColorDialog()
+    public DialogResult ShowDialog(Color Default, AppForm owner)
+    {
+        Color = Default;
+        Helper = new(this, owner, "选取颜色 - 高考倒计时", base.HookProc);
+        var previous = CustomColors;
+        var result = ShowDialog();
+
+        if (result == DialogResult.OK)
         {
-            FullOpen = true;
-            CustomColors = App.AppConfig.CustomColors;
-        }
+            var tmp = CustomColors;
 
-        public DialogResult ShowDialog(Color Default, AppForm owner)
-        {
-            Color = Default;
-            Helper = new(this, owner, "选取颜色 - 高考倒计时", base.HookProc);
-            var previous = CustomColors;
-            var result = ShowDialog();
-
-            if (result == DialogResult.OK)
+            if (!tmp.SequenceEqual(previous))
             {
-                var tmp = CustomColors;
-
-                if (!tmp.SequenceEqual(previous))
-                {
-                    App.AppConfig.CustomColors = tmp;
-                }
+                App.AppConfig.CustomColors = tmp;
             }
-
-            return result;
         }
 
-        protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-        {
-            return Helper.HookProc(hWnd, msg, wparam, lparam);
-        }
+        return result;
+    }
+
+    protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+    {
+        return Helper.HookProc(hWnd, msg, wparam, lparam);
     }
 }

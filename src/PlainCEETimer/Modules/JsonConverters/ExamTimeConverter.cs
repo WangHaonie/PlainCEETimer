@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json.Converters;
 
-namespace PlainCEETimer.Modules.JsonConverters
+namespace PlainCEETimer.Modules.JsonConverters;
+
+public sealed class ExamTimeConverter : IsoDateTimeConverter
 {
-    public sealed class ExamTimeConverter : IsoDateTimeConverter
+    public ExamTimeConverter()
     {
-        public ExamTimeConverter()
-        {
-            DateTimeFormat = App.DateTimeFormat;
-        }
+        DateTimeFormat = App.DateTimeFormat;
     }
 }

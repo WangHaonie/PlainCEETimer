@@ -1,74 +1,73 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public class ListViewItemSet<TData>()
+    where TData : IListViewData<TData>
 {
-    public class ListViewItemSet<TData>()
-        where TData : IListViewData<TData>
+    private struct Element(TData data, ListViewItem item)
     {
-        private struct Element(TData data, ListViewItem item)
-        {
-            public TData Data = data;
-            public ListViewItem Item = item;
+        public TData Data = data;
+        public ListViewItem Item = item;
 
-            public static Element FromData(TData data)
-            {
-                return new(data, null);
-            }
+        public static Element FromData(TData data)
+        {
+            return new(data, null);
+        }
+    }
+
+    private class ItemSetComparer : IEqualityComparer<Element>
+    {
+        private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
+
+        bool IEqualityComparer<Element>.Equals(Element x, Element y)
+        {
+            return Comparer.Equals(x.Data, y.Data);
         }
 
-        private class ItemSetComparer : IEqualityComparer<Element>
+        int IEqualityComparer<Element>.GetHashCode(Element obj)
         {
-            private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
+            return Comparer.GetHashCode(obj.Data);
+        }
+    }
 
-            bool IEqualityComparer<Element>.Equals(Element x, Element y)
-            {
-                return Comparer.Equals(x.Data, y.Data);
-            }
+    private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
 
-            int IEqualityComparer<Element>.GetHashCode(Element obj)
-            {
-                return Comparer.GetHashCode(obj.Data);
-            }
+    public bool CanAdd(TData data)
+    {
+        return !ItemsSet.Contains(Element.FromData(data));
+    }
+
+    public bool? CanEdit(TData newData, ListViewItem existing)
+    {
+        if (CanAdd(newData))
+        {
+            return true;
         }
 
-        private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
+        ItemsSet.TryGetValue(Element.FromData(newData), out Element actual);
 
-        public bool CanAdd(TData data)
+        if (existing == actual.Item)
         {
-            return !ItemsSet.Contains(Element.FromData(data));
+            return newData.InternalEquals(actual.Data) ? null : true;
         }
 
-        public bool? CanEdit(TData newData, ListViewItem existing)
-        {
-            if (CanAdd(newData))
-            {
-                return true;
-            }
+        return false;
+    }
 
-            ItemsSet.TryGetValue(Element.FromData(newData), out Element actual);
+    public void Add(TData data, ListViewItem item)
+    {
+        ItemsSet.Add(new(data, item));
+    }
 
-            if (existing == actual.Item)
-            {
-                return newData.InternalEquals(actual.Data) ? null : true;
-            }
+    public void Remove(TData data)
+    {
+        ItemsSet.Remove(Element.FromData(data));
+    }
 
-            return false;
-        }
-
-        public void Add(TData data, ListViewItem item)
-        {
-            ItemsSet.Add(new(data, item));
-        }
-
-        public void Remove(TData data)
-        {
-            ItemsSet.Remove(Element.FromData(data));
-        }
-
-        public void Clear()
-        {
-            ItemsSet.Clear();
-        }
+    public void Clear()
+    {
+        ItemsSet.Clear();
     }
 }

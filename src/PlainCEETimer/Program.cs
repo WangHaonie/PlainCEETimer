@@ -1,14 +1,13 @@
 ﻿using System;
 using PlainCEETimer.Modules;
 
-namespace PlainCEETimer
+namespace PlainCEETimer;
+
+internal static class Program
 {
-    internal static class Program
+    [STAThread]
+    private static void Main(string[] args)
     {
-        [STAThread]
-        private static void Main(string[] args)
-        {
-            App.StartProgram(args);
-        }
+        App.StartProgram(args);
     }
 }

@@ -2,26 +2,25 @@
 using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
 
-namespace PlainCEETimer.Interop
+namespace PlainCEETimer.Interop;
+
+public static class DisplayHelper
 {
-    public static class DisplayHelper
+    public static string[] GetSystemDisplays()
     {
-        public static string[] GetSystemDisplays()
+        List<string> tmp = [];
+
+        EnumSystemDisplays(d =>
         {
-            List<string> tmp = [];
+            tmp.Add(d.ToString());
+            return BOOL.TRUE;
+        });
 
-            EnumSystemDisplays(d =>
-            {
-                tmp.Add(d.ToString());
-                return BOOL.TRUE;
-            });
-
-            return [.. tmp];
-        }
-
-        [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
-        private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
-
-        private delegate BOOL EnumDisplayProc(SystemDisplay info);
+        return [.. tmp];
     }
+
+    [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
+    private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
+
+    private delegate BOOL EnumDisplayProc(SystemDisplay info);
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public interface IListViewData<T> : IComparable<T>, IEquatable<T>
 {
-    public interface IListViewData<T> : IComparable<T>, IEquatable<T>
-    {
-        bool InternalEquals(T other);
-    }
+    bool InternalEquals(T other);
 }

@@ -4,89 +4,88 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
 
-namespace PlainCEETimer.Modules.Configuration
+namespace PlainCEETimer.Modules.Configuration;
+
+public class AppConfig
 {
-    public class AppConfig
+    public GeneralObject General { get; set; } = new();
+
+    public DisplayObject Display { get; set; } = new();
+
+    public ExamInfoObject[] Exams
     {
-        public GeneralObject General { get; set; } = new();
+        get;
+        set => Validator.SetValue(ref field, value);
+    } = [];
 
-        public DisplayObject Display { get; set; } = new();
+    public int ExamIndex { get; set; }
 
-        public ExamInfoObject[] Exams
+    public string[] GlobalCustomTexts
+    {
+        get;
+        set
         {
-            get;
-            set => Validator.SetValue(ref field, value);
-        } = [];
-
-        public int ExamIndex { get; set; }
-
-        public string[] GlobalCustomTexts
-        {
-            get;
-            set
+            if (Validator.ValidateNeeded)
             {
-                if (Validator.ValidateNeeded)
+                foreach (var text in value)
                 {
-                    foreach (var text in value)
-                    {
-                        Validator.EnsureCustomText(text);
-                    }
+                    Validator.EnsureCustomText(text);
                 }
-
-                field = value;
             }
-        } = DefaultValues.GlobalDefaultCustomTexts;
 
-        public ColorSetObject[] GlobalColors
+            field = value;
+        }
+    } = DefaultValues.GlobalDefaultCustomTexts;
+
+    public ColorSetObject[] GlobalColors
+    {
+        get;
+        set
         {
-            get;
-            set
+            if (Validator.ValidateNeeded && value.Length < 4)
             {
-                if (Validator.ValidateNeeded && value.Length < 4)
-                {
-                    throw new Exception();
-                }
-
-                field = value;
+                throw new Exception();
             }
-        } = DefaultValues.CountdownDefaultColors;
 
-        public CustomRuleObject[] CustomRules
-        {
-            get;
-            set => Validator.SetValue(ref field, value);
-        } = [];
-
-        [JsonConverter(typeof(CustomColorsConverter))]
-        public int[] CustomColors { get; set; } = DefaultValues.ColorDialogColors;
-
-        [JsonConverter(typeof(FontFormatConverter))]
-        public Font Font { get; set; } = DefaultValues.CountdownDefaultFont;
-
-        public int NtpServer
-        {
-            get;
-            set => Validator.SetValue(ref field, value, 3, 0);
+            field = value;
         }
+    } = DefaultValues.CountdownDefaultColors;
 
-        public int Dark
-        {
-            get;
-            set => Validator.SetValue(ref field, value, 2, 0);
-        }
+    public CustomRuleObject[] CustomRules
+    {
+        get;
+        set => Validator.SetValue(ref field, value);
+    } = [];
 
-        [JsonConverter(typeof(PointFormatConverter))]
-        public Point Location { get; set; }
+    [JsonConverter(typeof(CustomColorsConverter))]
+    public int[] CustomColors { get; set; } = DefaultValues.ColorDialogColors;
 
-        public static readonly AppConfig Empty = new();
+    [JsonConverter(typeof(FontFormatConverter))]
+    public Font Font { get; set; } = DefaultValues.CountdownDefaultFont;
 
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            var value = ExamIndex;
-            Validator.SetValue(ref value, value, Exams.Length, 0);
-            ExamIndex = value;
-            Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
-        }
+    public int NtpServer
+    {
+        get;
+        set => Validator.SetValue(ref field, value, 3, 0);
+    }
+
+    public int Dark
+    {
+        get;
+        set => Validator.SetValue(ref field, value, 2, 0);
+    }
+
+    [JsonConverter(typeof(PointFormatConverter))]
+    public Point Location { get; set; }
+
+    public static readonly AppConfig Empty = new();
+
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        var value = ExamIndex;
+        Validator.SetValue(ref value, value, Exams.Length, 0);
+        ExamIndex = value;
+        Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
     }
 }

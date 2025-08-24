@@ -3,45 +3,44 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public class PlainButtonBase
 {
-    public class PlainButtonBase
+    private readonly ButtonBase Target;
+
+    public PlainButtonBase(ButtonBase target)
     {
-        private readonly ButtonBase Target;
+        target.UseVisualStyleBackColor = true;
 
-        public PlainButtonBase(ButtonBase target)
+        if (ThemeManager.ShouldUseDarkMode)
         {
-            target.UseVisualStyleBackColor = true;
-
-            if (ThemeManager.ShouldUseDarkMode)
-            {
-                Target = target;
-                Target.EnabledChanged += Button_EnabledChanged;
-                UpdateStyle();
-            }
-            else
-            {
-                target.FlatStyle = FlatStyle.System;
-            }
-        }
-
-        private void Button_EnabledChanged(object sender, EventArgs e)
-        {
+            Target = target;
+            Target.EnabledChanged += Button_EnabledChanged;
             UpdateStyle();
         }
-
-        private void UpdateStyle()
+        else
         {
-            Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
-            ThemeManager.FlushControl(Target, NativeStyle.ExplorerDark);
+            target.FlatStyle = FlatStyle.System;
         }
+    }
 
-        ~PlainButtonBase()
+    private void Button_EnabledChanged(object sender, EventArgs e)
+    {
+        UpdateStyle();
+    }
+
+    private void UpdateStyle()
+    {
+        Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
+        ThemeManager.FlushControl(Target, NativeStyle.ExplorerDark);
+    }
+
+    ~PlainButtonBase()
+    {
+        if (Target != null)
         {
-            if (Target != null)
-            {
-                Target.EnabledChanged -= Button_EnabledChanged;
-            }
+            Target.EnabledChanged -= Button_EnabledChanged;
         }
     }
 }

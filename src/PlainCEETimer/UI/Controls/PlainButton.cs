@@ -3,34 +3,33 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public sealed class PlainButton : Button
 {
-    public sealed class PlainButton : Button
+    private readonly ContextMenu Menu;
+
+    public PlainButton(ContextMenu menu)
     {
-        private readonly ContextMenu Menu;
+        Menu = menu;
+        FlatStyle = FlatStyle.System;
+        UseVisualStyleBackColor = true;
+        DoubleBuffered = true;
+    }
 
-        public PlainButton(ContextMenu menu)
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        if (ThemeManager.ShouldUseDarkMode)
         {
-            Menu = menu;
-            FlatStyle = FlatStyle.System;
-            UseVisualStyleBackColor = true;
-            DoubleBuffered = true;
+            ThemeManager.FlushControl(this, NativeStyle.ExplorerDark);
         }
 
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            if (ThemeManager.ShouldUseDarkMode)
-            {
-                ThemeManager.FlushControl(this, NativeStyle.ExplorerDark);
-            }
+        base.OnHandleCreated(e);
+    }
 
-            base.OnHandleCreated(e);
-        }
-
-        protected override void OnClick(EventArgs e)
-        {
-            Menu?.Show(this, new(0, Height));
-            base.OnClick(e);
-        }
+    protected override void OnClick(EventArgs e)
+    {
+        Menu?.Show(this, new(0, Height));
+        base.OnClick(e);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Windows.Forms;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public interface IListViewSubDialog<T>
+    where T : IListViewData<T>
 {
-    public interface IListViewSubDialog<T>
-        where T : IListViewData<T>
-    {
-        T Data { get; set; }
-        DialogResult ShowDialog();
-    }
+    T Data { get; set; }
+    DialogResult ShowDialog();
 }

@@ -1,13 +1,12 @@
 ﻿using System.Windows.Forms;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public class PlainLabel : Label
 {
-    public class PlainLabel : Label
+    public PlainLabel(string text)
     {
-        public PlainLabel(string text)
-        {
-            Text = text;
-            AutoSize = true;
-        }
+        Text = text;
+        AutoSize = true;
     }
 }

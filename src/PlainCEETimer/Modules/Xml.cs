@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace PlainCEETimer.Modules
+namespace PlainCEETimer.Modules;
+
+public static class Xml
 {
-    public static class Xml
+    public static XElement FormString(string raw)
     {
-        public static XElement FormString(string raw)
-        {
-            return XDocument.Parse(raw).Root;
-        }
+        return XDocument.Parse(raw).Root;
+    }
 
-        public static bool Check(this XElement top, string expectation, bool returnWhenNull, params string[] nodes)
-        {
-            var ns = top.GetDefaultNamespace();
-            var current = top;
+    public static bool Check(this XElement top, string expectation, bool returnWhenNull, params string[] nodes)
+    {
+        var ns = top.GetDefaultNamespace();
+        var current = top;
 
-            for (int i = 0; i < nodes.Length; i++)
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            current = current.Element(ns.GetName(nodes[i]));
+
+            if (current == null)
             {
-                current = current.Element(ns.GetName(nodes[i]));
-
-                if (current == null)
-                {
-                    return returnWhenNull || false;
-                }
+                return returnWhenNull || false;
             }
-
-            return current.Value.Equals(expectation, StringComparison.OrdinalIgnoreCase);
         }
+
+        return current.Value.Equals(expectation, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -1,96 +1,95 @@
 ﻿using System;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public enum CountdownState
 {
-    public enum CountdownState
-    {
-        Normal,
-        DaysOnly,
-        DaysOnlyOneDecimal,
-        DaysOnlyCeiling,
-        HoursOnly,
-        HoursOnlyOneDecimal,
-        MinutesOnly,
-        SecondsOnly
-    }
+    Normal,
+    DaysOnly,
+    DaysOnlyOneDecimal,
+    DaysOnlyCeiling,
+    HoursOnly,
+    HoursOnlyOneDecimal,
+    MinutesOnly,
+    SecondsOnly
+}
 
-    public enum CountdownPhase
-    {
-        P1,
-        P2,
-        P3,
-        None
-    }
+public enum CountdownPhase
+{
+    P1,
+    P2,
+    P3,
+    None
+}
 
-    public enum CountdownPosition
-    {
-        TopLeft,
-        LeftCenter,
-        BottomLeft,
-        TopCenter,
-        Center,
-        BottomCenter,
-        TopRight,
-        RightCenter,
-        BottomRight
-    }
+public enum CountdownPosition
+{
+    TopLeft,
+    LeftCenter,
+    BottomLeft,
+    TopCenter,
+    Center,
+    BottomCenter,
+    TopRight,
+    RightCenter,
+    BottomRight
+}
+
+/// <summary>
+/// 表示倒计时要显示哪些阶段
+/// </summary>
+public enum CountdownMode
+{
+    /// <summary>
+    /// 只显示 P1 阶段。
+    /// </summary>
+    Mode1 = 0b001,
 
     /// <summary>
-    /// 表示倒计时要显示哪些阶段
+    /// 显示 P1 和 P2 阶段。
     /// </summary>
-    public enum CountdownMode
-    {
-        /// <summary>
-        /// 只显示 P1 阶段。
-        /// </summary>
-        Mode1 = 0b001,
+    Mode2 = Mode1 | 0b010,
 
-        /// <summary>
-        /// 显示 P1 和 P2 阶段。
-        /// </summary>
-        Mode2 = Mode1 | 0b010,
+    /// <summary>
+    /// 显示全部阶段。
+    /// </summary>
+    Mode3 = Mode2 | 0b100
+}
 
-        /// <summary>
-        /// 显示全部阶段。
-        /// </summary>
-        Mode3 = Mode2 | 0b100
-    }
+public enum SettingsArea
+{
+    Funny,
+    SyncTime,
+    SetPPTService,
+    StartUp
+}
 
-    public enum SettingsArea
-    {
-        Funny,
-        SyncTime,
-        SetPPTService,
-        StartUp
-    }
+public enum MessageButtons
+{
+    OK,
+    YesNo
+}
 
-    public enum MessageButtons
-    {
-        OK,
-        YesNo
-    }
+[Flags]
+public enum AppFormParam
+{
+    None,
+    BindButtons = 1,
+    KeyPreview = 1 << 1,
+    Special = 1 << 2,
+    CompositedStyle = 1 << 3,
+    CenterScreen = 1 << 4,
+    OnEscClosing = 1 << 5 | KeyPreview,
+    RoundCorner = 1 << 6,
+    RoundCornerSmall = 1 << 7 | RoundCorner,
+    ModelessDialog = 1 << 8,
+    AllControl = BindButtons | KeyPreview
+}
 
-    [Flags]
-    public enum AppFormParam
-    {
-        None,
-        BindButtons = 1,
-        KeyPreview = 1 << 1,
-        Special = 1 << 2,
-        CompositedStyle = 1 << 3,
-        CenterScreen = 1 << 4,
-        OnEscClosing = 1 << 5 | KeyPreview,
-        RoundCorner = 1 << 6,
-        RoundCornerSmall = 1 << 7 | RoundCorner,
-        ModelessDialog = 1 << 8,
-        AllControl = BindButtons | KeyPreview
-    }
-
-    public enum ConsoleParam
-    {
-        None,
-        AutoClose,
-        ShowLeftButton,
-        NoMenu
-    }
+public enum ConsoleParam
+{
+    None,
+    AutoClose,
+    ShowLeftButton,
+    NoMenu
 }

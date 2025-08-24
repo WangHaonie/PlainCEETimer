@@ -1,12 +1,11 @@
 ﻿using System.Windows.Forms;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public sealed class PlainRadioButton : RadioButton
 {
-    public sealed class PlainRadioButton : RadioButton
+    public PlainRadioButton()
     {
-        public PlainRadioButton()
-        {
-            new PlainButtonBase(this);
-        }
+        new PlainButtonBase(this);
     }
 }

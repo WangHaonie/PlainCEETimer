@@ -6,20 +6,20 @@ using PlainCEETimer.UI;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Forms;
 
-namespace PlainCEETimer.Modules
-{
-    public class OptimizationHelper(bool isAuto) : IDisposable
-    {
-        private OpenFileDialog Dialog;
-        private const string NGen = "ngen.exe";
-        private readonly string NGenPath = @"C:\Windows\Microsoft.NET\Framework64\";
-        private readonly string NetFxVersion = "v4*";
-        private readonly AppMessageBox MessageX = AppMessageBox.Instance;
+namespace PlainCEETimer.Modules;
 
-        public void Optimize()
-        {
-            if (isAuto || MessageX.Warn(
-                """
+public class OptimizationHelper(bool isAuto) : IDisposable
+{
+    private OpenFileDialog Dialog;
+    private const string NGen = "ngen.exe";
+    private readonly string NGenPath = @"C:\Windows\Microsoft.NET\Framework64\";
+    private readonly string NetFxVersion = "v4*";
+    private readonly AppMessageBox MessageX = AppMessageBox.Instance;
+
+    public void Optimize()
+    {
+        if (isAuto || MessageX.Warn(
+            """
                 确认对本程序进行优化？此操作将有助于提升一定的运行速度。
                 
                 推荐在以下情况下使用：
@@ -27,96 +27,95 @@ namespace PlainCEETimer.Modules
                     2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
                     3. 其他情况导致的程序运行速度变慢
                 """, MessageButtons.YesNo) == DialogResult.Yes)
+        {
+            try
             {
-                try
+                var dirs = Directory.GetDirectories(NGenPath, NetFxVersion);
+                var length = dirs.Length;
+
+                if (length != 0)
                 {
-                    var dirs = Directory.GetDirectories(NGenPath, NetFxVersion);
-                    var length = dirs.Length;
-
-                    if (length != 0)
+                    for (int i = length - 1; i < length; i--)
                     {
-                        for (int i = length - 1; i < length; i--)
-                        {
-                            var path = Path.Combine(dirs[i], NGen);
+                        var path = Path.Combine(dirs[i], NGen);
 
-                            if (File.Exists(path))
-                            {
-                                Start(path);
-                                return;
-                            }
+                        if (File.Exists(path))
+                        {
+                            Start(path);
+                            return;
                         }
                     }
+                }
 
-                    throw new Exception();
-                }
-                catch
-                {
-                    if (!isAuto)
-                    {
-                        MessageX.Warn($"无法自动搜索到 {NGen}，请手动指定！");
-                        Retry();
-                    }
-                }
+                throw new Exception();
             }
-        }
-
-        public void Dispose()
-        {
-            Dialog.Destory();
-            GC.SuppressFinalize(this);
-        }
-
-        private void Retry()
-        {
-            Dialog ??= new()
+            catch
             {
-                Title = $"选择 {NGen} - 高考倒计时",
-                InitialDirectory = @"C:\Windows",
-                Filter = FileDialogWrapper.CreateFilters(FileFilter.Application, FileFilter.AllFiles),
-                FileName = NGen
-            };
-
-            if (FileDialogWrapper.ShowDialog(Dialog) == DialogResult.OK)
-            {
-                if (Dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
+                if (!isAuto)
                 {
-                    Start(Dialog.FileName);
-                }
-                else
-                {
-                    MessageX.Error($"选择的文件貌似不是 {NGen}，请重新指定！");
+                    MessageX.Warn($"无法自动搜索到 {NGen}，请手动指定！");
                     Retry();
                 }
             }
+        }
+    }
+
+    public void Dispose()
+    {
+        Dialog.Destory();
+        GC.SuppressFinalize(this);
+    }
+
+    private void Retry()
+    {
+        Dialog ??= new()
+        {
+            Title = $"选择 {NGen} - 高考倒计时",
+            InitialDirectory = @"C:\Windows",
+            Filter = FileDialogWrapper.CreateFilters(FileFilter.Application, FileFilter.AllFiles),
+            FileName = NGen
+        };
+
+        if (FileDialogWrapper.ShowDialog(Dialog) == DialogResult.OK)
+        {
+            if (Dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
+            {
+                Start(Dialog.FileName);
+            }
             else
             {
-                MessageX.Info("本次操作已被取消！");
+                MessageX.Error($"选择的文件貌似不是 {NGen}，请重新指定！");
+                Retry();
             }
         }
-
-        private void Start(string path)
+        else
         {
-            var param = ConsoleParam.ShowLeftButton;
-            Action<ConsoleWindow> complete = null;
+            MessageX.Info("本次操作已被取消！");
+        }
+    }
 
-            if (isAuto)
-            {
-                param |= ConsoleParam.AutoClose | ConsoleParam.NoMenu;
-            }
+    private void Start(string path)
+    {
+        var param = ConsoleParam.ShowLeftButton;
+        Action<ConsoleWindow> complete = null;
 
-            if (!isAuto)
-            {
-                complete = c => c.UpdateState("是否重启倒计时?");
-            }
-
-            var result = ConsoleWindow.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", complete, param);
-
-            if (!isAuto && result == DialogResult.OK)
-            {
-                App.Exit(true);
-            }
+        if (isAuto)
+        {
+            param |= ConsoleParam.AutoClose | ConsoleParam.NoMenu;
         }
 
-        ~OptimizationHelper() => Dispose();
+        if (!isAuto)
+        {
+            complete = c => c.UpdateState("是否重启倒计时?");
+        }
+
+        var result = ConsoleWindow.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", complete, param);
+
+        if (!isAuto && result == DialogResult.OK)
+        {
+            App.Exit(true);
+        }
     }
+
+    ~OptimizationHelper() => Dispose();
 }

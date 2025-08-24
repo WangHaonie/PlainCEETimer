@@ -6,177 +6,176 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
-namespace PlainCEETimer.UI.Dialogs
+namespace PlainCEETimer.UI.Dialogs;
+
+public sealed class CustomTextDialog : AppDialog
 {
-    public sealed class CustomTextDialog : AppDialog
+    public string[] CustomTexts { get; set; } = new string[3];
+
+    protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
+
+    private string[] Presets;
+    private PlainLabel LabelInfo;
+    private PlainComboBox ComboBoxPlaceholders;
+    private PlainLabel LabelP1;
+    private PlainLabel LabelP2;
+    private PlainLabel LabelP3;
+    private PlainTextBox TextBoxP1;
+    private PlainTextBox TextBoxP2;
+    private PlainTextBox TextBoxP3;
+    private PlainTextBox[] TextBoxes;
+    private PlainButton ButtonReset;
+    private EventHandler OnUserChanged;
+
+    protected override void OnInitializing()
     {
-        public string[] CustomTexts { get; set; } = new string[3];
+        var lp1 = "考试未开始";
+        var lp2 = "考试已开始";
+        var lp3 = "考试已结束";
+        Text = "全局自定义文本 - 高考倒计时";
+        OnUserChanged = (_, _) => UserChanged();
+        Presets = DefaultValues.GlobalDefaultCustomTexts;
 
-        protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
+        this.AddControls(b =>
+        [
+            LabelP1 = b.Label(lp1),
+            LabelP2 = b.Label(lp2),
+            LabelP3 = b.Label(lp3),
+            TextBoxP1 = b.TextBox(303, true, OnUserChanged),
+            TextBoxP2 = b.TextBox(303, true, OnUserChanged),
+            TextBoxP3 = b.TextBox(303, true, OnUserChanged),
+            LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
 
-        private string[] Presets;
-        private PlainLabel LabelInfo;
-        private PlainComboBox ComboBoxPlaceholders;
-        private PlainLabel LabelP1;
-        private PlainLabel LabelP2;
-        private PlainLabel LabelP3;
-        private PlainTextBox TextBoxP1;
-        private PlainTextBox TextBoxP2;
-        private PlainTextBox TextBoxP3;
-        private PlainTextBox[] TextBoxes;
-        private PlainButton ButtonReset;
-        private EventHandler OnUserChanged;
+            ComboBoxPlaceholders = b.ComboBox(160, null,
+                $"{Constants.PhExamName} - 考试名称",
+                $"{Constants.PhDays} - 天/总天数",
+                $"{Constants.PhDecimalDays} - 总天数 (一位小数)",
+                $"{Constants.PhCeilingDays} - 总天数 (向上取整)",
+                $"{Constants.PhHours} - 时",
+                $"{Constants.PhTotalHours} - 总小时",
+                $"{Constants.PhDecimalHours} - 总小时 (一位小数)",
+                $"{Constants.PhMinutes} - 分",
+                $"{Constants.PhTotalMinutes} - 总分钟",
+                $"{Constants.PhSeconds} - 秒",
+                $"{Constants.PhTotalSeconds} - 总秒数"
+            ),
 
-        protected override void OnInitializing()
-        {
-            var lp1 = "考试未开始";
-            var lp2 = "考试已开始";
-            var lp3 = "考试已结束";
-            Text = "全局自定义文本 - 高考倒计时";
-            OnUserChanged = (_, _) => UserChanged();
-            Presets = DefaultValues.GlobalDefaultCustomTexts;
-
-            this.AddControls(b =>
+            ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
             [
-                LabelP1 = b.Label(lp1),
-                LabelP2 = b.Label(lp2),
-                LabelP3 = b.Label(lp3),
-                TextBoxP1 = b.TextBox(303, true, OnUserChanged),
-                TextBoxP2 = b.TextBox(303, true, OnUserChanged),
-                TextBoxP3 = b.TextBox(303, true, OnUserChanged),
-                LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
+                m.Item("所有", ItemsReset_Click),
+                m.Separator(),
+                m.Item(lp1, ItemsReset_Click),
+                m.Item(lp2, ItemsReset_Click),
+                m.Item(lp3, ItemsReset_Click)
+            ])),
+        ]);
 
-                ComboBoxPlaceholders = b.ComboBox(160, null,
-                    $"{Constants.PhExamName} - 考试名称",
-                    $"{Constants.PhDays} - 天/总天数",
-                    $"{Constants.PhDecimalDays} - 总天数 (一位小数)",
-                    $"{Constants.PhCeilingDays} - 总天数 (向上取整)",
-                    $"{Constants.PhHours} - 时",
-                    $"{Constants.PhTotalHours} - 总小时",
-                    $"{Constants.PhDecimalHours} - 总小时 (一位小数)",
-                    $"{Constants.PhMinutes} - 分",
-                    $"{Constants.PhTotalMinutes} - 总分钟",
-                    $"{Constants.PhSeconds} - 秒",
-                    $"{Constants.PhTotalSeconds} - 总秒数"
-                ),
+        TextBoxes = [TextBoxP1, TextBoxP2, TextBoxP3];
 
-                ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
-                [
-                    m.Item("所有", ItemsReset_Click),
-                    m.Separator(),
-                    m.Item(lp1, ItemsReset_Click),
-                    m.Item(lp2, ItemsReset_Click),
-                    m.Item(lp3, ItemsReset_Click)
-                ])),
-            ]);
-
-            TextBoxes = [TextBoxP1, TextBoxP2, TextBoxP3];
-
-            foreach (var tb in TextBoxes)
+        foreach (var tb in TextBoxes)
+        {
+            tb.OnExpandableKeyDown = (target, e, l) =>
             {
-                tb.OnExpandableKeyDown = (target, e, l) =>
-                {
-                    TryAppendPlaceHolders(target, e, true, l);
-                };
+                TryAppendPlaceHolders(target, e, true, l);
+            };
+        }
+
+        base.OnInitializing();
+    }
+
+    protected override void StartLayout(bool isHighDpi)
+    {
+        ArrangeFirstControl(LabelInfo, 3, 0);
+        ArrangeFirstControl(ComboBoxPlaceholders);
+        CenterControlY(LabelInfo, ComboBoxPlaceholders);
+        CompactControlX(ComboBoxPlaceholders, LabelInfo);
+        ArrangeControlYL(LabelP1, LabelInfo);
+        ArrangeControlXT(TextBoxP1, LabelP1);
+        CompactControlY(TextBoxP1, ComboBoxPlaceholders, 3);
+        CenterControlY(LabelP1, TextBoxP1, isHighDpi ? 0 : -1);
+        ArrangeControlYL(TextBoxP2, TextBoxP1, 0, 3);
+        ArrangeControlYL(TextBoxP3, TextBoxP2, 0, 3);
+        AlignControlXL(LabelP2, LabelP1);
+        AlignControlXL(LabelP3, LabelP2);
+        CenterControlY(LabelP2, TextBoxP2, isHighDpi ? 0 : -1);
+        CenterControlY(LabelP3, TextBoxP3, isHighDpi ? 0 : -1);
+        ArrangeCommonButtonsR(ButtonA, ButtonB, TextBoxP3, 1, 3);
+        ArrangeControlXT(ButtonReset, ButtonA);
+        AlignControlXL(ButtonReset, LabelP1, 3);
+    }
+
+    protected override void OnLoad()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            TextBoxes[i].Text = CustomTexts[i];
+        }
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        var t = ActiveControl as PlainTextBox;
+        TryAppendPlaceHolders(t, e, t != null);
+        base.OnKeyDown(e);
+    }
+
+    protected override bool OnClickButtonA()
+    {
+        string[] tmp = new string[3];
+        string text;
+
+        for (int i = 0; i < 3; i++)
+        {
+            text = TextBoxes[i].Text;
+
+            if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out string msg, i + 1) && !string.IsNullOrEmpty(msg))
+            {
+                MessageX.Error(msg);
+                return false;
             }
 
-            base.OnInitializing();
+            tmp[i] = text;
         }
 
-        protected override void StartLayout(bool isHighDpi)
+        CustomTexts = tmp;
+        return base.OnClickButtonA();
+    }
+
+    private void ItemsReset_Click(object sender, EventArgs e)
+    {
+        var itemIndex = ((MenuItem)sender).Index - 2;
+
+        if (itemIndex < 0)
         {
-            ArrangeFirstControl(LabelInfo, 3, 0);
-            ArrangeFirstControl(ComboBoxPlaceholders);
-            CenterControlY(LabelInfo, ComboBoxPlaceholders);
-            CompactControlX(ComboBoxPlaceholders, LabelInfo);
-            ArrangeControlYL(LabelP1, LabelInfo);
-            ArrangeControlXT(TextBoxP1, LabelP1);
-            CompactControlY(TextBoxP1, ComboBoxPlaceholders, 3);
-            CenterControlY(LabelP1, TextBoxP1, isHighDpi ? 0 : -1);
-            ArrangeControlYL(TextBoxP2, TextBoxP1, 0, 3);
-            ArrangeControlYL(TextBoxP3, TextBoxP2, 0, 3);
-            AlignControlXL(LabelP2, LabelP1);
-            AlignControlXL(LabelP3, LabelP2);
-            CenterControlY(LabelP2, TextBoxP2, isHighDpi ? 0 : -1);
-            CenterControlY(LabelP3, TextBoxP3, isHighDpi ? 0 : -1);
-            ArrangeCommonButtonsR(ButtonA, ButtonB, TextBoxP3, 1, 3);
-            ArrangeControlXT(ButtonReset, ButtonA);
-            AlignControlXL(ButtonReset, LabelP1, 3);
+            ResetAllTexts();
         }
-
-        protected override void OnLoad()
+        else
         {
-            for (int i = 0; i < 3; i++)
-            {
-                TextBoxes[i].Text = CustomTexts[i];
-            }
+            ResetText(itemIndex);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        UserChanged();
+    }
+
+    private void TryAppendPlaceHolders(PlainTextBox tb, KeyEventArgs e, bool condition, int length = -1)
+    {
+        if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
         {
-            var t = ActiveControl as PlainTextBox;
-            TryAppendPlaceHolders(t, e, t != null);
-            base.OnKeyDown(e);
+            var text = Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex];
+            tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
         }
+    }
 
-        protected override bool OnClickButtonA()
+    private void ResetAllTexts()
+    {
+        for (int i = 0; i < 3; i++)
         {
-            string[] tmp = new string[3];
-            string text;
-
-            for (int i = 0; i < 3; i++)
-            {
-                text = TextBoxes[i].Text;
-
-                if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out string msg, i + 1) && !string.IsNullOrEmpty(msg))
-                {
-                    MessageX.Error(msg);
-                    return false;
-                }
-
-                tmp[i] = text;
-            }
-
-            CustomTexts = tmp;
-            return base.OnClickButtonA();
+            ResetText(i);
         }
+    }
 
-        private void ItemsReset_Click(object sender, EventArgs e)
-        {
-            var itemIndex = ((MenuItem)sender).Index - 2;
-
-            if (itemIndex < 0)
-            {
-                ResetAllTexts();
-            }
-            else
-            {
-                ResetText(itemIndex);
-            }
-
-            UserChanged();
-        }
-
-        private void TryAppendPlaceHolders(PlainTextBox tb, KeyEventArgs e, bool condition, int length = -1)
-        {
-            if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
-            {
-                var text = Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex];
-                tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
-            }
-        }
-
-        private void ResetAllTexts()
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                ResetText(i);
-            }
-        }
-
-        private void ResetText(int Index)
-        {
-            TextBoxes[Index].Text = Presets[Index];
-        }
+    private void ResetText(int Index)
+    {
+        TextBoxes[Index].Text = Presets[Index];
     }
 }

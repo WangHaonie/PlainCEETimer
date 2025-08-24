@@ -5,292 +5,291 @@ using System.Linq;
 using System.Windows.Forms;
 using PlainCEETimer.UI.Extensions;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public sealed partial class ColorBlock : PlainLabel
 {
-    public sealed partial class ColorBlock : PlainLabel
+    private sealed class ScreenColorPicker : AppForm
     {
-        private sealed class ScreenColorPicker : AppForm
-        {
-            private int HeightWidth;
-            private int MouseX;
-            private int MouseY;
-            private int PosOffset;
-            private int XY;
-            private Bitmap ScreenCut;
-            private Pen CrossPen;
-            private Rectangle DestRect;
-            private const int HW = 64;
-            private const int ScreenCutHW = 16;
-            private readonly Size ScreenCutSize;
-            private readonly Rectangle SourceRect;
+        private int HeightWidth;
+        private int MouseX;
+        private int MouseY;
+        private int PosOffset;
+        private int XY;
+        private Bitmap ScreenCut;
+        private Pen CrossPen;
+        private Rectangle DestRect;
+        private const int HW = 64;
+        private const int ScreenCutHW = 16;
+        private readonly Size ScreenCutSize;
+        private readonly Rectangle SourceRect;
 
-            public Color CurrentPixelColor
+        public Color CurrentPixelColor
+        {
+            get
             {
-                get
+                if (ScreenCut != null)
                 {
-                    if (ScreenCut != null)
+                    return ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
+                }
+
+                return Color.Empty;
+            }
+        }
+
+        protected override AppFormParam Params => AppFormParam.RoundCorner;
+
+        public ScreenColorPicker()
+        {
+            ScreenCut = new(ScreenCutHW, ScreenCutHW);
+            ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
+            SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
+        }
+
+        public void UpdateFrame(Point mp)
+        {
+            var screen = Screen.FromPoint(mp).Bounds;
+            var mx = mp.X;
+            var my = mp.Y;
+            int x = mx + PosOffset;
+            int y = my + PosOffset;
+
+            if (x + HeightWidth > screen.Right)
+            {
+                x = mx - HeightWidth - PosOffset;
+            }
+
+            if (y + HeightWidth > screen.Bottom)
+            {
+                y = my - HeightWidth - PosOffset;
+            }
+
+            SetLocation(x, y);
+            MouseX = mx;
+            MouseY = my;
+            Invalidate();
+        }
+
+        protected override void OnInitializing()
+        {
+            Text = "屏幕拾色器 - 高考倒计时";
+            TopMost = true;
+        }
+
+        protected override void OnLoad()
+        {
+            HeightWidth = ScaleToDpi(HW);
+            XY = HeightWidth / 2;
+            PosOffset = ScaleToDpi(HW / 4);
+            CrossPen = new(Color.Red, ScaleToDpi(1));
+            Size = new(HeightWidth, HeightWidth);
+            DestRect = new(0, 0, HeightWidth + 2, HeightWidth + 2);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            using var gg = Graphics.FromImage(ScreenCut);
+            var g = e.Graphics;
+            gg.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
+            g.DrawLine(CrossPen, PosOffset, XY, HeightWidth - PosOffset, XY);
+            g.DrawLine(CrossPen, XY, PosOffset, XY, HeightWidth - PosOffset);
+        }
+
+        protected override void OnClosed()
+        {
+            ScreenCut.Dispose();
+            CrossPen.Dispose();
+            ScreenCut = null;
+        }
+    }
+
+    private class CancellationMessageFilter : IMessageFilter
+    {
+        public event Action Cancel;
+
+        private const int WM_KEYDOWN = 0x0100;
+        private static readonly IntPtr EscKey = new((int)Keys.Escape);
+
+        public bool PreFilterMessage(ref Message m)
+        {
+            if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
+            {
+                Cancel?.Invoke();
+            }
+
+            return false;
+        }
+    }
+
+    private AppForm ParentForm => field ??= this.FindParentForm();
+
+    public ColorBlock[] Fellows { get; set; } = [];
+
+    public Color Color
+    {
+        get => BackColor;
+        set
+        {
+            if (value != BackColor)
+            {
+                BackColor = value;
+
+                if (PreviewBlock != null)
+                {
+                    if (IsFore)
                     {
-                        return ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
+                        PreviewBlock.ForeColor = value;
                     }
-
-                    return Color.Empty;
-                }
-            }
-
-            protected override AppFormParam Params => AppFormParam.RoundCorner;
-
-            public ScreenColorPicker()
-            {
-                ScreenCut = new(ScreenCutHW, ScreenCutHW);
-                ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
-                SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
-            }
-
-            public void UpdateFrame(Point mp)
-            {
-                var screen = Screen.FromPoint(mp).Bounds;
-                var mx = mp.X;
-                var my = mp.Y;
-                int x = mx + PosOffset;
-                int y = my + PosOffset;
-
-                if (x + HeightWidth > screen.Right)
-                {
-                    x = mx - HeightWidth - PosOffset;
-                }
-
-                if (y + HeightWidth > screen.Bottom)
-                {
-                    y = my - HeightWidth - PosOffset;
-                }
-
-                SetLocation(x, y);
-                MouseX = mx;
-                MouseY = my;
-                Invalidate();
-            }
-
-            protected override void OnInitializing()
-            {
-                Text = "屏幕拾色器 - 高考倒计时";
-                TopMost = true;
-            }
-
-            protected override void OnLoad()
-            {
-                HeightWidth = ScaleToDpi(HW);
-                XY = HeightWidth / 2;
-                PosOffset = ScaleToDpi(HW / 4);
-                CrossPen = new(Color.Red, ScaleToDpi(1));
-                Size = new(HeightWidth, HeightWidth);
-                DestRect = new(0, 0, HeightWidth + 2, HeightWidth + 2);
-            }
-
-            protected override void OnPaint(PaintEventArgs e)
-            {
-                using var gg = Graphics.FromImage(ScreenCut);
-                var g = e.Graphics;
-                gg.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
-                g.DrawLine(CrossPen, PosOffset, XY, HeightWidth - PosOffset, XY);
-                g.DrawLine(CrossPen, XY, PosOffset, XY, HeightWidth - PosOffset);
-            }
-
-            protected override void OnClosed()
-            {
-                ScreenCut.Dispose();
-                CrossPen.Dispose();
-                ScreenCut = null;
-            }
-        }
-
-        private class CancellationMessageFilter : IMessageFilter
-        {
-            public event Action Cancel;
-
-            private const int WM_KEYDOWN = 0x0100;
-            private static readonly IntPtr EscKey = new((int)Keys.Escape);
-
-            public bool PreFilterMessage(ref Message m)
-            {
-                if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
-                {
-                    Cancel?.Invoke();
-                }
-
-                return false;
-            }
-        }
-
-        private AppForm ParentForm => field ??= this.FindParentForm();
-
-        public ColorBlock[] Fellows { get; set; } = [];
-
-        public Color Color
-        {
-            get => BackColor;
-            set
-            {
-                if (value != BackColor)
-                {
-                    BackColor = value;
-
-                    if (PreviewBlock != null)
+                    else if (!IsPreview)
                     {
-                        if (IsFore)
-                        {
-                            PreviewBlock.ForeColor = value;
-                        }
-                        else if (!IsPreview)
-                        {
-                            PreviewBlock.BackColor = value;
-                        }
+                        PreviewBlock.BackColor = value;
                     }
-
-                    ColorChanged?.Invoke(this, EventArgs.Empty);
                 }
+
+                ColorChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+    }
 
-        public event EventHandler ColorChanged;
+    public event EventHandler ColorChanged;
 
-        private bool IsDragging;
-        private bool IsPicking;
-        private bool IsPickingCancelled;
-        private Point MouseLocation;
-        private Rectangle ParentBounds;
-        private ScreenColorPicker ColorPicker;
-        private readonly bool IsPreview;
-        private readonly bool IsFore;
-        private readonly ColorBlock PreviewBlock;
-        private static CancellationMessageFilter MsgFilter;
-        private Action CacelAction;
+    private bool IsDragging;
+    private bool IsPicking;
+    private bool IsPickingCancelled;
+    private Point MouseLocation;
+    private Rectangle ParentBounds;
+    private ScreenColorPicker ColorPicker;
+    private readonly bool IsPreview;
+    private readonly bool IsFore;
+    private readonly ColorBlock PreviewBlock;
+    private static CancellationMessageFilter MsgFilter;
+    private Action CacelAction;
 
-        public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
+    public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
+    {
+        AutoSize = true;
+        BorderStyle = BorderStyle.FixedSingle;
+        IsPreview = isPreview;
+        IsFore = isFore;
+        PreviewBlock = preview;
+    }
+
+    protected override void OnClick(EventArgs e)
+    {
+        if (!IsPreview)
         {
-            AutoSize = true;
-            BorderStyle = BorderStyle.FixedSingle;
-            IsPreview = isPreview;
-            IsFore = isFore;
-            PreviewBlock = preview;
-        }
+            var dialog = new PlainColorDialog();
 
-        protected override void OnClick(EventArgs e)
-        {
-            if (!IsPreview)
+            if (dialog.ShowDialog(Color, ParentForm) == DialogResult.OK)
             {
-                var dialog = new PlainColorDialog();
-
-                if (dialog.ShowDialog(Color, ParentForm) == DialogResult.OK)
-                {
-                    Color = dialog.Color;
-                }
+                Color = dialog.Color;
             }
-
-            base.OnClick(e);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        base.OnClick(e);
+    }
+
+    protected override void OnMouseDown(MouseEventArgs e)
+    {
+        if (!IsPreview)
         {
-            if (!IsPreview)
+            var mButtom = e.Button;
+
+            if (!IsDragging && mButtom == MouseButtons.Left)
             {
-                var mButtom = e.Button;
-
-                if (!IsDragging && mButtom == MouseButtons.Left)
-                {
-                    IsDragging = true;
-                    Capture = true;
-                    ParentBounds = ParentForm.Bounds;
-                }
-                else if (IsDragging && IsPicking && mButtom == MouseButtons.Right)
-                {
-                    CancelScreenColorPicker();
-                }
+                IsDragging = true;
+                Capture = true;
+                ParentBounds = ParentForm.Bounds;
             }
-
-            base.OnMouseDown(e);
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if (!IsPreview && IsDragging)
+            else if (IsDragging && IsPicking && mButtom == MouseButtons.Right)
             {
-                Cursor = Cursors.Cross;
-                MouseLocation = Cursor.Position;
-
-                if (!IsPicking && !ParentBounds.Contains(MouseLocation))
-                {
-                    IsPicking = true;
-                    MsgFilter ??= new();
-                    CacelAction ??= new(CancelScreenColorPicker);
-                    MsgFilter.Cancel += CacelAction;
-                    Application.AddMessageFilter(MsgFilter);
-                    ColorPicker = new();
-                    HideParentForm();
-                    ColorPicker.Show();
-                }
-
-                if (IsPicking)
-                {
-                    ColorPicker.UpdateFrame(MouseLocation);
-                }
+                CancelScreenColorPicker();
             }
-
-            base.OnMouseMove(e);
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            EndPicking();
-            base.OnMouseUp(e);
-        }
+        base.OnMouseDown(e);
+    }
 
-        private void EndPicking()
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        if (!IsPreview && IsDragging)
         {
-            if (!IsPreview && IsDragging)
+            Cursor = Cursors.Cross;
+            MouseLocation = Cursor.Position;
+
+            if (!IsPicking && !ParentBounds.Contains(MouseLocation))
             {
-                IsDragging = false;
-                Cursor = Cursors.Default;
-                Capture = false;
+                IsPicking = true;
+                MsgFilter ??= new();
+                CacelAction ??= new(CancelScreenColorPicker);
+                MsgFilter.Cancel += CacelAction;
+                Application.AddMessageFilter(MsgFilter);
+                ColorPicker = new();
+                HideParentForm();
+                ColorPicker.Show();
+            }
 
-                var parent = base.Parent;
-                var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
-
-                if (target != null && target is ColorBlock block && Fellows.Contains(block) && block != this)
-                {
-                    block.Color = Color;
-                }
-
-                if (IsPicking)
-                {
-                    if (IsPickingCancelled)
-                    {
-                        IsPickingCancelled = false;
-                    }
-                    else
-                    {
-                        Color = ColorPicker.CurrentPixelColor;
-                    }
-
-                    MsgFilter.Cancel -= CacelAction;
-                    Application.RemoveMessageFilter(MsgFilter);
-                    HideParentForm(false);
-                    ColorPicker.Close();
-                    IsPicking = false;
-                }
+            if (IsPicking)
+            {
+                ColorPicker.UpdateFrame(MouseLocation);
             }
         }
 
-        private void CancelScreenColorPicker()
-        {
-            IsPickingCancelled = true;
-            EndPicking();
-        }
+        base.OnMouseMove(e);
+    }
 
-        private void HideParentForm(bool hide = true)
+    protected override void OnMouseUp(MouseEventArgs e)
+    {
+        EndPicking();
+        base.OnMouseUp(e);
+    }
+
+    private void EndPicking()
+    {
+        if (!IsPreview && IsDragging)
         {
-            ParentForm.Opacity = hide ? 0 : 1;
+            IsDragging = false;
+            Cursor = Cursors.Default;
+            Capture = false;
+
+            var parent = base.Parent;
+            var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
+
+            if (target != null && target is ColorBlock block && Fellows.Contains(block) && block != this)
+            {
+                block.Color = Color;
+            }
+
+            if (IsPicking)
+            {
+                if (IsPickingCancelled)
+                {
+                    IsPickingCancelled = false;
+                }
+                else
+                {
+                    Color = ColorPicker.CurrentPixelColor;
+                }
+
+                MsgFilter.Cancel -= CacelAction;
+                Application.RemoveMessageFilter(MsgFilter);
+                HideParentForm(false);
+                ColorPicker.Close();
+                IsPicking = false;
+            }
         }
+    }
+
+    private void CancelScreenColorPicker()
+    {
+        IsPickingCancelled = true;
+        EndPicking();
+    }
+
+    private void HideParentForm(bool hide = true)
+    {
+        ParentForm.Opacity = hide ? 0 : 1;
     }
 }

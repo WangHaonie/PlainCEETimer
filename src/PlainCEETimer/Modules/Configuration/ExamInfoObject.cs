@@ -5,119 +5,118 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules.Configuration
+namespace PlainCEETimer.Modules.Configuration;
+
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
+public class ExamInfoObject : IListViewData<ExamInfoObject>
 {
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class ExamInfoObject : IListViewData<ExamInfoObject>
+    public string Name
     {
-        public string Name
+        get;
+        set
         {
-            get;
-            set
+            value = value.RemoveIllegalChars();
+
+            if (Validator.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
             {
-                value = value.RemoveIllegalChars();
-
-                if (Validator.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
-                {
-                    throw new Exception();
-                }
-
-                field = value;
+                throw new Exception();
             }
-        } = "";
 
-        [JsonConverter(typeof(ExamTimeConverter))]
-        public DateTime Start
+            field = value;
+        }
+    } = "";
+
+    [JsonConverter(typeof(ExamTimeConverter))]
+    public DateTime Start
+    {
+        get;
+        set
         {
-            get;
-            set
+            if (Validator.ValidateNeeded)
             {
-                if (Validator.ValidateNeeded)
-                {
-                    Validator.EnsureExamDate(value);
-                }
-
-                field = value.TruncateToSeconds();
+                Validator.EnsureExamDate(value);
             }
-        } = DateTime.Now;
 
-        [JsonConverter(typeof(ExamTimeConverter))]
-        public DateTime End
+            field = value.TruncateToSeconds();
+        }
+    } = DateTime.Now;
+
+    [JsonConverter(typeof(ExamTimeConverter))]
+    public DateTime End
+    {
+        get;
+        set
         {
-            get;
-            set
+            if (Validator.ValidateNeeded)
             {
-                if (Validator.ValidateNeeded)
-                {
-                    Validator.EnsureExamDate(value);
-                }
-
-                field = value.TruncateToSeconds();
+                Validator.EnsureExamDate(value);
             }
-        } = DateTime.Now;
 
-        public int CompareTo(ExamInfoObject other)
+            field = value.TruncateToSeconds();
+        }
+    } = DateTime.Now;
+
+    public int CompareTo(ExamInfoObject other)
+    {
+        if (other == null)
         {
-            if (other == null)
-            {
-                return 1;
-            }
-
-            int order = Start.CompareTo(other.Start);
-
-            if (order != 0)
-            {
-                return order;
-            }
-
-            if ((order = End.CompareTo(other.End)) != 0)
-            {
-                return order;
-            }
-
-            return string.CompareOrdinal(Name, other.Name);
+            return 1;
         }
 
-        public bool Equals(ExamInfoObject other)
+        int order = Start.CompareTo(other.Start);
+
+        if (order != 0)
         {
-            /*
-            
-            DateTime 比较时只精确到秒 参考：
-
-            C# DateTime 精确到秒/截断毫秒部分 - eshizhan - 博客园
-            https://www.cnblogs.com/eshizhan/archive/2011/11/15/2250007.html
-
-            */
-
-            return other != null
-                && Start == other.Start
-                && End == other.End
-                && Name == other.Name;
+            return order;
         }
 
-        public override string ToString()
+        if ((order = End.CompareTo(other.End)) != 0)
         {
-            return $"{Name.Truncate(6)} - {Start.Format()}";
+            return order;
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals((ExamInfoObject)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode();
-            }
-        }
-
-        bool IListViewData<ExamInfoObject>.InternalEquals(ExamInfoObject other)
-        {
-            return Equals(other);
-        }
-
-        private string DebuggerDisplay => $"{Name}: [{Start.Format()}]~[{End.Format()}]";
+        return string.CompareOrdinal(Name, other.Name);
     }
+
+    public bool Equals(ExamInfoObject other)
+    {
+        /*
+
+        DateTime 比较时只精确到秒 参考：
+
+        C# DateTime 精确到秒/截断毫秒部分 - eshizhan - 博客园
+        https://www.cnblogs.com/eshizhan/archive/2011/11/15/2250007.html
+
+        */
+
+        return other != null
+            && Start == other.Start
+            && End == other.End
+            && Name == other.Name;
+    }
+
+    public override string ToString()
+    {
+        return $"{Name.Truncate(6)} - {Start.Format()}";
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals((ExamInfoObject)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode();
+        }
+    }
+
+    bool IListViewData<ExamInfoObject>.InternalEquals(ExamInfoObject other)
+    {
+        return Equals(other);
+    }
+
+    private string DebuggerDisplay => $"{Name}: [{Start.Format()}]~[{End.Format()}]";
 }

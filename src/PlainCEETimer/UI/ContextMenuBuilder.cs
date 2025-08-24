@@ -1,46 +1,45 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.UI
+namespace PlainCEETimer.UI;
+
+public class ContextMenuBuilder
 {
-    public class ContextMenuBuilder
+    public MenuItem Item(string text)
     {
-        public MenuItem Item(string text)
-        {
-            return new(text);
-        }
+        return new(text);
+    }
 
-        public MenuItem Item(string text, EventHandler onClickHandler)
-        {
-            return new(text, onClickHandler);
-        }
+    public MenuItem Item(string text, EventHandler onClickHandler)
+    {
+        return new(text, onClickHandler);
+    }
 
-        public MenuItem Menu(string text, MenuItem[] items)
-        {
-            return new(text, items);
-        }
+    public MenuItem Menu(string text, MenuItem[] items)
+    {
+        return new(text, items);
+    }
 
-        public MenuItem Separator()
-        {
-            return new("-");
-        }
+    public MenuItem Separator()
+    {
+        return new("-");
+    }
 
-        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder)
-        {
-            return new(builder(new()));
-        }
+    public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder)
+    {
+        return new(builder(new()));
+    }
 
-        public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder, EventHandler onPopup)
-        {
-            var menu = Build(builder);
-            menu.Popup += onPopup;
-            return menu;
-        }
+    public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder, EventHandler onPopup)
+    {
+        var menu = Build(builder);
+        menu.Popup += onPopup;
+        return menu;
+    }
 
-        public static ContextMenu Merge(ContextMenu target, ContextMenu reference)
-        {
-            target.MergeMenu(reference);
-            return target;
-        }
+    public static ContextMenu Merge(ContextMenu target, ContextMenu reference)
+    {
+        target.MergeMenu(reference);
+        return target;
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Windows.Forms;
 
-namespace PlainCEETimer.UI.Controls
+namespace PlainCEETimer.UI.Controls;
+
+public sealed class PlainCheckBox : CheckBox
 {
-    public sealed class PlainCheckBox : CheckBox
+    public PlainCheckBox()
     {
-        public PlainCheckBox()
-        {
-            new PlainButtonBase(this);
-        }
+        new PlainButtonBase(this);
     }
 }
