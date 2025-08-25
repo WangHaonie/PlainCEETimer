@@ -6,9 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/**'
-      - 'PlainCEETimer/**'
-      - 'PlainCEETimer.Natives/**'
-      - 'PlainCEETimer.Setup/**'
+      - 'src/**'
 
 jobs:
   build:
@@ -74,6 +72,6 @@ jobs:
         with:
           tag_name: Preview
           files: |
-            PlainCEETimer.Setup/*.exe
+            src/PlainCEETimer.Setup/*.exe
           prerelease: true
           body_path: content.txt
