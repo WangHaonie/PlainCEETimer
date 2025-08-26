@@ -19,7 +19,7 @@ public static class DisplayHelper
         return [.. tmp];
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#12")]
     private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 
     private delegate BOOL EnumDisplayProc(SystemDisplay info);

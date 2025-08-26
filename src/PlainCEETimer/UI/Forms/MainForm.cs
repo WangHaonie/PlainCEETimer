@@ -87,14 +87,21 @@ public sealed class MainForm : AppForm
     protected override void OnInitializing()
     {
         Text = "高考倒计时";
-        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        SystemEvents.SessionEnding += (_, _) => Validator.Save();
 
         DefaultMatchEvaluator = m =>
         {
             var key = m.Value;
             return PhCountdown.TryGetValue(key, out string value) ? value : key;
         };
+
+        SystemEvents.DisplaySettingsChanged += (_, _) =>
+        {
+            RefreshScreen();
+            SetCountdownAutoWrap();
+            ApplyLocation();
+        };
+
+        SystemEvents.SessionEnding += (_, _) => Validator.Save();
     }
 
     protected override void WndProc(ref Message m)
@@ -178,13 +185,6 @@ public sealed class MainForm : AppForm
     protected override bool OnClosing(CloseReason closeReason)
     {
         return closeReason != CloseReason.WindowsShutDown;
-    }
-
-    private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
-    {
-        RefreshScreen();
-        SetCountdownAutoWrap();
-        ApplyLocation();
     }
 
     protected override void OnSizeChanged(EventArgs e)
@@ -432,44 +432,44 @@ public sealed class MainForm : AppForm
         ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
         [
             b.Menu("切换(&Q)",
-                [
-                    b.Item("请先添加考试信息")
-                ]),
+            [
+                b.Item("请先添加考试信息")
+            ]),
 
-                b.Separator(),
+            b.Separator(),
 
-                b.Item("设置(&S)", (_, _) =>
+            b.Item("设置(&S)", (_, _) =>
+            {
+                if (FormSettings == null || FormSettings.IsDisposed)
                 {
-                    if (FormSettings == null || FormSettings.IsDisposed)
-                    {
-                        FormSettings = new();
+                    FormSettings = new();
 
-                        FormSettings.DialogEnd += (_, dr) =>
+                    FormSettings.DialogEnd += (_, dr) =>
+                    {
+                        if (dr == DialogResult.OK)
                         {
-                            if (dr == DialogResult.OK)
-                            {
-                                Validator.Save();
-                                RefreshSettings();
-                                CountdownCallback(null);
-                            }
-                        };
-                    }
+                            Validator.Save();
+                            RefreshSettings();
+                            CountdownCallback(null);
+                        }
+                    };
+                }
 
-                    FormSettings.ReActivate();
-                }),
+                FormSettings.ReActivate();
+            }),
 
-                b.Item("关于(&A)", (_, _) =>
+            b.Item("关于(&A)", (_, _) =>
+            {
+                if (FormAbout == null || FormAbout.IsDisposed)
                 {
-                    if (FormAbout == null || FormAbout.IsDisposed)
-                    {
-                        FormAbout = new();
-                    }
+                    FormAbout = new();
+                }
 
-                    FormAbout.ReActivate();
-                }),
+                FormAbout.ReActivate();
+            }),
 
-                b.Separator(),
-                b.Item("安装目录(&D)", (_, _) => Process.Start(App.CurrentExecutableDir))
+            b.Separator(),
+            b.Item("安装目录(&D)", (_, _) => Process.Start(App.CurrentExecutableDir))
         ]);
     }
 
@@ -499,12 +499,12 @@ public sealed class MainForm : AppForm
                     ContextMenu = ContextMenuBuilder.Merge(ContextMenuTray, ContextMenuBuilder.Build(b =>
                     [
                         b.Separator(),
-                            b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
-                            b.Menu("关闭(&C)",
-                            [
-                                b.Item("重启(&R)", (_, _) => App.Exit(true)),
-                                b.Item("退出(&Q)", (_, _) => App.Exit())
-                            ])
+                        b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                        b.Menu("关闭(&C)",
+                        [
+                            b.Item("重启(&R)", (_, _) => App.Exit(true)),
+                            b.Item("退出(&Q)", (_, _) => App.Exit())
+                        ])
                     ]))
                 };
 

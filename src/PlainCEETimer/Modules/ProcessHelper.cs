@@ -43,10 +43,10 @@ public static class ProcessHelper
         return
             $"""
 
-                ===================================
-                命令执行完成，返回值为 0x{((Process)process).ExitCode:X}。可以关闭此窗口。
-                ===================================
-                """;
+            ===================================
+            命令执行完成，返回值为 0x{((Process)process).ExitCode:X}。可以关闭此窗口。
+            ===================================
+            """;
     }
 
     public static string GetExceptionMessage(Exception ex)

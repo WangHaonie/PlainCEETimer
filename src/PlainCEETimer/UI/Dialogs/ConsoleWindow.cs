@@ -64,8 +64,8 @@ public sealed class ConsoleWindow : AppDialog
             ConsoleBox.ContextMenu = ContextMenuBuilder.Build(b =>
             [
                 ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
-                    b.Separator(),
-                    b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
+                b.Separator(),
+                b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
             ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText));
         }
     }

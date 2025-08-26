@@ -44,9 +44,9 @@ public sealed class PlainTextBox : TextBox
             this.AddControls(b =>
             [
                 ContentBox = b.TextArea(0, 0, ContentBox_TextChanged),
-                    ButtonClose = b.Button("×", 18, 20, (_, _) => EndModelessDialog(false)),
-                    ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
-                    LabelCounter = b.Label("0/0")
+                ButtonClose = b.Button("×", 18, 20, (_, _) => EndModelessDialog(false)),
+                ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
+                LabelCounter = b.Label("0/0")
             ]);
         }
 
@@ -128,23 +128,23 @@ public sealed class PlainTextBox : TextBox
         if (Expandable = expandable)
         {
             this.AddControls(b => [ButtonExpand = b.Button("..", 18, 20, (_, _) =>
-                {
-                    Child = new(this);
+            {
+                Child = new(this);
 
-                    Child.DialogEnd += (_, dr) =>
+                Child.DialogEnd += (_, dr) =>
+                {
+                    if (dr == DialogResult.OK)
                     {
-                        if (dr == DialogResult.OK)
-                        {
-                            Text = Child.Content;
-                        }
-                    };
+                        Text = Child.Content;
+                    }
+                };
 
-                    ParentForm.ShowFlyout(Child, () => this.LocationToScreen(-4, -4));
-                }).With(x =>
-                {
-                    x.Cursor = Cursors.Arrow;
-                    x.Dock = DockStyle.Right;
-                })]);
+                ParentForm.ShowFlyout(Child, () => this.LocationToScreen(-4, -4));
+            }).With(x =>
+            {
+                x.Cursor = Cursors.Arrow;
+                x.Dock = DockStyle.Right;
+            })]);
         }
     }
 

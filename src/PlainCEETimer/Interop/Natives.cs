@@ -196,7 +196,7 @@ public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
 {
     private readonly ushort Value = ushort.MakeWord((byte)keys, (byte)fKeys);
 
-    public static readonly LnkHotkey None = new();
+    public static readonly LnkHotkey None = default;
 
     private string DebuggerDisplay => $"{(HotkeyModifiers)Value.HiByte}, {(Keys)Value.LoByte}";
 }
@@ -205,16 +205,16 @@ public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public readonly struct SystemDisplay
 {
-    private readonly int index;
-    private readonly string deviceName;
-    private readonly string deviceId;
-    private readonly string dosPath;
-    private readonly RECT bounds;
-    private readonly double refreshRate;
+    private readonly int Index;
+    private readonly string Name;
+    private readonly string Id;
+    private readonly string Path;
+    private readonly RECT Bounds;
+    private readonly double RefreshRate;
 
     public readonly override string ToString()
     {
-        return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", index + 1, deviceName, GetId(deviceId), dosPath, bounds.Right - bounds.Left, bounds.Bottom - bounds.Top, refreshRate);
+        return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", Index + 1, Name, GetId(Id), Path, Bounds.Right - Bounds.Left, Bounds.Bottom - Bounds.Top, RefreshRate);
     }
 
     private readonly string GetId(string did)

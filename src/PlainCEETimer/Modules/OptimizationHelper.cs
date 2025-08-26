@@ -20,13 +20,13 @@ public class OptimizationHelper(bool isAuto) : IDisposable
     {
         if (isAuto || MessageX.Warn(
             """
-                确认对本程序进行优化？此操作将有助于提升一定的运行速度。
+            确认对本程序进行优化？此操作将有助于提升一定的运行速度。
                 
-                推荐在以下情况下使用：
-                    1. 首次运行本程序
-                    2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
-                    3. 其他情况导致的程序运行速度变慢
-                """, MessageButtons.YesNo) == DialogResult.Yes)
+            推荐在以下情况下使用：
+                1. 首次运行本程序
+                2. 清理过系统垃圾 (特别是 .NET 缓存) 之后
+                3. 其他情况导致的程序运行速度变慢
+            """, MessageButtons.YesNo) == DialogResult.Yes)
         {
             try
             {

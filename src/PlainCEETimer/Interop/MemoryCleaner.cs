@@ -17,14 +17,28 @@ public static class MemoryCleaner
 
         if (mem == 0)
         {
-            WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId());
-            mem = (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().First().GetPropertyValue("WorkingSetPrivate");
+            mem = GetMemory();
         }
 
         if (mem > Threshold)
         {
             ClearMemory();
         }
+    }
+
+    private static ulong GetMemory()
+    {
+        /*
+            
+        使用 WMI 获取进程 Private WS 参考：
+
+        Is it possible to get 'private working set' of memory ? · Issue #15 · sindresorhus/tasklist
+        https://github.com/sindresorhus/tasklist/issues/15#issuecomment-402712280
+
+        */
+
+        WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId());
+        return (ulong)WmiSearcher.Get().Cast<ManagementBaseObject>().First().GetPropertyValue("WorkingSetPrivate");
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#4")]

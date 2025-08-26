@@ -28,9 +28,9 @@ public static class Constants
     public static readonly string[] AllPHs =
     [
         PhExamName,
-            PhDays, PhDecimalDays, PhCeilingDays,
-            PhHours, PhTotalHours, PhDecimalHours,
-            PhMinutes, PhTotalMinutes,
-            PhSeconds, PhTotalSeconds
+        PhDays, PhDecimalDays, PhCeilingDays,
+        PhHours, PhTotalHours, PhDecimalHours,
+        PhMinutes, PhTotalMinutes,
+        PhSeconds, PhTotalSeconds
     ];
 }

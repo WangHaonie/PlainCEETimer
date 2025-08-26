@@ -38,9 +38,9 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
     private PlainNumericUpDown NUDSeconds;
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
-    private readonly Dictionary<int, Temp> TemporaryChanges = new(3);
+    private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
 
-    private struct Temp(ColorSetObject colors, string text)
+    private struct Cache(ColorSetObject colors, string text)
     {
         public ColorSetObject Colors = colors;
         public string Text = text;
