@@ -36,7 +36,7 @@ public static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.6";
-    public const string AppBuildDate = "2025/8/25";
+    public const string AppBuildDate = "2025/8/26";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -53,7 +53,7 @@ public static class App
     private static Mutex MainMutex;
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
-    private static readonly string DotNetConfig = $"{CurrentExecutablePath}.config";
+    private static readonly string DotNetAppConfig = $"{CurrentExecutablePath}.config";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
     public static void StartProgram(string[] args)
@@ -185,7 +185,7 @@ public static class App
                 File.Delete(uefile);
             }
 
-            File.Delete(DotNetConfig);
+            File.Delete(DotNetAppConfig);
         }
         catch { }
     }
@@ -268,9 +268,9 @@ public static class App
 
         try
         {
-            File.Delete(DotNetConfig);
-            File.WriteAllText(DotNetConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
-            ProcessHelper.Run("attrib", $"+s +h \"{DotNetConfig}\"");
+            File.Delete(DotNetAppConfig);
+            File.WriteAllText(DotNetAppConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
+            ProcessHelper.Run("attrib", $"+s +h \"{DotNetAppConfig}\"");
         }
         catch { }
     }

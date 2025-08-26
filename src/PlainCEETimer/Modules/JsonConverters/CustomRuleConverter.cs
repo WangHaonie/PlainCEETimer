@@ -49,12 +49,12 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
     public override void WriteJson(JsonWriter writer, CustomRuleObject value, JsonSerializer serializer)
     {
         new JObject()
-            {
-                { nameof(value.Phase), (int)value.Phase },
-                { nameof(value.Tick), (long)value.Tick.TotalSeconds },
-                { nameof(value.Colors.Fore), value.Colors.Fore.ToInt32() },
-                { nameof(value.Colors.Back), value.Colors.Back.ToInt32() },
-                { nameof(value.Text), value.Text }
-            }.WriteTo(writer);
+        {
+            { nameof(value.Phase), (int)value.Phase },
+            { nameof(value.Tick), (long)value.Tick.TotalSeconds },
+            { nameof(value.Colors.Fore), value.Colors.Fore.ToInt32() },
+            { nameof(value.Colors.Back), value.Colors.Back.ToInt32() },
+            { nameof(value.Text), value.Text }
+        }.WriteTo(writer);
     }
 }

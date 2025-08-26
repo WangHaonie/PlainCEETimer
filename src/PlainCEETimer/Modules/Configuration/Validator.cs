@@ -25,19 +25,15 @@ public static class Validator
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
     public const string RegexPhPatterns = @"\{(\w+)\}";
-    private static readonly JsonSerializerSettings Settings;
+
+    private static readonly JsonSerializerSettings Settings = new()
+    {
+        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+        NullValueHandling = NullValueHandling.Ignore,
+        TypeNameHandling = TypeNameHandling.Auto
+    };
 
     internal static bool ValidateNeeded { get; set; } = true;
-
-    static Validator()
-    {
-        Settings = new JsonSerializerSettings()
-        {
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
-    }
 
     public static void Save()
     {
