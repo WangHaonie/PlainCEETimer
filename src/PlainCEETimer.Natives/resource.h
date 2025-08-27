@@ -1,8 +1,13 @@
 ﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by PlainCEETimer.Natives.rc
+//
+#pragma once
 
-// 新对象的下一组默认值
+#define IDD_CHOOSEFONT					999
+#define LIBRARYNAME 					L"PlainCEETimer.Natives.dll"
+
+// Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

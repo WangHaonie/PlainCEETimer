@@ -139,8 +139,7 @@ public sealed class PlainListView : ListView
         ThemeManager.FlushControl(hListView, LVstyle);
         ThemeManager.FlushControl(hHeader, LVstyle);
         ThemeManager.FlushControl(hToolTips, TTstyle);
-        ListViewHelper.SetWindowPos(hToolTips, HWND.TOPMOST, 0, 0, 0, 0, 0x0001U | 0x0002U | 0x0010U);
-        //                                                           SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+        Natives.SetWindowPos(hToolTips, HWND.TOPMOST, 0, 0, 0, 0, SWP.TOPMOST);
 
         base.OnHandleCreated(e);
     }

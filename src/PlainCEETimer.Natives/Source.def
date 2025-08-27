@@ -29,3 +29,5 @@ EXPORTS
     ShellLinkCreateLnk @20 NONAME
     ShellLinkQueryLnk @21 NONAME
     ReleaseShellLink @22 NONAME
+
+    RunFontDialog @24 NONAME

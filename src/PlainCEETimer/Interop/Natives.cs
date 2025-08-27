@@ -16,6 +16,21 @@ public static class Natives
 
     [DllImport(App.Gdi32Dll)]
     public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
+
+    [DllImport(App.User32Dll)]
+    public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SWP uFlags);
+
+    [DllImport(App.NativesDll, EntryPoint = "#24")]
+    public static extern BOOL RunFontDialog(HWND hWndOwner, ref LOGFONT lpLogFont, WNDPROC lpfnHookProc, int nSizeMin, int nSizeMax);
+}
+
+[Flags]
+public enum SWP : uint
+{
+    NOSIZE = 0x0001U,
+    NOMOVE = 0x0002U,
+    NOACTIVATE = 0x0010U,
+    TOPMOST = NOSIZE | NOMOVE | NOACTIVATE,
 }
 
 [Flags]
@@ -244,4 +259,39 @@ public struct Win32Lnk(string lnkPath)
     public string Description;
     public string IconPath;
     public int IconIndex;
+}
+
+[DebuggerDisplay("{lfFaceName}, {lfHeight}")]
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+public struct LOGFONT
+{
+    public int lfHeight;
+    public int lfWidth;
+    public int lfEscapement;
+    public int lfOrientation;
+    public int lfWeight;
+    public byte lfItalic;
+    public byte lfUnderline;
+    public byte lfStrikeOut;
+    public byte lfCharSet;
+    public byte lfOutPrecision;
+    public byte lfClipPrecision;
+    public byte lfQuality;
+    public byte lfPitchAndFamily;
+
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string lfFaceName;
+
+    public readonly Font ToFont()
+    {
+        return Font.FromLogFont(this);
+    }
+
+    public static LOGFONT FromFont(Font font)
+    {
+        LOGFONT lf = new();
+        object lfobj = lf;
+        font.ToLogFont(lfobj);
+        return (LOGFONT)lfobj;
+    }
 }

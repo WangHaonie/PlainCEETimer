@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Controls;
@@ -72,17 +72,8 @@ public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialo
     private const int WM_CTLCOLORLISTBOX = 0x0134;
     private const int WM_CTLCOLORBTN = 0x0135;
     private const int TRANSPARENT = 0x0001;
-    private const int chx1 = 0x0410;
-    private const int chx2 = 0x0411;
-    private const int cmb4 = 0x0473;
-    private const int grp1 = 0x0430;
     private const int grp2 = 0x0431;
-    private const int psh3 = 0x0402;
-    private const int psh15 = 0x040e;
-    private const int stc4 = 0x0443;
-    private const int stc6 = 0x0445;
 
-    private static int[] UnusedCtrls;
     private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
     private readonly StringBuilder builder = new(256);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
@@ -102,7 +93,7 @@ public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialo
             case WM_CTLCOLORBTN:
                 return WmCtlColor(wParam);
             case WM_COMMAND:
-                return DefHookProc(hWnd, WM_COMMAND, wParam, lParam);
+                return DefHookProc(hWnd, msg, wParam, lParam);
             case WM_DESTROY:
                 DeleteObject(hBrush);
                 break;
@@ -127,45 +118,6 @@ public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialo
             if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)))
             {
                 new GroupBoxNativeWindow(hCtrl);
-            }
-
-            if (UnusedCtrls == null)
-            {
-                List<int> tmp = [];
-                tmp.Add(stc6);
-
-                if (!f.ShowColor)
-                {
-                    tmp.Add(stc4);
-                    tmp.Add(cmb4);
-                }
-
-                if (!f.ShowApply)
-                {
-                    tmp.Add(psh3);
-                }
-
-                if (!f.ShowHelp)
-                {
-                    tmp.Add(psh15);
-                }
-
-                if (!f.ShowEffects)
-                {
-                    tmp.Add(grp1);
-                    tmp.Add(chx1);
-                    tmp.Add(chx2);
-                }
-
-                UnusedCtrls = [.. tmp];
-            }
-
-            foreach (var ctrl in UnusedCtrls)
-            {
-                if (hCtrl = GetDlgItem(hWnd, ctrl))
-                {
-                    DestroyWindow(hCtrl);
-                }
             }
         }
 
@@ -249,9 +201,6 @@ public class CommonDialogHelper(CommonDialog dialog, AppForm owner, string dialo
 
     [DllImport(App.User32Dll)]
     private static extern BOOL GetWindowRect(HWND hWnd, out RECT lpRect);
-
-    [DllImport(App.User32Dll)]
-    private static extern BOOL DestroyWindow(HWND hWnd);
 
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     private static extern BOOL SetWindowText(HWND hWnd, string lpString);

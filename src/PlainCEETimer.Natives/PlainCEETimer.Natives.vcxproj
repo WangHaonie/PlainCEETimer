@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DisplayHelper\DisplayHelper.h" />
+    <ClInclude Include="FontDialog\FontDialog.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ListViewHelper\ListViewHelper.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
+    <ClCompile Include="FontDialog\FontDialog.cpp" />
     <ClCompile Include="ListViewHelper\ListViewHelper.cpp" />
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
     <ClCompile Include="pch.cpp">
