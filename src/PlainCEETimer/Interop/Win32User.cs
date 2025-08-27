@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
@@ -57,7 +58,7 @@ public static class Win32User
         return username;
     }
 
-    [DllImport("kernel32.dll")]
+    [DllImport(App.Kernel32Dll)]
     private static extern int WTSGetActiveConsoleSessionId();
 
     [DllImport("wtsapi32.dll")]

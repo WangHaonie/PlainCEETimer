@@ -47,6 +47,6 @@ public static class MemoryCleaner
     [DllImport(App.NativesDll, EntryPoint = "#5")]
     private static extern void ClearMemory();
 
-    [DllImport("kernel32.dll")]
+    [DllImport(App.Kernel32Dll)]
     private static extern uint GetCurrentProcessId();
 }

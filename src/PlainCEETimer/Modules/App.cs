@@ -36,7 +36,7 @@ public static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.6";
-    public const string AppBuildDate = "2025/8/26";
+    public const string AppBuildDate = "2025/8/27";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -44,6 +44,7 @@ public static class App
     public const string UxThemeDll = "uxtheme.dll";
     public const string Shell32Dll = "shell32.dll";
     public const string Gdi32Dll = "gdi32.dll";
+    public const string Kernel32Dll = "kernel32.dll";
     public const string DateTimeFormat = "yyyyMMddHHmmss";
     private const string UEFilePrefix = "UnhandledException_";
 
