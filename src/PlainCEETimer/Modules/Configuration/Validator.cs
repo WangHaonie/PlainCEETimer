@@ -37,7 +37,11 @@ public static class Validator
 
     public static void Save()
     {
-        File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+        try
+        {
+            File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+        }
+        catch { }
     }
 
     public static AppConfig Read()
