@@ -51,6 +51,7 @@ public static class App
     private static bool IsMainProcess;
     private static bool IsClosing;
     private static string[] Args;
+    private static int ArgsLength;
     private static Mutex MainMutex;
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
@@ -67,6 +68,7 @@ public static class App
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
         AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
         Args = Array.ConvertAll(args, x => x.ToLower());
+        ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);
         MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
@@ -76,7 +78,7 @@ public static class App
 
             if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
             {
-                if (Args.Length == 0)
+                if (ArgsLength == 0)
                 {
                     new Action(UacHelper.CheckAdmin).Start();
                     Win32TaskScheduler.Initialize();
@@ -126,9 +128,12 @@ public static class App
                 ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
             }
         }
-        else if (!(Args[0] == "/run" && Args.Length > 3 && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
+        else if (!(ArgsLength > 3 && Args[0] == "/run" && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
         {
-            MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
+            if (ArgsLength != 0)
+            {
+                MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
+            }
         }
 
         if (!IsMainProcess)
@@ -207,7 +212,7 @@ public static class App
 
     private static string GetNextArg()
     {
-        if (Args.Length > 1)
+        if (ArgsLength > 1)
         {
             return Args[1];
         }
