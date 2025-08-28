@@ -19,9 +19,6 @@ public static class Natives
 
     [DllImport(App.User32Dll)]
     public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SWP uFlags);
-
-    [DllImport(App.NativesDll, EntryPoint = "#24")]
-    public static extern BOOL RunFontDialog(HWND hWndOwner, ref LOGFONT lpLogFont, WNDPROC lpfnHookProc, int nSizeMin, int nSizeMax);
 }
 
 [Flags]

@@ -13,11 +13,6 @@ public sealed class PlainFontDialog(Font existing) : CommonDialog
     private CommonDialogHelper Helper;
     private Font m_Font = existing;
 
-    public override void Reset()
-    {
-        m_Font = default;
-    }
-
     public DialogResult ShowDialog(AppForm owner)
     {
         try
@@ -39,7 +34,7 @@ public sealed class PlainFontDialog(Font existing) : CommonDialog
     protected override bool RunDialog(IntPtr hwndOwner)
     {
         var lf = LOGFONT.FromFont(m_Font);
-        var result = (bool)Natives.RunFontDialog(hwndOwner, ref lf, HookProc, Validator.MinFontSize, Validator.MaxFontSize);
+        var result = (bool)CommonDialogs.RunFontDialog(hwndOwner, ref lf, HookProc, Validator.MinFontSize, Validator.MaxFontSize);
 
         if (result)
         {
@@ -48,5 +43,10 @@ public sealed class PlainFontDialog(Font existing) : CommonDialog
         }
 
         return result;
+    }
+
+    public override void Reset()
+    {
+        m_Font = default;
     }
 }

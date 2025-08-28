@@ -51,7 +51,7 @@
     <ClInclude Include="ShellLink\ShellLink.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="FontDialog\FontDialog.h">
+    <ClInclude Include="CommonDialogs\CommonDialogs.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClCompile Include="ShellLink\ShellLink.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="FontDialog\FontDialog.cpp">
+    <ClCompile Include="CommonDialogs\CommonDialogs.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
