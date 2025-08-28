@@ -5,6 +5,7 @@
 #pragma once
 
 #include <ColorDlg.h>
+#include <dlgs.h>
 
 #define IDD_CHOOSECOLOR					998
 #define IDD_CHOOSEFONT					999
