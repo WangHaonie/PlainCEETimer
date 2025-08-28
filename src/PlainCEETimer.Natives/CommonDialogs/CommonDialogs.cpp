@@ -1,6 +1,29 @@
 #include "pch.h"
 #include "CommonDialogs.h"
 
+BOOL RunColorDialog(HWND hWndOwner, COLORREF* lpColor, LPFRHOOKPROC lpfnHookProc, COLORREF* lpCustomColors)
+{
+	CHOOSECOLOR cc = {};
+	cc.lStructSize = sizeof(cc);
+	cc.hwndOwner = hWndOwner;
+	cc.hInstance = reinterpret_cast<HWND>(GetModuleHandleW(LIBRARYNAME));
+	cc.rgbResult = *lpColor;
+	cc.lpCustColors = lpCustomColors;
+	cc.Flags = CC_RGBINIT | CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLEHOOK | CC_ENABLETEMPLATE;
+	cc.lpfnHook = lpfnHookProc;
+	cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
+
+	BOOL result = ChooseColor(&cc);
+
+	if (result)
+	{
+		lpColor = &cc.rgbResult;
+		lpCustomColors = cc.lpCustColors;
+	}
+
+	return result;
+}
+
 cexport(BOOL) RunFontDialog(HWND hWndOwner, LPLOGFONT lpLogFont, LPFRHOOKPROC lpfnHookProc, int nSizeMin, int nSizeMax)
 {
 	CHOOSEFONT cf = {};

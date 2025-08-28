@@ -126,6 +126,11 @@ public readonly struct COLORREF
         Value = color.ToWin32();
     }
 
+    public Color ToColor()
+    {
+        return Value.ToColor();
+    }
+
     public static implicit operator COLORREF(Color c)
     {
         return new(c);
@@ -138,6 +143,22 @@ public readonly struct COLORREF
             var color = Value.ToColor();
             return $"RGB({color.R}, {color.G}, {color.B})";
         }
+    }
+}
+
+public readonly struct COLORREFS
+{
+    private readonly IntPtr Value;
+
+    public COLORREFS(int[] colors, IntPtr ptr)
+    {
+        Marshal.Copy(colors, 0, ptr, 16);
+        Value = ptr;
+    }
+
+    public readonly void ToArray(int[] colors)
+    {
+        Marshal.Copy(Value, colors, 0, 16);
     }
 }
 

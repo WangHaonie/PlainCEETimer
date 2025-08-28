@@ -30,4 +30,5 @@ EXPORTS
     ShellLinkQueryLnk @21 NONAME
     ReleaseShellLink @22 NONAME
 
-    RunFontDialog @24 NONAME
+    RunColorDialog @24 NONAME
+    RunFontDialog @25 NONAME
