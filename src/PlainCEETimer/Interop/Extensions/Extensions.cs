@@ -12,4 +12,15 @@ public static class Extensions
             return (ushort)(low | (high << 8));
         }
     }
+
+    extension(int value)
+    {
+        public ushort LoWord => (ushort)(value & 0xFFFF);
+        public ushort HiWord => (ushort)(value >> 16);
+
+        public static int MakeLong(ushort low, ushort high)
+        {
+            return low | (high << 16);
+        }
+    }
 }

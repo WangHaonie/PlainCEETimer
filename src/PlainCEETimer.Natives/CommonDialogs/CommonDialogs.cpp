@@ -3,8 +3,7 @@
 
 BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors)
 {
-	CHOOSECOLOR cc = {};
-	cc.lStructSize = sizeof(cc);
+	CHOOSECOLOR cc = { sizeof(cc) };
 	cc.hwndOwner = hWndOwner;
 	cc.hInstance = reinterpret_cast<HWND>(GetModuleHandleW(LIBRARYNAME));
 	cc.rgbResult = *lpColor;
@@ -24,18 +23,17 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
 	return result;
 }
 
-cexport(BOOL) RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeMin, int nSizeMax)
+BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeLimit)
 {
-	CHOOSEFONT cf = {};
-	cf.lStructSize = sizeof(cf);
+	CHOOSEFONT cf = { sizeof(cf) };
 	cf.hwndOwner = hWndOwner;
 	cf.lpLogFont = lpLogFont;
 	cf.Flags = CF_NOVERTFONTS | CF_TTONLY | CF_FORCEFONTEXIST | CF_LIMITSIZE | CF_SCRIPTSONLY | CF_INITTOLOGFONTSTRUCT | CF_ENABLEHOOK | CF_ENABLETEMPLATE;
 	cf.lpfnHook = lpfnHookProc;
 	cf.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSEFONT);
 	cf.hInstance = GetModuleHandleW(LIBRARYNAME);
-	cf.nSizeMin = nSizeMin;
-	cf.nSizeMax = nSizeMax;
+	cf.nSizeMin = LOWORD(nSizeLimit);
+	cf.nSizeMax = HIWORD(nSizeLimit);
 
 	BOOL result = ChooseFont(&cf);
 

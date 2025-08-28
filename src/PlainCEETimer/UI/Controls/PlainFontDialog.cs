@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.UI.Controls;
@@ -20,12 +21,11 @@ public sealed class PlainFontDialog : PlainCommonDialog
     protected override BOOL RunDialog(HWND hWndOwner)
     {
         var lf = LOGFONT.FromFont(font);
-        var result = CommonDialogs.RunFontDialog(hWndOwner, DialogHook, ref lf, Validator.MinFontSize, Validator.MaxFontSize);
+        var result = CommonDialogs.RunFontDialog(hWndOwner, DialogHook, ref lf, int.MakeLong(Validator.MinFontSize, Validator.MaxFontSize));
 
         if (result)
         {
-            var tmp = lf.ToFont();
-            font = new(tmp.FontFamily, tmp.SizeInPoints, tmp.Style, GraphicsUnit.Point, tmp.GdiCharSet, tmp.GdiVerticalFont);
+            font = lf.ToFont();
         }
 
         return result;

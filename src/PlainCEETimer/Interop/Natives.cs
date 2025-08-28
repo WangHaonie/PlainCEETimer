@@ -146,12 +146,13 @@ public readonly struct COLORREF
     }
 }
 
-public readonly struct COLORREFS
+public readonly struct CUSTCOLORS : IDisposable
 {
     private readonly IntPtr Value;
 
-    public COLORREFS(int[] colors, IntPtr ptr)
+    public CUSTCOLORS(int[] colors)
     {
+        var ptr = Marshal.AllocHGlobal(16 * 4);
         Marshal.Copy(colors, 0, ptr, 16);
         Value = ptr;
     }
@@ -159,6 +160,11 @@ public readonly struct COLORREFS
     public readonly void ToArray(int[] colors)
     {
         Marshal.Copy(Value, colors, 0, 16);
+    }
+
+    public void Dispose()
+    {
+        Marshal.FreeHGlobal(Value);
     }
 }
 
@@ -302,7 +308,8 @@ public struct LOGFONT
 
     public readonly Font ToFont()
     {
-        return Font.FromLogFont(this);
+        var tmp = Font.FromLogFont(this);
+        return new(tmp.FontFamily, tmp.SizeInPoints, tmp.Style, GraphicsUnit.Point, tmp.GdiCharSet, tmp.GdiVerticalFont);
     }
 
     public static LOGFONT FromFont(Font font)

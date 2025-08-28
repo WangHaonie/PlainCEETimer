@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -17,8 +16,8 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
     public PlainColorDialog(AppForm owner, Color existing)
     {
-        Parent = owner;
         color = existing;
+        Parent = owner;
         Text = "选取颜色 - 高考倒计时";
     }
 
@@ -42,25 +41,16 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
     protected override BOOL RunDialog(HWND hWndOwner)
     {
-        var ptr = Marshal.AllocCoTaskMem(64);
+        using var colors = new CUSTCOLORS(customColors);
+        var cr = (COLORREF)color;
+        var result = CommonDialogs.RunColorDialog(hWndOwner, DialogHook, ref cr, colors);
 
-        try
+        if (result)
         {
-            var color = (COLORREF)this.color;
-            var colors = new COLORREFS(customColors, ptr);
-            var result = CommonDialogs.RunColorDialog(hWndOwner, DialogHook, ref color, colors);
-
-            if (result)
-            {
-                this.color = color.ToColor();
-                colors.ToArray(customColors);
-            }
-
-            return result;
+            color = cr.ToColor();
+            colors.ToArray(customColors);
         }
-        finally
-        {
-            Marshal.FreeCoTaskMem(ptr);
-        }
+
+        return result;
     }
 }
