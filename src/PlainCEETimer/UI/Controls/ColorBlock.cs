@@ -180,9 +180,9 @@ public sealed partial class ColorBlock : PlainLabel
     {
         if (!IsPreview)
         {
-            var dialog = new PlainColorDialog();
+            var dialog = new PlainColorDialog(ParentForm, Color);
 
-            if (dialog.ShowDialog(Color, ParentForm) == DialogResult.OK)
+            if (dialog.Show() == DialogResult.OK)
             {
                 Color = dialog.Color;
             }

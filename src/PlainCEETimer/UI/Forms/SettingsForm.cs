@@ -287,9 +287,9 @@ public sealed class SettingsForm : AppForm
 
                         ButtonFont = b.Button("选择字体(&F)", true, (_, _) =>
                         {
-                            var dialog = new PlainFontDialog(SelectedFont);
+                            var dialog = new PlainFontDialog(this, SelectedFont);
 
-                            if (dialog.ShowDialog(this) == DialogResult.OK)
+                            if (dialog.Show() == DialogResult.OK)
                             {
                                 SettingsChanged();
                                 ChangeDisplayFont(dialog.Font);

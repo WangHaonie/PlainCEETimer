@@ -2,5 +2,5 @@
 
 #include <commdlg.h>
 
-cexport(BOOL) RunColorDialog(HWND hWndOwner, COLORREF* lpColor, LPFRHOOKPROC lpfnHookProc, COLORREF* lpCustomColors);
-cexport(BOOL) RunFontDialog(HWND hWndOwner, LPLOGFONT lpLogFont, LPFRHOOKPROC lpfnHookProc, int nSizeMin, int nSizeMax);
+cexport(BOOL) RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
+cexport(BOOL) RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeMin, int nSizeMax);

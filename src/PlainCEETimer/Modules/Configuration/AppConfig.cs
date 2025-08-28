@@ -58,7 +58,19 @@ public class AppConfig
     } = [];
 
     [JsonConverter(typeof(CustomColorsConverter))]
-    public int[] CustomColors { get; set; } = DefaultValues.ColorDialogColors;
+    public int[] CustomColors
+    {
+        get;
+        set
+        {
+            if (value != null && value.Length < 16)
+            {
+                throw new Exception();
+            }
+
+            field = value;
+        }
+    } = DefaultValues.ColorDialogColors;
 
     [JsonConverter(typeof(FontFormatConverter))]
     public Font Font { get; set; } = DefaultValues.CountdownDefaultFont;

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CommonDialogs.h"
 
-BOOL RunColorDialog(HWND hWndOwner, COLORREF* lpColor, LPFRHOOKPROC lpfnHookProc, COLORREF* lpCustomColors)
+BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors)
 {
 	CHOOSECOLOR cc = {};
 	cc.lStructSize = sizeof(cc);
@@ -24,7 +24,7 @@ BOOL RunColorDialog(HWND hWndOwner, COLORREF* lpColor, LPFRHOOKPROC lpfnHookProc
 	return result;
 }
 
-cexport(BOOL) RunFontDialog(HWND hWndOwner, LPLOGFONT lpLogFont, LPFRHOOKPROC lpfnHookProc, int nSizeMin, int nSizeMax)
+cexport(BOOL) RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeMin, int nSizeMax)
 {
 	CHOOSEFONT cf = {};
 	cf.lStructSize = sizeof(cf);

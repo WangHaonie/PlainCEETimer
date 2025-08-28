@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -8,48 +7,25 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainColorDialog : CommonDialog
+public sealed class PlainColorDialog : PlainCommonDialog
 {
-    public Color Color => m_Color;
+    public int[] CustomColors => (int[])customColors.Clone();
+    public Color Color => color;
 
-    public int[] CustomColors
+    private Color color;
+    private readonly int[] customColors = App.AppConfig.CustomColors;
+
+    public PlainColorDialog(AppForm owner, Color existing)
     {
-        get
-        {
-            return (int[])m_CustomColors.Clone();
-        }
-        set
-        {
-            int num = (value == null) ? 0 : Math.Min(value.Length, 16);
-
-            if (num > 0)
-            {
-                Array.Copy(value, 0, m_CustomColors, 0, num);
-            }
-
-            for (int i = num; i < 16; i++)
-            {
-                m_CustomColors[i] = 16777215;
-            }
-        }
+        Parent = owner;
+        color = existing;
+        Text = "选取颜色 - 高考倒计时";
     }
 
-    private CommonDialogHelper Helper;
-    private int[] m_CustomColors;
-    private Color m_Color;
-
-    public PlainColorDialog()
+    public override DialogResult Show()
     {
-        m_CustomColors = new int[16];
-        CustomColors = App.AppConfig.CustomColors;
-    }
-
-    public DialogResult ShowDialog(Color existing, AppForm owner)
-    {
-        m_Color = existing;
-        Helper = new(this, owner, "选取颜色 - 高考倒计时", base.HookProc);
         var previous = CustomColors;
-        var result = ShowDialog(owner);
+        var result = base.Show();
 
         if (result == DialogResult.OK)
         {
@@ -64,25 +40,20 @@ public sealed class PlainColorDialog : CommonDialog
         return result;
     }
 
-    protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-    {
-        return Helper.HookProc(hWnd, msg, wparam, lparam);
-    }
-
-    protected override bool RunDialog(IntPtr hwndOwner)
+    protected override BOOL RunDialog(HWND hWndOwner)
     {
         var ptr = Marshal.AllocCoTaskMem(64);
 
         try
         {
-            var color = (COLORREF)m_Color;
-            var colors = new COLORREFS(m_CustomColors, ptr);
-            var result = (bool)CommonDialogs.RunColorDialog(hwndOwner, ref color, HookProc, colors);
+            var color = (COLORREF)this.color;
+            var colors = new COLORREFS(customColors, ptr);
+            var result = CommonDialogs.RunColorDialog(hWndOwner, DialogHook, ref color, colors);
 
             if (result)
             {
-                m_Color = color.ToColor();
-                colors.ToArray(m_CustomColors);
+                this.color = color.ToColor();
+                colors.ToArray(customColors);
             }
 
             return result;
@@ -91,11 +62,5 @@ public sealed class PlainColorDialog : CommonDialog
         {
             Marshal.FreeCoTaskMem(ptr);
         }
-    }
-
-    public override void Reset()
-    {
-        m_Color = Color.Black;
-        CustomColors = null;
     }
 }
