@@ -9,9 +9,9 @@ namespace PlainCEETimer.UI.Controls;
 public sealed class PlainColorDialog : PlainCommonDialog
 {
     public int[] CustomColors => (int[])customColors.Clone();
-    public Color Color => color;
+    public Color Color => color.ToColor();
 
-    private Color color;
+    private COLORREF color;
     private readonly int[] customColors = App.AppConfig.CustomColors;
 
     public PlainColorDialog(AppForm owner, Color existing)
@@ -42,12 +42,10 @@ public sealed class PlainColorDialog : PlainCommonDialog
     protected override BOOL RunDialog(HWND hWndOwner)
     {
         using var colors = new CUSTCOLORS(customColors);
-        var cr = (COLORREF)color;
-        var result = CommonDialogs.RunColorDialog(hWndOwner, DialogHook, ref cr, colors);
+        var result = CommonDialogs.RunColorDialog(hWndOwner, DialogHook, ref color, colors);
 
         if (result)
         {
-            color = cr.ToColor();
             colors.ToArray(customColors);
         }
 

@@ -16,7 +16,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
 
 	if (result)
 	{
-		lpColor = &cc.rgbResult;
+		*lpColor = cc.rgbResult;
 		lpCustomColors = cc.lpCustColors;
 	}
 
