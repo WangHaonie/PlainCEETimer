@@ -9,13 +9,11 @@ public abstract class PlainCommonDialog : CommonDialog
     public string Text { get; set; }
     public AppForm Parent { get; set; }
 
-    protected WNDPROC DialogHook => hook;
-
     private CommonDialogHelper Helper;
-    private WNDPROC hook;
 
     public virtual DialogResult Show()
     {
+        Helper = new(this, Parent, Text, base.HookProc);
         return ShowDialog(Parent);
     }
 
@@ -25,8 +23,6 @@ public abstract class PlainCommonDialog : CommonDialog
     {
         try
         {
-            hook = HookProc;
-            Helper = new(this, Parent, Text, base.HookProc);
             return RunDialog((HWND)hwndOwner);
         }
         catch
