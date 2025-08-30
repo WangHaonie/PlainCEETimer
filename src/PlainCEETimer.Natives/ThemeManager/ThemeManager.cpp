@@ -75,8 +75,11 @@ https://stackoverflow.com/a/62811758
 
 void FlushWindow(HWND hWnd, BOOL newStyle)
 {
-    int enabled = 1;
-    DwmSetWindowAttribute(hWnd, newStyle ? 20 : 19, &enabled, sizeof(enabled));
+    if (hWnd)
+    {
+        int enabled = 1;
+        DwmSetWindowAttribute(hWnd, newStyle ? 20 : 19, &enabled, sizeof(enabled));
+    }
 }
 
 void FlushApp()
@@ -110,6 +113,9 @@ void FlushApp()
 
 void SetWindowBorderColor(HWND hWnd, BOOL enabled, COLORREF color)
 {
-    COLORREF c = enabled ? color : DWMWA_COLOR_DEFAULT;
-    DwmSetWindowAttribute(hWnd, DWMWA_BORDER_COLOR, &c, sizeof(c));
+    if (hWnd)
+    {
+        COLORREF c = enabled ? color : DWMWA_COLOR_DEFAULT;
+        DwmSetWindowAttribute(hWnd, DWMWA_BORDER_COLOR, &c, sizeof(c));
+    }
 }

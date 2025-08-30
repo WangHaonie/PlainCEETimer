@@ -58,7 +58,7 @@ void ShellLinkCreateLnk(LnkInfo shLnkInfo)
 
 void ShellLinkQueryLnk(LnkInfo* lpshLnkInfo)
 {
-    if (initialized &&
+    if (initialized && lpshLnkInfo &&
         SUCCEEDED(ppf->Load(lpshLnkInfo->lnkPath, STGM_READ)))
     {
         SHGetPropertyStoreFromParsingName(lpshLnkInfo->lnkPath, nullptr, GPS_DEFAULT, IID_PPV_ARGS(&pps));

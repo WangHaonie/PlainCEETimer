@@ -27,7 +27,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
 
 BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeLimit)
 {
-    if (hWndOwner && lpfnHookProc && lpLogFont && nSizeLimit > 0)
+    if (hWndOwner && lpfnHookProc && lpLogFont && IsPositive(nSizeLimit))
     {
         CHOOSEFONT cf = { sizeof(cf) };
         cf.hwndOwner = hWndOwner;

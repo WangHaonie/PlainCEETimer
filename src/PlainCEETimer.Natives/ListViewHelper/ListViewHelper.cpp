@@ -13,5 +13,8 @@ https://learn.microsoft.com/zh-cn/windows/win32/api/commctrl/nf-commctrl-listvie
 
 void ListViewSelectAllItems(HWND hLV, BOOL selected)
 {
-    ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0, LVIS_SELECTED);
+	if (hLV)
+	{
+		ListView_SetItemState(hLV, -1, selected ? LVIS_SELECTED : 0, LVIS_SELECTED);
+	}
 }
