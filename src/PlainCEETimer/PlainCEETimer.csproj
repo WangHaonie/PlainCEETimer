@@ -105,7 +105,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interop\CommonDialogs.cs" />
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Extensions\Extensions.cs" />
     <Compile Include="Interop\Natives.cs" />
@@ -209,7 +208,6 @@
     <Compile Include="UI\Controls\PlainColorDialog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Interop\CommonDialogHelper.cs" />
     <Compile Include="Interop\Win32User.cs" />
     <Compile Include="UI\ContextMenuBuilder.cs" />
     <Compile Include="Interop\IconHelper.cs" />

@@ -14,15 +14,12 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
 		cc.lpfnHook = lpfnHookProc;
 		cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
 
-		BOOL result = ChooseColor(&cc);
-
-		if (result)
+		if (ChooseColor(&cc))
 		{
 			*lpColor = cc.rgbResult;
 			lpCustomColors = cc.lpCustColors;
+			return TRUE;
 		}
-
-		return result;
 	}
 
 	return FALSE;
@@ -42,13 +39,12 @@ BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFon
 		cf.nSizeMin = LOWORD(nSizeLimit);
 		cf.nSizeMax = HIWORD(nSizeLimit);
 
-		BOOL result = ChooseFont(&cf);
-
-		if (result)
+		if (ChooseFont(&cf))
 		{
 			lpLogFont = cf.lpLogFont;
+			return TRUE;
 		}
-
-		return result;
 	}
+
+	return FALSE;
 }

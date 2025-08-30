@@ -36,7 +36,7 @@ public static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.7";
-    public const string AppBuildDate = "2025/8/29";
+    public const string AppBuildDate = "2025/8/30";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -148,21 +148,21 @@ public static class App
     {
         MessageX.Info(
             """
-                可用的命令行参数: 
+            可用的命令行参数: 
 
-                /h
-                        显示此帮助信息
-                /ac
-                        检测当前用户是否具有管理员权限
-                /fr [<版本号>]
-                        强制下载并安装指定的版本，留空则当前版本，推荐
-                        在特殊情况下使用，不支持老版本
-                /op
-                        优化本程序，提升运行速度
-                /lnk [/custom]
-                        向开始菜单文件夹和桌面创建指向本程序的快捷方式
-                        /custom 表示用户将自行选择保存快捷方式的文件夹
-                """);
+            /h
+                    显示此帮助信息
+            /ac
+                    检测当前用户是否具有管理员权限
+            /fr [<版本号>]
+                    强制下载并安装指定的版本，留空则当前版本，推荐
+                    在特殊情况下使用，不支持老版本
+            /op
+                    优化本程序，提升运行速度
+            /lnk [/custom]
+                    向开始菜单文件夹和桌面创建指向本程序的快捷方式
+                    /custom 表示用户将自行选择保存快捷方式的文件夹
+            """);
     }
 
     public static void Exit(bool restart = false)

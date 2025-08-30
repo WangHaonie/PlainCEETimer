@@ -289,7 +289,7 @@ public sealed class SettingsForm : AppForm
                         {
                             var dialog = new PlainFontDialog(this, SelectedFont);
 
-                            if (dialog.Show() == DialogResult.OK)
+                            if (dialog.ShowDialog() == DialogResult.OK)
                             {
                                 SettingsChanged();
                                 ChangeDisplayFont(dialog.Font);

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -15,43 +16,32 @@ public sealed class PlainColorDialog : PlainCommonDialog
     private COLORREF color;
     private readonly int[] customColors;
 
-    public PlainColorDialog(AppForm owner, Color existing)
+    public PlainColorDialog(AppForm owner, Color existing) : base(owner, "选取颜色 - 高考倒计时")
     {
         color = existing;
-        Parent = owner;
-        Text = "选取颜色 - 高考倒计时";
         customColors = DefaultValues.ColorDialogColors.Copy();
         customColors.PopulateWith(App.AppConfig.CustomColors);
     }
 
-    public override DialogResult Show()
+    protected override BOOL RunDialog(HWND hWndOwner)
     {
+        using var colors = new CUSTCOLORS(customColors);
         var previous = customColors.Copy();
-        var result = base.Show();
+        var result = RunColorDialog(hWndOwner, HookProc, ref color, colors);
 
-        if (result == DialogResult.OK)
+        if (result)
         {
-            var tmp = customColors;
+            colors.ToArray(customColors);
 
-            if (!tmp.SequenceEqual(previous))
+            if (!customColors.SequenceEqual(previous))
             {
-                App.AppConfig.CustomColors = tmp;
+                App.AppConfig.CustomColors = customColors;
             }
         }
 
         return result;
     }
 
-    protected override BOOL RunDialog(HWND hWndOwner)
-    {
-        using var colors = new CUSTCOLORS(customColors);
-        var result = CommonDialogs.RunColorDialog(hWndOwner, HookProc, ref color, colors);
-
-        if (result)
-        {
-            colors.ToArray(customColors);
-        }
-
-        return result;
-    }
+    [DllImport(App.NativesDll, EntryPoint = "#24")]
+    private static extern BOOL RunColorDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);
 }
