@@ -123,6 +123,6 @@ public static class ThemeManager
     [DllImport("dwmapi.dll")]
     private static extern void DwmGetColorizationColor(out int pcrColorization, ref BOOL pfOpaqueBlend);
 
-    [DllImport(App.NativesDll, EntryPoint = "#23")]
+    [DllImport(App.NativesDll, EntryPoint = "#12")]
     public static extern void SetBorderColor(HWND hWnd, BOOL enabled, COLORREF color);
 }

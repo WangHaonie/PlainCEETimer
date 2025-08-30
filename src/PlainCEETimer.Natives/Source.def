@@ -14,21 +14,21 @@ EXPORTS
 
     FlushApp @10 NONAME
     FlushWindow @11 NONAME
-    SetWindowBorderColor @23 NONAME
+    SetWindowBorderColor @12 NONAME
 
-    EnumSystemDisplays @12 NONAME
+    EnumSystemDisplays @13 NONAME
 
-    InitializeTaskScheduler @13 NONAME
-    TaskSchdImportTaskFromXml @14 NONAME
-    TaskSchdExportTaskAsXml @15 NONAME
-    TaskSchdEnableTask @16 NONAME
-    TaskSchdDeleteTask @17 NONAME
-    ReleaseTaskScheduler @18 NONAME
+    InitializeTaskScheduler @14 NONAME
+    TaskSchdImportTaskFromXml @15 NONAME
+    TaskSchdExportTaskAsXml @16 NONAME
+    TaskSchdEnableTask @17 NONAME
+    TaskSchdDeleteTask @18 NONAME
+    ReleaseTaskScheduler @19 NONAME
 
-    InitializeShellLink @19 NONAME
-    ShellLinkCreateLnk @20 NONAME
-    ShellLinkQueryLnk @21 NONAME
-    ReleaseShellLink @22 NONAME
+    InitializeShellLink @20 NONAME
+    ShellLinkCreateLnk @21 NONAME
+    ShellLinkQueryLnk @22 NONAME
+    ReleaseShellLink @23 NONAME
 
     RunColorDialog @24 NONAME
     RunFontDialog @25 NONAME
