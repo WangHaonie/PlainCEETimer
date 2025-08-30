@@ -285,7 +285,7 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelFont = b.Label(null),
 
-                        ButtonFont = b.Button("选择字体(&F)", true, (_, _) =>
+                        ButtonFont = b.Button("更改(&F)", (_, _) =>
                         {
                             var dialog = new PlainFontDialog(this, SelectedFont);
 
@@ -296,7 +296,7 @@ public sealed class SettingsForm : AppForm
                             }
                         }),
 
-                        ButtonDefaultFont = b.Button("恢复默认(&H)", true, (_, _) =>
+                        ButtonDefaultFont = b.Button("重置(&H)", (_, _) =>
                         {
                             ChangeDisplayFont(DefaultValues.CountdownDefaultFont);
                             SettingsChanged();
@@ -311,7 +311,7 @@ public sealed class SettingsForm : AppForm
                         LabelColorP3 = b.Label("[3]考试后"),
                         LabelColorWelcome = b.Label("[4]欢迎信息"),
 
-                        ButtonDefaultColor = b.Button("恢复默认(&M)", true, ContextMenuBuilder.Build(b =>
+                        ButtonDefaultColor = b.Button("重置(&M)", ContextMenuBuilder.Build(b =>
                         [
                             b.Menu("白底(&L)",
                             [

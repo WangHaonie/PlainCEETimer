@@ -53,11 +53,6 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainButton Button(string text, bool autoSize, ContextMenu menu)
-    {
-        return Button(text, autoSize, null, menu);
-    }
-
     public PlainButton Button(string text, bool autoSize, EventHandler onClick)
     {
         return Button(text, autoSize, onClick, null);
