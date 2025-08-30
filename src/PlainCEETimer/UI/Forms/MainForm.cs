@@ -101,7 +101,7 @@ public sealed class MainForm : AppForm
             ApplyLocation();
         };
 
-        SystemEvents.SessionEnding += (_, _) => Validator.Save();
+        SystemEvents.SessionEnding += (_, _) => Validator.SaveConfig();
     }
 
     protected override void WndProc(ref Message m)
@@ -196,6 +196,7 @@ public sealed class MainForm : AppForm
     private void MainForm_LocationRefreshed()
     {
         AppConfig.Location = Location;
+        Validator.DemandConfig();
     }
 
     private void ExamItems_Click(object sender, EventArgs e)
@@ -209,6 +210,7 @@ public sealed class MainForm : AppForm
             UnselectAllExamItems();
             ExamIndex = index;
             AppConfig.ExamIndex = index;
+            Validator.DemandConfig();
             LoadExams();
             TryRunCountdown();
             UpdateExamSelection();
@@ -227,6 +229,7 @@ public sealed class MainForm : AppForm
     private void ExamAutoSwitch(object sender, EventArgs e)
     {
         AppConfig.ExamIndex = (ExamIndex + 1) % Exams.Length;
+        Validator.DemandConfig();
         LoadExams();
         TryRunCountdown();
         UnselectAllExamItems();
@@ -448,7 +451,6 @@ public sealed class MainForm : AppForm
                     {
                         if (dr == DialogResult.OK)
                         {
-                            Validator.Save();
                             RefreshSettings();
                             CountdownCallback(null);
                         }
@@ -786,6 +788,7 @@ public sealed class MainForm : AppForm
         {
             ScreenIndex = 0;
             AppConfig.Display.ScreenIndex = 0;
+            Validator.DemandConfig();
         }
 
         SelectedScreenRect = screens[ScreenIndex].WorkingArea;

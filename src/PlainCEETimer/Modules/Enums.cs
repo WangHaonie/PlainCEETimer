@@ -34,3 +34,20 @@ public enum UacNotifyLevel
     Disabled,
     Unknown
 }
+
+public enum ConfigField
+{
+    GlobalColorsLength,
+    ExamNameLength,
+    CustomRulesDissimilarity,
+    ExamsDissimilarity,
+    DateTimeLength,
+    CustomTextLength,
+    CustomTextFormat,
+    ColorSetPartsLength,
+    ColorSetContrast,
+    CustomRulePhase,
+    CustomRuleTick,
+    CountdownFont,
+    PointPartsLength
+}

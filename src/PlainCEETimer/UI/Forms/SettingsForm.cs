@@ -839,45 +839,38 @@ public sealed class SettingsForm : AppForm
     {
         Startup.SetAll(CheckBoxStartup.Checked, (bool)CheckBoxStartup.Tag);
 
-        App.AppConfig = new()
-        {
-            General = new()
-            {
-                AutoSwitch = CheckBoxAutoSwitch.Checked,
-                Interval = ComboBoxAutoSwitchInterval.SelectedIndex,
-                TrayIcon = CheckBoxTrayIcon.Checked,
-                TrayText = CheckBoxTrayText.Checked,
-                MemClean = CheckBoxMemClean.Checked,
-                TopMost = CheckBoxTopMost.Checked,
-                UniTopMost = CheckBoxUniTopMost.Checked,
-                Opacity = (int)NudOpacity.Value,
-                BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color)
-            },
+        var a = App.AppConfig;
+        a.Exams = EditedExamInfo;
+        a.GlobalCustomTexts = EditedCustomTexts;
+        a.GlobalColors = SelectedColors;
+        a.CustomRules = EditedCustomRules;
+        a.Font = SelectedFont;
+        a.NtpServer = ComboBoxNtpServers.SelectedIndex;
+        a.Dark = SelectedTheme;
 
-            Display = new()
-            {
-                ShowXOnly = CheckBoxShowXOnly.Checked,
-                X = ComboBoxShowXOnly.SelectedIndex,
-                EndIndex = ComboBoxCountdownEnd.SelectedIndex,
-                CustomText = CheckBoxRulesMan.Checked,
-                ScreenIndex = ComboBoxScreens.SelectedIndex,
-                Position = (CountdownPosition)ComboBoxPosition.SelectedIndex,
-                Draggable = CheckBoxDraggable.Checked,
-                SeewoPptsvc = CheckBoxPptSvc.Checked
-            },
+        var g = a.General;
+        g.AutoSwitch = CheckBoxAutoSwitch.Checked;
+        g.Interval = ComboBoxAutoSwitchInterval.SelectedIndex;
+        g.TrayIcon = CheckBoxTrayIcon.Checked;
+        g.TrayText = CheckBoxTrayText.Checked;
+        g.MemClean = CheckBoxMemClean.Checked;
+        g.TopMost = CheckBoxTopMost.Checked;
+        g.UniTopMost = CheckBoxUniTopMost.Checked;
+        g.Opacity = (int)NudOpacity.Value;
+        g.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
-            Exams = EditedExamInfo,
-            ExamIndex = AppConfig.ExamIndex,
-            GlobalCustomTexts = EditedCustomTexts,
-            GlobalColors = SelectedColors,
-            CustomRules = EditedCustomRules,
-            CustomColors = AppConfig.CustomColors,
-            Font = SelectedFont,
-            NtpServer = ComboBoxNtpServers.SelectedIndex,
-            Dark = SelectedTheme,
-            Location = AppConfig.Location
-        };
+        var d = a.Display;
+        d.ShowXOnly = CheckBoxShowXOnly.Checked;
+        d.X = ComboBoxShowXOnly.SelectedIndex;
+        d.EndIndex = ComboBoxCountdownEnd.SelectedIndex;
+        d.CustomText = CheckBoxRulesMan.Checked;
+        d.ScreenIndex = ComboBoxScreens.SelectedIndex;
+        d.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
+        d.Draggable = CheckBoxDraggable.Checked;
+        d.SeewoPptsvc = CheckBoxPptSvc.Checked;
 
+        Validator.DemandConfig();
+        Validator.SaveConfig();
         EndModelessDialog(true, false);
     }
 }

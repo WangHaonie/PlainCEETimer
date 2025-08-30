@@ -35,6 +35,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
             if (!customColors.SequenceEqual(previous))
             {
                 App.AppConfig.CustomColors = customColors;
+                Validator.DemandConfig();
             }
         }
 

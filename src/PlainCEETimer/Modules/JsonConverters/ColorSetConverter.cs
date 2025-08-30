@@ -11,18 +11,20 @@ public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
     {
         var colors = serializer.Deserialize<int[]>(reader);
 
-        if (colors.Length == 2)
+        if (colors == null || colors.Length < 2)
         {
-            var fore = Validator.GetColor(colors[0]);
-            var back = Validator.GetColor(colors[1]);
-
-            if (Validator.IsNiceContrast(fore, back))
-            {
-                return new(fore, back);
-            }
+            throw new InvalidTamperingException(ConfigField.ColorSetPartsLength);
         }
 
-        throw new Exception();
+        var fore = Validator.GetColor(colors[0]);
+        var back = Validator.GetColor(colors[1]);
+
+        if (!Validator.IsNiceContrast(fore, back))
+        {
+            throw new InvalidTamperingException(ConfigField.ColorSetContrast);
+        }
+
+        return new(fore, back);
     }
 
     public override void WriteJson(JsonWriter writer, ColorSetObject value, JsonSerializer serializer)

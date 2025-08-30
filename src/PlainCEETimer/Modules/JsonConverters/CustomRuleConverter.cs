@@ -16,14 +16,14 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
 
         if (phaseInt is < 0 or > 2)
         {
-            throw new Exception();
+            throw new InvalidTamperingException(ConfigField.CustomRulePhase);
         }
 
         var tick = TimeSpan.FromSeconds(double.Parse(json[nameof(existingValue.Tick)].ToString()));
 
         if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
         {
-            throw new Exception();
+            throw new InvalidTamperingException(ConfigField.CustomRuleTick);
         }
 
         var fore = Validator.GetColor(json[nameof(ColorSetObject.Fore)]);
@@ -31,7 +31,7 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
 
         if (!Validator.IsNiceContrast(fore, back))
         {
-            throw new Exception();
+            throw new InvalidTamperingException(ConfigField.ColorSetContrast);
         }
 
         var text = json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();

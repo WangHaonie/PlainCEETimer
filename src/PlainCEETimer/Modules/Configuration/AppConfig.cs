@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
@@ -15,7 +14,7 @@ public class AppConfig
     public ExamInfoObject[] Exams
     {
         get;
-        set => Validator.SetValue(ref field, value);
+        set => Validator.SetValue(ref field, value, ConfigField.ExamsDissimilarity);
     } = [];
 
     public int ExamIndex { get; set; }
@@ -44,7 +43,7 @@ public class AppConfig
         {
             if (Validator.ValidateNeeded && value.Length < 4)
             {
-                throw new Exception();
+                throw new InvalidTamperingException(ConfigField.GlobalColorsLength);
             }
 
             field = value;
@@ -54,7 +53,7 @@ public class AppConfig
     public CustomRuleObject[] CustomRules
     {
         get;
-        set => Validator.SetValue(ref field, value);
+        set => Validator.SetValue(ref field, value, ConfigField.CustomRulesDissimilarity);
     } = [];
 
     [JsonConverter(typeof(CustomColorsConverter))]

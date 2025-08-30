@@ -4,12 +4,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
 
-public static class Validator
+internal static class Validator
 {
     public const int MaxExamNameLength = 15;
     public const int MinExamNameLength = 2;
@@ -26,6 +27,10 @@ public static class Validator
     public const string ValueSeparatorString = ", ";
     public const string RegexPhPatterns = @"\{(\w+)\}";
 
+    public static bool ValidateNeeded { get; set; } = true;
+
+    private static bool CanSaveConfig;
+
     private static readonly JsonSerializerSettings Settings = new()
     {
         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
@@ -33,25 +38,41 @@ public static class Validator
         TypeNameHandling = TypeNameHandling.Auto
     };
 
-    internal static bool ValidateNeeded { get; set; } = true;
 
-    public static void Save()
+    public static void DemandConfig()
+    {
+        CanSaveConfig = true;
+    }
+
+    public static void SaveConfig()
     {
         try
         {
-            File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+            if (CanSaveConfig)
+            {
+                File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+                CanSaveConfig = false;
+            }
         }
         catch { }
     }
 
-    public static AppConfig Read()
+    public static AppConfig ReadConfig()
     {
         try
         {
-            return JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(App.ConfigFilePath)) ?? AppConfig.Empty;
+            var config = App.ConfigFilePath;
+
+            if (File.Exists(config))
+            {
+                return JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(config)) ?? AppConfig.Empty;
+            }
+
+            return AppConfig.Empty;
         }
-        catch
+        catch (Exception ex)
         {
+            App.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{App.WriteException(ex)}\n\n" + ex.Message, App.AppName);
             return AppConfig.Empty;
         }
     }
@@ -61,7 +82,7 @@ public static class Validator
         field = (ValidateNeeded && (value > max || value < min)) ? defvalue : value;
     }
 
-    public static void SetValue<T>(ref T[] field, T[] value)
+    public static void SetValue<T>(ref T[] field, T[] value, ConfigField type)
         where T : IListViewData<T>
     {
         if (ValidateNeeded)
@@ -72,7 +93,7 @@ public static class Validator
             {
                 if (!set.Add(item))
                 {
-                    throw new Exception();
+                    throw new InvalidTamperingException(type);
                 }
             }
 
@@ -157,15 +178,20 @@ public static class Validator
     {
         if (time.Ticks is < MinDate or > MaxDate)
         {
-            throw new Exception();
+            throw new InvalidTamperingException(ConfigField.DateTimeLength);
         }
     }
 
     public static void EnsureCustomText(string custom)
     {
-        if (IsInvalidCustomLength(custom.Length) || !VerifyCustomText(custom, out var _))
+        if (IsInvalidCustomLength(custom.Length))
         {
-            throw new Exception();
+            throw new InvalidTamperingException(ConfigField.CustomTextLength);
+        }
+
+        if (!VerifyCustomText(custom, out var _))
+        {
+            throw new InvalidTamperingException(ConfigField.CustomTextFormat);
         }
     }
 

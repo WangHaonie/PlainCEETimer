@@ -9,18 +9,21 @@ namespace PlainCEETimer.Interop;
 public static class ThemeManager
 {
     public static int VerticalScrollBarWidth { get; } = SystemInformation.VerticalScrollBarWidth;
-    public static bool IsDarkModeSupported { get; }
-    public static bool ShouldUseDarkMode { get; }
-    public static SystemTheme CurrentTheme { get; }
-    public static int Initialize;
-    private static readonly BOOL IsNewDwma;
+    public static bool IsDarkModeSupported => Supported;
+    public static bool ShouldUseDarkMode => UseDark;
+    public static SystemTheme CurrentTheme => Theme;
 
-    static ThemeManager()
+    private static bool Supported;
+    private static bool UseDark;
+    private static SystemTheme Theme;
+    private static BOOL IsNewDwma;
+
+    public static void Initialize()
     {
-        if (IsDarkModeSupported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
+        if (Supported = App.OSBuild >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
         {
             var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
-            CurrentTheme = tmp ? SystemTheme.Dark : SystemTheme.Light;
+            Theme = tmp ? SystemTheme.Dark : SystemTheme.Light;
             var option = App.AppConfig.Dark;
 
             if (App.OSBuild >= WindowsBuilds.Windows10_20H1)
@@ -28,7 +31,7 @@ public static class ThemeManager
                 IsNewDwma = BOOL.TRUE;
             }
 
-            if (ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
+            if (UseDark = (option == 0 && tmp) || option == 2)
             {
                 FlushApp();
             }

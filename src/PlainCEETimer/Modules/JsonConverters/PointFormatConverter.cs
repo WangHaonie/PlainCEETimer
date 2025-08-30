@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
@@ -10,12 +11,12 @@ public sealed class PointFormatConverter : JsonConverter<Point>
     {
         var parts = serializer.Deserialize<int[]>(reader);
 
-        if (parts.Length == 2)
+        if (parts == null || parts.Length < 2)
         {
-            return new(parts[0], parts[1]);
+            throw new InvalidTamperingException(ConfigField.PointPartsLength);
         }
 
-        throw new Exception();
+        return new(parts[0], parts[1]);
     }
 
     public override void WriteJson(JsonWriter writer, Point value, JsonSerializer serializer)

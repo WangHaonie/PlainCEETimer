@@ -14,7 +14,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules;
 
-public static class App
+internal static class App
 {
     public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
     public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
@@ -25,7 +25,7 @@ public static class App
 
     public static AppConfig AppConfig
     {
-        get => field ??= Validator.Read();
+        get => field ??= Validator.ReadConfig();
         set;
     }
 
@@ -61,11 +61,11 @@ public static class App
     public static void StartProgram(string[] args)
     {
         ExtractConfig();
-        _ = ThemeManager.Initialize;
         Application.SetCompatibleTextRenderingDefault(false);
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
+        ThemeManager.Initialize();
         AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
         Args = Array.ConvertAll(args, x => x.ToLower());
         ArgsLength = Args.Length;
@@ -165,11 +165,21 @@ public static class App
             """);
     }
 
+    public static void PopupAbortRetryIgnore(string message, string title)
+    {
+        var result = MessageBox.Show(message, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
+
+        if (result != DialogResult.Ignore)
+        {
+            Exit(result == DialogResult.Retry);
+        }
+    }
+
     public static void Exit(bool restart = false)
     {
         IsClosing = true;
         Startup.Cleanup();
-        Validator.Save();
+        Validator.SaveConfig();
 
         if (IsMainProcess && MainMutex != null)
         {
@@ -180,6 +190,16 @@ public static class App
 
         ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
         Environment.Exit(0);
+    }
+
+    public static string WriteException(Exception ex)
+    {
+        var now = DateTime.Now;
+        var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
+        var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
+        var exFilePath = $"{CurrentExecutableDir}{exFileName}";
+        File.AppendAllText(exFilePath, content);
+        return "安装目录：\n" + exFileName;
     }
 
     private static void DeleteExtraFiles()
@@ -246,18 +266,7 @@ public static class App
     {
         if (!IsClosing)
         {
-            var now = DateTime.Now;
-            var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
-            var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
-            var exFilePath = $"{CurrentExecutableDir}{exFileName}";
-            File.AppendAllText(exFilePath, content);
-
-            var result = MessageBox.Show($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至：\n{exFilePath}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
-
-            if (result != DialogResult.Ignore)
-            {
-                Exit(result == DialogResult.Retry);
-            }
+            PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
     }
 
