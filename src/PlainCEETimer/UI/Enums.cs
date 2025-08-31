@@ -58,9 +58,9 @@ public enum CountdownMode
 
 public enum SettingsArea
 {
-    Funny,
+    Restart,
     SyncTime,
-    SetPPTService,
+    PPTService,
     StartUp
 }
 

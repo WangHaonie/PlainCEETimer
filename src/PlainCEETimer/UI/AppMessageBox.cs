@@ -39,7 +39,7 @@ public class AppMessageBox(AppForm parent = null)
             this.AddControls(b =>
             [
                 ImageIcon = b.Image(level.Icon),
-                    LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
+                LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
             ]);
 
             base.OnInitializing();

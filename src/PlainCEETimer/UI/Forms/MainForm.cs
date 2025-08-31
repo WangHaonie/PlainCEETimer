@@ -190,7 +190,7 @@ public sealed class MainForm : AppForm
     protected override void OnSizeChanged(EventArgs e)
     {
         base.OnSizeChanged(e);
-        ValidateLocation();
+        VerifyLocation();
     }
 
     private void MainForm_LocationRefreshed()
@@ -236,7 +236,7 @@ public sealed class MainForm : AppForm
         UpdateExamSelection(true);
     }
 
-    private void ValidateLocation()
+    private void VerifyLocation()
     {
         if (!IsReadyToMove)
         {
@@ -396,8 +396,12 @@ public sealed class MainForm : AppForm
         if (ShowTrayIcon)
         {
             var tmp = BaseContextMenu();
-            tmp.MenuItems.RemoveAt(0);
-            tmp.MenuItems.RemoveAt(0);
+
+            for (int i = 0; i < 2; i++)
+            {
+                tmp.MenuItems.RemoveAt(0);
+            }
+
             ContextMenuTray = tmp;
         }
 
@@ -487,10 +491,8 @@ public sealed class MainForm : AppForm
                     {
                         App.Exit(true);
                     }
-                    else
-                    {
-                        return;
-                    }
+
+                    return;
                 }
 
                 TrayIcon = new()

@@ -145,9 +145,9 @@ public sealed class SettingsForm : AppForm
 
                     GBoxTheme = b.GroupBox("应用主题设定",
                     [
-                        RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).With(x => x.Tag = 0),
-                        RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).With(x => x.Tag = 1),
-                        RadioButtonThemeDark = b.RadioButton("深色", RadioButtonTheme_CheckedChanged).With(x => x.Tag = 2),
+                        RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).Tag(0),
+                        RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).Tag(1),
+                        RadioButtonThemeDark = b.RadioButton("深色", RadioButtonTheme_CheckedChanged).Tag(2),
                     ]),
 
                     GBoxOthers = b.GroupBox("其他",
@@ -178,7 +178,7 @@ public sealed class SettingsForm : AppForm
                             }
 
                             SettingsChanged();
-                        }).With(x => x.Tag = IsTaskStartUp),
+                        }).Tag(IsTaskStartUp),
 
                         CheckBoxMemClean = b.CheckBox("自动清理倒计时占用的运行内存(&M)", SettingsChanged),
 
@@ -192,7 +192,7 @@ public sealed class SettingsForm : AppForm
                                 CheckBoxUniTopMost.Enabled = false;
                             }
 
-                            ChangePptsvcStyle(null, null);
+                            UpdateOptionsForPptsvc();
                         }),
 
                         CheckBoxUniTopMost = b.CheckBox("顶置其他窗口(&U)", SettingsChanged),
@@ -220,7 +220,6 @@ public sealed class SettingsForm : AppForm
                         {
                             ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
                             ChangeCustomTextStyle(sender);
-                            SettingsChanged();
                         }),
 
                         ButtonRulesMan = b.Button("规则管理器(&R)", true, (_, _) =>
@@ -240,11 +239,7 @@ public sealed class SettingsForm : AppForm
                             }
                         }).Disable(),
 
-                        CheckBoxRulesMan = b.CheckBox("自定义不同时刻的颜色和内容:", (sender, _) =>
-                        {
-                            ChangeCustomTextStyle(sender);
-                            SettingsChanged();
-                        })
+                        CheckBoxRulesMan = b.CheckBox("自定义不同时刻的颜色和内容:", (sender, _) => ChangeCustomTextStyle(sender))
                     ]),
 
                     GBoxDraggable = b.GroupBox("多显示器与拖动",
@@ -259,7 +254,7 @@ public sealed class SettingsForm : AppForm
 
                         LabelPosition = b.Label("位置"),
 
-                        ComboBoxPosition = b.ComboBox(84, ChangePptsvcStyle, "左上角", "左侧居中", "左下角", "顶部居中", "屏幕中心", "底部居中", "右上角", "右侧居中", "右下角"),
+                        ComboBoxPosition = b.ComboBox(84, (_, _ ) => UpdateOptionsForPptsvc(), "左上角", "左侧居中", "左下角", "顶部居中", "屏幕中心", "底部居中", "右上角", "右侧居中", "右下角"),
 
                         CheckBoxDraggable = b.CheckBox("允许拖动倒计时窗口(&D)", (_, _) =>
                         {
@@ -268,7 +263,7 @@ public sealed class SettingsForm : AppForm
                             ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
                             ComboBoxScreens.Enabled = flag;
                             ComboBoxPosition.Enabled = flag;
-                            ChangePptsvcStyle(null, null);
+                            UpdateOptionsForPptsvc();
                         })
                     ]),
 
@@ -291,16 +286,11 @@ public sealed class SettingsForm : AppForm
 
                             if (dialog.ShowDialog() == DialogResult.OK)
                             {
-                                SettingsChanged();
                                 ChangeDisplayFont(dialog.Font);
                             }
                         }),
 
-                        ButtonDefaultFont = b.Button("重置(&H)", (_, _) =>
-                        {
-                            ChangeDisplayFont(DefaultValues.CountdownDefaultFont);
-                            SettingsChanged();
-                        })
+                        ButtonDefaultFont = b.Button("重置(&H)", (_, _) => ChangeDisplayFont(DefaultValues.CountdownDefaultFont))
                     ]),
 
                     GBoxColors = b.GroupBox("字体颜色",
@@ -370,22 +360,11 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelRestart = b.Label(null),
 
-                        ButtonRestart = b.Button(null, true, (_, _) =>
-                        {
-                            if (IsFunnyClick)
-                            {
-                                App.Exit();
-                            }
-                            else
-                            {
-                                App.Exit(true);
-                            }
-                        })
-                        .With(x => x.MouseDown += (_, e) =>
+                        ButtonRestart = b.Button(null, true, (_, _) => App.Exit(!IsFunnyClick)).With(x => x.MouseDown += (_, e) =>
                         {
                             if (e.Button == MouseButtons.Right)
                             {
-                                UpdateSettingsArea(SettingsArea.Funny);
+                                UpdateSettingsArea(SettingsArea.Restart);
                                 IsFunnyClick = true;
                             }
                             else if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
@@ -403,12 +382,7 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelOpacity = b.Label("窗口不透明度 "),
 
-                        NudOpacity = b.NumericUpDown(50, Validator.MaxOpacity, SettingsChanged).With(x =>
-                        {
-                            x.Minimum = Validator.MinOpacity;
-                            x.Increment = 1;
-                            x.DecimalPlaces = 0;
-                        }),
+                        NudOpacity = b.NumericUpDown(50, Validator.MaxOpacity, SettingsChanged).With(x => x.Minimum = Validator.MinOpacity),
 
                         CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                         {
@@ -583,7 +557,7 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
         GroupBoxArrageFirstControl(LabelRestart);
-        UpdateSettingsArea(SettingsArea.Funny, false);
+        UpdateSettingsArea(SettingsArea.Restart, false);
         SetLabelAutoWrap(LabelRestart);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
@@ -607,8 +581,6 @@ public sealed class SettingsForm : AppForm
         {
             SaveSettings();
         }
-
-        UpdateSettingsArea(SettingsArea.Funny, false);
     }
 
     private void SettingsChanged(object sender, EventArgs e)
@@ -657,7 +629,7 @@ public sealed class SettingsForm : AppForm
         ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
         ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
         ChangeDisplayFont(AppConfig.Font);
-        ChangePptsvcStyle(null, null);
+        UpdateOptionsForPptsvc();
         SelectedColors = AppConfig.GlobalColors;
         ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
         EditedCustomTexts = AppConfig.GlobalCustomTexts;
@@ -704,26 +676,6 @@ public sealed class SettingsForm : AppForm
             ButtonRulesMan.Enabled = cb.Checked;
             CheckBoxShowXOnly.Enabled = !cb.Checked;
         }
-    }
-
-    private void ChangePptsvcStyle(object sender, EventArgs e)
-    {
-        var a = CheckBoxTopMost.Checked;
-        var b = ComboBoxPosition.SelectedIndex == 0;
-        var c = CheckBoxDraggable.Checked;
-
-        if (!a)
-        {
-            UpdateSettingsArea(SettingsArea.SetPPTService, false);
-        }
-        else if ((a && c) || (a && b))
-        {
-            UpdateSettingsArea(SettingsArea.SetPPTService);
-        }
-        else
-        {
-            UpdateSettingsArea(SettingsArea.SetPPTService, false, 1);
-        }
 
         SettingsChanged();
     }
@@ -757,17 +709,16 @@ public sealed class SettingsForm : AppForm
                 ButtonRestart.Enabled = !isWorking;
                 ButtonSave.Enabled = !isWorking && UserChanged;
                 ButtonCancel.Enabled = !isWorking;
-                ButtonSyncTime.Text = isWorking ? "正在同步中，请稍候..." : "立即同步(&S)";
                 break;
-            case SettingsArea.Funny:
+            case SettingsArea.Restart:
                 GBoxRestart.Text = isWorking ? "关闭倒计时" : "重启倒计时";
                 LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(isWorking ? "(●'◡'●)" : "")}";
                 ButtonRestart.Text = isWorking ? "点击关闭(&G)" : "点击重启(&R)";
                 break;
-            case SettingsArea.SetPPTService:
+            case SettingsArea.PPTService:
                 CheckBoxPptSvc.Enabled = isWorking;
                 CheckBoxPptSvc.Checked = isWorking && AppConfig.Display.SeewoPptsvc;
-                CheckBoxPptSvc.Text = isWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(subCase == 0 ? "顶置" : "在左上角")}。";
+                CheckBoxPptSvc.Text = isWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(subCase == 0 ? "顶置" : "在左上角")}";
                 break;
             case SettingsArea.StartUp:
                 CheckBoxStartup.Text = $"开机时自动运行倒计时{(isWorking ? "*" : "")}(&B)";
@@ -779,6 +730,7 @@ public sealed class SettingsForm : AppForm
     {
         SelectedFont = newFont;
         LabelFont.Text = $"当前字体: {newFont.Name}, {newFont.Size}pt, {newFont.Style}";
+        SettingsChanged();
     }
 
     private void ApplyColorBlocks(ColorSetObject[] colors)
@@ -793,6 +745,35 @@ public sealed class SettingsForm : AppForm
     {
         ColorBlocks[index].Color = colors[index].Fore;
         ColorBlocks[index + 4].Color = colors[index].Back;
+    }
+
+    private void UpdateOptionsForPptsvc()
+    {
+        var topmost = CheckBoxTopMost.Checked;
+        var topleft = ComboBoxPosition.SelectedIndex == 0;
+        var drag = CheckBoxDraggable.Checked;
+
+        bool working;
+        int sub;
+
+        if (!topmost)
+        {
+            working = false;
+            sub = 0;
+        }
+        else if (topleft || drag)
+        {
+            working = true;
+            sub = 0;
+        }
+        else
+        {
+            working = false;
+            sub = 1;
+        }
+
+        UpdateSettingsArea(SettingsArea.PPTService, working, sub);
+        SettingsChanged();
     }
 
     private bool SaveChanges()

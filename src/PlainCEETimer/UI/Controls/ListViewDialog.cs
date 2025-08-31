@@ -35,6 +35,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     private readonly ListViewItemSet<TData> ItemsSet = new();
     private readonly ListView.ListViewItemCollection Items;
     private readonly ListViewGroupCollection Groups;
+
     private readonly PlainListView ListViewMain = new()
     {
         Location = new(3, 3),

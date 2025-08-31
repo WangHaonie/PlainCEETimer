@@ -21,6 +21,13 @@ public static class Extensions
         return control;
     }
 
+    public static TControl Tag<TControl>(this TControl control, object data)
+        where TControl : Control
+    {
+        control.Tag = data;
+        return control;
+    }
+
     public static TControl AsFocus<TControl>(this TControl control, AppForm parent)
         where TControl : Control
     {
