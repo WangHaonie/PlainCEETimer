@@ -110,11 +110,17 @@ internal static class App
                             UacHelper.CheckAdmin();
                             MessageX.Info(
                                 $"""
-                                    检测结果：
+                                检测结果:
+                                
+                                当前系统
+                                    用户名: {Win32User.LogonUser}
+                                    UAC 状态: {UacHelper.GetUacDescription()}
 
-                                    {Win32User.LogonUser} 为当前登入的账户。
-                                    目前高考倒计时正在以 {Win32User.ProcessOwner} 的身份运行{(Win32User.NotElevated ? "" : " (已提权)")}，{(UacHelper.IsAdmin ? "已经" : "无法")}获取到管理员权限。 
-                                    """);
+                                当前进程
+                                    所有者: {Win32User.ProcessOwner}
+                                    管理员权限: {(UacHelper.IsAdmin ? "有" : "无")}
+                                    提权运行: {(Win32User.NotElevated ? "否" : "是")}
+                                """);
                             break;
                         case "/fr":
                             Application.Run(new DownloaderForm(GetNextArg()));

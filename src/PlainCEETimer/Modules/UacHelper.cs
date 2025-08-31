@@ -44,6 +44,11 @@ public static class UacHelper
         return true;
     }
 
+    public static string GetUacDescription()
+    {
+        return $"{Level} ({(IsUACDisabled ? "异常" : "正常")})";
+    }
+
     public static void CheckAdmin()
     {
         IsAdmin = ProcessHelper.Run("net", "session", getExitCode: true) == 0;
