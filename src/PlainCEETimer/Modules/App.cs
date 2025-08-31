@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -36,7 +37,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.7";
-    public const string AppBuildDate = "2025/8/30";
+    public const string AppBuildDate = "2025/8/31";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -58,7 +59,24 @@ internal static class App
     private static readonly string DotNetAppConfig = $"{CurrentExecutablePath}.config";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
-    public static void StartProgram(string[] args)
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
+
+        if (IsMainProcess)
+        {
+            new Action(StartPipeServer).Start();
+        }
+
+        if (!StartProgram(args))
+        {
+            StartPipeClient();
+            Exit();
+        }
+    }
+
+    private static bool StartProgram(string[] args)
     {
         ExtractConfig();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -70,12 +88,9 @@ internal static class App
         Args = Array.ConvertAll(args, x => x.ToLower());
         ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);
-        MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
         if (IsMainProcess)
         {
-            new Action(StartPipeServer).Start();
-
             if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
             {
                 if (ArgsLength == 0)
@@ -127,6 +142,8 @@ internal static class App
                 MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
                 ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
             }
+
+            return true;
         }
         else if (!(ArgsLength > 3 && Args[0] == "/run" && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
         {
@@ -136,33 +153,7 @@ internal static class App
             }
         }
 
-        if (!IsMainProcess)
-        {
-            StartPipeClient();
-        }
-
-        Exit();
-    }
-
-    private static void PopupHelp()
-    {
-        MessageX.Info(
-            """
-            可用的命令行参数: 
-
-            /h
-                    显示此帮助信息
-            /ac
-                    检测当前用户是否具有管理员权限
-            /fr [<版本号>]
-                    强制下载并安装指定的版本，留空则当前版本，推荐
-                    在特殊情况下使用，不支持老版本
-            /op
-                    优化本程序，提升运行速度
-            /lnk [/custom]
-                    向开始菜单文件夹和桌面创建指向本程序的快捷方式
-                    /custom 表示用户将自行选择保存快捷方式的文件夹
-            """);
+        return false;
     }
 
     public static void PopupAbortRetryIgnore(string message, string title)
@@ -200,6 +191,27 @@ internal static class App
         var exFilePath = $"{CurrentExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);
         return "安装目录：\n" + exFileName;
+    }
+
+    private static void PopupHelp()
+    {
+        MessageX.Info(
+            """
+            可用的命令行参数: 
+
+            /h
+                    显示此帮助信息
+            /ac
+                    检测当前用户是否具有管理员权限
+            /fr [<版本号>]
+                    强制下载并安装指定的版本，留空则当前版本，推荐
+                    在特殊情况下使用，不支持老版本
+            /op
+                    优化本程序，提升运行速度
+            /lnk [/custom]
+                    向开始菜单文件夹和桌面创建指向本程序的快捷方式
+                    /custom 表示用户将自行选择保存快捷方式的文件夹
+            """);
     }
 
     private static void DeleteExtraFiles()

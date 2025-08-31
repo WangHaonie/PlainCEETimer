@@ -256,7 +256,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Extensions\Extensions.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.lock.json" />
     <None Include="Properties\app.manifest" />
