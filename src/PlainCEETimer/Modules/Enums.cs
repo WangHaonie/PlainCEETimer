@@ -27,12 +27,12 @@ public enum SystemTheme
 
 public enum UacNotifyLevel
 {
-    AllDimming,
-    AppsOnlyDimming,
-    AppsOnlyNoDimming,
-    Never,
-    Disabled,
-    Unknown
+    Unknown = -1,
+    Disabled = 0,
+    Never = 0,
+    AppsOnlyNoDimming = 1,
+    AppsOnlyDimming = 2,
+    AlwaysDimming = 3,
 }
 
 public enum ConfigField

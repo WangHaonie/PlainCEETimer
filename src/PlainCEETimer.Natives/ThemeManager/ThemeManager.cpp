@@ -73,7 +73,7 @@ https://stackoverflow.com/a/62811758
 
 */
 
-void FlushWindow(HWND hWnd, BOOL newStyle)
+void SetWindowFrameTheme(HWND hWnd, BOOL newStyle)
 {
     if (hWnd)
     {
@@ -82,7 +82,7 @@ void FlushWindow(HWND hWnd, BOOL newStyle)
     }
 }
 
-void FlushApp()
+void InitializeAppTheme()
 {
     if (!SetPreferredAppMode)
     {
@@ -111,11 +111,19 @@ void FlushApp()
     }
 }
 
-void SetWindowBorderColor(HWND hWnd, BOOL enabled, COLORREF color)
+void SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
 {
     if (hWnd)
     {
         COLORREF c = enabled ? color : DWMWA_COLOR_DEFAULT;
         DwmSetWindowAttribute(hWnd, DWMWA_BORDER_COLOR, &c, sizeof(c));
     }
+}
+
+DWORD GetSystemAccentColor()
+{
+    DWORD result = 0;
+    BOOL flag = FALSE;
+    DwmGetColorizationColor(&result, &flag);
+    return result;
 }

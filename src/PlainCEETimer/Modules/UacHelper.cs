@@ -25,7 +25,7 @@ public static class UacHelper
     static UacHelper()
     {
         Level = GetNotifyLevel();
-        IsUACDisabled = Level >= UacNotifyLevel.Never;
+        IsUACDisabled = Level <= UacNotifyLevel.Never;
     }
 
     public static bool EnsureUAC(AppMessageBox mx)
@@ -46,7 +46,7 @@ public static class UacHelper
 
     public static string GetUacDescription()
     {
-        return $"{Level} ({(IsUACDisabled ? "异常" : "正常")})";
+        return $"{Level} ({(int)Level}) ({(IsUACDisabled ? "异常" : "正常")})";
     }
 
     public static void CheckAdmin()
@@ -60,7 +60,7 @@ public static class UacHelper
 
         return (reg.Get("EnableLUA", 0), reg.Get("ConsentPromptBehaviorAdmin", 0), reg.Get("PromptOnSecureDesktop", 0)) switch
         {
-            (1, 2, 1) => UacNotifyLevel.AllDimming,
+            (1, 2, 1) => UacNotifyLevel.AlwaysDimming,
             (1, 5, 1) => UacNotifyLevel.AppsOnlyDimming,
             (1, 5, 0) => UacNotifyLevel.AppsOnlyNoDimming,
             (1 or 0, 0, 0) => UacNotifyLevel.Never,

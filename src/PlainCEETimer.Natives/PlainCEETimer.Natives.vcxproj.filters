@@ -54,6 +54,9 @@
     <ClInclude Include="CommonDialogs\CommonDialogs.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Win32User\Win32User.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="CommonDialogs\CommonDialogs.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32User\Win32User.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

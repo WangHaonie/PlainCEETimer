@@ -21,49 +21,20 @@ public static class Win32User
 
     */
 
-    public static string ProcessOwner => ProcOwner;
-    public static string LogonUser => LogonUserName;
+    public static string ProcessOwner => processOwner;
+    public static string LogonUser => logonUser;
     public static bool NotElevated { get; }
 
-    private const int WTSInfoClass_WTSUserName = 5;
-    private const int WTSInfoClass_WTSDomainName = 7;
-
-    private static readonly string ProcOwner;
-    private static readonly string LogonUserName;
+    private static readonly string processOwner;
+    private static readonly string logonUser;
 
     static Win32User()
     {
-        ProcOwner = WindowsIdentity.GetCurrent().Name;
-        LogonUserName = GetCurrentLogonUserName();
-        NotElevated = ProcOwner.Equals(LogonUserName, StringComparison.OrdinalIgnoreCase);
+        processOwner = WindowsIdentity.GetCurrent().Name;
+        logonUser = GetLogonUserName();
+        NotElevated = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static string GetCurrentLogonUserName()
-    {
-        var username = "";
-        var sid = WTSGetActiveConsoleSessionId();
-
-        if (WTSQuerySessionInformation(IntPtr.Zero, sid, WTSInfoClass_WTSDomainName, out IntPtr buffer, out int strLen) && strLen > 1)
-        {
-            username = Marshal.PtrToStringAnsi(buffer);
-            WTSFreeMemory(buffer);
-
-            if (WTSQuerySessionInformation(IntPtr.Zero, sid, WTSInfoClass_WTSUserName, out buffer, out strLen) && strLen > 1)
-            {
-                username += @"\" + Marshal.PtrToStringAnsi(buffer);
-                WTSFreeMemory(buffer);
-            }
-        }
-
-        return username;
-    }
-
-    [DllImport(App.Kernel32Dll)]
-    private static extern int WTSGetActiveConsoleSessionId();
-
-    [DllImport("wtsapi32.dll")]
-    private static extern void WTSFreeMemory(IntPtr pMemory);
-
-    [DllImport("wtsapi32.dll")]
-    private static extern BOOL WTSQuerySessionInformation(IntPtr hServer, int SessionId, int WTSInfoClass, out IntPtr ppBuffer, out int pBytesReturned);
+    [DllImport(App.NativesDll, EntryPoint = "#27", CharSet = CharSet.Unicode)]
+    private static extern string GetLogonUserName();
 }

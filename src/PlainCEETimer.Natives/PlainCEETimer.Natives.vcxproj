@@ -153,7 +153,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib;taskschd.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib;taskschd.lib;wtsapi32.lib</AdditionalDependencies>
       <NoEntryPoint>true</NoEntryPoint>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
@@ -164,6 +164,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ListViewHelper\ListViewHelper.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
+    <ClInclude Include="Win32User\Win32User.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="CommonDialogs\CommonDialogs.cpp" />
     <ClCompile Include="ListViewHelper\ListViewHelper.cpp" />
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
+    <ClCompile Include="Win32User\Win32User.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

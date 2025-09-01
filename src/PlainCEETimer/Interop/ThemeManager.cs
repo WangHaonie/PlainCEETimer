@@ -33,7 +33,7 @@ public static class ThemeManager
 
             if (UseDark = (option == 0 && tmp) || option == 2)
             {
-                FlushApp();
+                InitializeAppTheme();
             }
         }
 
@@ -42,7 +42,7 @@ public static class ThemeManager
 
     public static void FlushWindow(HWND hWnd)
     {
-        FlushWindow(hWnd, IsNewDwma);
+        SetWindowFrameTheme(hWnd, IsNewDwma);
     }
 
     public static void FlushControl(IWin32Window control, NativeStyle type)
@@ -62,19 +62,7 @@ public static class ThemeManager
 
     public static Color GetAccentColor(IntPtr wParam = default)
     {
-        var flag = BOOL.FALSE;
-        int color;
-
-        if (wParam != IntPtr.Zero)
-        {
-            color = (int)(wParam.ToInt64() & 0xFFFFFFFF);
-        }
-        else
-        {
-            DwmGetColorizationColor(out color, ref flag);
-        }
-
-        return Color.FromArgb(color);
+        return Color.FromArgb(wParam != IntPtr.Zero ? (int)(wParam.ToInt64() & 0xFFFFFFFF) : GetSystemAccentColor());
     }
 
     private static string GetSubAppName(NativeStyle style)
@@ -118,14 +106,14 @@ public static class ThemeManager
     private static extern int SetWindowTheme(HWND hWnd, string pszSubAppName, string pszSubIdList);
 
     [DllImport(App.NativesDll, EntryPoint = "#10")]
-    private static extern void FlushApp();
+    private static extern void InitializeAppTheme();
 
     [DllImport(App.NativesDll, EntryPoint = "#11")]
-    private static extern void FlushWindow(HWND hWnd, BOOL newStyle);
-
-    [DllImport("dwmapi.dll")]
-    private static extern void DwmGetColorizationColor(out int pcrColorization, ref BOOL pfOpaqueBlend);
+    private static extern void SetWindowFrameTheme(HWND hWnd, BOOL newStyle);
 
     [DllImport(App.NativesDll, EntryPoint = "#12")]
-    public static extern void SetBorderColor(HWND hWnd, BOOL enabled, COLORREF color);
+    public static extern void SetBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
+
+    [DllImport(App.NativesDll, EntryPoint = "#13")]
+    private static extern int GetSystemAccentColor();
 }

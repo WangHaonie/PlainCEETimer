@@ -810,6 +810,6 @@ public sealed class MainForm : AppForm
 
     private void SetBorderColor(BOOL enabled, COLORREF color)
     {
-        ThemeManager.SetBorderColor(Handle, enabled, color);
+        ThemeManager.SetBorderColor(Handle, color, enabled);
     }
 }

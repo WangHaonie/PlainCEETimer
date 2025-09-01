@@ -2,6 +2,7 @@
 
 #include <dwmapi.h>
 
-cexport(void) FlushWindow(HWND hWnd, BOOL newStyle);
-cexport(void) FlushApp();
-cexport(void) SetWindowBorderColor(HWND hWnd, BOOL enabled, COLORREF color);
+cexport(void) SetWindowFrameTheme(HWND hWnd, BOOL newStyle);
+cexport(void) InitializeAppTheme();
+cexport(void) SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
+cexport(DWORD) GetSystemAccentColor();

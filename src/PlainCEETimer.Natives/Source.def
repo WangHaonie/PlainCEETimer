@@ -12,23 +12,26 @@ EXPORTS
     TaskListSetProgressValue @8 NONAME
     ReleaseTaskbarList @9 NONAME
 
-    FlushApp @10 NONAME
-    FlushWindow @11 NONAME
+    InitializeAppTheme @10 NONAME
+    SetWindowFrameTheme @11 NONAME
     SetWindowBorderColor @12 NONAME
+    GetSystemAccentColor @13 NONAME
 
-    EnumSystemDisplays @13 NONAME
+    EnumSystemDisplays @14 NONAME
 
-    InitializeTaskScheduler @14 NONAME
-    TaskSchdImportTaskFromXml @15 NONAME
-    TaskSchdExportTaskAsXml @16 NONAME
-    TaskSchdEnableTask @17 NONAME
-    TaskSchdDeleteTask @18 NONAME
-    ReleaseTaskScheduler @19 NONAME
+    InitializeTaskScheduler @15 NONAME
+    TaskSchdImportTaskFromXml @16 NONAME
+    TaskSchdExportTaskAsXml @17 NONAME
+    TaskSchdEnableTask @18 NONAME
+    TaskSchdDeleteTask @19 NONAME
+    ReleaseTaskScheduler @20 NONAME
 
-    InitializeShellLink @20 NONAME
-    ShellLinkCreateLnk @21 NONAME
-    ShellLinkQueryLnk @22 NONAME
-    ReleaseShellLink @23 NONAME
+    InitializeShellLink @21 NONAME
+    ShellLinkCreateLnk @22 NONAME
+    ShellLinkQueryLnk @23 NONAME
+    ReleaseShellLink @24 NONAME
 
-    RunColorDialog @24 NONAME
-    RunFontDialog @25 NONAME
+    RunColorDialog @25 NONAME
+    RunFontDialog @26 NONAME
+
+    GetLogonUserName @27 NONAME
