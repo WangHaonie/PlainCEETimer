@@ -17,17 +17,13 @@ internal sealed class FileDialogWrapper(string title) : AppForm
         this.AddControls(b => [b.Label(title)]);
     }
 
-    public static DialogResult ShowDialog(FileDialog dialog)
+    public static DialogResult ShowDialog(FileDialog dialog, params FileFilter[] filters)
     {
+        dialog.Filter = string.Join("|", filters);
         var wrapper = new FileDialogWrapper(dialog.Title);
         wrapper.Show();
         var result = dialog.ShowDialog(wrapper);
         wrapper.Close();
         return result;
-    }
-
-    public static string CreateFilters(params FileFilter[] filters)
-    {
-        return string.Join("|", filters);
     }
 }

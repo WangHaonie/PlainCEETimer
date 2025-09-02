@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Win32User.h"
 #include <string>
 
@@ -6,7 +6,7 @@ using namespace std;
 
 LPCWSTR GetLogonUserName()
 {
-    wstring tmp = L"<δ֪�û���>";
+    wstring tmp = L"<未知用户名>";
     LPWSTR buffer = nullptr;
     DWORD length = 0;
     DWORD sid = WTSGetActiveConsoleSessionId();

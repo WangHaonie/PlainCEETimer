@@ -36,7 +36,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.7";
-    public const string AppBuildDate = "2025/9/1";
+    public const string AppBuildDate = "2025/9/2";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -107,20 +107,7 @@ internal static class App
                             PopupHelp();
                             break;
                         case "/ac":
-                            UacHelper.CheckAdmin();
-                            MessageX.Info(
-                                $"""
-                                检测结果:
-                                
-                                当前系统
-                                    用户名: {Win32User.LogonUser}
-                                    UAC 状态: {UacHelper.GetUacDescription()}
-
-                                当前进程
-                                    所有者: {Win32User.ProcessOwner}
-                                    管理员权限: {(UacHelper.IsAdmin ? "有" : "无")}
-                                    提权运行: {(Win32User.NotElevated ? "否" : "是")}
-                                """);
+                            UacHelper.PopupReport();
                             break;
                         case "/fr":
                             Application.Run(new DownloaderForm(GetNextArg()));

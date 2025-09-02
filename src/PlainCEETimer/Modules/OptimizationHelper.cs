@@ -72,11 +72,11 @@ public class OptimizationHelper(bool isAuto) : IDisposable
         {
             Title = $"选择 {NGen} - 高考倒计时",
             InitialDirectory = @"C:\Windows",
-            Filter = FileDialogWrapper.CreateFilters(FileFilter.Application, FileFilter.AllFiles),
             FileName = NGen
         };
 
-        if (FileDialogWrapper.ShowDialog(Dialog) == DialogResult.OK)
+        if (FileDialogWrapper.ShowDialog(Dialog,
+            FileFilter.Application, FileFilter.AllFiles) == DialogResult.OK)
         {
             if (Dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
             {

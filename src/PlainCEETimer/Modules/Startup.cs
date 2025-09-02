@@ -33,19 +33,19 @@ internal static class Startup
     {
         new Action(() =>
         {
-            if (option && isTask)
+            if (!option)
+            {
+                DeleteAll();
+            }
+            else if (isTask)
             {
                 SetTask();
                 DeleteRegistry();
             }
-            else if (option)
+            else
             {
                 SetRegistry();
                 DeleteTask();
-            }
-            else
-            {
-                DeleteAll();
             }
         }).Start();
     }
@@ -82,7 +82,10 @@ internal static class Startup
 
     private static void EnableTask()
     {
-        Win32TaskScheduler.Enable(TaskName);
+        if (NotElevated)
+        {
+            Win32TaskScheduler.Enable(TaskName);
+        }
     }
 
     private static void DeleteRegistry()

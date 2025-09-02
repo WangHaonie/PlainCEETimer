@@ -203,7 +203,7 @@ public sealed partial class ColorBlock : PlainLabel
                 Capture = true;
                 ParentBounds = ParentForm.Bounds;
             }
-            else if (IsDragging && IsPicking && mButtom == MouseButtons.Right)
+            else if (IsPicking && mButtom == MouseButtons.Right)
             {
                 CancelScreenColorPicker();
             }

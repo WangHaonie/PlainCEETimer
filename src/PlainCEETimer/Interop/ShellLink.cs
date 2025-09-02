@@ -34,11 +34,10 @@ public static class ShellLink
             Dialog ??= new()
             {
                 Title = "保存快捷方式 - 高考倒计时",
-                Filter = FileDialogWrapper.CreateFilters(FileFilter.Shortcut),
                 FileName = LnkName
             };
 
-            if (FileDialogWrapper.ShowDialog(Dialog) == DialogResult.OK)
+            if (FileDialogWrapper.ShowDialog(Dialog, FileFilter.Shortcut) == DialogResult.OK)
             {
                 ResetAppShortcut(Dialog.FileName);
                 return true;
