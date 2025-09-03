@@ -451,7 +451,7 @@ public sealed class MainForm : AppForm
                 {
                     FormSettings = new();
 
-                    FormSettings.DialogEnd += (_, dr) =>
+                    FormSettings.DialogEnd += dr =>
                     {
                         if (dr == DialogResult.OK)
                         {

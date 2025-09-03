@@ -18,7 +18,7 @@ public abstract class AppForm : Form
 
     protected virtual AppFormParam Params => AppFormParam.None;
 
-    public event EventHandler<DialogResult> DialogEnd;
+    public event Action<DialogResult> DialogEnd;
     protected event Action LocationRefreshed;
 
     private bool IsLoading = true;
@@ -169,7 +169,8 @@ public abstract class AppForm : Form
 
         if (CheckParam(AppFormParam.ModelessDialog))
         {
-            DialogEnd?.Invoke(this, DialogResult);
+            DialogEnd?.Invoke(DialogResult);
+            DialogEnd = null;
         }
     }
 

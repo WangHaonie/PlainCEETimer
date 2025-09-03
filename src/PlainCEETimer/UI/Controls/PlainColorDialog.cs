@@ -25,11 +25,11 @@ public sealed class PlainColorDialog : PlainCommonDialog
     protected override BOOL RunDialog(HWND hWndOwner)
     {
         using var colors = new CUSTCOLORS(customColors);
-        var previous = customColors.Copy();
         var result = RunColorDialog(hWndOwner, HookProc, ref color, colors);
 
         if (result)
         {
+            var previous = customColors.Copy();
             colors.ToArray(customColors);
 
             if (!customColors.SequenceEqual(previous))

@@ -62,7 +62,7 @@ public static class ThemeManager
 
     public static Color GetAccentColor(IntPtr wParam = default)
     {
-        return Color.FromArgb(wParam != IntPtr.Zero ? (int)(wParam.ToInt64() & 0xFFFFFFFF) : GetSystemAccentColor());
+        return Color.FromArgb(wParam != default ? (int)(wParam.ToInt64() & 0xFFFFFFFF) : GetSystemAccentColor());
     }
 
     private static string GetSubAppName(NativeStyle style)

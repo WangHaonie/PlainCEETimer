@@ -36,7 +36,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.7";
-    public const string AppBuildDate = "2025/9/2";
+    public const string AppBuildDate = "2025/9/3";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -61,6 +61,11 @@ internal static class App
     [STAThread]
     private static void Main(string[] args)
     {
+        ExtractConfig();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.ThreadException += (_, e) => HandleException(e.Exception);
+        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
         MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
         if (IsMainProcess)
@@ -77,11 +82,6 @@ internal static class App
 
     private static bool StartProgram(string[] args)
     {
-        ExtractConfig();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-        Application.ThreadException += (_, e) => HandleException(e.Exception);
-        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
         ThemeManager.Initialize();
         AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
         Args = Array.ConvertAll(args, x => x.ToLower());

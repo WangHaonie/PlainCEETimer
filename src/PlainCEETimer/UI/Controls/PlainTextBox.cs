@@ -131,7 +131,7 @@ public sealed class PlainTextBox : TextBox
             {
                 Child = new(this);
 
-                Child.DialogEnd += (_, dr) =>
+                Child.DialogEnd += dr =>
                 {
                     if (dr == DialogResult.OK)
                     {
