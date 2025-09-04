@@ -154,9 +154,11 @@ public sealed class SettingsForm : AppForm
                     [
                         CheckBoxStartup = b.CheckBox(null, (_, _) =>
                         {
-                            if (CheckBoxStartup.Checked)
+                            var flag = CheckBoxStartup.Checked;
+
+                            if (flag ^ (bool)CheckBoxStartup.Tag)
                             {
-                                if (!(bool)CheckBoxStartup.Tag)
+                                if (flag)
                                 {
                                     if ((ModifierKeys & Keys.Shift) == Keys.Shift)
                                     {
@@ -168,10 +170,7 @@ public sealed class SettingsForm : AppForm
                                         UpdateSettingsArea(SettingsArea.StartUp, false);
                                     }
                                 }
-                            }
-                            else
-                            {
-                                if ((bool)CheckBoxStartup.Tag)
+                                else
                                 {
                                     CheckBoxStartup.Tag = false;
                                 }
@@ -199,8 +198,9 @@ public sealed class SettingsForm : AppForm
 
                         CheckBoxTrayIcon = b.CheckBox("在托盘区域显示通知图标(&I)", (_, _) =>
                         {
-                            CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked;
-                            CheckBoxTrayText.Checked = CheckBoxTrayIcon.Checked && AppConfig.General.TrayText;
+                            var flag = CheckBoxTrayIcon.Checked;
+                            CheckBoxTrayText.Enabled = flag;
+                            CheckBoxTrayText.Checked = flag;
                             SettingsChanged();
                         }),
 
@@ -245,22 +245,13 @@ public sealed class SettingsForm : AppForm
                     GBoxDraggable = b.GroupBox("多显示器与拖动",
                     [
                         LabelScreens = b.Label("固定在屏幕"),
-
-                        ComboBoxScreens = b.ComboBox(107, (_, _) =>
-                        {
-                            ComboBoxPosition.SelectedIndex = ComboBoxPosition.Enabled ? (int)AppConfig.Display.Position : 3;
-                            SettingsChanged();
-                        }, DisplayHelper.GetSystemDisplays()),
-
+                        ComboBoxScreens = b.ComboBox(107, SettingsChanged, DisplayHelper.GetSystemDisplays()),
                         LabelPosition = b.Label("位置"),
-
                         ComboBoxPosition = b.ComboBox(84, (_, _ ) => UpdateOptionsForPptsvc(), "左上角", "左侧居中", "左下角", "顶部居中", "屏幕中心", "底部居中", "右上角", "右侧居中", "右下角"),
 
                         CheckBoxDraggable = b.CheckBox("允许拖动倒计时窗口(&D)", (_, _) =>
                         {
                             var flag = !CheckBoxDraggable.Checked;
-                            ComboBoxScreens.SelectedIndex = CheckBoxDraggable.Checked ? 0 : AppConfig.Display.ScreenIndex;
-                            ComboBoxPosition.SelectedIndex = CheckBoxDraggable.Checked ? 3 : (int)AppConfig.Display.Position;
                             ComboBoxScreens.Enabled = flag;
                             ComboBoxPosition.Enabled = flag;
                             UpdateOptionsForPptsvc();
@@ -381,7 +372,6 @@ public sealed class SettingsForm : AppForm
                     GBoxMainForm = b.GroupBox("主窗口样式",
                     [
                         LabelOpacity = b.Label("窗口不透明度 "),
-
                         NudOpacity = b.NumericUpDown(50, Validator.MaxOpacity, SettingsChanged).With(x => x.Minimum = Validator.MinOpacity),
 
                         CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
