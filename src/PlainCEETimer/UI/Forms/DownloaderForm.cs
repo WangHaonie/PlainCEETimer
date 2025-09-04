@@ -24,7 +24,7 @@ public sealed class DownloaderForm : AppForm
     private ProgressBar ProgressBarMain;
     private PlainButton ButtonRetry;
     private PlainButton ButtonCancel;
-    private Hyperlink LinkBrowser;
+    private PlainLinkLabel LinkBrowser;
     private readonly string TargetVersion;
     private readonly long UpdateSize;
     private readonly CancellationTokenSource cts = new();
@@ -91,7 +91,7 @@ public sealed class DownloaderForm : AppForm
     {
         if (Win32User.NotElevated)
         {
-            LinkBrowser.HyperLink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
+            LinkBrowser.Hyperlink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
             TaskbarProgress.Initialize(Handle);
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;

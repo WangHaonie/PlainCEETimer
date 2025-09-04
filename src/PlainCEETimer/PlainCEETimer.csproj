@@ -135,9 +135,6 @@
     <Compile Include="UI\Controls\PlainFontDialog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\Hyperlink.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>

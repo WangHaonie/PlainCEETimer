@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.Windows.Forms;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.UI.Controls;
@@ -10,6 +11,8 @@ public class PlainLinkLabel : LinkLabel
         get => Links[0].Enabled;
         set => Links[0].Enabled = value;
     }
+
+    public string Hyperlink { get; set; }
 
     public PlainLinkLabel()
     {
@@ -29,5 +32,18 @@ public class PlainLinkLabel : LinkLabel
         LinkColor = normal;
         ActiveLinkColor = click;
         DisabledLinkColor = disabled;
+    }
+
+    protected override void OnLinkClicked(LinkLabelLinkClickedEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+        {
+            if (!string.IsNullOrEmpty(Hyperlink))
+            {
+                Process.Start(Hyperlink);
+            }
+
+            base.OnLinkClicked(e);
+        }
     }
 }

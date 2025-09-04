@@ -16,10 +16,10 @@ public sealed class AboutForm : AppForm
     private PlainButton ButtonOK;
     private PlainLabel LabelInfo;
     private PlainLabel LabelLicense;
-    private Hyperlink LinkGitHub;
+    private PlainLinkLabel LinkGitHub;
     private PictureBox ImageLogo;
-    private Hyperlink LinkFeedback;
-    private Hyperlink LinkTutorial;
+    private PlainLinkLabel LinkFeedback;
+    private PlainLinkLabel LinkTutorial;
 
     protected override void OnInitializing()
     {
