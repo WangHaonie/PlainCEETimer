@@ -8,7 +8,6 @@ namespace PlainCEETimer.Interop;
 
 public static class ThemeManager
 {
-    public static int VerticalScrollBarWidth { get; } = SystemInformation.VerticalScrollBarWidth;
     public static bool IsDarkModeSupported => Supported;
     public static bool ShouldUseDarkMode => UseDark;
     public static SystemTheme CurrentTheme => Theme;

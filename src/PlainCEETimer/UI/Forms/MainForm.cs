@@ -475,7 +475,7 @@ public sealed class MainForm : AppForm
             }),
 
             b.Separator(),
-            b.Item("安装目录(&D)", (_, _) => Process.Start(App.CurrentExecutableDir))
+            b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
         ]);
     }
 

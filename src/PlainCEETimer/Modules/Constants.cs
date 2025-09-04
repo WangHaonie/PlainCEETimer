@@ -23,9 +23,9 @@ public static class Constants
     public const string PhP2 = $"距离{PhExamName}{PhEnd}{PhDays}天{PhHours}时{PhMinutes}分{PhSeconds}秒";
     public const string PhP3 = $"距离{PhExamName}{PhPast}{PhDays}天{PhHours}时{PhMinutes}分{PhSeconds}秒";
 
-    public static readonly string[] PhRuleTypes = [PhRtP1, PhRtP2, PhRtP3];
-    public static readonly string[] PhAllPhases = [PhP1, PhP2, PhP3];
-    public static readonly string[] AllPHs =
+    public static string[] PhRuleTypes => field ??= [PhRtP1, PhRtP2, PhRtP3];
+
+    public static string[] AllPHs => field ??=
     [
         PhExamName,
         PhDays, PhDecimalDays, PhCeilingDays,

@@ -15,7 +15,7 @@ internal static class Startup
     private static readonly string UserName = Win32User.LogonUser;
     private static readonly string UserNameOnly = UserName.Split('\\')[1];
     private static readonly string TaskName = $"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})";
-    private static readonly string AppPath = $"\"{App.CurrentExecutablePath}\"";
+    private static readonly string AppPath = $"\"{App.ExecutablePath}\"";
     private static readonly string StartupKey = App.AppNameEngOld;
     private static readonly RegistryHelper Registry = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 

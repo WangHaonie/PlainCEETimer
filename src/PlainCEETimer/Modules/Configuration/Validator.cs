@@ -37,7 +37,6 @@ internal static class Validator
         TypeNameHandling = TypeNameHandling.Auto
     };
 
-
     public static void DemandConfig()
     {
         CanSaveConfig = true;

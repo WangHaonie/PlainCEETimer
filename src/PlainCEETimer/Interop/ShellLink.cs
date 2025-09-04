@@ -11,7 +11,7 @@ namespace PlainCEETimer.Interop;
 public static class ShellLink
 {
     private static readonly string LnkName = "高考倒计时.lnk";
-    private static readonly string AppPath = App.CurrentExecutablePath;
+    private static readonly string AppPath = App.ExecutablePath;
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
     private static SaveFileDialog Dialog;
 
@@ -79,7 +79,7 @@ public static class ShellLink
         var args = lnk.Args;
         var needed = false;
 
-        if (path == null || !path.Equals(App.CurrentExecutablePath, StringComparison.OrdinalIgnoreCase))
+        if (path == null || !path.Equals(App.ExecutablePath, StringComparison.OrdinalIgnoreCase))
         {
             lnk.Target = AppPath;
             needed = true;

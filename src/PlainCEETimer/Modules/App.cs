@@ -17,9 +17,9 @@ namespace PlainCEETimer.Modules;
 internal static class App
 {
     public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
-    public static string CurrentExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
-    public static string CurrentExecutablePath => field ??= Application.ExecutablePath;
-    public static string ConfigFilePath => field ??= $"{CurrentExecutableDir}{AppNameEng}.config";
+    public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
+    public static string ExecutablePath => field ??= Application.ExecutablePath;
+    public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
     public static Icon AppIcon { get; private set; }
     public static Version AppVersionObject => field ??= Version.Parse(AppVersion);
 
@@ -54,8 +54,8 @@ internal static class App
     private static int ArgsLength;
     private static Mutex MainMutex;
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
-    private static readonly string CurrentExecutableName = Path.GetFileName(CurrentExecutablePath);
-    private static readonly string DotNetAppConfig = $"{CurrentExecutablePath}.config";
+    private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
+    private static readonly string DotNetAppConfig = $"{ExecutablePath}.config";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
     [STAThread]
@@ -66,7 +66,7 @@ internal static class App
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-        MainMutex = new Mutex(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
+        MainMutex = new(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
         if (IsMainProcess)
         {
@@ -83,14 +83,14 @@ internal static class App
     private static bool StartProgram(string[] args)
     {
         ThemeManager.Initialize();
-        AppIcon = IconHelper.GetIcon(CurrentExecutablePath);
+        AppIcon = IconHelper.GetIcon(ExecutablePath);
         Args = Array.ConvertAll(args, x => x.ToLower());
         ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);
 
         if (IsMainProcess)
         {
-            if (CurrentExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
+            if (ExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
             {
                 if (ArgsLength == 0)
                 {
@@ -131,8 +131,8 @@ internal static class App
             }
             else
             {
-                MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {CurrentExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
-                ProcessHelper.Run("cmd", $"/c ren \"{CurrentExecutablePath}\" {OriginalFileName} && start \"\" \"{CurrentExecutableDir}{OriginalFileName}\" {AllArgs}");
+                MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
+                ProcessHelper.Run("cmd", $"/c ren \"{ExecutablePath}\" {OriginalFileName} && start \"\" \"{ExecutableDir}{OriginalFileName}\" {AllArgs}");
             }
 
             return true;
@@ -171,7 +171,7 @@ internal static class App
             MainMutex = null;
         }
 
-        ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {CurrentExecutableName} {(restart ? $"& start \"\" \"{CurrentExecutablePath}\"" : "")}");
+        ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {ExecutableName} {(restart ? $"& start \"\" \"{ExecutablePath}\"" : "")}");
         Environment.Exit(0);
     }
 
@@ -180,7 +180,7 @@ internal static class App
         var now = DateTime.Now;
         var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
         var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
-        var exFilePath = $"{CurrentExecutableDir}{exFileName}";
+        var exFilePath = $"{ExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);
         return "安装目录：\n" + exFileName;
     }
@@ -210,7 +210,7 @@ internal static class App
     {
         try
         {
-            foreach (var uefile in Directory.GetFiles(CurrentExecutableDir, $"{UEFilePrefix}*.txt"))
+            foreach (var uefile in Directory.GetFiles(ExecutableDir, $"{UEFilePrefix}*.txt"))
             {
                 File.Delete(uefile);
             }

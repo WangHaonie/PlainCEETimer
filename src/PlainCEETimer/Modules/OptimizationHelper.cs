@@ -109,7 +109,7 @@ public class OptimizationHelper(bool isAuto) : IDisposable
             complete = c => c.UpdateState("是否重启倒计时?");
         }
 
-        var result = ConsoleWindow.Run(path, $"install \"{App.CurrentExecutablePath}\" /verbose", complete, param);
+        var result = ConsoleWindow.Run(path, $"install \"{App.ExecutablePath}\" /verbose", complete, param);
 
         if (!isAuto && result == DialogResult.OK)
         {

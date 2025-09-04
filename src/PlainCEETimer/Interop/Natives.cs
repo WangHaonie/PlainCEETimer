@@ -119,6 +119,8 @@ public readonly struct HWND
 [DebuggerDisplay("{DebuggerDisplay}")]
 public readonly struct COLORREF
 {
+    public const int EmptyValue = 0xFFFFFF;
+
     private readonly int Value;
 
     private COLORREF(Color color)
@@ -308,7 +310,7 @@ public struct LOGFONT
 
     public readonly Font ToFont()
     {
-        var tmp = Font.FromLogFont(this);
+        using var tmp = Font.FromLogFont(this);
         return new(tmp.FontFamily, tmp.SizeInPoints, tmp.Style, GraphicsUnit.Point, tmp.GdiCharSet, tmp.GdiVerticalFont);
     }
 
