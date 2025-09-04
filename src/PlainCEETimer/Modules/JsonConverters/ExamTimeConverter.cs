@@ -1,11 +1,32 @@
-﻿using Newtonsoft.Json.Converters;
+﻿using System;
+using System.Globalization;
+using Newtonsoft.Json;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class ExamTimeConverter : IsoDateTimeConverter
+public sealed class ExamTimeConverter : JsonConverter<DateTime>
 {
-    public ExamTimeConverter()
+    public override DateTime ReadJson(JsonReader reader, Type objectType, DateTime existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        DateTimeFormat = App.DateTimeFormat;
+        try
+        {
+            if (reader.ValueType == typeof(string) &&
+            DateTime.TryParseExact(reader.Value.ToString(), App.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime value))
+            {
+                return value;
+            }
+
+            return new(Convert.ToInt64(reader.Value) * Validator.MinTick);
+        }
+        catch
+        {
+            throw new InvalidTamperingException(ConfigField.DateTimeFormat);
+        }
+    }
+
+    public override void WriteJson(JsonWriter writer, DateTime value, JsonSerializer serializer)
+    {
+        writer.WriteValue(value.Ticks / Validator.MinTick);
     }
 }

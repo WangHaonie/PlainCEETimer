@@ -14,6 +14,6 @@ public sealed class ColorFormatConverter : JsonConverter<Color>
 
     public override void WriteJson(JsonWriter writer, Color value, JsonSerializer serializer)
     {
-        serializer.Serialize(writer, value.ToWin32());
+        writer.WriteValue(value.ToWin32());
     }
 }

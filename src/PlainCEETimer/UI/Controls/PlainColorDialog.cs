@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using PlainCEETimer.Interop;
@@ -34,12 +35,27 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
             if (!customColors.SequenceEqual(previous))
             {
-                App.AppConfig.CustomColors = customColors;
+                App.AppConfig.CustomColors = RemoveEmptyColors(customColors);
                 Validator.DemandConfig();
             }
         }
 
         return result;
+    }
+
+    private int[] RemoveEmptyColors(int[] colors)
+    {
+        List<int> tmp = [];
+
+        foreach (var c in colors)
+        {
+            if (c != COLORREF.EmptyValue)
+            {
+                tmp.Add(c);
+            }
+        }
+
+        return [.. tmp];
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#25")]

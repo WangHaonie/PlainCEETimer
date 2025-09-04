@@ -13,6 +13,6 @@ public sealed class BorderColorConverter : JsonConverter<BorderColorObject>
 
     public override void WriteJson(JsonWriter writer, BorderColorObject value, JsonSerializer serializer)
     {
-        serializer.Serialize(writer, WindowsBuilds.IsWin11 ? value.MakeLong() : 0);
+        writer.WriteValue(WindowsBuilds.IsWin11 ? value.MakeLong() : default);
     }
 }

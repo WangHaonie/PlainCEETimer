@@ -49,5 +49,6 @@ public enum ConfigField
     CustomRulePhase,
     CustomRuleTick,
     CountdownFont,
-    PointPartsLength
+    PointFormat,
+    DateTimeFormat
 }
