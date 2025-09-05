@@ -13,7 +13,7 @@ public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
 
         if (colors == null || colors.Length < 2)
         {
-            throw new InvalidTamperingException(ConfigField.ColorSetPartsLength);
+            throw Validator.InvalidTampering(ConfigField.ColorSetPartsLength);
         }
 
         var fore = Validator.GetColorFromInt32(colors[0]);
@@ -21,7 +21,7 @@ public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
 
         if (!Validator.IsNiceContrast(fore, back))
         {
-            throw new InvalidTamperingException(ConfigField.ColorSetContrast);
+            throw Validator.InvalidTampering(ConfigField.ColorSetContrast);
         }
 
         return new(fore, back);

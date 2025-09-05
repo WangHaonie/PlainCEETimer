@@ -43,7 +43,7 @@ public class AppConfig
         {
             if (Validator.ValidateNeeded && value.Length < 4)
             {
-                throw new InvalidTamperingException(ConfigField.GlobalColorsLength);
+                throw Validator.InvalidTampering(ConfigField.GlobalColorsLength);
             }
 
             field = value;

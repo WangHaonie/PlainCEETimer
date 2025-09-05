@@ -22,6 +22,7 @@ internal static class Validator
     public const long MinTick = TimeSpan.TicksPerSecond; // 1s
     public const long MaxDate = 3155378975999999999L; // DateTime.Max
     public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
+    public const long MinDateSeconds = MinDate / MinTick;
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
     public const string RegexPhPatterns = @"\{(\w+)\}";
@@ -91,7 +92,7 @@ internal static class Validator
             {
                 if (!set.Add(item))
                 {
-                    throw new InvalidTamperingException(type);
+                    throw InvalidTampering(type);
                 }
             }
         }
@@ -174,7 +175,7 @@ internal static class Validator
     {
         if (time.Ticks is < MinDate or > MaxDate)
         {
-            throw new InvalidTamperingException(ConfigField.DateTimeLength);
+            throw InvalidTampering(ConfigField.DateTimeLength);
         }
     }
 
@@ -182,12 +183,12 @@ internal static class Validator
     {
         if (IsInvalidCustomLength(custom.Length))
         {
-            throw new InvalidTamperingException(ConfigField.CustomTextLength);
+            throw InvalidTampering(ConfigField.CustomTextLength);
         }
 
         if (!VerifyCustomText(custom, out var _))
         {
-            throw new InvalidTamperingException(ConfigField.CustomTextFormat);
+            throw InvalidTampering(ConfigField.CustomTextFormat);
         }
     }
 
@@ -201,6 +202,11 @@ internal static class Validator
         }
 
         return Color.FromArgb(rgb);
+    }
+
+    internal static InvalidTamperingException InvalidTampering(ConfigField config)
+    {
+        throw new InvalidTamperingException(config);
     }
 
     private static double GetRelativeLuminance(Color color)

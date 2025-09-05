@@ -19,7 +19,7 @@ public sealed class FontFormatConverter : JsonConverter<Font>
             return new Font(part1, part2);
         }
 
-        throw new InvalidTamperingException(ConfigField.CountdownFont);
+        throw Validator.InvalidTampering(ConfigField.CountdownFont);
     }
 
     public override void WriteJson(JsonWriter writer, Font value, JsonSerializer serializer)

@@ -95,7 +95,7 @@ public sealed class ExamInfoDialog(ExamInfoObject existing) : AppDialog, IListVi
         var start = DTPStart.Value;
         var end = DTPEnd.Value;
         var span = end - start;
-        var ts = (int)span.TotalSeconds;
+        var ts = (long)span.TotalSeconds;
 
         if (end <= start || ts < 1)
         {

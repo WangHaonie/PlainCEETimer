@@ -19,7 +19,7 @@ public class ExamInfoObject : IListViewData<ExamInfoObject>
 
             if (Validator.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
             {
-                throw new InvalidTamperingException(ConfigField.ExamNameLength);
+                throw Validator.InvalidTampering(ConfigField.ExamNameLength);
             }
 
             field = value;

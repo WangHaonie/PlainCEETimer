@@ -17,16 +17,16 @@ public sealed class ExamTimeConverter : JsonConverter<DateTime>
                 return value;
             }
 
-            return new(Convert.ToInt64(reader.Value) * Validator.MinTick);
+            return new((Convert.ToInt64(reader.Value) + Validator.MinDateSeconds) * Validator.MinTick);
         }
         catch
         {
-            throw new InvalidTamperingException(ConfigField.DateTimeFormat);
+            throw Validator.InvalidTampering(ConfigField.DateTimeFormat);
         }
     }
 
     public override void WriteJson(JsonWriter writer, DateTime value, JsonSerializer serializer)
     {
-        writer.WriteValue(value.Ticks / Validator.MinTick);
+        writer.WriteValue((value.Ticks / Validator.MinTick) - Validator.MinDateSeconds);
     }
 }

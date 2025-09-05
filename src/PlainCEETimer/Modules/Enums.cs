@@ -35,7 +35,7 @@ public enum UacNotifyLevel
     AlwaysDimming = 3,
 }
 
-public enum ConfigField
+internal enum ConfigField
 {
     GlobalColorsLength,
     ExamNameLength,
