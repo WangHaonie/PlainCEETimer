@@ -14,7 +14,7 @@ public class AppConfig
     public ExamInfoObject[] Exams
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.ExamsDissimilarity);
+        set => Validator.SetValue(ref field, value, ConfigField.ExamInfoArray);
     } = [];
 
     public int ExamIndex { get; set; }
@@ -53,7 +53,7 @@ public class AppConfig
     public CustomRuleObject[] CustomRules
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.CustomRulesDissimilarity);
+        set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
     } = [];
 
     [JsonConverter(typeof(CustomColorsConverter))]

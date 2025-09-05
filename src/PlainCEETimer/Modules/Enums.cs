@@ -39,8 +39,8 @@ public enum ConfigField
 {
     GlobalColorsLength,
     ExamNameLength,
-    CustomRulesDissimilarity,
-    ExamsDissimilarity,
+    CustomRulesArray,
+    ExamInfoArray,
     DateTimeLength,
     CustomTextLength,
     CustomTextFormat,

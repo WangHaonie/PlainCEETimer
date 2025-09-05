@@ -125,8 +125,6 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         ]);
 
         ListViewMain.ContextMenu = ContextMenuMain;
-        ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
-
         base.OnInitializing();
     }
 
@@ -161,6 +159,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         });
 
         ListViewMain.MouseDoubleClick += ContextEdit_Click;
+        ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
     }
 
     protected sealed override void OnKeyDown(KeyEventArgs e)
@@ -315,7 +314,6 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             ListViewMain.SelectAll(BOOL.FALSE);
             AddItem(data, true);
-            ListViewMain.Sort();
             ListViewMain.AutoAdjustColumnWidth();
         });
 

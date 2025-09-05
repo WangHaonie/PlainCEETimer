@@ -16,8 +16,8 @@ public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
             throw new InvalidTamperingException(ConfigField.ColorSetPartsLength);
         }
 
-        var fore = Validator.GetColor(colors[0]);
-        var back = Validator.GetColor(colors[1]);
+        var fore = Validator.GetColorFromInt32(colors[0]);
+        var back = Validator.GetColorFromInt32(colors[1]);
 
         if (!Validator.IsNiceContrast(fore, back))
         {

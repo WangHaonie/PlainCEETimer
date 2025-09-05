@@ -11,30 +11,30 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
 {
     public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        var json = serializer.Deserialize<JObject>(reader);
-        var phaseInt = int.Parse(json[nameof(existingValue.Phase)].ToString());
+        var json = JObject.Load(reader);
+        var phaseInt = json[nameof(existingValue.Phase)].ToObject<int>(serializer);
 
         if (phaseInt is < 0 or > 2)
         {
             throw new InvalidTamperingException(ConfigField.CustomRulePhase);
         }
 
-        var tick = TimeSpan.FromSeconds(double.Parse(json[nameof(existingValue.Tick)].ToString()));
+        var tick = TimeSpan.FromSeconds(json[nameof(existingValue.Tick)].ToObject<double>(serializer));
 
         if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
         {
             throw new InvalidTamperingException(ConfigField.CustomRuleTick);
         }
 
-        var fore = Validator.GetColor(json[nameof(ColorSetObject.Fore)]);
-        var back = Validator.GetColor(json[nameof(ColorSetObject.Back)]);
+        var fore = Validator.GetColorFromInt32(json[nameof(ColorSetObject.Fore)].ToObject<int>(serializer));
+        var back = Validator.GetColorFromInt32(json[nameof(ColorSetObject.Back)].ToObject<int>(serializer));
 
         if (!Validator.IsNiceContrast(fore, back))
         {
             throw new InvalidTamperingException(ConfigField.ColorSetContrast);
         }
 
-        var text = json[nameof(existingValue.Text)].ToString().RemoveIllegalChars();
+        var text = json[nameof(existingValue.Text)].ToObject<string>(serializer).RemoveIllegalChars();
         Validator.EnsureCustomText(text);
 
         return new()

@@ -94,8 +94,6 @@ internal static class Validator
                     throw new InvalidTamperingException(type);
                 }
             }
-
-            Array.Sort(value);
         }
 
         field = value;
@@ -193,18 +191,9 @@ internal static class Validator
         }
     }
 
-    public static Color GetColor(object obj)
+    public static Color GetColorFromInt32(int c)
     {
-        int rgb;
-
-        if (obj is int tmp)
-        {
-            rgb = tmp;
-        }
-        else
-        {
-            rgb = int.Parse(obj.ToString());
-        }
+        var rgb = c;
 
         if (rgb > 0)
         {
