@@ -141,7 +141,7 @@ public class AppMessageBox(AppForm parent = null)
         private MessageLevel(string description, ref Bitmap icon, int iconIndex, SystemSound sound)
         {
             Description = description;
-            icon ??= IconHelper.GetIcon("imageres.dll", iconIndex).ToBitmap();
+            icon ??= HICON.ExtractIcon("imageres.dll", iconIndex).ToBitmap();
             Icon = icon;
             Sound = sound;
         }

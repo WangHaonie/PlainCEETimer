@@ -83,7 +83,7 @@ internal static class App
     private static bool StartProgram(string[] args)
     {
         ThemeManager.Initialize();
-        AppIcon = IconHelper.GetIcon(ExecutablePath);
+        AppIcon = HICON.ExtractIcon(ExecutablePath);
         Args = Array.ConvertAll(args, x => x.ToLower());
         ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);

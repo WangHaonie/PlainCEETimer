@@ -208,7 +208,6 @@
     </Compile>
     <Compile Include="Interop\Win32User.cs" />
     <Compile Include="UI\ContextMenuBuilder.cs" />
-    <Compile Include="Interop\IconHelper.cs" />
     <Compile Include="Interop\ListViewHelper.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
@@ -231,7 +230,6 @@
     <Compile Include="UI\IListViewData.cs" />
     <Compile Include="UI\IListViewSubDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
-    <Compile Include="Modules\JsonConverters\CustomColorsConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRuleConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />

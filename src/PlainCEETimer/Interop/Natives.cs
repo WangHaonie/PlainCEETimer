@@ -19,6 +19,21 @@ public static class Natives
 
     [DllImport(App.User32Dll)]
     public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SWP uFlags);
+
+    /*
+
+    提取 DLL 里的图标参考:
+
+    How can I use the images within shell32.dll in my C# project? - Stack Overflow
+    https://stackoverflow.com/a/6873026/21094697
+
+    */
+
+    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
+    public static extern int ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON phiconSmall, int nIcons);
+
+    [DllImport(App.User32Dll)]
+    public static extern BOOL DestroyIcon(IntPtr hIcon);
 }
 
 [Flags]
@@ -232,12 +247,30 @@ public struct NMCUSTOMDRAW
     public IntPtr lItemlParam;
 }
 
+public readonly struct HICON
+{
+    private readonly IntPtr Value;
+
+    public Icon ToIcon()
+    {
+        var result = (Icon)Icon.FromHandle(Value).Clone();
+        Natives.DestroyIcon(Value);
+        return result;
+    }
+
+    public static Icon ExtractIcon(string file, int index = 0)
+    {
+        Natives.ExtractIconEx(file, index, out HICON hIcon, default, 1);
+        return hIcon.ToIcon();
+    }
+}
+
 [DebuggerDisplay("{DebuggerDisplay}")]
 public readonly struct LnkHotkey(HotkeyModifiers fKeys, Keys keys)
 {
     private readonly ushort Value = ushort.MakeWord((byte)keys, (byte)fKeys);
 
-    public static readonly LnkHotkey None = default;
+    public static readonly LnkHotkey None;
 
     private string DebuggerDisplay => $"{(HotkeyModifiers)Value.HiByte}, {(Keys)Value.LoByte}";
 }

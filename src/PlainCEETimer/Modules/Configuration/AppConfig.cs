@@ -56,7 +56,6 @@ public class AppConfig
         set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
     } = [];
 
-    [JsonConverter(typeof(CustomColorsConverter))]
     public int[] CustomColors { get; set; }
 
     [JsonConverter(typeof(FontFormatConverter))]
