@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using PlainCEETimer.UI;
@@ -204,9 +205,10 @@ internal static class Validator
         return Color.FromArgb(rgb);
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static InvalidTamperingException InvalidTampering(ConfigField config)
     {
-        throw new InvalidTamperingException(config);
+        return new InvalidTamperingException(config);
     }
 
     private static double GetRelativeLuminance(Color color)
