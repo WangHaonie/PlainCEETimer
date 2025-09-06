@@ -26,73 +26,46 @@ public sealed class MainForm : AppForm
     private int AutoSwitchInterval;
     private int CurrentTheme;
     private int CountdownMaxW;
-    private int ExamIndex;
     private int ScreenIndex;
-    private int ShowXOnlyIndex;
     private int LastMouseX;
     private int LastMouseY;
     private bool AutoSwitch;
-    private bool CanUseRules;
-    private bool IsCountdownReady;
-    private bool IsCountdownRunning;
     private bool IsDraggable;
     private bool IsPPTService;
     private bool IsReadyToMove;
-    private bool IsShowXOnly;
     private bool LoadedMemCleaner;
     private bool MemClean;
     private bool ShowTrayIcon;
     private bool ShowTrayText;
     private bool TrayIconReopen;
-    private bool UseCustomText;
     private bool BorderUseAccentColor;
     private string CountdownContent;
-    private string ExamName;
-    private string[] GlobalTexts;
-    private CountdownMode Mode;
     private CountdownPosition CountdownPos;
-    private CountdownPhase CurrentPhase = CountdownPhase.None;
-    private CountdownState SelectedState;
     private Color CountdownForeColor;
     private BorderColorObject BorderColor;
-    private ColorSetObject[] CountdownColors;
-    private DateTime Now;
-    private DateTime ExamEnd;
-    private DateTime ExamStart;
     private Point LastLocation;
     private Rectangle SelectedScreenRect;
     private AboutForm FormAbout;
     private AppConfig AppConfig;
     private ContextMenu ContextMenuMain;
     private ContextMenu ContextMenuTray;
-    private CustomRuleObject[] CustomRules;
-    private CustomRuleObject[] CurrentRules;
-    private ExamInfoObject CurrentExam;
-    private ExamInfoObject[] Exams;
     private Font CountdownFont;
-    private MatchEvaluator DefaultMatchEvaluator;
     private Menu.MenuItemCollection ExamSwitchMain;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
     private System.Threading.Timer MemCleaner;
-    private System.Threading.Timer Countdown;
     private System.Windows.Forms.Timer AutoSwitchHandler;
     private const int PptsvcThreshold = 1;
     private const int MemCleanerInterval = 300_000; // 5 min
     private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
-    private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
-    private readonly Dictionary<string, string> PhCountdown = new(12);
-    private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
+
+    private DefaultCountdownService Countdown;
+    private int ExamIndex;
+    private ExamInfoObject[] Exams;
 
     protected override void OnInitializing()
     {
         Text = "高考倒计时";
-
-        DefaultMatchEvaluator = m =>
-        {
-            var key = m.Value;
-            return PhCountdown.TryGetValue(key, out string value) ? value : key;
-        };
 
         SystemEvents.DisplaySettingsChanged += (_, _) =>
         {
@@ -208,13 +181,12 @@ public sealed class MainForm : AppForm
         if (item != null && !item.Checked)
         {
             UnselectAllExamItems();
-            ExamIndex = index;
             AppConfig.ExamIndex = index;
             Validator.DemandConfig();
             LoadExams();
             TryRunCountdown();
             UpdateExamSelection();
-            CountdownCallback(null);
+            Countdown.Refresh();
         }
     }
 
@@ -247,6 +219,7 @@ public sealed class MainForm : AppForm
 
     private void RefreshSettings()
     {
+        SetCountdownAutoWrap();
         LoadConfig();
         LoadExams();
         PrepareCountdown();
@@ -255,63 +228,75 @@ public sealed class MainForm : AppForm
         CompatibleWithPPTService();
         LoadContextMenu();
         LoadTrayIcon();
-        SetCountdownAutoWrap();
         ApplyStyle();
     }
 
     private void LoadConfig()
     {
         AppConfig = App.AppConfig;
-        GlobalTexts = AppConfig.GlobalCustomTexts;
         MemClean = AppConfig.General.MemClean;
-        IsShowXOnly = AppConfig.Display.ShowXOnly;
         IsDraggable = AppConfig.Display.Draggable;
         UniTopMost = AppConfig.General.UniTopMost;
         IsPPTService = AppConfig.Display.SeewoPptsvc;
-        UseCustomText = AppConfig.Display.CustomText;
         ScreenIndex = AppConfig.Display.ScreenIndex;
         CountdownPos = AppConfig.Display.Position;
-        ShowXOnlyIndex = AppConfig.Display.X;
         ShowTrayIcon = AppConfig.General.TrayIcon;
         ShowTrayText = AppConfig.General.TrayText;
-        CustomRules = AppConfig.CustomRules;
-        CountdownColors = AppConfig.GlobalColors;
+    }
+
+    private void Countdown_CountdownChanged(object sender, CountdownChangedEventArgs e)
+    {
+        var content = e.Content;
+        CountdownContent = content;
+        CountdownForeColor = e.ForeColor;
+        BackColor = e.BackColor;
+        Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
+        Invalidate();
+
+        if (ShowTrayText)
+        {
+            UpdateTrayIconText(content);
+        }
+
+        var type = BorderColor.Type;
+
+        if (BorderColor.Enabled && type is 1 or 2)
+        {
+            SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : BackColor);
+        }
     }
 
     private void LoadExams()
     {
         AutoSwitch = AppConfig.General.AutoSwitch;
         AutoSwitchInterval = GetAutoSwitchInterval(AppConfig.General.Interval);
-        var endIndex = AppConfig.Display.EndIndex;
-        Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
+
+        if (Countdown == null)
+        {
+            Countdown = new();
+            Countdown.CountdownChanged += Countdown_CountdownChanged;
+        }
+
         Exams = AppConfig.Exams;
-        var i = AppConfig.ExamIndex;
-        ExamIndex = i < Exams.Length ? i : 0;
+        ExamIndex = AppConfig.ExamIndex;
 
-        try
+        Countdown.StartInfo = new()
         {
-            CurrentExam = Exams[ExamIndex];
-        }
-        catch
-        {
-            ExamIndex = -1;
-            CurrentExam = new();
-        }
+            CountdownText = AppConfig.GlobalCustomTexts,
+            UseCustomText = AppConfig.Display.CustomText,
+            CustomRules = AppConfig.CustomRules,
+            ShowFieldOnly = AppConfig.Display.ShowXOnly,
+            CountdownField = AppConfig.Display.X,
+            Exams = Exams,
+            CountdownMode = AppConfig.Display.EndIndex,
+            CountdownColors = AppConfig.GlobalColors,
+            ExamIndex = ExamIndex
+        };
 
-        ExamName = CurrentExam.Name;
-        ExamStart = CurrentExam.Start;
-        ExamEnd = CurrentExam.End;
-        IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
-
-        if (IsCountdownReady && CurrentPhase != CountdownPhase.None)
-        {
-            RefreshCustomRules();
-        }
     }
 
     private void PrepareCountdown()
     {
-        SelectedState = IsShowXOnly ? (CountdownState)(ShowXOnlyIndex + 1) : CountdownState.Normal;
         CountdownFont = AppConfig.Font;
         LocationRefreshed -= MainForm_LocationRefreshed;
 
@@ -381,11 +366,7 @@ public sealed class MainForm : AppForm
 
     private void TryRunCountdown()
     {
-        if (!IsCountdownRunning)
-        {
-            IsCountdownRunning = true;
-            Countdown = new(CountdownCallback, null, 0, 1000);
-        }
+        Countdown.Start();
     }
 
     private void LoadContextMenu()
@@ -456,7 +437,7 @@ public sealed class MainForm : AppForm
                         if (dr == DialogResult.OK)
                         {
                             RefreshSettings();
-                            CountdownCallback(null);
+                            Countdown.Refresh();
                         }
                     };
                 }
@@ -567,7 +548,7 @@ public sealed class MainForm : AppForm
         {
             AutoSwitchHandler.Destory();
 
-            if (IsCountdownReady && Exams.Length > 1)
+            if (Countdown.IsCountdownReady && Exams.Length > 1)
             {
                 AutoSwitchHandler = new() { Interval = AutoSwitchInterval };
                 AutoSwitchHandler.Tick += ExamAutoSwitch;
@@ -575,89 +556,6 @@ public sealed class MainForm : AppForm
             }
         }
     }
-
-    private void CountdownCallback(object state)
-    {
-        if (IsCountdownReady)
-        {
-            Now = DateTime.Now;
-
-            if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
-            {
-                SetPhase(CountdownPhase.P1);
-                ApplyCustomRule(0, ExamStart - Now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
-            {
-                SetPhase(CountdownPhase.P2);
-                ApplyCustomRule(1, ExamEnd - Now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
-            {
-                SetPhase(CountdownPhase.P3);
-                ApplyCustomRule(2, Now - ExamEnd);
-                return;
-            }
-        }
-
-        Countdown.Dispose();
-        UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3]);
-        UpdateTrayIconText(App.AppName, true);
-        IsCountdownRunning = false;
-    }
-
-    private void ApplyCustomRule(int phase, TimeSpan span)
-    {
-        PhCountdown[Constants.PhExamName] = ExamName;
-        PhCountdown[Constants.PhDays] = $"{span.Days}";
-        PhCountdown[Constants.PhCeilingDays] = $"{span.Days + 1}";
-        PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
-        PhCountdown[Constants.PhHours] = $"{span.Hours:00}";
-        PhCountdown[Constants.PhDecimalHours] = $"{span.TotalHours:0.0}";
-        PhCountdown[Constants.PhTotalHours] = $"{Math.Truncate(span.TotalHours)}";
-        PhCountdown[Constants.PhMinutes] = $"{span.Minutes:00}";
-        PhCountdown[Constants.PhTotalMinutes] = $"{span.TotalMinutes:0}";
-        PhCountdown[Constants.PhSeconds] = $"{span.Seconds:00}";
-        PhCountdown[Constants.PhTotalSeconds] = $"{span.TotalSeconds:0}";
-
-        if (UseCustomText)
-        {
-            if (CanUseRules)
-            {
-                foreach (var rule in CurrentRules)
-                {
-                    if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
-                    {
-                        UpdateCountdown(CountdownRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
-                        return;
-                    }
-                }
-            }
-
-            UpdateCountdown(CountdownRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
-        }
-        else
-        {
-            PhCountdown["{ht}"] = DefaultTexts[phase];
-            UpdateCountdown(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
-        }
-    }
-
-    private string GetDefaultText() => SelectedState switch
-    {
-        CountdownState.DaysOnly => "距离{x}{ht}{d}天",
-        CountdownState.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
-        CountdownState.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
-        CountdownState.HoursOnly => "距离{x}{ht}{th}小时",
-        CountdownState.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
-        CountdownState.MinutesOnly => "距离{x}{ht}{tm}分钟",
-        CountdownState.SecondsOnly => "距离{x}{ht}{ts}秒",
-        _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
-    };
 
     private int GetAutoSwitchInterval(int Index) => Index switch
     {
@@ -675,39 +573,6 @@ public sealed class MainForm : AppForm
         12 => 3600_000, // 1 h
         _ => 10_000 // 10 s
     };
-
-    private void UpdateCountdown(string content, ColorSetObject colors)
-    {
-        BeginInvoke(() =>
-        {
-            CountdownContent = content;
-            CountdownForeColor = colors.Fore;
-            BackColor = colors.Back;
-            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
-            Invalidate();
-
-            if (ShowTrayText)
-            {
-                UpdateTrayIconText(content);
-            }
-
-            var type = BorderColor.Type;
-
-            if (BorderColor.Enabled && type is 1 or 2)
-            {
-                SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : BackColor);
-            }
-        });
-    }
-
-    private void SetPhase(CountdownPhase phase)
-    {
-        if (CurrentPhase != phase)
-        {
-            CurrentPhase = phase;
-            RefreshCustomRules();
-        }
-    }
 
     private void UpdateTrayIconText(string content, bool invokeNeeded = false)
     {
@@ -794,18 +659,6 @@ public sealed class MainForm : AppForm
         }
 
         SelectedScreenRect = screens[ScreenIndex].WorkingArea;
-    }
-
-    private void RefreshCustomRules()
-    {
-        CurrentRules =
-        [..
-            CustomRules
-            .Where(r => r.Phase == CurrentPhase)
-            .OrderByDescending(x => x)
-        ];
-
-        CanUseRules = UseCustomText && CurrentRules.Length != 0;
     }
 
     private void SetBorderColor(BOOL enabled, COLORREF color)
