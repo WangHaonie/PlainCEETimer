@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -11,7 +12,7 @@ public class AppConfig
 
     public DisplayObject Display { get; set; } = new();
 
-    public ExamInfoObject[] Exams
+    public Exam[] Exams
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.ExamInfoArray);
@@ -36,7 +37,7 @@ public class AppConfig
         }
     } = DefaultValues.GlobalDefaultCustomTexts;
 
-    public ColorSetObject[] GlobalColors
+    public ColorPair[] GlobalColors
     {
         get;
         set
@@ -50,7 +51,7 @@ public class AppConfig
         }
     } = DefaultValues.CountdownDefaultColors;
 
-    public CustomRuleObject[] CustomRules
+    public CustomRule[] CustomRules
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);

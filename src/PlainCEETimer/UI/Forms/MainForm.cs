@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
@@ -51,7 +52,7 @@ public sealed class MainForm : AppForm
     private CountdownState SelectedState;
     private Color CountdownForeColor;
     private BorderColorObject BorderColor;
-    private ColorSetObject[] CountdownColors;
+    private ColorPair[] CountdownColors;
     private DateTime Now;
     private DateTime ExamEnd;
     private DateTime ExamStart;
@@ -64,10 +65,10 @@ public sealed class MainForm : AppForm
     private DisplayObject Display;
     private ContextMenu ContextMenuMain;
     private ContextMenu ContextMenuTray;
-    private CustomRuleObject[] CustomRules;
-    private CustomRuleObject[] CurrentRules;
-    private ExamInfoObject CurrentExam;
-    private ExamInfoObject[] Exams;
+    private CustomRule[] CustomRules;
+    private CustomRule[] CurrentRules;
+    private Exam CurrentExam;
+    private Exam[] Exams;
     private Font CountdownFont;
     private MatchEvaluator DefaultMatchEvaluator;
     private Menu.MenuItemCollection ExamSwitchMain;
@@ -324,7 +325,7 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private ExamInfoObject GetCurrentExam()
+    private Exam GetCurrentExam()
     {
         var length = Exams.Length;
 
@@ -678,7 +679,7 @@ public sealed class MainForm : AppForm
         _ => 10_000 // 10 s
     };
 
-    private void UpdateCountdown(string content, ColorSetObject colors)
+    private void UpdateCountdown(string content, ColorPair colors)
     {
         BeginInvoke(() =>
         {

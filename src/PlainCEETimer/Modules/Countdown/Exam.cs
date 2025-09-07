@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules.Configuration;
+namespace PlainCEETimer.Modules.Countdown;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public class ExamInfoObject : IListViewData<ExamInfoObject>
+public class Exam : IListViewData<Exam>
 {
     public string Name
     {
@@ -56,7 +57,7 @@ public class ExamInfoObject : IListViewData<ExamInfoObject>
         }
     } = DateTime.Now;
 
-    public int CompareTo(ExamInfoObject other)
+    public int CompareTo(Exam other)
     {
         if (other == null)
         {
@@ -78,7 +79,7 @@ public class ExamInfoObject : IListViewData<ExamInfoObject>
         return string.CompareOrdinal(Name, other.Name);
     }
 
-    public bool Equals(ExamInfoObject other)
+    public bool Equals(Exam other)
     {
         /*
 
@@ -102,7 +103,7 @@ public class ExamInfoObject : IListViewData<ExamInfoObject>
 
     public override bool Equals(object obj)
     {
-        return Equals((ExamInfoObject)obj);
+        return Equals((Exam)obj);
     }
 
     public override int GetHashCode()
@@ -113,7 +114,7 @@ public class ExamInfoObject : IListViewData<ExamInfoObject>
         }
     }
 
-    bool IListViewData<ExamInfoObject>.InternalEquals(ExamInfoObject other)
+    bool IListViewData<Exam>.InternalEquals(Exam other)
     {
         return Equals(other);
     }

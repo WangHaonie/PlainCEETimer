@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
+public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 {
     public string[] GlobalTexts { private get; set; }
-    public ColorSetObject[] GlobalColors { private get; set; }
-    public CustomRuleObject Data { get; set; }
+    public ColorPair[] GlobalColors { private get; set; }
+    public CustomRule Data { get; set; }
 
     protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
@@ -40,9 +41,9 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
     private EventHandler OnUserChanged;
     private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
 
-    private struct Cache(ColorSetObject colors, string text)
+    private struct Cache(ColorPair colors, string text)
     {
-        public ColorSetObject Colors = colors;
+        public ColorPair Colors = colors;
         public string Text = text;
     }
 
@@ -250,7 +251,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRuleObject>
         }
     }
 
-    private void ApplyColorBlock(ColorSetObject colors)
+    private void ApplyColorBlock(ColorPair colors)
     {
         BlockFore.Color = colors.Fore;
         BlockBack.Color = colors.Back;

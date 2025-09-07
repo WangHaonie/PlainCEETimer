@@ -18,7 +18,7 @@ public static class Extensions
         => new([.. s.Trim().Where(x => !IllegalChars.Contains(x))]);
 
     public static string Format(this DateTime dateTime)
-        => dateTime.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss");
+        => dateTime.ToString(Validator.DateTimeFormat);
 
     public static string Format(this TimeSpan timeSpan)
         => timeSpan.ToString("d'天'h'时'm'分's'秒'");

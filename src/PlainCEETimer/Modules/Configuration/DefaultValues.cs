@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Countdown;
 
 namespace PlainCEETimer.Modules.Configuration;
 
@@ -11,7 +12,7 @@ public static class DefaultValues
 
     public static string[] GlobalDefaultCustomTexts => field ??= [Constants.PhP1, Constants.PhP2, Constants.PhP3];
 
-    public static ColorSetObject[] CountdownDefaultColors
+    public static ColorPair[] CountdownDefaultColors
     {
         get
         {
@@ -32,7 +33,7 @@ public static class DefaultValues
         }
     }
 
-    public static ColorSetObject[] CountdownDefaultColorsDark => field ??=
+    public static ColorPair[] CountdownDefaultColorsDark => field ??=
     [
         new(Color.Red, Color.Black),
         new(Color.Lime, Color.Black),
@@ -40,7 +41,7 @@ public static class DefaultValues
         new(Color.White, Color.Black)
     ];
 
-    public static ColorSetObject[] CountdownDefaultColorsLight => field ??=
+    public static ColorPair[] CountdownDefaultColorsLight => field ??=
     [
         new(Color.Red, Color.White),
         new(Color.Green, Color.White),

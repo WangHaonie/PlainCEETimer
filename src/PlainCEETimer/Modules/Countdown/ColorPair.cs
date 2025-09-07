@@ -3,23 +3,23 @@ using System.Drawing;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
 
-namespace PlainCEETimer.Modules.Configuration;
+namespace PlainCEETimer.Modules.Countdown;
 
 [JsonConverter(typeof(ColorSetConverter))]
-public readonly struct ColorSetObject(Color fore, Color back) : IEquatable<ColorSetObject>
+public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 {
     public Color Fore => fore;
 
     public Color Back => back;
 
-    public bool Equals(ColorSetObject other)
+    public bool Equals(ColorPair other)
     {
         return fore == other.Fore && back == other.Back;
     }
 
     public override bool Equals(object obj)
     {
-        return Equals((ColorSetObject)obj);
+        return Equals((ColorPair)obj);
     }
 
     public override int GetHashCode()

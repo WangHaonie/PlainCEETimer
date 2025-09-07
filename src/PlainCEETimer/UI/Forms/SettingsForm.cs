@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
@@ -21,7 +22,7 @@ public sealed class SettingsForm : AppForm
     private bool IsFunnyClick;
     private int SelectedTheme;
     private string[] EditedCustomTexts;
-    private ColorSetObject[] SelectedColors;
+    private ColorPair[] SelectedColors;
     private ColorBlock BlockBorderColor;
     private ColorBlock BlockColor11;
     private ColorBlock BlockColor12;
@@ -43,8 +44,8 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
     private PlainComboBox ComboBoxShowXOnly;
-    private CustomRuleObject[] EditedCustomRules;
-    private ExamInfoObject[] EditedExamInfo;
+    private CustomRule[] EditedCustomRules;
+    private Exam[] EditedExamInfo;
     private Font SelectedFont;
     private PlainLabel LabelColor;
     private PlainLabel LabelColorP1;
@@ -723,7 +724,7 @@ public sealed class SettingsForm : AppForm
         SettingsChanged();
     }
 
-    private void ApplyColorBlocks(ColorSetObject[] colors)
+    private void ApplyColorBlocks(ColorPair[] colors)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -731,7 +732,7 @@ public sealed class SettingsForm : AppForm
         }
     }
 
-    private void ApplyColorBlocks(ColorSetObject[] colors, int index)
+    private void ApplyColorBlocks(ColorPair[] colors, int index)
     {
         ColorBlocks[index].Color = colors[index].Fore;
         ColorBlocks[index + 4].Color = colors[index].Back;
@@ -776,7 +777,7 @@ public sealed class SettingsForm : AppForm
 
         int index = -1;
         var length = 4;
-        SelectedColors = new ColorSetObject[length];
+        SelectedColors = new ColorPair[length];
 
         for (int i = 0; i < length; i++)
         {

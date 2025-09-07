@@ -2,14 +2,15 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
+public sealed class CustomRuleConverter : JsonConverter<CustomRule>
 {
-    public override CustomRuleObject ReadJson(JsonReader reader, Type objectType, CustomRuleObject existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override CustomRule ReadJson(JsonReader reader, Type objectType, CustomRule existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var json = JObject.Load(reader);
         var phaseInt = json[nameof(existingValue.Phase)].ToObject<int>(serializer);
@@ -26,8 +27,8 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
             throw Validator.InvalidTampering(ConfigField.CustomRuleTick);
         }
 
-        var fore = Validator.GetColorFromInt32(json[nameof(ColorSetObject.Fore)].ToObject<int>(serializer));
-        var back = Validator.GetColorFromInt32(json[nameof(ColorSetObject.Back)].ToObject<int>(serializer));
+        var fore = Validator.GetColorFromInt32(json[nameof(ColorPair.Fore)].ToObject<int>(serializer));
+        var back = Validator.GetColorFromInt32(json[nameof(ColorPair.Back)].ToObject<int>(serializer));
 
         if (!Validator.IsNiceContrast(fore, back))
         {
@@ -46,7 +47,7 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRuleObject>
         };
     }
 
-    public override void WriteJson(JsonWriter writer, CustomRuleObject value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, CustomRule value, JsonSerializer serializer)
     {
         new JObject()
         {

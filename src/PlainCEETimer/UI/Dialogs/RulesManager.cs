@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RulesManager : ListViewDialog<CustomRuleObject, RuleDialog>
+public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
 {
     public string[] CustomTextPreset { get; set; }
-    public ColorSetObject[] ColorPresets { private get; set; }
+    public ColorPair[] ColorPresets { private get; set; }
 
     public RulesManager()
         : base(460, ["时刻", "效果预览"], Constants.PhRuleTypes)
@@ -19,12 +19,12 @@ public sealed class RulesManager : ListViewDialog<CustomRuleObject, RuleDialog>
         ItemDescription = "规则";
     }
 
-    protected override int GetGroupIndex(CustomRuleObject data)
+    protected override int GetGroupIndex(CustomRule data)
     {
         return (int)data.Phase;
     }
 
-    protected override ListViewItem GetListViewItem(CustomRuleObject data)
+    protected override ListViewItem GetListViewItem(CustomRule data)
     {
         var tmp = data.Colors;
         var item = new ListViewItem(data.Tick.Format()) { UseItemStyleForSubItems = false };
@@ -32,7 +32,7 @@ public sealed class RulesManager : ListViewDialog<CustomRuleObject, RuleDialog>
         return item;
     }
 
-    protected override IListViewSubDialog<CustomRuleObject> GetSubDialog(CustomRuleObject data = null)
+    protected override IListViewSubDialog<CustomRule> GetSubDialog(CustomRule data = null)
     {
         return new RuleDialog()
         {

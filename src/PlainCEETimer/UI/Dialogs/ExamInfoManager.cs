@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class ExamInfoManager : ListViewDialog<ExamInfoObject, ExamInfoDialog>
+public sealed class ExamInfoManager : ListViewDialog<Exam, ExamInfoDialog>
 {
     private DateTime Now;
 
@@ -17,7 +17,7 @@ public sealed class ExamInfoManager : ListViewDialog<ExamInfoObject, ExamInfoDia
         ItemDescription = "考试信息";
     }
 
-    protected override int GetGroupIndex(ExamInfoObject data)
+    protected override int GetGroupIndex(Exam data)
     {
         Now = DateTime.Now;
 
@@ -34,12 +34,12 @@ public sealed class ExamInfoManager : ListViewDialog<ExamInfoObject, ExamInfoDia
         return 1;
     }
 
-    protected override ListViewItem GetListViewItem(ExamInfoObject data)
+    protected override ListViewItem GetListViewItem(Exam data)
     {
         return new([data.Name, data.Start.Format(), data.End.Format()]);
     }
 
-    protected override IListViewSubDialog<ExamInfoObject> GetSubDialog(ExamInfoObject data = null)
+    protected override IListViewSubDialog<Exam> GetSubDialog(Exam data = null)
     {
         return new ExamInfoDialog(data);
     }

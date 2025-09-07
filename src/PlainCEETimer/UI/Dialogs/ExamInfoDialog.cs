@@ -3,15 +3,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class ExamInfoDialog(ExamInfoObject existing) : AppDialog, IListViewSubDialog<ExamInfoObject>
+public sealed class ExamInfoDialog(Exam existing) : AppDialog, IListViewSubDialog<Exam>
 {
-    public ExamInfoObject Data { get; set; } = existing;
+    public Exam Data { get; set; } = existing;
 
     protected override AppFormParam Params => AppFormParam.BindButtons;
 

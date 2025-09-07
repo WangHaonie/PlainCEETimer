@@ -213,13 +213,13 @@
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
     <Compile Include="Interop\ThemeManager.cs" />
-    <Compile Include="Modules\Configuration\ColorSetObject.cs" />
+    <Compile Include="Modules\Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />
     <Compile Include="Modules\Configuration\DefaultValues.cs" />
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
-    <Compile Include="Modules\Configuration\ExamInfoObject.cs" />
+    <Compile Include="Modules\Countdown\Exam.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
-    <Compile Include="Modules\Configuration\CustomRuleObject.cs" />
+    <Compile Include="Modules\Countdown\CustomRule.cs" />
     <Compile Include="Modules\Constants.cs" />
     <Compile Include="UI\ControlBuilder.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />

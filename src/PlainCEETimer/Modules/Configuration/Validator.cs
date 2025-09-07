@@ -27,6 +27,8 @@ internal static class Validator
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
     public const string RegexPhPatterns = @"\{(\w+)\}";
+    public const string DateTimeFormat = "yyyy'/'M'/'d dddd H':'mm':'ss";
+    public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
 
     public static bool ValidateNeeded { get; set; } = true;
 

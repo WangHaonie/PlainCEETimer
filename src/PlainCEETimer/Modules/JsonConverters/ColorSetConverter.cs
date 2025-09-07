@@ -1,13 +1,14 @@
 ﻿using System;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
+public sealed class ColorSetConverter : JsonConverter<ColorPair>
 {
-    public override ColorSetObject ReadJson(JsonReader reader, Type objectType, ColorSetObject existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override ColorPair ReadJson(JsonReader reader, Type objectType, ColorPair existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var colors = serializer.Deserialize<int[]>(reader);
 
@@ -27,7 +28,7 @@ public sealed class ColorSetConverter : JsonConverter<ColorSetObject>
         return new(fore, back);
     }
 
-    public override void WriteJson(JsonWriter writer, ColorSetObject value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, ColorPair value, JsonSerializer serializer)
     {
         serializer.Serialize(writer, new int[] { value.Fore.ToInt32(), value.Back.ToInt32() });
     }

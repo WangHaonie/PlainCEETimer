@@ -10,7 +10,7 @@ public class ControlBuilder
 {
     public PlainLabel Label(string text)
     {
-        return new PlainLabel(text);
+        return new(text);
     }
 
     public ColorBlock Block(string text)
@@ -129,7 +129,7 @@ public class ControlBuilder
 
     public DateTimePicker DateTimePicker(int w, EventHandler onValueChanged)
     {
-        var ctrl = new DateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = "yyyy-MM-dd dddd HH:mm:ss" };
+        var ctrl = new DateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = Validator.DTPFormat };
         ctrl.SetBounds(0, 0, w, 23);
         ctrl.ValueChanged += onValueChanged;
         return ctrl;
