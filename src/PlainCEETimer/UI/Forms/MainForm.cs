@@ -25,12 +25,10 @@ public sealed class MainForm : AppForm
 
     private int AutoSwitchInterval;
     private int CurrentTheme;
-    private int CountdownMaxW;
+    private int CountdownWidth;
     private int ExamIndex;
     private int ScreenIndex;
     private int ShowXOnlyIndex;
-    private int LastMouseX;
-    private int LastMouseY;
     private bool AutoSwitch;
     private bool CanUseRules;
     private bool IsCountdownReady;
@@ -39,8 +37,6 @@ public sealed class MainForm : AppForm
     private bool IsPPTService;
     private bool IsReadyToMove;
     private bool IsShowXOnly;
-    private bool LoadedMemCleaner;
-    private bool MemClean;
     private bool ShowTrayIcon;
     private bool ShowTrayText;
     private bool TrayIconReopen;
@@ -60,9 +56,12 @@ public sealed class MainForm : AppForm
     private DateTime ExamEnd;
     private DateTime ExamStart;
     private Point LastLocation;
+    private Point LastMouseLocation;
     private Rectangle SelectedScreenRect;
     private AboutForm FormAbout;
     private AppConfig AppConfig;
+    private GeneralObject General;
+    private DisplayObject Display;
     private ContextMenu ContextMenuMain;
     private ContextMenu ContextMenuTray;
     private CustomRuleObject[] CustomRules;
@@ -74,11 +73,10 @@ public sealed class MainForm : AppForm
     private Menu.MenuItemCollection ExamSwitchMain;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
-    private System.Threading.Timer MemCleaner;
+    private MemoryCleaner MemCleaner;
     private System.Threading.Timer Countdown;
     private System.Windows.Forms.Timer AutoSwitchHandler;
     private const int PptsvcThreshold = 1;
-    private const int MemCleanerInterval = 300_000; // 5 min
     private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
     private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
     private readonly Dictionary<string, string> PhCountdown = new(12);
@@ -144,8 +142,7 @@ public sealed class MainForm : AppForm
         {
             IsReadyToMove = true;
             Cursor = Cursors.SizeAll;
-            LastMouseX = e.X;
-            LastMouseY = e.Y;
+            LastMouseLocation = e.Location;
             LastLocation = Location;
         }
 
@@ -156,7 +153,7 @@ public sealed class MainForm : AppForm
     {
         if (IsDraggable && IsReadyToMove)
         {
-            SetLocation(MousePosition.X - LastMouseX, MousePosition.Y - LastMouseY);
+            SetLocation(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
         }
 
         base.OnMouseMove(e);
@@ -201,9 +198,8 @@ public sealed class MainForm : AppForm
 
     private void ExamItems_Click(object sender, EventArgs e)
     {
-        int index;
         var item = (MenuItem)sender;
-        index = item.Index;
+        int index = item.Index;
 
         if (item != null && !item.Checked)
         {
@@ -262,42 +258,33 @@ public sealed class MainForm : AppForm
     private void LoadConfig()
     {
         AppConfig = App.AppConfig;
+        General = AppConfig.General;
+        Display = AppConfig.Display;
+
         GlobalTexts = AppConfig.GlobalCustomTexts;
-        MemClean = AppConfig.General.MemClean;
-        IsShowXOnly = AppConfig.Display.ShowXOnly;
-        IsDraggable = AppConfig.Display.Draggable;
-        UniTopMost = AppConfig.General.UniTopMost;
-        IsPPTService = AppConfig.Display.SeewoPptsvc;
-        UseCustomText = AppConfig.Display.CustomText;
-        ScreenIndex = AppConfig.Display.ScreenIndex;
-        CountdownPos = AppConfig.Display.Position;
-        ShowXOnlyIndex = AppConfig.Display.X;
-        ShowTrayIcon = AppConfig.General.TrayIcon;
-        ShowTrayText = AppConfig.General.TrayText;
+        IsShowXOnly = Display.ShowXOnly;
+        IsDraggable = Display.Draggable;
+        UniTopMost = General.UniTopMost;
+        IsPPTService = Display.SeewoPptsvc;
+        UseCustomText = Display.CustomText;
+        ScreenIndex = Display.ScreenIndex;
+        CountdownPos = Display.Position;
+        ShowXOnlyIndex = Display.X;
+        ShowTrayIcon = General.TrayIcon;
+        ShowTrayText = General.TrayText;
         CustomRules = AppConfig.CustomRules;
         CountdownColors = AppConfig.GlobalColors;
     }
 
     private void LoadExams()
     {
-        AutoSwitch = AppConfig.General.AutoSwitch;
-        AutoSwitchInterval = GetAutoSwitchInterval(AppConfig.General.Interval);
-        var endIndex = AppConfig.Display.EndIndex;
+        AutoSwitch = General.AutoSwitch;
+        AutoSwitchInterval = GetAutoSwitchInterval(General.Interval);
+        var endIndex = Display.EndIndex;
         Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
         Exams = AppConfig.Exams;
-        var i = AppConfig.ExamIndex;
-        ExamIndex = i < Exams.Length ? i : 0;
-
-        try
-        {
-            CurrentExam = Exams[ExamIndex];
-        }
-        catch
-        {
-            ExamIndex = -1;
-            CurrentExam = new();
-        }
-
+        ExamIndex = AppConfig.ExamIndex;
+        CurrentExam = GetCurrentExam();
         ExamName = CurrentExam.Name;
         ExamStart = CurrentExam.Start;
         ExamEnd = CurrentExam.End;
@@ -325,30 +312,45 @@ public sealed class MainForm : AppForm
             RefreshScreen();
         }
 
-        if (MemClean ^ LoadedMemCleaner)
+        if (General.MemClean)
         {
-            if (MemClean)
-            {
-                MemCleaner = new(_ => MemoryCleaner.Clean(), null, 3000, MemCleanerInterval);
-            }
-            else
-            {
-                MemCleaner.Dispose();
-            }
+            MemCleaner ??= new();
+            MemCleaner.Start();
+        }
+        else
+        {
+            MemCleaner.Destory();
+            MemCleaner = null;
+        }
+    }
+
+    private ExamInfoObject GetCurrentExam()
+    {
+        var length = Exams.Length;
+
+        if (length == 0)
+        {
+            ExamIndex = -1;
+            return new();
         }
 
-        LoadedMemCleaner = MemClean;
+        if (length <= ExamIndex)
+        {
+            ExamIndex = 0;
+        }
+
+        return Exams[ExamIndex];
     }
 
     private void ApplyStyle()
     {
-        var topmost = AppConfig.General.TopMost;
-        BorderColor = AppConfig.General.BorderColor;
+        var topmost = General.TopMost;
+        BorderColor = General.BorderColor;
         TopMost = false;
         TopMost = topmost;
         UniTopMostChanged?.Invoke();
         ShowInTaskbar = !topmost;
-        Opacity = AppConfig.General.Opacity / 100D;
+        Opacity = General.Opacity / 100D;
 
         if (!BorderColor.Enabled)
         {
@@ -683,7 +685,7 @@ public sealed class MainForm : AppForm
             CountdownContent = content;
             CountdownForeColor = colors.Fore;
             BackColor = colors.Back;
-            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxW, 0), TextFormatFlags.WordBreak);
+            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
             Invalidate();
 
             if (ShowTrayText)
@@ -742,7 +744,7 @@ public sealed class MainForm : AppForm
 
     private void SetCountdownAutoWrap()
     {
-        CountdownMaxW = GetCurrentScreenRect().Width - 10;
+        CountdownWidth = GetCurrentScreenRect().Width - 10;
     }
 
     private void ApplyLocation()
@@ -789,7 +791,7 @@ public sealed class MainForm : AppForm
         if (ScreenIndex < 0 || ScreenIndex >= screens.Length)
         {
             ScreenIndex = 0;
-            AppConfig.Display.ScreenIndex = 0;
+            Display.ScreenIndex = 0;
             Validator.DemandConfig();
         }
 
