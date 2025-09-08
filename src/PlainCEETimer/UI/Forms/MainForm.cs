@@ -50,7 +50,7 @@ public sealed class MainForm : AppForm
     private GeneralObject General;
     private MemoryCleaner MemCleaner;
     private MenuItem ExamSwitchMenu;
-    private Menu.MenuItemCollection ExamSwitchMainItems;
+    private Menu.MenuItemCollection ExamSwitchMenuItems;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
     private const int PptsvcThreshold = 1;
@@ -169,7 +169,7 @@ public sealed class MainForm : AppForm
         var item = (MenuItem)sender;
         int index = item.Index;
 
-        if (item != null && !item.Checked)
+        if (!item.Checked)
         {
             MainCountdown.SwitchToExam(index);
             SwitchToExam(index);
@@ -178,33 +178,30 @@ public sealed class MainForm : AppForm
 
     private void MainCountdown_ExamSwitched(object sender, ExamSwitchedEventArgs e)
     {
-        BeginInvoke(() => SwitchToExam(e.Index));
+        SwitchToExam(e.Index);
     }
 
     private void MainCountdown_CountdownUpdated(object sender, CountdownUpdatedEventArgs e)
     {
-        BeginInvoke(() =>
+        var content = e.Content;
+        var back = e.BackColor;
+        CountdownContent = content;
+        CountdownForeColor = e.ForeColor;
+        BackColor = back;
+        Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
+        Invalidate();
+
+        if (ShowTrayText)
         {
-            var content = e.Content;
-            var back = e.BackColor;
-            CountdownContent = content;
-            CountdownForeColor = e.ForeColor;
-            BackColor = back;
-            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
-            Invalidate();
+            UpdateTrayIconText(content);
+        }
 
-            if (ShowTrayText)
-            {
-                UpdateTrayIconText(content);
-            }
+        var type = BorderColor.Type;
 
-            var type = BorderColor.Type;
-
-            if (BorderColor.Enabled && type is 1 or 2)
-            {
-                SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
-            }
-        });
+        if (BorderColor.Enabled && type is 1 or 2)
+        {
+            SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
+        }
     }
 
     private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -327,18 +324,18 @@ public sealed class MainForm : AppForm
             MainCountdown.ExamSwitched += MainCountdown_ExamSwitched;
         }
 
-        var option = CountdownOption.None;
+        var options = CountdownOption.None;
         var endIndex = Display.EndIndex;
         var mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
 
         if (Display.CustomText)
         {
-            option |= CountdownOption.UseCustomText;
+            options |= CountdownOption.UseCustomText;
         }
 
         if (General.AutoSwitch)
         {
-            option |= CountdownOption.EnableAutoSwitch;
+            options |= CountdownOption.EnableAutoSwitch;
         }
 
         MainCountdown.StartInfo = new()
@@ -346,7 +343,7 @@ public sealed class MainForm : AppForm
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
             GlobalCustomText = AppConfig.GlobalCustomTexts,
-            Options = option,
+            Options = options,
             Mode = mode,
             Field = Display.ShowXOnly ? (CountdownField)(FieldValue + 1) : CountdownField.Normal,
             GlobalColors = AppConfig.GlobalColors,
@@ -361,12 +358,12 @@ public sealed class MainForm : AppForm
     {
         ContextMenuMain = BaseContextMenu();
         ExamSwitchMenu = ContextMenuMain.MenuItems[0];
-        ExamSwitchMainItems = ExamSwitchMenu.MenuItems;
+        ExamSwitchMenuItems = ExamSwitchMenu.MenuItems;
         ContextMenu = ContextMenuMain;
 
         if (Exams.Length != 0)
         {
-            ExamSwitchMainItems.Clear();
+            ExamSwitchMenuItems.Clear();
 
             for (int i = 0; i < Exams.Length; i++)
             {
@@ -377,7 +374,7 @@ public sealed class MainForm : AppForm
                 };
 
                 item.Click += ExamItems_Click;
-                ExamSwitchMainItems.Add(item);
+                ExamSwitchMenuItems.Add(item);
             }
         }
     }
@@ -410,6 +407,7 @@ public sealed class MainForm : AppForm
                     Visible = true,
                     Text = Text,
                     Icon = App.AppIcon,
+
                     ContextMenu = ContextMenuBuilder.Merge(tmp, ContextMenuBuilder.Build(b =>
                     [
                         b.Separator(),
@@ -442,13 +440,13 @@ public sealed class MainForm : AppForm
     {
         if (index < 0)
         {
-            var item = ExamSwitchMainItems[0];
+            var item = ExamSwitchMenuItems[0];
             item.Checked = false;
             item.Enabled = false;
         }
         else
         {
-            Natives.CheckMenuRadioItem(ExamSwitchMenu.Handle, 0, ExamSwitchMainItems.Count - 1, index, MenuFlag.ByPosition);
+            Natives.CheckMenuRadioItem(ExamSwitchMenu.Handle, 0, ExamSwitchMenuItems.Count - 1, index, MenuFlag.ByPosition);
         }
 
         ExamIndex = index;

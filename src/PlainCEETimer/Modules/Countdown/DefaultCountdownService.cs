@@ -21,6 +21,7 @@ public class DefaultCountdownService : ICountdownService
     public event CountdownUpdatedEventHandler CountdownUpdated;
 
     private int ExamIndex;
+    private int ExamsLength;
     private int AutoSwitchInterval;
     private bool IsRunning;
     private bool EnableAutoSwitch;
@@ -41,6 +42,7 @@ public class DefaultCountdownService : ICountdownService
     private Exam[] Exams;
     private CustomRule[] CustomRules;
     private CustomRule[] Rules;
+    private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Dictionary<string, string> PhCountdown = new(12);
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
@@ -48,6 +50,8 @@ public class DefaultCountdownService : ICountdownService
 
     public DefaultCountdownService()
     {
+        CurrentContext = SynchronizationContext.Current;
+
         DefaultMatchEvaluator = m =>
         {
             var key = m.Value;
@@ -72,12 +76,6 @@ public class DefaultCountdownService : ICountdownService
     public void Dispose()
     {
         MainTimer.Destory();
-
-        if (!CanStart)
-        {
-            AutoSwitchTimer.Destory();
-        }
-
         IsRunning = false;
     }
 
@@ -93,6 +91,7 @@ public class DefaultCountdownService : ICountdownService
         SelectedField = value.Field;
         GlobalColors = value.GlobalColors;
         Exams = value.Exams;
+        ExamsLength = Exams.Length;
         CustomRules = value.CustomRules;
         UpdateExams();
         field = value;
@@ -111,7 +110,7 @@ public class DefaultCountdownService : ICountdownService
     {
         AutoSwitchTimer.Destory();
 
-        if (CanStart && EnableAutoSwitch && Exams.Length > 1)
+        if (CanStart && EnableAutoSwitch && ExamsLength > 1)
         {
             AutoSwitchTimer = new(AutoSwitchCallback, null, AutoSwitchInterval, AutoSwitchInterval);
         }
@@ -169,7 +168,7 @@ public class DefaultCountdownService : ICountdownService
 
     private void AutoSwitchCallback(object state)
     {
-        ExamIndex = (ExamIndex + 1) % Exams.Length;
+        ExamIndex = (ExamIndex + 1) % ExamsLength;
         UpdateExams();
         TryStartMainTimer();
         OnExamSwitched(ExamIndex);
@@ -258,11 +257,11 @@ public class DefaultCountdownService : ICountdownService
 
     private void OnExamSwitched(int index)
     {
-        ExamSwitched?.Invoke(this, new(index));
+        CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(index)), null);
     }
 
     private void OnCountdownUpdated(string content, ColorPair colors)
     {
-        CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back));
+        CurrentContext.Post(_ => CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back)), null);
     }
 }
