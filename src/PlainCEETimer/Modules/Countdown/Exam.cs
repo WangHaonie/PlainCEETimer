@@ -108,10 +108,7 @@ public class Exam : IListViewData<Exam>
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return (17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode();
-        }
+        return unchecked((17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode());
     }
 
     bool IListViewData<Exam>.InternalEquals(Exam other)

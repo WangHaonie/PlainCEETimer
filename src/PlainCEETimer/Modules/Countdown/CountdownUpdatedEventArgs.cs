@@ -9,3 +9,5 @@ public class CountdownUpdatedEventArgs(string content, Color fore, Color back) :
     public Color ForeColor => fore;
     public Color BackColor => back;
 }
+
+public delegate void CountdownUpdatedEventHandler(object sender, CountdownUpdatedEventArgs e);

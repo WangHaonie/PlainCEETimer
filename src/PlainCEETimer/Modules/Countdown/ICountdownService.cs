@@ -6,10 +6,9 @@ public interface ICountdownService : IDisposable
 {
     CountdownStartInfo StartInfo { get; set; }
 
-    event EventHandler<ExamSwitchedEventArgs> ExamSwitched;
-    event EventHandler<CountdownUpdatedEventArgs> CountdownUpdated;
+    event ExamSwitchedEventHandler ExamSwitched;
+    event CountdownUpdatedEventHandler CountdownUpdated;
 
     void Start();
     void SwitchToExam(int index);
-    void Refresh();
 }

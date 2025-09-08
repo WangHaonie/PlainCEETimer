@@ -17,8 +17,8 @@ public class DefaultCountdownService : ICountdownService
         set => SetStartInfo(ref field, value);
     }
 
-    public event EventHandler<ExamSwitchedEventArgs> ExamSwitched;
-    public event EventHandler<CountdownUpdatedEventArgs> CountdownUpdated;
+    public event ExamSwitchedEventHandler ExamSwitched;
+    public event CountdownUpdatedEventHandler CountdownUpdated;
 
     private int ExamIndex;
     private int AutoSwitchInterval;
@@ -57,12 +57,7 @@ public class DefaultCountdownService : ICountdownService
 
     public void Start()
     {
-        if (!IsRunning)
-        {
-            MainTimer = new(CountdownCallback, null, 0, 1000);
-            IsRunning = true;
-        }
-
+        TryStartMainTimer();
         ResetAutoSwitch();
     }
 
@@ -70,35 +65,46 @@ public class DefaultCountdownService : ICountdownService
     {
         ExamIndex = index;
         UpdateExams();
+        TryStartMainTimer();
         ResetAutoSwitch();
-    }
-
-    public void Refresh()
-    {
-        CountdownCallback(null);
     }
 
     public void Dispose()
     {
         MainTimer.Destory();
+
+        if (!CanStart)
+        {
+            AutoSwitchTimer.Destory();
+        }
+
         IsRunning = false;
     }
 
     private void SetStartInfo(ref CountdownStartInfo field, CountdownStartInfo value)
     {
+        AutoSwitchInterval = value.AutoSwitchInterval;
+        ExamIndex = value.ExamIndex;
+        GlobalText = value.GlobalCustomText;
         Options = value.Options;
         CanUseCustomText = CheckOptions(CountdownOption.UseCustomText);
         EnableAutoSwitch = CheckOptions(CountdownOption.EnableAutoSwitch);
-        AutoSwitchInterval = value.AutoSwitchInterval;
         Mode = value.Mode;
-        CustomRules = value.CustomRules;
-        GlobalText = value.GlobalCustomText;
         SelectedField = value.Field;
         GlobalColors = value.GlobalColors;
-        ExamIndex = value.ExamIndex;
         Exams = value.Exams;
+        CustomRules = value.CustomRules;
         UpdateExams();
         field = value;
+    }
+
+    private void TryStartMainTimer()
+    {
+        if (!IsRunning)
+        {
+            MainTimer = new(CountdownCallback, null, 0, 1000);
+            IsRunning = true;
+        }
     }
 
     private void ResetAutoSwitch()
@@ -118,6 +124,7 @@ public class DefaultCountdownService : ICountdownService
         ExamStart = current.Start;
         ExamEnd = current.End;
         CanStart = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
+        CountdownCallback(null);
     }
 
     private bool CheckOptions(CountdownOption option)
@@ -164,7 +171,7 @@ public class DefaultCountdownService : ICountdownService
     {
         ExamIndex = (ExamIndex + 1) % Exams.Length;
         UpdateExams();
-        Refresh();
+        TryStartMainTimer();
         OnExamSwitched(ExamIndex);
     }
 

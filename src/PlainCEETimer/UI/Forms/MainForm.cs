@@ -25,7 +25,7 @@ public sealed class MainForm : AppForm
     private int CountdownWidth;
     private int ExamIndex;
     private int ScreenIndex;
-    private int ShowXOnlyIndex;
+    private int FieldValue;
     private bool IsDraggable;
     private bool IsPPTService;
     private bool IsReadyToMove;
@@ -43,15 +43,16 @@ public sealed class MainForm : AppForm
     private ICountdownService MainCountdown;
     private AboutForm FormAbout;
     private AppConfig AppConfig;
-    private GeneralObject General;
-    private DisplayObject Display;
     private ContextMenu ContextMenuMain;
+    private DisplayObject Display;
+    private Exam[] Exams;
     private Font CountdownFont;
+    private GeneralObject General;
     private MemoryCleaner MemCleaner;
-    private Menu.MenuItemCollection ExamSwitchMain;
+    private MenuItem ExamSwitchMenu;
+    private Menu.MenuItemCollection ExamSwitchMainItems;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
-    private Exam[] Exams;
     private const int PptsvcThreshold = 1;
     private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
 
@@ -170,21 +171,14 @@ public sealed class MainForm : AppForm
 
         if (item != null && !item.Checked)
         {
-            ExamIndex = index;
             MainCountdown.SwitchToExam(index);
-            MainCountdown.Refresh();
-            AppConfig.ExamIndex = index;
-            Validator.DemandConfig();
-            UpdateExamSelection();
+            SwitchToExam(index);
         }
     }
 
     private void MainCountdown_ExamSwitched(object sender, ExamSwitchedEventArgs e)
     {
-        ExamIndex = e.Index;
-        AppConfig.ExamIndex = ExamIndex;
-        Validator.DemandConfig();
-        UpdateExamSelection();
+        BeginInvoke(() => SwitchToExam(e.Index));
     }
 
     private void MainCountdown_CountdownUpdated(object sender, CountdownUpdatedEventArgs e)
@@ -253,7 +247,7 @@ public sealed class MainForm : AppForm
         IsPPTService = Display.SeewoPptsvc;
         ScreenIndex = Display.ScreenIndex;
         CountdownPos = Display.Position;
-        ShowXOnlyIndex = Display.X;
+        FieldValue = Display.X;
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
 
@@ -354,7 +348,7 @@ public sealed class MainForm : AppForm
             GlobalCustomText = AppConfig.GlobalCustomTexts,
             Options = option,
             Mode = mode,
-            Field = Display.ShowXOnly ? (CountdownField)(ShowXOnlyIndex + 1) : CountdownField.Normal,
+            Field = Display.ShowXOnly ? (CountdownField)(FieldValue + 1) : CountdownField.Normal,
             GlobalColors = AppConfig.GlobalColors,
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
@@ -366,12 +360,13 @@ public sealed class MainForm : AppForm
     private void LoadContextMenu()
     {
         ContextMenuMain = BaseContextMenu();
-        ExamSwitchMain = ContextMenuMain.MenuItems[0].MenuItems;
+        ExamSwitchMenu = ContextMenuMain.MenuItems[0];
+        ExamSwitchMainItems = ExamSwitchMenu.MenuItems;
         ContextMenu = ContextMenuMain;
 
         if (Exams.Length != 0)
         {
-            ExamSwitchMain.Clear();
+            ExamSwitchMainItems.Clear();
 
             for (int i = 0; i < Exams.Length; i++)
             {
@@ -382,7 +377,7 @@ public sealed class MainForm : AppForm
                 };
 
                 item.Click += ExamItems_Click;
-                ExamSwitchMain.Add(item);
+                ExamSwitchMainItems.Add(item);
             }
         }
     }
@@ -443,18 +438,22 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private void UpdateExamSelection()
+    private void SwitchToExam(int index)
     {
-        if (ExamIndex < 0)
+        if (index < 0)
         {
-            var item = ExamSwitchMain[0];
+            var item = ExamSwitchMainItems[0];
             item.Checked = false;
             item.Enabled = false;
         }
         else
         {
-            Natives.CheckMenuRadioItem(ContextMenuMain.MenuItems[0].Handle, 0, ExamSwitchMain.Count - 1, ExamIndex, MenuFlag.ByPosition);
+            Natives.CheckMenuRadioItem(ExamSwitchMenu.Handle, 0, ExamSwitchMainItems.Count - 1, index, MenuFlag.ByPosition);
         }
+
+        ExamIndex = index;
+        AppConfig.ExamIndex = index;
+        Validator.DemandConfig();
     }
 
     private int GetAutoSwitchInterval(int Index) => Index switch
@@ -503,7 +502,6 @@ public sealed class MainForm : AppForm
                     if (dr == DialogResult.OK)
                     {
                         RefreshSettings();
-                        MainCountdown.Refresh();
                     }
                 };
             }
