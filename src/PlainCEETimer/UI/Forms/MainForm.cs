@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
@@ -24,74 +21,43 @@ public sealed class MainForm : AppForm
 
     public static event Action UniTopMostChanged;
 
-    private int AutoSwitchInterval;
     private int CurrentTheme;
     private int CountdownWidth;
     private int ExamIndex;
     private int ScreenIndex;
     private int ShowXOnlyIndex;
-    private bool AutoSwitch;
-    private bool CanUseRules;
-    private bool IsCountdownReady;
-    private bool IsCountdownRunning;
     private bool IsDraggable;
     private bool IsPPTService;
     private bool IsReadyToMove;
-    private bool IsShowXOnly;
     private bool ShowTrayIcon;
     private bool ShowTrayText;
     private bool TrayIconReopen;
-    private bool UseCustomText;
     private bool BorderUseAccentColor;
     private string CountdownContent;
-    private string ExamName;
-    private string[] GlobalTexts;
-    private CountdownMode Mode;
-    private CountdownPosition CountdownPos;
-    private CountdownPhase CurrentPhase = CountdownPhase.None;
-    private CountdownState SelectedState;
     private Color CountdownForeColor;
     private BorderColorObject BorderColor;
-    private ColorPair[] CountdownColors;
-    private DateTime Now;
-    private DateTime ExamEnd;
-    private DateTime ExamStart;
     private Point LastLocation;
     private Point LastMouseLocation;
     private Rectangle SelectedScreenRect;
+    private CountdownPosition CountdownPos;
+    private ICountdownService MainCountdown;
     private AboutForm FormAbout;
     private AppConfig AppConfig;
     private GeneralObject General;
     private DisplayObject Display;
     private ContextMenu ContextMenuMain;
-    private ContextMenu ContextMenuTray;
-    private CustomRule[] CustomRules;
-    private CustomRule[] CurrentRules;
-    private Exam CurrentExam;
-    private Exam[] Exams;
     private Font CountdownFont;
-    private MatchEvaluator DefaultMatchEvaluator;
+    private MemoryCleaner MemCleaner;
     private Menu.MenuItemCollection ExamSwitchMain;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
-    private MemoryCleaner MemCleaner;
-    private System.Threading.Timer Countdown;
-    private System.Windows.Forms.Timer AutoSwitchHandler;
+    private Exam[] Exams;
     private const int PptsvcThreshold = 1;
     private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
-    private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
-    private readonly Dictionary<string, string> PhCountdown = new(12);
-    private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
 
     protected override void OnInitializing()
     {
         Text = "高考倒计时";
-
-        DefaultMatchEvaluator = m =>
-        {
-            var key = m.Value;
-            return PhCountdown.TryGetValue(key, out string value) ? value : key;
-        };
 
         SystemEvents.DisplaySettingsChanged += (_, _) =>
         {
@@ -101,16 +67,6 @@ public sealed class MainForm : AppForm
         };
 
         SystemEvents.SessionEnding += (_, _) => Validator.SaveConfig();
-    }
-
-    protected override void WndProc(ref Message m)
-    {
-        if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
-        {
-            SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor(m.WParam));
-        }
-
-        base.WndProc(ref m);
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -191,6 +147,16 @@ public sealed class MainForm : AppForm
         VerifyLocation();
     }
 
+    protected override void WndProc(ref Message m)
+    {
+        if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
+        {
+            SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor(m.WParam));
+        }
+
+        base.WndProc(ref m);
+    }
+
     private void MainForm_LocationRefreshed()
     {
         AppConfig.Location = Location;
@@ -204,15 +170,47 @@ public sealed class MainForm : AppForm
 
         if (item != null && !item.Checked)
         {
-            UnselectAllExamItems();
             ExamIndex = index;
+            MainCountdown.SwitchToExam(index);
+            MainCountdown.Refresh();
             AppConfig.ExamIndex = index;
             Validator.DemandConfig();
-            LoadExams();
-            TryRunCountdown();
             UpdateExamSelection();
-            CountdownCallback(null);
         }
+    }
+
+    private void MainCountdown_ExamSwitched(object sender, ExamSwitchedEventArgs e)
+    {
+        ExamIndex = e.Index;
+        AppConfig.ExamIndex = ExamIndex;
+        Validator.DemandConfig();
+        UpdateExamSelection();
+    }
+
+    private void MainCountdown_CountdownUpdated(object sender, CountdownUpdatedEventArgs e)
+    {
+        BeginInvoke(() =>
+        {
+            var content = e.Content;
+            var back = e.BackColor;
+            CountdownContent = content;
+            CountdownForeColor = e.ForeColor;
+            BackColor = back;
+            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
+            Invalidate();
+
+            if (ShowTrayText)
+            {
+                UpdateTrayIconText(content);
+            }
+
+            var type = BorderColor.Type;
+
+            if (BorderColor.Enabled && type is 1 or 2)
+            {
+                SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
+            }
+        });
     }
 
     private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -221,16 +219,6 @@ public sealed class MainForm : AppForm
         {
             App.OnTrayMenuShowAllClicked();
         }
-    }
-
-    private void ExamAutoSwitch(object sender, EventArgs e)
-    {
-        AppConfig.ExamIndex = (ExamIndex + 1) % Exams.Length;
-        Validator.DemandConfig();
-        LoadExams();
-        TryRunCountdown();
-        UnselectAllExamItems();
-        UpdateExamSelection(true);
     }
 
     private void VerifyLocation()
@@ -245,15 +233,13 @@ public sealed class MainForm : AppForm
     private void RefreshSettings()
     {
         LoadConfig();
-        LoadExams();
-        PrepareCountdown();
-        TryRunCountdown();
         ApplyLocation();
         CompatibleWithPPTService();
         LoadContextMenu();
         LoadTrayIcon();
         SetCountdownAutoWrap();
         ApplyStyle();
+        RunCountdown();
     }
 
     private void LoadConfig()
@@ -262,45 +248,19 @@ public sealed class MainForm : AppForm
         General = AppConfig.General;
         Display = AppConfig.Display;
 
-        GlobalTexts = AppConfig.GlobalCustomTexts;
-        IsShowXOnly = Display.ShowXOnly;
         IsDraggable = Display.Draggable;
         UniTopMost = General.UniTopMost;
         IsPPTService = Display.SeewoPptsvc;
-        UseCustomText = Display.CustomText;
         ScreenIndex = Display.ScreenIndex;
         CountdownPos = Display.Position;
         ShowXOnlyIndex = Display.X;
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
-        CustomRules = AppConfig.CustomRules;
-        CountdownColors = AppConfig.GlobalColors;
-    }
 
-    private void LoadExams()
-    {
-        AutoSwitch = General.AutoSwitch;
-        AutoSwitchInterval = GetAutoSwitchInterval(General.Interval);
-        var endIndex = Display.EndIndex;
-        Mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
         Exams = AppConfig.Exams;
         ExamIndex = AppConfig.ExamIndex;
-        CurrentExam = GetCurrentExam();
-        ExamName = CurrentExam.Name;
-        ExamStart = CurrentExam.Start;
-        ExamEnd = CurrentExam.End;
-        IsCountdownReady = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
-
-        if (IsCountdownReady && CurrentPhase != CountdownPhase.None)
-        {
-            RefreshCustomRules();
-        }
-    }
-
-    private void PrepareCountdown()
-    {
-        SelectedState = IsShowXOnly ? (CountdownState)(ShowXOnlyIndex + 1) : CountdownState.Normal;
         CountdownFont = AppConfig.Font;
+
         LocationRefreshed -= MainForm_LocationRefreshed;
 
         if (IsDraggable)
@@ -323,24 +283,6 @@ public sealed class MainForm : AppForm
             MemCleaner.Destory();
             MemCleaner = null;
         }
-    }
-
-    private Exam GetCurrentExam()
-    {
-        var length = Exams.Length;
-
-        if (length == 0)
-        {
-            ExamIndex = -1;
-            return new();
-        }
-
-        if (length <= ExamIndex)
-        {
-            ExamIndex = 0;
-        }
-
-        return Exams[ExamIndex];
     }
 
     private void ApplyStyle()
@@ -382,32 +324,49 @@ public sealed class MainForm : AppForm
         CurrentTheme = newTheme;
     }
 
-    private void TryRunCountdown()
+    private void RunCountdown()
     {
-        if (!IsCountdownRunning)
+        if (MainCountdown == null)
         {
-            IsCountdownRunning = true;
-            Countdown = new(CountdownCallback, null, 0, 1000);
+            MainCountdown = new DefaultCountdownService();
+            MainCountdown.CountdownUpdated += MainCountdown_CountdownUpdated;
+            MainCountdown.ExamSwitched += MainCountdown_ExamSwitched;
         }
+
+        var option = CountdownOption.None;
+        var endIndex = Display.EndIndex;
+        var mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
+
+        if (Display.CustomText)
+        {
+            option |= CountdownOption.UseCustomText;
+        }
+
+        if (General.AutoSwitch)
+        {
+            option |= CountdownOption.EnableAutoSwitch;
+        }
+
+        MainCountdown.StartInfo = new()
+        {
+            AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
+            ExamIndex = ExamIndex,
+            GlobalCustomText = AppConfig.GlobalCustomTexts,
+            Options = option,
+            Mode = mode,
+            Field = Display.ShowXOnly ? (CountdownField)(ShowXOnlyIndex + 1) : CountdownField.Normal,
+            GlobalColors = AppConfig.GlobalColors,
+            Exams = Exams,
+            CustomRules = AppConfig.CustomRules
+        };
+
+        MainCountdown.Start();
     }
 
     private void LoadContextMenu()
     {
         ContextMenuMain = BaseContextMenu();
         ExamSwitchMain = ContextMenuMain.MenuItems[0].MenuItems;
-
-        if (ShowTrayIcon)
-        {
-            var tmp = BaseContextMenu();
-
-            for (int i = 0; i < 2; i++)
-            {
-                tmp.MenuItems.RemoveAt(0);
-            }
-
-            ContextMenuTray = tmp;
-        }
-
         ContextMenu = ContextMenuMain;
 
         if (Exams.Length != 0)
@@ -419,74 +378,20 @@ public sealed class MainForm : AppForm
                 var item = new MenuItem()
                 {
                     Text = $"{i + 1}. {Exams[i]}",
-                    RadioCheck = true,
-                    Checked = i == ExamIndex
+                    RadioCheck = true
                 };
 
                 item.Click += ExamItems_Click;
                 ExamSwitchMain.Add(item);
             }
         }
-
-        UpdateExamSelection();
-
-        /*
-
-        克隆 (重用) 现有 ContextMenuStrip 实例 参考：
-
-        .net - C# - Duplicate ContextMenuStrip Items into another - Stack Overflow
-        https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
-
-        */
-
-        ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
-        [
-            b.Menu("切换(&Q)",
-            [
-                b.Item("请先添加考试信息")
-            ]),
-
-            b.Separator(),
-
-            b.Item("设置(&S)", (_, _) =>
-            {
-                if (FormSettings == null || FormSettings.IsDisposed)
-                {
-                    FormSettings = new();
-
-                    FormSettings.DialogEnd += dr =>
-                    {
-                        if (dr == DialogResult.OK)
-                        {
-                            RefreshSettings();
-                            CountdownCallback(null);
-                        }
-                    };
-                }
-
-                FormSettings.ReActivate();
-            }),
-
-            b.Item("关于(&A)", (_, _) =>
-            {
-                if (FormAbout == null || FormAbout.IsDisposed)
-                {
-                    FormAbout = new();
-                }
-
-                FormAbout.ReActivate();
-            }),
-
-            b.Separator(),
-            b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
-        ]);
     }
 
     private void LoadTrayIcon()
     {
-        if (TrayIcon == null)
+        if (ShowTrayIcon)
         {
-            if (ShowTrayIcon)
+            if (TrayIcon == null)
             {
                 if (TrayIconReopen)
                 {
@@ -498,12 +403,19 @@ public sealed class MainForm : AppForm
                     return;
                 }
 
+                var tmp = BaseContextMenu();
+
+                for (int i = 0; i < 2; i++)
+                {
+                    tmp.MenuItems.RemoveAt(0);
+                }
+
                 TrayIcon = new()
                 {
                     Visible = true,
                     Text = Text,
                     Icon = App.AppIcon,
-                    ContextMenu = ContextMenuBuilder.Merge(ContextMenuTray, ContextMenuBuilder.Build(b =>
+                    ContextMenu = ContextMenuBuilder.Merge(tmp, ContextMenuBuilder.Build(b =>
                     [
                         b.Separator(),
                         b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
@@ -515,152 +427,35 @@ public sealed class MainForm : AppForm
                     ]))
                 };
 
-                TrayIcon.MouseClick -= TrayIcon_MouseClick;
                 TrayIcon.MouseClick += TrayIcon_MouseClick;
+            }
 
-                if (!ShowTrayText)
-                {
-                    UpdateTrayIconText(App.AppName);
-                }
-            }
-        }
-        else
-        {
-            if (!ShowTrayIcon)
-            {
-                TrayIcon.Dispose();
-                TrayIcon = null;
-                TrayIconReopen = true;
-            }
-            else if (!ShowTrayText)
+            if (!ShowTrayText)
             {
                 UpdateTrayIconText(App.AppName);
             }
         }
-    }
-
-    private void UnselectAllExamItems()
-    {
-        var length = ExamSwitchMain.Count;
-
-        for (int i = 0; i < length; i++)
-        {
-            ExamSwitchMain[i].Checked = false;
-        }
-    }
-
-    private void UpdateExamSelection(bool canUpdate = false)
-    {
-        if (ExamIndex != -1)
-        {
-            ExamSwitchMain[ExamIndex].Checked = true;
-        }
         else
+        {
+            TrayIcon.Dispose();
+            TrayIcon = null;
+            TrayIconReopen = true;
+        }
+    }
+
+    private void UpdateExamSelection()
+    {
+        if (ExamIndex < 0)
         {
             var item = ExamSwitchMain[0];
             item.Checked = false;
             item.Enabled = false;
         }
-
-        if (!AutoSwitch)
-        {
-            AutoSwitchHandler.Destory();
-        }
-        else if (!canUpdate)
-        {
-            AutoSwitchHandler.Destory();
-
-            if (IsCountdownReady && Exams.Length > 1)
-            {
-                AutoSwitchHandler = new() { Interval = AutoSwitchInterval };
-                AutoSwitchHandler.Tick += ExamAutoSwitch;
-                AutoSwitchHandler.Start();
-            }
-        }
-    }
-
-    private void CountdownCallback(object state)
-    {
-        if (IsCountdownReady)
-        {
-            Now = DateTime.Now;
-
-            if (Mode >= CountdownMode.Mode1 && Now < ExamStart)
-            {
-                SetPhase(CountdownPhase.P1);
-                ApplyCustomRule(0, ExamStart - Now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode2 && Now < ExamEnd)
-            {
-                SetPhase(CountdownPhase.P2);
-                ApplyCustomRule(1, ExamEnd - Now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode3 && Now > ExamEnd)
-            {
-                SetPhase(CountdownPhase.P3);
-                ApplyCustomRule(2, Now - ExamEnd);
-                return;
-            }
-        }
-
-        Countdown.Dispose();
-        UpdateCountdown("欢迎使用高考倒计时", CountdownColors[3]);
-        UpdateTrayIconText(App.AppName, true);
-        IsCountdownRunning = false;
-    }
-
-    private void ApplyCustomRule(int phase, TimeSpan span)
-    {
-        PhCountdown[Constants.PhExamName] = ExamName;
-        PhCountdown[Constants.PhDays] = $"{span.Days}";
-        PhCountdown[Constants.PhCeilingDays] = $"{span.Days + 1}";
-        PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
-        PhCountdown[Constants.PhHours] = $"{span.Hours:00}";
-        PhCountdown[Constants.PhDecimalHours] = $"{span.TotalHours:0.0}";
-        PhCountdown[Constants.PhTotalHours] = $"{Math.Truncate(span.TotalHours)}";
-        PhCountdown[Constants.PhMinutes] = $"{span.Minutes:00}";
-        PhCountdown[Constants.PhTotalMinutes] = $"{span.TotalMinutes:0}";
-        PhCountdown[Constants.PhSeconds] = $"{span.Seconds:00}";
-        PhCountdown[Constants.PhTotalSeconds] = $"{span.TotalSeconds:0}";
-
-        if (UseCustomText)
-        {
-            if (CanUseRules)
-            {
-                foreach (var rule in CurrentRules)
-                {
-                    if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
-                    {
-                        UpdateCountdown(CountdownRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
-                        return;
-                    }
-                }
-            }
-
-            UpdateCountdown(CountdownRegEx.Replace(GlobalTexts[phase], DefaultMatchEvaluator), CountdownColors[phase]);
-        }
         else
         {
-            PhCountdown["{ht}"] = DefaultTexts[phase];
-            UpdateCountdown(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), CountdownColors[phase]);
+            Natives.CheckMenuRadioItem(ContextMenuMain.MenuItems[0].Handle, 0, ExamSwitchMain.Count - 1, ExamIndex, MenuFlag.ByPosition);
         }
     }
-
-    private string GetDefaultText() => SelectedState switch
-    {
-        CountdownState.DaysOnly => "距离{x}{ht}{d}天",
-        CountdownState.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
-        CountdownState.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
-        CountdownState.HoursOnly => "距离{x}{ht}{th}小时",
-        CountdownState.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
-        CountdownState.MinutesOnly => "距离{x}{ht}{tm}分钟",
-        CountdownState.SecondsOnly => "距离{x}{ht}{ts}秒",
-        _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
-    };
 
     private int GetAutoSwitchInterval(int Index) => Index switch
     {
@@ -679,53 +474,63 @@ public sealed class MainForm : AppForm
         _ => 10_000 // 10 s
     };
 
-    private void UpdateCountdown(string content, ColorPair colors)
-    {
-        BeginInvoke(() =>
-        {
-            CountdownContent = content;
-            CountdownForeColor = colors.Fore;
-            BackColor = colors.Back;
-            Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
-            Invalidate();
+    private ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
+    [
+        /*
 
-            if (ShowTrayText)
+        克隆 (重用) 现有 ContextMenuStrip 实例 参考：
+
+        .net - C# - Duplicate ContextMenuStrip Items into another - Stack Overflow
+        https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
+
+        */
+
+        b.Menu("切换(&Q)",
+        [
+            b.Item("请先添加考试信息")
+        ]),
+
+        b.Separator(),
+
+        b.Item("设置(&S)", (_, _) =>
+        {
+            if (FormSettings == null || FormSettings.IsDisposed)
             {
-                UpdateTrayIconText(content);
+                FormSettings = new();
+
+                FormSettings.DialogEnd += dr =>
+                {
+                    if (dr == DialogResult.OK)
+                    {
+                        RefreshSettings();
+                        MainCountdown.Refresh();
+                    }
+                };
             }
 
-            var type = BorderColor.Type;
+            FormSettings.ReActivate();
+        }),
 
-            if (BorderColor.Enabled && type is 1 or 2)
-            {
-                SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : BackColor);
-            }
-        });
-    }
-
-    private void SetPhase(CountdownPhase phase)
-    {
-        if (CurrentPhase != phase)
+        b.Item("关于(&A)", (_, _) =>
         {
-            CurrentPhase = phase;
-            RefreshCustomRules();
-        }
-    }
+            if (FormAbout == null || FormAbout.IsDisposed)
+            {
+                FormAbout = new();
+            }
 
-    private void UpdateTrayIconText(string content, bool invokeNeeded = false)
+            FormAbout.ReActivate();
+        }),
+
+        b.Separator(),
+        b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
+    ]);
+
+    private void UpdateTrayIconText(string content)
     {
         if (TrayIcon != null)
         {
-            content = content.Truncate(60);
-
-            if (invokeNeeded)
-            {
-                BeginInvoke(() => TrayIcon.Text = content);
-            }
-            else
-            {
-                TrayIcon.Text = content;
-            }
+            var text = content.Truncate(60);
+            TrayIcon.Text = text;
         }
     }
 
@@ -797,18 +602,6 @@ public sealed class MainForm : AppForm
         }
 
         SelectedScreenRect = screens[ScreenIndex].WorkingArea;
-    }
-
-    private void RefreshCustomRules()
-    {
-        CurrentRules =
-        [..
-            CustomRules
-            .Where(r => r.Phase == CurrentPhase)
-            .OrderByDescending(x => x)
-        ];
-
-        CanUseRules = UseCustomText && CurrentRules.Length != 0;
     }
 
     private void SetBorderColor(BOOL enabled, COLORREF color)

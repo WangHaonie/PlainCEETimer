@@ -39,13 +39,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
     private PlainNumericUpDown NUDSeconds;
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
-    private readonly Dictionary<int, Cache> TemporaryChanges = new(3);
-
-    private struct Cache(ColorPair colors, string text)
-    {
-        public ColorPair Colors = colors;
-        public string Text = text;
-    }
+    private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
 
     protected override void OnInitializing()
     {
@@ -89,8 +83,8 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
                         if (TemporaryChanges.ContainsKey(index))
                         {
                             var tmp = TemporaryChanges[index];
-                            ApplyColorBlock(tmp.Colors);
-                            TextBoxCustomText.Text = tmp.Text;
+                            ApplyColorBlock(new(tmp.ForeColor, tmp.BackColor));
+                            TextBoxCustomText.Text = tmp.Content;
                         }
                         else
                         {
@@ -228,7 +222,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 
     private void SaveTemp()
     {
-        TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(new(BlockFore.Color, BlockBack.Color), TextBoxCustomText.Text);
+        TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(TextBoxCustomText.Text, BlockFore.Color, BlockBack.Color);
     }
 
     private void GetNewData(bool all = true, bool colorOnly = false, bool textOnly = false)

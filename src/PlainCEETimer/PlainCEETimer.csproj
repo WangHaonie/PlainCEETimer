@@ -112,6 +112,12 @@
     <Compile Include="Interop\Win32TaskScheduler.cs" />
     <Compile Include="Modules\Configuration\BorderColorObject.cs" />
     <Compile Include="Modules\Configuration\InvalidTamperingException.cs" />
+    <Compile Include="Modules\Countdown\CountdownStartInfo.cs" />
+    <Compile Include="Modules\Countdown\CountdownUpdatedEventArgs.cs" />
+    <Compile Include="Modules\Countdown\DefaultCountdownService.cs" />
+    <Compile Include="Modules\Countdown\Enums.cs" />
+    <Compile Include="Modules\Countdown\ExamSwitchedEventArgs.cs" />
+    <Compile Include="Modules\Countdown\ICountdownService.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\JsonConverters\ColorFormatConverter.cs" />
     <Compile Include="Modules\Startup.cs" />

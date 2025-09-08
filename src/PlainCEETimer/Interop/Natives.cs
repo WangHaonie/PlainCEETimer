@@ -18,7 +18,10 @@ public static class Natives
     public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
 
     [DllImport(App.User32Dll)]
-    public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SWP uFlags);
+    public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SwpFlag uFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern BOOL CheckMenuRadioItem(HWND hmenu, int first, int last, int check, MenuFlag flags);
 
     /*
 
@@ -37,7 +40,13 @@ public static class Natives
 }
 
 [Flags]
-public enum SWP : uint
+public enum MenuFlag
+{
+    ByPosition = 0x0400
+}
+
+[Flags]
+public enum SwpFlag : uint
 {
     NOSIZE = 0x0001U,
     NOMOVE = 0x0002U,
