@@ -12,7 +12,7 @@ public sealed class ExamTimeConverter : JsonConverter<DateTime>
         try
         {
             if (reader.ValueType == typeof(string) &&
-            DateTime.TryParseExact(reader.Value.ToString(), App.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime value))
+            DateTime.TryParseExact(reader.Value.ToString(), App.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var value))
             {
                 return value;
             }

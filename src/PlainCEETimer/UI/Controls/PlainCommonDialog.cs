@@ -36,7 +36,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                     using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
-                    GetClientRect(hWnd, out RECT rc);
+                    GetClientRect(hWnd, out var rc);
                     rc.Left += 6;
                     Rectangle rect = rc;
                     var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
@@ -146,7 +146,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             }, IntPtr.Zero);
         }
 
-        GetWindowRect(hWnd, out RECT rect);
+        GetWindowRect(hWnd, out var rect);
 
         Rectangle bounds = rect;
         var screen = Screen.GetWorkingArea(owner);

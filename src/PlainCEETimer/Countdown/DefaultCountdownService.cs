@@ -57,7 +57,7 @@ public class DefaultCountdownService : ICountdownService
         DefaultMatchEvaluator = m =>
         {
             var key = m.Value;
-            return PhCountdown.TryGetValue(key, out string value) ? value : key;
+            return PhCountdown.TryGetValue(key, out var value) ? value : key;
         };
     }
 
@@ -182,7 +182,7 @@ public class DefaultCountdownService : ICountdownService
             ExamIndex = (ExamIndex + 1) % ExamsLength;
             UpdateExams();
         }
-        while (!TestExam(CurrentExam, out var _, out var _) && ExamIndex != ExamsLength - 1);
+        while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsLength - 1);
 
         IsSkipping = false;
         TryStartMainTimer();
@@ -191,7 +191,7 @@ public class DefaultCountdownService : ICountdownService
 
     private void CountdownCallback(object state)
     {
-        if (CanStart && TestExam(CurrentExam, out CountdownPhase phase, out TimeSpan span))
+        if (CanStart && TestExam(CurrentExam, out var phase, out var span))
         {
             SetPhase(phase);
             ApplyCustomRule(CurrentExam.Name, (int)phase, span);

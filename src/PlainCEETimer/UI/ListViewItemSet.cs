@@ -46,7 +46,7 @@ public class ListViewItemSet<TData>()
             return true;
         }
 
-        if (ItemsSet.TryGetValue(Element.FromData(newData), out Element actual) && existing.Equals(actual.Item))
+        if (ItemsSet.TryGetValue(Element.FromData(newData), out var actual) && existing.Equals(actual.Item))
         {
             return newData.InternalEquals(actual.Data) ? null : true;
         }

@@ -269,7 +269,7 @@ public readonly struct HICON
 
     public static Icon ExtractIcon(string file, int index = 0)
     {
-        Natives.ExtractIconEx(file, index, out HICON hIcon, default, 1);
+        Natives.ExtractIconEx(file, index, out var hIcon, default, 1);
         return hIcon.ToIcon();
     }
 }

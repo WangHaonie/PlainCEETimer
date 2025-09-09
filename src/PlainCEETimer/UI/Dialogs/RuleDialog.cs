@@ -186,7 +186,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 
         var content = TextBoxCustomText.Text.RemoveIllegalChars();
 
-        if (!Validator.VerifyCustomText(content, out string ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
+        if (!Validator.VerifyCustomText(content, out var ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
         {
             MessageX.Error(ErrorMsg);
             return false;

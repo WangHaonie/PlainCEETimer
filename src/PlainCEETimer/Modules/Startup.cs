@@ -113,7 +113,7 @@ internal static class Startup
     {
         if (NotElevated)
         {
-            Win32TaskScheduler.Export(TaskName, out string raw);
+            Win32TaskScheduler.Export(TaskName, out var raw);
 
             if (!string.IsNullOrEmpty(raw))
             {

@@ -128,7 +128,7 @@ public sealed class CustomTextDialog : AppDialog
         {
             text = TextBoxes[i].Text;
 
-            if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out string msg, i + 1) && !string.IsNullOrEmpty(msg))
+            if (!Validator.VerifyCustomText(text.RemoveIllegalChars(), out var msg, i + 1) && !string.IsNullOrEmpty(msg))
             {
                 MessageX.Error(msg);
                 return false;
