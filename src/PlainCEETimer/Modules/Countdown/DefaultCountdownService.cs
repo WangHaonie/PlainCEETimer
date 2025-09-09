@@ -28,6 +28,7 @@ public class DefaultCountdownService : ICountdownService
     private bool CanUseCustomText;
     private bool CanStart;
     private bool CanUseRules;
+    private bool CanUpdateRules;
     private string ExamName;
     private string[] GlobalText;
     private DateTime ExamStart;
@@ -93,6 +94,7 @@ public class DefaultCountdownService : ICountdownService
         Exams = value.Exams;
         ExamsLength = Exams.Length;
         CustomRules = value.CustomRules;
+        CanUpdateRules = true;
         UpdateExams();
         field = value;
     }
@@ -133,7 +135,7 @@ public class DefaultCountdownService : ICountdownService
 
     private void SetPhase(CountdownPhase phase)
     {
-        if (Phase != phase)
+        if (CanUpdateRules || Phase != phase)
         {
             Rules =
             [..
@@ -144,6 +146,7 @@ public class DefaultCountdownService : ICountdownService
 
             CanUseRules = CanUseCustomText && Rules.Length != 0;
             Phase = phase;
+            CanUpdateRules = false;
         }
     }
 
