@@ -22,18 +22,17 @@ public class DefaultCountdownService : ICountdownService
     public event CountdownUpdatedEventHandler CountdownUpdated;
 
     private int ExamIndex;
+    private int LastExamIndex = -2;
     private int ExamsLength;
     private int AutoSwitchInterval;
     private bool IsRunning;
+    private bool IsSkipping;
     private bool EnableAutoSwitch;
     private bool CanUseCustomText;
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
-    private string ExamName;
     private string[] GlobalText;
-    private DateTime ExamStart;
-    private DateTime ExamEnd;
     private ColorPair[] GlobalColors;
     private CountdownMode Mode;
     private CountdownField SelectedField;
@@ -41,6 +40,7 @@ public class DefaultCountdownService : ICountdownService
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
+    private Exam CurrentExam;
     private Exam[] Exams;
     private CustomRule[] CustomRules;
     private CustomRule[] Rules;
@@ -121,12 +121,16 @@ public class DefaultCountdownService : ICountdownService
 
     private void UpdateExams()
     {
-        var current = GetCurrentExam(Exams, ref ExamIndex);
-        ExamName = current.Name;
-        ExamStart = current.Start;
-        ExamEnd = current.End;
-        CanStart = !string.IsNullOrWhiteSpace(ExamName) && (ExamEnd > ExamStart || Mode == CountdownMode.Mode1);
-        CountdownCallback(null);
+        CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
+        var name = CurrentExam.Name;
+        var start = CurrentExam.Start;
+        var end = CurrentExam.End;
+        CanStart = !string.IsNullOrWhiteSpace(name) && (end > start || Mode == CountdownMode.Mode1);
+
+        if (!IsSkipping)
+        {
+            CountdownCallback(null);
+        }
     }
 
     private bool CheckOptions(CountdownOption option)
@@ -172,47 +176,68 @@ public class DefaultCountdownService : ICountdownService
 
     private void AutoSwitchCallback(object state)
     {
-        ExamIndex = (ExamIndex + 1) % ExamsLength;
-        UpdateExams();
+        do
+        {
+            IsSkipping = true;
+            ExamIndex = (ExamIndex + 1) % ExamsLength;
+            UpdateExams();
+        }
+        while (!TestExam(CurrentExam, out var _, out var _) && ExamIndex != ExamsLength - 1);
+
+        IsSkipping = false;
         TryStartMainTimer();
         OnExamSwitched(ExamIndex);
     }
 
     private void CountdownCallback(object state)
     {
-        if (CanStart)
+        if (CanStart && TestExam(CurrentExam, out CountdownPhase phase, out TimeSpan span))
         {
-            var now = DateTime.Now;
-
-            if (Mode >= CountdownMode.Mode1 && now < ExamStart)
-            {
-                SetPhase(CountdownPhase.P1);
-                ApplyCustomRule(0, ExamStart - now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode2 && now < ExamEnd)
-            {
-                SetPhase(CountdownPhase.P2);
-                ApplyCustomRule(1, ExamEnd - now);
-                return;
-            }
-
-            if (Mode >= CountdownMode.Mode3 && now > ExamEnd)
-            {
-                SetPhase(CountdownPhase.P3);
-                ApplyCustomRule(2, now - ExamEnd);
-                return;
-            }
+            SetPhase(phase);
+            ApplyCustomRule(CurrentExam.Name, (int)phase, span);
         }
-
-        Dispose();
-        OnCountdownUpdated("欢迎使用高考倒计时", GlobalColors[3]);
+        else
+        {
+            Dispose();
+            OnCountdownUpdated("欢迎使用高考倒计时", GlobalColors[3]);
+        }
     }
 
-    private void ApplyCustomRule(int phase, TimeSpan span)
+    private bool TestExam(Exam exam, out CountdownPhase phase, out TimeSpan span)
     {
-        PhCountdown[Constants.PhExamName] = ExamName;
+        var t = DateTime.Now;
+        var s = exam.Start;
+        var e = exam.End;
+
+        if (Mode >= CountdownMode.Mode1 && t < s)
+        {
+            phase = CountdownPhase.P1;
+            span = s - t;
+            return true;
+        }
+
+        if (Mode >= CountdownMode.Mode2 && t < e)
+        {
+            phase = CountdownPhase.P2;
+            span = e - t;
+            return true;
+        }
+
+        if (Mode >= CountdownMode.Mode3 && t > e)
+        {
+            phase = CountdownPhase.P3;
+            span = t - e;
+            return true;
+        }
+
+        phase = CountdownPhase.None;
+        span = default;
+        return false;
+    }
+
+    private void ApplyCustomRule(string name, int phase, TimeSpan span)
+    {
+        PhCountdown[Constants.PhExamName] = name;
         PhCountdown[Constants.PhDays] = $"{span.Days}";
         PhCountdown[Constants.PhCeilingDays] = $"{span.Days + 1}";
         PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
@@ -261,7 +286,11 @@ public class DefaultCountdownService : ICountdownService
 
     private void OnExamSwitched(int index)
     {
-        CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(index)), null);
+        if (!IsSkipping && index != LastExamIndex)
+        {
+            CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(index)), null);
+            LastExamIndex = index;
+        }
     }
 
     private void OnCountdownUpdated(string content, ColorPair colors)
