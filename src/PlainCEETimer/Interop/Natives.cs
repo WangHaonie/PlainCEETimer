@@ -48,10 +48,10 @@ public enum MenuFlag
 [Flags]
 public enum SwpFlag : uint
 {
-    NOSIZE = 0x0001U,
-    NOMOVE = 0x0002U,
-    NOACTIVATE = 0x0010U,
-    TOPMOST = NOSIZE | NOMOVE | NOACTIVATE,
+    NoSize = 0x0001U,
+    NoMove = 0x0002U,
+    NoActivate = 0x0010U,
+    Topmost = NoSize | NoMove | NoActivate,
 }
 
 [Flags]
