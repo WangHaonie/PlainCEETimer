@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Linq;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Countdown;
 
 namespace PlainCEETimer.Modules.Configuration;
 

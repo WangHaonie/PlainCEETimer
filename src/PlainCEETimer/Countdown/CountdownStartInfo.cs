@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.Modules.Countdown;
+﻿namespace PlainCEETimer.Countdown;
 
 public sealed class CountdownStartInfo
 {

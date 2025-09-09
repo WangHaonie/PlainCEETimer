@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class Exam : IListViewData<Exam>

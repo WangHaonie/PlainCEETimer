@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 

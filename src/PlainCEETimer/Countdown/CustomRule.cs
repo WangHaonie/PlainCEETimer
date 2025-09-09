@@ -5,7 +5,7 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 [JsonConverter(typeof(CustomRuleConverter))]

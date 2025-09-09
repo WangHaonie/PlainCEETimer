@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters;

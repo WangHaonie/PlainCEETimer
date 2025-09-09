@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;

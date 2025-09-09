@@ -1,8 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 

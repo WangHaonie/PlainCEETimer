@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 public class CountdownUpdatedEventArgs(string content, Color fore, Color back) : EventArgs
 {

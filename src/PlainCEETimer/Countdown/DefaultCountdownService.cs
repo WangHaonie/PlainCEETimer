@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 public class DefaultCountdownService : ICountdownService
 {

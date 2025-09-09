@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using PlainCEETimer.Modules.Countdown;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration;

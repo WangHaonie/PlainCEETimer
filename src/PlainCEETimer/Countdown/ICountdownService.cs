@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 public interface ICountdownService : IDisposable
 {

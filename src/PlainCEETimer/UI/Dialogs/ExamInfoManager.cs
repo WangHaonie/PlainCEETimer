@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Modules.Countdown;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 

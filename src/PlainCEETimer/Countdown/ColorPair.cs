@@ -3,7 +3,7 @@ using System.Drawing;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.JsonConverters;
 
-namespace PlainCEETimer.Modules.Countdown;
+namespace PlainCEETimer.Countdown;
 
 [JsonConverter(typeof(ColorSetConverter))]
 public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>

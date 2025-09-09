@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Countdown;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
