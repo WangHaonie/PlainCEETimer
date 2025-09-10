@@ -64,7 +64,7 @@ public class DefaultCountdownService : ICountdownService
     public void Start()
     {
         TryStartMainTimer();
-        ResetAutoSwitch();
+        ResetAutoSwitchTimer();
     }
 
     public void SwitchToExam(int index)
@@ -72,13 +72,14 @@ public class DefaultCountdownService : ICountdownService
         ExamIndex = index;
         UpdateExams();
         TryStartMainTimer();
-        ResetAutoSwitch();
+        ResetAutoSwitchTimer();
     }
 
     public void Dispose()
     {
-        MainTimer.Destory();
-        IsRunning = false;
+        StopAutoSwitchTimer();
+        StopMainTimer();
+        GC.SuppressFinalize(this);
     }
 
     private void SetStartInfo(ref CountdownStartInfo field, CountdownStartInfo value)
@@ -109,14 +110,19 @@ public class DefaultCountdownService : ICountdownService
         }
     }
 
-    private void ResetAutoSwitch()
+    private void ResetAutoSwitchTimer()
     {
-        AutoSwitchTimer.Destory();
+        StopAutoSwitchTimer();
 
         if (CanStart && EnableAutoSwitch && ExamsLength > 1)
         {
             AutoSwitchTimer = new(AutoSwitchCallback, null, AutoSwitchInterval, AutoSwitchInterval);
         }
+    }
+
+    private bool CheckOptions(CountdownOption option)
+    {
+        return (Options & option) == option;
     }
 
     private void UpdateExams()
@@ -130,28 +136,6 @@ public class DefaultCountdownService : ICountdownService
         if (!IsSkipping)
         {
             CountdownCallback(null);
-        }
-    }
-
-    private bool CheckOptions(CountdownOption option)
-    {
-        return (Options & option) == option;
-    }
-
-    private void SetPhase(CountdownPhase phase)
-    {
-        if (CanUpdateRules || Phase != phase)
-        {
-            Rules =
-            [..
-                CustomRules
-                .Where(r => r.Phase == phase)
-                .OrderByDescending(x => x)
-            ];
-
-            CanUseRules = CanUseCustomText && Rules.Length != 0;
-            Phase = phase;
-            CanUpdateRules = false;
         }
     }
 
@@ -198,7 +182,7 @@ public class DefaultCountdownService : ICountdownService
         }
         else
         {
-            Dispose();
+            StopMainTimer();
             OnCountdownUpdated("欢迎使用高考倒计时", GlobalColors[3]);
         }
     }
@@ -233,6 +217,23 @@ public class DefaultCountdownService : ICountdownService
         phase = CountdownPhase.None;
         span = default;
         return false;
+    }
+
+    private void SetPhase(CountdownPhase phase)
+    {
+        if (CanUpdateRules || Phase != phase)
+        {
+            Rules =
+            [..
+                CustomRules
+                .Where(r => r.Phase == phase)
+                .OrderByDescending(x => x)
+            ];
+
+            CanUseRules = CanUseCustomText && Rules.Length != 0;
+            Phase = phase;
+            CanUpdateRules = false;
+        }
     }
 
     private void ApplyCustomRule(string name, int phase, TimeSpan span)
@@ -296,5 +297,21 @@ public class DefaultCountdownService : ICountdownService
     private void OnCountdownUpdated(string content, ColorPair colors)
     {
         CurrentContext.Post(_ => CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back)), null);
+    }
+
+    private void StopAutoSwitchTimer()
+    {
+        AutoSwitchTimer.Destory();
+    }
+
+    private void StopMainTimer()
+    {
+        MainTimer.Destory();
+        IsRunning = false;
+    }
+
+    ~DefaultCountdownService()
+    {
+        Dispose();
     }
 }
