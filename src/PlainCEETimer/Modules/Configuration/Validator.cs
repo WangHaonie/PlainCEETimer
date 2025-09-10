@@ -100,6 +100,7 @@ internal static class Validator
             }
         }
 
+        Array.Sort(value);
         field = value;
     }
 

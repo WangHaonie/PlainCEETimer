@@ -8,11 +8,12 @@ namespace PlainCEETimer.Countdown;
 [JsonConverter(typeof(ColorSetConverter))]
 public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 {
+    public Color Fore => _fore;
+
+    public Color Back => _back;
+
     private readonly Color _fore = fore;
     private readonly Color _back = back;
-
-    public Color Fore => _fore;
-    public Color Back => _back;
 
     public bool Equals(ColorPair other)
     {

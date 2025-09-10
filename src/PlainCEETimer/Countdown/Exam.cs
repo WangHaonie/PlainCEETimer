@@ -117,5 +117,5 @@ public class Exam : IListViewData<Exam>
         return Equals(other);
     }
 
-    private string DebuggerDisplay => $"{Name}: [{Start.Format()}]~[{End.Format()}]";
+    private string DebuggerDisplay => $"{Name}: {Start.Format()} ~ {End.Format()}";
 }

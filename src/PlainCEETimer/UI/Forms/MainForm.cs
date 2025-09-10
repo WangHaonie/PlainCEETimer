@@ -166,8 +166,7 @@ public sealed class MainForm : AppForm
 
     private void ExamItems_Click(object sender, EventArgs e)
     {
-        var item = (MenuItem)sender;
-        int index = item.Index;
+        int index = ((MenuItem)sender).Index;
 
         if (!Natives.GetMenuItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
         {
