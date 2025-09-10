@@ -8,8 +8,8 @@ EXPORTS
     ClearProcessMemory @5 NONAME
 
     InitializeTaskbarList @6 NONAME
-    TaskListSetProgressState @7 NONAME
-    TaskListSetProgressValue @8 NONAME
+    TaskbarListSetProgressState @7 NONAME
+    TaskbarListSetProgressValue @8 NONAME
     ReleaseTaskbarList @9 NONAME
 
     InitializeAppTheme @10 NONAME
