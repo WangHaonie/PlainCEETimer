@@ -48,3 +48,16 @@ BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFon
 
     return FALSE;
 }
+
+BOOL GetMenuItemCheckStateByPosition(HMENU hMenu, int iItemIndex)
+{
+    MENUITEMINFO mii = { sizeof(mii) };
+    mii.fMask = MIIM_STATE;
+
+    if (GetMenuItemInfo(hMenu, iItemIndex, TRUE, &mii) && (mii.fState & MFS_CHECKED) != 0)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}

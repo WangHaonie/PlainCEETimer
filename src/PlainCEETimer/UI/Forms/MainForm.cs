@@ -169,7 +169,7 @@ public sealed class MainForm : AppForm
         var item = (MenuItem)sender;
         int index = item.Index;
 
-        if (!item.Checked)
+        if (!Natives.GetMenuItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
         {
             MainCountdown.SwitchToExam(index);
             SwitchToExam(index);

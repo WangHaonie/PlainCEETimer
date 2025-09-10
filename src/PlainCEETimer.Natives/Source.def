@@ -35,3 +35,4 @@ EXPORTS
     RunFontDialog @26 NONAME
 
     GetLogonUserName @27 NONAME
+    GetMenuItemCheckStateByPosition @28 NONAME
