@@ -128,10 +128,7 @@ public class DefaultCountdownService : ICountdownService
     private void UpdateExams()
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
-        var name = CurrentExam.Name;
-        var start = CurrentExam.Start;
-        var end = CurrentExam.End;
-        CanStart = !string.IsNullOrWhiteSpace(name) && (end > start || Mode == CountdownMode.Mode1);
+        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == CountdownMode.Mode1);
 
         if (!IsSkipping)
         {
