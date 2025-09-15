@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -46,8 +45,8 @@ public class DefaultCountdownService : ICountdownService
     private CustomRule[] Rules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
-    private readonly Dictionary<string, string> PhCountdown = new(12);
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
+    private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
 
     public DefaultCountdownService()
@@ -57,7 +56,14 @@ public class DefaultCountdownService : ICountdownService
         DefaultMatchEvaluator = m =>
         {
             var key = m.Value;
-            return PhCountdown.TryGetValue(key, out var value) ? value : key;
+            var i = Validator.GetPhIndex(key);
+
+            if (i < 0)
+            {
+                return key;
+            }
+
+            return PhCountdown[i];
         };
     }
 
@@ -175,7 +181,13 @@ public class DefaultCountdownService : ICountdownService
         if (CanStart && TestExam(CurrentExam, out var phase, out var span))
         {
             SetPhase(phase);
-            ApplyCustomRule(CurrentExam.Name, (int)phase, span);
+
+            for (int i = 0; i < 12; i++)
+            {
+                PhCountdown[i] = TranslatePh(i, span, phase);
+            }
+
+            ApplyCustomRule((int)phase, span);
         }
         else
         {
@@ -233,20 +245,8 @@ public class DefaultCountdownService : ICountdownService
         }
     }
 
-    private void ApplyCustomRule(string name, int phase, TimeSpan span)
+    private void ApplyCustomRule(int phase, TimeSpan span)
     {
-        PhCountdown[Constants.PhExamName] = name;
-        PhCountdown[Constants.PhDays] = $"{span.Days}";
-        PhCountdown[Constants.PhCeilingDays] = $"{span.Days + 1}";
-        PhCountdown[Constants.PhDecimalDays] = $"{span.TotalDays:0.0}";
-        PhCountdown[Constants.PhHours] = $"{span.Hours:00}";
-        PhCountdown[Constants.PhDecimalHours] = $"{span.TotalHours:0.0}";
-        PhCountdown[Constants.PhTotalHours] = $"{Math.Truncate(span.TotalHours)}";
-        PhCountdown[Constants.PhMinutes] = $"{span.Minutes:00}";
-        PhCountdown[Constants.PhTotalMinutes] = $"{span.TotalMinutes:0}";
-        PhCountdown[Constants.PhSeconds] = $"{span.Seconds:00}";
-        PhCountdown[Constants.PhTotalSeconds] = $"{span.TotalSeconds:0}";
-
         if (CanUseCustomText)
         {
             if (CanUseRules)
@@ -265,7 +265,6 @@ public class DefaultCountdownService : ICountdownService
         }
         else
         {
-            PhCountdown["{ht}"] = DefaultTexts[phase];
             OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), GlobalColors[phase]);
         }
     }
@@ -280,6 +279,23 @@ public class DefaultCountdownService : ICountdownService
         CountdownField.MinutesOnly => "距离{x}{ht}{tm}分钟",
         CountdownField.SecondsOnly => "距离{x}{ht}{ts}秒",
         _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
+    };
+
+    private string TranslatePh(int i, TimeSpan span, CountdownPhase phase) => i switch
+    {
+        0 => CurrentExam.Name,
+        1 => span.Days.ToString(),
+        2 => Math.Ceiling(span.TotalDays).ToString(),
+        3 => span.TotalDays.ToString("0.0"),
+        4 => span.Hours.ToString("00"),
+        5 => Math.Truncate(span.TotalHours).ToString(),
+        6 => span.TotalHours.ToString("0.0"),
+        7 => span.Minutes.ToString("00"),
+        8 => span.TotalMinutes.ToString("0"),
+        9 => span.Seconds.ToString("00"),
+        10 => span.TotalSeconds.ToString("0"),
+        11 => CanUseCustomText ? string.Empty : DefaultTexts[(int)phase],
+        _ => string.Empty
     };
 
     private void OnExamSwitched(int index)

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -26,7 +25,7 @@ internal static class Validator
     public const long MinDateSeconds = MinDate / MinTick;
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
-    public const string RegexPhPatterns = @"\{(\w+)\}";
+    public const string RegexPhPatterns = @"\{(x|d|dd|cd|h|th|dh|m|tm|s|ts|ht)\}";
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
     public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
 
@@ -127,7 +126,7 @@ internal static class Validator
         {
             for (int j = 0; j < count; j++)
             {
-                if (Constants.AllPHs.Contains(matches[j].Value))
+                if (GetPhIndex(matches[j].Value) >= 0)
                 {
                     isEmpty = false;
                     break;
@@ -174,6 +173,23 @@ internal static class Validator
     {
         return length is 0 or > MaxCustomTextLength;
     }
+
+    public static int GetPhIndex(string ph) => ph switch
+    {
+        Constants.PhExamName => 0,
+        Constants.PhDays => 1,
+        Constants.PhCeilingDays => 2,
+        Constants.PhDecimalDays => 3,
+        Constants.PhHours => 4,
+        Constants.PhTotalHours => 5,
+        Constants.PhDecimalHours => 6,
+        Constants.PhMinutes => 7,
+        Constants.PhTotalMinutes => 8,
+        Constants.PhSeconds => 9,
+        Constants.PhTotalSeconds => 10,
+        "{ht}" => 11,
+        _ => -1
+    };
 
     public static void EnsureExamDate(DateTime time)
     {
