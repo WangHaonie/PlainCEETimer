@@ -3,6 +3,7 @@ EXPORTS
     SetRoundCornerEx @2 NONAME
 
     ListViewSelectAllItems @3 NONAME
+    MenuGetItemCheckStateByPosition @28 NONAME
 
     GetProcessMemoryEx @4 NONAME
     ClearProcessMemory @5 NONAME
@@ -20,10 +21,10 @@ EXPORTS
     EnumSystemDisplays @14 NONAME
 
     InitializeTaskScheduler @15 NONAME
-    TaskSchdImportTaskFromXml @16 NONAME
-    TaskSchdExportTaskAsXml @17 NONAME
-    TaskSchdEnableTask @18 NONAME
-    TaskSchdDeleteTask @19 NONAME
+    TaskSchedulerImportTaskFromXml @16 NONAME
+    TaskSchedulerExportTaskAsXml @17 NONAME
+    TaskSchedulerEnableTask @18 NONAME
+    TaskSchedulerDeleteTask @19 NONAME
     ReleaseTaskScheduler @20 NONAME
 
     InitializeShellLink @21 NONAME
@@ -35,4 +36,3 @@ EXPORTS
     RunFontDialog @26 NONAME
 
     GetLogonUserName @27 NONAME
-    GetMenuItemCheckStateByPosition @28 NONAME

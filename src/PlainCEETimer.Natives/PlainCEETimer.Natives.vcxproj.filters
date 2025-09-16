@@ -33,7 +33,7 @@
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ListViewHelper\ListViewHelper.h">
+    <ClInclude Include="ListViewHelper\Win32UI.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="ThemeManager\ThemeManager.h">
@@ -71,7 +71,7 @@
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ListViewHelper\ListViewHelper.cpp">
+    <ClCompile Include="ListViewHelper\Win32UI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ThemeManager\ThemeManager.cpp">

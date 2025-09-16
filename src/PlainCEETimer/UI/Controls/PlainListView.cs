@@ -96,7 +96,7 @@ public sealed class PlainListView : ListView
     {
         if (Items.Count != 0)
         {
-            ListViewHelper.SelectAllItems(Handle, selected);
+            Win32UI.ListViewSelectAllItems(Handle, selected);
         }
     }
 

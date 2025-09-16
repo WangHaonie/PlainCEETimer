@@ -162,7 +162,7 @@
     <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="CommonDialogs\CommonDialogs.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="ListViewHelper\ListViewHelper.h" />
+    <ClInclude Include="ListViewHelper\Win32UI.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
     <ClInclude Include="Win32User\Win32User.h" />
     <ClInclude Include="pch.h" />
@@ -177,7 +177,7 @@
   <ItemGroup>
     <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
     <ClCompile Include="CommonDialogs\CommonDialogs.cpp" />
-    <ClCompile Include="ListViewHelper\ListViewHelper.cpp" />
+    <ClCompile Include="ListViewHelper\Win32UI.cpp" />
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
     <ClCompile Include="Win32User\Win32User.cpp" />
     <ClCompile Include="pch.cpp">

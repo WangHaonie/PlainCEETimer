@@ -47,6 +47,9 @@ public static class Extensions
     c# - How do I truncate milliseconds off "Ticks" without converting to datetime? - Stack Overflow
     https://stackoverflow.com/a/35018359
 
+    C# DateTime 精确到秒/截断毫秒部分 - eshizhan - 博客园
+    https://www.cnblogs.com/eshizhan/archive/2011/11/15/2250007.html
+
     */
     public static DateTime TruncateToSeconds(this DateTime dt)
         => new(dt.Ticks / Validator.MinTick * Validator.MinTick);

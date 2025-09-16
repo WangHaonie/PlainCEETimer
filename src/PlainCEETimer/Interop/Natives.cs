@@ -23,9 +23,6 @@ public static class Natives
     [DllImport(App.User32Dll)]
     public static extern BOOL CheckMenuRadioItem(HWND hmenu, int first, int last, int check, MenuFlag flags);
 
-    [DllImport(App.NativesDll, EntryPoint = "#28")]
-    public static extern BOOL GetMenuItemCheckStateByPosition(HWND hMenu, int iItemIndex);
-
     /*
 
     提取 DLL 里的图标参考:

@@ -11,12 +11,6 @@ namespace PlainCEETimer.Countdown;
 
 public class DefaultCountdownService : ICountdownService
 {
-    public CountdownStartInfo StartInfo
-    {
-        get;
-        set => SetStartInfo(ref field, value);
-    }
-
     public event ExamSwitchedEventHandler ExamSwitched;
     public event CountdownUpdatedEventHandler CountdownUpdated;
 
@@ -67,8 +61,9 @@ public class DefaultCountdownService : ICountdownService
         };
     }
 
-    public void Start()
+    public void Start(CountdownStartInfo startInfo)
     {
+        SetStartInfo(startInfo);
         TryStartMainTimer();
         ResetAutoSwitchTimer();
     }
@@ -88,7 +83,7 @@ public class DefaultCountdownService : ICountdownService
         GC.SuppressFinalize(this);
     }
 
-    private void SetStartInfo(ref CountdownStartInfo field, CountdownStartInfo value)
+    private void SetStartInfo(CountdownStartInfo value)
     {
         AutoSwitchInterval = value.AutoSwitchInterval;
         ExamIndex = value.ExamIndex;
@@ -104,7 +99,6 @@ public class DefaultCountdownService : ICountdownService
         CustomRules = value.CustomRules;
         CanUpdateRules = true;
         UpdateExams();
-        field = value;
     }
 
     private void TryStartMainTimer()

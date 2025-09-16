@@ -29,7 +29,7 @@ void InitializeTaskScheduler()
     }
 }
 
-void TaskSchdImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
+void TaskSchedulerImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
 {
     if (initialized && ResetPtrRegisteredTask())
     {
@@ -37,7 +37,7 @@ void TaskSchdImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
     }
 }
 
-void TaskSchdExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
+void TaskSchedulerExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
 {
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
@@ -45,7 +45,7 @@ void TaskSchdExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
     }
 }
 
-void TaskSchdEnableTask(LPCWSTR taskName)
+void TaskSchedulerEnableTask(LPCWSTR taskName)
 {
     if (initialized && ResetPtrRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {
@@ -59,7 +59,7 @@ void TaskSchdEnableTask(LPCWSTR taskName)
     }
 }
 
-void TaskSchdDeleteTask(LPCWSTR taskName)
+void TaskSchedulerDeleteTask(LPCWSTR taskName)
 {
     if (initialized)
     {

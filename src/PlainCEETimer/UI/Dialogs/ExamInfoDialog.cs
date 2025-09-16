@@ -108,15 +108,15 @@ public sealed class ExamInfoDialog(Exam existing) : AppDialog, IListViewSubDialo
 
         if (span.TotalDays > 4)
         {
-            tmp = $"{span.TotalDays:0} 天";
+            tmp = span.TotalDays.ToString("0") + " 天";
         }
         else if (span.TotalMinutes < 40 && ts > 60)
         {
-            tmp = $"{span.TotalMinutes:0} 分钟";
+            tmp = span.TotalMinutes.ToString("0") + " 分钟";
         }
         else if (ts < 60)
         {
-            tmp = $"{ts:0} 秒";
+            tmp = ts.ToString("0") + " 秒";
         }
 
         if (!string.IsNullOrEmpty(tmp) && MessageX.Warn($"检测到设置的考试时间太长或太短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)

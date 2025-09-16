@@ -168,7 +168,7 @@ public sealed class MainForm : AppForm
     {
         int index = ((MenuItem)sender).Index;
 
-        if (!Natives.GetMenuItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
+        if (!Win32UI.MenuGetItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
         {
             MainCountdown.SwitchToExam(index);
             SwitchToExam(index);
@@ -337,7 +337,7 @@ public sealed class MainForm : AppForm
             options |= CountdownOption.EnableAutoSwitch;
         }
 
-        MainCountdown.StartInfo = new()
+        MainCountdown.Start(new()
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
@@ -348,9 +348,7 @@ public sealed class MainForm : AppForm
             GlobalColors = AppConfig.GlobalColors,
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
-        };
-
-        MainCountdown.Start();
+        });
     }
 
     private void LoadContextMenu()

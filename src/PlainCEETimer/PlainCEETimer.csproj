@@ -105,6 +105,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Countdown\CountdownUpdatedEventHandler.cs" />
+    <Compile Include="Countdown\ExamSwitchedEventHandler.cs" />
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Extensions\Extensions.cs" />
     <Compile Include="Interop\Natives.cs" />
@@ -214,7 +216,7 @@
     </Compile>
     <Compile Include="Interop\Win32User.cs" />
     <Compile Include="UI\ContextMenuBuilder.cs" />
-    <Compile Include="Interop\ListViewHelper.cs" />
+    <Compile Include="Interop\Win32UI.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
