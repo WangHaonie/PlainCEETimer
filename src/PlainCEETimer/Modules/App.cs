@@ -247,15 +247,16 @@ internal static class App
     private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
     {
         var isRedirector = !string.IsNullOrEmpty(pipe);
+        var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
+        var w = new StreamWriter(client) { AutoFlush = true };
 
         try
         {
-            using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
             client.Connect(isRedirector ? 500 : 1000);
 
             if (isRedirector)
             {
-                ProcessHelper.RunRedirector(new StreamWriter(client) { AutoFlush = true }, path, args);
+                ProcessHelper.RunRedirector(w, path, args);
             }
 
             return true;
@@ -263,6 +264,11 @@ internal static class App
         catch
         {
             return false;
+        }
+        finally
+        {
+            client.Destory();
+            w.Destory();
         }
     }
 
