@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>PlainCEETimer.Natives.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -112,7 +112,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>PlainCEETimer.Natives.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,7 +129,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>PlainCEETimer.Natives.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,16 +155,14 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dwmapi.lib;uxtheme.lib;comctl32.lib;ucrt.lib;vcruntime.lib;taskschd.lib;wtsapi32.lib</AdditionalDependencies>
       <NoEntryPoint>true</NoEntryPoint>
-      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>PlainCEETimer.Natives.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="CommonDialogs\CommonDialogs.h" />
+    <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="ListViewHelper\Win32UI.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
-    <ClInclude Include="Win32User\Win32User.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RoundCorner\RoundCorner.h" />
@@ -173,13 +171,13 @@
     <ClInclude Include="TaskScheduler\TaskScheduler.h" />
     <ClInclude Include="ThemeManager\IATHook.h" />
     <ClInclude Include="ThemeManager\ThemeManager.h" />
+    <ClInclude Include="Win32UI\Win32UI.h" />
+    <ClInclude Include="Win32User\Win32User.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
     <ClCompile Include="CommonDialogs\CommonDialogs.cpp" />
-    <ClCompile Include="ListViewHelper\Win32UI.cpp" />
+    <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
     <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
-    <ClCompile Include="Win32User\Win32User.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,12 +189,14 @@
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
     <ClCompile Include="TaskScheduler\TaskScheduler.cpp" />
     <ClCompile Include="ThemeManager\ThemeManager.cpp" />
+    <ClCompile Include="Win32UI\Win32UI.cpp" />
+    <ClCompile Include="Win32User\Win32User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PlainCEETimer.Natives.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source.def" />
+    <None Include="PlainCEETimer.Natives.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

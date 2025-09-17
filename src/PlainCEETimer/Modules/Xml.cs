@@ -10,7 +10,7 @@ public static class Xml
         return XDocument.Parse(raw).Root;
     }
 
-    public static bool Check(this XElement top, string expectation, bool returnWhenNull, params string[] nodes)
+    public static bool Check(this XElement top, string expectation, bool defaultValue, params string[] nodes)
     {
         var ns = top.GetDefaultNamespace();
         var current = top;
@@ -21,7 +21,7 @@ public static class Xml
 
             if (current == null)
             {
-                return returnWhenNull || false;
+                return defaultValue || false;
             }
         }
 

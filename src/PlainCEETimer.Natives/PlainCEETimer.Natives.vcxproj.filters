@@ -15,81 +15,81 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskbarProgress\TaskbarProgress.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="RoundCorner\RoundCorner.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ListViewHelper\Win32UI.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ThemeManager\ThemeManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ThemeManager\IATHook.h">
+    <ClInclude Include="CommonDialogs\CommonDialogs.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="DisplayHelper\DisplayHelper.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TaskScheduler\TaskScheduler.h">
+    <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoundCorner\RoundCorner.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="ShellLink\ShellLink.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CommonDialogs\CommonDialogs.h">
+    <ClInclude Include="TaskbarProgress\TaskbarProgress.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskScheduler\TaskScheduler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ThemeManager\IATHook.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ThemeManager\ThemeManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32UI\Win32UI.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Win32User\Win32User.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="RoundCorner\RoundCorner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ListViewHelper\Win32UI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ThemeManager\ThemeManager.cpp">
+    <ClCompile Include="CommonDialogs\CommonDialogs.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="DisplayHelper\DisplayHelper.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
+    <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="RoundCorner\RoundCorner.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ShellLink\ShellLink.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CommonDialogs\CommonDialogs.cpp">
+    <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ThemeManager\ThemeManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32UI\Win32UI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Win32User\Win32User.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,7 +99,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source.def">
+    <None Include="PlainCEETimer.Natives.def">
       <Filter>Source</Filter>
     </None>
   </ItemGroup>
