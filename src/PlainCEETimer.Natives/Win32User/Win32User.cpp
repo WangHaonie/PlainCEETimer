@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Win32User.h"
 #include <string>
+#include <TlHelp32.h>
+#include <vector>
 
 using namespace std;
 
@@ -27,4 +29,78 @@ LPCWSTR GetLogonUserName()
     }
 
     return _wcsdup(tmp.c_str());
+}
+
+BOOL RunProcessAsLogonUser(LPCWSTR cli, LPDWORD lpExitCode)
+{
+    DWORD activeSid = WTSGetActiveConsoleSessionId();
+    HANDLE hToken = nullptr;
+    DWORD exitCode = 0;
+    BOOL result = FALSE;
+
+    if (WTSQueryUserToken(activeSid, &hToken))
+    {
+        result = TRUE;
+    }
+
+    if (!result)
+    {
+        HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        PROCESSENTRY32 pe32 = { sizeof(pe32) };
+
+        if (Process32First(hSnapshot, &pe32))
+        {
+            do
+            {
+                DWORD sid;
+
+                if (ProcessIdToSessionId(pe32.th32ProcessID, &sid) && sid == activeSid)
+                {
+                    HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe32.th32ProcessID);
+
+                    if (hProc)
+                    {
+                        if (OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_DUPLICATE, &hToken))
+                        {
+                            result = TRUE;
+                        }
+
+                        CloseHandle(hProc);
+                    }
+
+                    break;
+                }
+            }
+            while (Process32Next(hSnapshot, &pe32));
+        }
+    }
+
+    if (result)
+    {
+        HANDLE hTokenPrimary = nullptr;
+
+        if (DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, nullptr, SecurityIdentification, TokenPrimary, &hTokenPrimary))
+        {
+            STARTUPINFO si = { sizeof(si) };
+            PROCESS_INFORMATION pi = {};
+            wstring cmd = cli;
+
+            if (CreateProcessWithTokenW(hTokenPrimary, 0, nullptr, &cmd[0], CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
+            {
+                WaitForSingleObject(pi.hProcess, INFINITE);
+
+                if (GetExitCodeProcess(pi.hProcess, &exitCode))
+                {
+                    result = TRUE;
+                }
+            }
+
+            CloseHandle(hTokenPrimary);
+        }
+
+        CloseHandle(hToken);
+    }
+
+    *lpExitCode = exitCode;
+    return result;
 }

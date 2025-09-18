@@ -36,3 +36,4 @@ EXPORTS
     RunFontDialog @26 NONAME
 
     GetLogonUserName @27 NONAME
+    RunProcessAsLogonUser @29 NONAME

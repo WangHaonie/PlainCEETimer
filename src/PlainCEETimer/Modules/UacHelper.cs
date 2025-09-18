@@ -48,18 +48,20 @@ public static class UacHelper
     public static void PopupReport()
     {
         CheckAdmin();
+
         AppMessageBox.Instance.Info(
             $"""
             检测结果:
                                 
             当前系统
-                用户名: {Win32User.LogonUser}
                 UAC 状态: {GetUacDescription()}
+                用户名: {Win32User.LogonUser}
+                管理员权限: {GetUserAdmin(true)}
 
             当前进程
-                所有者: {Win32User.ProcessOwner}
-                管理员权限: {(IsAdmin ? "有" : "无")}
                 提权运行: {(Win32User.NotElevated ? "否" : "是")}
+                所有者: {Win32User.ProcessOwner}
+                管理员权限: {GetUserAdmin(false)}
             """);
     }
 
@@ -86,5 +88,20 @@ public static class UacHelper
     private static string GetUacDescription()
     {
         return $"{Level} ({(int)Level}) ({(IsUACDisabled ? "异常" : "正常")})";
+    }
+
+    private static string GetUserAdmin(bool logon)
+    {
+        if (!logon || Win32User.NotElevated)
+        {
+            return IsAdmin ? "有" : "无";
+        }
+
+        if (ProcessHelper.RunAsLogon("net", "session", out int code))
+        {
+            return code == 0 ? "有" : "无";
+        }
+
+        return "未知";
     }
 }

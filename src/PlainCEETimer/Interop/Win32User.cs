@@ -35,6 +35,9 @@ public static class Win32User
         NotElevated = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
     }
 
+    [DllImport(App.NativesDll, EntryPoint = "#29", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern BOOL RunProcessAsLogonUser(string cli, out int lpExitCode);
+
     [DllImport(App.NativesDll, EntryPoint = "#27", CharSet = CharSet.Unicode)]
     private static extern string GetLogonUserName();
 }

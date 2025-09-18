@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
 
@@ -36,6 +37,11 @@ public static class ProcessHelper
         var proc = MakeProc(path, args, true, true, false, false);
         proc.Start();
         return proc;
+    }
+
+    public static bool RunAsLogon(string path, string args, out int exitCode)
+    {
+        return Win32User.RunProcessAsLogonUser(path + " " + args, out exitCode);
     }
 
     public static string GetExitMessage(object process)
