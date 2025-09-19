@@ -10,6 +10,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms;
 
@@ -175,34 +176,6 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private void MainCountdown_ExamSwitched(object sender, ExamSwitchedEventArgs e)
-    {
-        SwitchToExam(e.Index);
-    }
-
-    private void MainCountdown_CountdownUpdated(object sender, CountdownUpdatedEventArgs e)
-    {
-        var content = e.Content;
-        var back = e.BackColor;
-        CountdownContent = content;
-        CountdownForeColor = e.ForeColor;
-        BackColor = back;
-        Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
-        Invalidate();
-
-        if (ShowTrayText)
-        {
-            UpdateTrayIconText(content);
-        }
-
-        var type = BorderColor.Type;
-
-        if (BorderColor.Enabled && type is 1 or 2)
-        {
-            SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
-        }
-    }
-
     private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left)
@@ -319,8 +292,32 @@ public sealed class MainForm : AppForm
         if (MainCountdown == null)
         {
             MainCountdown = new DefaultCountdownService();
-            MainCountdown.CountdownUpdated += MainCountdown_CountdownUpdated;
-            MainCountdown.ExamSwitched += MainCountdown_ExamSwitched;
+
+            MainCountdown.ExamSwitched += (_, e) => SwitchToExam(e.Index);
+
+            MainCountdown.CountdownUpdated += (_, e) =>
+            {
+                var content = e.Content;
+                var back = e.BackColor;
+                CountdownContent = content;
+                CountdownForeColor = e.ForeColor;
+                BackColor = back;
+                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
+                Invalidate();
+
+                if (ShowTrayText)
+                {
+                    UpdateTrayIconText(content);
+                }
+
+                var type = BorderColor.Type;
+
+                if (BorderColor.Enabled && type is 1 or 2)
+                {
+                    SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
+                }
+            };
+
         }
 
         var options = CountdownOption.None;
@@ -444,7 +441,7 @@ public sealed class MainForm : AppForm
         }
         else
         {
-            Natives.CheckMenuRadioItem(ExamSwitchMenu.Handle, 0, ExamSwitchMenuItems.Count - 1, index, MenuFlag.ByPosition);
+            ExamSwitchMenu.DoRadioCheck(index);
         }
 
         ExamIndex = index;

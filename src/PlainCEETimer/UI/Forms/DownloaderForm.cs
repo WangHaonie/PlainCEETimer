@@ -89,7 +89,7 @@ public sealed class DownloaderForm : AppForm
 
     protected override void OnShown()
     {
-        if (Win32User.NotElevated)
+        if (Win32User.NotImpersonalOrElevated)
         {
             LinkBrowser.Hyperlink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
             TaskbarProgress.Initialize(Handle);

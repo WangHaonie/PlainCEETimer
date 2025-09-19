@@ -2,7 +2,6 @@
 #include "Win32User.h"
 #include <string>
 #include <TlHelp32.h>
-#include <vector>
 
 using namespace std;
 
@@ -31,7 +30,7 @@ LPCWSTR GetLogonUserName()
     return _wcsdup(tmp.c_str());
 }
 
-BOOL RunProcessAsLogonUser(LPCWSTR cli, LPDWORD lpExitCode)
+BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
     DWORD activeSid = WTSGetActiveConsoleSessionId();
     HANDLE hToken = nullptr;
@@ -83,7 +82,9 @@ BOOL RunProcessAsLogonUser(LPCWSTR cli, LPDWORD lpExitCode)
         {
             STARTUPINFO si = { sizeof(si) };
             PROCESS_INFORMATION pi = {};
-            wstring cmd = cli;
+            wstring cmd = path;
+            cmd += L" ";
+            cmd += args;
 
             if (CreateProcessWithTokenW(hTokenPrimary, 0, nullptr, &cmd[0], CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
             {

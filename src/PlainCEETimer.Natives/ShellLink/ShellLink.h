@@ -9,10 +9,10 @@ struct LnkInfo
     LPCWSTR args;
     LPCWSTR workingDir;
     WORD hotkey;
-    int showCmd;
+    INT showCmd;
     LPCWSTR description;
     LPCWSTR iconPath;
-    int iconIndex;
+    INT iconIndex;
 };
 
 cexport(void) InitializeShellLink();

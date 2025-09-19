@@ -45,7 +45,7 @@ public static class ShellLink
         }
         else
         {
-            if (Win32User.NotElevated)
+            if (Win32User.NotImpersonalOrElevated)
             {
                 if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
                 {

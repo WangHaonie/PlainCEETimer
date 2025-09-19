@@ -4,6 +4,9 @@ EXPORTS
 
     ListViewSelectAllItems @3 NONAME
     MenuGetItemCheckStateByPosition @28 NONAME
+    MenuCheckRadioItemByPosition @30 NONAME
+    SetTopMostWindow @31 NONAME
+    GetWindowTextEx @32 NONAME
 
     GetProcessMemoryEx @4 NONAME
     ClearProcessMemory @5 NONAME

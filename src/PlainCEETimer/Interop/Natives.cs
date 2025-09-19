@@ -17,12 +17,6 @@ public static class Natives
     [DllImport(App.Gdi32Dll)]
     public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
 
-    [DllImport(App.User32Dll)]
-    public static extern BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, SwpFlag uFlags);
-
-    [DllImport(App.User32Dll)]
-    public static extern BOOL CheckMenuRadioItem(HWND hmenu, int first, int last, int check, MenuFlag flags);
-
     /*
 
     提取 DLL 里的图标参考:
@@ -37,21 +31,6 @@ public static class Natives
 
     [DllImport(App.User32Dll)]
     public static extern BOOL DestroyIcon(IntPtr hIcon);
-}
-
-[Flags]
-public enum MenuFlag
-{
-    ByPosition = 0x0400
-}
-
-[Flags]
-public enum SwpFlag : uint
-{
-    NoSize = 0x0001U,
-    NoMove = 0x0002U,
-    NoActivate = 0x0010U,
-    Topmost = NoSize | NoMove | NoActivate,
 }
 
 [Flags]
@@ -115,8 +94,6 @@ public readonly struct BOOL
 [DebuggerDisplay("{Value}")]
 public readonly struct HWND
 {
-    public static readonly HWND TOPMOST = new(new(-1));
-
     private readonly IntPtr Value;
 
     private HWND(IntPtr value)

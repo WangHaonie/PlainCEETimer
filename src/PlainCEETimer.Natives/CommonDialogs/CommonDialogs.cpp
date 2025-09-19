@@ -25,7 +25,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
     return FALSE;
 }
 
-BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, int nSizeLimit)
+BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit)
 {
     if (hWndOwner && lpfnHookProc && lpLogFont && IsPositive(nSizeLimit))
     {

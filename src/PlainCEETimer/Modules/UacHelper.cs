@@ -22,6 +22,8 @@ public static class UacHelper
 
     private static readonly UacNotifyLevel Level;
     private static readonly bool IsUACDisabled;
+    private const string AcExe = "net";
+    private const string AcArg = "session";
 
     static UacHelper()
     {
@@ -59,7 +61,6 @@ public static class UacHelper
                 管理员权限: {GetUserAdmin(true)}
 
             当前进程
-                提权运行: {(Win32User.NotElevated ? "否" : "是")}
                 所有者: {Win32User.ProcessOwner}
                 管理员权限: {GetUserAdmin(false)}
             """);
@@ -67,7 +68,7 @@ public static class UacHelper
 
     public static void CheckAdmin()
     {
-        IsAdmin = ProcessHelper.Run("net", "session", getExitCode: true) == 0;
+        IsAdmin = ProcessHelper.Run(AcExe, AcArg, getExitCode: true) == 0;
     }
 
     private static UacNotifyLevel GetNotifyLevel()
@@ -92,12 +93,12 @@ public static class UacHelper
 
     private static string GetUserAdmin(bool logon)
     {
-        if (!logon || Win32User.NotElevated)
+        if (!logon || Win32User.NotImpersonalOrElevated)
         {
             return IsAdmin ? "有" : "无";
         }
 
-        if (ProcessHelper.RunAsLogon("net", "session", out int code))
+        if (ProcessHelper.RunAsLogon(AcExe, AcArg, out int code))
         {
             return code == 0 ? "有" : "无";
         }

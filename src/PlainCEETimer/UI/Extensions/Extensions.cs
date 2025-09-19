@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Extensions;
@@ -66,5 +67,10 @@ public static class Extensions
         }
 
         return new(p.X + xOffset, p.Y + yOffset);
+    }
+
+    public static void DoRadioCheck(this MenuItem menu, int item)
+    {
+        Win32UI.MenuCheckRadioItemByPosition(menu.Handle, item);
     }
 }

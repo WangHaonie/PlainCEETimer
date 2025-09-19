@@ -41,7 +41,7 @@ public static class ProcessHelper
 
     public static bool RunAsLogon(string path, string args, out int exitCode)
     {
-        return Win32User.RunProcessAsLogonUser(path + " " + args, out exitCode);
+        return Win32User.RunProcessAsLogonUser(path, args, out exitCode);
     }
 
     public static string GetExitMessage(object process)
@@ -78,10 +78,7 @@ public static class ProcessHelper
     {
         try
         {
-            Run(path, args, (proc, _) =>
-            {
-                w.WriteLine(GetExitMessage(proc));
-            }, (_, e) => w.WriteLine(e.Data));
+            Run(path, args, (proc, _) => w.WriteLine(GetExitMessage(proc)), (_, e) => w.WriteLine(e.Data));
         }
         catch (Exception ex)
         {

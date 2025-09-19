@@ -39,9 +39,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                     GetClientRect(hWnd, out var rc);
                     rc.Left += 6;
                     Rectangle rect = rc;
-                    var sb = new StringBuilder(GetWindowTextLength(hWnd) + 1);
-                    GetWindowText(hWnd, sb, sb.Capacity);
-                    g.DrawString(sb.ToString(), font, brush, rect);
+                    g.DrawString(Win32UI.GetWindowTextEx(hWnd), font, brush, rect);
                     Handled = true;
                 }
 
@@ -50,12 +48,6 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
             base.WndProc(ref m);
         }
-
-        [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern int GetWindowText(HWND hWnd, StringBuilder lpString, int nMaxCount);
-
-        [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-        private static extern int GetWindowTextLength(HWND hWnd);
 
         [DllImport(App.User32Dll)]
         private static extern BOOL GetClientRect(HWND hWnd, out RECT lpRect);
