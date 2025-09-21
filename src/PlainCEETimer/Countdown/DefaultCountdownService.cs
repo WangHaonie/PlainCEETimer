@@ -63,19 +63,13 @@ public class DefaultCountdownService : ICountdownService
     public void Start(CountdownStartInfo startInfo)
     {
         SetStartInfo(startInfo);
-        UpdateExams();
-        OnExamSwitched();
-        TryStartMainTimer();
-        ResetAutoSwitchTimer();
+        InternalStart();
     }
 
     public void SwitchToExam(int index)
     {
         ExamIndex = index;
-        UpdateExams();
-        OnExamSwitched();
-        TryStartMainTimer();
-        ResetAutoSwitchTimer();
+        InternalStart();
     }
 
     public void Dispose()
@@ -100,6 +94,14 @@ public class DefaultCountdownService : ICountdownService
         ExamsLength = Exams.Length;
         CustomRules = value.CustomRules;
         CanUpdateRules = true;
+    }
+
+    private void InternalStart()
+    {
+        UpdateExams();
+        OnExamSwitched();
+        TryStartMainTimer();
+        ResetAutoSwitchTimer();
     }
 
     private void TryStartMainTimer()

@@ -22,17 +22,23 @@ void ListViewSelectAllItems(HWND hLV, BOOL selected)
 
 void SetTopMostWindow(HWND hWnd)
 {
-    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    if (hWnd)
+    {
+        SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
 }
 
 BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
 {
-    MENUITEMINFO mii = { sizeof(mii) };
-    mii.fMask = MIIM_STATE;
-
-    if (GetMenuItemInfo(hMenu, item, TRUE, &mii) && (mii.fState & MFS_CHECKED) != 0)
+    if (hMenu)
     {
-        return TRUE;
+        MENUITEMINFO mii = { sizeof(mii) };
+        mii.fMask = MIIM_STATE;
+
+        if (GetMenuItemInfo(hMenu, item, TRUE, &mii) && (mii.fState & MFS_CHECKED) != 0)
+        {
+            return TRUE;
+        }
     }
 
     return FALSE;
@@ -40,13 +46,23 @@ BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
 
 BOOL MenuCheckRadioItemByPosition(HMENU hMenu, UINT item)
 {
-    return CheckMenuRadioItem(hMenu, 0, GetMenuItemCount(hMenu) - 1, item, MF_BYPOSITION);
+    if (hMenu)
+    {
+        return CheckMenuRadioItem(hMenu, 0, GetMenuItemCount(hMenu) - 1, item, MF_BYPOSITION);
+    }
+
+    return FALSE;
 }
 
 LPCWSTR GetWindowTextEx(HWND hWnd)
 {
-    wstring buffer;
-    buffer.reserve(GetWindowTextLength(hWnd) + 1);
-    GetWindowText(hWnd, &buffer[0], (int)buffer.capacity());
-    return _wcsdup(buffer.c_str());
+    if (hWnd)
+    {
+        wstring buffer;
+        buffer.reserve(GetWindowTextLength(hWnd) + 1);
+        GetWindowText(hWnd, &buffer[0], (int)buffer.capacity());
+        return _wcsdup(buffer.c_str());
+    }
+
+    return L"";
 }
