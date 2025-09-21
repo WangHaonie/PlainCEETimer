@@ -364,8 +364,7 @@ public sealed class MainForm : AppForm
                 var item = new MenuItem()
                 {
                     Text = $"{i + 1}. {Exams[i]}",
-                    RadioCheck = true,
-                    Checked = i == ExamIndex
+                    RadioCheck = true
                 };
 
                 item.Click += ExamItems_Click;

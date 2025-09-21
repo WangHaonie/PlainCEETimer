@@ -19,7 +19,6 @@ public class DefaultCountdownService : ICountdownService
     private int ExamsLength;
     private int AutoSwitchInterval;
     private bool IsRunning;
-    private bool IsSkipping;
     private bool EnableAutoSwitch;
     private bool CanUseCustomText;
     private bool CanStart;
@@ -64,6 +63,8 @@ public class DefaultCountdownService : ICountdownService
     public void Start(CountdownStartInfo startInfo)
     {
         SetStartInfo(startInfo);
+        UpdateExams();
+        OnExamSwitched();
         TryStartMainTimer();
         ResetAutoSwitchTimer();
     }
@@ -72,6 +73,7 @@ public class DefaultCountdownService : ICountdownService
     {
         ExamIndex = index;
         UpdateExams();
+        OnExamSwitched();
         TryStartMainTimer();
         ResetAutoSwitchTimer();
     }
@@ -98,7 +100,6 @@ public class DefaultCountdownService : ICountdownService
         ExamsLength = Exams.Length;
         CustomRules = value.CustomRules;
         CanUpdateRules = true;
-        UpdateExams();
     }
 
     private void TryStartMainTimer()
@@ -108,6 +109,8 @@ public class DefaultCountdownService : ICountdownService
             MainTimer = new(CountdownCallback, null, 0, 1000);
             IsRunning = true;
         }
+
+        CountdownCallback(null);
     }
 
     private void ResetAutoSwitchTimer()
@@ -129,11 +132,6 @@ public class DefaultCountdownService : ICountdownService
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
         CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == CountdownMode.Mode1);
-
-        if (!IsSkipping)
-        {
-            CountdownCallback(null);
-        }
     }
 
     private Exam GetCurrentExam(Exam[] exams, ref int index)
@@ -151,7 +149,6 @@ public class DefaultCountdownService : ICountdownService
         }
 
         index = newIndex;
-        OnExamSwitched(index);
         return index < 0 ? new() : exams[index];
     }
 
@@ -159,15 +156,13 @@ public class DefaultCountdownService : ICountdownService
     {
         do
         {
-            IsSkipping = true;
             ExamIndex = (ExamIndex + 1) % ExamsLength;
             UpdateExams();
         }
         while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsLength - 1);
 
-        IsSkipping = false;
         TryStartMainTimer();
-        OnExamSwitched(ExamIndex);
+        OnExamSwitched();
     }
 
     private void CountdownCallback(object state)
@@ -292,12 +287,12 @@ public class DefaultCountdownService : ICountdownService
         _ => string.Empty
     };
 
-    private void OnExamSwitched(int index)
+    private void OnExamSwitched()
     {
-        if (!IsSkipping && index != LastExamIndex)
+        if (ExamIndex != LastExamIndex)
         {
-            CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(index)), null);
-            LastExamIndex = index;
+            CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(ExamIndex)), null);
+            LastExamIndex = ExamIndex;
         }
     }
 
