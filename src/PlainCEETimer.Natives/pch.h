@@ -17,4 +17,9 @@ inline bool EnsurePositive(int a, int b, int c) noexcept
     return IsPositive(a) && IsPositive(b) && IsPositive(c);
 }
 
+inline bool IsNullOrEmpty(const wchar_t* str) noexcept
+{
+    return !str || !*str;
+}
+
 #endif 

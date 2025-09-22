@@ -71,9 +71,10 @@ void ShellLinkQueryLnk(LnkInfo* lpshLnkInfo)
         GetPropertyStore(PKEY_Link_Arguments, shlargs);
         lpshLnkInfo->args = _wcsdup(shlargs.c_str());
 
-        WCHAR shlworkdir[MAX_PATH];
-        psh->GetWorkingDirectory(shlworkdir, MAX_PATH);
-        lpshLnkInfo->workingDir = _wcsdup(shlworkdir);
+        wstring shlworkdir;
+        shlworkdir.resize(MAX_PATH);
+        psh->GetWorkingDirectory(&shlworkdir[0], MAX_PATH);
+        lpshLnkInfo->workingDir = _wcsdup(shlworkdir.c_str());
 
         WORD shlkeys;
         psh->GetHotkey(&shlkeys);
@@ -87,10 +88,11 @@ void ShellLinkQueryLnk(LnkInfo* lpshLnkInfo)
         GetPropertyStore(PKEY_Comment, shldescr);
         lpshLnkInfo->description = _wcsdup(shldescr.c_str());
 
-        WCHAR shliconloc[MAX_PATH];
+        wstring shliconloc;
+        shliconloc.resize(MAX_PATH);
         int index = 0;
-        psh->GetIconLocation(shliconloc, MAX_PATH, &index);
-        lpshLnkInfo->iconPath = _wcsdup(shliconloc);
+        psh->GetIconLocation(&shliconloc[0], MAX_PATH, &index);
+        lpshLnkInfo->iconPath = _wcsdup(shliconloc.c_str());
         lpshLnkInfo->iconIndex = index;
     }
 }

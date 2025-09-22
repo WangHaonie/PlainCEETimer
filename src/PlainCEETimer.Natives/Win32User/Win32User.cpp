@@ -32,10 +32,16 @@ LPCWSTR GetLogonUserName()
 
 BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
+    BOOL result = FALSE;
+
+    if (IsNullOrEmpty(path) || IsNullOrEmpty(args))
+    {
+        return result;
+    }
+
     DWORD activeSid = WTSGetActiveConsoleSessionId();
     HANDLE hToken = nullptr;
     DWORD exitCode = 0;
-    BOOL result = FALSE;
 
     if (WTSQueryUserToken(activeSid, &hToken))
     {
@@ -88,9 +94,16 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 
             if (CreateProcessWithTokenW(hTokenPrimary, 0, nullptr, &cmd[0], CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
             {
-                WaitForSingleObject(pi.hProcess, INFINITE);
+                if (lpExitCode)
+                {
+                    WaitForSingleObject(pi.hProcess, INFINITE);
 
-                if (GetExitCodeProcess(pi.hProcess, &exitCode))
+                    if (GetExitCodeProcess(pi.hProcess, &exitCode))
+                    {
+                        result = TRUE;
+                    }
+                }
+                else
                 {
                     result = TRUE;
                 }
@@ -102,6 +115,10 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         CloseHandle(hToken);
     }
 
-    *lpExitCode = exitCode;
+    if (lpExitCode)
+    {
+        *lpExitCode = exitCode;
+    }
+
     return result;
 }
