@@ -8,28 +8,7 @@ using namespace std;
 
 static IShellLink* psh = nullptr;
 static IPersistFile* ppf = nullptr;
-static IPropertyStore* pps = nullptr;
 static BOOL initialized = FALSE;
-
-static HRESULT GetPropertyStore(REFPROPERTYKEY key, wstring& value)
-{
-    PROPVARIANT pv;
-    PropVariantInit(&pv);
-
-    auto hr = pps->GetValue(key, &pv);
-
-    if (SUCCEEDED(hr) && pv.vt == VT_LPWSTR)
-    {
-        value = pv.pwszVal;
-    }
-    else
-    {
-        value.clear();
-    }
-
-    PropVariantClear(&pv);
-    return hr;
-}
 
 void InitializeShellLink()
 {
@@ -41,68 +20,52 @@ void InitializeShellLink()
     }
 }
 
-void ShellLinkCreateLnk(LnkInfo shLnkInfo)
+void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
 {
     if (initialized)
     {
-        psh->SetPath(shLnkInfo.target);
-        psh->SetArguments(shLnkInfo.args);
-        psh->SetWorkingDirectory(shLnkInfo.workingDir);
-        psh->SetHotkey(shLnkInfo.hotkey);
-        psh->SetShowCmd(shLnkInfo.showCmd);
-        psh->SetDescription(shLnkInfo.description);
-        psh->SetIconLocation(shLnkInfo.iconPath, shLnkInfo.iconIndex);
-        ppf->Save(shLnkInfo.lnkPath, TRUE);
+        psh->SetPath(lnkFileInfo.pszTarget);
+        psh->SetArguments(lnkFileInfo.pszArgs);
+        psh->SetWorkingDirectory(lnkFileInfo.pszWorkingDir);
+        psh->SetHotkey(lnkFileInfo.wHotkey);
+        psh->SetShowCmd(lnkFileInfo.iShowCmd);
+        psh->SetDescription(lnkFileInfo.pszDescription);
+        psh->SetIconLocation(lnkFileInfo.pszIconPath, lnkFileInfo.iIcon);
+        ppf->Save(lnkFileInfo.lnkPath, TRUE);
     }
 }
 
-void ShellLinkQueryLnk(LnkInfo* lpshLnkInfo)
+void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
-    if (initialized && lpshLnkInfo &&
-        SUCCEEDED(ppf->Load(lpshLnkInfo->lnkPath, STGM_READ)))
+    if (initialized && lpLnkFileInfo &&
+        SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
     {
-        SHGetPropertyStoreFromParsingName(lpshLnkInfo->lnkPath, nullptr, GPS_DEFAULT, IID_PPV_ARGS(&pps));
+        WCHAR t[MAX_PATH];
+        WCHAR a[INFOTIPSIZE];
+        WCHAR wd[MAX_PATH];
+        WCHAR d[MAX_PATH];
+        WCHAR ip[MAX_PATH];
 
-        wstring shlpath;
-        GetPropertyStore(PKEY_Link_TargetParsingPath, shlpath);
-        lpshLnkInfo->target = _wcsdup(shlpath.c_str());
+        psh->GetPath(t, MAX_PATH, nullptr, 0);
+        psh->GetArguments(a, INFOTIPSIZE);
+        psh->GetWorkingDirectory(wd, MAX_PATH);
+        psh->GetHotkey(&lpLnkFileInfo->wHotkey);
+        psh->GetShowCmd(&lpLnkFileInfo->iShowCmd);
+        psh->GetDescription(d, MAX_PATH);
+        psh->GetIconLocation(ip, MAX_PATH, &lpLnkFileInfo->iIcon);
 
-        wstring shlargs;
-        GetPropertyStore(PKEY_Link_Arguments, shlargs);
-        lpshLnkInfo->args = _wcsdup(shlargs.c_str());
-
-        wstring shlworkdir;
-        shlworkdir.resize(MAX_PATH);
-        psh->GetWorkingDirectory(&shlworkdir[0], MAX_PATH);
-        lpshLnkInfo->workingDir = _wcsdup(shlworkdir.c_str());
-
-        WORD shlkeys;
-        psh->GetHotkey(&shlkeys);
-        lpshLnkInfo->hotkey = shlkeys;
-
-        int shlshowcmd;
-        psh->GetShowCmd(&shlshowcmd);
-        lpshLnkInfo->showCmd = shlshowcmd;
-
-        wstring shldescr;
-        GetPropertyStore(PKEY_Comment, shldescr);
-        lpshLnkInfo->description = _wcsdup(shldescr.c_str());
-
-        wstring shliconloc;
-        shliconloc.resize(MAX_PATH);
-        int index = 0;
-        psh->GetIconLocation(&shliconloc[0], MAX_PATH, &index);
-        lpshLnkInfo->iconPath = _wcsdup(shliconloc.c_str());
-        lpshLnkInfo->iconIndex = index;
+        lpLnkFileInfo->pszTarget = _wcsdup(t);
+        lpLnkFileInfo->pszArgs = _wcsdup(a);
+        lpLnkFileInfo->pszWorkingDir = _wcsdup(wd);
+        lpLnkFileInfo->pszDescription = _wcsdup(d);
+        lpLnkFileInfo->pszIconPath = _wcsdup(ip);
     }
 }
 
 void ReleaseShellLink()
 {
-    if (pps) pps->Release();
     if (ppf) ppf->Release();
     if (psh) psh->Release();
-    pps = nullptr;
     ppf = nullptr;
     psh = nullptr;
     initialized = FALSE;

@@ -293,7 +293,7 @@ public readonly struct SystemDisplay
 
 [DebuggerDisplay("{Target,nq} {Args,nq}")]
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-public struct Win32Lnk(string lnkPath)
+public struct LNKFILEINFO(string lnkPath)
 {
     public string LnkPath = lnkPath;
     public string Target;

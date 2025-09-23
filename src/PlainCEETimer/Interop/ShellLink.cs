@@ -73,7 +73,7 @@ public static class ShellLink
 
     private static void ResetAppShortcut(string lnkPath)
     {
-        var lnk = new Win32Lnk(lnkPath);
+        var lnk = new LNKFILEINFO(lnkPath);
         Query(ref lnk);
         var path = lnk.Target;
         var args = lnk.Args;
@@ -107,10 +107,10 @@ public static class ShellLink
     private static extern void Initialize();
 
     [DllImport(App.NativesDll, EntryPoint = "#22", CharSet = CharSet.Unicode)]
-    private static extern void Create(Win32Lnk shLnkInfo);
+    private static extern void Create(LNKFILEINFO lnkFileInfo);
 
     [DllImport(App.NativesDll, EntryPoint = "#23", CharSet = CharSet.Unicode)]
-    private static extern void Query(ref Win32Lnk lpshLnkInfo);
+    private static extern void Query(ref LNKFILEINFO lpLnkFileInfo);
 
     [DllImport(App.NativesDll, EntryPoint = "#24")]
     private static extern void Release();
