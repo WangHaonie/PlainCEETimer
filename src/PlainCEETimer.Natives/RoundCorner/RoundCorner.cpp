@@ -15,7 +15,7 @@ https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-rounde
 
 void SetRoundCorner(HWND hWnd, int width, int height, int radius)
 {
-    if (hWnd && EnsurePositive(width, height, radius))
+    if (hWnd)
     {
         SetWindowRgn(hWnd, CreateRoundRectRgn(0, 0, width, height, radius, radius), TRUE);
     }

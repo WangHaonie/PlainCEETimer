@@ -15,22 +15,22 @@ https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nn-shobjidl_co
 
 static ITaskbarList3* ptl = nullptr;
 static HWND targetHwnd = nullptr;
-static BOOL initialized = FALSE;
+static bool Initialized = false;
 
 void InitializeTaskbarList(HWND hWnd)
 {
-    if (!initialized && hWnd &&
+    if (!Initialized && hWnd &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&ptl))))
     {
         targetHwnd = hWnd;
         ptl->HrInit();
-        initialized = TRUE;
+        Initialized = true;
     }
 }
 
 void TaskbarListSetProgressState(TBPFLAG tbpFlags)
 {
-    if (initialized)
+    if (Initialized)
     {
         ptl->SetProgressState(targetHwnd, tbpFlags);
     }
@@ -38,7 +38,7 @@ void TaskbarListSetProgressState(TBPFLAG tbpFlags)
 
 void TaskbarListSetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
-    if (initialized)
+    if (Initialized)
     {
         ptl->SetProgressValue(targetHwnd, ullCompleted, ullTotal);
     }
@@ -49,5 +49,5 @@ void ReleaseTaskbarList()
     if (ptl) ptl->Release();
     ptl = nullptr;
     targetHwnd = nullptr;
-    initialized = FALSE;
+    Initialized = false;
 }

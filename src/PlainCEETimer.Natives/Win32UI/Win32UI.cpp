@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Win32UI.h"
 #include <CommCtrl.h>
-#include <string>
 
 using namespace std;
 
@@ -58,11 +57,17 @@ LPCWSTR GetWindowTextEx(HWND hWnd)
 {
     if (hWnd)
     {
-        wstring buffer;
-        buffer.reserve(GetWindowTextLength(hWnd) + 1);
-        GetWindowText(hWnd, &buffer[0], (int)buffer.capacity());
-        return _wcsdup(buffer.c_str());
+        auto length = GetWindowTextLength(hWnd) + 1;
+        WCHAR* buffer = (WCHAR*)malloc(length * sizeof(wchar_t));
+        
+        if (buffer)
+        {
+            GetWindowText(hWnd, buffer, length);
+            auto ptr = CoTaskStrAlloc(buffer);
+            free(buffer);
+            return ptr;
+        }
     }
 
-    return L"";
+    return nullptr;
 }

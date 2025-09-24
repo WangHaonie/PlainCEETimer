@@ -5,13 +5,13 @@
 typedef struct tagLNKFILEINFO
 {
     LPCWSTR lnkPath;
-    LPCWSTR pszTarget;
-    LPCWSTR pszArgs;
-    LPCWSTR pszWorkingDir;
+    LPWSTR pszTarget;
+    LPWSTR pszArgs;
+    LPWSTR pszWorkingDir;
     WORD wHotkey;
     INT iShowCmd;
-    LPCWSTR pszDescription;
-    LPCWSTR pszIconPath;
+    LPWSTR pszDescription;
+    LPWSTR pszIconPath;
     INT iIcon;
 } LNKFILEINFO, *LPLNKFILEINFO;
 

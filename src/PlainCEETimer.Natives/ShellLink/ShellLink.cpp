@@ -1,28 +1,24 @@
 #include "pch.h"
 #include "ShellLink.h"
 #include <ShObjIdl.h>
-#include <propkey.h>
-#include <string>
-
-using namespace std;
 
 static IShellLink* psh = nullptr;
 static IPersistFile* ppf = nullptr;
-static BOOL initialized = FALSE;
+static bool Initialized = false;
 
 void InitializeShellLink()
 {
-    if (!initialized &&
+    if (!Initialized &&
         SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&psh))))
     {
         psh->QueryInterface(IID_PPV_ARGS(&ppf));
-        initialized = TRUE;
+        Initialized = true;
     }
 }
 
 void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
 {
-    if (initialized)
+    if (Initialized)
     {
         psh->SetPath(lnkFileInfo.pszTarget);
         psh->SetArguments(lnkFileInfo.pszArgs);
@@ -31,13 +27,13 @@ void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
         psh->SetShowCmd(lnkFileInfo.iShowCmd);
         psh->SetDescription(lnkFileInfo.pszDescription);
         psh->SetIconLocation(lnkFileInfo.pszIconPath, lnkFileInfo.iIcon);
-        ppf->Save(lnkFileInfo.lnkPath, TRUE);
+        ppf->Save(lnkFileInfo.lnkPath, FALSE);
     }
 }
 
 void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
-    if (initialized && lpLnkFileInfo &&
+    if (Initialized && lpLnkFileInfo &&
         SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
     {
         WCHAR t[MAX_PATH];
@@ -54,11 +50,11 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
         psh->GetDescription(d, MAX_PATH);
         psh->GetIconLocation(ip, MAX_PATH, &lpLnkFileInfo->iIcon);
 
-        lpLnkFileInfo->pszTarget = _wcsdup(t);
-        lpLnkFileInfo->pszArgs = _wcsdup(a);
-        lpLnkFileInfo->pszWorkingDir = _wcsdup(wd);
-        lpLnkFileInfo->pszDescription = _wcsdup(d);
-        lpLnkFileInfo->pszIconPath = _wcsdup(ip);
+        lpLnkFileInfo->pszTarget = CoTaskStrAlloc(t);
+        lpLnkFileInfo->pszArgs = CoTaskStrAlloc(a);
+        lpLnkFileInfo->pszWorkingDir = CoTaskStrAlloc(wd);
+        lpLnkFileInfo->pszDescription = CoTaskStrAlloc(d);
+        lpLnkFileInfo->pszIconPath = CoTaskStrAlloc(ip);
     }
 }
 
@@ -68,5 +64,5 @@ void ReleaseShellLink()
     if (psh) psh->Release();
     ppf = nullptr;
     psh = nullptr;
-    initialized = FALSE;
+    Initialized = false;
 }

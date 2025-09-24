@@ -1,25 +1,38 @@
 #include "pch.h"
 #include "CommonDialogs.h"
 
-BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors)
+BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustColors)
 {
-    if (hWndOwner && lpfnHookProc && lpColor && lpCustomColors)
-    {
-        CHOOSECOLOR cc = { sizeof(cc) };
-        cc.hwndOwner = hWndOwner;
-        cc.hInstance = reinterpret_cast<HWND>(GetModuleHandleW(LIBRARYNAME));
-        cc.rgbResult = *lpColor;
-        cc.lpCustColors = lpCustomColors;
-        cc.Flags = CC_RGBINIT | CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLEHOOK | CC_ENABLETEMPLATE;
-        cc.lpfnHook = lpfnHookProc;
-        cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
+    CHOOSECOLOR cc = { sizeof(cc) };
+    DWORD flags = CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLETEMPLATE;
 
-        if (ChooseColor(&cc))
-        {
-            *lpColor = cc.rgbResult;
-            lpCustomColors = cc.lpCustColors;
-            return TRUE;
-        }
+    if (lpfnHookProc)
+    {
+        flags |= CC_ENABLEHOOK;
+        cc.lpfnHook = lpfnHookProc;
+    }
+
+    if (lpColor)
+    {
+        flags |= CC_RGBINIT;
+        cc.rgbResult = *lpColor;
+    }
+
+    if (lpCustColors)
+    {
+        cc.lpCustColors = lpCustColors;
+    }
+
+    cc.Flags = flags;
+    cc.hwndOwner = hWndOwner;
+    cc.hInstance = reinterpret_cast<HWND>(GetModuleHandleW(LIBRARYNAME));
+    cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
+
+    if (ChooseColor(&cc))
+    {
+        if (lpColor) *lpColor = cc.rgbResult;
+        if (lpCustColors) lpCustColors = cc.lpCustColors;
+        return TRUE;
     }
 
     return FALSE;
@@ -27,23 +40,37 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor
 
 BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit)
 {
-    if (hWndOwner && lpfnHookProc && lpLogFont && IsPositive(nSizeLimit))
+    CHOOSEFONT cf = { sizeof(cf) };
+    DWORD flags = CF_NOVERTFONTS | CF_TTONLY | CF_FORCEFONTEXIST | CF_SCRIPTSONLY | CF_ENABLETEMPLATE;
+
+    if (lpfnHookProc)
     {
-        CHOOSEFONT cf = { sizeof(cf) };
-        cf.hwndOwner = hWndOwner;
-        cf.lpLogFont = lpLogFont;
-        cf.Flags = CF_NOVERTFONTS | CF_TTONLY | CF_FORCEFONTEXIST | CF_LIMITSIZE | CF_SCRIPTSONLY | CF_INITTOLOGFONTSTRUCT | CF_ENABLEHOOK | CF_ENABLETEMPLATE;
+        flags |= CF_ENABLEHOOK;
         cf.lpfnHook = lpfnHookProc;
-        cf.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSEFONT);
-        cf.hInstance = GetModuleHandleW(LIBRARYNAME);
+    }
+
+    if (lpLogFont)
+    {
+        flags |= CF_INITTOLOGFONTSTRUCT;
+        cf.lpLogFont = lpLogFont;
+    }
+
+    if (nSizeLimit > 0)
+    {
+        flags |= CF_LIMITSIZE;
         cf.nSizeMin = LOWORD(nSizeLimit);
         cf.nSizeMax = HIWORD(nSizeLimit);
+    }
 
-        if (ChooseFont(&cf))
-        {
-            lpLogFont = cf.lpLogFont;
-            return TRUE;
-        }
+    cf.Flags = flags;
+    cf.hwndOwner = hWndOwner;
+    cf.hInstance = GetModuleHandleW(LIBRARYNAME);
+    cf.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSEFONT);
+
+    if (ChooseFont(&cf))
+    {
+        if (lpLogFont) lpLogFont = cf.lpLogFont;
+        return TRUE;
     }
 
     return FALSE;

@@ -4,22 +4,27 @@
 #include "framework.h"
 #include "resource.h"
 #include <sdkddkver.h>
+#include <combaseapi.h>
 
 #define cexport(ret) extern "C" __declspec(dllexport) ret WINAPI
-
-inline bool IsPositive(int i) noexcept
-{
-    return i > 0;
-}
-
-inline bool EnsurePositive(int a, int b, int c) noexcept
-{
-    return IsPositive(a) && IsPositive(b) && IsPositive(c);
-}
 
 inline bool IsNullOrEmpty(const wchar_t* str) noexcept
 {
     return !str || !*str;
+}
+
+inline wchar_t* CoTaskStrAlloc(const wchar_t* str)
+{
+    auto length = wcslen(str);
+    auto size = (length + 1) * sizeof(wchar_t);
+    auto ptr = (wchar_t*)CoTaskMemAlloc(size);
+
+    if (ptr)
+    {
+        memcpy(ptr, str, size);
+    }
+
+    return ptr;
 }
 
 #endif 
