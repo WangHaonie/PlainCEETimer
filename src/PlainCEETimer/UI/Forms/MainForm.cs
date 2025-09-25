@@ -292,7 +292,6 @@ public sealed class MainForm : AppForm
         if (MainCountdown == null)
         {
             MainCountdown = new DefaultCountdownService();
-
             MainCountdown.ExamSwitched += (_, e) => SwitchToExam(e.Index);
 
             MainCountdown.CountdownUpdated += (_, e) =>
@@ -317,7 +316,6 @@ public sealed class MainForm : AppForm
                     SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
                 }
             };
-
         }
 
         var options = CountdownOption.None;

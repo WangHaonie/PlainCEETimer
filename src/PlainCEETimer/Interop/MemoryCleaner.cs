@@ -56,10 +56,10 @@ public class MemoryCleaner : IDisposable
         return obj == default ? default : (ulong)obj.GetPropertyValue("WorkingSetPrivate");
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#4")]
+    [DllImport(App.NativesDll, EntryPoint = "#1")]
     private static extern ulong GetMemoryEx();
 
-    [DllImport(App.NativesDll, EntryPoint = "#5")]
+    [DllImport(App.NativesDll, EntryPoint = "#2")]
     private static extern void ClearMemory();
 
     [DllImport(App.Kernel32Dll)]

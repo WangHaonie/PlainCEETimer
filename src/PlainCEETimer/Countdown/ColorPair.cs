@@ -8,16 +8,13 @@ namespace PlainCEETimer.Countdown;
 [JsonConverter(typeof(ColorSetConverter))]
 public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 {
-    public Color Fore => _fore;
+    public Color Fore => fore;
 
-    public Color Back => _back;
-
-    private readonly Color _fore = fore;
-    private readonly Color _back = back;
+    public Color Back => back;
 
     public bool Equals(ColorPair other)
     {
-        return _fore == other._fore && _back == other._back;
+        return fore == other.Fore && back == other.Back;
     }
 
     public override bool Equals(object obj)
@@ -27,6 +24,6 @@ public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 
     public override int GetHashCode()
     {
-        return _fore.GetHashCode() + _back.GetHashCode();
+        return fore.GetHashCode() + back.GetHashCode();
     }
 }

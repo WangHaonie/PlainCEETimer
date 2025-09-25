@@ -24,6 +24,6 @@ public sealed class PlainFontDialog(AppForm owner, Font font) : PlainCommonDialo
         return result;
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#26")]
+    [DllImport(App.NativesDll, EntryPoint = "#11")]
     private static extern BOOL RunFontDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
 }

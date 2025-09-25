@@ -1,42 +1,43 @@
 EXPORTS
-    SetRoundCorner @1 NONAME
-    SetRoundCornerEx @2 NONAME
 
-    ListViewSelectAllItems @3 NONAME
-    MenuGetItemCheckStateByPosition @28 NONAME
+    GetProcessMemoryEx @1 NONAME
+    ClearProcessMemory @2 NONAME
+
+    InitializeAppTheme @3 NONAME
+    SetWindowFrameTheme @4 NONAME
+    SetWindowBorderColor @5 NONAME
+    GetSystemAccentColor @6 NONAME
+
+    EnumSystemDisplays @7 NONAME
+
+    SetRoundCorner @8 NONAME
+    SetRoundCornerEx @9 NONAME
+
+    RunColorDialog @10 NONAME
+    RunFontDialog @11 NONAME
+
+    InitializeTaskbarList @12 NONAME
+    TaskbarListSetProgressState @13 NONAME
+    TaskbarListSetProgressValue @14 NONAME
+    ReleaseTaskbarList @15 NONAME
+
+    InitializeTaskScheduler @16 NONAME
+    TaskSchedulerImportTaskFromXml @17 NONAME
+    TaskSchedulerExportTaskAsXml @18 NONAME
+    TaskSchedulerEnableTask @19 NONAME
+    TaskSchedulerDeleteTask @20 NONAME
+    ReleaseTaskScheduler @21 NONAME
+
+    InitializeShellLink @22 NONAME
+    ShellLinkCreateLnk @23 NONAME
+    ShellLinkQueryLnk @24 NONAME
+    ReleaseShellLink @25 NONAME
+
+    GetLogonUserName @26 NONAME
+    RunProcessAsLogonUser @27 NONAME
+
+    ListViewSelectAllItems @28 NONAME
+    MenuGetItemCheckStateByPosition @29 NONAME
     MenuCheckRadioItemByPosition @30 NONAME
     SetTopMostWindow @31 NONAME
     GetWindowTextEx @32 NONAME
-
-    GetProcessMemoryEx @4 NONAME
-    ClearProcessMemory @5 NONAME
-
-    InitializeTaskbarList @6 NONAME
-    TaskbarListSetProgressState @7 NONAME
-    TaskbarListSetProgressValue @8 NONAME
-    ReleaseTaskbarList @9 NONAME
-
-    InitializeAppTheme @10 NONAME
-    SetWindowFrameTheme @11 NONAME
-    SetWindowBorderColor @12 NONAME
-    GetSystemAccentColor @13 NONAME
-
-    EnumSystemDisplays @14 NONAME
-
-    InitializeTaskScheduler @15 NONAME
-    TaskSchedulerImportTaskFromXml @16 NONAME
-    TaskSchedulerExportTaskAsXml @17 NONAME
-    TaskSchedulerEnableTask @18 NONAME
-    TaskSchedulerDeleteTask @19 NONAME
-    ReleaseTaskScheduler @20 NONAME
-
-    InitializeShellLink @21 NONAME
-    ShellLinkCreateLnk @22 NONAME
-    ShellLinkQueryLnk @23 NONAME
-    ReleaseShellLink @24 NONAME
-
-    RunColorDialog @25 NONAME
-    RunFontDialog @26 NONAME
-
-    GetLogonUserName @27 NONAME
-    RunProcessAsLogonUser @29 NONAME

@@ -58,6 +58,6 @@ public sealed class PlainColorDialog : PlainCommonDialog
         return [.. tmp];
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#25")]
+    [DllImport(App.NativesDll, EntryPoint = "#10")]
     private static extern BOOL RunColorDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);
 }

@@ -34,7 +34,7 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
     BOOL result = FALSE;
 
-    if (IsNullOrEmpty(path) || IsNullOrEmpty(args))
+    if (IsNullOrEmpty(path) && IsNullOrEmpty(args))
     {
         return result;
     }

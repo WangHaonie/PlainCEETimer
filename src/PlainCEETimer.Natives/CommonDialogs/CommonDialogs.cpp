@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CommonDialogs.h"
 
-BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustColors)
+BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustColors)
 {
     CHOOSECOLOR cc = { sizeof(cc) };
     DWORD flags = CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLETEMPLATE;

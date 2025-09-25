@@ -37,7 +37,7 @@ void TaskSchedulerImportTaskFromXml(LPCWSTR taskName, LPCWSTR strXml)
     }
 }
 
-void TaskSchedulerExportTaskAsXml(LPCWSTR taskName, BSTR* pbstrXml)
+void TaskSchedulerExportTaskAsXml(LPCWSTR taskName, LPBSTR pbstrXml)
 {
     if (Initialized && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(taskName), &prt)))
     {

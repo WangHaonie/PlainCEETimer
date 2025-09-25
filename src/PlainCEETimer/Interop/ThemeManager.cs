@@ -104,15 +104,15 @@ public static class ThemeManager
     [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
     private static extern int SetWindowTheme(HWND hWnd, string pszSubAppName, string pszSubIdList);
 
-    [DllImport(App.NativesDll, EntryPoint = "#10")]
+    [DllImport(App.NativesDll, EntryPoint = "#3")]
     private static extern void InitializeAppTheme();
 
-    [DllImport(App.NativesDll, EntryPoint = "#11")]
+    [DllImport(App.NativesDll, EntryPoint = "#4")]
     private static extern void SetWindowFrameTheme(HWND hWnd, BOOL newStyle);
 
-    [DllImport(App.NativesDll, EntryPoint = "#12")]
+    [DllImport(App.NativesDll, EntryPoint = "#5")]
     public static extern void SetBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
 
-    [DllImport(App.NativesDll, EntryPoint = "#13")]
+    [DllImport(App.NativesDll, EntryPoint = "#6")]
     private static extern int GetSystemAccentColor();
 }

@@ -5,9 +5,9 @@ namespace PlainCEETimer.Interop;
 
 public static class RoundCorner
 {
-    [DllImport(App.NativesDll, EntryPoint = "#1")]
+    [DllImport(App.NativesDll, EntryPoint = "#8")]
     public static extern void SetRoundCorner(HWND hWnd, int width, int height, int radius);
 
-    [DllImport(App.NativesDll, EntryPoint = "#2")]
+    [DllImport(App.NativesDll, EntryPoint = "#9")]
     public static extern void SetRoundCornerEx(HWND hWnd, BOOL isSmall);
 }
