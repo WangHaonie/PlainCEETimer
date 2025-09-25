@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
-using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;

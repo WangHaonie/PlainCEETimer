@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
@@ -40,7 +39,7 @@ public class DefaultCountdownService : ICountdownService
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
-    private readonly string[] DefaultTexts = [Constants.PhStart, Constants.PhEnd, Constants.PhPast];
+    private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
 
     public DefaultCountdownService()
     {

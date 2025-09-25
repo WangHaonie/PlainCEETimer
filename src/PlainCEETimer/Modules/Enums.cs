@@ -34,21 +34,3 @@ public enum UacNotifyLevel
     AppsOnlyDimming = 2,
     AlwaysDimming = 3,
 }
-
-internal enum ConfigField
-{
-    GlobalColorsLength,
-    ExamNameLength,
-    CustomRulesArray,
-    ExamInfoArray,
-    DateTimeLength,
-    CustomTextLength,
-    CustomTextFormat,
-    ColorSetPartsLength,
-    ColorSetContrast,
-    CustomRulePhase,
-    CustomRuleTick,
-    CountdownFont,
-    PointFormat,
-    DateTimeFormat
-}

@@ -316,9 +316,9 @@ public sealed class SettingsForm : AppForm
                             ]),
                         ])),
 
-                        BlockPreviewColor1 = b.Block($"距离...{Constants.PhStart}..."),
-                        BlockPreviewColor2 = b.Block($"距离...{Constants.PhEnd}..."),
-                        BlockPreviewColor3 = b.Block($"距离...{Constants.PhPast}..."),
+                        BlockPreviewColor1 = b.Block($"距离...{Ph.Start}..."),
+                        BlockPreviewColor2 = b.Block($"距离...{Ph.End}..."),
+                        BlockPreviewColor3 = b.Block($"距离...{Ph.Past}..."),
                         BlockPreviewColor4 = b.Block("欢迎使用..."),
 
                         BlockColor11 = b.Block(true, BlockPreviewColor1, SettingsChanged),

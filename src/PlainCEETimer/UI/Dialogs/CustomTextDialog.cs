@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Modules;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
@@ -47,17 +47,17 @@ public sealed class CustomTextDialog : AppDialog
             LabelInfo = b.Label("用于匹配规则之外。可用的占位符: "),
 
             ComboBoxPlaceholders = b.ComboBox(160, null,
-                $"{Constants.PhExamName} - 考试名称",
-                $"{Constants.PhDays} - 天/总天数",
-                $"{Constants.PhDecimalDays} - 总天数 (一位小数)",
-                $"{Constants.PhCeilingDays} - 总天数 (向上取整)",
-                $"{Constants.PhHours} - 时",
-                $"{Constants.PhTotalHours} - 总小时",
-                $"{Constants.PhDecimalHours} - 总小时 (一位小数)",
-                $"{Constants.PhMinutes} - 分",
-                $"{Constants.PhTotalMinutes} - 总分钟",
-                $"{Constants.PhSeconds} - 秒",
-                $"{Constants.PhTotalSeconds} - 总秒数"
+                $"{Ph.ExamName} - 考试名称",
+                $"{Ph.Days} - 天/总天数",
+                $"{Ph.DecimalDays} - 总天数 (一位小数)",
+                $"{Ph.CeilingDays} - 总天数 (向上取整)",
+                $"{Ph.Hours} - 时",
+                $"{Ph.TotalHours} - 总小时",
+                $"{Ph.DecimalHours} - 总小时 (一位小数)",
+                $"{Ph.Minutes} - 分",
+                $"{Ph.TotalMinutes} - 总分钟",
+                $"{Ph.Seconds} - 秒",
+                $"{Ph.TotalSeconds} - 总秒数"
             ),
 
             ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
@@ -161,7 +161,7 @@ public sealed class CustomTextDialog : AppDialog
     {
         if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
         {
-            var text = Constants.AllPHs[ComboBoxPlaceholders.SelectedIndex];
+            var text = Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex];
             tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
         }
     }

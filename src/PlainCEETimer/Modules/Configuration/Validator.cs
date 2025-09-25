@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -176,17 +177,17 @@ internal static class Validator
 
     public static int GetPhIndex(string ph) => ph switch
     {
-        Constants.PhExamName => 0,
-        Constants.PhDays => 1,
-        Constants.PhCeilingDays => 2,
-        Constants.PhDecimalDays => 3,
-        Constants.PhHours => 4,
-        Constants.PhTotalHours => 5,
-        Constants.PhDecimalHours => 6,
-        Constants.PhMinutes => 7,
-        Constants.PhTotalMinutes => 8,
-        Constants.PhSeconds => 9,
-        Constants.PhTotalSeconds => 10,
+        Ph.ExamName => 0,
+        Ph.Days => 1,
+        Ph.CeilingDays => 2,
+        Ph.DecimalDays => 3,
+        Ph.Hours => 4,
+        Ph.TotalHours => 5,
+        Ph.DecimalHours => 6,
+        Ph.Minutes => 7,
+        Ph.TotalMinutes => 8,
+        Ph.Seconds => 9,
+        Ph.TotalSeconds => 10,
         "{ht}" => 11,
         _ => -1
     };

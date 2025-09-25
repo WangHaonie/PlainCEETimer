@@ -10,7 +10,7 @@ public static class DefaultValues
 {
     public static int[] ColorDialogColors => field ??= [.. Enumerable.Repeat(COLORREF.EmptyValue, 16)];
 
-    public static string[] GlobalDefaultCustomTexts => field ??= [Constants.PhP1, Constants.PhP2, Constants.PhP3];
+    public static string[] GlobalDefaultCustomTexts => field ??= [Ph.P1, Ph.P2, Ph.P3];
 
     public static ColorPair[] CountdownDefaultColors
     {

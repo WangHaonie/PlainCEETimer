@@ -113,6 +113,7 @@
     <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
     <Compile Include="Modules\Configuration\BorderColorObject.cs" />
+    <Compile Include="Modules\Configuration\Enums.cs" />
     <Compile Include="Modules\Configuration\InvalidTamperingException.cs" />
     <Compile Include="Countdown\CountdownStartInfo.cs" />
     <Compile Include="Countdown\CountdownUpdatedEventArgs.cs" />
@@ -228,7 +229,7 @@
     <Compile Include="Countdown\Exam.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
     <Compile Include="Countdown\CustomRule.cs" />
-    <Compile Include="Modules\Constants.cs" />
+    <Compile Include="Countdown\Ph.cs" />
     <Compile Include="UI\ControlBuilder.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />
     <Compile Include="Modules\Enums.cs" />

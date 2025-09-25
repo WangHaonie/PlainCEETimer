@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 
@@ -13,7 +12,7 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
     public ColorPair[] ColorPresets { private get; set; }
 
     public RulesManager()
-        : base(460, ["时刻", "效果预览"], Constants.PhRuleTypes)
+        : base(460, ["时刻", "效果预览"], Ph.RuleTypes)
     {
         Text = "管理自定义规则 - 高考倒计时";
         ItemDescription = "规则";

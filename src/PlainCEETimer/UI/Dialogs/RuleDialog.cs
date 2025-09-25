@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
@@ -94,7 +93,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
                 }
 
                 UserChanged();
-            }, Constants.PhRuleTypes),
+            }, Ph.RuleTypes),
 
             NUDDays = b.NumericUpDown(53, 65535M, OnUserChanged),
             NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),
