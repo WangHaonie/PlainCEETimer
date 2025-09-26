@@ -33,13 +33,13 @@
     <ClInclude Include="TaskbarProgress\TaskbarProgress.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TaskScheduler\TaskScheduler.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ThemeManager\IATHook.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="ThemeManager\ThemeManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32TaskScheduler\Win32TaskScheduler.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Win32UI\Win32UI.h">
@@ -77,10 +77,10 @@
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
+    <ClCompile Include="ThemeManager\ThemeManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ThemeManager\ThemeManager.cpp">
+    <ClCompile Include="Win32TaskScheduler\Win32TaskScheduler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Win32UI\Win32UI.cpp">

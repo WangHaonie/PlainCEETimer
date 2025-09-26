@@ -58,8 +58,8 @@ BOOL RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFon
     if (nSizeLimit > 0)
     {
         flags |= CF_LIMITSIZE;
-        cf.nSizeMin = LOWORD(nSizeLimit);
-        cf.nSizeMax = HIWORD(nSizeLimit);
+        cf.nSizeMin = HIWORD(nSizeLimit);
+        cf.nSizeMax = LOWORD(nSizeLimit);
     }
 
     cf.Flags = flags;

@@ -1,14 +1,5 @@
 ﻿namespace PlainCEETimer.Modules;
 
-public enum TaskbarProgressState
-{
-    None,
-    Indeterminate,
-    Normal,
-    Error = 4,
-    Paused = 8
-}
-
 public enum NativeStyle
 {
     Explorer,
