@@ -108,9 +108,11 @@
     <Compile Include="Countdown\CountdownUpdatedEventHandler.cs" />
     <Compile Include="Countdown\ExamSwitchedEventHandler.cs" />
     <Compile Include="Interop\DisplayHelper.cs" />
+    <Compile Include="Interop\Enums.cs" />
     <Compile Include="Interop\Extensions\Extensions.cs" />
     <Compile Include="Interop\Natives.cs" />
     <Compile Include="Interop\ShellLink.cs" />
+    <Compile Include="Interop\Structs.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
     <Compile Include="Modules\Configuration\BorderColorObject.cs" />
     <Compile Include="Modules\Configuration\Enums.cs" />
@@ -122,7 +124,6 @@
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
-    <Compile Include="Modules\JsonConverters\ColorFormatConverter.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\Xml.cs" />
     <Compile Include="UI\Colors.cs" />

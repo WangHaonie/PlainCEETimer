@@ -14,7 +14,7 @@ public sealed class PlainFontDialog(AppForm owner, Font font) : PlainCommonDialo
     protected override BOOL RunDialog(HWND hWndOwner)
     {
         var lf = LOGFONT.FromFont(font);
-        var result = RunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(Validator.MinFontSize, Validator.MaxFontSize));
+        var result = RunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(Validator.MaxFontSize, Validator.MinFontSize));
 
         if (result)
         {

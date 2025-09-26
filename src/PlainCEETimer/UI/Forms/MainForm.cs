@@ -23,7 +23,7 @@ public sealed class MainForm : AppForm
     public static event Action UniTopMostChanged;
 
     private int CurrentTheme;
-    private int CountdownWidth;
+    private int CountdownMaxWidth;
     private int ExamIndex;
     private int ScreenIndex;
     private int FieldValue;
@@ -301,7 +301,7 @@ public sealed class MainForm : AppForm
                 CountdownContent = content;
                 CountdownForeColor = e.ForeColor;
                 BackColor = back;
-                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownWidth, 0), TextFormatFlags.WordBreak);
+                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak);
                 Invalidate();
 
                 if (ShowTrayText)
@@ -539,7 +539,7 @@ public sealed class MainForm : AppForm
 
     private void SetCountdownAutoWrap()
     {
-        CountdownWidth = GetCurrentScreenRect().Width - 10;
+        CountdownMaxWidth = GetCurrentScreenRect().Width - 10;
     }
 
     private void ApplyLocation()
