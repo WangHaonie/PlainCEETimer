@@ -63,7 +63,7 @@ LPCWSTR GetWindowTextEx(HWND hWnd)
         if (buffer)
         {
             GetWindowText(hWnd, buffer, length);
-            auto ptr = CoTaskStrAlloc(buffer);
+            auto ptr = CoTaskStrAllocW(buffer);
             free(buffer);
             buffer = nullptr;
             return ptr;

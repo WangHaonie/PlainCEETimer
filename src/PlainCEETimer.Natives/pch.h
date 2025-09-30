@@ -13,7 +13,7 @@ inline bool IsNullOrEmpty(const wchar_t* str) noexcept
     return !str || !*str;
 }
 
-inline wchar_t* CoTaskStrAlloc(const wchar_t* str)
+inline wchar_t* CoTaskStrAllocW(const wchar_t* str)
 {
     auto length = wcslen(str);
     auto size = (length + 1) * sizeof(wchar_t);

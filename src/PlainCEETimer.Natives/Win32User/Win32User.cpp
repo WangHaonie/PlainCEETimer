@@ -27,7 +27,7 @@ LPCWSTR GetLogonUserName()
         }
     }
 
-    return CoTaskStrAlloc(tmp.c_str());
+    return CoTaskStrAllocW(tmp.c_str());
 }
 
 BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
@@ -41,7 +41,6 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 
     DWORD activeSid = WTSGetActiveConsoleSessionId();
     HANDLE hToken = nullptr;
-    DWORD exitCode = 0;
 
     if (WTSQueryUserToken(activeSid, &hToken))
     {
@@ -57,6 +56,11 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         {
             do
             {
+                if (!wcsstr(pe32.szExeFile, L"taskh")) // 匹配 taskhost*.exe 进程
+                {
+                    continue;
+                }
+
                 DWORD sid;
 
                 if (ProcessIdToSessionId(pe32.th32ProcessID, &sid) && sid == activeSid)
@@ -79,6 +83,8 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
             while (Process32Next(hSnapshot, &pe32));
         }
     }
+
+    DWORD exitCode = 0;
 
     if (result)
     {

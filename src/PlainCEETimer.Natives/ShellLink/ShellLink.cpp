@@ -50,11 +50,11 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
         psh->GetDescription(d, MAX_PATH);
         psh->GetIconLocation(ip, MAX_PATH, &lpLnkFileInfo->iIcon);
 
-        lpLnkFileInfo->pszTarget = CoTaskStrAlloc(t);
-        lpLnkFileInfo->pszArgs = CoTaskStrAlloc(a);
-        lpLnkFileInfo->pszWorkingDir = CoTaskStrAlloc(wd);
-        lpLnkFileInfo->pszDescription = CoTaskStrAlloc(d);
-        lpLnkFileInfo->pszIconPath = CoTaskStrAlloc(ip);
+        lpLnkFileInfo->pszTarget = CoTaskStrAllocW(t);
+        lpLnkFileInfo->pszArgs = CoTaskStrAllocW(a);
+        lpLnkFileInfo->pszWorkingDir = CoTaskStrAllocW(wd);
+        lpLnkFileInfo->pszDescription = CoTaskStrAllocW(d);
+        lpLnkFileInfo->pszIconPath = CoTaskStrAllocW(ip);
     }
 }
 
