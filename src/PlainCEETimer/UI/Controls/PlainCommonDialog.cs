@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -33,13 +31,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                     HWND hWnd = Handle;
 
                     using var g = Graphics.FromHwnd((IntPtr)hWnd);
-                    using var font = Font.FromHfont(Natives.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
+                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
-                    GetClientRect(hWnd, out var rc);
+                    Win32UI.GetClientRect(hWnd, out var rc);
                     rc.Left += 6;
                     Rectangle rect = rc;
-                    g.DrawString(Win32UI.GetWindowTextEx(hWnd), font, brush, rect);
+                    g.DrawString(Win32UI.GetWindowText(hWnd), font, brush, rect);
                     Handled = true;
                 }
 
@@ -48,9 +46,6 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
             base.WndProc(ref m);
         }
-
-        [DllImport(App.User32Dll)]
-        private static extern BOOL GetClientRect(HWND hWnd, out RECT lpRect);
     }
 
     private const int WM_DESTROY = 0x0002;
@@ -63,8 +58,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private const int TRANSPARENT = 0x0001;
     private const int grp2 = 0x0431;
 
-    private readonly IntPtr hBrush = CreateSolidBrush(BackCrColor);
-    private readonly StringBuilder builder = new(256);
+    private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
     private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
@@ -101,7 +95,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             case WM_CTLCOLORBTN:
                 return WmCtlColor(wparam);
             case WM_DESTROY:
-                DeleteObject(hBrush);
+                Win32UI.DeleteObject(hBrush);
                 break;
         }
 
@@ -114,14 +108,14 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (dialogTitle != null)
         {
-            SetWindowText(hWnd, dialogTitle);
+            Win32UI.SetWindowText(hWnd, dialogTitle);
         }
 
         if (this is PlainFontDialog f)
         {
             HWND hCtrl;
 
-            if (UseDark && (hCtrl = GetDlgItem(hWnd, grp2)))
+            if (UseDark && (hCtrl = Win32UI.GetDlgItem(hWnd, grp2)))
             {
                 new GroupBoxNativeWindow(hCtrl);
             }
@@ -131,14 +125,14 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         {
             ThemeManager.FlushWindow(hWnd);
 
-            EnumChildWindows(hWnd, (child, _) =>
+            Win32UI.EnumChildWindows(hWnd, (child, _) =>
             {
                 ThemeManager.FlushControl(child, GetNativeStyle(child));
                 return BOOL.TRUE;
             }, IntPtr.Zero);
         }
 
-        GetWindowRect(hWnd, out var rect);
+        Win32UI.GetWindowRect(hWnd, out var rect);
 
         Rectangle bounds = rect;
         var screen = Screen.GetWorkingArea(owner);
@@ -157,7 +151,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         if (r > screen.Right) x = screen.Right - w;
         if (b > screen.Bottom) y = screen.Bottom - h;
 
-        MoveWindow(hWnd, x, y, w, h, BOOL.FALSE);
+        Win32UI.MoveWindow(hWnd, x, y, w, h, BOOL.FALSE);
         return BOOL.TRUE;
     }
 
@@ -165,9 +159,9 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         if (UseDark)
         {
-            SetBkMode(hDC, TRANSPARENT);
-            SetBkColor(hDC, BackCrColor);
-            Natives.SetTextColor(hDC, ForeCrColor);
+            Win32UI.SetBkMode(hDC, TRANSPARENT);
+            Win32UI.SetBkColor(hDC, BackCrColor);
+            Win32UI.SetTextColor(hDC, ForeCrColor);
             return hBrush;
         }
 
@@ -176,9 +170,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private NativeStyle GetNativeStyle(HWND hWnd)
     {
-        builder.Clear();
-        GetClassName(hWnd, builder, 256);
-        var className = builder.ToString();
+        var className = Win32UI.GetClassName(hWnd);
 
         if (className == "ComboBox" || className == "Edit")
         {
@@ -192,36 +184,4 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
 
     }
-
-    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    private static extern int GetClassName(HWND hWnd, StringBuilder lpClassName, int nMaxCount);
-
-    [DllImport(App.Gdi32Dll)]
-    private static extern int SetBkMode(HDC hdc, int mode);
-
-    [DllImport(App.User32Dll)]
-    private static extern void MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
-
-    [DllImport(App.Gdi32Dll)]
-    private static extern BOOL DeleteObject(IntPtr hObject);
-
-    [DllImport(App.User32Dll)]
-    private static extern BOOL EnumChildWindows(HWND hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
-
-    private delegate BOOL EnumChildProc(HWND hWnd, IntPtr lParam);
-
-    [DllImport(App.User32Dll)]
-    private static extern BOOL GetWindowRect(HWND hWnd, out RECT lpRect);
-
-    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    private static extern BOOL SetWindowText(HWND hWnd, string lpString);
-
-    [DllImport(App.Gdi32Dll)]
-    private static extern COLORREF SetBkColor(HDC hdc, COLORREF color);
-
-    [DllImport(App.Gdi32Dll)]
-    private static extern IntPtr CreateSolidBrush(COLORREF color);
-
-    [DllImport(App.User32Dll)]
-    private static extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
 }

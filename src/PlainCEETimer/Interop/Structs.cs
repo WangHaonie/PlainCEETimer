@@ -196,13 +196,13 @@ public readonly struct HICON
     public Icon ToIcon()
     {
         var result = (Icon)Icon.FromHandle(Value).Clone();
-        Natives.DestroyIcon(Value);
+        Win32UI.DestroyIcon(Value);
         return result;
     }
 
     public static Icon ExtractIcon(string file, int index = 0)
     {
-        Natives.ExtractIconEx(file, index, out var hIcon, default, 1);
+        Win32UI.ExtractIconEx(file, index, out var hIcon, default, 1);
         return hIcon.ToIcon();
     }
 }
@@ -273,8 +273,7 @@ public struct LOGFONT
 
     public static LOGFONT FromFont(Font font)
     {
-        LOGFONT lf = default;
-        object lfobj = lf;
+        object lfobj = default(LOGFONT);
         font.ToLogFont(lfobj);
         return (LOGFONT)lfobj;
     }

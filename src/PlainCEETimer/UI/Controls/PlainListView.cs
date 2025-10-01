@@ -123,8 +123,8 @@ public sealed class PlainListView : ListView
     protected override void OnHandleCreated(EventArgs e)
     {
         HWND hListView = Handle;
-        HWND hHeader = Natives.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-        HWND hToolTips = Natives.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
+        HWND hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+        HWND hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
         new SysHeader32NativeWindow(hHeader);
 
         var LVstyle = NativeStyle.ItemsView;
@@ -164,7 +164,7 @@ public sealed class PlainListView : ListView
                     m.Result = new(CDRF_NOTIFYITEMDRAW);
                     return;
                 case CDDS_ITEMPREPAINT:
-                    Natives.SetTextColor(nmcd.hdc, UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
+                    Win32UI.SetTextColor(nmcd.hdc, UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
                     m.Result = new(CDRF_DODEFAULT);
                     return;
             }

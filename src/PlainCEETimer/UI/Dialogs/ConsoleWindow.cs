@@ -27,6 +27,7 @@ public sealed class ConsoleWindow : AppDialog
     private MenuItem ContextCopy;
     private Process ElevatedProc;
     private PlainTextBox ConsoleBox;
+    private TaskbarProgress tbp;
     private readonly Timer ConsoleTimer = new();
 
     protected override void OnInitializing()
@@ -78,11 +79,11 @@ public sealed class ConsoleWindow : AppDialog
 
     protected override void OnShown()
     {
-        TaskbarProgress.Initialize(Handle);
+        tbp = new(Handle);
 
         if (UacHelper.EnsureUAC(MessageX))
         {
-            TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
+            tbp.SetState(TaskbarProgressState.Indeterminate);
             ConsoleTimer_Tick(null, null);
             ConsoleTimer.Start();
 
@@ -158,11 +159,6 @@ public sealed class ConsoleWindow : AppDialog
         return IsRunning || (ElevatedProc != null && !ElevatedProc.HasExited);
     }
 
-    protected override void OnClosed()
-    {
-        TaskbarProgress.Release();
-    }
-
     public void UpdateState(string text)
     {
         SafeExecute(() => LabelMessage.Text += text);
@@ -203,8 +199,8 @@ public sealed class ConsoleWindow : AppDialog
             IsRunning = false;
             ConsoleTimer.Stop();
             LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
-            TaskbarProgress.SetState(TaskbarProgressState.Normal);
-            TaskbarProgress.SetValue(1UL, 1UL);
+            tbp.SetState(TaskbarProgressState.Normal);
+            tbp.SetValue(1UL, 1UL);
             Complete?.Invoke(this);
 
             ButtonB.Enabled = true;

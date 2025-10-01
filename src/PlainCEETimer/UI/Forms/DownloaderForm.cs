@@ -25,6 +25,7 @@ public sealed class DownloaderForm : AppForm
     private PlainButton ButtonRetry;
     private PlainButton ButtonCancel;
     private PlainLinkLabel LinkBrowser;
+    private TaskbarProgress tbp;
     private readonly string TargetVersion;
     private readonly long UpdateSize;
     private readonly CancellationTokenSource cts = new();
@@ -67,7 +68,7 @@ public sealed class DownloaderForm : AppForm
                     cts.Cancel();
                     UpdateLabels("用户已取消下载。", null, null);
                     IsCancelled = true;
-                    TaskbarProgress.SetState(TaskbarProgressState.Error);
+                    tbp.SetState(TaskbarProgressState.Error);
                     MessageX.Warn("你已取消下载！\n\n稍后可以在 关于 窗口点击图标来再次检查更新。");
                 }
 
@@ -92,7 +93,7 @@ public sealed class DownloaderForm : AppForm
         if (Win32User.NotImpersonalOrElevated)
         {
             LinkBrowser.Hyperlink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
-            TaskbarProgress.Initialize(Handle);
+            tbp = new(Handle);
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;
@@ -112,15 +113,6 @@ public sealed class DownloaderForm : AppForm
         return !IsCancelled;
     }
 
-    protected override void OnClosed()
-    {
-        if (IsCancelled)
-        {
-            TaskbarProgress.SetState(TaskbarProgressState.None);
-            TaskbarProgress.Release();
-        }
-    }
-
     private async void DownloadUpdate()
     {
         IsCancelled = false;
@@ -132,7 +124,7 @@ public sealed class DownloaderForm : AppForm
     {
         UpdateLabels(null, $"已下载/总共: {report.Downloaded} KB / {report.Total} KB", $"下载速度: {report.Speed:0.00} KB/s");
         ProgressBarMain.Value = report.Progress;
-        TaskbarProgress.SetValue((ulong)report.Downloaded, (ulong)report.Total);
+        tbp.SetValue((ulong)report.Downloaded, (ulong)report.Total);
     }
 
     private void UpdateDownloader_Error(Exception ex)
@@ -141,8 +133,8 @@ public sealed class DownloaderForm : AppForm
         UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
         ButtonRetry.Enabled = true;
         IsCancelled = true;
-        TaskbarProgress.SetValue(1UL, 1UL);
-        TaskbarProgress.SetState(TaskbarProgressState.Error);
+        tbp.SetValue(1UL, 1UL);
+        tbp.SetState(TaskbarProgressState.Error);
     }
 
     private void UpdateDownloader_Completed()
@@ -151,8 +143,8 @@ public sealed class DownloaderForm : AppForm
         ButtonRetry.Enabled = false;
         LinkBrowser.Enabled = false;
         ProgressBarMain.Value = 100;
-        TaskbarProgress.SetValue(1UL, 1UL);
-        TaskbarProgress.SetState(TaskbarProgressState.Indeterminate);
+        tbp.SetValue(1UL, 1UL);
+        tbp.SetState(TaskbarProgressState.Indeterminate);
         UpdateLabels("下载完成，请稍侯...", null, null);
         IsCancelled = true;
 

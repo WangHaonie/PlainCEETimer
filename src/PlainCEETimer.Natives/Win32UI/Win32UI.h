@@ -7,3 +7,4 @@ cexport(void) SetTopMostWindow(HWND hWnd);
 cexport(BOOL) MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item);
 cexport(BOOL) MenuCheckRadioItemByPosition(HMENU hMenu, UINT item);
 cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
+cexport(LPCWSTR) GetWindowClassName(HWND hWnd);

@@ -1,19 +1,48 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
-public static class TaskbarProgress
+public class TaskbarProgress : IDisposable
 {
+    private readonly HWND hWnd;
+
+    public TaskbarProgress(HWND hwnd)
+    {
+        hWnd = hwnd;
+        Initialize();
+    }
+
+    public void SetState(TaskbarProgressState state)
+    {
+        SetState(hWnd, state);
+    }
+
+    public void SetValue(ulong completed, ulong total)
+    {
+        SetValue(hWnd, completed, total);
+    }
+
+    public void Dispose()
+    {
+        Release();
+    }
+
+    ~TaskbarProgress()
+    {
+        Dispose();
+    }
+
     [DllImport(App.NativesDll, EntryPoint = "#12")]
-    public static extern void Initialize(HWND hWnd);
+    private static extern void Initialize();
 
     [DllImport(App.NativesDll, EntryPoint = "#13")]
-    public static extern void SetState(TaskbarProgressState tbpFlags);
+    private static extern void SetState(HWND hWnd, TaskbarProgressState tbpFlags);
 
     [DllImport(App.NativesDll, EntryPoint = "#14")]
-    public static extern void SetValue(ulong ullCompleted, ulong ullTotal);
+    private static extern void SetValue(HWND hWnd, ulong ullCompleted, ulong ullTotal);
 
     [DllImport(App.NativesDll, EntryPoint = "#15")]
-    public static extern void Release();
+    private static extern void Release();
 }

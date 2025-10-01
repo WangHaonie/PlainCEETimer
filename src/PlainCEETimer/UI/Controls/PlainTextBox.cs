@@ -176,7 +176,7 @@ public sealed class PlainTextBox : TextBox
 
             */
 
-            Natives.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(ButtonExpand.Width << 16));
+            Win32UI.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(ButtonExpand.Width << 16));
         }
 
         OnTextChanged(EventArgs.Empty);

@@ -14,33 +14,31 @@ https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nn-shobjidl_co
 */
 
 static ITaskbarList3* ptl = nullptr;
-static HWND targetHwnd = nullptr;
 static bool Initialized = false;
 
-void InitializeTaskbarList(HWND hWnd)
+void InitializeTaskbarList()
 {
-    if (!Initialized && hWnd &&
+    if (!Initialized &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&ptl))))
     {
-        targetHwnd = hWnd;
         ptl->HrInit();
         Initialized = true;
     }
 }
 
-void TaskbarListSetProgressState(TBPFLAG tbpFlags)
+void TaskbarListSetProgressState(HWND hWnd, TBPFLAG tbpFlags)
 {
-    if (Initialized)
+    if (Initialized && hWnd)
     {
-        ptl->SetProgressState(targetHwnd, tbpFlags);
+        ptl->SetProgressState(hWnd, tbpFlags);
     }
 }
 
-void TaskbarListSetProgressValue(ULONGLONG ullCompleted, ULONGLONG ullTotal)
+void TaskbarListSetProgressValue(HWND hWnd, ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
-    if (Initialized)
+    if (Initialized && hWnd)
     {
-        ptl->SetProgressValue(targetHwnd, ullCompleted, ullTotal);
+        ptl->SetProgressValue(hWnd, ullCompleted, ullTotal);
     }
 }
 
@@ -48,6 +46,5 @@ void ReleaseTaskbarList()
 {
     if (ptl) ptl->Release();
     ptl = nullptr;
-    targetHwnd = nullptr;
     Initialized = false;
 }

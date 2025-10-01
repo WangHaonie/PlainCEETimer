@@ -41,3 +41,4 @@ EXPORTS
     MenuCheckRadioItemByPosition @30 NONAME
     SetTopMostWindow @31 NONAME
     GetWindowTextEx @32 NONAME
+    GetWindowClassName @33 NONAME

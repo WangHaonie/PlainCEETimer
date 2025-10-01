@@ -110,7 +110,7 @@
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Enums.cs" />
     <Compile Include="Interop\Extensions\Extensions.cs" />
-    <Compile Include="Interop\Natives.cs" />
+    <Compile Include="Interop\FunctionPointers.cs" />
     <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Structs.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
@@ -26,7 +25,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
     protected override BOOL RunDialog(HWND hWndOwner)
     {
         using var colors = new CUSTCOLORS(customColors);
-        var result = RunColorDialog(hWndOwner, HookProc, ref color, colors);
+        var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, colors);
 
         if (result)
         {
@@ -57,7 +56,4 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
         return [.. tmp];
     }
-
-    [DllImport(App.NativesDll, EntryPoint = "#10")]
-    private static extern BOOL RunColorDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);
 }
