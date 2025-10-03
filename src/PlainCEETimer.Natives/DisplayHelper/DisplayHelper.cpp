@@ -122,7 +122,7 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
                     info.deviceId = did;
 
-                    if (!(lpfnEnum(info)))
+                    if (!lpfnEnum(info))
                     {
                         return;
                     }

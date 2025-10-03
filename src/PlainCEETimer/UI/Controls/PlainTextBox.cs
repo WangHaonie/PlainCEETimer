@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -50,7 +51,7 @@ public sealed class PlainTextBox : TextBox
             ]);
         }
 
-        protected override void StartLayout(bool isHighDpi)
+        protected override void RunLayout(bool isHighDpi)
         {
             ContentBox.Text = parent.Text;
             ContentBox.SetBounds(0, 0, parent.Width, ScaleToDpi(110), BoundsSpecified.Size);
@@ -176,7 +177,7 @@ public sealed class PlainTextBox : TextBox
 
             */
 
-            Win32UI.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(ButtonExpand.Width << 16));
+            Win32UI.SendMessage(Handle, EM_SETMARGINS, new(EC_RIGHTMARGIN), new(int.MakeLong(0, ButtonExpand.Width)));
         }
 
         OnTextChanged(EventArgs.Empty);

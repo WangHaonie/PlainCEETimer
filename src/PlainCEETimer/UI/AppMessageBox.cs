@@ -46,7 +46,7 @@ public class AppMessageBox(AppForm parent = null)
             ButtonA.Enabled = true;
         }
 
-        protected override void StartLayout(bool isHighDpi)
+        protected override void RunLayout(bool isHighDpi)
         {
             ArrangeControlXT(LabelMessage, ImageIcon, 2);
             ArrangeCommonButtonsR(ButtonA, ButtonB, LabelMessage, -3, 3);

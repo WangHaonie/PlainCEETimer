@@ -417,7 +417,7 @@ public sealed class SettingsForm : AppForm
         UpdateSettingsArea(SettingsArea.StartUp, false);
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         GroupBoxArrageFirstControl(LabelExamInfo, 0, 2);
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);

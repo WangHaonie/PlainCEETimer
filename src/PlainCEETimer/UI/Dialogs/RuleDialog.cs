@@ -111,7 +111,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
         base.OnInitializing();
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelCharExam);
         ArrangeControlXT(ComboBoxRuleType, LabelCharExam);

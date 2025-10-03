@@ -128,7 +128,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         base.OnInitializing();
     }
 
-    protected sealed override void StartLayout(bool isHighDpi)
+    protected sealed override void RunLayout(bool isHighDpi)
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
         ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);

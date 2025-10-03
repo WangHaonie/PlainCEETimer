@@ -78,7 +78,7 @@ void SetWindowFrameTheme(HWND hWnd, BOOL newStyle)
     if (hWnd)
     {
         int enabled = 1;
-        DwmSetWindowAttribute(hWnd, newStyle ? 20 : 19, &enabled, sizeof(enabled));
+        DwmSetWindowAttribute(hWnd, newStyle ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, &enabled, sizeof(enabled));
     }
 }
 

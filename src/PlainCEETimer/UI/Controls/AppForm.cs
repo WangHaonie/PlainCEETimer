@@ -115,7 +115,7 @@ public abstract class AppForm : Form
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();
-        StartLayout(IsHighDpi);
+        RunLayout(IsHighDpi);
         ResumeLayout(true);
         OnLoad();
         base.OnLoad(e);
@@ -235,7 +235,7 @@ public abstract class AppForm : Form
     /// 在 <see cref="AppForm"/> OnLoad 之前触发，可用于对控件进行最后的布局。
     /// 该方法没有默认实现，可不调用 base.StartLayout(bool);
     /// </summary>
-    protected virtual void StartLayout(bool isHighDpi) { }
+    protected virtual void RunLayout(bool isHighDpi) { }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> 加载时触发。该方法没有默认实现，直接派生自 <see cref="AppForm"/> 的类可不调用 base.OnLoad();

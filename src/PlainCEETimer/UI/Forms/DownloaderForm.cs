@@ -77,7 +77,7 @@ public sealed class DownloaderForm : AppForm
         ]);
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelDownloading);
         ArrangeControlYL(ProgressBarMain, LabelDownloading, 2);

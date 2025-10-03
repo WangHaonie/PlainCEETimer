@@ -83,7 +83,7 @@ public sealed class CustomTextDialog : AppDialog
         base.OnInitializing();
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelInfo, 3, 0);
         ArrangeFirstControl(ComboBoxPlaceholders);

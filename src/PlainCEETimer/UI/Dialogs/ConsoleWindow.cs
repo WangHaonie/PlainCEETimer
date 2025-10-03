@@ -71,7 +71,7 @@ public sealed class ConsoleWindow : AppDialog
         }
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
         CenterControlY(LabelMessage, ButtonA);

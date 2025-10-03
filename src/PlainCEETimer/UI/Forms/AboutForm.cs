@@ -59,7 +59,7 @@ public sealed class AboutForm : AppForm
         ]);
     }
 
-    protected override void StartLayout(bool isHighDpi)
+    protected override void RunLayout(bool isHighDpi)
     {
         ArrangeControlXT(LabelInfo, ImageLogo, 0, isHighDpi ? -3 : 0);
         ArrangeControlYL(LabelLicense, ImageLogo, isHighDpi ? -3 : -2);

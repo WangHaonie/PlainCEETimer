@@ -170,9 +170,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private NativeStyle GetNativeStyle(HWND hWnd)
     {
-        var className = Win32UI.GetClassName(hWnd);
-
-        if (className == "ComboBox" || className == "Edit")
+        if (Win32UI.GetClassName(hWnd) is "ComboBox" or "Edit")
         {
             return NativeStyle.CfdDark;
         }
