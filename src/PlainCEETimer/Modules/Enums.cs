@@ -25,3 +25,10 @@ public enum UacNotifyLevel
     AppsOnlyDimming = 2,
     AlwaysDimming = 3,
 }
+
+public enum SpecialFolder
+{
+    Desktop,
+    StartMenuPrograms = 2,
+    WinDir = 36
+}

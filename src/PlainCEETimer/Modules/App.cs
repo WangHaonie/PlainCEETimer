@@ -73,7 +73,7 @@ internal static class App
             new Action(StartPipeServer).Start();
         }
 
-        if (!StartProgram(args))
+        if (!StartProgram(["/lnk"]))
         {
             StartPipeClient();
             Exit();
@@ -146,6 +146,11 @@ internal static class App
         }
 
         return false;
+    }
+
+    public static string GetSpecialFolder(SpecialFolder folder)
+    {
+        return Environment.GetFolderPath((Environment.SpecialFolder)folder);
     }
 
     public static void PopupAbortRetryIgnore(string message, string title)
