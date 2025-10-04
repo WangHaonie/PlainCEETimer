@@ -6,7 +6,5 @@
 *.rc binary
 
 # https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
-*.cpp linguist-language=C++
-*.h linguist-language=C++
 *.cmd linguist-documentation
-**/PlainCEETimer.Setup/** linguist-documentation
+*.nsi linguist-documentation
