@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.Interop.Extensions;
+﻿namespace PlainCEETimer.Interop;
 
 public static class Extensions
 {

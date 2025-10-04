@@ -13,6 +13,16 @@ inline bool IsNullOrEmpty(const wchar_t* str) noexcept
     return !str || !*str;
 }
 
+template<typename TInterface>
+inline void __stdcall ReleasePPI(TInterface** ppi)
+{
+    if (ppi && *ppi)
+    {
+        (*ppi)->Release();
+        *ppi = nullptr;
+    }
+}
+
 /*
 
 关于字符串内存分配：

@@ -44,7 +44,6 @@ void TaskbarListSetProgressValue(HWND hWnd, ULONGLONG ullCompleted, ULONGLONG ul
 
 void ReleaseTaskbarList()
 {
-    if (ptl) ptl->Release();
-    ptl = nullptr;
+    ReleasePPI(&ptl);
     init = false;
 }

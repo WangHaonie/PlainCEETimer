@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using Newtonsoft.Json;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
@@ -20,12 +19,7 @@ public struct BorderColorObject
 
     public Color Color { get; set; }
 
-    public BorderColorObject(int words)
-    {
-        Enabled = new((byte)((words >> 28) & 0xF));
-        Type = (byte)(((words) >> 24) & 0xF);
-        Color = (words & 0xFFFFFF).ToColor();
-    }
+    internal readonly int Value => ((byte)Enabled << 28) | ((byte)Type << 24) | Color.ToWin32();
 
     public BorderColorObject(bool enabled, int selection, Color color)
     {
@@ -34,8 +28,10 @@ public struct BorderColorObject
         Color = color;
     }
 
-    internal readonly int MakeLong()
+    internal BorderColorObject(int w)
     {
-        return ((byte)Enabled << 28) | ((byte)Type << 24) | Color.ToWin32();
+        Enabled = new((byte)((w >> 28) & 0xF));
+        Type = (byte)(((w) >> 24) & 0xF);
+        Color = (w & 0xFFFFFF).ToColor();
     }
 }

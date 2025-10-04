@@ -3,7 +3,7 @@
 namespace PlainCEETimer.Interop;
 
 [Flags]
-public enum HotkeyModifiers : byte
+public enum HotkeyModifier : byte
 {
     None = 0x00,
     Shit = 0x01, // (●'◡'●)

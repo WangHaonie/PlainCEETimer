@@ -49,15 +49,16 @@ public static class ShellLink
             {
                 if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
                 {
-                    var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}\\";
+                    var path = @"\" + LnkName;
+                    var programsdir = $"{App.GetSpecialFolder(SpecialFolder.StartMenuPrograms)}\\{App.AppName}";
 
                     if (!Directory.Exists(programsdir))
                     {
                         Directory.CreateDirectory(programsdir);
                     }
 
-                    ResetAppShortcut($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{LnkName}");
-                    ResetAppShortcut(programsdir + LnkName);
+                    ResetAppShortcut(App.GetSpecialFolder(SpecialFolder.Desktop) + path);
+                    ResetAppShortcut(programsdir + path);
 
                     return true;
                 }

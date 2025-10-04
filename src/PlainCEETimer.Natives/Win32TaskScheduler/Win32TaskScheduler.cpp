@@ -6,17 +6,6 @@ static ITaskFolder* ptf = nullptr;
 static IRegisteredTask* prt = nullptr;
 static bool init = false;
 
-static bool ResetRegisteredTask()
-{
-    if (prt)
-    {
-        prt->Release();
-        prt = nullptr;
-    }
-
-    return true;
-}
-
 void InitializeTaskScheduler()
 {
     if (!init &&
@@ -30,23 +19,27 @@ void InitializeTaskScheduler()
 
 void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType)
 {
-    if (init && ResetRegisteredTask())
+    if (init)
     {
         ptf->RegisterTask(_bstr_t(path), _bstr_t(xmlText), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), logonType, _variant_t(L""), &prt);
     }
+
+    ReleasePPI(&prt);
 }
 
 void TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 {
-    if (init && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
         prt->get_Xml(pXml);
     }
+
+    ReleasePPI(&prt);
 }
 
 void TaskSchedulerEnableTask(LPCWSTR path)
 {
-    if (init && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
         VARIANT_BOOL enabled;
         prt->get_Enabled(&enabled);
@@ -56,6 +49,8 @@ void TaskSchedulerEnableTask(LPCWSTR path)
             prt->put_Enabled(VARIANT_TRUE);
         }
     }
+
+    ReleasePPI(&prt);
 }
 
 void TaskSchedulerDeleteTask(LPCWSTR path)
@@ -68,10 +63,7 @@ void TaskSchedulerDeleteTask(LPCWSTR path)
 
 void ReleaseTaskScheduler()
 {
-    ResetRegisteredTask();
-    if (ptf) ptf->Release();
-    if (pts) pts->Release();
-    pts = nullptr;
-    ptf = nullptr;
+    ReleasePPI(&ptf);
+    ReleasePPI(&pts);
     init = false;
 }

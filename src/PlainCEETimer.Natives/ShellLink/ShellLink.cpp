@@ -60,9 +60,7 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
 
 void ReleaseShellLink()
 {
-    if (ppf) ppf->Release();
-    if (psh) psh->Release();
-    ppf = nullptr;
-    psh = nullptr;
+    ReleasePPI(&ppf);
+    ReleasePPI(&psh);
     init = false;
 }

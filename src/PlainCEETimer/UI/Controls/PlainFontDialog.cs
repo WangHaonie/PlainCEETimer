@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.UI.Controls;
