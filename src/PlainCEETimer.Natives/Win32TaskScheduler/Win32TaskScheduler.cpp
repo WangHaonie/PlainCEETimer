@@ -4,7 +4,7 @@
 static ITaskService* pts = nullptr;
 static ITaskFolder* ptf = nullptr;
 static IRegisteredTask* prt = nullptr;
-static bool Initialized = false;
+static bool init = false;
 
 static bool ResetRegisteredTask()
 {
@@ -19,18 +19,18 @@ static bool ResetRegisteredTask()
 
 void InitializeTaskScheduler()
 {
-    if (!Initialized &&
+    if (!init &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pts))))
     {
         pts->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
         pts->GetFolder(_bstr_t(L"\\"), &ptf);
-        Initialized = true;
+        init = true;
     }
 }
 
 void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType)
 {
-    if (Initialized && ResetRegisteredTask())
+    if (init && ResetRegisteredTask())
     {
         ptf->RegisterTask(_bstr_t(path), _bstr_t(xmlText), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), logonType, _variant_t(L""), &prt);
     }
@@ -38,7 +38,7 @@ void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TY
 
 void TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 {
-    if (Initialized && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
         prt->get_Xml(pXml);
     }
@@ -46,7 +46,7 @@ void TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 
 void TaskSchedulerEnableTask(LPCWSTR path)
 {
-    if (Initialized && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && ResetRegisteredTask() && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
         VARIANT_BOOL enabled;
         prt->get_Enabled(&enabled);
@@ -60,7 +60,7 @@ void TaskSchedulerEnableTask(LPCWSTR path)
 
 void TaskSchedulerDeleteTask(LPCWSTR path)
 {
-    if (Initialized)
+    if (init)
     {
         ptf->DeleteTask(_bstr_t(path), 0);
     }
@@ -73,5 +73,5 @@ void ReleaseTaskScheduler()
     if (pts) pts->Release();
     pts = nullptr;
     ptf = nullptr;
-    Initialized = false;
+    init = false;
 }

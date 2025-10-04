@@ -4,21 +4,21 @@
 
 static IShellLink* psh = nullptr;
 static IPersistFile* ppf = nullptr;
-static bool Initialized = false;
+static bool init = false;
 
 void InitializeShellLink()
 {
-    if (!Initialized &&
+    if (!init &&
         SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&psh))))
     {
         psh->QueryInterface(IID_PPV_ARGS(&ppf));
-        Initialized = true;
+        init = true;
     }
 }
 
 void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
 {
-    if (Initialized)
+    if (init)
     {
         psh->SetPath(lnkFileInfo.pszTarget);
         psh->SetArguments(lnkFileInfo.pszArgs);
@@ -33,7 +33,7 @@ void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
 
 void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
-    if (Initialized && lpLnkFileInfo &&
+    if (init && lpLnkFileInfo &&
         SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
     {
         WCHAR t[MAX_PATH];
@@ -64,5 +64,5 @@ void ReleaseShellLink()
     if (psh) psh->Release();
     ppf = nullptr;
     psh = nullptr;
-    Initialized = false;
+    init = false;
 }
