@@ -43,13 +43,9 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                     {
                         if (auto srcMode = sourceModes[sourceModeInfoIdx])
                         {
-                            info.bounds =
-                            {
-                                srcMode->position.x,
-                                srcMode->position.y,
-                                srcMode->position.x + static_cast<LONG>(srcMode->width),
-                                srcMode->position.y + static_cast<LONG>(srcMode->height)
-                            };
+                            info.position = srcMode->position;
+                            info.width = srcMode->width;
+                            info.height = srcMode->height;
                         }
                     }
 
@@ -63,14 +59,10 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         }
                     };
 
-                    LPCWSTR dpath = L"<未知路径>";
-
                     if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&sourceName)) == ERROR_SUCCESS && *sourceName.viewGdiDeviceName)
                     {
-                        dpath = sourceName.viewGdiDeviceName;
+                        info.dosPath = sourceName.viewGdiDeviceName;
                     }
-
-                    info.dosPath = dpath;
 
                     DISPLAYCONFIG_TARGET_DEVICE_NAME targetName =
                     {
@@ -82,14 +74,10 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
                         }
                     };
 
-                    LPCWSTR name = L"<未知名称>";
-
                     if (DisplayConfigGetDeviceInfo(reinterpret_cast<DISPLAYCONFIG_DEVICE_INFO_HEADER*>(&targetName)) == ERROR_SUCCESS && *targetName.monitorFriendlyDeviceName)
                     {
-                        name = targetName.monitorFriendlyDeviceName;
+                        info.deviceName = targetName.monitorFriendlyDeviceName;
                     }
-
-                    info.deviceName = name;
 
                     double refrate = 0.0;
 
@@ -112,15 +100,12 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
                     info.refreshRate = refrate;
 
-                    LPCWSTR did = L"<未知型号>";
                     DISPLAY_DEVICE dd = { sizeof(dd) };
                     
-                    if (EnumDisplayDevices(dpath, 0, &dd, 0) && *dd.DeviceID)
+                    if (EnumDisplayDevices(info.dosPath, 0, &dd, 0) && *dd.DeviceID)
                     {
-                        did = dd.DeviceID;
+                        info.deviceId = dd.DeviceID;
                     }
-
-                    info.deviceId = did;
 
                     if (!lpfnEnum(info))
                     {

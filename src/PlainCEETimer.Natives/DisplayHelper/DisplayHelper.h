@@ -8,7 +8,9 @@ struct SystemDisplay
     LPCWSTR deviceName;
     LPCWSTR deviceId;
     LPCWSTR dosPath;
-    RECT bounds;
+    POINTL position;
+    LONG width;
+    LONG height;
     double refreshRate;
 };
 

@@ -1,6 +1,4 @@
-﻿using System;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
+﻿using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
 
@@ -31,23 +29,20 @@ internal static class Startup
 
     public static void SetAll(bool option, bool isTask)
     {
-        new Action(() =>
+        if (!option)
         {
-            if (!option)
-            {
-                DeleteAll();
-            }
-            else if (isTask)
-            {
-                SetTask();
-                DeleteRegistry();
-            }
-            else
-            {
-                SetRegistry();
-                DeleteTask();
-            }
-        }).Start();
+            DeleteAll();
+        }
+        else if (isTask)
+        {
+            SetTask();
+            DeleteRegistry();
+        }
+        else
+        {
+            SetRegistry();
+            DeleteTask();
+        }
     }
 
     public static void DeleteAll()

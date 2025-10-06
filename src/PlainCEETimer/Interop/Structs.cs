@@ -8,22 +8,12 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.Interop;
 
 [DebuggerDisplay("{(Value == 0 ? false : true)}")]
-public readonly struct BOOL
+public readonly struct BOOL(int value)
 {
-    private readonly int Value;
+    private readonly int Value = value;
 
-    public static readonly BOOL TRUE = new(true);
-    public static readonly BOOL FALSE = new(false);
-
-    private BOOL(bool value)
-    {
-        Value = value ? 1 : 0;
-    }
-
-    public BOOL(int value)
-    {
-        Value = value;
-    }
+    public static readonly BOOL TRUE = new(1);
+    public static readonly BOOL FALSE = new(0);
 
     public static implicit operator int(BOOL b)
     {
@@ -37,7 +27,7 @@ public readonly struct BOOL
 
     public static explicit operator BOOL(bool b)
     {
-        return new(b);
+        return b ? TRUE : FALSE;
     }
 
     public static implicit operator IntPtr(BOOL b)
@@ -224,12 +214,12 @@ public readonly struct SystemDisplay
     private readonly string Name;
     private readonly string Id;
     private readonly string Path;
-    private readonly RECT Bounds;
+    private readonly Rectangle Bounds;
     private readonly double RefreshRate;
 
     public readonly override string ToString()
     {
-        return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", Index + 1, Name, GetId(Id), Path, Bounds.Right - Bounds.Left, Bounds.Bottom - Bounds.Top, RefreshRate);
+        return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", Index + 1, Name, GetId(Id), Path, Bounds.Width, Bounds.Height, RefreshRate);
     }
 
     private readonly string GetId(string did)
