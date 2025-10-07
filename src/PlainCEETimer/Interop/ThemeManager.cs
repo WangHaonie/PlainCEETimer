@@ -72,6 +72,7 @@ public static class ThemeManager
             NativeStyle.CfdDark => "DarkMode_CFD",
             NativeStyle.ItemsViewDark => "DarkMode_ItemsView",
             NativeStyle.ItemsView => "ItemsView",
+            NativeStyle.DarkTheme => "DarkMode_DarkTheme",
             _ => "Explorer",
         };
     }

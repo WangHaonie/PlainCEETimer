@@ -200,7 +200,7 @@ public sealed class ConsoleWindow : AppDialog
             ConsoleTimer.Stop();
             LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
             tbp.SetState(TaskbarProgressState.Normal);
-            tbp.SetValue(1UL, 1UL);
+            tbp.SetValue(1, 1);
             Complete?.Invoke(this);
 
             ButtonB.Enabled = true;

@@ -172,6 +172,9 @@
     <Compile Include="UI\Controls\PlainNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Controls\PlainProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\PlainRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
