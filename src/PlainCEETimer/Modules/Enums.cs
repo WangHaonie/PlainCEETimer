@@ -7,7 +7,7 @@ public enum NativeStyle
     CfdDark,
     ItemsView,
     ItemsViewDark,
-    DarkTheme // ≥ 26120.6760 ?
+    DarkTheme // ≥ 26120.6682 ?
 }
 
 public enum SystemTheme
