@@ -141,6 +141,11 @@ public sealed class PlainListView : ListView
         ThemeManager.FlushControl(hToolTips, TTstyle);
         Win32UI.SetTopMostWindow(hToolTips);
 
+        if (WindowsBuilds.IsWin11)
+        {
+            RoundCorner.SetRoundCornerEx(hToolTips, BOOL.TRUE);
+        }
+
         base.OnHandleCreated(e);
     }
 
