@@ -158,18 +158,16 @@ public sealed class PlainListView : ListView
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == WM_NOTIFY &&
-            Marshal.PtrToStructure<NMHDR>(m.LParam).code == NM_CUSTOMDRAW)
+        if (m.Msg == WM_NOTIFY && Marshal.ReadInt32(m.LParam, 16 /* NMHDR.code */) == NM_CUSTOMDRAW)
         {
-            var nmcd = Marshal.PtrToStructure<NMCUSTOMDRAW>(m.LParam);
-
-            switch (nmcd.dwDrawStage)
+            switch (Marshal.ReadInt32(m.LParam, 24 /* NMCUSTOMDRAW.dwDrawStage */))
             {
                 case CDDS_PREPAINT:
                     m.Result = new(CDRF_NOTIFYITEMDRAW);
                     return;
                 case CDDS_ITEMPREPAINT:
-                    Win32UI.SetTextColor(nmcd.hdc, UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
+                    Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, 32 /* NMCUSTOMDRAW.hdc */),
+                        UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
                     m.Result = new(CDRF_DODEFAULT);
                     return;
             }

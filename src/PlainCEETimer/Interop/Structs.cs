@@ -157,27 +157,6 @@ public struct RECT
     }
 }
 
-[DebuggerDisplay("{code}")]
-[StructLayout(LayoutKind.Sequential)]
-public struct NMHDR
-{
-    public HWND hWndFrom;
-    public IntPtr idFrom;
-    public int code;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-public struct NMCUSTOMDRAW
-{
-    public NMHDR hdr;
-    public int dwDrawStage;
-    public HDC hdc;
-    public RECT rc;
-    public IntPtr dwItemSpec;
-    public uint uItemState;
-    public IntPtr lItemlParam;
-}
-
 public readonly struct HICON
 {
     private readonly IntPtr Value;
