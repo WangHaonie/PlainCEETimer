@@ -55,7 +55,7 @@ public static class Win32UI
     public static extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
 
     [DllImport(App.User32Dll)]
-    public static extern IntPtr SendMessage(HWND hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    public static extern IntPtr SendMessage(HWND hWnd, int msg, int wParam, int lParam);
 
     [DllImport(App.NativesDll, EntryPoint = "#10")]
     public static extern BOOL RunColorDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);

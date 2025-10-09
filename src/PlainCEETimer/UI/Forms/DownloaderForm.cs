@@ -55,8 +55,8 @@ public sealed class DownloaderForm : AppForm
 
             ButtonRetry = b.Button("重试(&R)", (_, _) =>
             {
+                ProgressBarMain.Style = ProgressStyle.Normal;
                 ProgressBarMain.Value = 0;
-                ProgressBarMain.TaskbarProgressState = TaskbarProgressState.Normal;
                 UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
                 DownloadUpdate();
             }).Disable(),
@@ -69,7 +69,7 @@ public sealed class DownloaderForm : AppForm
                     cts.Cancel();
                     UpdateLabels("用户已取消下载。", null, null);
                     IsCancelled = true;
-                    ProgressBarMain.TaskbarProgressState = TaskbarProgressState.Paused;
+                    ProgressBarMain.Style = ProgressStyle.Paused;
                     MessageX.Warn("你已取消下载！\n\n稍后可以在 关于 窗口点击图标来再次检查更新。");
                 }
 
@@ -133,7 +133,7 @@ public sealed class DownloaderForm : AppForm
         ButtonRetry.Enabled = true;
         IsCancelled = true;
         ProgressBarMain.Value = 100;
-        ProgressBarMain.TaskbarProgressState = TaskbarProgressState.Error;
+        ProgressBarMain.Style = ProgressStyle.Error;
     }
 
     private void UpdateDownloader_Completed()
@@ -142,7 +142,7 @@ public sealed class DownloaderForm : AppForm
         ButtonRetry.Enabled = false;
         LinkBrowser.Enabled = false;
         ProgressBarMain.Value = 100;
-        ProgressBarMain.TaskbarProgressState = TaskbarProgressState.Indeterminate;
+        ProgressBarMain.Style = ProgressStyle.Indeterminate;
         UpdateLabels("下载完成，请稍侯...", null, null);
         IsCancelled = true;
 

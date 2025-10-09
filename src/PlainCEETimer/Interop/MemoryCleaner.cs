@@ -13,13 +13,11 @@ public class MemoryCleaner : IDisposable
     private Timer MainTimer;
     private ManagementObjectSearcher WmiSearcher;
 
-    private const int MemCleanerInterval = 300_000; // 5 min
-    private const ulong Threshold = 9UL * 1024 * 1024;
-
     public void Start()
     {
         if (!IsRunning)
         {
+            const int MemCleanerInterval = 300_000; // 5 min
             MainTimer = new(_ => Clean(), null, 3000, MemCleanerInterval);
             IsRunning = true;
         }
@@ -42,6 +40,8 @@ public class MemoryCleaner : IDisposable
         {
             mem = GetMemory();
         }
+
+        const ulong Threshold = 9UL * 1024 * 1024;
 
         if (mem > Threshold)
         {

@@ -55,6 +55,9 @@ public static class DefaultValues
         {
             if (field == null)
             {
+                const string NotoSansSC = "Noto Sans SC";
+                const string MicrosoftYaHei = "Microsoft YaHei";
+
                 using var tester = new Font(NotoSansSC, 1);
                 field = new(tester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 18F, FontStyle.Bold, GraphicsUnit.Point);
             }
@@ -62,7 +65,4 @@ public static class DefaultValues
             return field;
         }
     }
-
-    private const string NotoSansSC = "Noto Sans SC";
-    private const string MicrosoftYaHei = "Microsoft YaHei";
 }

@@ -83,7 +83,7 @@ public sealed class ConsoleWindow : AppDialog
 
         if (UacHelper.EnsureUAC(MessageX))
         {
-            tbp.SetState(TaskbarProgressState.Indeterminate);
+            tbp.SetState(ProgressStyle.Indeterminate);
             ConsoleTimer_Tick(null, null);
             ConsoleTimer.Start();
 
@@ -199,7 +199,7 @@ public sealed class ConsoleWindow : AppDialog
             IsRunning = false;
             ConsoleTimer.Stop();
             LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
-            tbp.SetState(TaskbarProgressState.Normal);
+            tbp.SetState(ProgressStyle.Normal);
             tbp.SetValue(1, 1);
             Complete?.Invoke(this);
 

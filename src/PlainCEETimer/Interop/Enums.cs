@@ -19,7 +19,7 @@ public enum ShowWindowCommand
     Minimize = 7
 }
 
-public enum TaskbarProgressState
+public enum ProgressStyle
 {
     None,
     Indeterminate,

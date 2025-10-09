@@ -14,7 +14,7 @@ public class TaskbarProgress : IDisposable
         Initialize();
     }
 
-    public void SetState(TaskbarProgressState state)
+    public void SetState(ProgressStyle state)
     {
         SetState(hWnd, state);
     }
@@ -38,7 +38,7 @@ public class TaskbarProgress : IDisposable
     private static extern void Initialize();
 
     [DllImport(App.NativesDll, EntryPoint = "#13")]
-    private static extern void SetState(HWND hWnd, TaskbarProgressState tbpFlags);
+    private static extern void SetState(HWND hWnd, ProgressStyle tbpFlags);
 
     [DllImport(App.NativesDll, EntryPoint = "#14")]
     private static extern void SetValue(HWND hWnd, long ullCompleted, long ullTotal);

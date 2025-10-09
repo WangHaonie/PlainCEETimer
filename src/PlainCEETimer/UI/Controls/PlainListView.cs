@@ -19,8 +19,6 @@ public sealed class PlainListView : ListView
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
-        private const int WM_SETCURSOR = 0x0020;
-
         public SysHeader32NativeWindow(HWND hHeader)
         {
             AssignHandle((IntPtr)hHeader);
@@ -28,6 +26,8 @@ public sealed class PlainListView : ListView
 
         protected override void WndProc(ref Message m)
         {
+            const int WM_SETCURSOR = 0x0020;
+
             if (m.Msg == WM_SETCURSOR)
             {
                 m.Result = BOOL.TRUE;
@@ -61,16 +61,6 @@ public sealed class PlainListView : ListView
             field = value;
         }
     }
-
-    private const int WM_NOTIFY = 0x004E;
-    private const int NM_CUSTOMDRAW = -12;
-    private const int CDDS_PREPAINT = 0x00000001;
-    private const int CDRF_NOTIFYITEMDRAW = 0x00000020;
-    private const int CDDS_ITEMPREPAINT = 0x00010000 | CDDS_PREPAINT;
-    private const int CDRF_DODEFAULT = 0x00000000;
-    private const int LVM_FIRST = 0x1000;
-    private const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
-    private const int LVM_GETHEADER = LVM_FIRST + 31;
 
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
     private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
@@ -122,9 +112,13 @@ public sealed class PlainListView : ListView
 
     protected override void OnHandleCreated(EventArgs e)
     {
+        const int LVM_FIRST = 0x1000;
+        const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
+        const int LVM_GETHEADER = LVM_FIRST + 31;
+
         HWND hListView = Handle;
-        HWND hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-        HWND hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, IntPtr.Zero, IntPtr.Zero);
+        HWND hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, 0, 0);
+        HWND hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, 0, 0);
         new SysHeader32NativeWindow(hHeader);
 
         var LVstyle = NativeStyle.ItemsView;
@@ -158,6 +152,13 @@ public sealed class PlainListView : ListView
 
     protected override void WndProc(ref Message m)
     {
+        const int WM_NOTIFY = 0x004E;
+        const int NM_CUSTOMDRAW = -12;
+        const int CDDS_PREPAINT = 0x00000001;
+        const int CDRF_NOTIFYITEMDRAW = 0x00000020;
+        const int CDDS_ITEMPREPAINT = 0x00010000 | CDDS_PREPAINT;
+        const int CDRF_DODEFAULT = 0x00000000;
+
         if (m.Msg == WM_NOTIFY && Marshal.ReadInt32(m.LParam, 16 /* NMHDR.code */) == NM_CUSTOMDRAW)
         {
             switch (Marshal.ReadInt32(m.LParam, 24 /* NMCUSTOMDRAW.dwDrawStage */))

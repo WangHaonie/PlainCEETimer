@@ -55,7 +55,6 @@ public sealed class MainForm : AppForm
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
     private const int PptsvcThreshold = 1;
-    private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
 
     protected override void OnInitializing()
     {
@@ -151,6 +150,8 @@ public sealed class MainForm : AppForm
 
     protected override void WndProc(ref Message m)
     {
+        const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
+
         if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
         {
             SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor(m.WParam));

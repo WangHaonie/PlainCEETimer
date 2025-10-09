@@ -10,9 +10,6 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 {
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
-        private const int WM_PAINT = 0x000F;
-        private const int WM_GETFONT = 0x0031;
-
         private bool Handled;
 
         public GroupBoxNativeWindow(HWND hGroupBox)
@@ -22,6 +19,9 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         protected override void WndProc(ref Message m)
         {
+            const int WM_PAINT = 0x000F;
+            const int WM_GETFONT = 0x0031;
+
             if (m.Msg == WM_PAINT)
             {
                 base.WndProc(ref m);
@@ -31,7 +31,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                     HWND hWnd = Handle;
 
                     using var g = Graphics.FromHwnd((IntPtr)hWnd);
-                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM_GETFONT, IntPtr.Zero, IntPtr.Zero));
+                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM_GETFONT, 0, 0));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
                     Win32UI.GetClientRect(hWnd, out var rc);
@@ -47,16 +47,6 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             base.WndProc(ref m);
         }
     }
-
-    private const int WM_DESTROY = 0x0002;
-    private const int WM_INITDIALOG = 0x0110;
-    private const int WM_CTLCOLORDLG = 0x0136;
-    private const int WM_CTLCOLOREDIT = 0x0133;
-    private const int WM_CTLCOLORSTATIC = 0x0138;
-    private const int WM_CTLCOLORLISTBOX = 0x0134;
-    private const int WM_CTLCOLORBTN = 0x0135;
-    private const int TRANSPARENT = 0x0001;
-    private const int grp2 = 0x0431;
 
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
@@ -84,6 +74,14 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     protected sealed override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
     {
+        const int WM_DESTROY = 0x0002;
+        const int WM_INITDIALOG = 0x0110;
+        const int WM_CTLCOLORDLG = 0x0136;
+        const int WM_CTLCOLOREDIT = 0x0133;
+        const int WM_CTLCOLORSTATIC = 0x0138;
+        const int WM_CTLCOLORLISTBOX = 0x0134;
+        const int WM_CTLCOLORBTN = 0x0135;
+
         switch (msg)
         {
             case WM_INITDIALOG:
@@ -114,6 +112,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         if (this is PlainFontDialog f)
         {
             HWND hCtrl;
+            const int grp2 = 0x0431;
 
             if (UseDark && (hCtrl = Win32UI.GetDlgItem(hWnd, grp2)))
             {
@@ -159,6 +158,8 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         if (UseDark)
         {
+            const int TRANSPARENT = 1;
+
             Win32UI.SetBkMode(hDC, TRANSPARENT);
             Win32UI.SetBkColor(hDC, BackCrColor);
             Win32UI.SetTextColor(hDC, ForeCrColor);

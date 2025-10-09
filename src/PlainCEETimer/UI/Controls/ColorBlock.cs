@@ -109,11 +109,12 @@ public sealed partial class ColorBlock : PlainLabel
     {
         public event Action Cancel;
 
-        private const int WM_KEYDOWN = 0x0100;
         private static readonly IntPtr EscKey = new((int)Keys.Escape);
 
         public bool PreFilterMessage(ref Message m)
         {
+            const int WM_KEYDOWN = 0x0100;
+
             if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
             {
                 Cancel?.Invoke();
