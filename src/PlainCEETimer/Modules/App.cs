@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
@@ -36,7 +35,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/10/10";
+    public const string AppBuildDate = "2025/10/12";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -176,7 +175,7 @@ internal static class App
             MainMutex = null;
         }
 
-        ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {Process.GetCurrentProcess().Id}\" /im {ExecutableName} {(restart ? $"& start \"\" \"{ExecutablePath}\"" : "")}");
+        ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {MemoryCleaner.GetCurrentProcessId()}\" /im {ExecutableName} {(restart ? $"& start \"\" \"{ExecutablePath}\"" : "")}");
         Environment.Exit(0);
     }
 
@@ -257,7 +256,7 @@ internal static class App
         {
             using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
             client.Connect(isRedirector ? 500 : 1000);
-            using var w = new StreamWriter(client) { AutoFlush = true };
+            using var w = new StreamWriter(client);
 
             if (isRedirector)
             {

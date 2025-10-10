@@ -2,8 +2,6 @@
 #include "DisplayHelper.h"
 #include <vector>
 
-using namespace std;
-
 void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 {
     if (lpfnEnum)
@@ -13,13 +11,13 @@ void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 
         if (GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &pathCount, &modeCount) == ERROR_SUCCESS)
         {
-            vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
-            vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
+            std::vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
+            std::vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
 
             if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr) == ERROR_SUCCESS)
             {
                 int index = 0;
-                vector<const DISPLAYCONFIG_SOURCE_MODE*> sourceModes(modeCount, nullptr);
+                std::vector<const DISPLAYCONFIG_SOURCE_MODE*> sourceModes(modeCount, nullptr);
 
                 for (UINT32 i = 0; i < modeCount; i++)
                 {

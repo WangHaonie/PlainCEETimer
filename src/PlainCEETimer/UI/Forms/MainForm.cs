@@ -81,8 +81,8 @@ public sealed class MainForm : AppForm
     {
         RefreshSettings();
         Validator.ValidateNeeded = false;
-        new Action(() => new Updater().CheckForUpdate(false, this)).Start();
         new Action(Startup.RefreshTaskState).Start();
+        new Action(() => new Updater().CheckForUpdate(false, this)).Start();
     }
 
     /*
@@ -349,7 +349,7 @@ public sealed class MainForm : AppForm
 
     private void LoadContextMenu()
     {
-        ContextMenuMain = BaseContextMenu();
+        ContextMenuMain = GetBaseContextMenu();
         ExamSwitchMenu = ContextMenuMain.MenuItems[0];
         ExamSwitchMenuItems = ExamSwitchMenu.MenuItems;
         ContextMenu = ContextMenuMain;
@@ -389,7 +389,7 @@ public sealed class MainForm : AppForm
                     return;
                 }
 
-                var tmp = BaseContextMenu();
+                var tmp = GetBaseContextMenu();
 
                 for (int i = 0; i < 2; i++)
                 {
@@ -465,7 +465,7 @@ public sealed class MainForm : AppForm
         _ => 10_000 // 10 s
     };
 
-    private ContextMenu BaseContextMenu() => ContextMenuBuilder.Build(b =>
+    private ContextMenu GetBaseContextMenu() => ContextMenuBuilder.Build(b =>
     [
         /*
 
