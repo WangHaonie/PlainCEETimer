@@ -49,6 +49,12 @@ public sealed class PlainProgressBar : ProgressBar
         }
     }
 
+    public ProgressBarStyle RealStyle
+    {
+        get => base.Style;
+        set => base.Style = value;
+    }
+
     private TaskbarProgress tbp;
     private bool init;
 
@@ -59,8 +65,12 @@ public sealed class PlainProgressBar : ProgressBar
             ThemeManager.FlushControl(Handle, NativeStyle.DarkTheme);
         }
 
-        tbp = new(this.FindParentForm().Handle);
-        init = true;
+        if (!init)
+        {
+            tbp = new(this.FindParentForm().Handle);
+            init = true;
+        }
+
         base.OnHandleCreated(e);
     }
 }
