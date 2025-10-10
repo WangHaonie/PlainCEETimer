@@ -2,8 +2,6 @@
 #include "Win32UI.h"
 #include <CommCtrl.h>
 
-using namespace std;
-
 //
 // 使用 WinAPI 高效全选 ListView 所有项 参考：
 //

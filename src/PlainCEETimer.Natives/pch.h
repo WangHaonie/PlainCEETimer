@@ -8,9 +8,14 @@
 
 #define cexport(ret) extern "C" __declspec(dllexport) ret WINAPI
 
-inline bool IsNullOrEmpty(const wchar_t* str) noexcept
+inline bool __cdecl IsStringNullOrEmptyW(const wchar_t* str) noexcept
 {
     return !str || !*str;
+}
+
+inline bool __cdecl StringStartsWithW(const wchar_t* strA, const wchar_t* strB)
+{
+    return _wcsnicmp(strA, strB, wcslen(strB)) == 0;
 }
 
 template<typename TInterface>
@@ -39,8 +44,7 @@ https://learn.microsoft.com/en-us/dotnet/framework/interop/default-marshalling-b
 
 inline wchar_t* __stdcall CoTaskStrAllocW(const wchar_t* str)
 {
-    auto length = wcslen(str);
-    auto size = (length + 1) * sizeof(wchar_t);
+    auto size = (wcslen(str) + 1) * sizeof(wchar_t);
     auto ptr = (wchar_t*)CoTaskMemAlloc(size);
 
     if (ptr)

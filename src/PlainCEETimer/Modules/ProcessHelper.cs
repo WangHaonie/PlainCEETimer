@@ -39,7 +39,7 @@ public static class ProcessHelper
         return proc;
     }
 
-    public static bool RunAsLogon(string path, string args, out int exitCode)
+    public static bool RunAsLogonUser(string path, string args, out int exitCode)
     {
         return Win32User.RunProcessAsLogonUser(path, args, out exitCode);
     }
@@ -57,7 +57,9 @@ public static class ProcessHelper
 
     public static string GetExceptionMessage(Exception ex)
     {
-        if (ex is Win32Exception w32ex && w32ex.NativeErrorCode == 1223)
+        const int ERROR_CANCELLED = 1223;
+
+        if (ex is Win32Exception w32ex && w32ex.NativeErrorCode == ERROR_CANCELLED)
         {
             /*
 
@@ -78,6 +80,7 @@ public static class ProcessHelper
     {
         try
         {
+            w.AutoFlush = true;
             Run(path, args, (proc, _) => w.WriteLine(GetExitMessage(proc)), (_, e) => w.WriteLine(e.Data));
         }
         catch (Exception ex)

@@ -98,7 +98,7 @@ public static class UacHelper
             return IsAdmin ? "有" : "无";
         }
 
-        if (ProcessHelper.RunAsLogon(AcExe, AcArg, out int code))
+        if (ProcessHelper.RunAsLogonUser(AcExe, AcArg, out int code))
         {
             return code == 0 ? "有" : "无";
         }

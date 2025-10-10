@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -34,26 +33,17 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
             if (!customColors.SequenceEqual(previous))
             {
-                App.AppConfig.CustomColors = RemoveEmptyColors(customColors);
+                App.AppConfig.CustomColors =
+                [..
+                    customColors
+                    .Where(c => c != COLORREF.EmptyValue)
+                    .Distinct()
+                ];
+
                 Validator.DemandConfig();
             }
         }
 
         return result;
-    }
-
-    private int[] RemoveEmptyColors(int[] colors)
-    {
-        List<int> tmp = [];
-
-        foreach (var c in colors)
-        {
-            if (c != COLORREF.EmptyValue)
-            {
-                tmp.Add(c);
-            }
-        }
-
-        return [.. tmp];
     }
 }

@@ -3,11 +3,9 @@
 #include <string>
 #include <TlHelp32.h>
 
-using namespace std;
-
 LPCWSTR GetLogonUserName()
 {
-    wstring tmp = L"<未知用户名>";
+    std::wstring tmp = L"<未知用户名>";
     LPWSTR buffer = nullptr;
     DWORD length = 0;
     DWORD sid = WTSGetActiveConsoleSessionId();
@@ -34,7 +32,7 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
     BOOL result = FALSE;
 
-    if (IsNullOrEmpty(path) && IsNullOrEmpty(args))
+    if (IsStringNullOrEmptyW(path) && IsStringNullOrEmptyW(args))
     {
         return result;
     }
@@ -56,7 +54,7 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         {
             do
             {
-                if (!wcsstr(pe32.szExeFile, L"taskh")) // 匹配 taskhost*.exe 进程
+                if (!StringStartsWithW(pe32.szExeFile, L"taskh")) // 匹配 taskhost*.exe 进程
                 {
                     continue;
                 }
@@ -94,7 +92,7 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         {
             STARTUPINFO si = { sizeof(si) };
             PROCESS_INFORMATION pi = {};
-            wstring cmd = path;
+            std::wstring cmd = path;
             cmd += L" ";
             cmd += args;
 
