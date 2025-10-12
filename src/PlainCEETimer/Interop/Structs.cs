@@ -7,7 +7,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
-[DebuggerDisplay("{(Value == 0 ? false : true)}")]
+[DebuggerDisplay(@"{(Value == 0 ? ""FALSE"" : ""TRUE""),nq}")]
 public readonly struct BOOL(int value)
 {
     private readonly int Value = value;

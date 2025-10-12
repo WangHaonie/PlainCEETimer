@@ -11,18 +11,27 @@ public class PlainButtonBase
 
     public PlainButtonBase(ButtonBase target)
     {
+        Target = target;
         target.UseVisualStyleBackColor = true;
+        target.FlatStyle = FlatStyle.System;
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            Target = target;
-            Target.EnabledChanged += Button_EnabledChanged;
-            UpdateStyle();
+            if (ThemeManager.NewThemeAvailable)
+            {
+                target.HandleCreated += Button_HandleCreated;
+            }
+            else
+            {
+                target.EnabledChanged += Button_EnabledChanged;
+                UpdateStyle();
+            }
         }
-        else
-        {
-            target.FlatStyle = FlatStyle.System;
-        }
+    }
+
+    private void Button_HandleCreated(object sender, EventArgs e)
+    {
+        ThemeManager.FlushControl(Target.Handle, NativeStyle.DarkTheme);
     }
 
     private void Button_EnabledChanged(object sender, EventArgs e)
@@ -34,13 +43,5 @@ public class PlainButtonBase
     {
         Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
         ThemeManager.FlushControl(Target, NativeStyle.ExplorerDark);
-    }
-
-    ~PlainButtonBase()
-    {
-        if (Target != null)
-        {
-            Target.EnabledChanged -= Button_EnabledChanged;
-        }
     }
 }

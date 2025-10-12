@@ -42,3 +42,4 @@ EXPORTS
     SetTopMostWindow @31 NONAME
     GetWindowTextEx @32 NONAME
     GetWindowClassName @33 NONAME
+    TestWindowTheme @34 NONAME

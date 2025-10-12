@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -11,12 +13,27 @@ public sealed class PlainGroupBox : GroupBox
         if (ThemeManager.ShouldUseDarkMode)
         {
             ForeColor = Colors.DarkForeText;
+
+            if (ThemeManager.NewThemeAvailable)
+            {
+                FlatStyle = FlatStyle.System;
+            }
         }
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        if (ThemeManager.NewThemeAvailable)
+        {
+            ThemeManager.FlushControl(this, NativeStyle.DarkTheme);
+        }
+
+        base.OnHandleCreated(e);
     }
 
     protected override void OnPaint(PaintEventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode)
+        if (ThemeManager.ShouldUseDarkMode && !ThemeManager.NewThemeAvailable)
         {
             //
             // 深色模式下 GroupBox 应使用灰色边框 参考:

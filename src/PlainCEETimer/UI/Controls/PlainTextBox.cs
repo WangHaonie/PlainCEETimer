@@ -159,7 +159,7 @@ public sealed class PlainTextBox : TextBox
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.FlushControl(this, NativeStyle.CfdDark);
+            ThemeManager.FlushControl(this, NativeStyle.CfdDark, true);
         }
 
         base.OnHandleCreated(e);

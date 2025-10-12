@@ -10,10 +10,12 @@ public static class ThemeManager
 {
     public static bool IsDarkModeSupported => Supported;
     public static bool ShouldUseDarkMode => UseDark;
+    public static bool NewThemeAvailable => CanUseNewTheme;
     public static SystemTheme CurrentTheme => Theme;
 
     private static bool Supported;
     private static bool UseDark;
+    private static bool CanUseNewTheme;
     private static SystemTheme Theme;
     private static BOOL IsNewDwma;
 
@@ -33,6 +35,7 @@ public static class ThemeManager
             if (UseDark = (option == 0 && tmp) || option == 2)
             {
                 InitializeAppTheme();
+                CanUseNewTheme = TestWindowTheme("DarkMode_DarkTheme::Button");
             }
         }
 
@@ -44,13 +47,22 @@ public static class ThemeManager
         SetWindowFrameTheme(hWnd, IsNewDwma);
     }
 
-    public static void FlushControl(IWin32Window control, NativeStyle type)
+    public static void FlushControl(IWin32Window control, NativeStyle type, bool AllowUpgrade = false)
     {
-        FlushControl(control.Handle, type);
+        FlushControl(control.Handle, type, AllowUpgrade);
     }
 
-    public static void FlushControl(HWND hWnd, NativeStyle type)
+    public static void FlushControl(HWND hWnd, NativeStyle type, bool AllowUpgrade = false)
     {
+        if (CanUseNewTheme && AllowUpgrade)
+        {
+            type = type switch
+            {
+                NativeStyle.CfdDark => NativeStyle.DarkTheme,
+                _ => type
+            };
+        }
+
         SetWindowTheme(hWnd, GetSubAppName(type), null);
     }
 
@@ -116,4 +128,7 @@ public static class ThemeManager
 
     [DllImport(App.NativesDll, EntryPoint = "#6")]
     private static extern int GetSystemAccentColor();
+
+    [DllImport(App.NativesDll, EntryPoint = "#34", CharSet = CharSet.Unicode)]
+    private static extern BOOL TestWindowTheme(string pszClassList);
 }

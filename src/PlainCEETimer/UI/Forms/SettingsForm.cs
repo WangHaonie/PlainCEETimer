@@ -484,7 +484,7 @@ public sealed class SettingsForm : AppForm
         SetLabelAutoWrap(LabelPptsvc);
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, CheckBoxDraggable);
-        GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 0);
+        GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
         GroupBoxArrageFirstControl(LabelFont);

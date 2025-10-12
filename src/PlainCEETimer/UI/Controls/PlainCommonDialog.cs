@@ -109,6 +109,17 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             Win32UI.SetWindowText(hWnd, dialogTitle);
         }
 
+        if (UseDark)
+        {
+            ThemeManager.FlushWindow(hWnd);
+
+            Win32UI.EnumChildWindows(hWnd, (child, _) =>
+            {
+                ThemeManager.FlushControl(child, GetNativeStyle(child, out var up), up);
+                return BOOL.TRUE;
+            }, IntPtr.Zero);
+        }
+
         if (this is PlainFontDialog f)
         {
             HWND hCtrl;
@@ -116,19 +127,15 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
             if (UseDark && (hCtrl = Win32UI.GetDlgItem(hWnd, grp2)))
             {
-                new GroupBoxNativeWindow(hCtrl);
+                if (ThemeManager.NewThemeAvailable)
+                {
+                    ThemeManager.FlushControl(hCtrl, NativeStyle.DarkTheme);
+                }
+                else
+                {
+                    new GroupBoxNativeWindow(hCtrl);
+                }
             }
-        }
-
-        if (UseDark)
-        {
-            ThemeManager.FlushWindow(hWnd);
-
-            Win32UI.EnumChildWindows(hWnd, (child, _) =>
-            {
-                ThemeManager.FlushControl(child, GetNativeStyle(child));
-                return BOOL.TRUE;
-            }, IntPtr.Zero);
         }
 
         Win32UI.GetWindowRect(hWnd, out var rect);
@@ -169,13 +176,23 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private NativeStyle GetNativeStyle(HWND hWnd)
+    private NativeStyle GetNativeStyle(HWND hWnd, out bool up)
     {
-        if (Win32UI.GetClassName(hWnd) is "ComboBox" or "Edit")
+        var cn = Win32UI.GetClassName(hWnd);
+
+        if (cn == "ComboBox")
         {
+            up = false;
             return NativeStyle.CfdDark;
         }
 
+        if (cn == "Edit")
+        {
+            up = true;
+            return NativeStyle.CfdDark;
+        }
+
+        up = true;
         return NativeStyle.ExplorerDark;
     }
 

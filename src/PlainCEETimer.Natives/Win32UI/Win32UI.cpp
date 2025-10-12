@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Win32UI.h"
 #include <CommCtrl.h>
+#include <Uxtheme.h>
 
 //
 // 使用 WinAPI 高效全选 ListView 所有项 参考：
@@ -81,4 +82,17 @@ LPCWSTR GetWindowClassName(HWND hWnd)
     }
 
     return nullptr;
+}
+
+BOOL TestWindowTheme(LPCWSTR pszClassList)
+{
+    HTHEME h = OpenThemeData(nullptr, pszClassList);
+
+    if (h)
+    {
+        CloseThemeData(h);
+        return TRUE;
+    }
+
+    return FALSE;
 }
