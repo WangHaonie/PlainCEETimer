@@ -36,11 +36,11 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
     if (init && lpLnkFileInfo &&
         SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
     {
-        WCHAR t[MAX_PATH];
-        WCHAR a[INFOTIPSIZE];
-        WCHAR wd[MAX_PATH];
-        WCHAR d[MAX_PATH];
-        WCHAR ip[MAX_PATH];
+        LPWSTR t = CoTaskStrAllocW(MAX_PATH, nullptr);
+        LPWSTR a = CoTaskStrAllocW(INFOTIPSIZE, nullptr);
+        LPWSTR wd = CoTaskStrAllocW(MAX_PATH, nullptr);
+        LPWSTR d = CoTaskStrAllocW(MAX_PATH, nullptr);
+        LPWSTR ip = CoTaskStrAllocW(MAX_PATH, nullptr);
 
         psh->GetPath(t, MAX_PATH, nullptr, 0);
         psh->GetArguments(a, INFOTIPSIZE);
@@ -50,11 +50,11 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
         psh->GetDescription(d, MAX_PATH);
         psh->GetIconLocation(ip, MAX_PATH, &lpLnkFileInfo->iIcon);
 
-        lpLnkFileInfo->pszTarget = CoTaskStrAllocW(t);
-        lpLnkFileInfo->pszArgs = CoTaskStrAllocW(a);
-        lpLnkFileInfo->pszWorkingDir = CoTaskStrAllocW(wd);
-        lpLnkFileInfo->pszDescription = CoTaskStrAllocW(d);
-        lpLnkFileInfo->pszIconPath = CoTaskStrAllocW(ip);
+        lpLnkFileInfo->pszTarget = t;
+        lpLnkFileInfo->pszArgs = a;
+        lpLnkFileInfo->pszWorkingDir = wd;
+        lpLnkFileInfo->pszDescription = d;
+        lpLnkFileInfo->pszIconPath = ip;
     }
 }
 

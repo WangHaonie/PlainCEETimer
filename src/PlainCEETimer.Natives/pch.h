@@ -42,10 +42,23 @@ https://learn.microsoft.com/en-us/dotnet/framework/interop/default-marshalling-b
 
 */
 
-inline wchar_t* __stdcall CoTaskStrAllocW(const wchar_t* str)
+inline LPWSTR __stdcall CoTaskStrAllocW(SIZE_T strLength, SIZE_T* bytesAllocated)
 {
-    auto size = (wcslen(str) + 1) * sizeof(wchar_t);
-    auto ptr = (wchar_t*)CoTaskMemAlloc(size);
+    SIZE_T s = strLength * sizeof(WCHAR);
+    LPWSTR ptr = (LPWSTR)CoTaskMemAlloc(s);
+
+    if (bytesAllocated)
+    {
+        *bytesAllocated = s;
+    }
+
+    return ptr;
+}
+
+inline LPWSTR __stdcall CoTaskStrCopyW(LPCWSTR str)
+{
+    SIZE_T size = 0;
+    LPWSTR ptr = CoTaskStrAllocW(wcslen(str) + 1, &size);
 
     if (ptr)
     {

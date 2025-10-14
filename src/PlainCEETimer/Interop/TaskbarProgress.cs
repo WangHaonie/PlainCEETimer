@@ -27,6 +27,7 @@ public class TaskbarProgress : IDisposable
     public void Dispose()
     {
         Release();
+        GC.SuppressFinalize(this);
     }
 
     ~TaskbarProgress()

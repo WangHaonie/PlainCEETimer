@@ -56,16 +56,13 @@ LPCWSTR GetWindowTextEx(HWND hWnd)
 {
     if (hWnd)
     {
-        auto length = GetWindowTextLength(hWnd) + 1;
-        WCHAR* buffer = (WCHAR*)malloc(length * sizeof(wchar_t));
+        int length = GetWindowTextLength(hWnd) + 1;
+        LPWSTR buffer = CoTaskStrAllocW(length, nullptr);
         
         if (buffer)
         {
             GetWindowText(hWnd, buffer, length);
-            auto ptr = CoTaskStrAllocW(buffer);
-            free(buffer);
-            buffer = nullptr;
-            return ptr;
+            return buffer;
         }
     }
 
@@ -76,9 +73,9 @@ LPCWSTR GetWindowClassName(HWND hWnd)
 {
     if (hWnd)
     {
-        WCHAR buffer[256]; // lpszClassName 最大长度
+        LPWSTR buffer = CoTaskStrAllocW(256, nullptr); // lpszClassName 最大长度
         GetClassName(hWnd, buffer, 256);
-        return CoTaskStrAllocW(buffer);
+        return buffer;
     }
 
     return nullptr;

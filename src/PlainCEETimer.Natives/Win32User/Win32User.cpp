@@ -25,7 +25,7 @@ LPCWSTR GetLogonUserName()
         }
     }
 
-    return CoTaskStrAllocW(tmp.c_str());
+    return CoTaskStrCopyW(tmp.c_str());
 }
 
 BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)

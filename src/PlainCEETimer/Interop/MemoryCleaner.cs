@@ -30,6 +30,8 @@ public class MemoryCleaner : IDisposable
             MainTimer.Dispose();
             IsRunning = false;
         }
+
+        GC.SuppressFinalize(this);
     }
 
     private void Clean()
@@ -54,6 +56,11 @@ public class MemoryCleaner : IDisposable
         WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId());
         var obj = WmiSearcher.Get().Cast<ManagementBaseObject>().FirstOrDefault();
         return obj == default ? default : (ulong)obj.GetPropertyValue("WorkingSetPrivate");
+    }
+
+    ~MemoryCleaner()
+    {
+        Dispose();
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#1")]
