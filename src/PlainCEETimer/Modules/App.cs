@@ -15,7 +15,6 @@ namespace PlainCEETimer.Modules;
 
 internal static class App
 {
-    public static int OSBuild => field == 0 ? field = Environment.OSVersion.Version.Build : field;
     public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
     public static string ExecutablePath => field ??= Application.ExecutablePath;
     public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
@@ -35,7 +34,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/10/14";
+    public const string AppBuildDate = "2025/10/18";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";

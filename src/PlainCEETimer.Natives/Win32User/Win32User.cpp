@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Win32User.h"
+#include "Utils.h"
 #include <string>
 #include <TlHelp32.h>
 

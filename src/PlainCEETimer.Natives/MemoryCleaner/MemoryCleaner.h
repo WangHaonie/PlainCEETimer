@@ -1,4 +1,4 @@
 ﻿#pragma once
 
-cexport(void) ClearProcessMemory();
-cexport(SIZE_T) GetProcessMemoryEx();
+cexport(void) ClearProcessWS();
+cexport(SIZE_T) GetProcessPrivateWS();

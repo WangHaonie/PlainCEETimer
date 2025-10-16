@@ -522,7 +522,7 @@ public sealed class SettingsForm : AppForm
         CompactControlX(NudOpacity, LabelOpacity);
         Control yLast = NudOpacity;
 
-        if (WindowsBuilds.IsWin11)
+        if (SystemVersion.IsWindows11)
         {
             ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 3);
             ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
@@ -633,7 +633,7 @@ public sealed class SettingsForm : AppForm
         NudOpacity.Value = AppConfig.General.Opacity;
         ApplyRadios();
 
-        if (WindowsBuilds.IsWin11)
+        if (SystemVersion.IsWindows11)
         {
             var border = AppConfig.General.BorderColor;
             CheckBoxBorderColor.Checked = border.Enabled;

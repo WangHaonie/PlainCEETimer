@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI;
@@ -31,7 +30,7 @@ public class PlainButtonBase
 
     private void Button_HandleCreated(object sender, EventArgs e)
     {
-        ThemeManager.FlushControl(Target.Handle, NativeStyle.DarkTheme);
+        ThemeManager.EnableDarkMode(Target.Handle, NativeStyle.DarkTheme);
     }
 
     private void Button_EnabledChanged(object sender, EventArgs e)
@@ -42,6 +41,6 @@ public class PlainButtonBase
     private void UpdateStyle()
     {
         Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
-        ThemeManager.FlushControl(Target, NativeStyle.ExplorerDark);
+        ThemeManager.EnableDarkMode(Target, NativeStyle.ExplorerDark);
     }
 }

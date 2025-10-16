@@ -22,7 +22,8 @@ public class RegistryHelper : IDisposable
 
     public T Get<T>(string key, T defaultValue)
     {
-        return (T)OpenedKey?.GetValue(key, defaultValue);
+        var s = OpenedKey?.GetValue(key, defaultValue);
+        return (T)s;
     }
 
     public bool Check(string key, string expectation, string defaultValue)

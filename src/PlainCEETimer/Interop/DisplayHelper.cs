@@ -13,12 +13,12 @@ public static class DisplayHelper
         EnumSystemDisplays(d =>
         {
             tmp.Add(d.ToString());
-            return BOOL.TRUE;
+            return true;
         });
 
         return [.. tmp];
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#7")]
+    [DllImport(App.NativesDll, EntryPoint = "#3")]
     private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 }

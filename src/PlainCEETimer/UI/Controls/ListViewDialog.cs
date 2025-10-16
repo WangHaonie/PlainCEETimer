@@ -263,7 +263,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     private void ContextSelectAll_Click(object sender, EventArgs e)
     {
-        ListViewMain.Suspend(() => ListViewMain.SelectAll(BOOL.TRUE));
+        ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
     }
 
     private void AddItemSafe(TData data)
@@ -312,7 +312,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     {
         ListViewMain.Suspend(() =>
         {
-            ListViewMain.SelectAll(BOOL.FALSE);
+            ListViewMain.SelectAll(false);
             AddItem(data, true);
             ListViewMain.AutoAdjustColumnWidth();
         });

@@ -82,7 +82,7 @@ public sealed class PlainListView : ListView
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
 
-    public void SelectAll(BOOL selected)
+    public void SelectAll(bool selected)
     {
         if (Items.Count != 0)
         {
@@ -130,14 +130,14 @@ public sealed class PlainListView : ListView
             TTstyle = NativeStyle.ExplorerDark;
         }
 
-        ThemeManager.FlushControl(hListView, LVstyle);
-        ThemeManager.FlushControl(hHeader, LVstyle);
-        ThemeManager.FlushControl(hToolTips, TTstyle);
+        ThemeManager.EnableDarkMode(hListView, LVstyle);
+        ThemeManager.EnableDarkMode(hHeader, LVstyle);
+        ThemeManager.EnableDarkMode(hToolTips, TTstyle);
         Win32UI.SetTopMostWindow(hToolTips);
 
-        if (WindowsBuilds.IsWin11)
+        if (SystemVersion.IsWindows11)
         {
-            RoundCorner.SetRoundCornerEx(hToolTips, BOOL.TRUE);
+            Win32UI.SetRoundCornerEx(hToolTips, true);
         }
 
         base.OnHandleCreated(e);

@@ -1,45 +1,43 @@
 EXPORTS
 
-    GetProcessMemoryEx @1 NONAME
-    ClearProcessMemory @2 NONAME
+    GetProcessPrivateWS @1 NONAME
+    ClearProcessWS @2 NONAME
 
-    InitializeAppTheme @3 NONAME
-    SetWindowFrameTheme @4 NONAME
-    SetWindowBorderColor @5 NONAME
-    GetSystemAccentColor @6 NONAME
+    EnumSystemDisplays @3 NONAME
 
-    EnumSystemDisplays @7 NONAME
+    GetLogonUserName @4 NONAME
+    RunProcessAsLogonUser @5 NONAME
 
-    SetRoundCorner @8 NONAME
-    SetRoundCornerEx @9 NONAME
+    InitializeTaskbarList @6 NONAME
+    TaskbarListSetProgressState @7 NONAME
+    TaskbarListSetProgressValue @8 NONAME
+    ReleaseTaskbarList @9 NONAME
 
-    RunColorDialog @10 NONAME
-    RunFontDialog @11 NONAME
+    InitializeTaskScheduler @10 NONAME
+    TaskSchedulerImportTaskFromXml @11 NONAME
+    TaskSchedulerExportTaskAsXml @12 NONAME
+    TaskSchedulerEnableTask @13 NONAME
+    TaskSchedulerDeleteTask @14 NONAME
+    ReleaseTaskScheduler @15 NONAME
 
-    InitializeTaskbarList @12 NONAME
-    TaskbarListSetProgressState @13 NONAME
-    TaskbarListSetProgressValue @14 NONAME
-    ReleaseTaskbarList @15 NONAME
+    InitializeShellLink @16 NONAME
+    ShellLinkCreateLnk @17 NONAME
+    ShellLinkQueryLnk @18 NONAME
+    ReleaseShellLink @19 NONAME
 
-    InitializeTaskScheduler @16 NONAME
-    TaskSchedulerImportTaskFromXml @17 NONAME
-    TaskSchedulerExportTaskAsXml @18 NONAME
-    TaskSchedulerEnableTask @19 NONAME
-    TaskSchedulerDeleteTask @20 NONAME
-    ReleaseTaskScheduler @21 NONAME
+    RunColorDialog @20 NONAME
+    RunFontDialog @21 NONAME
 
-    InitializeShellLink @22 NONAME
-    ShellLinkCreateLnk @23 NONAME
-    ShellLinkQueryLnk @24 NONAME
-    ReleaseShellLink @25 NONAME
-
-    GetLogonUserName @26 NONAME
-    RunProcessAsLogonUser @27 NONAME
+    SetRoundCorner @22 NONAME
+    SetRoundCornerEx @23 NONAME
+    EnableDarkModeForApp @24 NONAME
+    EnableDarkModeForWindowFrame @25 NONAME
+    SetWindowBorderColor @26 NONAME
+    GetSystemAccentColor @27 NONAME
 
     ListViewSelectAllItems @28 NONAME
-    MenuGetItemCheckStateByPosition @29 NONAME
-    MenuCheckRadioItemByPosition @30 NONAME
-    SetTopMostWindow @31 NONAME
+    SetTopMostWindow @29 NONAME
+    MenuGetItemCheckStateByPosition @30 NONAME
+    MenuCheckRadioItemByPosition @31 NONAME
     GetWindowTextEx @32 NONAME
     GetWindowClassName @33 NONAME
-    TestWindowTheme @34 NONAME

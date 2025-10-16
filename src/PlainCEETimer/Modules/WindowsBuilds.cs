@@ -9,6 +9,5 @@ public static class WindowsBuilds
     public const int Windows10_1903 = 18362;
     public const int Windows10_20H1 = 18985;
     public const int Windows11_21H2 = 22000;
-
-    public static readonly bool IsWin11 = App.OSBuild >= Windows11_21H2;
+    public const int Windows11_24H2_WIP = 26120;
 }

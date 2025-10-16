@@ -159,18 +159,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CommonDialogs\CommonDialogs.h" />
     <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="RoundCorner\RoundCorner.h" />
-    <ClInclude Include="ShellLink\ShellLink.h" />
-    <ClInclude Include="TaskbarProgress\TaskbarProgress.h" />
     <ClInclude Include="ThemeManager\IATHook.h" />
-    <ClInclude Include="ThemeManager\ThemeManager.h" />
-    <ClInclude Include="Win32TaskScheduler\Win32TaskScheduler.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Win32COM\Win32COM.h" />
     <ClInclude Include="Win32UI\Win32UI.h" />
     <ClInclude Include="Win32User\Win32User.h" />
   </ItemGroup>
@@ -187,8 +183,8 @@
     <ClCompile Include="RoundCorner\RoundCorner.cpp" />
     <ClCompile Include="ShellLink\ShellLink.cpp" />
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
+    <ClCompile Include="TaskScheduler\TaskScheduler.cpp" />
     <ClCompile Include="ThemeManager\ThemeManager.cpp" />
-    <ClCompile Include="Win32TaskScheduler\Win32TaskScheduler.cpp" />
     <ClCompile Include="Win32UI\Win32UI.cpp" />
     <ClCompile Include="Win32User\Win32User.cpp" />
   </ItemGroup>

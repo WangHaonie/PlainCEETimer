@@ -35,9 +35,9 @@ public static class Win32User
         NotImpersonalOrElevated = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#26", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#4", CharSet = CharSet.Unicode)]
     private static extern string GetLogonUserName();
 
-    [DllImport(App.NativesDll, EntryPoint = "#27", CharSet = CharSet.Unicode)]
-    public static extern BOOL RunProcessAsLogonUser(string path, string args, out int lpExitCode);
+    [DllImport(App.NativesDll, EntryPoint = "#5", CharSet = CharSet.Unicode)]
+    public static extern bool RunProcessAsLogonUser(string path, string args, out int lpExitCode);
 }

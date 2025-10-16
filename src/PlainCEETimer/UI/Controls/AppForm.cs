@@ -138,7 +138,7 @@ public abstract class AppForm : Form
     {
         if (SetRoundRegion && SetRoundCorner)
         {
-            RoundCorner.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
+            Win32UI.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
         }
 
         base.OnSizeChanged(e);
@@ -207,14 +207,14 @@ public abstract class AppForm : Form
                 BackColor = Colors.DarkBackText;
             }
 
-            ThemeManager.FlushWindow(Handle);
+            ThemeManager.EnableDarkMode(Handle);
         }
 
         if (SetRoundCorner)
         {
-            if (WindowsBuilds.IsWin11)
+            if (SystemVersion.IsWindows11)
             {
-                RoundCorner.SetRoundCornerEx(Handle, (BOOL)SmallRoundCorner);
+                Win32UI.SetRoundCornerEx(Handle, (bool)SmallRoundCorner);
             }
             else
             {

@@ -154,7 +154,7 @@ public sealed class MainForm : AppForm
 
         if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
         {
-            SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor(m.WParam));
+            SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
         }
 
         base.WndProc(ref m);
@@ -261,18 +261,18 @@ public sealed class MainForm : AppForm
 
         if (!BorderColor.Enabled)
         {
-            SetBorderColor(BOOL.FALSE, default);
+            SetBorderColor(false, default);
         }
         else
         {
             switch (BorderColor.Type)
             {
                 case 0:
-                    SetBorderColor(BOOL.TRUE, BorderColor.Color);
+                    SetBorderColor(true, BorderColor.Color);
                     break;
                 case 3:
                     BorderUseAccentColor = true;
-                    SetBorderColor(BOOL.TRUE, ThemeManager.GetAccentColor());
+                    SetBorderColor(true, ThemeManager.GetAccentColor());
                     break;
             }
         }
@@ -314,7 +314,7 @@ public sealed class MainForm : AppForm
 
                 if (BorderColor.Enabled && type is 1 or 2)
                 {
-                    SetBorderColor(BOOL.TRUE, type == 1 ? CountdownForeColor : back);
+                    SetBorderColor(true, type == 1 ? CountdownForeColor : back);
                 }
             };
         }
@@ -594,8 +594,8 @@ public sealed class MainForm : AppForm
         SelectedScreenRect = screens[ScreenIndex].WorkingArea;
     }
 
-    private void SetBorderColor(BOOL enabled, COLORREF color)
+    private void SetBorderColor(bool enabled, COLORREF color)
     {
-        ThemeManager.SetBorderColor(Handle, color, enabled);
+        Win32UI.SetBorderColor(Handle, color, enabled);
     }
 }

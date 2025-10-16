@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Win32UI.h"
+#include "Utils.h"
 #include <CommCtrl.h>
 #include <Uxtheme.h>
 
@@ -79,17 +80,4 @@ LPCWSTR GetWindowClassName(HWND hWnd)
     }
 
     return nullptr;
-}
-
-BOOL TestWindowTheme(LPCWSTR pszClassList)
-{
-    HTHEME h = OpenThemeData(nullptr, pszClassList);
-
-    if (h)
-    {
-        CloseThemeData(h);
-        return TRUE;
-    }
-
-    return FALSE;
 }

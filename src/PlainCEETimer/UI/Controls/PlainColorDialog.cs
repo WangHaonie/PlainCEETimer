@@ -21,7 +21,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
         customColors.PopulateWith(App.AppConfig.CustomColors);
     }
 
-    protected override BOOL RunDialog(HWND hWndOwner)
+    protected override bool RunDialog(HWND hWndOwner)
     {
         using var colors = new CUSTCOLORS(customColors);
         var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, colors);

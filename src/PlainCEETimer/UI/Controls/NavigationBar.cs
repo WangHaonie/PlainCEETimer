@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
@@ -47,11 +46,11 @@ public sealed class NavigationBar : TreeView
         {
             ForeColor = Colors.DarkForeText;
             BackColor = Colors.DarkBackText;
-            ThemeManager.FlushControl(this, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkMode(this, NativeStyle.ExplorerDark);
         }
         else
         {
-            ThemeManager.FlushControl(this, NativeStyle.Explorer);
+            ThemeManager.EnableDarkMode(this, NativeStyle.Explorer);
         }
 
         base.OnHandleCreated(e);

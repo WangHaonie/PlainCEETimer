@@ -125,6 +125,7 @@
     <Compile Include="Countdown\ICountdownService.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\Startup.cs" />
+    <Compile Include="Modules\SystemVersion.cs" />
     <Compile Include="Modules\Xml.cs" />
     <Compile Include="UI\Colors.cs" />
     <Compile Include="UI\Controls\AppForm.cs">
@@ -223,9 +224,8 @@
     <Compile Include="UI\ContextMenuBuilder.cs" />
     <Compile Include="Interop\Win32UI.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
-    <Compile Include="Interop\RoundCorner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
-    <Compile Include="Interop\ThemeManager.cs" />
+    <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />
     <Compile Include="Modules\Configuration\DefaultValues.cs" />

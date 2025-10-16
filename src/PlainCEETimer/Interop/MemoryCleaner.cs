@@ -36,7 +36,7 @@ public class MemoryCleaner : IDisposable
 
     private void Clean()
     {
-        var mem = GetMemoryEx();
+        var mem = GetProcessPrivateWS();
 
         if (mem == 0)
         {
@@ -47,7 +47,7 @@ public class MemoryCleaner : IDisposable
 
         if (mem > Threshold)
         {
-            ClearMemory();
+            ClearProcessWS();
         }
     }
 
@@ -64,10 +64,10 @@ public class MemoryCleaner : IDisposable
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#1")]
-    private static extern ulong GetMemoryEx();
+    private static extern ulong GetProcessPrivateWS();
 
     [DllImport(App.NativesDll, EntryPoint = "#2")]
-    private static extern void ClearMemory();
+    private static extern void ClearProcessWS();
 
     [DllImport(App.Kernel32Dll)]
     public static extern uint GetCurrentProcessId();

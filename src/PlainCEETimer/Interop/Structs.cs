@@ -7,35 +7,6 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
-[DebuggerDisplay(@"{(Value == 0 ? ""FALSE"" : ""TRUE""),nq}")]
-public readonly struct BOOL(int value)
-{
-    private readonly int Value = value;
-
-    public static readonly BOOL TRUE = new(1);
-    public static readonly BOOL FALSE = new(0);
-
-    public static implicit operator int(BOOL b)
-    {
-        return b.Value;
-    }
-
-    public static implicit operator bool(BOOL b)
-    {
-        return b.Value != 0;
-    }
-
-    public static explicit operator BOOL(bool b)
-    {
-        return b ? TRUE : FALSE;
-    }
-
-    public static implicit operator IntPtr(BOOL b)
-    {
-        return new(b.Value);
-    }
-}
-
 [DebuggerDisplay("{Value}")]
 public readonly struct HWND
 {
@@ -245,4 +216,9 @@ public struct LOGFONT
         font.ToLogFont(lfobj);
         return (LOGFONT)lfobj;
     }
+}
+
+public readonly struct BOOL
+{
+    public static readonly IntPtr TRUE = new(1);
 }

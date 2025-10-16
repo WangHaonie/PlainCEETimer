@@ -57,6 +57,12 @@ public static class Extensions
     public static int ToWin32(this Color color)
         => ColorTranslator.ToWin32(color);
 
+    public static int ToWin32(this bool b)
+        => b ? 1 : 0;
+
+    public static bool ToBool(this int i)
+        => i != 0;
+
     public static Color ToColor(this int value)
         => ColorTranslator.FromOle(value);
 

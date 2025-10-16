@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
@@ -27,7 +26,7 @@ public sealed class PlainNumericUpDown : NumericUpDown
 
             for (int i = 0; i < count; i++)
             {
-                ThemeManager.FlushControl(ctrls[i], NativeStyle.ExplorerDark);
+                ThemeManager.EnableDarkMode(ctrls[i], NativeStyle.ExplorerDark);
             }
         }
 

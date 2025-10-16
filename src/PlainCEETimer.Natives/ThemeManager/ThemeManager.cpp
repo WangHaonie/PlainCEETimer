@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "ThemeManager.h"
+#include "Win32UI/Win32UI.h"
 #include "IATHook.h"
 #include <dwmapi.h>
 
@@ -64,25 +64,7 @@ static void FixScrollBar()
     }
 }
 
-/*
-
-窗体标题栏深色样式 参考：
-
-c# - WinForms Dark title bar on Windows 10 - Stack Overflow
-https://stackoverflow.com/a/62811758
-
-*/
-
-void SetWindowFrameTheme(HWND hWnd, BOOL newStyle)
-{
-    if (hWnd)
-    {
-        int enabled = 1;
-        DwmSetWindowAttribute(hWnd, newStyle ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, &enabled, sizeof(enabled));
-    }
-}
-
-void InitializeAppTheme()
+void EnableDarkModeForApp()
 {
     if (!SetPreferredAppMode)
     {
@@ -108,6 +90,24 @@ void InitializeAppTheme()
     {
         SetPreferredAppMode(2);
         FixScrollBar();
+    }
+}
+
+/*
+
+窗体标题栏深色样式 参考：
+
+c# - WinForms Dark title bar on Windows 10 - Stack Overflow
+https://stackoverflow.com/a/62811758
+
+*/
+
+void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1)
+{
+    if (hWnd)
+    {
+        int enabled = 1;
+        DwmSetWindowAttribute(hWnd, after20h1 ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, &enabled, sizeof(enabled));
     }
 }
 

@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "Win32TaskScheduler.h"
+#include "Win32COM/Win32COM.h"
+#include "Utils.h"
 
 static ITaskService* pts = nullptr;
 static ITaskFolder* ptf = nullptr;

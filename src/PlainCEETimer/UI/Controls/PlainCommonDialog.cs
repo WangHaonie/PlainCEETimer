@@ -58,7 +58,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return ShowDialog(owner);
     }
 
-    protected abstract BOOL RunDialog(HWND hWndOwner);
+    protected abstract bool RunDialog(HWND hWndOwner);
 
     protected sealed override bool RunDialog(IntPtr hwndOwner)
     {
@@ -100,7 +100,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private BOOL WmInitDialog(HWND hWnd)
+    private IntPtr WmInitDialog(HWND hWnd)
     {
         owner.ReActivate();
 
@@ -111,12 +111,12 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (UseDark)
         {
-            ThemeManager.FlushWindow(hWnd);
+            ThemeManager.EnableDarkMode(hWnd);
 
             Win32UI.EnumChildWindows(hWnd, (child, _) =>
             {
-                ThemeManager.FlushControl(child, GetNativeStyle(child, out var up), up);
-                return BOOL.TRUE;
+                ThemeManager.EnableDarkMode(child, GetNativeStyle(child, out var up), up);
+                return true;
             }, IntPtr.Zero);
         }
 
@@ -129,7 +129,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             {
                 if (ThemeManager.NewThemeAvailable)
                 {
-                    ThemeManager.FlushControl(hCtrl, NativeStyle.DarkTheme);
+                    ThemeManager.EnableDarkMode(hCtrl, NativeStyle.DarkTheme);
                 }
                 else
                 {
@@ -157,7 +157,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         if (r > screen.Right) x = screen.Right - w;
         if (b > screen.Bottom) y = screen.Bottom - h;
 
-        Win32UI.MoveWindow(hWnd, x, y, w, h, BOOL.FALSE);
+        Win32UI.MoveWindow(hWnd, x, y, w, h, false);
         return BOOL.TRUE;
     }
 

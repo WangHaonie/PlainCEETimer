@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "ShellLink.h"
+#include "Win32COM/Win32COM.h"
+#include "Utils.h"
 #include <ShObjIdl.h>
 
 static IShellLink* psh = nullptr;

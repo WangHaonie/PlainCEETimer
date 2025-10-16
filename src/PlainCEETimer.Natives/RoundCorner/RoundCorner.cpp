@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "RoundCorner.h"
+#include "Win32UI/Win32UI.h"
 
 /*
 
@@ -21,11 +21,11 @@ void SetRoundCorner(HWND hWnd, int width, int height, int radius)
     }
 }
 
-void SetRoundCornerEx(HWND hWnd, BOOL isSmall)
+void SetRoundCornerEx(HWND hWnd, BOOL smallCorner)
 {
     if (hWnd)
     {
-        DWM_WINDOW_CORNER_PREFERENCE type = isSmall ? DWMWCP_ROUNDSMALL : DWMWCP_ROUND;
+        DWM_WINDOW_CORNER_PREFERENCE type = smallCorner ? DWMWCP_ROUNDSMALL : DWMWCP_ROUND;
         DwmSetWindowAttribute(hWnd, DWMWA_WINDOW_CORNER_PREFERENCE, &type, sizeof(type));
     }
 }

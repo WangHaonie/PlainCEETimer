@@ -8,7 +8,7 @@ public sealed class PlainFontDialog(AppForm owner, Font font) : PlainCommonDialo
 {
     public Font Font => font;
 
-    protected override BOOL RunDialog(HWND hWndOwner)
+    protected override bool RunDialog(HWND hWndOwner)
     {
         var lf = LOGFONT.FromFont(font);
         var result = Win32UI.RunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(Validator.MaxFontSize, Validator.MinFontSize));

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
@@ -22,7 +21,7 @@ public sealed class PlainComboBox : ComboBox
         {
             ForeColor = Colors.DarkForeText;
             BackColor = Colors.DarkBackText;
-            ThemeManager.FlushControl(this, NativeStyle.CfdDark);
+            ThemeManager.EnableDarkMode(this, NativeStyle.CfdDark);
         }
 
         base.OnHandleCreated(e);

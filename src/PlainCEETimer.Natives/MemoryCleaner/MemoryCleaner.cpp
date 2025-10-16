@@ -11,12 +11,12 @@ https://stackoverflow.com/a/223300/21094697
 
 */
 
-void ClearProcessMemory()
+void ClearProcessWS()
 {
     EmptyWorkingSet(GetCurrentProcess());
 }
 
-SIZE_T GetProcessMemoryEx()
+SIZE_T GetProcessPrivateWS()
 {
     /*
     

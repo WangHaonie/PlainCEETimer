@@ -15,31 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommonDialogs\CommonDialogs.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="DisplayHelper\DisplayHelper.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RoundCorner\RoundCorner.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ShellLink\ShellLink.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskbarProgress\TaskbarProgress.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ThemeManager\IATHook.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ThemeManager\ThemeManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32TaskScheduler\Win32TaskScheduler.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Win32UI\Win32UI.h">
@@ -55,6 +37,12 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32COM\Win32COM.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,10 +65,10 @@
     <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ThemeManager\ThemeManager.cpp">
+    <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Win32TaskScheduler\Win32TaskScheduler.cpp">
+    <ClCompile Include="ThemeManager\ThemeManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Win32UI\Win32UI.cpp">

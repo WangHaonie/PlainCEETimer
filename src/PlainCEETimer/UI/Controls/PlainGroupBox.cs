@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
@@ -25,7 +24,7 @@ public sealed class PlainGroupBox : GroupBox
     {
         if (ThemeManager.NewThemeAvailable)
         {
-            ThemeManager.FlushControl(this, NativeStyle.DarkTheme);
+            ThemeManager.EnableDarkMode(this, NativeStyle.DarkTheme);
         }
 
         base.OnHandleCreated(e);
