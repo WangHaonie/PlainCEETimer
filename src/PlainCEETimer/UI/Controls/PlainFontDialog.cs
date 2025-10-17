@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 
@@ -8,7 +9,7 @@ public sealed class PlainFontDialog(AppForm owner, Font font) : PlainCommonDialo
 {
     public Font Font => font;
 
-    protected override bool RunDialog(HWND hWndOwner)
+    protected override bool StartDialog(IntPtr hWndOwner)
     {
         var lf = LOGFONT.FromFont(font);
         var result = Win32UI.RunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(Validator.MaxFontSize, Validator.MinFontSize));

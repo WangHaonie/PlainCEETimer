@@ -6,9 +6,9 @@ namespace PlainCEETimer.Interop;
 
 public class TaskbarProgress : IDisposable
 {
-    private readonly HWND hWnd;
+    private readonly IntPtr hWnd;
 
-    public TaskbarProgress(HWND hwnd)
+    public TaskbarProgress(IntPtr hwnd)
     {
         hWnd = hwnd;
         Initialize();
@@ -39,10 +39,10 @@ public class TaskbarProgress : IDisposable
     private static extern void Initialize();
 
     [DllImport(App.NativesDll, EntryPoint = "#7")]
-    private static extern void SetState(HWND hWnd, ProgressStyle tbpFlags);
+    private static extern void SetState(IntPtr hWnd, ProgressStyle tbpFlags);
 
     [DllImport(App.NativesDll, EntryPoint = "#8")]
-    private static extern void SetValue(HWND hWnd, long ullCompleted, long ullTotal);
+    private static extern void SetValue(IntPtr hWnd, long ullCompleted, long ullTotal);
 
     [DllImport(App.NativesDll, EntryPoint = "#9")]
     private static extern void Release();

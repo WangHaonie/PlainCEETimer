@@ -7,10 +7,10 @@ namespace PlainCEETimer.Interop;
 public static class Win32UI
 {
     [DllImport(App.User32Dll)]
-    public static extern void MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+    public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
     [DllImport(App.Gdi32Dll)]
-    public static extern int SetBkMode(HDC hdc, int mode);
+    public static extern int SetBkMode(IntPtr hdc, int mode);
 
     /*
 
@@ -31,64 +31,64 @@ public static class Win32UI
     public static extern bool DeleteObject(IntPtr hObject);
 
     [DllImport(App.User32Dll)]
-    public static extern bool EnumChildWindows(HWND hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
+    public static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
     [DllImport(App.User32Dll)]
-    public static extern bool GetWindowRect(HWND hWnd, out RECT lpRect);
+    public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
     [DllImport(App.User32Dll)]
-    public static extern bool GetClientRect(HWND hWnd, out RECT lpRect);
+    public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    public static extern bool SetWindowText(HWND hWnd, string lpString);
+    public static extern bool SetWindowText(IntPtr hWnd, string lpString);
 
     [DllImport(App.Gdi32Dll)]
-    public static extern COLORREF SetBkColor(HDC hdc, COLORREF color);
+    public static extern COLORREF SetBkColor(IntPtr hdc, COLORREF color);
 
     [DllImport(App.Gdi32Dll)]
-    public static extern COLORREF SetTextColor(HDC hdc, COLORREF color);
+    public static extern COLORREF SetTextColor(IntPtr hdc, COLORREF color);
 
     [DllImport(App.Gdi32Dll)]
     public static extern IntPtr CreateSolidBrush(COLORREF color);
 
     [DllImport(App.User32Dll)]
-    public static extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
+    public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
     [DllImport(App.User32Dll)]
-    public static extern IntPtr SendMessage(HWND hWnd, int msg, int wParam, int lParam);
+    public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
     [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
-    public static extern int SetWindowTheme(HWND hWnd, string pszSubAppName, string pszSubIdList);
+    public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
     [DllImport(App.NativesDll, EntryPoint = "#20")]
-    public static extern bool RunColorDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);
+    public static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, CUSTCOLORS lpCustomColors);
 
     [DllImport(App.NativesDll, EntryPoint = "#21")]
-    public static extern bool RunFontDialog(HWND hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
+    public static extern bool RunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
 
     [DllImport(App.NativesDll, EntryPoint = "#22")]
-    public static extern void SetRoundCorner(HWND hWnd, int width, int height, int radius);
+    public static extern void SetRoundCorner(IntPtr hWnd, int width, int height, int radius);
 
     [DllImport(App.NativesDll, EntryPoint = "#23")]
-    public static extern void SetRoundCornerEx(HWND hWnd, bool isSmall);
+    public static extern void SetRoundCornerEx(IntPtr hWnd, bool isSmall);
 
     [DllImport(App.NativesDll, EntryPoint = "#24")]
     public static extern void EnableDarkModeForApp();
 
     [DllImport(App.NativesDll, EntryPoint = "#25")]
-    public static extern void EnableDarkModeForWindowFrame(HWND hWnd, bool after20h1);
+    public static extern void EnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1);
 
     [DllImport(App.NativesDll, EntryPoint = "#26")]
-    public static extern void SetBorderColor(HWND hWnd, COLORREF color, bool enabled);
+    public static extern void SetBorderColor(IntPtr hWnd, COLORREF color, bool enabled);
 
     [DllImport(App.NativesDll, EntryPoint = "#27")]
     public static extern int GetSystemAccentColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#28")]
-    public static extern void ListViewSelectAllItems(HWND hLV, bool selected);
+    public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
 
     [DllImport(App.NativesDll, EntryPoint = "#29")]
-    public static extern void SetTopMostWindow(HWND hWnd);
+    public static extern void SetTopMostWindow(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern bool MenuGetItemCheckStateByPosition(IntPtr hMenu, int item);
@@ -97,8 +97,8 @@ public static class Win32UI
     public static extern bool MenuCheckRadioItemByPosition(IntPtr hMenu, int item);
 
     [DllImport(App.NativesDll, EntryPoint = "#32", CharSet = CharSet.Unicode)]
-    public static extern string GetWindowText(HWND hWnd);
+    public static extern string GetWindowText(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#33", CharSet = CharSet.Unicode)]
-    public static extern string GetClassName(HWND hWnd);
+    public static extern string GetClassName(IntPtr hWnd);
 }

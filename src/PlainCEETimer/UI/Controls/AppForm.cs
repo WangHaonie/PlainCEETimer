@@ -8,7 +8,7 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class AppForm : Form
+public abstract class AppForm : Form, IAppWindow
 {
     /// <summary>
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
@@ -207,14 +207,14 @@ public abstract class AppForm : Form
                 BackColor = Colors.DarkBackText;
             }
 
-            ThemeManager.EnableDarkMode(Handle);
+            ThemeManager.EnableDarkMode(this);
         }
 
         if (SetRoundCorner)
         {
             if (SystemVersion.IsWindows11)
             {
-                Win32UI.SetRoundCornerEx(Handle, (bool)SmallRoundCorner);
+                Win32UI.SetRoundCornerEx(Handle, SmallRoundCorner);
             }
             else
             {
@@ -491,4 +491,6 @@ public abstract class AppForm : Form
     {
         TopMost = !IsDisposed && MainForm.UniTopMost;
     }
+
+    IntPtr IAppWindow.WindowHandle => Handle;
 }

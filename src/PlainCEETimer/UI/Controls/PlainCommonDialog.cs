@@ -6,15 +6,15 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog
+public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog, IAppWindow
 {
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
         private bool Handled;
 
-        public GroupBoxNativeWindow(HWND hGroupBox)
+        public GroupBoxNativeWindow(IntPtr hGroupBox)
         {
-            AssignHandle((IntPtr)hGroupBox);
+            AssignHandle(hGroupBox);
         }
 
         protected override void WndProc(ref Message m)
@@ -28,9 +28,9 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
                 if (!Handled)
                 {
-                    HWND hWnd = Handle;
+                    IntPtr hWnd = Handle;
 
-                    using var g = Graphics.FromHwnd((IntPtr)hWnd);
+                    using var g = Graphics.FromHwnd(hWnd);
                     using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM_GETFONT, 0, 0));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
@@ -48,6 +48,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         }
     }
 
+    private IntPtr Handle;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
@@ -58,13 +59,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return ShowDialog(owner);
     }
 
-    protected abstract bool RunDialog(HWND hWndOwner);
+    protected abstract bool StartDialog(IntPtr hWndOwner);
 
     protected sealed override bool RunDialog(IntPtr hwndOwner)
     {
         try
         {
-            return RunDialog((HWND)hwndOwner);
+            return StartDialog(hwndOwner);
         }
         catch
         {
@@ -100,8 +101,9 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private IntPtr WmInitDialog(HWND hWnd)
+    private IntPtr WmInitDialog(IntPtr hWnd)
     {
+        Handle = hWnd;
         owner.ReActivate();
 
         if (dialogTitle != null)
@@ -111,7 +113,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (UseDark)
         {
-            ThemeManager.EnableDarkMode(hWnd);
+            ThemeManager.EnableDarkMode(this);
 
             Win32UI.EnumChildWindows(hWnd, (child, _) =>
             {
@@ -122,10 +124,10 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (this is PlainFontDialog f)
         {
-            HWND hCtrl;
+            IntPtr hCtrl;
             const int grp2 = 0x0431;
 
-            if (UseDark && (hCtrl = Win32UI.GetDlgItem(hWnd, grp2)))
+            if (UseDark && ((hCtrl = Win32UI.GetDlgItem(hWnd, grp2)) != IntPtr.Zero))
             {
                 if (ThemeManager.NewThemeAvailable)
                 {
@@ -158,10 +160,10 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         if (b > screen.Bottom) y = screen.Bottom - h;
 
         Win32UI.MoveWindow(hWnd, x, y, w, h, false);
-        return BOOL.TRUE;
+        return new(1);
     }
 
-    private IntPtr WmCtlColor(HDC hDC)
+    private IntPtr WmCtlColor(IntPtr hDC)
     {
         if (UseDark)
         {
@@ -176,7 +178,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private NativeStyle GetNativeStyle(HWND hWnd, out bool up)
+    private NativeStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
         var cn = Win32UI.GetClassName(hWnd);
 
@@ -200,4 +202,6 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
 
     }
+
+    IntPtr IAppWindow.WindowHandle => Handle;
 }

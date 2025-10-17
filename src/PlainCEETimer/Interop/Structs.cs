@@ -7,32 +7,6 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
-[DebuggerDisplay("{Value}")]
-public readonly struct HWND
-{
-    private readonly IntPtr Value;
-
-    private HWND(IntPtr value)
-    {
-        Value = value;
-    }
-
-    public static implicit operator bool(HWND hWnd)
-    {
-        return hWnd.Value != IntPtr.Zero;
-    }
-
-    public static implicit operator HWND(IntPtr ptr)
-    {
-        return new(ptr);
-    }
-
-    public static explicit operator IntPtr(HWND hWnd)
-    {
-        return hWnd.Value;
-    }
-}
-
 [DebuggerDisplay("{DebuggerDisplay}")]
 public readonly struct COLORREF
 {
@@ -84,32 +58,6 @@ public readonly struct CUSTCOLORS : IDisposable
     public void Dispose()
     {
         Marshal.FreeHGlobal(Value);
-    }
-}
-
-[DebuggerDisplay("{Value}")]
-public readonly struct HDC
-{
-    private readonly IntPtr Value;
-
-    private HDC(IntPtr value)
-    {
-        Value = value;
-    }
-
-    public static implicit operator bool(HDC hDC)
-    {
-        return hDC.Value != IntPtr.Zero;
-    }
-
-    public static implicit operator HDC(IntPtr ptr)
-    {
-        return new(ptr);
-    }
-
-    public static explicit operator IntPtr(HDC hDC)
-    {
-        return hDC.Value;
     }
 }
 
@@ -216,9 +164,4 @@ public struct LOGFONT
         font.ToLogFont(lfobj);
         return (LOGFONT)lfobj;
     }
-}
-
-public readonly struct BOOL
-{
-    public static readonly IntPtr TRUE = new(1);
 }

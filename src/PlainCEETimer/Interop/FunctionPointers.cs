@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.Interop;
 
-public delegate bool EnumChildProc(HWND hWnd, IntPtr lParam);
+public delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
 
 public delegate bool EnumDisplayProc(SystemDisplay info);
 

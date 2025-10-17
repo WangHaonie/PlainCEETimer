@@ -19,9 +19,9 @@ public sealed class PlainListView : ListView
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
-        public SysHeader32NativeWindow(HWND hHeader)
+        public SysHeader32NativeWindow(IntPtr hHeader)
         {
-            AssignHandle((IntPtr)hHeader);
+            AssignHandle(hHeader);
         }
 
         protected override void WndProc(ref Message m)
@@ -30,7 +30,7 @@ public sealed class PlainListView : ListView
 
             if (m.Msg == WM_SETCURSOR)
             {
-                m.Result = BOOL.TRUE;
+                m.Result = new(1);
             }
             else
             {
@@ -116,9 +116,9 @@ public sealed class PlainListView : ListView
         const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
         const int LVM_GETHEADER = LVM_FIRST + 31;
 
-        HWND hListView = Handle;
-        HWND hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, 0, 0);
-        HWND hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, 0, 0);
+        IntPtr hListView = Handle;
+        IntPtr hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, 0, 0);
+        IntPtr hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, 0, 0);
         new SysHeader32NativeWindow(hHeader);
 
         var LVstyle = NativeStyle.ItemsView;
