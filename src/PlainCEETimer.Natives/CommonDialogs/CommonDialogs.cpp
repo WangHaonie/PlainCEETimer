@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Win32UI/Win32UI.h"
 
-BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustColors)
+BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors)
 {
     CHOOSECOLOR cc = { sizeof(cc) };
     DWORD flags = CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLETEMPLATE;
@@ -18,9 +18,9 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColo
         cc.rgbResult = *lpColor;
     }
 
-    if (lpCustColors)
+    if (lpCustomColors)
     {
-        cc.lpCustColors = lpCustColors;
+        cc.lpCustColors = lpCustomColors;
     }
 
     cc.Flags = flags;
@@ -31,7 +31,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColo
     if (ChooseColor(&cc))
     {
         if (lpColor) *lpColor = cc.rgbResult;
-        if (lpCustColors) lpCustColors = cc.lpCustColors;
+        if (lpCustomColors) lpCustomColors = cc.lpCustColors;
         return TRUE;
     }
 

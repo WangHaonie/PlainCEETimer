@@ -111,19 +111,19 @@ public class AppMessageBox(AppForm parent = null)
 
     private struct MessageLevel
     {
-        public readonly string Description;
-        public readonly Bitmap Icon;
-        public readonly SystemSound Sound;
-
         public static MessageLevel Info => field.init ? field : field = new("提示 - 高考倒计时", ref InfoIcon, 76, SystemSounds.Asterisk);
         public static MessageLevel Warning => field.init ? field : field = new("警告 - 高考倒计时", ref WarningIcon, 79, SystemSounds.Exclamation);
         public static MessageLevel Error => field.init ? field : field = new("错误 - 高考倒计时", ref ErrorIcon, 93, SystemSounds.Hand);
 
-        private readonly bool init;
-
         private static Bitmap InfoIcon;
         private static Bitmap WarningIcon;
         private static Bitmap ErrorIcon;
+
+        public readonly string Description;
+        public readonly Bitmap Icon;
+        public readonly SystemSound Sound;
+
+        private readonly bool init;
 
         /*
 

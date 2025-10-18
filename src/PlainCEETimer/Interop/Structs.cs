@@ -39,18 +39,17 @@ public readonly struct COLORREF
     }
 }
 
-public readonly struct CUSTCOLORS : IDisposable
+public readonly struct LPCUSTCOLORS : IDisposable
 {
     private readonly IntPtr Value;
 
-    public CUSTCOLORS(int[] colors)
+    public LPCUSTCOLORS(int[] colors)
     {
-        var ptr = Marshal.AllocHGlobal(16 * 4);
-        Marshal.Copy(colors, 0, ptr, 16);
-        Value = ptr;
+        Value = Marshal.AllocHGlobal(16 * 4);
+        Marshal.Copy(colors, 0, Value, 16);
     }
 
-    public readonly void ToArray(int[] colors)
+    public readonly void CopyTo(int[] colors)
     {
         Marshal.Copy(Value, colors, 0, 16);
     }

@@ -165,13 +165,14 @@ public abstract class AppForm : Form, IAppWindow
     {
         OnClosed();
         base.OnClosed(e);
-        Dispose(true);
 
         if (CheckParam(AppFormParam.ModelessDialog))
         {
             DialogEnd?.Invoke(DialogResult);
             DialogEnd = null;
         }
+
+        Dispose(true);
     }
 
     protected sealed override CreateParams CreateParams
@@ -258,6 +259,7 @@ public abstract class AppForm : Form, IAppWindow
     /// </summary>
     protected virtual void OnClosed() { }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected bool CheckParam(AppFormParam param)
     {
         return (ParamsInternal & param) == param;

@@ -32,6 +32,6 @@ public struct BorderColorObject
     {
         Enabled = ((w >> 28) & 0xF).ToBool();
         Type = ((w) >> 24) & 0xF;
-        Color = (w & 0xFFFFFF).ToColor();
+        Color = (w & COLORREF.EmptyValue).ToColor();
     }
 }

@@ -16,12 +16,12 @@ public readonly struct SystemVersion
 
     public SystemVersion()
     {
-        using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", rootKey: RegistryHive.LocalMachine);
-        UBR = reg.Get(nameof(UBR), 0);
         var ver = Environment.OSVersion.Version;
         Major = ver.Major;
         Minor = ver.Minor;
         Build = ver.Build;
+        using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", rootKey: RegistryHive.LocalMachine);
+        UBR = reg.Get(nameof(UBR), 0);
     }
 
     static SystemVersion()
