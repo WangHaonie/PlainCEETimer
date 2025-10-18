@@ -21,10 +21,23 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     }
 
     public TData[] Data { get; set; }
-    protected string ItemDescription { get; set; } = "项";
 
-    protected override AppFormParam Params => AppFormParam.AllControl;
+    protected string ItemDescription
+    {
+        set
+        {
+            value ??= "项";
+            MsgDelete = $"确认删除所选{value}吗？此操作将不可撤销！";
+            MsgAddDup = $"列表中已存在该{value}，请重新添加！";
+            MsgEditDup = $"列表中已存在该{value}，请重新编辑！";
+        }
+    }
 
+    protected sealed override AppFormParam Params => AppFormParam.AllControl;
+
+    private string MsgDelete;
+    private string MsgAddDup;
+    private string MsgEditDup;
     private ContextMenu ContextMenuMain;
     private MenuItem ContextDuplicate;
     private MenuItem ContextEdit;
@@ -234,7 +247,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         var selected = ListViewMain.SelectedItemsCount;
 
         if (selected != 0 &&
-            MessageX.Warn($"确认删除所选{ItemDescription}吗？此操作将不可撤销！", MessageButtons.YesNo) == DialogResult.Yes)
+            MessageX.Warn(MsgDelete, MessageButtons.YesNo) == DialogResult.Yes)
         {
             ListViewMain.Suspend(() =>
             {
@@ -274,7 +287,8 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         }
         else
         {
-            MessageX.Error($"检测待添加的{ItemDescription}与现有的重复。\n\n请重新添加！");
+            MessageX.Error(MsgAddDup);
+
             var dialog = GetSubDialog(data);
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -297,7 +311,8 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
             }
             else
             {
-                MessageX.Error($"检测到此{ItemDescription}在编辑后与现有的重复。\n\n请重新编辑！");
+                MessageX.Error(MsgEditDup);
+
                 var dialog = GetSubDialog(newData);
 
                 if (dialog.ShowDialog() == DialogResult.OK)

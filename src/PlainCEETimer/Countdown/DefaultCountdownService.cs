@@ -120,7 +120,7 @@ public class DefaultCountdownService : ICountdownService
 
         if (CanStart && EnableAutoSwitch && ExamsLength > 1)
         {
-            AutoSwitchTimer = new(AutoSwitchCallback, null, AutoSwitchInterval, AutoSwitchInterval);
+            AutoSwitchTimer = new(AutoSwitchCallback, null, IsRunning ? AutoSwitchInterval : 5000, AutoSwitchInterval);
         }
     }
 
