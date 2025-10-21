@@ -179,11 +179,12 @@ public abstract class AppForm : Form, IAppWindow
     {
         get
         {
+            const int WS_EX_COMPOSITED = 0x02000000;
             var cp = base.CreateParams;
 
             if (CheckParam(AppFormParam.CompositedStyle))
             {
-                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                cp.ExStyle |= WS_EX_COMPOSITED;
             }
 
             return cp;
@@ -234,7 +235,7 @@ public abstract class AppForm : Form, IAppWindow
 
     /// <summary>
     /// 在 <see cref="AppForm"/> OnLoad 之前触发，可用于对控件进行最后的布局。
-    /// 该方法没有默认实现，可不调用 base.StartLayout(bool);
+    /// 该方法没有默认实现，可不调用 base.RunLayout(bool);
     /// </summary>
     protected virtual void RunLayout(bool isHighDpi) { }
 

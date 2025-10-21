@@ -12,10 +12,9 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
     public ColorPair[] ColorPresets { private get; set; }
 
     public RulesManager()
-        : base(460, ["时刻", "效果预览"], Ph.RuleTypes)
+        : base(460, ["时刻", "效果预览"], Ph.RuleTypes, "规则")
     {
         Text = "管理自定义规则 - 高考倒计时";
-        ItemDescription = "规则";
     }
 
     protected override int GetGroupIndex(CustomRule data)

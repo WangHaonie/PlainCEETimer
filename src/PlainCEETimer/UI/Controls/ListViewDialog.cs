@@ -22,22 +22,8 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     public TData[] Data { get; set; }
 
-    protected string ItemDescription
-    {
-        set
-        {
-            value ??= "项";
-            MsgDelete = $"确认删除所选{value}吗？此操作将不可撤销！";
-            MsgAddDup = $"列表中已存在该{value}，请重新添加！";
-            MsgEditDup = $"列表中已存在该{value}，请重新编辑！";
-        }
-    }
-
     protected sealed override AppFormParam Params => AppFormParam.AllControl;
 
-    private string MsgDelete;
-    private string MsgAddDup;
-    private string MsgEditDup;
     private ContextMenu ContextMenuMain;
     private MenuItem ContextDuplicate;
     private MenuItem ContextEdit;
@@ -45,6 +31,9 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     private MenuItem ContextSelectAll;
     private PlainButton ButtonOperation;
     private PlainButton NewButton;
+    private readonly string MsgDelete;
+    private readonly string MsgAddDup;
+    private readonly string MsgEditDup;
     private readonly ListViewItemSet<TData> ItemsSet = new();
     private readonly ListView.ListViewItemCollection Items;
     private readonly ListViewGroupCollection Groups;
@@ -55,8 +44,9 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         UseCompatibleStateImageBehavior = false
     };
 
-    protected ListViewDialog(int listViewWidth, string[] headers, string[] groups)
+    protected ListViewDialog(int listViewWidth, string[] headers, string[] groups, string itemDesc = null)
     {
+        var desc = itemDesc ?? "项";
         ListViewMain.Headers = headers;
         ListViewMain.Size = new Size(ScaleToDpi(listViewWidth), ScaleToDpi(218));
 
@@ -72,6 +62,9 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         }
 
         Items = ListViewMain.Items;
+        MsgDelete = $"确认删除所选{desc}吗？此操作将不可撤销！";
+        MsgAddDup = $"列表中已存在该{desc}，请重新添加！";
+        MsgEditDup = $"列表中已存在该{desc}，请重新编辑！";
     }
 
     /// <summary>
