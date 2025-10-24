@@ -40,6 +40,12 @@ public static class Extensions
         return control;
     }
 
+    public static MenuItem Default(this MenuItem item)
+    {
+        item.DefaultItem = true;
+        return item;
+    }
+
     public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)
     {
         var ctrls = builder(new());

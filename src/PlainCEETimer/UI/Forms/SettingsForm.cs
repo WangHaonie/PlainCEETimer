@@ -297,7 +297,7 @@ public sealed class SettingsForm : AppForm
                         [
                             b.Menu("白底(&L)",
                             [
-                                b.Item("所有", ItemsLight_Click),
+                                b.Item("所有", ItemsLight_Click).Default(),
                                 b.Separator(),
                                 b.Item("1", ItemsLight_Click),
                                 b.Item("2", ItemsLight_Click),
@@ -307,7 +307,7 @@ public sealed class SettingsForm : AppForm
 
                             b.Menu("黑底(&D)",
                             [
-                                b.Item("所有", ItemsDark_Click),
+                                b.Item("所有", ItemsDark_Click).Default(),
                                 b.Separator(),
                                 b.Item("1", ItemsDark_Click),
                                 b.Item("2", ItemsDark_Click),

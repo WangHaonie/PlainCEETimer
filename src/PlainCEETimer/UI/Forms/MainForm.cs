@@ -405,7 +405,8 @@ public sealed class MainForm : AppForm
                     ContextMenu = ContextMenuBuilder.Merge(tmp, ContextMenuBuilder.Build(b =>
                     [
                         b.Separator(),
-                        b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()),
+                        b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()).Default(),
+
                         b.Menu("关闭(&C)",
                         [
                             b.Item("重启(&R)", (_, _) => App.Exit(true)),

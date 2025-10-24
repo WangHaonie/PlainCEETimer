@@ -62,7 +62,7 @@ public sealed class CustomTextDialog : AppDialog
 
             ButtonReset = b.Button("重置(R)", ContextMenuBuilder.Build(m =>
             [
-                m.Item("所有", ItemsReset_Click),
+                m.Item("所有", ItemsReset_Click).Default(),
                 m.Separator(),
                 m.Item(lp1, ItemsReset_Click),
                 m.Item(lp2, ItemsReset_Click),

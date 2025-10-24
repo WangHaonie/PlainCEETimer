@@ -109,7 +109,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
                     {
                         AddItemSafe(dialog.Data);
                     }
-                }),
+                }).Default(),
 
                 b.Separator(),
                 ContextDuplicate = b.Item("重复(&C)", ContextDuplicate_Click),
