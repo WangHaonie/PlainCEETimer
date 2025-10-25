@@ -181,7 +181,7 @@ public class ControlBuilder
 
     private PlainButton Button(string text, bool autoSize, EventHandler onClick, ContextMenu menu)
     {
-        var ctrl = new PlainButton(menu) { Text = text, MinimumSize = new(0, 23) };
+        var ctrl = new PlainButton() { Text = text, MinimumSize = new(0, 23), ContextMenu = menu };
 
         if (autoSize)
         {

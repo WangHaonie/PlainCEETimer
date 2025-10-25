@@ -45,13 +45,18 @@ public readonly struct LPCUSTCOLORS : IDisposable
 
     public LPCUSTCOLORS(int[] colors)
     {
-        Value = Marshal.AllocHGlobal(16 * 4);
+        Value = Marshal.AllocHGlobal(16 * sizeof(int));
         Marshal.Copy(colors, 0, Value, 16);
     }
 
     public readonly void CopyTo(int[] colors)
     {
         Marshal.Copy(Value, colors, 0, 16);
+    }
+
+    public static explicit operator LPCUSTCOLORS(int[] arr)
+    {
+        return new(arr);
     }
 
     public void Dispose()

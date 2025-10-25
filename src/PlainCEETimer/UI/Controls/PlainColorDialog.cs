@@ -24,13 +24,13 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
     protected override bool StartDialog(IntPtr hWndOwner)
     {
-        using var colors = new LPCUSTCOLORS(customColors);
-        var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, colors);
+        using var lpColors = (LPCUSTCOLORS)customColors;
+        var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, lpColors);
 
         if (result)
         {
             var previous = customColors.Copy();
-            colors.CopyTo(customColors);
+            lpColors.CopyTo(customColors);
 
             if (!customColors.SequenceEqual(previous))
             {

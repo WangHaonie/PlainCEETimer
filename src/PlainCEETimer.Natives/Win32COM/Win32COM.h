@@ -34,7 +34,7 @@ typedef struct tagLNKFILEINFO
     LPWSTR pszDescription;
     LPWSTR pszIconPath;
     INT iIcon;
-} LNKFILEINFO, * LPLNKFILEINFO;
+} LNKFILEINFO, *LPLNKFILEINFO;
 
 cexport(void) InitializeShellLink();
 cexport(void) ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo);
