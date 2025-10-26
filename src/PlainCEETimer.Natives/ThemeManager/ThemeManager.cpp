@@ -14,8 +14,8 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
 using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
-fnSetPreferredAppMode SetPreferredAppMode = nullptr;
-fnOpenNcThemeData OpenNcThemeData = nullptr;
+fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
+fnOpenNcThemeData g_OpenNcThemeData = nullptr;
 
 /*
 
@@ -32,41 +32,20 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 */
 
-static void FixScrollBar()
+static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 {
-    HMODULE hComctl = LoadLibraryEx(L"comctl32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-
-    if (hComctl)
+    if (wcscmp(pszClassList, L"ScrollBar") == 0)
     {
-        auto* addr = FindDelayLoadThunkInModule(hComctl, "uxtheme.dll", 49);
-
-        if (addr)
-        {
-            DWORD oldProtect;
-
-            if (VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect))
-            {
-                auto MyOpenThemeData = [](HWND hWnd, LPCWSTR classList) -> HTHEME
-                {
-                    if (wcscmp(classList, L"ScrollBar") == 0)
-                    {
-                        hWnd = nullptr;
-                        classList = L"DarkMode_Explorer::ScrollBar";
-                    }
-
-                    return OpenNcThemeData(hWnd, classList);
-                };
-
-                addr->u1.Function = reinterpret_cast<ULONG_PTR>(static_cast<fnOpenNcThemeData>(MyOpenThemeData));
-                VirtualProtect(addr, sizeof(IMAGE_THUNK_DATA), oldProtect, &oldProtect);
-            }
-        }
+        hWnd = nullptr;
+        pszClassList = L"DarkMode_Explorer::ScrollBar";
     }
-}
+
+    return g_OpenNcThemeData(hWnd, pszClassList);
+};
 
 void EnableDarkModeForApp()
 {
-    if (!SetPreferredAppMode)
+    if (!g_SetPreferredAppMode)
     {
         HMODULE hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
@@ -76,20 +55,16 @@ void EnableDarkModeForApp()
 
             if (addr)
             {
-                SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
+                g_SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
+                g_SetPreferredAppMode(2);
             }
 
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
             {
-                OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+                g_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+                ReplaceFunction(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
             }
         }
-    }
-
-    if (SetPreferredAppMode)
-    {
-        SetPreferredAppMode(2);
-        FixScrollBar();
     }
 }
 

@@ -4,6 +4,7 @@
 #include <commdlg.h>
 #include <dwmapi.h>
 
+#define HOOK_OPENNCTHEMEDATA_ARGS "comctl32.dll", "uxtheme.dll", nullptr, 49
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
 
 // Common Dialogs 相关
