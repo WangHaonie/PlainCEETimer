@@ -95,7 +95,7 @@ public static class ShellLink
         if (needed)
         {
             lnk.WorkingDir = string.Empty;
-            lnk.Hotkey = LnkHotkey.None;
+            lnk.Hotkey = Hotkey.None;
             lnk.ShowCmd = ShowWindowCommand.Normal;
             lnk.Description = App.AppName;
             lnk.IconPath = string.Empty;

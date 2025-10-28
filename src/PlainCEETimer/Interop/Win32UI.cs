@@ -60,6 +60,9 @@ public static class Win32UI
     [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
     public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
+    [DllImport(App.User32Dll)]
+    public static extern int FillRect(IntPtr hDC, ref RECT lprc, IntPtr hbr);
+
     [DllImport(App.NativesDll, EntryPoint = "#20")]
     public static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, LPCUSTCOLORS lpCustomColors);
 
@@ -101,4 +104,13 @@ public static class Win32UI
 
     [DllImport(App.NativesDll, EntryPoint = "#33", CharSet = CharSet.Unicode)]
     public static extern string GetClassName(IntPtr hWnd);
+
+    [DllImport(App.NativesDll, EntryPoint = "#34")]
+    public static extern void CommonHookSysColor(COLORREF crFore, COLORREF crBack);
+
+    [DllImport(App.NativesDll, EntryPoint = "#35")]
+    public static extern void CommonUnhookSysColor();
+
+    [DllImport(App.NativesDll, EntryPoint = "#36")]
+    public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyles);
 }

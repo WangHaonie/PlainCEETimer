@@ -41,3 +41,6 @@ EXPORTS
     MenuCheckRadioItemByPosition @31 NONAME
     GetWindowTextEx @32 NONAME
     GetWindowClassName @33 NONAME
+    CommonHookSysColor @34 NONAME
+    CommonUnhookSysColor @35 NONAME
+    RemoveWindowExStyle @36 NONAME

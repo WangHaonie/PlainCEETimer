@@ -27,6 +27,14 @@ void SetTopMostWindow(HWND hWnd)
     }
 }
 
+void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyles)
+{
+    LONG_PTR currentExStyle = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+    currentExStyle &= ~WS_EX_CLIENTEDGE;
+    SetWindowLongPtr(hWnd, GWL_EXSTYLE, currentExStyle);
+    SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+}
+
 BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
 {
     if (hMenu)

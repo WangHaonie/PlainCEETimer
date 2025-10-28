@@ -14,8 +14,13 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
 using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
+using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
 fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
 fnOpenNcThemeData g_OpenNcThemeData = nullptr;
+fnGetSysColor g_GetSysColor = nullptr;
+static COLORREF g_crFore = 0;
+static COLORREF g_crBack = 0;
+static bool isHookEnabled = false;
 
 /*
 
@@ -43,6 +48,27 @@ static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
     return g_OpenNcThemeData(hWnd, pszClassList);
 };
 
+static DWORD WINAPI GetSysColorNew(int nIndex)
+{
+    switch (nIndex)
+    {
+        case COLOR_WINDOW:
+        {
+            return g_crBack;
+        }
+
+        case COLOR_WINDOWTEXT:
+        {
+            return g_crFore;
+        }
+
+        default:
+        {
+            return g_GetSysColor(nIndex);
+        }
+    }
+}
+
 void EnableDarkModeForApp()
 {
     if (!g_SetPreferredAppMode)
@@ -65,6 +91,36 @@ void EnableDarkModeForApp()
                 ReplaceFunction(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
             }
         }
+    }
+}
+
+void CommonHookSysColor(COLORREF crFore, COLORREF crBack)
+{
+    if (!isHookEnabled)
+    {
+        void* o = nullptr;
+
+        if (ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &o))
+        {
+            g_crFore = crFore;
+            g_crBack = crBack;
+
+            if (!g_GetSysColor && o)
+            {
+                g_GetSysColor = reinterpret_cast<fnGetSysColor>(o);
+            }
+
+            isHookEnabled = true;
+        }
+    }
+}
+
+void CommonUnhookSysColor()
+{
+    if (isHookEnabled)
+    {
+        ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
+        isHookEnabled = false;
     }
 }
 

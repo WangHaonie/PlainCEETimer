@@ -99,13 +99,32 @@ public readonly struct HICON
 }
 
 [DebuggerDisplay("{DebuggerDisplay}")]
-public readonly struct LnkHotkey(HotkeyModifier fKeys, Keys keys)
+public readonly struct Hotkey
 {
-    private readonly ushort Value = ushort.MakeWord((byte)keys, (byte)fKeys);
+    public KeyModifiers Modifiers => (KeyModifiers)Value.HiByte;
 
-    public static readonly LnkHotkey None;
+    public Keys Keys => (Keys)Value.LoByte;
 
-    private string DebuggerDisplay => $"{(HotkeyModifier)Value.HiByte}, {(Keys)Value.LoByte}";
+    private string DebuggerDisplay => $"{Modifiers}, {Keys}";
+
+    private readonly ushort Value;
+
+    public static readonly Hotkey None;
+
+    public Hotkey(ushort value)
+    {
+        Value = value;
+    }
+
+    public Hotkey(KeyModifiers fKeys, Keys keys)
+    {
+        Value = ushort.MakeWord((byte)keys, (byte)fKeys);
+    }
+
+    public static implicit operator ushort(Hotkey hk)
+    {
+        return hk.Value;
+    }
 }
 
 [DebuggerDisplay("{ToString(),nq}")]
@@ -146,7 +165,7 @@ public struct LNKFILEINFO(string lnkPath)
     public string Target;
     public string Args;
     public string WorkingDir;
-    public LnkHotkey Hotkey;
+    public Hotkey Hotkey;
     public ShowWindowCommand ShowCmd;
     public string Description;
     public string IconPath;
