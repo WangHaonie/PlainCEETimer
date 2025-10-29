@@ -135,7 +135,28 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public NavigationPage Page(Control[] controls)
+    public PlainTabControl TabCtrl(int w, int h, bool multiline, TabPage[] pages)
+    {
+        var ctrl = new PlainTabControl();
+        ctrl.SetBounds(0, 0, w, h);
+        ctrl.TabPages.AddRange(pages);
+        ctrl.Multiline = multiline;
+        return ctrl;
+    }
+
+    public TabPage TabPage(string text, Control[] controls)
+    {
+        var ctrl = new TabPage(text);
+
+        if (controls != null)
+        {
+            ctrl.Controls.AddRange(controls);
+        }
+
+        return ctrl;
+    }
+
+    public NavigationPage NavPage(Control[] controls)
     {
         var ctrl = new NavigationPage();
         ctrl.Controls.AddRange(controls);

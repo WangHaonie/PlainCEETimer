@@ -186,6 +186,9 @@
     <Compile Include="UI\Controls\PlainRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Controls\PlainTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\PlainTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

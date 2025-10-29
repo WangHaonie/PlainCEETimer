@@ -115,7 +115,7 @@ public sealed class SettingsForm : AppForm
         [
             PageNavPages = b.Panel(56, 1, 334, 260,
             [
-                PageGeneral = b.Page(
+                PageGeneral = b.NavPage(
                 [
                     GBoxExamInfo = b.GroupBox("考试信息",
                     [
@@ -209,7 +209,7 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageDisplay = b.Page(
+                PageDisplay = b.NavPage(
                 [
                     GBoxContent = b.GroupBox("倒计时内容",
                     [
@@ -266,7 +266,7 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageAppearance = b.Page(
+                PageAppearance = b.NavPage(
                 [
                     GBoxFont = b.GroupBox("字体和大小",
                     [
@@ -332,7 +332,7 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageAdvanced = b.Page(
+                PageAdvanced = b.NavPage(
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
                     [
