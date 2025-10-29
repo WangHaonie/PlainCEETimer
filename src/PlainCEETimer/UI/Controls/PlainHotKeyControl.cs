@@ -59,8 +59,9 @@ public class PlainHotKeyControl : Control
 
     protected override Size DefaultMinimumSize => new(150, 23);
 
-    private Hotkey hotkey = new(KeyModifiers.Shit | KeyModifiers.Control | KeyModifiers.Alt, Keys.F11);
+    private Hotkey hotkey = Hotkey.None;
     private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+    private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
     public PlainHotKeyControl()
     {
@@ -81,12 +82,13 @@ public class PlainHotKeyControl : Control
         {
             const int WM_ERASEBKGND = 0x0014;
             const int WM_PAINT = 0x000F;
+            const int WM_DESTROY = 0x0002;
 
             switch (m.Msg)
             {
                 case WM_ERASEBKGND:
                     Win32UI.GetClientRect(m.HWnd, out var rc);
-                    Win32UI.FillRect(m.WParam, ref rc, Win32UI.CreateSolidBrush(Colors.DarkBackText));
+                    Win32UI.FillRect(m.WParam, ref rc, hBrush);
                     m.Result = new(1);
                     return;
                 case WM_PAINT:
@@ -94,6 +96,9 @@ public class PlainHotKeyControl : Control
                     base.WndProc(ref m);
                     Win32UI.CommonUnhookSysColor();
                     return;
+                case WM_DESTROY:
+                    Win32UI.DeleteObject(hBrush);
+                    break;
             }
         }
 

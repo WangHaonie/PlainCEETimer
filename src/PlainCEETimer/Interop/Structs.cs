@@ -98,14 +98,12 @@ public readonly struct HICON
     }
 }
 
-[DebuggerDisplay("{DebuggerDisplay}")]
+[DebuggerDisplay("{Modifiers} | {Keys}")]
 public readonly struct Hotkey
 {
     public KeyModifiers Modifiers => (KeyModifiers)Value.HiByte;
 
     public Keys Keys => (Keys)Value.LoByte;
-
-    private string DebuggerDisplay => $"{Modifiers}, {Keys}";
 
     private readonly ushort Value;
 
