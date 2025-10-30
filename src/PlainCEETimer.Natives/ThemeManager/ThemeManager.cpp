@@ -119,7 +119,13 @@ void CommonUnhookSysColor()
 {
     if (isHookEnabled)
     {
-        ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
+        if (g_GetSysColor)
+        {
+            ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
+        }
+
+        g_crFore = 0;
+        g_crBack = 0;
         isHookEnabled = false;
     }
 }

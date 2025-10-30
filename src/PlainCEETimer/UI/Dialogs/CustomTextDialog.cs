@@ -74,10 +74,7 @@ public sealed class CustomTextDialog : AppDialog
 
         foreach (var tb in TextBoxes)
         {
-            tb.OnExpandableKeyDown = (target, e, l) =>
-            {
-                TryAppendPlaceHolders(target, e, true, l);
-            };
+            tb.ExpandableKeyDown += (_, e) => TryAppendPlaceHolders(e.Target, e.KeyEventArgs, true, e.TextLength);
         }
 
         base.OnInitializing();

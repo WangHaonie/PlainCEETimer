@@ -112,5 +112,5 @@ public static class Win32UI
     public static extern void CommonUnhookSysColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#36")]
-    public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyles);
+    public static extern void RemoveWindowExStyles(IntPtr hWnd, long dwExStyles);
 }

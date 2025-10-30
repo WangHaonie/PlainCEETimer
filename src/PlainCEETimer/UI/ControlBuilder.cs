@@ -135,6 +135,13 @@ public class ControlBuilder
         return ctrl;
     }
 
+    public PlainHotKeyControl HotKeyCtrl(int w)
+    {
+        var ctrl = new PlainHotKeyControl();
+        ctrl.SetBounds(0, 0, w, 0);
+        return ctrl;
+    }
+
     public PlainTabControl TabCtrl(int w, int h, bool multiline, TabPage[] pages)
     {
         var ctrl = new PlainTabControl();

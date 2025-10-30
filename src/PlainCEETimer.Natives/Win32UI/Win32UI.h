@@ -33,4 +33,4 @@ cexport(BOOL) MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item);
 cexport(BOOL) MenuCheckRadioItemByPosition(HMENU hMenu, UINT item);
 cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
 cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
-cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyles);
+cexport(void) RemoveWindowExStyles(HWND hWnd, LONG_PTR dwExStyles);

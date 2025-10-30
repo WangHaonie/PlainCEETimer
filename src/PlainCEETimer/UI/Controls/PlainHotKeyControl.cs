@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -22,6 +23,32 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 
 public class PlainHotKeyControl : Control
 {
+    private sealed class ParentFormNativeWindow : NativeWindow
+    {
+        private readonly PlainHotKeyControl Ctrl;
+
+        public ParentFormNativeWindow(PlainHotKeyControl ctrl)
+        {
+            AssignHandle(ctrl.FindParentForm().Handle);
+            Ctrl = ctrl;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            const int EN_CHANGE = 0x0300;
+            const int WM_COMMAND = 0x0111;
+
+            if (m.Msg == WM_COMMAND && m.WParam.ToInt32().HiWord == EN_CHANGE)
+            {
+                Ctrl.OnHotKeyChanged();
+            }
+
+            base.WndProc(ref m);
+        }
+    }
+
+    public event EventHandler HotKeyChanged;
+
     public Hotkey Hotkey
     {
         get
@@ -57,7 +84,7 @@ public class PlainHotKeyControl : Control
         }
     }
 
-    protected override Size DefaultMinimumSize => new(150, 23);
+    protected override Size DefaultMinimumSize => new(100, 23);
 
     private Hotkey hotkey = Hotkey.None;
     private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
@@ -71,8 +98,9 @@ public class PlainHotKeyControl : Control
     protected override void OnHandleCreated(EventArgs e)
     {
         const int WS_EX_CLIENTEDGE = 0x00000200;
-        Win32UI.RemoveWindowExStyle(Handle, WS_EX_CLIENTEDGE);
+        Win32UI.RemoveWindowExStyles(Handle, WS_EX_CLIENTEDGE);
         SetHotKey(hotkey);
+        new ParentFormNativeWindow(this);
         base.OnHandleCreated(e);
     }
 
@@ -109,5 +137,10 @@ public class PlainHotKeyControl : Control
     {
         const int HKM_SETHOTKEY = 0x0400 + 1;
         Win32UI.SendMessage(Handle, HKM_SETHOTKEY, hk, 0);
+    }
+
+    private void OnHotKeyChanged()
+    {
+        HotKeyChanged?.Invoke(this, EventArgs.Empty);
     }
 }

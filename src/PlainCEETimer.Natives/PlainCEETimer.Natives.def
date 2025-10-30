@@ -43,4 +43,4 @@ EXPORTS
     GetWindowClassName @33 NONAME
     CommonHookSysColor @34 NONAME
     CommonUnhookSysColor @35 NONAME
-    RemoveWindowExStyle @36 NONAME
+    RemoveWindowExStyles @36 NONAME

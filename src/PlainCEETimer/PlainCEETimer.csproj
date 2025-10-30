@@ -236,6 +236,7 @@
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
     <Compile Include="UI\IAppWindow.cs" />
+    <Compile Include="UI\TextBoxFlyoutEventArgs.cs" />
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />

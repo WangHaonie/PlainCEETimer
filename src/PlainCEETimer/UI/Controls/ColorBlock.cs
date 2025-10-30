@@ -105,10 +105,8 @@ public sealed partial class ColorBlock : PlainLabel
         }
     }
 
-    private class CancellationMessageFilter : IMessageFilter
+    private class CancellationMessageFilter(ColorBlock ctrl) : IMessageFilter
     {
-        public event Action Cancel;
-
         private static readonly IntPtr EscKey = new((int)Keys.Escape);
 
         public bool PreFilterMessage(ref Message m)
@@ -117,7 +115,7 @@ public sealed partial class ColorBlock : PlainLabel
 
             if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
             {
-                Cancel?.Invoke();
+                ctrl.CancelScreenColorPicker();
             }
 
             return false;
@@ -166,7 +164,6 @@ public sealed partial class ColorBlock : PlainLabel
     private readonly bool IsFore;
     private readonly ColorBlock PreviewBlock;
     private static CancellationMessageFilter MsgFilter;
-    private Action CacelAction;
 
     public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
     {
@@ -223,9 +220,7 @@ public sealed partial class ColorBlock : PlainLabel
             if (!IsPicking && !ParentBounds.Contains(MouseLocation))
             {
                 IsPicking = true;
-                MsgFilter ??= new();
-                CacelAction ??= new(CancelScreenColorPicker);
-                MsgFilter.Cancel += CacelAction;
+                MsgFilter ??= new(this);
                 Application.AddMessageFilter(MsgFilter);
                 ColorPicker = new();
                 HideParentForm();
@@ -274,7 +269,6 @@ public sealed partial class ColorBlock : PlainLabel
                     Color = ColorPicker.CurrentPixelColor;
                 }
 
-                MsgFilter.Cancel -= CacelAction;
                 Application.RemoveMessageFilter(MsgFilter);
                 HideParentForm(false);
                 ColorPicker.Close();
