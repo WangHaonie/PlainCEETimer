@@ -1,8 +1,29 @@
 ﻿#include "pch.h"
 #include "Win32UI.h"
 #include "Utils.h"
+#include "ThemeManager/IATHook.h"
 #include <CommCtrl.h>
 #include <Uxtheme.h>
+
+using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
+
+static HHOOK g_hMsgBoxHook = nullptr;
+static HWND g_hMsgBoxHookOwner = nullptr;
+static fnMessageBoxW g_MessageBoxW = nullptr;
+
+static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    SendMessage(g_hMsgBoxHookOwner, WM_APP + nCode, wParam, lParam);
+    return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+static int WINAPI MessageBoxNew(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
+{
+    g_hMsgBoxHook = SetWindowsHookEx(WH_CBT, CbtMessageBoxHookProc, nullptr, GetCurrentThreadId());
+    auto ret = g_MessageBoxW(hWnd, lpText, lpCaption, uType);
+    UnhookWindowsHookEx(g_hMsgBoxHook);
+    return ret;
+}
 
 //
 // 使用 WinAPI 高效全选 ListView 所有项 参考：
@@ -86,4 +107,34 @@ LPCWSTR GetWindowClassName(HWND hWnd)
     }
 
     return nullptr;
+}
+
+void ComdlgHookMessageBox(HWND hWnd)
+{
+    if (hWnd)
+    {
+        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW);
+        g_hMsgBoxHookOwner = hWnd;
+    }
+}
+
+void ComdlgUnhookMessageBox()
+{
+    if (g_MessageBoxW)
+    {
+        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, g_MessageBoxW, nullptr);
+    }
+}
+
+BOOL IsMessageBox(LPCREATESTRUCT lpCreateStruct)
+{
+    auto style = WS_POPUP | WS_CAPTION | DS_3DLOOK | DS_MODALFRAME;
+    auto ex = WS_EX_DLGMODALFRAME;
+
+    if ((lpCreateStruct->style & style) == style && (lpCreateStruct->dwExStyle & ex) == ex)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }

@@ -94,6 +94,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             case WM_CTLCOLORBTN:
                 return WmCtlColor(wparam);
             case WM_DESTROY:
+                Win32UI.ComdlgUnhookMessageBox();
                 Win32UI.DeleteObject(hBrush);
                 break;
         }
@@ -103,6 +104,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private IntPtr WmInitDialog(IntPtr hWnd)
     {
+        Win32UI.ComdlgHookMessageBox();
         Handle = hWnd;
         owner.ReActivate();
 
@@ -141,25 +143,8 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         }
 
         Win32UI.GetWindowRect(hWnd, out var rect);
-
-        Rectangle bounds = rect;
-        var screen = Screen.GetWorkingArea(owner);
-
-        var w = bounds.Width;
-        var h = bounds.Height;
-        var x = owner.Left + (owner.Width / 2) - (w / 2);
-        var y = owner.Top + (owner.Height / 2) - (h / 2);
-
-        var l = x;
-        var t = y;
-        var r = x + w;
-        var b = y + h;
-        if (l < screen.X) x = screen.X;
-        if (t < screen.Y) y = screen.Y;
-        if (r > screen.Right) x = screen.Right - w;
-        if (b > screen.Bottom) y = screen.Bottom - h;
-
-        Win32UI.MoveWindow(hWnd, x, y, w, h, false);
+        var r = Win32UI.MakeCenterParent(rect, owner.Bounds);
+        Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
         return new(1);
     }
 

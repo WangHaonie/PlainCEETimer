@@ -96,7 +96,8 @@ inline PIMAGE_THUNK_DATA FindDelayLoadThunkInModule(void* moduleBase, const char
     return nullptr;
 }
 
-inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, size_t entryID, void* pNewFunc, void** ppOldFunc)
+template <typename TFunc>
+inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, size_t entryID, TFunc pNewFunc, TFunc* ppOldFunc)
 {
     bool delayLoad = false;
 
@@ -141,7 +142,7 @@ inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* impor
             {
                 if (ppOldFunc)
                 {
-                    *ppOldFunc = reinterpret_cast<void*>(addr->u1.Function);
+                    *ppOldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
                 }
 
                 addr->u1.Function = reinterpret_cast<ULONG_PTR>(pNewFunc);

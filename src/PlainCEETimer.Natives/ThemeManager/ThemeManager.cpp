@@ -88,7 +88,7 @@ void EnableDarkModeForApp()
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
             {
                 g_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
-                ReplaceFunction(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
+                ReplaceFunction<fnOpenNcThemeData>(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
             }
         }
     }
@@ -98,18 +98,10 @@ void CommonHookSysColor(COLORREF crFore, COLORREF crBack)
 {
     if (!isHookEnabled)
     {
-        void* o = nullptr;
-
-        if (ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &o))
+        if (ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor))
         {
             g_crFore = crFore;
             g_crBack = crBack;
-
-            if (!g_GetSysColor && o)
-            {
-                g_GetSysColor = reinterpret_cast<fnGetSysColor>(o);
-            }
-
             isHookEnabled = true;
         }
     }
@@ -121,7 +113,7 @@ void CommonUnhookSysColor()
     {
         if (g_GetSysColor)
         {
-            ReplaceFunction(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
+            ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
         }
 
         g_crFore = 0;

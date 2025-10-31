@@ -44,3 +44,6 @@ EXPORTS
     CommonHookSysColor @34 NONAME
     CommonUnhookSysColor @35 NONAME
     RemoveWindowExStyles @36 NONAME
+    ComdlgHookMessageBox @37 NONAME
+    ComdlgUnhookMessageBox @38 NONAME
+    IsMessageBox @39 NONAME
