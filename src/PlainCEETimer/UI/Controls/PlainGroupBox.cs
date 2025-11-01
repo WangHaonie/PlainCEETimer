@@ -24,7 +24,7 @@ public sealed class PlainGroupBox : GroupBox
     {
         if (ThemeManager.NewThemeAvailable)
         {
-            ThemeManager.EnableDarkMode(this, NativeStyle.DarkTheme);
+            ThemeManager.EnableDarkModeForControl(this, NativeStyle.DarkTheme);
         }
 
         base.OnHandleCreated(e);

@@ -6,7 +6,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog, IAppWindow
+public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog
 {
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
@@ -115,16 +115,16 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (UseDark)
         {
-            ThemeManager.EnableDarkMode(this);
+            ThemeManager.EnableDarkModeForWindow(Handle);
 
             Win32UI.EnumChildWindows(hWnd, (child, _) =>
             {
-                ThemeManager.EnableDarkMode(child, GetNativeStyle(child, out var up), up);
+                ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
                 return true;
             }, IntPtr.Zero);
         }
 
-        if (this is PlainFontDialog f)
+        if (this is PlainFontDialog)
         {
             IntPtr hCtrl;
             const int grp2 = 0x0431;
@@ -133,7 +133,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             {
                 if (ThemeManager.NewThemeAvailable)
                 {
-                    ThemeManager.EnableDarkMode(hCtrl, NativeStyle.DarkTheme);
+                    ThemeManager.EnableDarkModeForControl(hCtrl, NativeStyle.DarkTheme);
                 }
                 else
                 {
@@ -143,7 +143,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         }
 
         Win32UI.GetWindowRect(hWnd, out var rect);
-        var r = Win32UI.MakeCenterParent(rect, owner.Bounds);
+        Win32UI.MakeCenter(rect, owner.Bounds, out var r);
         Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
         return new(1);
     }
@@ -187,6 +187,4 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
 
     }
-
-    IntPtr IAppWindow.WindowHandle => Handle;
 }

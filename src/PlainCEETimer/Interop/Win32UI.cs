@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
@@ -35,7 +36,7 @@ public static class Win32UI
 
                     GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT_hwndParent), out var lprc);
 
-                    var r = MakeCenterParent
+                    MakeCenter
                     (
                         new
                         (
@@ -43,7 +44,7 @@ public static class Win32UI
                             Marshal.ReadInt32(lpcs, CREATESTRUCT_y),
                             Marshal.ReadInt32(lpcs, CREATESTRUCT_cx),
                             Marshal.ReadInt32(lpcs, CREATESTRUCT_cy)
-                        ), lprc
+                        ), lprc, out var r
                     );
 
                     Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
@@ -55,7 +56,7 @@ public static class Win32UI
         }
     }
 
-    private static bool SetMBHook;
+    private static HookMessageBoxMsgWindow nwMsg;
 
     [DllImport(App.User32Dll)]
     public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
@@ -167,11 +168,10 @@ public static class Win32UI
 
     public static void ComdlgHookMessageBox()
     {
-        if (!SetMBHook)
+        if (nwMsg == null)
         {
-            var mw = new HookMessageBoxMsgWindow();
-            ComdlgHookMessageBox(mw.Handle);
-            SetMBHook = true;
+            nwMsg = new HookMessageBoxMsgWindow();
+            ComdlgHookMessageBox(nwMsg.Handle);
         }
     }
 
@@ -180,10 +180,11 @@ public static class Win32UI
 
     public static void ComdlgUnhookMessageBox()
     {
-        if (SetMBHook)
+        if (nwMsg != null)
         {
             _ComdlgUnhookMessageBox();
-            SetMBHook = false;
+            nwMsg.DestroyHandle();
+            nwMsg = null;
         }
     }
 
@@ -193,21 +194,15 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#39")]
     private static extern bool IsMessageBox(IntPtr lpCreateStruct);
 
-    public static Rectangle MakeCenterParent(Rectangle target, Rectangle parent)
+    public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);
         var w = target.Width;
         var h = target.Height;
         var x = parent.Left + (parent.Width / 2) - (w / 2);
         var y = parent.Top + (parent.Height / 2) - (h / 2);
-        var l = x;
-        var t = y;
-        var r = x + w;
-        var b = y + h;
-        if (l < screen.X) x = screen.X;
-        if (t < screen.Y) y = screen.Y;
-        if (r > screen.Right) x = screen.Right - w;
-        if (b > screen.Bottom) y = screen.Bottom - h;
-        return new(x, y, w, h);
+        x = x.Clamp(screen.X, screen.Right - w);
+        y = y.Clamp(screen.Y, screen.Bottom - h);
+        targetNew = new(x, y, w, h);
     }
 }

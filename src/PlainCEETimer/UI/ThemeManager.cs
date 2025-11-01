@@ -42,17 +42,17 @@ public static class ThemeManager
         Application.EnableVisualStyles();
     }
 
-    public static void EnableDarkMode(IAppWindow window)
+    public static void EnableDarkModeForWindow(IntPtr hWnd)
     {
-        Win32UI.EnableDarkModeForWindowFrame(window.WindowHandle, IsNewDwma);
+        Win32UI.EnableDarkModeForWindowFrame(hWnd, IsNewDwma);
     }
 
-    public static void EnableDarkMode(IWin32Window control, NativeStyle type, bool AutoUpgrade = false)
+    public static void EnableDarkModeForControl(IWin32Window control, NativeStyle type, bool AutoUpgrade = false)
     {
-        EnableDarkMode(control.Handle, type, AutoUpgrade);
+        EnableDarkModeForControl(control.Handle, type, AutoUpgrade);
     }
 
-    public static void EnableDarkMode(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
+    public static void EnableDarkModeForControl(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
     {
         if (CanUseNewTheme && AutoUpgrade)
         {

@@ -4,11 +4,12 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class AppForm : Form, IAppWindow
+public abstract class AppForm : Form
 {
     /// <summary>
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
@@ -19,7 +20,6 @@ public abstract class AppForm : Form, IAppWindow
     protected virtual AppFormParam Params => AppFormParam.None;
 
     public event Action<DialogResult> DialogEnd;
-    protected event Action LocationRefreshed;
 
     private bool IsLoading = true;
     private bool SetRoundRegion;
@@ -209,7 +209,7 @@ public abstract class AppForm : Form, IAppWindow
                 BackColor = Colors.DarkBackText;
             }
 
-            ThemeManager.EnableDarkMode(this);
+            ThemeManager.EnableDarkModeForWindow(Handle);
         }
 
         if (SetRoundCorner)
@@ -446,39 +446,13 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    protected void KeepOnScreen()
+    protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
-        bool b = false;
-
-        if (Left < screen.Left)
-        {
-            Left = screen.Left;
-            b = true;
-        }
-
-        if (Top < screen.Top)
-        {
-            Top = screen.Top;
-            b = true;
-        }
-
-        if (Right > screen.Right)
-        {
-            Left = screen.Right - Width;
-            b = true;
-        }
-
-        if (Bottom > screen.Bottom)
-        {
-            Top = screen.Bottom - Height;
-            b = true;
-        }
-
-        if (Special && b)
-        {
-            LocationRefreshed?.Invoke();
-        }
+        var x = Left.Clamp(screen.Left, screen.Right - Width);
+        var y = Top.Clamp(screen.Top, screen.Bottom - Height);
+        SetLocation(x, y);
+        return new(x, y);
     }
 
     private void AppLauncher_TrayMenuShowAllClicked()
@@ -494,6 +468,4 @@ public abstract class AppForm : Form, IAppWindow
     {
         TopMost = !IsDisposed && MainForm.UniTopMost;
     }
-
-    IntPtr IAppWindow.WindowHandle => Handle;
 }

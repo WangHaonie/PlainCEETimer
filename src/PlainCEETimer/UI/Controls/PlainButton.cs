@@ -17,7 +17,7 @@ public sealed class PlainButton : Button
     {
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkMode(this, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkModeForControl(this, NativeStyle.ExplorerDark);
         }
 
         base.OnHandleCreated(e);

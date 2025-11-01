@@ -130,9 +130,9 @@ public sealed class PlainListView : ListView
             TTstyle = NativeStyle.ExplorerDark;
         }
 
-        ThemeManager.EnableDarkMode(hListView, LVstyle);
-        ThemeManager.EnableDarkMode(hHeader, LVstyle);
-        ThemeManager.EnableDarkMode(hToolTips, TTstyle);
+        ThemeManager.EnableDarkModeForControl(hListView, LVstyle);
+        ThemeManager.EnableDarkModeForControl(hHeader, LVstyle);
+        ThemeManager.EnableDarkModeForControl(hToolTips, TTstyle);
         Win32UI.SetTopMostWindow(hToolTips);
 
         if (SystemVersion.IsWindows11)

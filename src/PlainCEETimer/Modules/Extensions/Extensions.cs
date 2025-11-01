@@ -60,6 +60,25 @@ public static class Extensions
     public static int ToWin32(this bool b)
         => b ? 1 : 0;
 
+    public static int Clamp(this int value, int min, int max)
+    {
+        if (min > max)
+        {
+            (min, max) = (max, min);
+        }
+
+        if (value < min)
+        {
+            return min;
+        }
+        else if (value > max)
+        {
+            return max;
+        }
+
+        return value;
+    }
+
     public static bool ToBool(this int i)
         => i != 0;
 

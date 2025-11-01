@@ -46,11 +46,11 @@ public sealed class NavigationBar : TreeView
         {
             ForeColor = Colors.DarkForeText;
             BackColor = Colors.DarkBackText;
-            ThemeManager.EnableDarkMode(this, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkModeForControl(this, NativeStyle.ExplorerDark);
         }
         else
         {
-            ThemeManager.EnableDarkMode(this, NativeStyle.Explorer);
+            ThemeManager.EnableDarkModeForControl(this, NativeStyle.Explorer);
         }
 
         base.OnHandleCreated(e);

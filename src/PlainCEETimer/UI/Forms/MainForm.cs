@@ -128,13 +128,19 @@ public sealed class MainForm : AppForm
                 KeepOnScreen();
                 CompatibleWithPPTService();
                 SetCountdownAutoWrap();
-                MainForm_LocationRefreshed();
+                SaveLocation();
             }
 
             IsReadyToMove = false;
         }
 
         base.OnMouseUp(e);
+    }
+
+    private void SaveLocation()
+    {
+        AppConfig.Location = Location;
+        Validator.DemandConfig();
     }
 
     protected override bool OnClosing(CloseReason closeReason)
@@ -158,12 +164,6 @@ public sealed class MainForm : AppForm
         }
 
         base.WndProc(ref m);
-    }
-
-    private void MainForm_LocationRefreshed()
-    {
-        AppConfig.Location = Location;
-        Validator.DemandConfig();
     }
 
     private void ExamItems_Click(object sender, EventArgs e)
@@ -190,7 +190,12 @@ public sealed class MainForm : AppForm
         if (!IsReadyToMove)
         {
             ApplyLocation();
-            KeepOnScreen();
+            var p = Location;
+
+            if (KeepOnScreen() != p)
+            {
+                SaveLocation();
+            }
         }
     }
 
@@ -225,11 +230,9 @@ public sealed class MainForm : AppForm
         ExamIndex = AppConfig.ExamIndex;
         CountdownFont = AppConfig.Font;
 
-        LocationRefreshed -= MainForm_LocationRefreshed;
 
         if (IsDraggable)
         {
-            LocationRefreshed += MainForm_LocationRefreshed;
             Location = AppConfig.Location;
         }
         else

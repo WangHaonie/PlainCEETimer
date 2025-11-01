@@ -26,7 +26,7 @@ public sealed class PlainNumericUpDown : NumericUpDown
 
             for (int i = 0; i < count; i++)
             {
-                ThemeManager.EnableDarkMode(ctrls[i], NativeStyle.ExplorerDark);
+                ThemeManager.EnableDarkModeForControl(ctrls[i], NativeStyle.ExplorerDark);
             }
         }
 

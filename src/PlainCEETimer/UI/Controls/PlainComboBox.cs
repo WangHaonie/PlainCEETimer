@@ -21,7 +21,7 @@ public sealed class PlainComboBox : ComboBox
         {
             ForeColor = Colors.DarkForeText;
             BackColor = Colors.DarkBackText;
-            ThemeManager.EnableDarkMode(this, NativeStyle.CfdDark);
+            ThemeManager.EnableDarkModeForControl(this, NativeStyle.CfdDark);
         }
 
         base.OnHandleCreated(e);

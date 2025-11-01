@@ -62,7 +62,7 @@ public sealed class PlainProgressBar : ProgressBar
     {
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkMode(Handle, NativeStyle.DarkTheme);
+            ThemeManager.EnableDarkModeForControl(Handle, NativeStyle.DarkTheme);
         }
 
         if (!init)

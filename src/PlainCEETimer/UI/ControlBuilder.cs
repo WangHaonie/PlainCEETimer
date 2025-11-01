@@ -135,10 +135,11 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainHotKeyControl HotKeyCtrl(int w)
+    public PlainHotKeyControl HotKeyCtrl(int w, EventHandler onHotKeyChanged)
     {
         var ctrl = new PlainHotKeyControl();
         ctrl.SetBounds(0, 0, w, 0);
+        ctrl.HotKeyChanged += onHotKeyChanged;
         return ctrl;
     }
 

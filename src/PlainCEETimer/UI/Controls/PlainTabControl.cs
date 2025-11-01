@@ -14,7 +14,7 @@ public class PlainTabControl : TabControl
         if (UseDark)
         {
             var tabs = TabPages;
-            var length = TabCount;
+            var length = tabs.Count;
             TabPage current;
 
             for (int i = 0; i < length; i++)
@@ -26,7 +26,7 @@ public class PlainTabControl : TabControl
 
             if (ThemeManager.NewThemeAvailable)
             {
-                ThemeManager.EnableDarkMode(this, NativeStyle.DarkTheme);
+                ThemeManager.EnableDarkModeForControl(this, NativeStyle.DarkTheme);
             }
             else
             {
@@ -50,7 +50,7 @@ public class PlainTabControl : TabControl
         if (UseDark && m.Msg == WM_PARENTNOTIFY
             && m.WParam.ToInt32().LoWord == WM_CREATE)
         {
-            ThemeManager.EnableDarkMode(m.LParam, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkModeForControl(m.LParam, NativeStyle.ExplorerDark);
         }
 
         base.WndProc(ref m);
