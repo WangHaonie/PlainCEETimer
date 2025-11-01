@@ -14,7 +14,7 @@ public class PlainTabControl : TabControl
         if (UseDark)
         {
             var tabs = TabPages;
-            var length = TabCount;
+            var length = tabs.Count;
             TabPage current;
 
             for (int i = 0; i < length; i++)

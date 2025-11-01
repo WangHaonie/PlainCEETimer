@@ -55,7 +55,7 @@ public static class Win32UI
         }
     }
 
-    private static bool SetMBHook;
+    private static HookMessageBoxMsgWindow nwMsg;
 
     [DllImport(App.User32Dll)]
     public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
@@ -167,11 +167,10 @@ public static class Win32UI
 
     public static void ComdlgHookMessageBox()
     {
-        if (!SetMBHook)
+        if (nwMsg == null)
         {
-            var mw = new HookMessageBoxMsgWindow();
-            ComdlgHookMessageBox(mw.Handle);
-            SetMBHook = true;
+            nwMsg = new HookMessageBoxMsgWindow();
+            ComdlgHookMessageBox(nwMsg.Handle);
         }
     }
 
@@ -180,10 +179,11 @@ public static class Win32UI
 
     public static void ComdlgUnhookMessageBox()
     {
-        if (SetMBHook)
+        if (nwMsg != null)
         {
             _ComdlgUnhookMessageBox();
-            SetMBHook = false;
+            nwMsg.DestroyHandle();
+            nwMsg = null;
         }
     }
 

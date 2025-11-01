@@ -49,7 +49,7 @@ public class PlainHotKeyControl : Control
 
     public event EventHandler HotKeyChanged;
 
-    public Hotkey Hotkey
+    public HotKey Hotkey
     {
         get
         {
@@ -86,7 +86,7 @@ public class PlainHotKeyControl : Control
 
     protected override Size DefaultMinimumSize => new(100, 23);
 
-    private Hotkey hotkey = Hotkey.None;
+    private HotKey hotkey = HotKey.None;
     private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
@@ -133,7 +133,7 @@ public class PlainHotKeyControl : Control
         base.WndProc(ref m);
     }
 
-    private void SetHotKey(Hotkey hk)
+    private void SetHotKey(HotKey hk)
     {
         const int HKM_SETHOTKEY = 0x0400 + 1;
         Win32UI.SendMessage(Handle, HKM_SETHOTKEY, hk, 0);
