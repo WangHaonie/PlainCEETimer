@@ -165,14 +165,13 @@ public abstract class AppForm : Form
     {
         OnClosed();
         base.OnClosed(e);
+        Dispose(true);
 
         if (CheckParam(AppFormParam.ModelessDialog))
         {
             DialogEnd?.Invoke(DialogResult);
             DialogEnd = null;
         }
-
-        Dispose(true);
     }
 
     protected sealed override CreateParams CreateParams

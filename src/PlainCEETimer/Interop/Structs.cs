@@ -54,7 +54,7 @@ public readonly struct LPCUSTCOLORS : IDisposable
         Marshal.Copy(Value, colors, 0, 16);
     }
 
-    public static explicit operator LPCUSTCOLORS(int[] arr)
+    public static implicit operator LPCUSTCOLORS(int[] arr)
     {
         return new(arr);
     }

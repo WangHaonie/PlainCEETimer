@@ -29,7 +29,7 @@ public class PlainHotKeyControl : Control
 
         public ParentFormNativeWindow(PlainHotKeyControl ctrl)
         {
-            AssignHandle(ctrl.FindParentForm().Handle);
+            AssignHandle(ctrl.Parent.Handle);
             Ctrl = ctrl;
         }
 
@@ -38,7 +38,7 @@ public class PlainHotKeyControl : Control
             const int EN_CHANGE = 0x0300;
             const int WM_COMMAND = 0x0111;
 
-            if (m.Msg == WM_COMMAND && m.WParam.ToInt32().HiWord == EN_CHANGE)
+            if (m.Msg == WM_COMMAND && m.LParam == Ctrl.Handle && m.WParam.ToInt32().HiWord == EN_CHANGE)
             {
                 Ctrl.OnHotKeyChanged();
             }

@@ -24,7 +24,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
 
     protected override bool StartDialog(IntPtr hWndOwner)
     {
-        using var lpColors = (LPCUSTCOLORS)customColors;
+        using LPCUSTCOLORS lpColors = customColors;
         var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, lpColors);
 
         if (result)
