@@ -9,55 +9,6 @@ namespace PlainCEETimer.Interop;
 
 public static class Win32UI
 {
-    private sealed class HookMessageBoxMsgWindow : NativeWindow
-    {
-        public HookMessageBoxMsgWindow()
-        {
-            const int HWND_MESSAGE = -3;
-            CreateHandle(new() { Parent = new(HWND_MESSAGE) });
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            const int WM_APP = 0x8000;
-            const int HCBT_CREATEWND = WM_APP + 3;
-
-            if (m.Msg == HCBT_CREATEWND)
-            {
-                var lpcs = Marshal.ReadIntPtr(m.LParam);
-
-                if (IsMessageBox(lpcs))
-                {
-                    const int CREATESTRUCT_hwndParent = 24;
-                    const int CREATESTRUCT_cy = 32;
-                    const int CREATESTRUCT_cx = 36;
-                    const int CREATESTRUCT_y = 40;
-                    const int CREATESTRUCT_x = 44;
-
-                    GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT_hwndParent), out var lprc);
-
-                    MakeCenter
-                    (
-                        new
-                        (
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT_x),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT_y),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT_cx),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT_cy)
-                        ), lprc, out var r
-                    );
-
-                    Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
-                    Marshal.WriteInt32(lpcs, CREATESTRUCT_y, r.Y);
-                }
-            }
-
-            base.WndProc(ref m);
-        }
-    }
-
-    private static HookMessageBoxMsgWindow nwMsg;
-
     [DllImport(App.User32Dll)]
     public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
@@ -166,33 +117,14 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#36")]
     public static extern void RemoveWindowExStyles(IntPtr hWnd, long dwExStyles);
 
-    public static void ComdlgHookMessageBox()
-    {
-        if (nwMsg == null)
-        {
-            nwMsg = new HookMessageBoxMsgWindow();
-            ComdlgHookMessageBox(nwMsg.Handle);
-        }
-    }
-
     [DllImport(App.NativesDll, EntryPoint = "#37")]
-    private static extern void ComdlgHookMessageBox(IntPtr hWnd);
-
-    public static void ComdlgUnhookMessageBox()
-    {
-        if (nwMsg != null)
-        {
-            _ComdlgUnhookMessageBox();
-            nwMsg.DestroyHandle();
-            nwMsg = null;
-        }
-    }
+    public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);
 
     [DllImport(App.NativesDll, EntryPoint = "#38")]
-    private static extern void _ComdlgUnhookMessageBox();
+    public static extern void ComdlgUnhookMessageBox();
 
     [DllImport(App.NativesDll, EntryPoint = "#39")]
-    private static extern bool IsMessageBox(IntPtr lpCreateStruct);
+    public static extern bool IsMessageBox(IntPtr lpCreateStruct);
 
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {

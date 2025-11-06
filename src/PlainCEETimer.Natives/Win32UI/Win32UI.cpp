@@ -7,12 +7,21 @@
 
 using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
 
-static HWND g_hWndMsg = nullptr;
 static fnMessageBoxW g_MessageBoxW = nullptr;
+static HOOKPROC g_CbtHookProc = nullptr;
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    SendMessage(g_hWndMsg, WM_APP + nCode, wParam, lParam);
+    if (g_CbtHookProc)
+    {
+        LRESULT hr = g_CbtHookProc(nCode, wParam, lParam);
+
+        if (SUCCEEDED(hr))
+        {
+            return hr;
+        }
+    }
+
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
@@ -108,12 +117,12 @@ LPCWSTR GetWindowClassName(HWND hWnd)
     return nullptr;
 }
 
-void ComdlgHookMessageBox(HWND hWnd)
+void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc)
 {
-    if (hWnd)
+    if (!g_CbtHookProc && lpfnCbtHookProc)
     {
         ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW);
-        g_hWndMsg = hWnd;
+        g_CbtHookProc = lpfnCbtHookProc;
     }
 }
 
@@ -122,6 +131,7 @@ void ComdlgUnhookMessageBox()
     if (g_MessageBoxW)
     {
         ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, g_MessageBoxW, nullptr);
+        g_CbtHookProc = nullptr;
     }
 }
 

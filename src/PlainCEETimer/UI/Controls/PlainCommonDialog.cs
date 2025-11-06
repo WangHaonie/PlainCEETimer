@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -49,6 +50,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     }
 
     private IntPtr Handle;
+    private HOOKPROC CBTHookProc;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
@@ -104,9 +106,10 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private IntPtr WmInitDialog(IntPtr hWnd)
     {
-        Win32UI.ComdlgHookMessageBox();
         Handle = hWnd;
         owner.ReActivate();
+        CBTHookProc = CbtHookProc;
+        Win32UI.ComdlgHookMessageBox(CBTHookProc);
 
         if (dialogTitle != null)
         {
@@ -181,6 +184,43 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         up = true;
         return NativeStyle.ExplorerDark;
+    }
+
+    private IntPtr CbtHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        const int HCBT_CREATEWND = 3;
+
+        if (nCode == HCBT_CREATEWND)
+        {
+            var lpcs = Marshal.ReadIntPtr(lParam);
+
+            if (Win32UI.IsMessageBox(lpcs))
+            {
+                const int CREATESTRUCT_hwndParent = 24;
+                const int CREATESTRUCT_cy = 32;
+                const int CREATESTRUCT_cx = 36;
+                const int CREATESTRUCT_y = 40;
+                const int CREATESTRUCT_x = 44;
+
+                Win32UI.GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT_hwndParent), out var lprc);
+
+                Win32UI.MakeCenter
+                (
+                    new
+                    (
+                        Marshal.ReadInt32(lpcs, CREATESTRUCT_x),
+                        Marshal.ReadInt32(lpcs, CREATESTRUCT_y),
+                        Marshal.ReadInt32(lpcs, CREATESTRUCT_cx),
+                        Marshal.ReadInt32(lpcs, CREATESTRUCT_cy)
+                    ), lprc, out var r
+                );
+
+                Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
+                Marshal.WriteInt32(lpcs, CREATESTRUCT_y, r.Y);
+            }
+        }
+
+        return new(-1);
     }
 
     public sealed override void Reset()

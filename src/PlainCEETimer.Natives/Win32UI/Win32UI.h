@@ -35,6 +35,6 @@ cexport(BOOL) MenuCheckRadioItemByPosition(HMENU hMenu, UINT item);
 cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
 cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
 cexport(void) RemoveWindowExStyles(HWND hWnd, LONG_PTR dwExStyles);
-cexport(void) ComdlgHookMessageBox(HWND hWnd);
+cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);
 cexport(void) ComdlgUnhookMessageBox();
 cexport(BOOL) IsMessageBox(LPCREATESTRUCT lpCreateStruct);
