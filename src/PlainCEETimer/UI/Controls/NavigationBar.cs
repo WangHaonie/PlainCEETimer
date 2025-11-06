@@ -29,6 +29,8 @@ public sealed class NavigationBar : TreeView
 
             Pages = pages;
         }
+
+        SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
     }
 
     /// <summary>

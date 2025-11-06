@@ -71,9 +71,9 @@ public static class ThemeManager
         return GetTheme(oldValue) != GetTheme(newValue);
     }
 
-    public static Color GetAccentColor(IntPtr wParam = default)
+    public unsafe static Color GetAccentColor(IntPtr wParam = default)
     {
-        return Color.FromArgb(wParam != default ? (int)(wParam.ToInt64() & 0xFFFFFFFF) : Win32UI.GetSystemAccentColor());
+        return Color.FromArgb(wParam != default ? (int)(uint)(void*)wParam : Win32UI.GetSystemAccentColor());
     }
 
     /*

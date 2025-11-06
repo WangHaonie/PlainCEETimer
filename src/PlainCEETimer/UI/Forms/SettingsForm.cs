@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class SettingsForm : AppForm
 {
-    protected override AppFormParam Params => AppFormParam.CompositedStyle | AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
+    protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
 
     private bool AllowThemeChanging;
     private bool IsSyncingTime;
