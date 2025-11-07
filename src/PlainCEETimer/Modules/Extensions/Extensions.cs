@@ -88,8 +88,8 @@ public static class Extensions
     public static void Destory(this IDisposable obj)
         => obj?.Dispose();
 
-    public static T[] Copy<T>(this T[] array)
-        => (T[])array.Clone();
+    public static T Copy<T>(this T obj) where T : ICloneable
+        => (T)obj.Clone();
 
     public static void PopulateWith<T>(this T[] destination, T[] source)
     {

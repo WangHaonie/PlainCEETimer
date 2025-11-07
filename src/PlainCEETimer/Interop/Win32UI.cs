@@ -15,21 +15,6 @@ public static class Win32UI
     [DllImport(App.Gdi32Dll)]
     public static extern int SetBkMode(IntPtr hdc, int mode);
 
-    /*
-
-    提取 DLL 里的图标参考:
-
-    How can I use the images within shell32.dll in my C# project? - Stack Overflow
-    https://stackoverflow.com/a/6873026/21094697
-
-    */
-
-    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
-    public static extern int ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON phiconSmall, int nIcons);
-
-    [DllImport(App.User32Dll)]
-    public static extern bool DestroyIcon(IntPtr hIcon);
-
     [DllImport(App.Gdi32Dll)]
     public static extern bool DeleteObject(IntPtr hObject);
 
@@ -59,6 +44,21 @@ public static class Win32UI
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+
+    /*
+
+    提取 DLL 里的图标参考:
+
+    How can I use the images within shell32.dll in my C# project? - Stack Overflow
+    https://stackoverflow.com/a/6873026/21094697
+
+    */
+
+    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
+    public unsafe static extern int ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool DestroyIcon(HICON hIcon);
 
     [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
     public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
@@ -109,13 +109,13 @@ public static class Win32UI
     public static extern string GetClassName(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#34")]
-    public static extern void CommonHookSysColor(COLORREF crFore, COLORREF crBack);
+    public static extern void ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
 
     [DllImport(App.NativesDll, EntryPoint = "#35")]
-    public static extern void CommonUnhookSysColor();
+    public static extern void ComctlUnhookSysColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#36")]
-    public static extern void RemoveWindowExStyles(IntPtr hWnd, long dwExStyles);
+    public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
 
     [DllImport(App.NativesDll, EntryPoint = "#37")]
     public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);

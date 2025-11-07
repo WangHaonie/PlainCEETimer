@@ -29,16 +29,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
                 if (!Handled)
                 {
-                    IntPtr hWnd = Handle;
-
+                    var hWnd = Handle;
                     using var g = Graphics.FromHwnd(hWnd);
                     using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM_GETFONT, 0, 0));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
                     Win32UI.GetClientRect(hWnd, out var rc);
-                    rc.Left += 6;
-                    Rectangle rect = rc;
-                    g.DrawString(Win32UI.GetWindowText(hWnd), font, brush, rect);
+                    g.DrawString(Win32UI.GetWindowText(hWnd), font, brush, rc.Left + 7, rc.Top);
                     Handled = true;
                 }
 
@@ -85,23 +82,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         const int WM_CTLCOLORLISTBOX = 0x0134;
         const int WM_CTLCOLORBTN = 0x0135;
 
-        switch (msg)
+        return msg switch
         {
-            case WM_INITDIALOG:
-                return WmInitDialog(hWnd);
-            case WM_CTLCOLORDLG:
-            case WM_CTLCOLOREDIT:
-            case WM_CTLCOLORSTATIC:
-            case WM_CTLCOLORLISTBOX:
-            case WM_CTLCOLORBTN:
-                return WmCtlColor(wparam);
-            case WM_DESTROY:
-                Win32UI.ComdlgUnhookMessageBox();
-                Win32UI.DeleteObject(hBrush);
-                break;
-        }
-
-        return IntPtr.Zero;
+            WM_INITDIALOG => WmInitDialog(hWnd),
+            WM_CTLCOLORDLG or WM_CTLCOLOREDIT or WM_CTLCOLORSTATIC or WM_CTLCOLORLISTBOX or WM_CTLCOLORBTN => WmCtlColor(wparam),
+            WM_DESTROY => WmDestroy(),
+            _ => IntPtr.Zero,
+        };
     }
 
     private IntPtr WmInitDialog(IntPtr hWnd)
@@ -134,7 +121,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
             if (UseDark && ((hCtrl = Win32UI.GetDlgItem(hWnd, grp2)) != IntPtr.Zero))
             {
-                if (ThemeManager.NewThemeAvailable)
+                if (!ThemeManager.NewThemeAvailable)
                 {
                     ThemeManager.EnableDarkModeForControl(hCtrl, NativeStyle.DarkTheme);
                 }
@@ -163,6 +150,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             return hBrush;
         }
 
+        return IntPtr.Zero;
+    }
+
+    private IntPtr WmDestroy()
+    {
+        Win32UI.ComdlgUnhookMessageBox();
+        Win32UI.DeleteObject(hBrush);
         return IntPtr.Zero;
     }
 

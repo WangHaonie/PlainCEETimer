@@ -41,9 +41,9 @@ EXPORTS
     MenuCheckRadioItemByPosition @31 NONAME
     GetWindowTextEx @32 NONAME
     GetWindowClassName @33 NONAME
-    CommonHookSysColor @34 NONAME
-    CommonUnhookSysColor @35 NONAME
-    RemoveWindowExStyles @36 NONAME
+    ComctlHookSysColor @34 NONAME
+    ComctlUnhookSysColor @35 NONAME
+    RemoveWindowExStyle @36 NONAME
     ComdlgHookMessageBox @37 NONAME
     ComdlgUnhookMessageBox @38 NONAME
     IsMessageBox @39 NONAME

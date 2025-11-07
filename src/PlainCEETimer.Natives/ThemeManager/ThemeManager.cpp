@@ -20,7 +20,6 @@ fnOpenNcThemeData g_OpenNcThemeData = nullptr;
 fnGetSysColor g_GetSysColor = nullptr;
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
-static bool isHookEnabled = false;
 
 /*
 
@@ -94,32 +93,26 @@ void EnableDarkModeForApp()
     }
 }
 
-void CommonHookSysColor(COLORREF crFore, COLORREF crBack)
+void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 {
-    if (!isHookEnabled)
+    if (!g_GetSysColor)
     {
-        if (ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor))
-        {
-            g_crFore = crFore;
-            g_crBack = crBack;
-            isHookEnabled = true;
-        }
+        ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor);
+        g_crFore = crFore;
+        g_crBack = crBack;
     }
 }
 
-void CommonUnhookSysColor()
+void ComctlUnhookSysColor()
 {
-    if (isHookEnabled)
+    if (g_GetSysColor)
     {
-        if (g_GetSysColor)
-        {
-            ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
-        }
-
-        g_crFore = 0;
-        g_crBack = 0;
-        isHookEnabled = false;
+        ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
+        g_GetSysColor = nullptr;
     }
+
+    g_crFore = 0;
+    g_crBack = 0;
 }
 
 /*

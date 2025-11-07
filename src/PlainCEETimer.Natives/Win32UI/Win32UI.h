@@ -23,8 +23,8 @@ cexport(void) EnableDarkModeForApp();
 cexport(void) EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1);
 cexport(void) SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
 cexport(DWORD) GetSystemAccentColor();
-cexport(void) CommonHookSysColor(COLORREF crFore, COLORREF crBack);
-cexport(void) CommonUnhookSysColor();
+cexport(void) ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
+cexport(void) ComctlUnhookSysColor();
 
 // Win32 Control 相关
 
@@ -34,7 +34,7 @@ cexport(BOOL) MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item);
 cexport(BOOL) MenuCheckRadioItemByPosition(HMENU hMenu, UINT item);
 cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
 cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
-cexport(void) RemoveWindowExStyles(HWND hWnd, LONG_PTR dwExStyles);
+cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
 cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);
 cexport(void) ComdlgUnhookMessageBox();
 cexport(BOOL) IsMessageBox(LPCREATESTRUCT lpCreateStruct);

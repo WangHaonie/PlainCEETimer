@@ -49,14 +49,9 @@ public readonly struct LPCUSTCOLORS : IDisposable
         Marshal.Copy(colors, 0, Value, 16);
     }
 
-    public readonly void CopyTo(int[] colors)
+    public readonly void Populate(int[] colors)
     {
         Marshal.Copy(Value, colors, 0, 16);
-    }
-
-    public static implicit operator LPCUSTCOLORS(int[] arr)
-    {
-        return new(arr);
     }
 
     public void Dispose()
@@ -86,15 +81,15 @@ public readonly struct HICON
 
     public Icon ToIcon()
     {
-        var result = (Icon)Icon.FromHandle(Value).Clone();
-        Win32UI.DestroyIcon(Value);
+        var result = Icon.FromHandle(Value).Copy();
+        Win32UI.DestroyIcon(this);
         return result;
     }
 
-    public static Icon ExtractIcon(string file, int index = 0)
+    public unsafe static Icon ExtractIcon(string file, int index = 0)
     {
-        Win32UI.ExtractIconEx(file, index, out var hIcon, default, 1);
-        return hIcon.ToIcon();
+        Win32UI.ExtractIconEx(file, index, out var hi, null, 1);
+        return hi.ToIcon();
     }
 }
 

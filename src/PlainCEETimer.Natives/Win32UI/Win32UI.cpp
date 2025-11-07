@@ -56,9 +56,9 @@ void SetTopMostWindow(HWND hWnd)
     }
 }
 
-void RemoveWindowExStyles(HWND hWnd, LONG_PTR dwExStyles)
+void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 {
-    SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyles);
+    SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyle);
     SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 

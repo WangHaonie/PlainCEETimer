@@ -97,7 +97,7 @@ public class PlainHotKeyControl : Control
     protected override void OnHandleCreated(EventArgs e)
     {
         const int WS_EX_CLIENTEDGE = 0x00000200;
-        Win32UI.RemoveWindowExStyles(Handle, WS_EX_CLIENTEDGE);
+        Win32UI.RemoveWindowExStyle(Handle, WS_EX_CLIENTEDGE);
         SetHotKey(hotkey);
         new ParentFormNativeWindow(this);
         base.OnHandleCreated(e);
@@ -119,9 +119,9 @@ public class PlainHotKeyControl : Control
                     m.Result = new(1);
                     return;
                 case WM_PAINT:
-                    Win32UI.CommonHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
+                    Win32UI.ComctlHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
                     base.WndProc(ref m);
-                    Win32UI.CommonUnhookSysColor();
+                    Win32UI.ComctlUnhookSysColor();
                     return;
                 case WM_DESTROY:
                     Win32UI.DeleteObject(hBrush);
