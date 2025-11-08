@@ -76,7 +76,7 @@ public static class Win32UI
     public static extern void SetRoundCorner(IntPtr hWnd, int width, int height, int radius);
 
     [DllImport(App.NativesDll, EntryPoint = "#23")]
-    public static extern void SetRoundCornerEx(IntPtr hWnd, bool isSmall);
+    public static extern void SetRoundCornerEx(IntPtr hWnd, bool smallCorner);
 
     [DllImport(App.NativesDll, EntryPoint = "#24")]
     public static extern void EnableDarkModeForApp();

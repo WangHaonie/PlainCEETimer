@@ -19,32 +19,15 @@ https://support.cyberfox.com/settings/360048585292-UAC-Levels-Windows-User-Accou
 public static class UacHelper
 {
     public static bool IsAdmin { get; private set; }
+    public static bool IsUacDisabled => Level <= UacNotifyLevel.Disabled;
 
     private static readonly UacNotifyLevel Level;
-    private static readonly bool IsUACDisabled;
     private const string AcExe = "net";
     private const string AcArg = "session";
 
     static UacHelper()
     {
         Level = GetNotifyLevel();
-        IsUACDisabled = Level <= UacNotifyLevel.Never;
-    }
-
-    public static bool EnsureUAC(AppMessageBox mx)
-    {
-        if (!IsAdmin)
-        {
-            mx.Warn("检测到当前用户不具有管理员权限，将尝试自动提权。\n\n若弹出 UAC 对话框，请点击 是。");
-
-            if (IsUACDisabled)
-            {
-                mx.Error("授权失败! 当前系统已禁用 UAC。");
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public static void PopupReport()
@@ -56,7 +39,7 @@ public static class UacHelper
             检测结果:
                                 
             当前系统
-                UAC 状态: {GetUacDescription()}
+                UAC 状态: {Level} ({(int)Level}/4)
                 用户名: {Win32User.LogonUser}
                 管理员权限: {GetUserAdmin(true)}
 
@@ -77,28 +60,23 @@ public static class UacHelper
 
         return (reg.Get("EnableLUA", 0), reg.Get("ConsentPromptBehaviorAdmin", 0), reg.Get("PromptOnSecureDesktop", 0)) switch
         {
-            (1, 2, 1) => UacNotifyLevel.AlwaysDimming,
-            (1, 5, 1) => UacNotifyLevel.AppsOnlyDimming,
-            (1, 5, 0) => UacNotifyLevel.AppsOnlyNoDimming,
-            (1 or 0, 0, 0) => UacNotifyLevel.Never,
+            (1, 2, 1) => UacNotifyLevel.AlwaysDimmed,
+            (1, 5, 1) => UacNotifyLevel.AppsOnlyDimmed,
+            (1, 5, 0) => UacNotifyLevel.AppsOnlyNoDimmed,
+            (1, 0, 0) => UacNotifyLevel.NeverNotify,
             (0, _, _) => UacNotifyLevel.Disabled,
             _ => UacNotifyLevel.Unknown
         };
     }
 
-    private static string GetUacDescription()
-    {
-        return $"{Level} ({(int)Level}) ({(IsUACDisabled ? "异常" : "正常")})";
-    }
-
     private static string GetUserAdmin(bool logon)
     {
-        if (!logon || Win32User.NotImpersonalOrElevated)
+        if (!logon)
         {
             return IsAdmin ? "有" : "无";
         }
 
-        if (ProcessHelper.RunAsLogonUser(AcExe, AcArg, out int code))
+        if (ProcessHelper.RunAsLogonUser(AcExe, AcArg, out var code))
         {
             return code == 0 ? "有" : "无";
         }

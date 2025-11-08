@@ -83,7 +83,7 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         }
     }
 
-    DWORD exitCode = 0;
+    DWORD exitCode = -1;
 
     if (result)
     {

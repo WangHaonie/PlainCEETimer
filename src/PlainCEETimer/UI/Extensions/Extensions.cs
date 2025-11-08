@@ -22,7 +22,7 @@ public static class Extensions
         return control;
     }
 
-    public static TControl Tag<TControl>(this TControl control, object data)
+    public static TControl Tag<TControl, TData>(this TControl control, TData data)
         where TControl : Control
     {
         control.Tag = data;

@@ -81,77 +81,72 @@ public sealed class ConsoleWindow : AppDialog
     {
         tbp = new(Handle);
 
-        if (UacHelper.EnsureUAC(MessageX))
+        tbp.SetState(ProgressStyle.Indeterminate);
+        ConsoleTimer_Tick(null, null);
+        ConsoleTimer.Start();
+
+        if (UacHelper.IsAdmin)
         {
-            tbp.SetState(ProgressStyle.Indeterminate);
-            ConsoleTimer_Tick(null, null);
-            ConsoleTimer.Start();
-
-            if (UacHelper.IsAdmin)
+            new Action(() =>
             {
-                new Action(() =>
+                try
                 {
-                    try
+                    ProcessHelper.Run(ExePath, ExeArgs, (proc, _) =>
                     {
-                        ProcessHelper.Run(ExePath, ExeArgs, (proc, _) =>
-                        {
-                            SafeWrite(ProcessHelper.GetExitMessage(proc));
-                        }, (_, e) => SafeWrite(e.Data));
-                    }
-                    catch (Exception ex)
-                    {
-                        SafeWrite(ProcessHelper.GetExceptionMessage(ex));
-                    }
-                    finally
-                    {
-                        Final();
-                    }
-                }).Start();
-            }
-            else
-            {
-                ElevateNeeded = true;
-
-                new Action(() =>
+                        SafeWrite(ProcessHelper.GetExitMessage(proc));
+                    }, (_, e) => SafeWrite(e.Data));
+                }
+                catch (Exception ex)
                 {
-                    using var server = new NamedPipeServerStream(Key, PipeDirection.In, 1, PipeTransmissionMode.Message);
-                    using var reader = new StreamReader(server);
-                    server.WaitForConnection();
-                    string line;
-
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line == "```3")
-                        {
-                            Final();
-                            break;
-                        }
-                        else
-                        {
-                            SafeWrite(line);
-                        }
-                    }
-                }).Start();
-
-                new Action(() =>
+                    SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                }
+                finally
                 {
-                    try
-                    {
-                        ElevatedProc = ProcessHelper.RunElevated(App.ExecutablePath, "/run " + Key + " " + ExePath + " " + ExeArgs);
-                    }
-                    catch (Exception ex)
-                    {
-                        SafeWrite(ProcessHelper.GetExceptionMessage(ex));
-                        Final();
-                    }
-                }).Start();
-            }
+                    Final();
+                }
+            }).Start();
         }
         else
         {
-            Final();
-            Close();
+            MessageX.Warn("检测到当前用户不具有管理员权限，将尝试自动提权。\n\n若弹出 UAC 对话框，请点击 是。" + (UacHelper.IsUacDisabled ? "\n(当前系统貌似已禁用 UAC，可能会导致提权失败)" : ""));
+            ElevateNeeded = true;
+
+            new Action(() =>
+            {
+                using var server = new NamedPipeServerStream(Key, PipeDirection.In, 1, PipeTransmissionMode.Message);
+                using var reader = new StreamReader(server);
+                server.WaitForConnection();
+                string line;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line == "```3")
+                    {
+                        Final();
+                        break;
+                    }
+                    else
+                    {
+                        SafeWrite(line);
+                    }
+                }
+            }).Start();
+
+            new Action(() =>
+            {
+                try
+                {
+                    ElevatedProc = ProcessHelper.RunElevated(App.ExecutablePath, "/run " + Key + " " + ExePath + " " + ExeArgs);
+                }
+                catch (Exception ex)
+                {
+                    SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                    Final();
+                }
+            }).Start();
         }
+
+        Final();
     }
 
     protected override bool OnClosing(CloseReason closeReason)

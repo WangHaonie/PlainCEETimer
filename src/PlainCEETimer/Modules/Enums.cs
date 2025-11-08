@@ -21,10 +21,10 @@ public enum UacNotifyLevel
 {
     Unknown = -1,
     Disabled = 0,
-    Never = 0,
-    AppsOnlyNoDimming = 1,
-    AppsOnlyDimming = 2,
-    AlwaysDimming = 3,
+    NeverNotify = 1,
+    AppsOnlyNoDimmed = 2,
+    AppsOnlyDimmed = 3,
+    AlwaysDimmed = 4,
 }
 
 public enum SpecialFolder
