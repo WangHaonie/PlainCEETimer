@@ -86,10 +86,10 @@ public readonly struct HICON
         return result;
     }
 
-    public unsafe static Icon ExtractIcon(string file, int index = 0)
+    public unsafe static HICON FromFile(string file, int index = 0)
     {
         Win32UI.ExtractIconEx(file, index, out var hi, null, 1);
-        return hi.ToIcon();
+        return hi;
     }
 }
 

@@ -2,8 +2,7 @@
 #include "Win32UI.h"
 #include "Utils.h"
 #include "ThemeManager/IATHook.h"
-#include <CommCtrl.h>
-#include <Uxtheme.h>
+#include <Windows.h>
 
 using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
 
@@ -135,7 +134,7 @@ void ComdlgUnhookMessageBox()
     }
 }
 
-BOOL IsMessageBox(LPCREATESTRUCT lpCreateStruct)
+BOOL IsDialog(LPCREATESTRUCT lpCreateStruct)
 {
     auto style = WS_POPUP | WS_CAPTION | DS_3DLOOK | DS_MODALFRAME;
     auto ex = WS_EX_DLGMODALFRAME;

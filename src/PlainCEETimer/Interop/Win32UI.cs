@@ -124,7 +124,7 @@ public static class Win32UI
     public static extern void ComdlgUnhookMessageBox();
 
     [DllImport(App.NativesDll, EntryPoint = "#39")]
-    public static extern bool IsMessageBox(IntPtr lpCreateStruct);
+    public static extern bool IsDialog(IntPtr lpCreateStruct);
 
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {

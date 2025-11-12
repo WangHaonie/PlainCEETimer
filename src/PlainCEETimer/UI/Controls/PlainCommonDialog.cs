@@ -188,7 +188,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         {
             var lpcs = Marshal.ReadIntPtr(lParam);
 
-            if (Win32UI.IsMessageBox(lpcs))
+            if (Win32UI.IsDialog(lpcs))
             {
                 const int CREATESTRUCT_hwndParent = 24;
                 const int CREATESTRUCT_cy = 32;

@@ -50,7 +50,7 @@ inline LPWSTR __stdcall CoTaskStrAllocW(SIZE_T strLength, SIZE_T* bytesAllocated
     return ptr;
 }
 
-inline LPWSTR __stdcall CoTaskStrCopyW(LPCWSTR str)
+inline LPWSTR __stdcall CoTaskStrDupW(LPCWSTR str)
 {
     SIZE_T size = 0;
     LPWSTR ptr = CoTaskStrAllocW(wcslen(str) + 1, &size);

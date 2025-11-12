@@ -46,4 +46,4 @@ EXPORTS
     RemoveWindowExStyle @36 NONAME
     ComdlgHookMessageBox @37 NONAME
     ComdlgUnhookMessageBox @38 NONAME
-    IsMessageBox @39 NONAME
+    IsDialog @39 NONAME

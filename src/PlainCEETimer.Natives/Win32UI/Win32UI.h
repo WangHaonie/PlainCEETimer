@@ -37,4 +37,4 @@ cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
 cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
 cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);
 cexport(void) ComdlgUnhookMessageBox();
-cexport(BOOL) IsMessageBox(LPCREATESTRUCT lpCreateStruct);
+cexport(BOOL) IsDialog(LPCREATESTRUCT lpCreateStruct);
