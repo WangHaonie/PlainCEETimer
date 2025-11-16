@@ -120,7 +120,7 @@ public sealed class DownloaderForm : AppForm
         await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
     }
 
-    private void UpdateDownloader_Downloading(DownloadReport report)
+    private void UpdateDownloader_Downloading(object sender, ref DownloadReport report)
     {
         UpdateLabels(null, $"已下载/总共: {report.Downloaded} KB / {report.Total} KB", $"下载速度: {report.Speed:0.00} KB/s");
         ProgressBarMain.Value = report.Progress;

@@ -9,7 +9,7 @@ namespace PlainCEETimer.Modules.Http;
 
 public class Downloader
 {
-    public event Action<DownloadReport> Downloading;
+    public event DownloadingEventHandler Downloading;
     public event Action<Exception> Error;
     public event Action Completed;
 
@@ -48,7 +48,7 @@ public class Downloader
                 report.Speed = (downloaded - last) / (elapsed - lastReport).TotalSeconds / 1024D;
                 last = downloaded;
                 lastReport = elapsed;
-                Downloading?.Invoke(report);
+                Downloading?.Invoke(this, ref report);
 
                 if (token.IsCancellationRequested)
                 {
@@ -61,7 +61,7 @@ public class Downloader
 
             report.Progress = 100;
             report.Speed = 0;
-            Downloading?.Invoke(report);
+            Downloading?.Invoke(this, ref report);
             Completed?.Invoke();
         }
         catch (Exception ex)

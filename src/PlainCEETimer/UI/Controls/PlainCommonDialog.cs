@@ -121,7 +121,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
             if (UseDark && ((hCtrl = Win32UI.GetDlgItem(hWnd, grp2)) != IntPtr.Zero))
             {
-                if (!ThemeManager.NewThemeAvailable)
+                if (ThemeManager.NewThemeAvailable)
                 {
                     ThemeManager.EnableDarkModeForControl(hCtrl, NativeStyle.DarkTheme);
                 }

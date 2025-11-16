@@ -141,7 +141,21 @@ public sealed class SettingsForm : AppForm
                             SettingsChanged();
                         }),
 
-                        ComboBoxAutoSwitchInterval = b.ComboBox(86, SettingsChanged, "10 秒", "15 秒", "30 秒", "45 秒", "1 分钟", "2 分钟", "3 分钟", "5 分钟", "10 分钟", "15 分钟", "30 分钟", "45 分钟", "1 小时").Disable()
+                        ComboBoxAutoSwitchInterval = b.ComboBox(86, SettingsChanged,
+                            "10 秒",
+                            "15 秒",
+                            "30 秒",
+                            "45 秒",
+                            "1 分钟",
+                            "2 分钟",
+                            "3 分钟",
+                            "5 分钟",
+                            "10 分钟",
+                            "15 分钟",
+                            "30 分钟",
+                            "45 分钟",
+                            "1 小时"
+                        ).Disable()
                     ]),
 
                     GBoxTheme = b.GroupBox("应用主题设定",
@@ -214,8 +228,21 @@ public sealed class SettingsForm : AppForm
                     GBoxContent = b.GroupBox("倒计时内容",
                     [
                         LabelCountdownEnd = b.Label("当考试开始后, 显示"),
-                        ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, "<程序欢迎信息>", "考试还有多久结束", "考试还有多久结束 和 已过去了多久"),
-                        ComboBoxShowXOnly = b.ComboBox(130, SettingsChanged, "总天数", "总天数 (一位小数)", "总天数 (向上取整)", "总小时", "总小时 (一位小数)", "总分钟", "总秒数").Disable(),
+                        ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged,
+                            "<程序欢迎信息>",
+                            "考试还有多久结束",
+                            "考试还有多久结束 和 已过去了多久"
+                        ),
+
+                        ComboBoxShowXOnly = b.ComboBox(130, SettingsChanged,
+                            "总天数",
+                            "总天数 (一位小数)",
+                            "总天数 (向上取整)",
+                            "总小时",
+                            "总小时 (一位小数)",
+                            "总分钟",
+                            "总秒数"
+                        ).Disable(),
 
                         CheckBoxShowXOnly = b.CheckBox("时间间隔格式只显示", (sender, _) =>
                         {
@@ -248,7 +275,18 @@ public sealed class SettingsForm : AppForm
                         LabelScreens = b.Label("固定在屏幕"),
                         ComboBoxScreens = b.ComboBox(107, SettingsChanged, DisplayHelper.GetSystemDisplays()),
                         LabelPosition = b.Label("位置"),
-                        ComboBoxPosition = b.ComboBox(84, (_, _ ) => UpdateOptionsForPptsvc(), "左上角", "左侧居中", "左下角", "顶部居中", "屏幕中心", "底部居中", "右上角", "右侧居中", "右下角"),
+
+                        ComboBoxPosition = b.ComboBox(84, (_, _ ) => UpdateOptionsForPptsvc(),
+                            "左上角",
+                            "左侧居中",
+                            "左下角",
+                            "顶部居中",
+                            "屏幕中心",
+                            "底部居中",
+                            "右上角",
+                            "右侧居中",
+                            "右下角"
+                        ),
 
                         CheckBoxDraggable = b.CheckBox("允许拖动倒计时窗口(&D)", (_, _) =>
                         {
@@ -338,7 +376,12 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelSyncTime = b.Label("将尝试自动启动 Windows Time 服务, 并设置默认 NTP 服务器然后与之同步。"),
 
-                        ComboBoxNtpServers = b.ComboBox(130, SettingsChanged, "time.windows.com", "ntp.aliyun.com", "ntp.tencent.com", "time.cloudflare.com"),
+                        ComboBoxNtpServers = b.ComboBox(130, SettingsChanged,
+                            "time.windows.com",
+                            "ntp.aliyun.com",
+                            "ntp.tencent.com",
+                            "time.cloudflare.com"
+                        ),
 
                         ButtonSyncTime = b.Button("立即同步(&Y)", true, (_, _) =>
                         {
@@ -387,7 +430,12 @@ public sealed class SettingsForm : AppForm
                         {
                             BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
                             SettingsChanged();
-                        }, "自定义", "跟随文字颜色", "跟随背景颜色", "跟随系统主题色").Disable(),
+                        },
+                            "自定义",
+                            "跟随文字颜色",
+                            "跟随背景颜色",
+                            "跟随系统主题色"
+                        ).Disable(),
 
                         BlockBorderColor = b.Block(true, BlockPreviewColor1, SettingsChanged).Disable()
                     ])
