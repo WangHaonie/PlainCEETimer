@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
@@ -24,6 +25,6 @@ public sealed class FontFormatConverter : JsonConverter<Font>
 
     public override void WriteJson(JsonWriter writer, Font value, JsonSerializer serializer)
     {
-        writer.WriteValue($"{value.Name}, {value.Size}pt, {value.Style}");
+        writer.WriteValue(value.Format());
     }
 }

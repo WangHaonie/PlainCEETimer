@@ -473,7 +473,7 @@ public sealed class MainForm : AppForm
     private void ChangeCountdownFont(Font newFont)
     {
         CountdownFont = newFont;
-        FontNameMenuItem.Text = $"{newFont.Name}, {newFont.Size}pt, {newFont.Style}".Truncate(35);
+        FontNameMenuItem.Text = newFont.Format().Truncate(35);
 
         if (!Validator.ValidateNeeded)
         {
