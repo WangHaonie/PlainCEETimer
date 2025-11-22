@@ -26,7 +26,6 @@ public sealed class MainForm : AppForm
     private int CountdownMaxWidth;
     private int ExamIndex;
     private int ScreenIndex;
-    private int FieldValue;
     private bool IsDraggable;
     private bool IsPPTService;
     private bool IsReadyToMove;
@@ -223,7 +222,6 @@ public sealed class MainForm : AppForm
         IsPPTService = Display.SeewoPptsvc;
         ScreenIndex = Display.ScreenIndex;
         CountdownPos = Display.Position;
-        FieldValue = Display.X;
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
 
@@ -321,28 +319,17 @@ public sealed class MainForm : AppForm
             };
         }
 
-        var options = CountdownOption.None;
         var endIndex = Display.EndIndex;
         var mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
-
-        if (Display.CustomText)
-        {
-            options |= CountdownOption.UseCustomText;
-        }
-
-        if (General.AutoSwitch)
-        {
-            options |= CountdownOption.EnableAutoSwitch;
-        }
 
         MainCountdown.Start(new()
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
             GlobalRules = AppConfig.GlobalRules ??= DefaultValues.GlobalDefaultRules,
-            Options = options,
+            AutoSwitch = General.AutoSwitch,
             Mode = mode,
-            Field = Display.ShowXOnly ? (CountdownField)(FieldValue + 1) : CountdownField.Normal,
+            Format = Display.Format,
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
         });

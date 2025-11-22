@@ -1,14 +1,4 @@
-﻿using System;
-
-namespace PlainCEETimer.Countdown;
-
-[Flags]
-public enum CountdownOption
-{
-    None,
-    UseCustomText,
-    EnableAutoSwitch
-}
+﻿namespace PlainCEETimer.Countdown;
 
 /// <summary>
 /// 表示倒计时要显示哪些阶段
@@ -31,7 +21,7 @@ public enum CountdownMode
     Mode3 = Mode2 | 0b100
 }
 
-public enum CountdownField
+public enum CountdownFormat
 {
     Normal,
     DaysOnly,
@@ -40,5 +30,6 @@ public enum CountdownField
     HoursOnly,
     HoursOnlyOneDecimal,
     MinutesOnly,
-    SecondsOnly
+    SecondsOnly,
+    Custom
 }

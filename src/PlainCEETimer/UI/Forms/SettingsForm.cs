@@ -27,7 +27,6 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxNtpServers;
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
-    private PlainComboBox ComboBoxShowXOnly;
     private PlainLabel LabelCountdownEnd;
     private PlainLabel LabelExamInfo;
     private PlainLabel LabelOpacity;
@@ -51,8 +50,6 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxDraggable;
     private PlainCheckBox CheckBoxMemClean;
     private PlainCheckBox CheckBoxPptSvc;
-    private PlainCheckBox CheckBoxRulesMan;
-    private PlainCheckBox CheckBoxShowXOnly;
     private PlainCheckBox CheckBoxStartup;
     private PlainCheckBox CheckBoxTopMost;
     private PlainCheckBox CheckBoxTrayIcon;
@@ -76,6 +73,9 @@ public sealed class SettingsForm : AppForm
     private Exam[] EditedExamInfo;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly AppConfig AppConfig = App.AppConfig;
+
+    private PlainLabel LabelCountdownFormat;
+    private PlainComboBox ComboBoxCountdownFormat;
 
     protected override void OnInitializing()
     {
@@ -199,29 +199,32 @@ public sealed class SettingsForm : AppForm
                     GBoxContent = b.GroupBox("倒计时内容",
                     [
                         LabelCountdownEnd = b.Label("当考试开始后, 显示"),
+
                         ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged,
                             "<程序欢迎信息>",
                             "考试还有多久结束",
                             "考试还有多久结束 和 已过去了多久"
                         ),
 
-                        ComboBoxShowXOnly = b.ComboBox(130, SettingsChanged,
-                            "总天数",
-                            "总天数 (一位小数)",
-                            "总天数 (向上取整)",
-                            "总小时",
-                            "总小时 (一位小数)",
-                            "总分钟",
-                            "总秒数"
-                        ).Disable(),
+                        LabelCountdownFormat = b.Label("倒计时内容格式"),
 
-                        CheckBoxShowXOnly = b.CheckBox("时间间隔格式只显示", (sender, _) =>
+                        ComboBoxCountdownFormat = b.ComboBox(119, (_, _) =>
                         {
-                            ComboBoxShowXOnly.Enabled = CheckBoxShowXOnly.Checked;
-                            ChangeCustomTextStyle(sender);
-                        }),
+                            ButtonRulesMan.Enabled = ComboBoxCountdownFormat.SelectedIndex == 8;
+                            SettingsChanged();
+                        },
+                            "默认",
+                            "仅总天数",
+                            "仅总天数 (一位小数)",
+                            "仅总天数 (向上取整)",
+                            "仅总小时",
+                            "仅总小时 (一位小数)",
+                            "仅总分钟",
+                            "仅总秒数",
+                            "自定义"
+                        ),
 
-                        ButtonRulesMan = b.Button("规则管理器(&R)", true, (_, _) =>
+                        ButtonRulesMan = b.Button("管理规则(&R)", true, (_, _) =>
                         {
                             var dialog = new RulesManager()
                             {
@@ -235,9 +238,7 @@ public sealed class SettingsForm : AppForm
                                 EditedGlobalRules = dialog.GlobalRules;
                                 SettingsChanged();
                             }
-                        }).Disable(),
-
-                        CheckBoxRulesMan = b.CheckBox("自定义不同时刻的颜色和内容:", (sender, _) => ChangeCustomTextStyle(sender))
+                        }).Disable()
                     ]),
 
                     GBoxDraggable = b.GroupBox("多显示器与拖动",
@@ -388,7 +389,7 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
 
-        GroupBoxArrageFirstControl(CheckBoxStartup, 3, 2);
+        GroupBoxArrageFirstControl(CheckBoxStartup, 4, 2);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
         ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
         ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
@@ -401,14 +402,12 @@ public sealed class SettingsForm : AppForm
         GroupBoxArrageFirstControl(LabelCountdownEnd);
         CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
         CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
-        CompactControlY(ComboBoxShowXOnly, ComboBoxCountdownEnd, 3);
-        AlignControlXL(CheckBoxShowXOnly, LabelCountdownEnd, 3);
-        CenterControlY(CheckBoxShowXOnly, ComboBoxShowXOnly, 1);
-        CompactControlX(ComboBoxShowXOnly, CheckBoxShowXOnly, -2);
-        CompactControlY(ButtonRulesMan, ComboBoxShowXOnly, 3);
-        CenterControlY(CheckBoxRulesMan, ButtonRulesMan, 1);
-        AlignControlXL(CheckBoxRulesMan, CheckBoxShowXOnly);
-        CompactControlX(ButtonRulesMan, CheckBoxRulesMan, 3);
+        ArrangeControlYL(LabelCountdownFormat, LabelCountdownEnd);
+        ArrangeControlXT(ComboBoxCountdownFormat, LabelCountdownFormat);
+        CompactControlY(ComboBoxCountdownFormat, ComboBoxCountdownEnd, 5);
+        CenterControlY(LabelCountdownFormat, ComboBoxCountdownFormat);
+        ArrangeControlXT(ButtonRulesMan, ComboBoxCountdownFormat, 5);
+        CenterControlY(ButtonRulesMan, ComboBoxCountdownFormat);
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 6);
 
         ArrangeControlYL(GBoxDraggable, GBoxContent, 0, 2);
@@ -420,7 +419,7 @@ public sealed class SettingsForm : AppForm
         ArrangeControlXRT(LabelPosition, ComboBoxScreens, LabelScreens);
         ArrangeControlXRT(ComboBoxPosition, LabelPosition, ComboBoxScreens);
         CompactControlY(CheckBoxDraggable, ComboBoxScreens, 3);
-        AlignControlXL(CheckBoxDraggable, CheckBoxShowXOnly);
+        AlignControlXL(CheckBoxDraggable, LabelScreens, 4);
         GroupBoxAutoAdjustHeight(GBoxDraggable, CheckBoxDraggable, 3);
 
         ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
@@ -428,7 +427,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxArrageFirstControl(LabelPptsvc);
         SetLabelAutoWrap(LabelPptsvc);
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
-        AlignControlXL(CheckBoxPptSvc, CheckBoxDraggable);
+        AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
@@ -440,7 +439,7 @@ public sealed class SettingsForm : AppForm
 
         if (SystemVersion.IsWindows11)
         {
-            ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 3);
+            ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
             ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
             CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
             CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
@@ -458,8 +457,8 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(GBoxSyncTime, GBoxMainForm, 0, 2);
         GroupBoxArrageFirstControl(LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime);
-        ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, isHighDpi ? 3 : 2, 3);
-        ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 3);
+        ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
+        ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 5);
         GroupBoxAutoAdjustHeight(GBoxSyncTime, ComboBoxNtpServers, 6);
 
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
@@ -517,14 +516,12 @@ public sealed class SettingsForm : AppForm
         CheckBoxTopMost.Checked = AppConfig.General.TopMost;
         CheckBoxMemClean.Checked = AppConfig.General.MemClean;
         CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
-        CheckBoxShowXOnly.Checked = AppConfig.Display.ShowXOnly;
-        CheckBoxRulesMan.Checked = AppConfig.Display.CustomText;
         ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
+        ComboBoxCountdownFormat.SelectedIndex = (int)AppConfig.Display.Format;
         CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
         CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
         ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
         ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
-        ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
         UpdateOptionsForPptsvc();
         ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
         EditedCustomRules = AppConfig.CustomRules;
@@ -553,24 +550,6 @@ public sealed class SettingsForm : AppForm
         RadioButtonThemeLight.Checked = value == 1;
         RadioButtonThemeDark.Checked = value == 2 && ThemeManager.IsDarkModeSupported;
         SelectedTheme = value;
-    }
-
-    private void ChangeCustomTextStyle(object sender)
-    {
-        var cb = (CheckBox)sender;
-
-        if (cb == CheckBoxShowXOnly)
-        {
-            CheckBoxRulesMan.Enabled = !cb.Checked;
-            ButtonRulesMan.Enabled = false;
-        }
-        else
-        {
-            ButtonRulesMan.Enabled = cb.Checked;
-            CheckBoxShowXOnly.Enabled = !cb.Checked;
-        }
-
-        SettingsChanged();
     }
 
     private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
@@ -668,10 +647,8 @@ public sealed class SettingsForm : AppForm
         g.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
         var d = a.Display;
-        d.ShowXOnly = CheckBoxShowXOnly.Checked;
-        d.X = ComboBoxShowXOnly.SelectedIndex;
         d.EndIndex = ComboBoxCountdownEnd.SelectedIndex;
-        d.CustomText = CheckBoxRulesMan.Checked;
+        d.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;
         d.ScreenIndex = ComboBoxScreens.SelectedIndex;
         d.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
         d.Draggable = CheckBoxDraggable.Checked;

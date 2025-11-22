@@ -6,11 +6,11 @@ public sealed class CountdownStartInfo
 
     public int ExamIndex { get; set; }
 
-    public CountdownOption Options { get; set; }
+    public bool AutoSwitch { get; set; }
 
     public CountdownMode Mode { get; set; }
 
-    public CountdownField Field { get; set; }
+    public CountdownFormat Format { get; set; }
 
     public Exam[] Exams { get; set; }
 

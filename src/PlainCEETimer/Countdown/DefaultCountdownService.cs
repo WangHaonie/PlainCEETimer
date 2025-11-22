@@ -25,8 +25,7 @@ public class DefaultCountdownService : ICountdownService
     private bool CanUseRules;
     private bool CanUpdateRules;
     private CountdownMode Mode;
-    private CountdownField SelectedField;
-    private CountdownOption Options;
+    private CountdownFormat SelectedField;
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
@@ -41,7 +40,7 @@ public class DefaultCountdownService : ICountdownService
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
-    private static readonly ColorPair DefaultColors = ThemeManager.ShouldUseDarkMode ? new(Color.Black, Color.White) : new(Color.White, Color.Black);
+    private static readonly ColorPair DefaultColors = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
 
     public DefaultCountdownService()
     {
@@ -89,11 +88,10 @@ public class DefaultCountdownService : ICountdownService
     {
         AutoSwitchInterval = value.AutoSwitchInterval;
         ExamIndex = value.ExamIndex;
-        Options = value.Options;
-        CanUseCustomText = CheckOptions(CountdownOption.UseCustomText);
-        EnableAutoSwitch = CheckOptions(CountdownOption.EnableAutoSwitch);
+        EnableAutoSwitch = value.AutoSwitch;
         Mode = value.Mode;
-        SelectedField = value.Field;
+        SelectedField = value.Format;
+        CanUseCustomText = SelectedField == CountdownFormat.Custom;
         GlobalRules = value.GlobalRules;
         Exams = value.Exams;
         ExamsLength = Exams.Length;
@@ -128,11 +126,6 @@ public class DefaultCountdownService : ICountdownService
         {
             AutoSwitchTimer = new(AutoSwitchCallback, null, IsRunning ? AutoSwitchInterval : 5000, AutoSwitchInterval);
         }
-    }
-
-    private bool CheckOptions(CountdownOption option)
-    {
-        return (Options & option) == option;
     }
 
     private void UpdateExams()
@@ -268,13 +261,13 @@ public class DefaultCountdownService : ICountdownService
 
     private string GetDefaultText() => SelectedField switch
     {
-        CountdownField.DaysOnly => "距离{x}{ht}{d}天",
-        CountdownField.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
-        CountdownField.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
-        CountdownField.HoursOnly => "距离{x}{ht}{th}小时",
-        CountdownField.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
-        CountdownField.MinutesOnly => "距离{x}{ht}{tm}分钟",
-        CountdownField.SecondsOnly => "距离{x}{ht}{ts}秒",
+        CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
+        CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
+        CountdownFormat.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
+        CountdownFormat.HoursOnly => "距离{x}{ht}{th}小时",
+        CountdownFormat.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
+        CountdownFormat.MinutesOnly => "距离{x}{ht}{tm}分钟",
+        CountdownFormat.SecondsOnly => "距离{x}{ht}{ts}秒",
         _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
     };
 
