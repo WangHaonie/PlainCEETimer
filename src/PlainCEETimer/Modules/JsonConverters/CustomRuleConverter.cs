@@ -20,11 +20,17 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRule>
             throw Validator.InvalidTampering(ConfigField.CustomRulePhase);
         }
 
-        var tick = TimeSpan.FromSeconds(json[nameof(existingValue.Tick)].ToObject<double>(serializer));
+        var tick = default(TimeSpan);
+        var is0tickAllowed = reader.Path.StartsWith(nameof(AppConfig.GlobalRules));
 
-        if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
+        if (!is0tickAllowed)
         {
-            throw Validator.InvalidTampering(ConfigField.CustomRuleTick);
+            tick = TimeSpan.FromSeconds(json[nameof(existingValue.Tick)].ToObject<double>(serializer));
+
+            if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
+            {
+                throw Validator.InvalidTampering(ConfigField.CustomRuleTick);
+            }
         }
 
         var fore = Validator.GetColorFromInt32(json[nameof(ColorPair.Fore)].ToObject<int>(serializer));
@@ -43,19 +49,26 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRule>
             Phase = (CountdownPhase)phaseInt,
             Tick = tick,
             Text = text,
-            Colors = new(fore, back)
+            Colors = new(fore, back),
+            IsDefault = is0tickAllowed
         };
     }
 
     public override void WriteJson(JsonWriter writer, CustomRule value, JsonSerializer serializer)
     {
-        new JObject()
+        var jo = new JObject
         {
-            { nameof(value.Phase), (int)value.Phase },
-            { nameof(value.Tick), (long)value.Tick.TotalSeconds },
-            { nameof(value.Colors.Fore), value.Colors.Fore.ToInt32() },
-            { nameof(value.Colors.Back), value.Colors.Back.ToInt32() },
-            { nameof(value.Text), value.Text }
-        }.WriteTo(writer);
+            { nameof(value.Phase), (int)value.Phase }
+        };
+
+        if (!value.IsDefault)
+        {
+            jo.Add(nameof(value.Tick), (long)value.Tick.TotalSeconds);
+        }
+
+        jo.Add(nameof(value.Colors.Fore), value.Colors.Fore.ToInt32());
+        jo.Add(nameof(value.Colors.Back), value.Colors.Back.ToInt32());
+        jo.Add(nameof(value.Text), value.Text);
+        jo.WriteTo(writer);
     }
 }

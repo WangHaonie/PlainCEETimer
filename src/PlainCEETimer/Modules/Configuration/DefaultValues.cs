@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
-using System.IO;
 using System.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -11,44 +11,43 @@ public static class DefaultValues
 {
     public static int[] ColorDialogColors => field ??= [.. Enumerable.Repeat(COLORREF.EmptyValue, 16)];
 
-    public static string[] GlobalDefaultCustomTexts => field ??= [Ph.P1, Ph.P2, Ph.P3];
-
-    public static ColorPair[] CountdownDefaultColors
+    public static CustomRule[] GlobalDefaultRules
     {
         get
         {
             if (field == null)
             {
-                var theme = ThemeManager.CurrentTheme;
-                var dark = false;
+                var flag = ThemeManager.ShouldUseDarkMode;
 
-                if (!File.Exists(App.ConfigFilePath) && theme != SystemTheme.None)
-                {
-                    dark = theme == SystemTheme.Dark;
-                }
-
-                field = dark ? CountdownDefaultColorsDark : CountdownDefaultColorsLight;
+                field =
+                [
+                    new()
+                    {
+                        IsDefault = true,
+                        Phase = CountdownPhase.P1,
+                        Colors = flag ? new(Color.Red, Color.Black) : new(Color.Red, Color.White),
+                        Text = Ph.P1
+                    },
+                    new()
+                    {
+                        IsDefault = true,
+                        Phase = CountdownPhase.P2,
+                        Colors = flag ? new(Color.Lime, Color.Black) : new(Color.Green, Color.White),
+                        Text = Ph.P2
+                    },
+                    new()
+                    {
+                        IsDefault = true,
+                        Phase = CountdownPhase.P3,
+                        Colors = flag ? new(Color.Aqua, Color.Black) : new(Color.Blue, Color.White),
+                        Text = Ph.P3
+                    }
+                ];
             }
 
-            return field;
+            return field.Copy();
         }
     }
-
-    public static ColorPair[] CountdownDefaultColorsDark => field ??=
-    [
-        new(Color.Red, Color.Black),
-        new(Color.Lime, Color.Black),
-        new(Color.Aqua, Color.Black),
-        new(Color.White, Color.Black)
-    ];
-
-    public static ColorPair[] CountdownDefaultColorsLight => field ??=
-    [
-        new(Color.Red, Color.White),
-        new(Color.Green, Color.White),
-        new(Color.Blue, Color.White),
-        new(Color.Black, Color.White)
-    ];
 
     public static Font CountdownDefaultFont
     {

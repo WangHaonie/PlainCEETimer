@@ -98,4 +98,7 @@ public static class Extensions
             Array.Copy(source, destination, Math.Min(source.Length, destination.Length));
         }
     }
+
+    public static bool IsNullOrEmpty<T>(this T[] arr)
+        => arr == null || arr.Length == 0;
 }

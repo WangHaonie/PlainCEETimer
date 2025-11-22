@@ -196,9 +196,6 @@
     <Compile Include="UI\Dialogs\ConsoleWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\CustomTextDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\Dialogs\ExamInfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>

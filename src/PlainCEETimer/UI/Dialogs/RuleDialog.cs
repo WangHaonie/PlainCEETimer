@@ -11,17 +11,17 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 {
-    public string[] GlobalTexts { private get; set; }
-    public ColorPair[] GlobalColors { private get; set; }
     public CustomRule Data { get; set; }
 
     protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
     private bool IsEditMode;
+    private bool IsGlobal;
     private ColorBlock BlockPreview;
     private ColorBlock BlockFore;
     private ColorBlock BlockBack;
     private PlainComboBox ComboBoxRuleType;
+    private PlainComboBox ComboBoxPlaceholders;
     private PlainLabel LabelCharExam;
     private PlainLabel LabelCharDay;
     private PlainLabel LabelCharHour;
@@ -39,6 +39,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
     private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
+    private static readonly CustomRule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
 
     protected override void OnInitializing()
     {
@@ -99,7 +100,24 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
             NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),
             NUDMinutes = b.NumericUpDown(40, 59M, OnUserChanged),
             NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
+
+            ComboBoxPlaceholders = b.ComboBox(160, null,
+                $"{Ph.ExamName} - 考试名称",
+                $"{Ph.Days} - 天/总天数",
+                $"{Ph.DecimalDays} - 总天数 (一位小数)",
+                $"{Ph.CeilingDays} - 总天数 (向上取整)",
+                $"{Ph.Hours} - 时",
+                $"{Ph.TotalHours} - 总小时",
+                $"{Ph.DecimalHours} - 总小时 (一位小数)",
+                $"{Ph.Minutes} - 分",
+                $"{Ph.TotalMinutes} - 总分钟",
+                $"{Ph.Seconds} - 秒",
+                $"{Ph.TotalSeconds} - 总秒数"
+            ),
         ]);
+
+        TextBoxCustomText.ExpandableVisibleChanged += (_, v) => ComboBoxPlaceholders.Visible = v;
+        TextBoxCustomText.ExpandableKeyDown += (_, e) => TryAppendPlaceHolders(e.Target, e.KeyEventArgs, true, e.TextLength);
 
         ColorBlock[] blocks = [BlockFore, BlockBack];
 
@@ -138,6 +156,9 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
         AlignControlXR(BlockPreview, TextBoxCustomText);
         ArrangeControlXRT(LinkResetColor, BlockPreview, LabelBack);
         ArrangeCommonButtonsR(ButtonA, ButtonB, LinkResetText, -3, 6);
+        ArrangeControlXLT(ComboBoxPlaceholders, TextBoxCustomText, BlockFore, 0, -6);
+        ComboBoxPlaceholders.BringToFront();
+        ComboBoxPlaceholders.Visible = false;
     }
 
     protected override void OnLoad()
@@ -146,6 +167,16 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 
         if (IsEditMode)
         {
+            if (IsGlobal = Data.IsDefault)
+            {
+                Control[] rtctrls = [ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds];
+
+                foreach (var ctrl in rtctrls)
+                {
+                    ctrl.Enabled = false;
+                }
+            }
+
             ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
             var tick = Data.Tick;
             NUDDays.Value = tick.Days;
@@ -161,6 +192,13 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
         }
     }
 
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        var t = ActiveControl as PlainTextBox;
+        TryAppendPlaceHolders(t, e, t != null);
+        base.OnKeyDown(e);
+    }
+
     protected override bool OnClickButtonA()
     {
         var d = (int)NUDDays.Value;
@@ -168,7 +206,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
         var m = (int)NUDMinutes.Value;
         var s = (int)NUDSeconds.Value;
 
-        if (d == 0 && m == 0 && h == 0 && s == 0)
+        if (!IsGlobal && d == 0 && m == 0 && h == 0 && s == 0)
         {
             MessageX.Error("时刻不能为0，请重新设置！");
             return false;
@@ -193,10 +231,11 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 
         Data = new()
         {
-            Phase = (CountdownPhase)ComboBoxRuleType.SelectedIndex,
-            Tick = new(d, h, m, s),
+            Phase = IsGlobal ? Data.Phase : (CountdownPhase)ComboBoxRuleType.SelectedIndex,
+            Tick = IsGlobal ? default : new(d, h, m, s),
             Text = content,
-            Colors = new(fore, back)
+            Colors = new(fore, back),
+            IsDefault = IsGlobal
         };
 
         return base.OnClickButtonA();
@@ -219,6 +258,15 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
         UserChanged();
     }
 
+    private void TryAppendPlaceHolders(PlainTextBox tb, KeyEventArgs e, bool condition, int length = -1)
+    {
+        if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
+        {
+            var text = Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex];
+            tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
+        }
+    }
+
     private void SaveTemp()
     {
         TemporaryChanges[ComboBoxRuleType.SelectedIndex] = new(TextBoxCustomText.Text, BlockFore.Color, BlockBack.Color);
@@ -226,16 +274,16 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
 
     private void GetNewData(bool all = true, bool colorOnly = false, bool textOnly = false)
     {
-        var index = ComboBoxRuleType.SelectedIndex;
+        var rule = GlobalDefaultRules[ComboBoxRuleType.SelectedIndex];
 
         if (all || colorOnly)
         {
-            ApplyColorBlock(GlobalColors[index]);
+            ApplyColorBlock(rule.Colors);
         }
 
         if (all || textOnly)
         {
-            TextBoxCustomText.Text = GlobalTexts[index];
+            TextBoxCustomText.Text = rule.Text;
         }
 
         if (!IsEditMode)

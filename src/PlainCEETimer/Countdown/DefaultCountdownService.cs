@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,8 +24,6 @@ public class DefaultCountdownService : ICountdownService
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
-    private string[] GlobalText;
-    private ColorPair[] GlobalColors;
     private CountdownMode Mode;
     private CountdownField SelectedField;
     private CountdownOption Options;
@@ -33,13 +32,16 @@ public class DefaultCountdownService : ICountdownService
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
     private Exam[] Exams;
+    private CustomRule DefaultRule;
     private CustomRule[] CustomRules;
-    private CustomRule[] Rules;
+    private CustomRule[] GlobalRules;
+    private CustomRule[] CurrentRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
+    private static readonly ColorPair DefaultColors = ThemeManager.ShouldUseDarkMode ? new(Color.Black, Color.White) : new(Color.White, Color.Black);
 
     public DefaultCountdownService()
     {
@@ -82,13 +84,12 @@ public class DefaultCountdownService : ICountdownService
     {
         AutoSwitchInterval = value.AutoSwitchInterval;
         ExamIndex = value.ExamIndex;
-        GlobalText = value.GlobalCustomText;
         Options = value.Options;
         CanUseCustomText = CheckOptions(CountdownOption.UseCustomText);
         EnableAutoSwitch = CheckOptions(CountdownOption.EnableAutoSwitch);
         Mode = value.Mode;
         SelectedField = value.Field;
-        GlobalColors = value.GlobalColors;
+        GlobalRules = value.GlobalRules;
         Exams = value.Exams;
         ExamsLength = Exams.Length;
         CustomRules = value.CustomRules;
@@ -182,7 +183,7 @@ public class DefaultCountdownService : ICountdownService
         else
         {
             StopMainTimer();
-            OnCountdownUpdated("欢迎使用高考倒计时", GlobalColors[3]);
+            OnCountdownUpdated("欢迎使用高考倒计时", DefaultColors);
         }
     }
 
@@ -222,14 +223,15 @@ public class DefaultCountdownService : ICountdownService
     {
         if (CanUpdateRules || Phase != phase)
         {
-            Rules =
+            CurrentRules =
             [..
                 CustomRules
                 .Where(r => r.Phase == phase)
                 .OrderByDescending(x => x)
             ];
 
-            CanUseRules = CanUseCustomText && Rules.Length != 0;
+            DefaultRule = GlobalRules[(int)phase];
+            CanUseRules = CanUseCustomText && CurrentRules.Length != 0;
             Phase = phase;
             CanUpdateRules = false;
         }
@@ -241,7 +243,7 @@ public class DefaultCountdownService : ICountdownService
         {
             if (CanUseRules)
             {
-                foreach (var rule in Rules)
+                foreach (var rule in CurrentRules)
                 {
                     if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
                     {
@@ -251,11 +253,11 @@ public class DefaultCountdownService : ICountdownService
                 }
             }
 
-            OnCountdownUpdated(CountdownRegEx.Replace(GlobalText[phase], DefaultMatchEvaluator), GlobalColors[phase]);
+            OnCountdownUpdated(CountdownRegEx.Replace(DefaultRule.Text, DefaultMatchEvaluator), DefaultRule.Colors);
         }
         else
         {
-            OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), GlobalColors[phase]);
+            OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), DefaultRule.Colors);
         }
     }
 

@@ -19,6 +19,8 @@ public class CustomRule : IListViewData<CustomRule>
 
     public ColorPair Colors { get; set; }
 
+    internal bool IsDefault { get; set; }
+
     public int CompareTo(CustomRule other)
     {
         if (other == null)
@@ -39,7 +41,19 @@ public class CustomRule : IListViewData<CustomRule>
 
     public bool Equals(CustomRule other)
     {
-        return other != null && Phase == other.Phase && Tick == other.Tick;
+        if (other == null)
+        {
+            return false;
+        }
+
+        var flag = Phase == other.Phase;
+
+        if (IsDefault || other.IsDefault)
+        {
+            return flag;
+        }
+
+        return flag && Tick == other.Tick;
     }
 
     public override bool Equals(object obj)
@@ -49,12 +63,19 @@ public class CustomRule : IListViewData<CustomRule>
 
     public override int GetHashCode()
     {
-        return unchecked((37 * 31 + Phase.GetHashCode()) * 31 + Tick.GetHashCode());
+        var phasecode = unchecked(37 * 31 + Phase.GetHashCode() * 31);
+
+        if (IsDefault)
+        {
+            return phasecode;
+        }
+
+        return unchecked(phasecode + Tick.GetHashCode());
     }
 
     bool IListViewData<CustomRule>.InternalEquals(CustomRule other)
     {
-        return Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
+        return !IsDefault && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
     }
 
     private string DebuggerDisplay => $"{Phase}: {Tick.Format()}, {Text}";

@@ -5,6 +5,7 @@ internal enum ConfigField
     GlobalColorsLength,
     ExamNameLength,
     CustomRulesArray,
+    GlobalRulesArray,
     ExamInfoArray,
     DateTimeLength,
     CustomTextLength,

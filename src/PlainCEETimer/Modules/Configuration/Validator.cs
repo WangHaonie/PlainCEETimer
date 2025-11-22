@@ -87,21 +87,24 @@ internal static class Validator
     public static void SetValue<T>(ref T[] field, T[] value, ConfigField type)
         where T : IListViewData<T>
     {
-        if (ValidateNeeded)
+        if (value != null)
         {
-            HashSet<T> set = [];
-
-            foreach (var item in value)
+            if (ValidateNeeded)
             {
-                if (!set.Add(item))
+                HashSet<T> set = [];
+
+                foreach (var item in value)
                 {
-                    throw InvalidTampering(type);
+                    if (!set.Add(item))
+                    {
+                        throw InvalidTampering(type);
+                    }
                 }
             }
-        }
 
-        Array.Sort(value);
-        field = value;
+            Array.Sort(value);
+            field = value;
+        }
     }
 
     public static bool ValidateBoolean(bool value, bool condition)

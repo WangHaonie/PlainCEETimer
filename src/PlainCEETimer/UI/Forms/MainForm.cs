@@ -340,11 +340,10 @@ public sealed class MainForm : AppForm
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
-            GlobalCustomText = AppConfig.GlobalCustomTexts,
+            GlobalRules = AppConfig.GlobalRules ??= DefaultValues.GlobalDefaultRules,
             Options = options,
             Mode = mode,
             Field = Display.ShowXOnly ? (CountdownField)(FieldValue + 1) : CountdownField.Normal,
-            GlobalColors = AppConfig.GlobalColors,
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
         });

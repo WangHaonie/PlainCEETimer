@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -20,42 +21,17 @@ public class AppConfig
 
     public int ExamIndex { get; set; }
 
-    public string[] GlobalCustomTexts
-    {
-        get;
-        set
-        {
-            if (Validator.ValidateNeeded)
-            {
-                foreach (var text in value)
-                {
-                    Validator.EnsureCustomText(text);
-                }
-            }
-
-            field = value;
-        }
-    } = DefaultValues.GlobalDefaultCustomTexts;
-
-    public ColorPair[] GlobalColors
-    {
-        get;
-        set
-        {
-            if (Validator.ValidateNeeded && value.Length < 4)
-            {
-                throw Validator.InvalidTampering(ConfigField.GlobalColorsLength);
-            }
-
-            field = value;
-        }
-    } = DefaultValues.CountdownDefaultColors;
-
     public CustomRule[] CustomRules
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
     } = [];
+
+    public CustomRule[] GlobalRules
+    {
+        get;
+        set => Validator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
+    }
 
     public int[] CustomColors { get; set; }
 
@@ -82,6 +58,13 @@ public class AppConfig
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {
+        var arr = GlobalRules;
+
+        if (arr.IsNullOrEmpty() || arr.Length < 3)
+        {
+            GlobalRules = null;
+        }
+
         var value = ExamIndex;
         Validator.SetValue(ref value, value, Exams.Length, 0);
         ExamIndex = value;

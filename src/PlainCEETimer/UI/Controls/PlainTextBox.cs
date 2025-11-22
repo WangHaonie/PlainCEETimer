@@ -52,6 +52,7 @@ public sealed class PlainTextBox : TextBox
             ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
+            parent.OnExpandableVisibleChanged(true);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -67,6 +68,7 @@ public sealed class PlainTextBox : TextBox
 
         protected override void OnClosed()
         {
+            parent.OnExpandableVisibleChanged(false);
             parent.Focus();
         }
 
@@ -99,6 +101,7 @@ public sealed class PlainTextBox : TextBox
     }
 
     public event EventHandler<TextBoxFlyoutEventArgs> ExpandableKeyDown;
+    public event EventHandler<bool> ExpandableVisibleChanged;
 
     private AppForm ParentForm;
     private PlainButton ButtonExpand;
@@ -203,5 +206,10 @@ public sealed class PlainTextBox : TextBox
     private void OnExpandableKeyDown(TextBoxFlyoutEventArgs e)
     {
         ExpandableKeyDown?.Invoke(this, e);
+    }
+
+    private void OnExpandableVisibleChanged(bool visible)
+    {
+        ExpandableVisibleChanged?.Invoke(this, visible);
     }
 }

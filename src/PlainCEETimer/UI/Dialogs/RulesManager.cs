@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Extensions;
@@ -8,8 +8,11 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
 {
-    public string[] CustomTextPreset { get; set; }
-    public ColorPair[] ColorPresets { private get; set; }
+    public CustomRule[] GlobalRules { get; set; }
+
+    protected override CustomRule[] DefaultData => GlobalRules;
+
+    private readonly List<CustomRule> gRules = new(3);
 
     public RulesManager()
         : base(460, ["时刻", "效果预览"], Ph.RuleTypes, "规则")
@@ -25,39 +28,40 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
     protected override ListViewItem GetListViewItem(CustomRule data)
     {
         var tmp = data.Colors;
-        var item = new ListViewItem(data.Tick.Format()) { UseItemStyleForSubItems = false };
+        var flag = data.IsDefault;
+        var item = new ListViewItem(flag ? "默认规则" : data.Tick.Format()) { UseItemStyleForSubItems = false };
+
+        if (flag)
+        {
+            item.ForeColor = ThemeManager.ShouldUseDarkMode ? Colors.DarkForeLinkDisabled : Colors.LightForeLinkDisabled;
+        }
+
         item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
         return item;
     }
 
     protected override IListViewSubDialog<CustomRule> GetSubDialog(CustomRule data = null)
     {
-        return new RuleDialog()
-        {
-            Data = data,
-            GlobalColors = ColorPresets,
-            GlobalTexts = CustomTextPreset
-        };
+        return new RuleDialog() { Data = data };
     }
 
-    protected override PlainButton AddButton(ControlBuilder b)
+    protected override bool OnCollectingData(CustomRule data)
     {
-        var button = b.Button("全局设置(&G)", ButtonGlobal_Click);
-        button.Width = 90;
-        return button;
-    }
-
-    private void ButtonGlobal_Click(object sender, EventArgs e)
-    {
-        var dialog = new CustomTextDialog()
+        if (data == null)
         {
-            CustomTexts = CustomTextPreset
-        };
-
-        if (dialog.ShowDialog() == DialogResult.OK)
-        {
-            CustomTextPreset = dialog.CustomTexts;
-            UserChanged();
+            GlobalRules = [.. gRules];
         }
+        else if (data.IsDefault)
+        {
+            gRules.Add(data);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected override bool OnRemovingData(CustomRule data)
+    {
+        return !data.IsDefault;
     }
 }

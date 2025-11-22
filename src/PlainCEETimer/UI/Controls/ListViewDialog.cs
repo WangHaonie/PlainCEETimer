@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -22,6 +24,8 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     public TData[] Data { get; set; }
 
+    protected virtual TData[] DefaultData { get; }
+
     protected sealed override AppFormParam Params => AppFormParam.AllControl;
 
     private ContextMenu ContextMenuMain;
@@ -30,7 +34,6 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     private MenuItem ContextDelete;
     private MenuItem ContextSelectAll;
     private PlainButton ButtonOperation;
-    private PlainButton NewButton;
     private readonly string MsgDelete;
     private readonly string MsgAddDup;
     private readonly string MsgEditDup;
@@ -88,10 +91,9 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     /// <returns><see cref="IListViewSubDialog{TData}"/></returns>
     protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
 
-    /// <summary>
-    /// 在 操作 按钮的右侧添加一个新按钮。
-    /// </summary>
-    protected virtual PlainButton AddButton(ControlBuilder b) => null;
+    protected virtual bool OnCollectingData(TData data) => false;
+
+    protected virtual bool OnRemovingData(TData data) => true;
 
     protected sealed override void OnInitializing()
     {
@@ -125,9 +127,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
                 ContextDuplicate.Enabled = enable;
                 ContextEdit.Enabled = enable;
                 ContextSelectAll.Enabled = Items.Count != 0;
-            })),
-
-            NewButton = AddButton(b)
+            }))
         ]);
 
         ListViewMain.ContextMenu = ContextMenuMain;
@@ -138,26 +138,33 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
         ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
-
-        if (NewButton != null)
-        {
-            ArrangeControlXT(NewButton, ButtonOperation, 3);
-        }
     }
 
     protected sealed override void OnLoad()
     {
         ListViewMain.Suspend(() =>
         {
-            var data = Data;
+            var flag1 = !DefaultData.IsNullOrEmpty();
+            var flag2 = !Data.IsNullOrEmpty();
 
-            if (data != null && data.Length != 0)
+            if (flag1)
             {
-                for (int i = 0; i < data.Length; i++)
+                foreach (var d in DefaultData)
                 {
-                    AddItem(data[i]);
+                    AddItem(d);
                 }
+            }
 
+            if (flag2)
+            {
+                foreach (var d in Data)
+                {
+                    AddItem(d);
+                }
+            }
+
+            if (flag1 || flag2)
+            {
                 Items[0].EnsureVisible();
             }
 
@@ -195,14 +202,20 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     protected sealed override bool OnClickButtonA()
     {
         var length = Items.Count;
-        var tmp = new TData[length];
+        var tmp = new List<TData>(length);
 
         for (int i = 0; i < length; i++)
         {
-            tmp[i] = (TData)Items[i].Tag;
+            var data = (TData)Items[i].Tag;
+
+            if (!OnCollectingData(data))
+            {
+                tmp.Add(data);
+            }
         }
 
-        Data = tmp;
+        Data = [.. tmp];
+        OnCollectingData(default);
         return base.OnClickButtonA();
     }
 
@@ -210,12 +223,16 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     {
         if (ListViewMain.SelectedItemsCount == 1)
         {
-            var item = ListViewMain.SelectedItem;
-            var dialog = GetSubDialog((TData)item.Tag);
+            var data = (TData)ListViewMain.SelectedItem.Tag;
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (OnRemovingData(data))
             {
-                AddItemSafe(dialog.Data);
+                var dialog = GetSubDialog(data);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    AddItemSafe(dialog.Data);
+                }
             }
         }
     }
@@ -244,7 +261,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             ListViewMain.Suspend(() =>
             {
-                if (selected == Items.Count)
+                if (DefaultData == null && selected == Items.Count)
                 {
                     RemoveAllItems();
                 }
@@ -299,7 +316,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             if ((bool)flag)
             {
-                RemoveItem(item, oldData);
+                RemoveItem(item, oldData, true);
                 AddItemCore(newData);
             }
             else
@@ -344,10 +361,13 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         }
     }
 
-    private void RemoveItem(ListViewItem item, TData data)
+    private void RemoveItem(ListViewItem item, TData data, bool isEdit = false)
     {
-        Items.Remove(item);
-        ItemsSet.Remove(data);
+        if (isEdit || OnRemovingData(data))
+        {
+            Items.Remove(item);
+            ItemsSet.Remove(data);
+        }
     }
 
     private void RemoveAllItems()
