@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
@@ -31,22 +30,18 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxShowXOnly;
     private PlainLabel LabelCountdownEnd;
     private PlainLabel LabelExamInfo;
-    private PlainLabel LabelFont;
     private PlainLabel LabelOpacity;
     private PlainLabel LabelPosition;
     private PlainLabel LabelPptsvc;
     private PlainLabel LabelRestart;
     private PlainLabel LabelScreens;
     private PlainLabel LabelSyncTime;
-    private NavigationPage PageAppearance;
     private NavigationPage PageDisplay;
     private NavigationPage PageGeneral;
     private NavigationPage PageAdvanced;
     private Panel PageNavPages;
     private PlainButton ButtonCancel;
-    private PlainButton ButtonDefaultFont;
     private PlainButton ButtonExamInfo;
-    private PlainButton ButtonFont;
     private PlainButton ButtonRestart;
     private PlainButton ButtonRulesMan;
     private PlainButton ButtonSave;
@@ -67,7 +62,6 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
     private PlainGroupBox GBoxExamInfo;
-    private PlainGroupBox GBoxFont;
     private PlainGroupBox GBoxMainForm;
     private PlainGroupBox GBoxOthers;
     private PlainGroupBox GBoxPptsvc;
@@ -77,7 +71,6 @@ public sealed class SettingsForm : AppForm
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
-    private Font SelectedFont;
     private CustomRule[] EditedGlobalRules;
     private CustomRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
@@ -281,26 +274,6 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageAppearance = b.NavPage(
-                [
-                    GBoxFont = b.GroupBox("字体和大小",
-                    [
-                        LabelFont = b.Label(null),
-
-                        ButtonFont = b.Button("更改(&F)", (_, _) =>
-                        {
-                            var dialog = new PlainFontDialog(this, SelectedFont);
-
-                            if (dialog.ShowDialog() == DialogResult.OK)
-                            {
-                                ChangeDisplayFont(dialog.Font);
-                            }
-                        }),
-
-                        ButtonDefaultFont = b.Button("重置(&H)", (_, _) => ChangeDisplayFont(DefaultValues.CountdownDefaultFont))
-                    ]),
-                ]),
-
                 PageAdvanced = b.NavPage(
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
@@ -375,7 +348,7 @@ public sealed class SettingsForm : AppForm
 
             b.Panel(1, 1, 54, 260,
             [
-                new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced])
+                new NavigationBar(["基本", "显示", "高级"], [PageGeneral, PageDisplay, PageAdvanced])
                 {
                     Indent = ScaleToDpi(5),
                     ItemHeight = ScaleToDpi(25)
@@ -457,12 +430,6 @@ public sealed class SettingsForm : AppForm
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, CheckBoxDraggable);
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
-
-
-        GroupBoxArrageFirstControl(LabelFont);
-        ArrangeControlYL(ButtonFont, LabelFont, isHighDpi ? 3 : 2, 3);
-        ArrangeControlXT(ButtonDefaultFont, ButtonFont, 3);
-        GroupBoxAutoAdjustHeight(GBoxFont, ButtonFont, 5);
 
 
         GroupBoxArrageFirstControl(LabelOpacity);
@@ -558,7 +525,6 @@ public sealed class SettingsForm : AppForm
         ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
         ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
         ComboBoxShowXOnly.SelectedIndex = AppConfig.Display.X;
-        ChangeDisplayFont(AppConfig.Font);
         UpdateOptionsForPptsvc();
         ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
         EditedCustomRules = AppConfig.CustomRules;
@@ -635,13 +601,6 @@ public sealed class SettingsForm : AppForm
         }
     }
 
-    private void ChangeDisplayFont(Font newFont)
-    {
-        SelectedFont = newFont;
-        LabelFont.Text = $"当前字体: {newFont.Name}, {newFont.Size}pt, {newFont.Style}";
-        SettingsChanged();
-    }
-
     private void UpdateOptionsForPptsvc()
     {
         var topmost = CheckBoxTopMost.Checked;
@@ -694,7 +653,6 @@ public sealed class SettingsForm : AppForm
         a.Exams = EditedExamInfo;
         a.CustomRules = EditedCustomRules;
         a.GlobalRules = EditedGlobalRules;
-        a.Font = SelectedFont;
         a.NtpServer = ComboBoxNtpServers.SelectedIndex;
         a.Dark = SelectedTheme;
 

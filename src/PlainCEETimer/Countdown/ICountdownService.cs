@@ -11,4 +11,6 @@ public interface ICountdownService : IDisposable
     void Start(CountdownStartInfo startInfo);
 
     void SwitchToExam(int index);
+
+    void ForceRefresh();
 }

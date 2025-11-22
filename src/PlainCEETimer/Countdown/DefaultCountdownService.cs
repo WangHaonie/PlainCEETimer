@@ -73,6 +73,11 @@ public class DefaultCountdownService : ICountdownService
         InternalStart();
     }
 
+    public void ForceRefresh()
+    {
+        CountdownCallback(null);
+    }
+
     public void Dispose()
     {
         StopAutoSwitchTimer();

@@ -51,6 +51,7 @@ public sealed class MainForm : AppForm
     private GeneralObject General;
     private MemoryCleaner MemCleaner;
     private MenuItem ExamSwitchMenu;
+    private MenuItem FontNameMenuItem;
     private Menu.MenuItemCollection ExamSwitchMenuItems;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
@@ -227,9 +228,7 @@ public sealed class MainForm : AppForm
         ShowTrayText = General.TrayText;
 
         Exams = AppConfig.Exams;
-        ExamIndex = AppConfig.ExamIndex;
-        CountdownFont = AppConfig.Font;
-
+        ExamIndex = AppConfig.Exam;
 
         if (IsDraggable)
         {
@@ -354,6 +353,9 @@ public sealed class MainForm : AppForm
         ContextMenuMain = GetBaseContextMenu();
         ExamSwitchMenu = ContextMenuMain.MenuItems[0];
         ExamSwitchMenuItems = ExamSwitchMenu.MenuItems;
+        FontNameMenuItem = ContextMenuMain.MenuItems[1].MenuItems[0];
+        FontNameMenuItem.Enabled = false;
+        ChangeCountdownFont(AppConfig.Font);
         ContextMenu = ContextMenuMain;
 
         if (Exams.Length != 0)
@@ -393,7 +395,7 @@ public sealed class MainForm : AppForm
 
                 var tmp = GetBaseContextMenu();
 
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     tmp.MenuItems.RemoveAt(0);
                 }
@@ -447,7 +449,7 @@ public sealed class MainForm : AppForm
         }
 
         ExamIndex = index;
-        AppConfig.ExamIndex = index;
+        AppConfig.Exam = index;
         Validator.DemandConfig();
     }
 
@@ -468,6 +470,19 @@ public sealed class MainForm : AppForm
         _ => 10_000 // 10 s
     };
 
+    private void ChangeCountdownFont(Font newFont)
+    {
+        CountdownFont = newFont;
+        FontNameMenuItem.Text = $"{newFont.Name}, {newFont.Size}pt, {newFont.Style}".Truncate(35);
+
+        if (!Validator.ValidateNeeded)
+        {
+            MainCountdown.ForceRefresh();
+            AppConfig.Font = CountdownFont;
+            Validator.DemandConfig();
+        }
+    }
+
     private ContextMenu GetBaseContextMenu() => ContextMenuBuilder.Build(b =>
     [
         /*
@@ -482,6 +497,24 @@ public sealed class MainForm : AppForm
         b.Menu("切换(&Q)",
         [
             b.Item("请先添加考试信息")
+        ]),
+
+        b.Menu("字体(&F)",
+        [
+            b.Item(null),
+            b.Separator(),
+
+            b.Item("更改字体(&C)", (_, _) =>
+            {
+                var dialog = new PlainFontDialog(this, CountdownFont);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    ChangeCountdownFont(dialog.Font);
+                }
+            }),
+
+            b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(DefaultValues.CountdownDefaultFont))
         ]),
 
         b.Separator(),

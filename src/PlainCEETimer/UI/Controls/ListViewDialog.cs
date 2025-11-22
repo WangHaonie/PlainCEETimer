@@ -28,6 +28,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     protected sealed override AppFormParam Params => AppFormParam.AllControl;
 
+    private bool HasDefaultData;
     private ContextMenu ContextMenuMain;
     private MenuItem ContextDuplicate;
     private MenuItem ContextEdit;
@@ -69,31 +70,6 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         MsgAddDup = $"列表中已存在该{desc}，请重新添加！";
         MsgEditDup = $"列表中已存在该{desc}，请重新编辑！";
     }
-
-    /// <summary>
-    /// 获取展示该 <see cref="TData"/> 的 <see cref="ListViewItem"/> 关联的分组的索引
-    /// </summary>
-    /// <param name="data">给定的数据</param>
-    /// <returns>表示索引的 <see cref="int"/></returns>
-    protected abstract int GetGroupIndex(TData data);
-
-    /// <summary>
-    /// 获取用于展示 <see cref="TData"/> 的 <see cref="ListViewItem"/> 实例 
-    /// </summary>
-    /// <param name="data">给定的数据</param>
-    /// <returns><see cref="ListViewItem"/></returns>
-    protected abstract ListViewItem GetListViewItem(TData data);
-
-    /// <summary>
-    /// 获取用于向用户显示 添加、更改、重试 的 <see cref="IListViewSubDialog{T}"/> 对话框实例。
-    /// </summary>
-    /// <param name="data">现有数据</param>
-    /// <returns><see cref="IListViewSubDialog{TData}"/></returns>
-    protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
-
-    protected virtual bool OnCollectingData(TData data) => false;
-
-    protected virtual bool OnRemovingData(TData data) => true;
 
     protected sealed override void OnInitializing()
     {
@@ -144,10 +120,10 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     {
         ListViewMain.Suspend(() =>
         {
-            var flag1 = !DefaultData.IsNullOrEmpty();
-            var flag2 = !Data.IsNullOrEmpty();
+            var hasData = !Data.IsNullOrEmpty();
+            HasDefaultData = !DefaultData.IsNullOrEmpty();
 
-            if (flag1)
+            if (HasDefaultData)
             {
                 foreach (var d in DefaultData)
                 {
@@ -155,7 +131,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
                 }
             }
 
-            if (flag2)
+            if (hasData)
             {
                 foreach (var d in Data)
                 {
@@ -163,7 +139,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
                 }
             }
 
-            if (flag1 || flag2)
+            if (HasDefaultData || hasData)
             {
                 Items[0].EnsureVisible();
             }
@@ -202,22 +178,41 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
     protected sealed override bool OnClickButtonA()
     {
         var length = Items.Count;
-        var tmp = new List<TData>(length);
 
-        for (int i = 0; i < length; i++)
+        if (length == 0)
         {
-            var data = (TData)Items[i].Tag;
+            Data = [];
+        }
+        else
+        {
+            var tmp = new List<TData>(length);
 
-            if (!OnCollectingData(data))
+            for (int i = 0; i < length; i++)
             {
-                tmp.Add(data);
+                var data = (TData)Items[i].Tag;
+
+                if (!OnCollectingData(data))
+                {
+                    tmp.Add(data);
+                }
             }
+
+            Data = [.. tmp];
+            OnCollectingData(default);
         }
 
-        Data = [.. tmp];
-        OnCollectingData(default);
         return base.OnClickButtonA();
     }
+
+    protected abstract int GetGroupIndex(TData data);
+
+    protected abstract ListViewItem GetListViewItem(TData data);
+
+    protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
+
+    protected virtual bool OnCollectingData(TData data) => false;
+
+    protected virtual bool OnRemovingData(TData data) => true;
 
     private void ContextDuplicate_Click(object sender, EventArgs e)
     {
@@ -261,7 +256,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             ListViewMain.Suspend(() =>
             {
-                if (DefaultData == null && selected == Items.Count)
+                if (!HasDefaultData && selected == Items.Count)
                 {
                     RemoveAllItems();
                 }

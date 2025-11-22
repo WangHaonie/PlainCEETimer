@@ -13,13 +13,13 @@ public class AppConfig
 
     public DisplayObject Display { get; set; } = new();
 
+    public int Exam { get; set; }
+
     public Exam[] Exams
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.ExamInfoArray);
     } = [];
-
-    public int ExamIndex { get; set; }
 
     public CustomRule[] CustomRules
     {
@@ -65,9 +65,9 @@ public class AppConfig
             GlobalRules = null;
         }
 
-        var value = ExamIndex;
+        var value = Exam;
         Validator.SetValue(ref value, value, Exams.Length, 0);
-        ExamIndex = value;
+        Exam = value;
         Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.X == 0) || Display.Draggable);
     }
 }
