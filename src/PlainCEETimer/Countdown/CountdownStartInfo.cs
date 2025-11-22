@@ -14,7 +14,7 @@ public sealed class CountdownStartInfo
 
     public Exam[] Exams { get; set; }
 
-    public CustomRule[] CustomRules { get; set; }
+    public Rule[] CustomRules { get; set; }
 
-    public CustomRule[] GlobalRules { get; set; }
+    public Rule[] GlobalRules { get; set; }
 }

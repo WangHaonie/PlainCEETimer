@@ -51,9 +51,9 @@ public static class Extensions
         var ctrls = builder(new());
         var collection = control.Controls;
 
-        for (int i = 0; i < ctrls.Length; i++)
+        foreach (var ctrl in ctrls)
         {
-            collection.Add(ctrls[i]);
+            collection.Add(ctrl);
         }
     }
 

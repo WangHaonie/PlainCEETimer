@@ -9,9 +9,9 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
+public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Rule>
 {
-    public CustomRule Data { get; set; }
+    public Rule Data { get; set; } = existing;
 
     protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
@@ -39,7 +39,7 @@ public sealed class RuleDialog : AppDialog, IListViewSubDialog<CustomRule>
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
     private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
-    private static readonly CustomRule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
+    private static readonly Rule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
 
     protected override void OnInitializing()
     {

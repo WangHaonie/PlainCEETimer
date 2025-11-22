@@ -6,9 +6,9 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class ExamInfoManager : ListViewDialog<Exam, ExamInfoDialog>
+public sealed class ExamManager : ListViewDialog<Exam, ExamDialog>
 {
-    public ExamInfoManager()
+    public ExamManager()
         : base(450, ["考试名称", "开始日期和时间", "结束日期和时间"], ["已过去的", "正在进行", "未开始的"], "考试信息")
     {
         Text = "管理考试信息 - 高考倒计时";
@@ -38,6 +38,6 @@ public sealed class ExamInfoManager : ListViewDialog<Exam, ExamInfoDialog>
 
     protected override IListViewSubDialog<Exam> GetSubDialog(Exam data = null)
     {
-        return new ExamInfoDialog(data);
+        return new ExamDialog(data);
     }
 }

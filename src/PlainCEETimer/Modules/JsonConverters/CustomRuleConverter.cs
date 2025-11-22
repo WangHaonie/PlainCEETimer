@@ -8,9 +8,9 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class CustomRuleConverter : JsonConverter<CustomRule>
+public sealed class CustomRuleConverter : JsonConverter<Rule>
 {
-    public override CustomRule ReadJson(JsonReader reader, Type objectType, CustomRule existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override Rule ReadJson(JsonReader reader, Type objectType, Rule existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var json = JObject.Load(reader);
         var phaseInt = json[nameof(existingValue.Phase)].ToObject<int>(serializer);
@@ -54,7 +54,7 @@ public sealed class CustomRuleConverter : JsonConverter<CustomRule>
         };
     }
 
-    public override void WriteJson(JsonWriter writer, CustomRule value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, Rule value, JsonSerializer serializer)
     {
         var jo = new JObject
         {

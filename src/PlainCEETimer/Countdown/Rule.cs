@@ -9,7 +9,7 @@ namespace PlainCEETimer.Countdown;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 [JsonConverter(typeof(CustomRuleConverter))]
-public class CustomRule : IListViewData<CustomRule>
+public class Rule : IListViewData<Rule>
 {
     public CountdownPhase Phase { get; set; }
 
@@ -21,7 +21,7 @@ public class CustomRule : IListViewData<CustomRule>
 
     internal bool IsDefault { get; set; }
 
-    public int CompareTo(CustomRule other)
+    public int CompareTo(Rule other)
     {
         if (other == null)
         {
@@ -39,7 +39,7 @@ public class CustomRule : IListViewData<CustomRule>
         return Phase == CountdownPhase.P3 ? -order : order;
     }
 
-    public bool Equals(CustomRule other)
+    public bool Equals(Rule other)
     {
         if (other == null)
         {
@@ -58,7 +58,7 @@ public class CustomRule : IListViewData<CustomRule>
 
     public override bool Equals(object obj)
     {
-        return Equals((CustomRule)obj);
+        return Equals((Rule)obj);
     }
 
     public override int GetHashCode()
@@ -73,7 +73,7 @@ public class CustomRule : IListViewData<CustomRule>
         return unchecked(phasecode + Tick.GetHashCode());
     }
 
-    bool IListViewData<CustomRule>.InternalEquals(CustomRule other)
+    bool IListViewData<Rule>.InternalEquals(Rule other)
     {
         return !IsDefault && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
     }

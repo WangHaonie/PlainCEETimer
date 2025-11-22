@@ -31,10 +31,10 @@ public class DefaultCountdownService : ICountdownService
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
     private Exam[] Exams;
-    private CustomRule DefaultRule;
-    private CustomRule[] CustomRules;
-    private CustomRule[] GlobalRules;
-    private CustomRule[] CurrentRules;
+    private Rule DefaultRule;
+    private Rule[] CustomRules;
+    private Rule[] GlobalRules;
+    private Rule[] CurrentRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);

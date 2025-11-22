@@ -20,6 +20,9 @@ public sealed class SettingsForm : AppForm
     private bool CanSaveChanges;
     private bool IsFunnyClick;
     private int SelectedTheme;
+    private AppConfig AppConfig;
+    private GeneralObject General;
+    private DisplayObject Display;
     private ColorBlock BlockBorderColor;
     private PlainComboBox ComboBoxAutoSwitchInterval;
     private PlainComboBox ComboBoxBorderColor;
@@ -68,11 +71,10 @@ public sealed class SettingsForm : AppForm
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
-    private CustomRule[] EditedGlobalRules;
-    private CustomRule[] EditedCustomRules;
+    private Rule[] EditedGlobalRules;
+    private Rule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
-    private readonly AppConfig AppConfig = App.AppConfig;
 
     private PlainLabel LabelCountdownFormat;
     private PlainComboBox ComboBoxCountdownFormat;
@@ -94,7 +96,7 @@ public sealed class SettingsForm : AppForm
 
                         ButtonExamInfo = b.Button("管理(&G)", (_, _) =>
                         {
-                            var dialog = new ExamInfoManager()
+                            var dialog = new ExamManager()
                             {
                                 Data = EditedExamInfo
                             };
@@ -511,45 +513,49 @@ public sealed class SettingsForm : AppForm
 
     private void RefreshSettings()
     {
-        CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
-        UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
-        CheckBoxTopMost.Checked = AppConfig.General.TopMost;
-        CheckBoxMemClean.Checked = AppConfig.General.MemClean;
-        CheckBoxDraggable.Checked = AppConfig.Display.Draggable;
-        ComboBoxCountdownEnd.SelectedIndex = AppConfig.Display.EndIndex;
-        ComboBoxCountdownFormat.SelectedIndex = (int)AppConfig.Display.Format;
-        CheckBoxPptSvc.Checked = AppConfig.Display.SeewoPptsvc;
-        CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
-        ComboBoxScreens.SelectedIndex = AppConfig.Display.ScreenIndex;
-        ComboBoxPosition.SelectedIndex = (int)AppConfig.Display.Position;
-        UpdateOptionsForPptsvc();
-        ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
+        AppConfig = App.AppConfig;
+        General = AppConfig.General;
+        Display = AppConfig.Display;
+
+        EditedExamInfo = AppConfig.Exams;
         EditedCustomRules = AppConfig.CustomRules;
         EditedGlobalRules = AppConfig.GlobalRules;
-        EditedExamInfo = AppConfig.Exams;
-        CheckBoxTrayText.Enabled = CheckBoxTrayIcon.Checked = AppConfig.General.TrayIcon;
-        CheckBoxTrayText.Checked = AppConfig.General.TrayText;
-        CheckBoxAutoSwitch.Checked = AppConfig.General.AutoSwitch;
-        ComboBoxAutoSwitchInterval.SelectedIndex = AppConfig.General.Interval;
-        NudOpacity.Value = AppConfig.General.Opacity;
-        ApplyRadios();
+        ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
+        var dark = AppConfig.Dark;
+        RadioButtonThemeSystem.Checked = dark == 0;
+        RadioButtonThemeLight.Checked = dark == 1;
+        RadioButtonThemeDark.Checked = dark == 2 && ThemeManager.IsDarkModeSupported;
+        SelectedTheme = dark;
+
+        CheckBoxAutoSwitch.Checked = General.AutoSwitch;
+        ComboBoxAutoSwitchInterval.SelectedIndex = General.Interval;
+        var ti = General.TrayIcon;
+        CheckBoxTrayText.Enabled = ti;
+        CheckBoxTrayIcon.Checked = ti;
+        CheckBoxTrayText.Checked = General.TrayText;
+        CheckBoxMemClean.Checked = General.MemClean;
+        CheckBoxTopMost.Checked = General.TopMost;
+        CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
+        NudOpacity.Value = General.Opacity;
 
         if (SystemVersion.IsWindows11)
         {
-            var border = AppConfig.General.BorderColor;
+            var border = General.BorderColor;
             CheckBoxBorderColor.Checked = border.Enabled;
             ComboBoxBorderColor.SelectedIndex = border.Type;
             BlockBorderColor.Color = border.Color;
         }
-    }
 
-    private void ApplyRadios()
-    {
-        var value = AppConfig.Dark;
-        RadioButtonThemeSystem.Checked = value == 0;
-        RadioButtonThemeLight.Checked = value == 1;
-        RadioButtonThemeDark.Checked = value == 2 && ThemeManager.IsDarkModeSupported;
-        SelectedTheme = value;
+        ComboBoxCountdownEnd.SelectedIndex = Display.EndIndex;
+        ComboBoxCountdownFormat.SelectedIndex = (int)Display.Format;
+        ComboBoxScreens.SelectedIndex = Display.ScreenIndex;
+        ComboBoxPosition.SelectedIndex = (int)Display.Position;
+        CheckBoxDraggable.Checked = Display.Draggable;
+        CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
+        UpdateOptionsForPptsvc();
+
+        CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
+        UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
     }
 
     private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
@@ -571,7 +577,7 @@ public sealed class SettingsForm : AppForm
                 break;
             case SettingsArea.PPTService:
                 CheckBoxPptSvc.Enabled = isWorking;
-                CheckBoxPptSvc.Checked = isWorking && AppConfig.Display.SeewoPptsvc;
+                CheckBoxPptSvc.Checked = isWorking && Display.SeewoPptsvc;
                 CheckBoxPptSvc.Text = isWorking ? "启用此功能(&X)" : $"此项暂不可用，因为倒计时没有{(subCase == 0 ? "顶置" : "在左上角")}";
                 break;
             case SettingsArea.StartUp:
@@ -628,31 +634,28 @@ public sealed class SettingsForm : AppForm
     {
         Startup.SetAll(CheckBoxStartup.Checked, (bool)CheckBoxStartup.Tag);
 
-        var a = App.AppConfig;
-        a.Exams = EditedExamInfo;
-        a.CustomRules = EditedCustomRules;
-        a.GlobalRules = EditedGlobalRules;
-        a.NtpServer = ComboBoxNtpServers.SelectedIndex;
-        a.Dark = SelectedTheme;
+        AppConfig.Exams = EditedExamInfo;
+        AppConfig.CustomRules = EditedCustomRules;
+        AppConfig.GlobalRules = EditedGlobalRules;
+        AppConfig.NtpServer = ComboBoxNtpServers.SelectedIndex;
+        AppConfig.Dark = SelectedTheme;
 
-        var g = a.General;
-        g.AutoSwitch = CheckBoxAutoSwitch.Checked;
-        g.Interval = ComboBoxAutoSwitchInterval.SelectedIndex;
-        g.TrayIcon = CheckBoxTrayIcon.Checked;
-        g.TrayText = CheckBoxTrayText.Checked;
-        g.MemClean = CheckBoxMemClean.Checked;
-        g.TopMost = CheckBoxTopMost.Checked;
-        g.UniTopMost = CheckBoxUniTopMost.Checked;
-        g.Opacity = (int)NudOpacity.Value;
-        g.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
+        General.AutoSwitch = CheckBoxAutoSwitch.Checked;
+        General.Interval = ComboBoxAutoSwitchInterval.SelectedIndex;
+        General.TrayIcon = CheckBoxTrayIcon.Checked;
+        General.TrayText = CheckBoxTrayText.Checked;
+        General.MemClean = CheckBoxMemClean.Checked;
+        General.TopMost = CheckBoxTopMost.Checked;
+        General.UniTopMost = CheckBoxUniTopMost.Checked;
+        General.Opacity = (int)NudOpacity.Value;
+        General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
-        var d = a.Display;
-        d.EndIndex = ComboBoxCountdownEnd.SelectedIndex;
-        d.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;
-        d.ScreenIndex = ComboBoxScreens.SelectedIndex;
-        d.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
-        d.Draggable = CheckBoxDraggable.Checked;
-        d.SeewoPptsvc = CheckBoxPptSvc.Checked;
+        Display.EndIndex = ComboBoxCountdownEnd.SelectedIndex;
+        Display.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;
+        Display.ScreenIndex = ComboBoxScreens.SelectedIndex;
+        Display.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
+        Display.Draggable = CheckBoxDraggable.Checked;
+        Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
 
         Validator.DemandConfig();
         Validator.SaveConfig();

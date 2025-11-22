@@ -74,10 +74,9 @@ public class ControlBuilder
 
     public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
     {
+        var data = new ComboData[items.Length];
         var ctrl = new PlainComboBox();
         ctrl.SetBounds(0, 0, w, 23);
-
-        var data = new ComboData[items.Length];
 
         for (int i = 0; i < items.Length; i++)
         {

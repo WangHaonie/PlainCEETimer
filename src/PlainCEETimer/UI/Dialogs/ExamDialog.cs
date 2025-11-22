@@ -10,7 +10,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class ExamInfoDialog(Exam existing) : AppDialog, IListViewSubDialog<Exam>
+public sealed class ExamDialog(Exam existing) : AppDialog, IListViewSubDialog<Exam>
 {
     public Exam Data { get; set; } = existing;
 

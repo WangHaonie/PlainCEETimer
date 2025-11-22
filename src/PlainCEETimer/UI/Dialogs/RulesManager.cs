@@ -6,13 +6,13 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
+public sealed class RulesManager : ListViewDialog<Rule, RuleDialog>
 {
-    public CustomRule[] GlobalRules { get; set; }
+    public Rule[] GlobalRules { get; set; }
 
-    protected override CustomRule[] DefaultData => GlobalRules;
+    protected override Rule[] DefaultData => GlobalRules;
 
-    private readonly List<CustomRule> gRules = new(3);
+    private readonly List<Rule> gRules = new(3);
 
     public RulesManager()
         : base(460, ["时刻", "效果预览"], Ph.RuleTypes, "规则")
@@ -20,12 +20,12 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
         Text = "管理自定义规则 - 高考倒计时";
     }
 
-    protected override int GetGroupIndex(CustomRule data)
+    protected override int GetGroupIndex(Rule data)
     {
         return (int)data.Phase;
     }
 
-    protected override ListViewItem GetListViewItem(CustomRule data)
+    protected override ListViewItem GetListViewItem(Rule data)
     {
         var tmp = data.Colors;
         var flag = data.IsDefault;
@@ -40,18 +40,20 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
         return item;
     }
 
-    protected override IListViewSubDialog<CustomRule> GetSubDialog(CustomRule data = null)
+    protected override IListViewSubDialog<Rule> GetSubDialog(Rule data = null)
     {
-        return new RuleDialog() { Data = data };
+        return new RuleDialog(data);
     }
 
-    protected override bool OnCollectingData(CustomRule data)
+    protected override bool OnCollectingData(Rule data)
     {
         if (data == null)
         {
             GlobalRules = [.. gRules];
+            return false;
         }
-        else if (data.IsDefault)
+
+        if (data.IsDefault)
         {
             gRules.Add(data);
             return true;
@@ -60,7 +62,7 @@ public sealed class RulesManager : ListViewDialog<CustomRule, RuleDialog>
         return false;
     }
 
-    protected override bool OnRemovingData(CustomRule data)
+    protected override bool OnRemovingData(Rule data)
     {
         return !data.IsDefault;
     }

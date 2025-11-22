@@ -15,9 +15,9 @@ public static class Xml
         var ns = top.GetDefaultNamespace();
         var current = top;
 
-        for (int i = 0; i < nodes.Length; i++)
+        foreach (var node in nodes)
         {
-            current = current.Element(ns.GetName(nodes[i]));
+            current = current.Element(ns.GetName(node));
 
             if (current == null)
             {

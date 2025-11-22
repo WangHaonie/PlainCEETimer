@@ -11,7 +11,7 @@ public static class DefaultValues
 {
     public static int[] ColorDialogColors => field ??= [.. Enumerable.Repeat(COLORREF.EmptyValue, 16)];
 
-    public static CustomRule[] GlobalDefaultRules
+    public static Rule[] GlobalDefaultRules
     {
         get
         {

@@ -196,10 +196,10 @@
     <Compile Include="UI\Dialogs\ConsoleWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\ExamInfoDialog.cs">
+    <Compile Include="UI\Dialogs\ExamDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Dialogs\ExamInfoManager.cs">
+    <Compile Include="UI\Dialogs\ExamManager.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Forms\FileDialogWrapper.cs">
@@ -241,7 +241,7 @@
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
     <Compile Include="Countdown\Exam.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
-    <Compile Include="Countdown\CustomRule.cs" />
+    <Compile Include="Countdown\Rule.cs" />
     <Compile Include="Countdown\Ph.cs" />
     <Compile Include="UI\ControlBuilder.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />

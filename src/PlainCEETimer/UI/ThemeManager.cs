@@ -11,7 +11,6 @@ public static class ThemeManager
     public static bool IsDarkModeSupported => Supported;
     public static bool ShouldUseDarkMode => UseDark;
     public static bool NewThemeAvailable => CanUseNewTheme;
-    public static SystemTheme CurrentTheme => Theme;
 
     private static bool Supported;
     private static bool UseDark;
@@ -108,7 +107,7 @@ public static class ThemeManager
     {
         if (ordinal == 0)
         {
-            return CurrentTheme;
+            return Theme;
         }
 
         return (SystemTheme)ordinal;

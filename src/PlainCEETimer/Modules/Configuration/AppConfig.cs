@@ -21,13 +21,13 @@ public class AppConfig
         set => Validator.SetValue(ref field, value, ConfigField.ExamInfoArray);
     } = [];
 
-    public CustomRule[] CustomRules
+    public Rule[] CustomRules
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
     } = [];
 
-    public CustomRule[] GlobalRules
+    public Rule[] GlobalRules
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
