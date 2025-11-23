@@ -29,6 +29,11 @@ public sealed class PlainTextBox : TextBox
         private string m_Text;
         private static readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
+        public void Input(string text)
+        {
+            ContentBox?.Input(TextLength + text.Length, text);
+        }
+
         protected override void OnInitializing()
         {
             base.OnInitializing();
@@ -62,7 +67,6 @@ public sealed class PlainTextBox : TextBox
                 ButtonApply_Click(null, null);
             }
 
-            parent.OnExpandableKeyDown(new(TextLength, ContentBox, e));
             base.OnKeyDown(e);
         }
 
@@ -100,7 +104,6 @@ public sealed class PlainTextBox : TextBox
         }
     }
 
-    public event EventHandler<TextBoxFlyoutEventArgs> ExpandableKeyDown;
     public event EventHandler<bool> ExpandableVisibleChanged;
 
     private AppForm ParentForm;
@@ -147,6 +150,11 @@ public sealed class PlainTextBox : TextBox
         {
             SelectedText = text;
         }
+    }
+
+    public void InputFlyout(string text)
+    {
+        Child?.Input(text);
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -201,11 +209,6 @@ public sealed class PlainTextBox : TextBox
     {
         e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
         base.OnKeyDown(e);
-    }
-
-    private void OnExpandableKeyDown(TextBoxFlyoutEventArgs e)
-    {
-        ExpandableKeyDown?.Invoke(this, e);
     }
 
     private void OnExpandableVisibleChanged(bool visible)

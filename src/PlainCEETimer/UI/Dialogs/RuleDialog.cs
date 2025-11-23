@@ -101,7 +101,8 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
             NUDMinutes = b.NumericUpDown(40, 59M, OnUserChanged),
             NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
 
-            ComboBoxPlaceholders = b.ComboBox(160, null,
+            ComboBoxPlaceholders = b.ComboBox(160, (_, _) =>
+                TextBoxCustomText.InputFlyout(Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex]),
                 $"{Ph.ExamName} - 考试名称",
                 $"{Ph.Days} - 天/总天数",
                 $"{Ph.DecimalDays} - 总天数 (一位小数)",
@@ -117,7 +118,6 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
         ]);
 
         TextBoxCustomText.ExpandableVisibleChanged += (_, v) => ComboBoxPlaceholders.Visible = v;
-        TextBoxCustomText.ExpandableKeyDown += (_, e) => TryAppendPlaceHolders(e.Target, e.KeyEventArgs, true, e.TextLength);
 
         ColorBlock[] blocks = [BlockFore, BlockBack];
 
@@ -192,13 +192,6 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
         }
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        var t = ActiveControl as PlainTextBox;
-        TryAppendPlaceHolders(t, e, t != null);
-        base.OnKeyDown(e);
-    }
-
     protected override bool OnClickButtonA()
     {
         var d = (int)NUDDays.Value;
@@ -256,15 +249,6 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
         var flag = (LinkLabel)sender == LinkResetColor;
         GetNewData(false, flag, !flag);
         UserChanged();
-    }
-
-    private void TryAppendPlaceHolders(PlainTextBox tb, KeyEventArgs e, bool condition, int length = -1)
-    {
-        if (e.Modifiers == Keys.None && e.KeyCode == Keys.F2 && condition)
-        {
-            var text = Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex];
-            tb.Input((length == -1 ? tb.Text.RemoveIllegalChars().Length : length) + text.Length, text);
-        }
     }
 
     private void SaveTemp()
