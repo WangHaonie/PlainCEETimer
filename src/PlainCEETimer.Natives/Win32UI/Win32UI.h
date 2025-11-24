@@ -12,8 +12,8 @@
 
 // Common Dialogs 相关
 
-cexport(BOOL) RunColorDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors);
-cexport(BOOL) RunFontDialog(HWND hWndOwner, LPFRHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit);
+cexport(BOOL) RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors);
+cexport(BOOL) RunFontDialog(HWND hWndOwner, LPCFHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit);
 
 // Win32 主题样式相关
 

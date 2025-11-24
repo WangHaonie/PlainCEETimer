@@ -15,9 +15,9 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
 using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
-fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
-fnOpenNcThemeData g_OpenNcThemeData = nullptr;
-fnGetSysColor g_GetSysColor = nullptr;
+static fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
+static fnOpenNcThemeData g_OpenNcThemeData = nullptr;
+static fnGetSysColor g_GetSysColor = nullptr;
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
 

@@ -58,6 +58,15 @@ public static class DefaultValues
                 const string NotoSansSC = "Noto Sans SC";
                 const string MicrosoftYaHei = "Microsoft YaHei";
 
+                /*
+                
+                测试指定字体是否安装 参考：
+
+                .net - Test if a Font is installed - Stack Overflow
+                https://stackoverflow.com/a/114003/21094697
+
+                */
+
                 using var tester = new Font(NotoSansSC, 1);
                 field = new(tester.Name == NotoSansSC ? NotoSansSC : MicrosoftYaHei, 18F, FontStyle.Bold, GraphicsUnit.Point);
             }

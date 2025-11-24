@@ -17,22 +17,7 @@ public class ListViewItemSet<TData>()
         }
     }
 
-    private class ItemSetComparer : IEqualityComparer<Element>
-    {
-        private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
-
-        bool IEqualityComparer<Element>.Equals(Element x, Element y)
-        {
-            return Comparer.Equals(x.Data, y.Data);
-        }
-
-        int IEqualityComparer<Element>.GetHashCode(Element obj)
-        {
-            return Comparer.GetHashCode(obj.Data);
-        }
-    }
-
-    private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
+    private readonly HashSet<Element> ItemsSet = [];
 
     public bool CanAdd(TData data)
     {

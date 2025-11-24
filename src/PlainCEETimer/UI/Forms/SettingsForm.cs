@@ -198,7 +198,7 @@ public sealed class SettingsForm : AppForm
 
                 PageDisplay = b.NavPage(
                 [
-                    GBoxContent = b.GroupBox("倒计时内容",
+                    GBoxContent = b.GroupBox("倒计时",
                     [
                         LabelCountdownEnd = b.Label("当考试开始后, 显示"),
 
@@ -249,7 +249,7 @@ public sealed class SettingsForm : AppForm
                         ComboBoxScreens = b.ComboBox(107, SettingsChanged, DisplayHelper.GetSystemDisplays()),
                         LabelPosition = b.Label("位置"),
 
-                        ComboBoxPosition = b.ComboBox(84, (_, _ ) => UpdateOptionsForPptsvc(),
+                        ComboBoxPosition = b.ComboBox(84, (_, _) => UpdateOptionsForPptsvc(),
                             "左上角",
                             "左侧居中",
                             "左下角",

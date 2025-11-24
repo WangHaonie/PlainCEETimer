@@ -145,8 +145,6 @@ public sealed class ConsoleWindow : AppDialog
                 }
             }).Start();
         }
-
-        Final();
     }
 
     protected override bool OnClosing(CloseReason closeReason)
