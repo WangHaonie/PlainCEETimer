@@ -71,8 +71,8 @@ public sealed class SettingsForm : AppForm
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
-    private Rule[] EditedGlobalRules;
-    private Rule[] EditedCustomRules;
+    private CountdownRule[] EditedGlobalRules;
+    private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
 
@@ -546,9 +546,9 @@ public sealed class SettingsForm : AppForm
             BlockBorderColor.Color = border.Color;
         }
 
-        ComboBoxCountdownEnd.SelectedIndex = Display.EndIndex;
+        ComboBoxCountdownEnd.SelectedIndex = Display.Mode;
         ComboBoxCountdownFormat.SelectedIndex = (int)Display.Format;
-        ComboBoxScreens.SelectedIndex = Display.ScreenIndex;
+        ComboBoxScreens.SelectedIndex = Display.Screen;
         ComboBoxPosition.SelectedIndex = (int)Display.Position;
         CheckBoxDraggable.Checked = Display.Draggable;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
@@ -650,9 +650,9 @@ public sealed class SettingsForm : AppForm
         General.Opacity = (int)NudOpacity.Value;
         General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
-        Display.EndIndex = ComboBoxCountdownEnd.SelectedIndex;
+        Display.Mode = ComboBoxCountdownEnd.SelectedIndex;
         Display.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;
-        Display.ScreenIndex = ComboBoxScreens.SelectedIndex;
+        Display.Screen = ComboBoxScreens.SelectedIndex;
         Display.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
         Display.Draggable = CheckBoxDraggable.Checked;
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;

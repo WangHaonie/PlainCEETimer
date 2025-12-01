@@ -220,7 +220,7 @@ public sealed class MainForm : AppForm
         IsDraggable = Display.Draggable;
         UniTopMost = General.UniTopMost;
         IsPPTService = Display.SeewoPptsvc;
-        ScreenIndex = Display.ScreenIndex;
+        ScreenIndex = Display.Screen;
         CountdownPos = Display.Position;
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
@@ -319,16 +319,13 @@ public sealed class MainForm : AppForm
             };
         }
 
-        var endIndex = Display.EndIndex;
-        var mode = endIndex == 2 ? CountdownMode.Mode3 : (endIndex is 1 or 2 ? CountdownMode.Mode2 : CountdownMode.Mode1);
-
         MainCountdown.Start(new()
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
             GlobalRules = AppConfig.GlobalRules ??= DefaultValues.GlobalDefaultRules,
             AutoSwitch = General.AutoSwitch,
-            Mode = mode,
+            Mode = Display.Mode,
             Format = Display.Format,
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
@@ -610,7 +607,7 @@ public sealed class MainForm : AppForm
         if (ScreenIndex < 0 || ScreenIndex >= screens.Length)
         {
             ScreenIndex = 0;
-            Display.ScreenIndex = 0;
+            Display.Screen = 0;
             Validator.DemandConfig();
         }
 

@@ -240,7 +240,7 @@
     <Compile Include="Modules\Configuration\DisplayObject.cs" />
     <Compile Include="Countdown\Exam.cs" />
     <Compile Include="Modules\Configuration\GeneralObject.cs" />
-    <Compile Include="Countdown\Rule.cs" />
+    <Compile Include="Countdown\CountdownRule.cs" />
     <Compile Include="Countdown\Ph.cs" />
     <Compile Include="UI\ControlBuilder.cs" />
     <Compile Include="Modules\Http\Downloader.cs" />

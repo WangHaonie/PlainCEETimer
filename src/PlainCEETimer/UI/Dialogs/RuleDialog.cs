@@ -9,9 +9,9 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Rule>
+public sealed class RuleDialog(CountdownRule existing) : AppDialog, IListViewSubDialog<CountdownRule>
 {
-    public Rule Data { get; set; } = existing;
+    public CountdownRule Data { get; set; } = existing;
 
     protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
@@ -39,7 +39,7 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
     private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
-    private static readonly Rule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
+    private static readonly CountdownRule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
 
     protected override void OnInitializing()
     {
@@ -205,10 +205,9 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
             return false;
         }
 
-        var fore = BlockFore.Color;
-        var back = BlockBack.Color;
+        var colors = new ColorPair(BlockFore.Color, BlockBack.Color);
 
-        if (!Validator.IsNiceContrast(fore, back))
+        if (!colors.Readable)
         {
             MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
             return false;
@@ -227,7 +226,7 @@ public sealed class RuleDialog(Rule existing) : AppDialog, IListViewSubDialog<Ru
             Phase = IsGlobal ? Data.Phase : (CountdownPhase)ComboBoxRuleType.SelectedIndex,
             Tick = IsGlobal ? default : new(d, h, m, s),
             Text = content,
-            Colors = new(fore, back),
+            Colors = colors,
             IsDefault = IsGlobal
         };
 

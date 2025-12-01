@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules.Configuration;
 public class DisplayObject
 {
     [DefaultValue(2)]
-    public int EndIndex
+    public int Mode
     {
         get;
         set => Validator.SetValue(ref field, value, 2, 0, 2);
@@ -15,12 +15,12 @@ public class DisplayObject
 
     public CountdownFormat Format { get; set; }
 
-    public int ScreenIndex { get; set; }
-
     [DefaultValue(CountdownPosition.TopCenter)]
     public CountdownPosition Position { get; set; } = CountdownPosition.TopCenter;
 
     public bool Draggable { get; set; }
 
     public bool SeewoPptsvc { get; set; }
+
+    public int Screen { get; set; }
 }

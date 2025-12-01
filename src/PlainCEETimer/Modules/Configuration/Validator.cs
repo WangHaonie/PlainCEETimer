@@ -148,26 +148,6 @@ internal static class Validator
         return true;
     }
 
-    public static bool IsNiceContrast(Color fore, Color back)
-    {
-        //
-        // 对比度判断 参考:
-        //
-        // Guidance on Applying WCAG 2 to Non-Web Information and ...
-        // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
-        //
-
-        var L1 = GetRelativeLuminance(fore);
-        var L2 = GetRelativeLuminance(back);
-
-        if (L1 < L2)
-        {
-            (L1, L2) = (L2, L1);
-        }
-
-        return (L1 + 0.05) / (L2 + 0.05) >= 3;
-    }
-
     public static bool IsValidExamLength(int length)
     {
         return length is >= MinExamNameLength and <= MaxExamNameLength;
@@ -216,7 +196,22 @@ internal static class Validator
         }
     }
 
-    public static Color GetColorFromInt32(int c)
+    public static ColorPair ParseColorPairFromConfig(int fore, int back)
+    {
+        var f = GetColorFromInt32(fore);
+        var b = GetColorFromInt32(back);
+
+        var colors = new ColorPair(f, b);
+
+        if (colors.Readable)
+        {
+            return colors;
+        }
+
+        throw InvalidTampering(ConfigField.ColorSetContrast);
+    }
+
+    private static Color GetColorFromInt32(int c)
     {
         var rgb = c;
 
@@ -232,25 +227,5 @@ internal static class Validator
     internal static InvalidTamperingException InvalidTampering(ConfigField config)
     {
         return new InvalidTamperingException(config);
-    }
-
-    private static double GetRelativeLuminance(Color color)
-    {
-        //
-        // 亮度计算 参考:
-        //
-        // Guidance on Applying WCAG 2 to Non-Web Information and ...
-        // https://www.w3.org/TR/wcag2ict/#dfn-relative-luminance
-        //
-
-        double RsRGB = color.R / 255.0;
-        double GsRGB = color.G / 255.0;
-        double BsRGB = color.B / 255.0;
-
-        double R = RsRGB <= 0.03928 ? RsRGB / 12.92 : Math.Pow((RsRGB + 0.055) / 1.055, 2.4);
-        double G = GsRGB <= 0.03928 ? GsRGB / 12.92 : Math.Pow((GsRGB + 0.055) / 1.055, 2.4);
-        double B = BsRGB <= 0.03928 ? BsRGB / 12.92 : Math.Pow((BsRGB + 0.055) / 1.055, 2.4);
-
-        return 0.2126 * R + 0.7152 * G + 0.0722 * B;
     }
 }

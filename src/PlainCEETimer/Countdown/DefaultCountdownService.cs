@@ -24,17 +24,17 @@ public class DefaultCountdownService : ICountdownService
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
-    private CountdownMode Mode;
+    private int Mode;
     private CountdownFormat SelectedField;
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
     private Exam[] Exams;
-    private Rule DefaultRule;
-    private Rule[] CustomRules;
-    private Rule[] GlobalRules;
-    private Rule[] CurrentRules;
+    private CountdownRule DefaultRule;
+    private CountdownRule[] CustomRules;
+    private CountdownRule[] GlobalRules;
+    private CountdownRule[] CurrentRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
@@ -131,7 +131,7 @@ public class DefaultCountdownService : ICountdownService
     private void UpdateExams()
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
-        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == CountdownMode.Mode1);
+        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
     }
 
     private Exam GetCurrentExam(Exam[] exams, ref int index)
@@ -191,21 +191,21 @@ public class DefaultCountdownService : ICountdownService
         var s = exam.Start;
         var e = exam.End;
 
-        if (Mode >= CountdownMode.Mode1 && t < s)
+        if (Mode >= 0 && t < s)
         {
             phase = CountdownPhase.P1;
             span = s - t;
             return true;
         }
 
-        if (Mode >= CountdownMode.Mode2 && t < e)
+        if (Mode >= 1 && t < e)
         {
             phase = CountdownPhase.P2;
             span = e - t;
             return true;
         }
 
-        if (Mode >= CountdownMode.Mode3 && t > e)
+        if (Mode >= 2 && t > e)
         {
             phase = CountdownPhase.P3;
             span = t - e;

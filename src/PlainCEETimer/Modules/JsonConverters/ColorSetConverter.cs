@@ -17,15 +17,7 @@ public sealed class ColorSetConverter : JsonConverter<ColorPair>
             throw Validator.InvalidTampering(ConfigField.ColorSetPartsLength);
         }
 
-        var fore = Validator.GetColorFromInt32(colors[0]);
-        var back = Validator.GetColorFromInt32(colors[1]);
-
-        if (!Validator.IsNiceContrast(fore, back))
-        {
-            throw Validator.InvalidTampering(ConfigField.ColorSetContrast);
-        }
-
-        return new(fore, back);
+        return Validator.ParseColorPairFromConfig(colors[0], colors[1]);
     }
 
     public override void WriteJson(JsonWriter writer, ColorPair value, JsonSerializer serializer)

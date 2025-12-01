@@ -8,9 +8,9 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class CustomRuleConverter : JsonConverter<Rule>
+public sealed class CustomRuleConverter : JsonConverter<CountdownRule>
 {
-    public override Rule ReadJson(JsonReader reader, Type objectType, Rule existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override CountdownRule ReadJson(JsonReader reader, Type objectType, CountdownRule existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var json = JObject.Load(reader);
         var phaseInt = json[nameof(existingValue.Phase)].ToObject<int>(serializer);
@@ -33,14 +33,7 @@ public sealed class CustomRuleConverter : JsonConverter<Rule>
             }
         }
 
-        var fore = Validator.GetColorFromInt32(json[nameof(ColorPair.Fore)].ToObject<int>(serializer));
-        var back = Validator.GetColorFromInt32(json[nameof(ColorPair.Back)].ToObject<int>(serializer));
-
-        if (!Validator.IsNiceContrast(fore, back))
-        {
-            throw Validator.InvalidTampering(ConfigField.ColorSetContrast);
-        }
-
+        var colors = Validator.ParseColorPairFromConfig(json[nameof(ColorPair.Fore)].ToObject<int>(serializer), json[nameof(ColorPair.Back)].ToObject<int>(serializer));
         var text = json[nameof(existingValue.Text)].ToObject<string>(serializer).RemoveIllegalChars();
         Validator.EnsureCustomText(text);
 
@@ -49,12 +42,12 @@ public sealed class CustomRuleConverter : JsonConverter<Rule>
             Phase = (CountdownPhase)phaseInt,
             Tick = tick,
             Text = text,
-            Colors = new(fore, back),
+            Colors = colors,
             IsDefault = is0tickAllowed
         };
     }
 
-    public override void WriteJson(JsonWriter writer, Rule value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, CountdownRule value, JsonSerializer serializer)
     {
         var jo = new JObject
         {
