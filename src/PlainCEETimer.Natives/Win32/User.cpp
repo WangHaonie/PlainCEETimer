@@ -1,8 +1,10 @@
 ﻿#include "pch.h"
-#include "Win32User.h"
+#include "User.h"
 #include "Utils.h"
 #include <string>
 #include <TlHelp32.h>
+#include <Windows.h>
+#include <WtsApi32.h>
 
 LPCWSTR GetLogonUserName()
 {

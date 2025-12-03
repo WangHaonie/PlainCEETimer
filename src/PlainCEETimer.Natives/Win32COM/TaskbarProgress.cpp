@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Win32COM/Win32COM.h"
+#include "TaskbarProgress.h"
 #include "Utils.h"
 
 /*

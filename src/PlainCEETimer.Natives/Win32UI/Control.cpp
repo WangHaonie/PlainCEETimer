@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
-#include "Win32UI.h"
+#include "Control.h"
 #include "Utils.h"
-#include "ThemeManager/IATHook.h"
+#include "Win32/IATHook.h"
+#include "CommCtrl.h"
 #include <Windows.h>
 
 using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
@@ -53,12 +54,6 @@ void SetTopMostWindow(HWND hWnd)
     {
         SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
-}
-
-void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
-{
-    SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyle);
-    SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
 BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
@@ -114,6 +109,12 @@ LPCWSTR GetWindowClassName(HWND hWnd)
     }
 
     return nullptr;
+}
+
+void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
+{
+    SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyle);
+    SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc)

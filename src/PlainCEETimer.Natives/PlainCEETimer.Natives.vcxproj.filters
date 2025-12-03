@@ -15,21 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DisplayHelper\DisplayHelper.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryCleaner\MemoryCleaner.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ThemeManager\IATHook.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32UI\Win32UI.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32User\Win32User.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -39,45 +24,75 @@
     <ClInclude Include="resource.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Win32COM\Win32COM.h">
+    <ClInclude Include="Utils.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="Win32\DisplayHelper.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32UI\CommonDialogs.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32UI\Control.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32\IATHook.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32\MemoryCleaner.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32UI\RoundCorner.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32COM\ShellLink.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32COM\TaskbarProgress.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32COM\TaskScheduler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32UI\Theme.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32\User.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommonDialogs\CommonDialogs.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplayHelper\DisplayHelper.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="RoundCorner\RoundCorner.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ShellLink\ShellLink.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskScheduler\TaskScheduler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ThemeManager\ThemeManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32UI\Win32UI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32User\Win32User.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32UI\CommonDialogs.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32UI\Control.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32\DisplayHelper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32\MemoryCleaner.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32UI\RoundCorner.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32COM\ShellLink.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32COM\TaskbarProgress.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32COM\TaskScheduler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32UI\Theme.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32\User.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

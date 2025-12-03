@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-#include "Win32UI/Win32UI.h"
-#include "IATHook.h"
+#include "Theme.h"
+#include "Win32/IATHook.h"
 #include <dwmapi.h>
 
 /*

@@ -159,34 +159,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DisplayHelper\DisplayHelper.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MemoryCleaner\MemoryCleaner.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ThemeManager\IATHook.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="Win32COM\Win32COM.h" />
-    <ClInclude Include="Win32UI\Win32UI.h" />
-    <ClInclude Include="Win32User\Win32User.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="Win32COM\ShellLink.h" />
+    <ClInclude Include="Win32COM\TaskbarProgress.h" />
+    <ClInclude Include="Win32COM\TaskScheduler.h" />
+    <ClInclude Include="Win32UI\CommonDialogs.h" />
+    <ClInclude Include="Win32UI\Control.h" />
+    <ClInclude Include="Win32UI\RoundCorner.h" />
+    <ClInclude Include="Win32UI\Theme.h" />
+    <ClInclude Include="Win32\DisplayHelper.h" />
+    <ClInclude Include="Win32\IATHook.h" />
+    <ClInclude Include="Win32\MemoryCleaner.h" />
+    <ClInclude Include="Win32\User.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommonDialogs\CommonDialogs.cpp" />
-    <ClCompile Include="DisplayHelper\DisplayHelper.cpp" />
-    <ClCompile Include="MemoryCleaner\MemoryCleaner.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RoundCorner\RoundCorner.cpp" />
-    <ClCompile Include="ShellLink\ShellLink.cpp" />
-    <ClCompile Include="TaskbarProgress\TaskbarProgress.cpp" />
-    <ClCompile Include="TaskScheduler\TaskScheduler.cpp" />
-    <ClCompile Include="ThemeManager\ThemeManager.cpp" />
-    <ClCompile Include="Win32UI\Win32UI.cpp" />
-    <ClCompile Include="Win32User\Win32User.cpp" />
+    <ClCompile Include="Win32COM\ShellLink.cpp" />
+    <ClCompile Include="Win32COM\TaskbarProgress.cpp" />
+    <ClCompile Include="Win32COM\TaskScheduler.cpp" />
+    <ClCompile Include="Win32UI\CommonDialogs.cpp" />
+    <ClCompile Include="Win32UI\Control.cpp" />
+    <ClCompile Include="Win32UI\RoundCorner.cpp" />
+    <ClCompile Include="Win32UI\Theme.cpp" />
+    <ClCompile Include="Win32\DisplayHelper.cpp" />
+    <ClCompile Include="Win32\MemoryCleaner.cpp" />
+    <ClCompile Include="Win32\User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PlainCEETimer.Natives.rc" />

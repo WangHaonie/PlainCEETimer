@@ -1,7 +1,8 @@
-#include "pch.h"
-#include "Win32COM/Win32COM.h"
+﻿#include "pch.h"
+#include "ShellLink.h"
 #include "Utils.h"
-#include <ShObjIdl.h>
+#include <Windows.h>
+#include <ShObjIdl_core.h>
 
 static IShellLink* psh = nullptr;
 static IPersistFile* ppf = nullptr;
