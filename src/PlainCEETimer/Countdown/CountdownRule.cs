@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
@@ -63,14 +64,14 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     public override int GetHashCode()
     {
-        var phasecode = unchecked(37 * 31 + Phase.GetHashCode() * 31);
+        var h = new HashCode().Add(Phase);
 
         if (IsDefault)
         {
-            return phasecode;
+            return h.Combine();
         }
 
-        return unchecked(phasecode + Tick.GetHashCode());
+        return h.Add(Tick).Combine();
     }
 
     bool IListViewData<CountdownRule>.InternalEquals(CountdownRule other)

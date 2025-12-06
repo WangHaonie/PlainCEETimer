@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
@@ -99,7 +100,11 @@ public class Exam : IListViewData<Exam>
 
     public override int GetHashCode()
     {
-        return unchecked((17 * 23 + Name.GetHashCode()) * 23 + Start.GetHashCode() + End.GetHashCode());
+        return new HashCode()
+            .Add(Name)
+            .Add(Start)
+            .Add(End)
+            .Combine();
     }
 
     bool IListViewData<Exam>.InternalEquals(Exam other)

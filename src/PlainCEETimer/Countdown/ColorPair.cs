@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Newtonsoft.Json;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Countdown;
@@ -50,7 +51,10 @@ public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 
     public override int GetHashCode()
     {
-        return foreColor.GetHashCode() + backColor.GetHashCode();
+        return new HashCode()
+            .Add(foreColor)
+            .Add(backColor)
+            .Combine();
     }
 
     private double GetRelativeLum(Color color)
