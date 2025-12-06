@@ -12,10 +12,11 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class ExamDialog(Exam existing) : AppDialog, IListViewSubDialog<Exam>
 {
-    public Exam Data { get; set; } = existing;
+    public Exam Data => data;
 
     protected override AppFormParam Params => AppFormParam.BindButtons;
 
+    private Exam data = existing;
     private PlainLabel LabelName;
     private PlainLabel LabelCounter;
     private PlainLabel LabelStart;
@@ -124,7 +125,7 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewSubDialog<Ex
             return false;
         }
 
-        Data = new()
+        data = new()
         {
             Name = CurrentExamName,
             Start = start,

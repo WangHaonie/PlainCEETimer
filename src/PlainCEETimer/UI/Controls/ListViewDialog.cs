@@ -22,23 +22,65 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         }
     }
 
+    /// <summary>
+    /// 获取或设置要展示在列表中的数据。
+    /// </summary>
     public TData[] Data { get; set; }
 
-    protected virtual TData[] DefaultData { get; }
+    /// <summary>
+    /// 获取或设置要固定在列表中的数据。
+    /// </summary>
+    public TData[] FixedData
+    {
+        get
+        {
+            if (IsDisposed)
+            {
+                return fixedData;
+            }
+
+            if (FixedDataItemSet != null)
+            {
+                var count = FixedDataItemSet.Count;
+                var data = new TData[count];
+                using var e = FixedDataItemSet.GetEnumerator();
+
+                for (int i = 0; e.MoveNext(); i++)
+                {
+                    data[i] = (TData)e.Current.Tag;
+                }
+
+                return data;
+            }
+
+            return null;
+        }
+
+        set
+        {
+            if (FixedDataItemSet == null && (HasFixedData = !value.IsNullOrEmpty()))
+            {
+                FixedDataItemSet = new(value.Length);
+                fixedData = value;
+            }
+        }
+    }
 
     protected sealed override AppFormParam Params => AppFormParam.AllControl;
 
-    private bool HasDefaultData;
+    private bool HasFixedData;
+    private TData[] fixedData;
     private ContextMenu ContextMenuMain;
     private MenuItem ContextDuplicate;
     private MenuItem ContextEdit;
     private MenuItem ContextDelete;
     private MenuItem ContextSelectAll;
     private PlainButton ButtonOperation;
+    private HashSet<ListViewItem> FixedDataItemSet;
     private readonly string MsgDelete;
     private readonly string MsgAddDup;
     private readonly string MsgEditDup;
-    private readonly ListViewItemSet<TData> ItemsSet = new();
+    private readonly ListViewItemSet<TData> ItemSet = new();
     private readonly ListView.ListViewItemCollection Items;
     private readonly ListViewGroupCollection Groups;
 
@@ -121,13 +163,12 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         ListViewMain.Suspend(() =>
         {
             var hasData = !Data.IsNullOrEmpty();
-            HasDefaultData = !DefaultData.IsNullOrEmpty();
 
-            if (HasDefaultData)
+            if (HasFixedData)
             {
-                foreach (var d in DefaultData)
+                for (int i = 0; i < fixedData.Length; i++)
                 {
-                    AddItem(d);
+                    AddItemCore(fixedData[i], isDefault: true);
                 }
             }
 
@@ -135,11 +176,11 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
             {
                 foreach (var d in Data)
                 {
-                    AddItem(d);
+                    AddItemCore(d);
                 }
             }
 
-            if (HasDefaultData || hasData)
+            if (HasFixedData || hasData)
             {
                 Items[0].EnsureVisible();
             }
@@ -177,30 +218,28 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     protected sealed override bool OnClickButtonA()
     {
-        var length = Items.Count;
+        TData[] data = [];
+        var total = Items.Count;
+        var length = total - (HasFixedData ? fixedData.Length : 0);
 
-        if (length == 0)
+        if (length != 0)
         {
-            Data = [];
-        }
-        else
-        {
-            var tmp = new List<TData>(length);
+            data = new TData[length];
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0, j = 0; i < total; i++)
             {
-                var data = (TData)Items[i].Tag;
+                var item = Items[i];
 
-                if (!OnCollectingData(data))
+                if (!IsDefault(item) && j < length)
                 {
-                    tmp.Add(data);
+                    data[j] = (TData)item.Tag;
+                    j++;
                 }
             }
-
-            Data = [.. tmp];
-            OnCollectingData(default);
         }
 
+        Data = data;
+        fixedData = FixedData;
         return base.OnClickButtonA();
     }
 
@@ -210,19 +249,15 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
 
-    protected virtual bool OnCollectingData(TData data) => false;
-
-    protected virtual bool OnRemovingData(TData data) => true;
-
     private void ContextDuplicate_Click(object sender, EventArgs e)
     {
         if (ListViewMain.SelectedItemsCount == 1)
         {
-            var data = (TData)ListViewMain.SelectedItem.Tag;
+            var item = ListViewMain.SelectedItem;
 
-            if (OnRemovingData(data))
+            if (!IsDefault(item))
             {
-                var dialog = GetSubDialog(data);
+                var dialog = GetSubDialog((TData)item.Tag);
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -256,7 +291,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             ListViewMain.Suspend(() =>
             {
-                if (!HasDefaultData && selected == Items.Count)
+                if (!HasFixedData && selected == Items.Count)
                 {
                     RemoveAllItems();
                 }
@@ -286,9 +321,9 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     private void AddItemSafe(TData data)
     {
-        if (ItemsSet.CanAdd(data))
+        if (ItemSet.CanAdd(data))
         {
-            AddItemCore(data);
+            AddItem(data);
         }
         else
         {
@@ -305,14 +340,15 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     private void EditItemSafe(ListViewItem item, TData newData, TData oldData)
     {
-        var flag = ItemsSet.CanEdit(newData, item);
+        var flag = ItemSet.CanEdit(newData, item);
 
         if (flag != null)
         {
             if ((bool)flag)
             {
+                var f = HasFixedData && FixedDataItemSet.Remove(item);
                 RemoveItem(item, oldData, true);
-                AddItemCore(newData);
+                AddItem(newData, f);
             }
             else
             {
@@ -328,19 +364,19 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         }
     }
 
-    private void AddItemCore(TData data)
+    private void AddItem(TData data, bool isDefault = false)
     {
         ListViewMain.Suspend(() =>
         {
             ListViewMain.SelectAll(false);
-            AddItem(data, true);
+            AddItemCore(data, true, isDefault);
             ListViewMain.AutoAdjustColumnWidth();
         });
 
         UserChanged();
     }
 
-    private void AddItem(TData data, bool isSelected = false)
+    private void AddItemCore(TData data, bool isSelected = false, bool isDefault = false)
     {
         var item = GetListViewItem(data);
         item.Group = Groups[GetGroupIndex(data)];
@@ -348,26 +384,36 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         item.Selected = isSelected;
         item.Focused = isSelected;
         Items.Add(item);
-        ItemsSet.Add(data, item);
+        ItemSet.Add(data, item);
 
         if (isSelected)
         {
             item.EnsureVisible();
         }
+
+        if (isDefault)
+        {
+            FixedDataItemSet.Add(item);
+        }
     }
 
     private void RemoveItem(ListViewItem item, TData data, bool isEdit = false)
     {
-        if (isEdit || OnRemovingData(data))
+        if (isEdit || !IsDefault(item))
         {
             Items.Remove(item);
-            ItemsSet.Remove(data);
+            ItemSet.Remove(data);
         }
     }
 
     private void RemoveAllItems()
     {
         Items.Clear();
-        ItemsSet.Clear();
+        ItemSet.Clear();
+    }
+
+    private bool IsDefault(ListViewItem item)
+    {
+        return HasFixedData && FixedDataItemSet.Contains(item);
     }
 }

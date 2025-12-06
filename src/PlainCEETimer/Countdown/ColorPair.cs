@@ -52,7 +52,7 @@ public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
     {
         return foreColor.GetHashCode() + backColor.GetHashCode();
     }
-    
+
     private double GetRelativeLum(Color color)
     {
         //

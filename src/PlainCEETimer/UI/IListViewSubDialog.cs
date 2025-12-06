@@ -2,10 +2,10 @@
 
 namespace PlainCEETimer.UI;
 
-public interface IListViewSubDialog<T>
+public interface IListViewSubDialog<out T>
     where T : IListViewData<T>
 {
-    T Data { get; set; }
+    T Data { get; }
 
     DialogResult ShowDialog();
 }

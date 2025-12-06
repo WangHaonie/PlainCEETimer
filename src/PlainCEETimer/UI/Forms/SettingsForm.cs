@@ -231,13 +231,13 @@ public sealed class SettingsForm : AppForm
                             var dialog = new RulesManager()
                             {
                                 Data = EditedCustomRules,
-                                GlobalRules = EditedGlobalRules,
+                                FixedData = EditedGlobalRules,
                             };
 
                             if (dialog.ShowDialog() == DialogResult.OK)
                             {
                                 EditedCustomRules = dialog.Data;
-                                EditedGlobalRules = dialog.GlobalRules;
+                                EditedGlobalRules = dialog.FixedData;
                                 SettingsChanged();
                             }
                         }).Disable()

@@ -9,9 +9,9 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RuleDialog(CountdownRule existing) : AppDialog, IListViewSubDialog<CountdownRule>
+public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets = null) : AppDialog, IListViewSubDialog<CountdownRule>
 {
-    public CountdownRule Data { get; set; } = existing;
+    public CountdownRule Data => data;
 
     protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
 
@@ -38,6 +38,8 @@ public sealed class RuleDialog(CountdownRule existing) : AppDialog, IListViewSub
     private PlainNumericUpDown NUDSeconds;
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
+    private CountdownRule data = existing;
+    private readonly CountdownRule[] Presets = presets ?? GlobalDefaultRules;
     private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
     private static readonly CountdownRule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
 
@@ -221,7 +223,7 @@ public sealed class RuleDialog(CountdownRule existing) : AppDialog, IListViewSub
             return false;
         }
 
-        Data = new()
+        data = new()
         {
             Phase = IsGlobal ? Data.Phase : (CountdownPhase)ComboBoxRuleType.SelectedIndex,
             Tick = IsGlobal ? default : new(d, h, m, s),
@@ -257,7 +259,7 @@ public sealed class RuleDialog(CountdownRule existing) : AppDialog, IListViewSub
 
     private void GetNewData(bool all = true, bool colorOnly = false, bool textOnly = false)
     {
-        var rule = GlobalDefaultRules[ComboBoxRuleType.SelectedIndex];
+        var rule = Presets[ComboBoxRuleType.SelectedIndex];
 
         if (all || colorOnly)
         {
