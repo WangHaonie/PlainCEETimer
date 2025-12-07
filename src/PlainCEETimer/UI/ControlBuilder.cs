@@ -134,6 +134,9 @@ public class ControlBuilder
         return ctrl;
     }
 
+    [Obsolete]
+    int __;
+#if false
     public PlainHotKeyControl HotKeyCtrl(int w, EventHandler onHotKeyChanged)
     {
         var ctrl = new PlainHotKeyControl();
@@ -150,6 +153,7 @@ public class ControlBuilder
         ctrl.Multiline = multiline;
         return ctrl;
     }
+#endif
 
     public TabPage TabPage(string text, Control[] controls)
     {

@@ -53,13 +53,9 @@ public static class ThemeManager
 
     public static void EnableDarkModeForControl(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
     {
-        if (CanUseNewTheme && AutoUpgrade)
+        if (CanUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
         {
-            type = type switch
-            {
-                NativeStyle.CfdDark => NativeStyle.DarkTheme,
-                _ => type
-            };
+            type = NativeStyle.DarkTheme;
         }
 
         Win32UI.SetWindowTheme(hWnd, GetSubAppName(type), null);

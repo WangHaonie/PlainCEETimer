@@ -155,9 +155,9 @@
     <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Controls\PlainHotKeyControl.cs">
+    <None Include="UI\Controls\PlainHotKeyControl.cs">
       <SubType>Component</SubType>
-    </Compile>
+    </None>
     <Compile Include="UI\Controls\PlainLabel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -188,9 +188,9 @@
     <Compile Include="UI\Controls\PlainRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\PlainTabControl.cs">
+    <None Include="UI\Controls\PlainTabControl.cs">
       <SubType>Component</SubType>
-    </Compile>
+    </None>
     <Compile Include="UI\Controls\PlainTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
