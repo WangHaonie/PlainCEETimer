@@ -2,7 +2,7 @@
 #include "Control.h"
 #include "Utils.h"
 #include "Win32/IATHook.h"
-#include "CommCtrl.h"
+#include <CommCtrl.h>
 #include <Windows.h>
 
 using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);

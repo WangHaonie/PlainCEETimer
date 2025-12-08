@@ -33,13 +33,12 @@ LPCWSTR GetLogonUserName()
 
 BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
-    BOOL result = FALSE;
-
-    if (IsStringNullOrEmptyW(path) && IsStringNullOrEmptyW(args))
+    if (WString_IsNullOrEmpty(path) && WString_IsNullOrEmpty(args))
     {
-        return result;
+        return FALSE;
     }
 
+    BOOL result = FALSE;
     DWORD activeSid = WTSGetActiveConsoleSessionId();
     HANDLE hToken = nullptr;
 
@@ -57,28 +56,26 @@ BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
         {
             do
             {
-                if (!StringStartsWithW(pe32.szExeFile, L"taskh")) // 匹配 taskhost*.exe 进程
+                if (WString_StartsWith(pe32.szExeFile, L"taskh")) // 匹配 taskhost*.exe 进程
                 {
-                    continue;
-                }
+                    DWORD sid;
 
-                DWORD sid;
-
-                if (ProcessIdToSessionId(pe32.th32ProcessID, &sid) && sid == activeSid)
-                {
-                    HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe32.th32ProcessID);
-
-                    if (hProc)
+                    if (ProcessIdToSessionId(pe32.th32ProcessID, &sid) && sid == activeSid)
                     {
-                        if (OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_DUPLICATE, &hToken))
+                        HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe32.th32ProcessID);
+
+                        if (hProc)
                         {
-                            result = TRUE;
+                            if (OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_DUPLICATE, &hToken))
+                            {
+                                result = TRUE;
+                            }
+
+                            CloseHandle(hProc);
                         }
 
-                        CloseHandle(hProc);
+                        break;
                     }
-
-                    break;
                 }
             }
             while (Process32Next(hSnapshot, &pe32));

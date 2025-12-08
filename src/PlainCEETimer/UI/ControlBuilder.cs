@@ -135,7 +135,7 @@ public class ControlBuilder
     }
 
     [Obsolete]
-    int __;
+    int _;
 #if false
     public PlainHotKeyControl HotKeyCtrl(int w, EventHandler onHotKeyChanged)
     {
@@ -153,7 +153,6 @@ public class ControlBuilder
         ctrl.Multiline = multiline;
         return ctrl;
     }
-#endif
 
     public TabPage TabPage(string text, Control[] controls)
     {
@@ -166,6 +165,7 @@ public class ControlBuilder
 
         return ctrl;
     }
+#endif
 
     public NavigationPage NavPage(Control[] controls)
     {

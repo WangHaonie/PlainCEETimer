@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "TaskbarProgress.h"
 #include "Utils.h"
+#include <ShObjIdl_core.h>
+#include <Windows.h>
 
 /*
 

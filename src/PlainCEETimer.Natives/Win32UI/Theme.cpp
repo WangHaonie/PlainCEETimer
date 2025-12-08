@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "Theme.h"
+#include "utils.h"
 #include "Win32/IATHook.h"
 #include <dwmapi.h>
+#include <Uxtheme.h>
+#include <Windows.h>
 
 /*
 
@@ -38,7 +41,7 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 {
-    if (wcscmp(pszClassList, L"ScrollBar") == 0)
+    if (WString_Equals(pszClassList, L"ScrollBar", false))
     {
         hWnd = nullptr;
         pszClassList = L"DarkMode_Explorer::ScrollBar";
@@ -60,12 +63,9 @@ static DWORD WINAPI GetSysColorNew(int nIndex)
         {
             return g_crFore;
         }
-
-        default:
-        {
-            return g_GetSysColor(nIndex);
-        }
     }
+
+    return g_GetSysColor(nIndex);
 }
 
 void EnableDarkModeForApp()

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "DisplayHelper.h"
 #include <vector>
+#include <Windows.h>
 
 void EnumSystemDisplays(EnumDisplayProc lpfnEnum)
 {

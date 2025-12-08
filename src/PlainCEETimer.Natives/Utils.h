@@ -1,16 +1,52 @@
 ﻿#pragma once
 
-#include <string>
 #include <combaseapi.h>
+#include <wchar.h>
+#include <Windows.h>
 
-inline bool __cdecl IsStringNullOrEmptyW(const wchar_t* str) noexcept
+inline bool __cdecl String_IsNullOrEmpty(const char* str) noexcept
 {
     return !str || !*str;
 }
 
-inline bool __cdecl StringStartsWithW(const wchar_t* strA, const wchar_t* strB)
+inline bool __cdecl WString_IsNullOrEmpty(const wchar_t* str) noexcept
 {
+    return !str || !*str;
+}
+
+inline bool __cdecl WString_StartsWith(const wchar_t* strA, const wchar_t* strB)
+{
+    if (!strA || !strB)
+    {
+        return false;
+    }
+
+    if (strA == strB)
+    {
+        return true;
+    }
+
     return _wcsnicmp(strA, strB, wcslen(strB)) == 0;
+}
+
+inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, bool fIgnoreCase)
+{
+    if (!strA || !strB)
+    {
+        return false;
+    }
+
+    if (strA == strB)
+    {
+        return true;
+    }
+
+    if (fIgnoreCase)
+    {
+        return _wcsicmp(strA, strB) == 0;
+    }
+
+    return wcscmp(strA, strB) == 0;
 }
 
 template<typename TInterface>

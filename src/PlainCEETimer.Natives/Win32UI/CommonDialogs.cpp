@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "CommonDialogs.h"
+#include <Windows.h>
 
 BOOL RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors)
 {

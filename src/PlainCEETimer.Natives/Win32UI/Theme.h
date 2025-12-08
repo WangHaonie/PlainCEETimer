@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #define HOOK_OPENNCTHEMEDATA_ARGS "comctl32.dll", "uxtheme.dll", nullptr, 49, IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT
 #define HOOK_GETSYSCOLOR_ARGS "comctl32.dll", "user32.dll", "GetSysColor", 0, IMAGE_DIRECTORY_ENTRY_IMPORT
 

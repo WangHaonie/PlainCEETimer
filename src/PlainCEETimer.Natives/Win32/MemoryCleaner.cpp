@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MemoryCleaner.h"
 #include <psapi.h>
+#include <Windows.h>
 
 /*
 

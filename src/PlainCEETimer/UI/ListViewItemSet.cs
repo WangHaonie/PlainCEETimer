@@ -10,18 +10,13 @@ public class ListViewItemSet<TData>()
     {
         public TData Data = data;
         public ListViewItem Item = item;
-
-        public static Element FromData(TData data)
-        {
-            return new(data, null);
-        }
     }
 
     private readonly HashSet<Element> ItemsSet = [];
 
     public bool CanAdd(TData data)
     {
-        return !ItemsSet.Contains(Element.FromData(data));
+        return !ItemsSet.Contains(new(data, null));
     }
 
     public bool? CanEdit(TData newData, ListViewItem existing)
@@ -31,7 +26,7 @@ public class ListViewItemSet<TData>()
             return true;
         }
 
-        if (ItemsSet.TryGetValue(Element.FromData(newData), out var actual) && existing.Equals(actual.Item))
+        if (ItemsSet.TryGetValue(new(newData, null), out var actual) && existing.Equals(actual.Item))
         {
             return newData.InternalEquals(actual.Data) ? null : true;
         }
@@ -46,7 +41,7 @@ public class ListViewItemSet<TData>()
 
     public void Remove(TData data)
     {
-        ItemsSet.Remove(Element.FromData(data));
+        ItemsSet.Remove(new(data, null));
     }
 
     public void Clear()

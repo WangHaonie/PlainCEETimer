@@ -172,27 +172,26 @@ public class AppMessageBox(AppForm parent = null)
 
     private DialogResult Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
     {
-        if (parent != null && parent.InvokeRequired)
+        if (parent != null)
         {
-            /*
+            if (parent.InvokeRequired)
+            {
+                /*
 
-            在 Invoke 方法内部获取到 DialogResult 返回值 参考:
+                在 Invoke 方法内部获取到 DialogResult 返回值 参考:
 
-            c# - Return Ivoke message DialogResult - Stack Overflow
-            https://stackoverflow.com/a/29256646/21094697
+                c# - Return Ivoke message DialogResult - Stack Overflow
+                https://stackoverflow.com/a/29256646/21094697
 
-            */
-            return (DialogResult)parent.Invoke(ShowPopup); // 等效于 Func<DialogResult>
+                */
+
+                return (DialogResult)parent.Invoke(() => Popup(message, level, buttons, autoClose));
+            }
+
+            parent.ReActivate();
         }
 
-        return ShowPopup();
-
-
-        DialogResult ShowPopup()
-        {
-            parent?.ReActivate();
-            return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();
-        }
+        return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();
     }
 
     private string GetExMessage(string msg, Exception ex)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <WtsApi32.h>
+#include <Windows.h>
 
 cexport(LPCWSTR) GetLogonUserName();
 cexport(BOOL) RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode);

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Windows.h>
 #include <taskschd.h>
+#include <Windows.h>
 
 cexport(void) InitializeTaskScheduler();
 cexport(void) TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType);

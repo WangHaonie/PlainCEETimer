@@ -6,6 +6,9 @@
 #pragma once
 
 #include <cstdint>
+#include <string.h>
+#include <utils.h>
+#include <Windows.h>
 
 /*
 
@@ -58,10 +61,10 @@ inline PIMAGE_THUNK_DATA FindAddressByOrdinal(void* moduleBase, PIMAGE_THUNK_DAT
 
 inline PIMAGE_THUNK_DATA FindAddress(void* moduleBase, PIMAGE_THUNK_DATA impName, PIMAGE_THUNK_DATA impAddr, const char* funcName, uint16_t ordinal)
 {
-    if (funcName && *funcName)
-        return FindAddressByName(moduleBase, impName, impAddr, funcName);
-    else
+    if (String_IsNullOrEmpty(funcName))
         return FindAddressByOrdinal(moduleBase, impName, impAddr, ordinal);
+    else
+        return FindAddressByName(moduleBase, impName, impAddr, funcName);
 }
 
 inline PIMAGE_THUNK_DATA FindIatThunkInModule(void* moduleBase, const char* dllName, const char* funcName, uint16_t ordinal)
@@ -99,6 +102,11 @@ inline PIMAGE_THUNK_DATA FindDelayLoadThunkInModule(void* moduleBase, const char
 template <typename TFunc>
 inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, size_t entryID, TFunc pNewFunc, TFunc* ppOldFunc)
 {
+    if (String_IsNullOrEmpty(targetModuleName) || String_IsNullOrEmpty(importedModuleName))
+    {
+        return false;
+    }
+
     bool delayLoad = false;
 
     switch (entryID)
