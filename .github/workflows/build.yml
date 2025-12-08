@@ -32,7 +32,7 @@ jobs:
         
       - name: Restore & Build Project
         working-directory: ./src/
-        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
+        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v145 /p:BuildInParallel=true
 
       - name: Build Setup
         run: makensis src/PlainCEETimer.Setup/Setup.nsi
