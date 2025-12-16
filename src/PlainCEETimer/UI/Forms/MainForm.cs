@@ -172,7 +172,7 @@ public sealed class MainForm : AppForm
 
         if (!Win32UI.MenuGetItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
         {
-            MainCountdown.SwitchToExam(index);
+            MainCountdown.SwitchTo(index);
             SwitchToExam(index);
         }
     }
@@ -209,6 +209,48 @@ public sealed class MainForm : AppForm
         SetCountdownAutoWrap();
         ApplyStyle();
         RunCountdown();
+        RegisterHotKeys();
+    }
+
+    private void RegisterHotKeys()
+    {
+        var hks = AppConfig.HotKeys;
+        HotKeyHelper.UnRegisterAll();
+
+        for (int i = 0; i < Validator.HotKeyCount; i++)
+        {
+            if (HotKeyHelper.Register(hks[i]) > 2)
+            {
+                MessageX.Warn($"第 {i + 1} 个热键注册失败，可能被其他应用程序占用！");
+            }
+        }
+
+        HotKeyHelper.HotKeyPress += HotKeyPress;
+    }
+
+    private void HotKeyPress(object sender, HotKeyPressEventArgs e)
+    {
+        switch (e.Id)
+        {
+            case 1:
+                HotKey_HideMain();
+                break;
+            case 2:
+                MainCountdown.SwitchToPrevious();
+                break;
+            case 3:
+                MainCountdown.SwitchToNext();
+                break;
+        }
+    }
+
+    private bool ishk1;
+
+    private void HotKey_HideMain()
+    {
+        ishk1 = !ishk1;
+        Opacity = ishk1 ? 0D : 1D;
+        ReActivate();
     }
 
     private void LoadConfig()

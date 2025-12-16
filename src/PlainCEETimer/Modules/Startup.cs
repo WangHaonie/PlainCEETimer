@@ -51,7 +51,7 @@ internal static class Startup
         DeleteTask();
     }
 
-    public static void Cleanup()
+    public static void CleanUp()
     {
         EnableTask();
         Win32TaskScheduler.Release();

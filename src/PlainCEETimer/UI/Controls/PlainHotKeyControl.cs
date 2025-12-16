@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -20,13 +21,14 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 
 */
 
-public class PlainHotKeyControl : Control
+[DebuggerDisplay("{HotKey}")]
+public class PlainHotkeyControl : Control
 {
     private sealed class ParentFormNativeWindow : NativeWindow
     {
-        private readonly PlainHotKeyControl Ctrl;
+        private readonly PlainHotkeyControl Ctrl;
 
-        public ParentFormNativeWindow(PlainHotKeyControl ctrl)
+        public ParentFormNativeWindow(PlainHotkeyControl ctrl)
         {
             AssignHandle(ctrl.Parent.Handle);
             Ctrl = ctrl;
@@ -48,7 +50,7 @@ public class PlainHotKeyControl : Control
 
     public event EventHandler HotKeyChanged;
 
-    public HotKey Hotkey
+    public HotKey HotKey
     {
         get
         {
@@ -58,16 +60,18 @@ public class PlainHotKeyControl : Control
                 hotkey = new((ushort)Win32UI.SendMessage(Handle, HKM_GETHOTKEY, 0, 0).ToInt32());
             }
 
-            return hotkey;
+            return new(hotkey);
         }
         set
         {
+            var h = new Hotkey(value);
+
             if (IsHandleCreated)
             {
-                SetHotKey(value);
+                SetHotKey(h);
             }
 
-            hotkey = value;
+            hotkey = h;
         }
     }
 
@@ -85,11 +89,11 @@ public class PlainHotKeyControl : Control
 
     protected override Size DefaultMinimumSize => new(100, 23);
 
-    private HotKey hotkey = HotKey.None;
+    private Hotkey hotkey;
     private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
-    public PlainHotKeyControl()
+    public PlainHotkeyControl()
     {
         SetStyle(ControlStyles.UserPaint, false);
     }
@@ -132,7 +136,7 @@ public class PlainHotKeyControl : Control
         base.WndProc(ref m);
     }
 
-    private void SetHotKey(HotKey hk)
+    private void SetHotKey(Hotkey hk)
     {
         const int HKM_SETHOTKEY = 0x0400 + 1;
         Win32UI.SendMessage(Handle, HKM_SETHOTKEY, hk, 0);

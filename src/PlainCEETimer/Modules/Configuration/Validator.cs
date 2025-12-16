@@ -19,6 +19,7 @@ internal static class Validator
     public const int MaxOpacity = 100;
     public const int MinOpacity = 20;
     public const int MaxCustomTextLength = 800;
+    public const int HotKeyCount = 3;
     public const long MaxTick = 56623103990000000L; // 65535d 23h 59m 59s
     public const long MinTick = TimeSpan.TicksPerSecond; // 1s
     public const long MaxDate = 3155378975999999999L; // DateTime.Max

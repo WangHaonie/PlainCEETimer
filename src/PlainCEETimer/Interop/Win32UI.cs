@@ -64,6 +64,12 @@ public static class Win32UI
     public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
     [DllImport(App.User32Dll)]
+    public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, Keys vk);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    [DllImport(App.User32Dll)]
     public static extern int FillRect(IntPtr hDC, ref RECT lprc, IntPtr hbr);
 
     [DllImport(App.NativesDll, EntryPoint = "#20")]

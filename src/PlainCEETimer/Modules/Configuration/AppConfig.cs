@@ -1,7 +1,9 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
@@ -31,6 +33,30 @@ public class AppConfig
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
+    }
+
+    public HotKey[] HotKeys
+    {
+        get;
+        set
+        {
+            if (Validator.ValidateNeeded)
+            {
+                HashSet<HotKey> hkset = new(Validator.HotKeyCount);
+
+                for (int i = 0; i < Validator.HotKeyCount; i++)
+                {
+                    var hk = value[i];
+
+                    if (hk.IsValid && !hkset.Add(hk))
+                    {
+                        throw Validator.InvalidTampering(ConfigField.HotKeysArray);
+                    }
+                }
+            }
+
+            field = value;
+        }
     }
 
     public int[] CustomColors { get; set; }

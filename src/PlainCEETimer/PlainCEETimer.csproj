@@ -128,8 +128,10 @@
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
     <Compile Include="Modules\HashCode.cs" />
+    <Compile Include="Modules\HotKeyHelper.cs" />
     <Compile Include="Modules\Http\DownloadingEventHandler.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
+    <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\SystemVersion.cs" />
     <Compile Include="Modules\Xml.cs" />
@@ -155,9 +157,9 @@
     <Compile Include="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="UI\Controls\PlainHotKeyControl.cs">
+    <Compile Include="UI\Controls\PlainHotkeyControl.cs">
       <SubType>Component</SubType>
-    </None>
+    </Compile>
     <Compile Include="UI\Controls\PlainLabel.cs">
       <SubType>Component</SubType>
     </Compile>

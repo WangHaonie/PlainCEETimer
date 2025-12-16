@@ -10,7 +10,11 @@ public interface ICountdownService : IDisposable
 
     void Start(CountdownStartInfo startInfo);
 
-    void SwitchToExam(int index);
+    void SwitchTo(int index);
+
+    void SwitchToNext();
+
+    void SwitchToPrevious();
 
     void ForceRefresh();
 }

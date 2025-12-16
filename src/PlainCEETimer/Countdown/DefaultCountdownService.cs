@@ -16,7 +16,7 @@ public class DefaultCountdownService : ICountdownService
 
     private int ExamIndex;
     private int LastExamIndex = -2;
-    private int ExamsLength;
+    private int ExamsCount;
     private int AutoSwitchInterval;
     private bool IsRunning;
     private bool EnableAutoSwitch;
@@ -66,10 +66,20 @@ public class DefaultCountdownService : ICountdownService
         InternalStart();
     }
 
-    public void SwitchToExam(int index)
+    public void SwitchTo(int index)
     {
         ExamIndex = index;
         InternalStart();
+    }
+
+    public void SwitchToNext()
+    {
+        SwitchTo((ExamIndex + 1) % ExamsCount);
+    }
+
+    public void SwitchToPrevious()
+    {
+        SwitchTo((ExamIndex - 1 + ExamsCount) % ExamsCount);
     }
 
     public void ForceRefresh()
@@ -94,7 +104,7 @@ public class DefaultCountdownService : ICountdownService
         CanUseCustomText = SelectedField == CountdownFormat.Custom;
         GlobalRules = value.GlobalRules;
         Exams = value.Exams;
-        ExamsLength = Exams.Length;
+        ExamsCount = Exams.Length;
         CustomRules = value.CustomRules;
         CanUpdateRules = true;
     }
@@ -122,7 +132,7 @@ public class DefaultCountdownService : ICountdownService
     {
         StopAutoSwitchTimer();
 
-        if (CanStart && EnableAutoSwitch && ExamsLength > 1)
+        if (CanStart && EnableAutoSwitch && ExamsCount > 1)
         {
             AutoSwitchTimer = new(AutoSwitchCallback, null, IsRunning ? AutoSwitchInterval : 5000, AutoSwitchInterval);
         }
@@ -156,10 +166,10 @@ public class DefaultCountdownService : ICountdownService
     {
         do
         {
-            ExamIndex = (ExamIndex + 1) % ExamsLength;
+            ExamIndex = (ExamIndex + 1) % ExamsCount;
             UpdateExams();
         }
-        while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsLength - 1);
+        while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsCount - 1);
 
         TryStartMainTimer();
         OnExamSwitched();

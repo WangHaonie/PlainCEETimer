@@ -134,17 +134,17 @@ public class ControlBuilder
         return ctrl;
     }
 
-    [Obsolete]
-    int _;
-#if false
-    public PlainHotKeyControl HotKeyCtrl(int w, EventHandler onHotKeyChanged)
+    public PlainHotkeyControl HotkeyCtrl(int w, EventHandler onHotKeyChanged)
     {
-        var ctrl = new PlainHotKeyControl();
+        var ctrl = new PlainHotkeyControl();
         ctrl.SetBounds(0, 0, w, 0);
         ctrl.HotKeyChanged += onHotKeyChanged;
         return ctrl;
     }
 
+    [Obsolete]
+    int _;
+#if false
     public PlainTabControl TabCtrl(int w, int h, bool multiline, TabPage[] pages)
     {
         var ctrl = new PlainTabControl();
