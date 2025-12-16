@@ -10,6 +10,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms;
@@ -215,17 +216,21 @@ public sealed class MainForm : AppForm
     private void RegisterHotKeys()
     {
         var hks = AppConfig.HotKeys;
-        HotKeyHelper.UnRegisterAll();
-
-        for (int i = 0; i < Validator.HotKeyCount; i++)
+        
+        if (!hks.IsNullOrEmpty())
         {
-            if (HotKeyHelper.Register(hks[i]) > 2)
-            {
-                MessageX.Warn($"第 {i + 1} 个热键注册失败，可能被其他应用程序占用！");
-            }
-        }
+            HotKeyHelper.UnRegisterAll();
 
-        HotKeyHelper.HotKeyPress += HotKeyPress;
+            for (int i = 0; i < Math.Min(Validator.HotKeyCount, hks.Length); i++)
+            {
+                if (HotKeyHelper.Register(hks[i]) > 2)
+                {
+                    MessageX.Warn($"第 {i + 1} 个热键注册失败，可能被其他应用程序占用！");
+                }
+            }
+
+            HotKeyHelper.HotKeyPress += HotKeyPress;
+        }
     }
 
     private void HotKeyPress(object sender, HotKeyPressEventArgs e)
@@ -574,8 +579,31 @@ public sealed class MainForm : AppForm
         }),
 
         b.Separator(),
+
+        b.Item("快捷键(&H)", (_, _) =>
+        {
+            if (DialogHotKey == null)
+            {
+                DialogHotKey = new();
+
+                if (DialogHotKey.ShowDialog() == DialogResult.OK)
+                {
+                    RegisterHotKeys();
+                }
+
+                DialogHotKey = null;
+            }
+            else
+            {
+                DialogHotKey.ReActivate();
+            }
+        }),
+
+        b.Separator(),
         b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
     ]);
+
+    private HotKeyDialog DialogHotKey;
 
     private void UpdateTrayIconText(string content)
     {

@@ -37,16 +37,12 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelOpacity;
     private PlainLabel LabelPosition;
     private PlainLabel LabelPptsvc;
-    private PlainLabel LabelHotKey1;
-    private PlainLabel LabelHotKey2;
-    private PlainLabel LabelHotKey3;
     private PlainLabel LabelRestart;
     private PlainLabel LabelScreens;
     private PlainLabel LabelSyncTime;
     private NavigationPage PageDisplay;
     private NavigationPage PageGeneral;
     private NavigationPage PageAdvanced;
-    private NavigationPage PageHotKeys;
     private Panel PageNavPages;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
@@ -64,9 +60,6 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxTrayIcon;
     private PlainCheckBox CheckBoxTrayText;
     private PlainCheckBox CheckBoxUniTopMost;
-    private PlainHotkeyControl HotkeyCtrl1;
-    private PlainHotkeyControl HotkeyCtrl2;
-    private PlainHotkeyControl HotkeyCtrl3;
     private PlainNumericUpDown NudOpacity;
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
@@ -74,7 +67,6 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxMainForm;
     private PlainGroupBox GBoxOthers;
     private PlainGroupBox GBoxPptsvc;
-    private PlainGroupBox GBoxHotKeys;
     private PlainGroupBox GBoxRestart;
     private PlainGroupBox GBoxSyncTime;
     private PlainGroupBox GBoxTheme;
@@ -85,7 +77,6 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
-    private PlainHotkeyControl[] HotKeyCtrls;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
 
     private PlainLabel LabelCountdownFormat;
@@ -289,19 +280,6 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageHotKeys = b.NavPage(
-                [
-                    GBoxHotKeys = b.GroupBox("快捷键绑定",
-                    [
-                        LabelHotKey1 = b.Label("[1]隐藏主窗口"),
-                        LabelHotKey2 = b.Label("[2]上一个考试"),
-                        LabelHotKey3 = b.Label("[3]下一个考试"),
-                        HotkeyCtrl1 = b.HotkeyCtrl(200, SettingsChanged),
-                        HotkeyCtrl2 = b.HotkeyCtrl(200, SettingsChanged),
-                        HotkeyCtrl3 = b.HotkeyCtrl(200, SettingsChanged)
-                    ])
-                ]),
-
                 PageAdvanced = b.NavPage(
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
@@ -376,7 +354,7 @@ public sealed class SettingsForm : AppForm
 
             b.Panel(1, 1, 54, 260,
             [
-                new NavigationBar(["基本", "显示", "热键", "高级"], [PageGeneral, PageDisplay, PageHotKeys, PageAdvanced])
+                new NavigationBar(["基本", "显示", "高级"], [PageGeneral, PageDisplay, PageAdvanced])
                 {
                     Indent = ScaleToDpi(5),
                     ItemHeight = ScaleToDpi(25)
@@ -387,7 +365,6 @@ public sealed class SettingsForm : AppForm
             ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
         ]);
 
-        HotKeyCtrls = [HotkeyCtrl1, HotkeyCtrl2, HotkeyCtrl3];
         UpdateSettingsArea(SettingsArea.StartUp, false);
     }
 
@@ -457,19 +434,6 @@ public sealed class SettingsForm : AppForm
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
-
-
-        GroupBoxArrageFirstControl(HotkeyCtrl1, 0, 3);
-        GroupBoxArrageFirstControl(LabelHotKey1, 1);
-        CompactControlX(HotkeyCtrl1, LabelHotKey1, 8);
-        CenterControlY(LabelHotKey1, HotkeyCtrl1, -1);
-        ArrangeControlYL(LabelHotKey2, LabelHotKey1);
-        ArrangeControlYL(LabelHotKey3, LabelHotKey2);
-        ArrangeControlYL(HotkeyCtrl2, HotkeyCtrl1, 0, 5);
-        ArrangeControlYL(HotkeyCtrl3, HotkeyCtrl2, 0, 5);
-        CenterControlY(LabelHotKey2, HotkeyCtrl2, -1);
-        CenterControlY(LabelHotKey3, HotkeyCtrl3, -1);
-        GroupBoxAutoAdjustHeight(GBoxHotKeys, HotkeyCtrl3, 8);
 
 
         GroupBoxArrageFirstControl(LabelOpacity);
@@ -595,14 +559,6 @@ public sealed class SettingsForm : AppForm
 
         CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
         UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
-
-        var hkarr = new HotKey[Validator.HotKeyCount];
-        hkarr.PopulateWith(AppConfig.HotKeys);
-
-        for (int i = 0; i < Validator.HotKeyCount; i++)
-        {
-            HotKeyCtrls[i].HotKey = hkarr[i];
-        }
     }
 
     private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
@@ -670,25 +626,7 @@ public sealed class SettingsForm : AppForm
             return false;
         }
 
-        Dictionary<int, HotKey> hkdic = new(3);
-
-        for (int i = 0; i < Validator.HotKeyCount; i++)
-        {
-            var hk = HotKeyCtrls[i].HotKey;
-
-            var f1 = HotKeyHelper.Test(hk) > 2;
-            var f2 = hk.IsValid;
-            var f3 = hkdic.ContainsValue(hk);
-            hkdic[i] = hk;
-
-            if (f1 || (f2 && f3))
-            {
-                MessageX.Error($"无法注册第 {i + 1} 个快捷键，请确保该快捷键未重复且未被其他应用程序注册！");
-                return false;
-            }
-        }
-
-        hkdic.Values.CopyTo(EditedHotKeys = new HotKey[3], 0);
+        
         CanSaveChanges = true;
         UserChanged = false;
         Close();

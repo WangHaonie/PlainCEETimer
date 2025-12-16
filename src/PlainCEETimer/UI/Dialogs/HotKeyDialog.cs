@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Extensions;
+
+namespace PlainCEETimer.UI.Dialogs;
+
+public sealed class HotKeyDialog : AppDialog
+{
+    protected override AppFormParam Params => AppFormParam.AllControl;
+
+    private EventHandler OnUserChanged;
+    private PlainLabel LabelHotKey1;
+    private PlainLabel LabelHotKey2;
+    private PlainLabel LabelHotKey3;
+    private PlainHotkeyControl HotkeyCtrl1;
+    private PlainHotkeyControl HotkeyCtrl2;
+    private PlainHotkeyControl HotkeyCtrl3;
+    private PlainHotkeyControl[] HotKeyCtrls;
+    private HotKey[] HotKeys;
+    private readonly AppConfig AppConfig = App.AppConfig;
+
+    protected override void OnInitializing()
+    {
+        Text = "快捷键绑定";
+        OnUserChanged = (_, _) => UserChanged();
+        HotKeys = AppConfig.HotKeys;
+
+        this.AddControls(b =>
+        [
+            LabelHotKey1 = b.Label("隐藏主窗口"),
+            LabelHotKey2 = b.Label("上一个考试"),
+            LabelHotKey3 = b.Label("下一个考试"),
+            HotkeyCtrl1 = b.HotkeyCtrl(185, OnUserChanged),
+            HotkeyCtrl2 = b.HotkeyCtrl(185, OnUserChanged),
+            HotkeyCtrl3 = b.HotkeyCtrl(185, OnUserChanged)
+        ]);
+
+        HotKeyCtrls = [HotkeyCtrl1, HotkeyCtrl2, HotkeyCtrl3];
+        base.OnInitializing();
+    }
+
+    protected override void RunLayout(bool isHighDpi)
+    {
+        ArrangeFirstControl(HotkeyCtrl1);
+        ArrangeFirstControl(LabelHotKey1);
+        CompactControlX(HotkeyCtrl1, LabelHotKey1, 5);
+        CenterControlY(LabelHotKey1, HotkeyCtrl1, -1);
+        ArrangeControlYL(LabelHotKey2, LabelHotKey1);
+        ArrangeControlYL(LabelHotKey3, LabelHotKey2);
+        ArrangeControlYL(HotkeyCtrl2, HotkeyCtrl1, 0, 5);
+        ArrangeControlYL(HotkeyCtrl3, HotkeyCtrl2, 0, 5);
+        CenterControlY(LabelHotKey2, HotkeyCtrl2, -1);
+        CenterControlY(LabelHotKey3, HotkeyCtrl3, -1);
+        ArrangeCommonButtonsR(ButtonA, ButtonB, HotkeyCtrl3, 1, 5);
+    }
+
+    protected override void OnLoad()
+    {
+        if (!HotKeys.IsNullOrEmpty())
+        {
+            for (int i = 0; i < Math.Min(Validator.HotKeyCount, HotKeys.Length); i++)
+            {
+                HotKeyCtrls[i].HotKey = HotKeys[i];
+            }
+        }
+    }
+
+    protected override bool OnClickButtonA()
+    {
+        Dictionary<int, HotKey> hkdic = new(Validator.HotKeyCount);
+
+        for (int i = 0; i < Validator.HotKeyCount; i++)
+        {
+            var hk = HotKeyCtrls[i].HotKey;
+            var flag = hkdic.ContainsValue(hk);
+            hkdic[i] = hk;
+
+            if (HotKeyHelper.Test(hk) > 2 || (hk.IsValid && flag))
+            {
+                MessageX.Error($"无法注册第 {i + 1} 个快捷键，请确保该快捷键未重复且未被其他应用程序注册！");
+                return false;
+            }
+        }
+
+        var arr = new HotKey[Validator.HotKeyCount];
+        hkdic.Values.CopyTo(arr, 0);
+        AppConfig.HotKeys = arr;
+        Validator.DemandConfig();
+        return base.OnClickButtonA();
+    }
+}
