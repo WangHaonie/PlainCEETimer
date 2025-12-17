@@ -239,6 +239,7 @@
     <Compile Include="Interop\Win32UI.cs" />
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
+    <Compile Include="UI\HotKey.cs" />
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />
@@ -255,7 +256,7 @@
     <Compile Include="Modules\Http\DownloadReport.cs" />
     <Compile Include="Modules\Http\HttpService.cs" />
     <Compile Include="UI\IListViewData.cs" />
-    <Compile Include="UI\IListViewSubDialog.cs" />
+    <Compile Include="UI\IListViewChildDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
     <Compile Include="Modules\JsonConverters\CustomRuleConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />

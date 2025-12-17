@@ -24,11 +24,11 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 [DebuggerDisplay("{HotKey}")]
 public class PlainHotkeyControl : Control
 {
-    private sealed class ParentFormNativeWindow : NativeWindow
+    private sealed class ParentNativeWindow : NativeWindow
     {
         private readonly PlainHotkeyControl Ctrl;
 
-        public ParentFormNativeWindow(PlainHotkeyControl ctrl)
+        public ParentNativeWindow(PlainHotkeyControl ctrl)
         {
             AssignHandle(ctrl.Parent.Handle);
             Ctrl = ctrl;
@@ -100,11 +100,19 @@ public class PlainHotkeyControl : Control
 
     protected override void OnHandleCreated(EventArgs e)
     {
+        base.OnHandleCreated(e);
+
         const int WS_EX_CLIENTEDGE = 0x00000200;
         Win32UI.RemoveWindowExStyle(Handle, WS_EX_CLIENTEDGE);
+
+        const int HKM_SETRULES = 0x0400 + 3;
+        const int HKCOMB_NONE = 0x0001;
+        const int HKCOMB_S = 0x0002;
+        Win32UI.SendMessage(Handle, HKM_SETRULES, HKCOMB_NONE | HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
+
         SetHotKey(hotkey);
-        new ParentFormNativeWindow(this);
-        base.OnHandleCreated(e);
+
+        new ParentNativeWindow(this);
     }
 
     protected override void WndProc(ref Message m)

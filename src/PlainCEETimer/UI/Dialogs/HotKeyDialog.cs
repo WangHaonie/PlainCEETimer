@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
@@ -35,9 +32,9 @@ public sealed class HotKeyDialog : AppDialog
 
         this.AddControls(b =>
         [
-            LabelHotKey1 = b.Label("隐藏主窗口"),
-            LabelHotKey2 = b.Label("上一个考试"),
-            LabelHotKey3 = b.Label("下一个考试"),
+            LabelHotKey1 = b.Label(Validator.GetHokKeyDescription(0)),
+            LabelHotKey2 = b.Label(Validator.GetHokKeyDescription(1)),
+            LabelHotKey3 = b.Label(Validator.GetHokKeyDescription(2)),
             HotkeyCtrl1 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl2 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl3 = b.HotkeyCtrl(185, OnUserChanged)
@@ -85,7 +82,7 @@ public sealed class HotKeyDialog : AppDialog
 
             if (HotKeyHelper.Test(hk) > 2 || (hk.IsValid && flag))
             {
-                MessageX.Error($"无法注册第 {i + 1} 个快捷键，请确保该快捷键未重复且未被其他应用程序注册！");
+                MessageX.Error($"无法注册快捷键 \"{Validator.GetHokKeyDescription(i)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
                 return false;
             }
         }

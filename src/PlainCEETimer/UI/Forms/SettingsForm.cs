@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
@@ -14,7 +12,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class SettingsForm : AppForm
 {
-    protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
+    protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog | AppFormParam.CompositedStyle;
 
     private bool AllowThemeChanging;
     private bool IsSyncingTime;
@@ -73,7 +71,6 @@ public sealed class SettingsForm : AppForm
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
-    private HotKey[] EditedHotKeys;
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
@@ -626,7 +623,6 @@ public sealed class SettingsForm : AppForm
             return false;
         }
 
-        
         CanSaveChanges = true;
         UserChanged = false;
         Close();
@@ -640,7 +636,6 @@ public sealed class SettingsForm : AppForm
         AppConfig.Exams = EditedExamInfo;
         AppConfig.CustomRules = EditedCustomRules;
         AppConfig.GlobalRules = EditedGlobalRules;
-        AppConfig.HotKeys = EditedHotKeys;
         AppConfig.NtpServer = ComboBoxNtpServers.SelectedIndex;
         AppConfig.Dark = SelectedTheme;
 

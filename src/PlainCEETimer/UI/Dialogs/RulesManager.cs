@@ -35,7 +35,7 @@ public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
         return item;
     }
 
-    protected override IListViewSubDialog<CountdownRule> GetSubDialog(CountdownRule data = null)
+    protected override IListViewChildDialog<CountdownRule> GetChildDialog(CountdownRule data = null)
     {
         CountdownRule[] p = null;
 

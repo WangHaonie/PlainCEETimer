@@ -36,7 +36,7 @@ public sealed class ExamManager : ListViewDialog<Exam, ExamDialog>
         return new([data.Name, data.Start.Format(), data.End.Format()]);
     }
 
-    protected override IListViewSubDialog<Exam> GetSubDialog(Exam data = null)
+    protected override IListViewChildDialog<Exam> GetChildDialog(Exam data = null)
     {
         return new ExamDialog(data);
     }

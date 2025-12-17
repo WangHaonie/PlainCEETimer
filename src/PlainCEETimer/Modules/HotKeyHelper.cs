@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules;
 

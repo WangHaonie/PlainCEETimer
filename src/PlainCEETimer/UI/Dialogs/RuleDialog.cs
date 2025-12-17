@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets = null) : AppDialog, IListViewSubDialog<CountdownRule>
+public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets = null) : AppDialog, IListViewChildDialog<CountdownRule>
 {
     public CountdownRule Data => data;
 

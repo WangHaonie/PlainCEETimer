@@ -176,6 +176,14 @@ internal static class Validator
         _ => -1
     };
 
+    public static string GetHokKeyDescription(int index) => index switch
+    {
+        0 => "隐藏主窗口",
+        1 => "上一个考试",
+        2 => "下一个考试",
+        _ => null
+    };
+
     public static void EnsureExamDate(DateTime time)
     {
         if (time.Ticks is < MinDate or > MaxDate)

@@ -60,3 +60,13 @@ public enum ConsoleParam
     ShowLeftButton,
     NoMenu
 }
+
+[Flags]
+public enum HotKeyModifiers : uint
+{
+    None = 0x0000,
+    Alt = 0x0001,
+    Ctrl = 0x0002,
+    Shit = 0x0004,
+    Win = 0x0008
+}

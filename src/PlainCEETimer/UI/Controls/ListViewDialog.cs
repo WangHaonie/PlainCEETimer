@@ -9,9 +9,9 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
+public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     where TData : IListViewData<TData>
-    where TSubDialog : AppDialog, IListViewSubDialog<TData>
+    where TChildDialog : AppDialog, IListViewChildDialog<TData>
 {
     private class ListViewItemComparer<T> : IComparer
         where T : IListViewData<T>
@@ -123,7 +123,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
             [
                 b.Item("添加(&A)", (_, _) =>
                 {
-                    var dialog = GetSubDialog();
+                    var dialog = GetChildDialog();
 
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
@@ -247,7 +247,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
     protected abstract ListViewItem GetListViewItem(TData data);
 
-    protected abstract IListViewSubDialog<TData> GetSubDialog(TData data = default);
+    protected abstract IListViewChildDialog<TData> GetChildDialog(TData data = default);
 
     private void ContextDuplicate_Click(object sender, EventArgs e)
     {
@@ -257,7 +257,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
 
             if (!IsDefault(item))
             {
-                var dialog = GetSubDialog((TData)item.Tag);
+                var dialog = GetChildDialog((TData)item.Tag);
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -273,7 +273,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             var item = ListViewMain.SelectedItem;
             var data = (TData)item.Tag;
-            var dialog = GetSubDialog(data);
+            var dialog = GetChildDialog(data);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -329,7 +329,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
         {
             MessageX.Error(MsgAddDup);
 
-            var dialog = GetSubDialog(data);
+            var dialog = GetChildDialog(data);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -354,7 +354,7 @@ public abstract class ListViewDialog<TData, TSubDialog> : AppDialog
             {
                 MessageX.Error(MsgEditDup);
 
-                var dialog = GetSubDialog(newData);
+                var dialog = GetChildDialog(newData);
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
