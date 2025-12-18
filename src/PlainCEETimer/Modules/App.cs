@@ -166,7 +166,7 @@ internal static class App
         IsClosing = true;
         Validator.SaveConfig();
         Startup.CleanUp();
-        HotKeyHelper.UnRegisterAll();
+        HotKeyService.CleanUp();
 
         if (IsMainProcess && MainMutex != null)
         {

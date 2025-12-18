@@ -80,7 +80,7 @@ public sealed class HotKeyDialog : AppDialog
             var flag = hkdic.ContainsValue(hk);
             hkdic[i] = hk;
 
-            if (HotKeyHelper.Test(hk) > 2 || (hk.IsValid && flag))
+            if (HotKeyService.Test(hk) > 2 || (hk.IsValid && flag))
             {
                 MessageX.Error($"无法注册快捷键 \"{Validator.GetHokKeyDescription(i)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
                 return false;

@@ -128,7 +128,6 @@
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
     <Compile Include="Modules\HashCode.cs" />
-    <Compile Include="Modules\HotKeyHelper.cs" />
     <Compile Include="Modules\Http\DownloadingEventHandler.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
@@ -240,6 +239,8 @@
     <Compile Include="Interop\MemoryCleaner.cs" />
     <Compile Include="Interop\TaskbarProgress.cs" />
     <Compile Include="UI\HotKey.cs" />
+    <Compile Include="UI\HotKeyPressEventArgs.cs" />
+    <Compile Include="UI\HotKeyService.cs" />
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />

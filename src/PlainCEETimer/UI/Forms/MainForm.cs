@@ -56,6 +56,9 @@ public sealed class MainForm : AppForm
     private Menu.MenuItemCollection ExamSwitchMenuItems;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
+    private HotKeyDialog DialogHotKey;
+    private HotKeyService[] hksvc;
+    private Action<HotKeyPressEventArgs>[] hkevents;
     private const int PptsvcThreshold = 1;
 
     protected override void OnInitializing()
@@ -184,24 +187,6 @@ public sealed class MainForm : AppForm
         if (e.Button == MouseButtons.Left)
         {
             App.OnTrayMenuShowAllClicked();
-        }
-    }
-
-    private void HotKeyPress(object sender, HotKeyPressEventArgs e)
-    {
-        switch (e.Id)
-        {
-            case 1:
-                IsHotKey1Activated = !IsHotKey1Activated;
-                Opacity = IsHotKey1Activated ? 0D : 1D;
-                ReActivate();
-                break;
-            case 2:
-                MainCountdown.SwitchToPrevious();
-                break;
-            case 3:
-                MainCountdown.SwitchToNext();
-                break;
         }
     }
 
@@ -351,26 +336,6 @@ public sealed class MainForm : AppForm
             Exams = Exams,
             CustomRules = AppConfig.CustomRules
         });
-    }
-
-    private void RegisterHotKeys()
-    {
-        var hks = AppConfig.HotKeys;
-
-        if (!hks.IsNullOrEmpty())
-        {
-            HotKeyHelper.UnRegisterAll();
-
-            for (int i = 0; i < Math.Min(Validator.HotKeyCount, hks.Length); i++)
-            {
-                if (HotKeyHelper.Register(hks[i]) > 2)
-                {
-                    MessageX.Warn($"快捷键 \"{Validator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
-                }
-            }
-
-            HotKeyHelper.HotKeyPress += HotKeyPress;
-        }
     }
 
     private void LoadContextMenu()
@@ -574,7 +539,7 @@ public sealed class MainForm : AppForm
 
         b.Separator(),
 
-        b.Item("快捷键(&H)", (_, _) =>
+        b.Item("快捷键(&K)", (_, _) =>
         {
             if (DialogHotKey == null)
             {
@@ -597,7 +562,48 @@ public sealed class MainForm : AppForm
         b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
     ]);
 
-    private HotKeyDialog DialogHotKey;
+    private void RegisterHotKeys()
+    {
+        var hks = AppConfig.HotKeys;
+
+        if (!hks.IsNullOrEmpty())
+        {
+            if (!hksvc.IsNullOrEmpty())
+            {
+                foreach (var svc in hksvc)
+                {
+                    svc.Unregister();
+                }
+            }
+
+            hksvc = new HotKeyService[Validator.HotKeyCount];
+
+            hkevents ??=
+            [
+                _ =>
+                {
+                    IsHotKey1Activated = !IsHotKey1Activated;
+                    Opacity = IsHotKey1Activated ? 0D : 1D;
+                    ReActivate();
+                },
+
+                _ => MainCountdown.SwitchToPrevious(),
+                _ => MainCountdown.SwitchToNext()
+            ];
+
+            for (int i = 0; i < Math.Min(Validator.HotKeyCount, hks.Length); i++)
+            {
+                var svc = new HotKeyService(hks[i], hkevents[i]);
+
+                if (!svc.Register())
+                {
+                    MessageX.Warn($"快捷键 \"{Validator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
+                }
+
+                hksvc[i] = svc;
+            }
+        }
+    }
 
     private void UpdateTrayIconText(string content)
     {
