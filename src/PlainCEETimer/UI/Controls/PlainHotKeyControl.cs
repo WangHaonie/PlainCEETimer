@@ -50,7 +50,7 @@ public class PlainHotkeyControl : Control
 
     public event EventHandler HotKeyChanged;
 
-    public HotKey HotKey
+    public Hotkey Hotkey
     {
         get
         {
@@ -60,18 +60,16 @@ public class PlainHotkeyControl : Control
                 hotkey = new((ushort)Win32UI.SendMessage(Handle, HKM_GETHOTKEY, 0, 0).ToInt32());
             }
 
-            return new(hotkey);
+            return hotkey;
         }
         set
         {
-            var h = new Hotkey(value);
-
             if (IsHandleCreated)
             {
-                SetHotKey(h);
+                SetHotKey(value);
             }
 
-            hotkey = h;
+            hotkey = value;
         }
     }
 

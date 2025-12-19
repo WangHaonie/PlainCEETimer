@@ -17,6 +17,16 @@ internal static class Startup
     private static readonly string StartupKey = App.AppNameEngOld;
     private static readonly RegistryHelper Registry = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 
+    static Startup()
+    {
+        App.AppExit += () =>
+        {
+            EnableTask();
+            Win32TaskScheduler.Release();
+            Registry.Dispose();
+        };
+    }
+
     public static bool GetRegistryState()
     {
         return NotElevated && Registry.Check(StartupKey, AppPath, "");
@@ -49,13 +59,6 @@ internal static class Startup
     {
         DeleteRegistry();
         DeleteTask();
-    }
-
-    public static void CleanUp()
-    {
-        EnableTask();
-        Win32TaskScheduler.Release();
-        Registry.Dispose();
     }
 
     private static void SetRegistry()

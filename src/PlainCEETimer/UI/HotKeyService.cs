@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI;
 
 public class HotKeyService(HotKey hk, Action<HotKeyPressEventArgs> onHotKeyPress)
 {
+    /*
+    
+    注册全局热键 参考：
+
+    .net - Set global hotkeys using C# - Stack Overflow
+    https://stackoverflow.com/a/27309185/21094697
+
+    WM_HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
+    https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey
+
+    */
+
     private class HotKeyMessageWindow : NativeWindow, IDisposable
     {
         public event EventHandler<HotKeyPressEventArgs> OnHotKeyPress;
@@ -50,6 +63,28 @@ public class HotKeyService(HotKey hk, Action<HotKeyPressEventArgs> onHotKeyPress
     private static List<HotKeyService> hksvcs;
     private static Dictionary<int, HotKey> hks;
     private static HotKeyMessageWindow hkmw;
+
+    static HotKeyService()
+    {
+        App.AppExit += () =>
+        {
+            if (hksvcs != null)
+            {
+                var length = hksvcs.Count;
+
+                for (int i = 0; i < length; i++)
+                {
+                    hksvcs[i].Unregister();
+                }
+
+                hksvcs.Clear();
+            }
+
+            hkmw.Destory();
+            hkmw = null;
+            hks?.Clear();
+        };
+    }
 
     public bool Register()
     {
@@ -132,25 +167,6 @@ public class HotKeyService(HotKey hk, Action<HotKeyPressEventArgs> onHotKeyPress
         }
 
         return 3; // 无法注册
-    }
-
-    internal static void CleanUp()
-    {
-        if (hksvcs != null)
-        {
-            var length = hksvcs.Count;
-
-            for (int i = 0; i < length; i++)
-            {
-                hksvcs[i].Unregister();
-            }
-
-            hksvcs.Clear();
-        }
-
-        hkmw.Destory();
-        hkmw = null;
-        hks?.Clear();
     }
 
     private static bool TestCore(HotKey hk)

@@ -27,14 +27,14 @@ internal static class App
         set;
     }
 
-    public static event Action TrayMenuShowAllClicked;
-    public static void OnTrayMenuShowAllClicked() => TrayMenuShowAllClicked?.Invoke();
+    internal static event Action ActivateMain;
+    internal static event Action AppExit;
 
     public const string AppName = "高考倒计时 by WangHaonie";
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/12/18";
+    public const string AppBuildDate = "2025/12/20";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -146,11 +146,6 @@ internal static class App
         return false;
     }
 
-    public static string GetSpecialFolder(SpecialFolder folder)
-    {
-        return Environment.GetFolderPath((Environment.SpecialFolder)folder);
-    }
-
     public static void PopupAbortRetryIgnore(string message, string title)
     {
         var result = MessageBox.Show(message, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
@@ -164,18 +159,27 @@ internal static class App
     public static void Exit(bool restart = false)
     {
         IsClosing = true;
-        Validator.SaveConfig();
-        Startup.CleanUp();
-        HotKeyService.CleanUp();
+        AppIcon.Destory();
+        AppExit?.Invoke();
+        AppExit = null;
+        ActivateMain = null;
 
-        if (IsMainProcess && MainMutex != null)
+        if (MainMutex != null)
         {
-            MainMutex.ReleaseMutex();
+            if (IsMainProcess)
+            {
+                MainMutex.ReleaseMutex();
+            }
+
             MainMutex.Dispose();
             MainMutex = null;
         }
 
-        ProcessHelper.Run("cmd", $"/c taskkill /f /fi \"PID eq {MemoryCleaner.GetCurrentProcessId()}\" /im {ExecutableName} {(restart ? $"& start \"\" \"{ExecutablePath}\"" : "")}");
+        if (restart)
+        {
+            ProcessHelper.Run(ExecutablePath, null);
+        }
+
         Environment.Exit(0);
     }
 
@@ -187,6 +191,11 @@ internal static class App
         var exFilePath = $"{ExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);
         return "安装目录：\n" + exFileName;
+    }
+
+    internal static void OnActivateMain()
+    {
+        ActivateMain?.Invoke();
     }
 
     private static void PopupHelp()
@@ -232,7 +241,7 @@ internal static class App
             {
                 using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
                 server.WaitForConnection();
-                OnTrayMenuShowAllClicked();
+                OnActivateMain();
             }
         }
         catch { }

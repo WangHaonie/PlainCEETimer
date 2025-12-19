@@ -12,7 +12,7 @@ public class OptimizationHelper(bool isAuto) : IDisposable
 {
     private OpenFileDialog Dialog;
     private const string NGen = "ngen.exe";
-    private readonly string NGenPath = App.GetSpecialFolder(SpecialFolder.WinDir) + @"\Microsoft.NET\Framework64\";
+    private readonly string NGenPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\Microsoft.NET\Framework64\";
     private readonly string NetFxVersion = "v4*";
     private readonly AppMessageBox MessageX = AppMessageBox.Instance;
 

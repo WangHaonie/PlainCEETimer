@@ -43,7 +43,7 @@ public abstract class AppForm : Form
         KeyPreview = CheckParam(AppFormParam.KeyPreview);
         SetRoundCorner = CheckParam(AppFormParam.RoundCorner);
         SmallRoundCorner = CheckParam(AppFormParam.RoundCornerSmall);
-        App.TrayMenuShowAllClicked += AppLauncher_TrayMenuShowAllClicked;
+        App.ActivateMain += App_ActivateMain;
         MessageX = new(this);
 
         if (!Special)
@@ -172,6 +172,8 @@ public abstract class AppForm : Form
             DialogEnd?.Invoke(DialogResult);
             DialogEnd = null;
         }
+
+        App.ActivateMain -= App_ActivateMain;
     }
 
     protected sealed override CreateParams CreateParams
@@ -454,7 +456,7 @@ public abstract class AppForm : Form
         return new(x, y);
     }
 
-    private void AppLauncher_TrayMenuShowAllClicked()
+    private void App_ActivateMain()
     {
         if (!IsDisposed)
         {

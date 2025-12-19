@@ -186,7 +186,7 @@ public sealed class MainForm : AppForm
     {
         if (e.Button == MouseButtons.Left)
         {
-            App.OnTrayMenuShowAllClicked();
+            App.OnActivateMain();
         }
     }
 
@@ -399,7 +399,7 @@ public sealed class MainForm : AppForm
                     ContextMenu = ContextMenuBuilder.Merge(tmp, ContextMenuBuilder.Build(b =>
                     [
                         b.Separator(),
-                        b.Item("显示界面(&X)", (_, _) => App.OnTrayMenuShowAllClicked()).Default(),
+                        b.Item("显示界面(&X)", (_, _) => App.OnActivateMain()).Default(),
 
                         b.Menu("关闭(&C)",
                         [

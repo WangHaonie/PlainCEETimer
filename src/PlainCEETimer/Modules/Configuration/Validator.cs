@@ -42,6 +42,11 @@ internal static class Validator
         TypeNameHandling = TypeNameHandling.Auto
     };
 
+    static Validator()
+    {
+        App.AppExit += SaveConfig;
+    }
+
     public static void DemandConfig()
     {
         CanSaveConfig = true;

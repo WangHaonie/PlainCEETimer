@@ -65,7 +65,7 @@ public sealed class HotKeyDialog : AppDialog
         {
             for (int i = 0; i < Math.Min(Validator.HotKeyCount, HotKeys.Length); i++)
             {
-                HotKeyCtrls[i].HotKey = HotKeys[i];
+                HotKeyCtrls[i].Hotkey = new(HotKeys[i]);
             }
         }
     }
@@ -76,7 +76,7 @@ public sealed class HotKeyDialog : AppDialog
 
         for (int i = 0; i < Validator.HotKeyCount; i++)
         {
-            var hk = HotKeyCtrls[i].HotKey;
+            var hk = new HotKey(HotKeyCtrls[i].Hotkey);
             var flag = hkdic.ContainsValue(hk);
             hkdic[i] = hk;
 

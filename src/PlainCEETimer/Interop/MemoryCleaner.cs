@@ -70,5 +70,5 @@ public class MemoryCleaner : IDisposable
     private static extern void ClearProcessWS();
 
     [DllImport(App.Kernel32Dll)]
-    public static extern uint GetCurrentProcessId();
+    private static extern uint GetCurrentProcessId();
 }
