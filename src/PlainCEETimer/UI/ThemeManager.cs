@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -39,6 +40,7 @@ public static class ThemeManager
         }
 
         Application.EnableVisualStyles();
+        ConfigurationManager.AppSettings.Set("EnableWindowsFormsHighDpiAutoResizing", "true");
     }
 
     public static void EnableDarkModeForWindow(IntPtr hWnd)

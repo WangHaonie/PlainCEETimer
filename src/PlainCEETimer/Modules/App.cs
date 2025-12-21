@@ -34,7 +34,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/12/20";
+    public const string AppBuildDate = "2025/12/21";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -53,13 +53,11 @@ internal static class App
     private static Mutex MainMutex;
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
-    private static readonly string DotNetAppConfig = $"{ExecutablePath}.config";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
     [STAThread]
     private static void Main(string[] args)
     {
-        ExtractConfig();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
@@ -227,8 +225,6 @@ internal static class App
             {
                 File.Delete(uefile);
             }
-
-            File.Delete(DotNetAppConfig);
         }
         catch { }
     }
@@ -286,25 +282,5 @@ internal static class App
         {
             PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
-    }
-
-    private static void ExtractConfig()
-    {
-        /*
-
-        使 NumericUpDown 的 UpDown 按钮在高 DPI 下自动缩放 参考：
-
-        NumericUpDown 类 (System.Windows.Forms) | Microsoft Learn
-        https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.forms.numericupdown
-
-        */
-
-        try
-        {
-            File.Delete(DotNetAppConfig);
-            File.WriteAllText(DotNetAppConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?><configuration><appSettings><add key=""EnableWindowsFormsHighDpiAutoResizing"" value=""true""/></appSettings></configuration>");
-            ProcessHelper.Run("attrib", $"+s +h \"{DotNetAppConfig}\"");
-        }
-        catch { }
     }
 }
