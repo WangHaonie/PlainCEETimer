@@ -193,6 +193,7 @@ internal static class App
 
     internal static void OnActivateMain()
     {
+        Win32UI.ActivateUnmanagedWindows();
         ActivateMain?.Invoke();
     }
 

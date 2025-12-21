@@ -450,8 +450,8 @@ public abstract class AppForm : Form
     protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
-        var x = Left.Clamp(screen.Left, screen.Right - Width);
-        var y = Top.Clamp(screen.Top, screen.Bottom - Height);
+        var x = Left.Clamp(screen.X, screen.Right - Width);
+        var y = Top.Clamp(screen.Y, screen.Bottom - Height);
         SetLocation(x, y);
         return new(x, y);
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,6 +10,8 @@ namespace PlainCEETimer.Interop;
 
 public static class Win32UI
 {
+    private static List<IntPtr> UnmanagedWindows;
+
     [DllImport(App.User32Dll)]
     public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
@@ -142,5 +145,35 @@ public static class Win32UI
         x = x.Clamp(screen.X, screen.Right - w);
         y = y.Clamp(screen.Y, screen.Bottom - h);
         targetNew = new(x, y, w, h);
+    }
+
+    public static void RegisterUnmanagedWindow(IntPtr hWnd)
+    {
+        (UnmanagedWindows ??= []).Add(hWnd);
+    }
+
+    public static void UnregisterUnmanagedWindow(IntPtr hWnd)
+    {
+        UnmanagedWindows?.Remove(hWnd);
+    }
+
+    public static void ActivateUnmanagedWindows()
+    {
+        if (UnmanagedWindows != null)
+        {
+            for (int i = 0; i < UnmanagedWindows.Count; i++)
+            {
+                var hWnd = UnmanagedWindows[i];
+
+                if (GetWindowRect(hWnd, out var rc))
+                {
+                    Rectangle rcWnd = rc;
+                    var rcScreen = Screen.GetWorkingArea(rcWnd);
+                    var x = rcWnd.X.Clamp(rcScreen.X, rcScreen.Right - rcWnd.Width);
+                    var y = rcWnd.Y.Clamp(rcScreen.Y, rcScreen.Bottom - rcWnd.Height);
+                    MoveWindow(hWnd, x, y, rcWnd.Width, rcWnd.Height, false);
+                }
+            }
+        }
     }
 }

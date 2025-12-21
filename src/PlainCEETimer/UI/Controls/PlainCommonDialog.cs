@@ -96,6 +96,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         Handle = hWnd;
         owner.ReActivate();
         CBTHookProc = CbtHookProc;
+        Win32UI.RegisterUnmanagedWindow(hWnd);
         Win32UI.ComdlgHookMessageBox(CBTHookProc);
 
         if (dialogTitle != null)
@@ -157,6 +158,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         Win32UI.ComdlgUnhookMessageBox();
         Win32UI.DeleteObject(hBrush);
+        Win32UI.UnregisterUnmanagedWindow(Handle);
         return IntPtr.Zero;
     }
 
@@ -211,6 +213,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
                 Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
                 Marshal.WriteInt32(lpcs, CREATESTRUCT_y, r.Y);
+                Win32UI.RegisterUnmanagedWindow(wParam);
             }
         }
 
