@@ -2,7 +2,6 @@
 using System.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -45,7 +44,7 @@ public static class DefaultValues
                 ];
             }
 
-            return field.Copy();
+            return field;
         }
     }
 

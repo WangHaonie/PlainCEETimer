@@ -59,6 +59,7 @@ public sealed class MainForm : AppForm
     private HotKeyDialog DialogHotKey;
     private HotKeyService[] hksvc;
     private Action<HotKeyPressEventArgs>[] hkevents;
+    private readonly CountdownRule[] DefaultRules = DefaultValues.GlobalDefaultRules;
     private const int PptsvcThreshold = 1;
 
     protected override void OnInitializing()
@@ -329,7 +330,7 @@ public sealed class MainForm : AppForm
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
-            GlobalRules = AppConfig.GlobalRules ??= DefaultValues.GlobalDefaultRules,
+            GlobalRules = GetDefRules(),
             AutoSwitch = General.AutoSwitch,
             Mode = Display.Mode,
             Format = Display.Format,
@@ -561,6 +562,33 @@ public sealed class MainForm : AppForm
         b.Separator(),
         b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
     ]);
+
+    private CountdownRule[] GetDefRules()
+    {
+        CountdownRule[] rules;
+
+        if (Display.Format == CountdownFormat.Custom)
+        {
+            rules = AppConfig.GlobalRules;
+
+            if (rules == null || rules.Length < 3)
+            {
+                var f = Validator.ValidateNeeded;
+                Validator.ValidateNeeded = false;
+                var r = DefaultRules.Copy();
+                r.PopulateWith(rules);
+                AppConfig.GlobalRules = rules = r;
+                Validator.ValidateNeeded = f;
+                Validator.DemandConfig();
+            }
+        }
+        else
+        {
+            rules = DefaultRules;
+        }
+
+        return rules;
+    }
 
     private void RegisterHotKeys()
     {

@@ -39,9 +39,8 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     private PlainTextBox TextBoxCustomText;
     private EventHandler OnUserChanged;
     private CountdownRule data = existing;
-    private readonly CountdownRule[] Presets = presets ?? GlobalDefaultRules;
+    private readonly CountdownRule[] Presets = presets ?? DefaultValues.GlobalDefaultRules;
     private readonly Dictionary<int, CountdownUpdatedEventArgs> TemporaryChanges = new(3);
-    private static readonly CountdownRule[] GlobalDefaultRules = DefaultValues.GlobalDefaultRules;
 
     protected override void OnInitializing()
     {

@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
@@ -85,16 +83,10 @@ public class AppConfig
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {
-        var arr = GlobalRules;
-
-        if (arr.IsNullOrEmpty() || arr.Length < 3)
-        {
-            GlobalRules = null;
-        }
-
         var value = Exam;
         Validator.SetValue(ref value, value, Exams.Length, 0);
         Exam = value;
+
         Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Draggable);
     }
 }

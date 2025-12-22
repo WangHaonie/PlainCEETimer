@@ -40,7 +40,7 @@ public class DefaultCountdownService : ICountdownService
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
-    private static readonly ColorPair DefaultColors = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
+    private static readonly ColorPair DefaultColor = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
 
     public DefaultCountdownService()
     {
@@ -191,7 +191,7 @@ public class DefaultCountdownService : ICountdownService
         else
         {
             StopMainTimer();
-            OnCountdownUpdated("欢迎使用高考倒计时", DefaultColors);
+            OnCountdownUpdated("欢迎使用高考倒计时", DefaultColor);
         }
     }
 
