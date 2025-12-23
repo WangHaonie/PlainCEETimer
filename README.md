@@ -3,7 +3,7 @@
     <img src="https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/Properties/AppIcon256px.png?raw=true" style="height: auto; width: 128px"/>
     <h2>高考倒计时 by WangHaonie</h2>
 
-[![GitHub all releases](https://img.shields.io/github/downloads/WangHaonie/PlainCEETimer/total?logo=github&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=%23DC67A5)](#) [![GitHub release (with filter)](https://img.shields.io/github/v/release/WangHaonie/PlainCEETimer?logo=github&label=%E6%9C%80%E6%96%B0%E7%89%88&color=%23178600)](https://github.com/WangHaonie/PlainCEETimer/releases/latest/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WangHaonie/PlainCEETimer/build.yml?label=%E6%B5%8B%E8%AF%95%E7%89%88)](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) [![Static Badge](https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-8.4k-blue)](#) [![GitHub Repo stars](https://img.shields.io/github/stars/WangHaonie/PlainCEETimer?logo=github&label=Stars&color=%23E5B84E)](https://github.com/WangHaonie/PlainCEETimer/stargazers) [![GitHub](https://img.shields.io/github/license/WangHaonie/PlainCEETimer?logo=github&label=%E8%AE%B8%E5%8F%AF%E8%AF%81&color=%233C9DF8)](#GPL-3.0-1-ov-file)
+[![GitHub all releases](https://img.shields.io/github/downloads/WangHaonie/PlainCEETimer/total?logo=github&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=%23DC67A5)](#) [![GitHub release (with filter)](https://img.shields.io/github/v/release/WangHaonie/PlainCEETimer?logo=github&label=%E6%9C%80%E6%96%B0%E7%89%88&color=%23178600)](https://github.com/WangHaonie/PlainCEETimer/releases/latest/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WangHaonie/PlainCEETimer/build.yml?label=%E6%B5%8B%E8%AF%95%E7%89%88)](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) [![Static Badge](https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-9.0k-blue)](#) [![GitHub Repo stars](https://img.shields.io/github/stars/WangHaonie/PlainCEETimer?logo=github&label=Stars&color=%23E5B84E)](https://github.com/WangHaonie/PlainCEETimer/stargazers) [![GitHub](https://img.shields.io/github/license/WangHaonie/PlainCEETimer?logo=github&label=%E8%AE%B8%E5%8F%AF%E8%AF%81&color=%233C9DF8)](#GPL-3.0-1-ov-file)
 
 </div>
 
@@ -43,8 +43,8 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + 适用于 v5.0.8，2025/9/10 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
 
 ## 🧑‍💻 开发环境
-+ Windows 11 Pro x64 (26220.7271)
-+ Visual Studio 2022 (18.0.2)
++ Windows 11 Pro x64 (26220.7523)
++ Visual Studio 2026 (18.1.1)
 + .NET Framework (4.8)
 + WinForms
 + C# 14 (Preview)
