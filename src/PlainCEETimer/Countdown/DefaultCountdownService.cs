@@ -66,20 +66,16 @@ public class DefaultCountdownService : ICountdownService
         InternalStart();
     }
 
-    public void SwitchTo(int index)
+    public void SwitchTo(SwitchOption option, int index = 0)
     {
-        ExamIndex = index;
+        ExamIndex = option switch
+        {
+            SwitchOption.Next => (ExamIndex + 1) % ExamsCount,
+            SwitchOption.Previous => (ExamIndex - 1 + ExamsCount) % ExamsCount,
+            _ => index
+        };
+
         InternalStart();
-    }
-
-    public void SwitchToNext()
-    {
-        SwitchTo((ExamIndex + 1) % ExamsCount);
-    }
-
-    public void SwitchToPrevious()
-    {
-        SwitchTo((ExamIndex - 1 + ExamsCount) % ExamsCount);
     }
 
     public void ForceRefresh()

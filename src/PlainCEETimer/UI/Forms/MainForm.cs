@@ -178,7 +178,7 @@ public sealed class MainForm : AppForm
 
         if (!Win32UI.MenuGetItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
         {
-            MainCountdown.SwitchTo(index);
+            MainCountdown.SwitchTo(SwitchOption.ByIndex, index);
             SwitchToExam(index);
         }
     }
@@ -436,12 +436,16 @@ public sealed class MainForm : AppForm
         }
         else
         {
+            if (index != ExamIndex)
+            {
+                AppConfig.Exam = index;
+                Validator.DemandConfig();
+            }
+
             ExamSwitchMenu.DoRadioCheck(index);
         }
 
         ExamIndex = index;
-        AppConfig.Exam = index;
-        Validator.DemandConfig();
     }
 
     private int GetAutoSwitchInterval(int Index) => Index switch
@@ -615,8 +619,8 @@ public sealed class MainForm : AppForm
                     ReActivate();
                 },
 
-                _ => MainCountdown.SwitchToPrevious(),
-                _ => MainCountdown.SwitchToNext()
+                _ => MainCountdown.SwitchTo(SwitchOption.Previous),
+                _ => MainCountdown.SwitchTo(SwitchOption.Next)
             ];
 
             for (int i = 0; i < Math.Min(Validator.HotKeyCount, hks.Length); i++)

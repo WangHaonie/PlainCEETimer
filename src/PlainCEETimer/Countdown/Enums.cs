@@ -12,3 +12,10 @@ public enum CountdownFormat
     SecondsOnly,
     Custom
 }
+
+public enum SwitchOption
+{
+    ByIndex,
+    Next,
+    Previous
+}
