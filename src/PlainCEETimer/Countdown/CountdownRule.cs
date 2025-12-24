@@ -59,7 +59,12 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     public override bool Equals(object obj)
     {
-        return Equals((CountdownRule)obj);
+        if (obj is CountdownRule r)
+        {
+            return Equals(r);
+        }
+
+        return false;
     }
 
     public override int GetHashCode()

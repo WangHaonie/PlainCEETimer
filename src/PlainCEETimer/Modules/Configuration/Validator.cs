@@ -39,7 +39,10 @@ internal static class Validator
     {
         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         NullValueHandling = NullValueHandling.Ignore,
-        TypeNameHandling = TypeNameHandling.Auto
+        TypeNameHandling = TypeNameHandling.Auto,
+#if DEBUG
+        Formatting = Formatting.Indented
+#endif
     };
 
     static Validator()
@@ -54,15 +57,17 @@ internal static class Validator
 
     public static void SaveConfig()
     {
-        try
+        //try
+        //{
+        if (CanSaveConfig)
         {
-            if (CanSaveConfig)
-            {
-                File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
-                CanSaveConfig = false;
-            }
+            var b = JsonConvert.SerializeObject(App.AppConfig, Settings);
+            Console.WriteLine(b);
+            File.WriteAllText(App.ConfigFilePath, b);
+            CanSaveConfig = false;
         }
-        catch { }
+        //}
+        //catch { }
     }
 
     public static AppConfig ReadConfig()

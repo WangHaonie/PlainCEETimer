@@ -46,7 +46,12 @@ public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 
     public override bool Equals(object obj)
     {
-        return Equals((ColorPair)obj);
+        if (obj is ColorPair cp)
+        {
+            return Equals(cp);
+        }
+
+        return false;
     }
 
     public override int GetHashCode()

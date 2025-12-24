@@ -11,7 +11,7 @@ public class HashCode
 
     public HashCode Add<T>(T value)
     {
-        hash = unchecked((hash * 397) ^ value.GetHashCode());
+        hash = unchecked((hash * 397) ^ (value?.GetHashCode() ?? 0));
         return this;
     }
 

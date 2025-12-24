@@ -58,6 +58,8 @@ public class Exam : IListViewData<Exam>
         }
     } = DateTime.Now;
 
+    public ExamSettings Settings { get; set; }
+
     public int CompareTo(Exam other)
     {
         if (other == null)
@@ -95,7 +97,12 @@ public class Exam : IListViewData<Exam>
 
     public override bool Equals(object obj)
     {
-        return Equals((Exam)obj);
+        if (obj is Exam e)
+        {
+            return Equals(e);
+        }
+
+        return false;
     }
 
     public override int GetHashCode()

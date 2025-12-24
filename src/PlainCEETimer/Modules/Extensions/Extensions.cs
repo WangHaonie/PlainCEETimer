@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.Extensions;
@@ -104,4 +106,34 @@ public static class Extensions
 
     public static bool IsNullOrEmpty<T>(this T[] arr)
         => arr == null || arr.Length == 0;
+
+    public static bool IsEnabled(this ExamSettings settings)
+        => settings != null && settings.Enabled;
+
+    public static bool ArrayEquals<T>(this T[] arr1, T[] arr2)
+    {
+        // Enumerable.SequenceEqual 基于 IEnumerator，在比较数组类型时，速度可能略慢，故编写此方法专用于数组序列的比较。
+
+        if (arr1 == null || arr2 == null || arr1.Length != arr2.Length)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(arr1, arr2))
+        {
+            return true;
+        }
+
+        var comparer = EqualityComparer<T>.Default;
+
+        for (int i = 0; i < arr1.Length; i++)
+        {
+            if (!comparer.Equals(arr1[i], arr2[2]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

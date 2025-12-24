@@ -32,7 +32,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
             var previous = customColors.Copy();
             lpColors.Populate(customColors);
 
-            if (!customColors.SequenceEqual(previous))
+            if (!customColors.ArrayEquals(previous))
             {
                 App.AppConfig.CustomColors =
                 [..

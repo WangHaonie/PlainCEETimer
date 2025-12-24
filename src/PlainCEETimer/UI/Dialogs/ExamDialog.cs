@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
@@ -10,13 +11,15 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Dialogs;
 
-public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<Exam>
+public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam>
 {
     public Exam Data => data;
 
     protected override AppFormParam Params => AppFormParam.BindButtons;
 
-    private Exam data = existing;
+    private int Mode;
+    private bool IsEnabled;
+    private CountdownFormat Format;
     private PlainLabel LabelName;
     private PlainLabel LabelCounter;
     private PlainLabel LabelStart;
@@ -24,13 +27,25 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
     private PlainTextBox TextBoxName;
     private DateTimePicker DTPStart;
     private DateTimePicker DTPEnd;
+    private PlainGroupBox GBoxContent;
+    private PlainLabel LabelCountdownEnd;
+    private PlainLabel LabelCountdownFormat;
+    private PlainButton ButtonRulesMan;
+    private PlainComboBox ComboBoxCountdownFormat;
+    private PlainComboBox ComboBoxCountdownEnd;
+    private PlainCheckBox CheckBoxEnableSettings;
+    private EventHandler OnUserChanged;
+    private ExamSettings Settings;
+    private CountdownRule[] Rules;
+    private CountdownRule[] DefaultRules;
+
     private string CurrentExamName;
     private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
 
     protected override void OnInitializing()
     {
         Text = "考试信息 - 高考倒计时";
-        AutoSizeMode = AutoSizeMode.GrowOnly;
+        OnUserChanged = (_, _) => UserChanged();
 
         this.AddControls(b =>
         [
@@ -39,7 +54,7 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
             LabelEnd = b.Label("考试结束"),
             LabelCounter = b.Label("00/00"),
 
-            TextBoxName = b.TextBox(215, false, (_, _) =>
+            TextBoxName = b.TextBox(220, false, (_, _) =>
             {
                 CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
                 int count = CurrentExamName.Length;
@@ -48,8 +63,43 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
                 UserChanged();
             }).With(c => c.MaxLength = 99),
 
-            DTPStart = b.DateTimePicker(250, DTP_ValueChanged),
-            DTPEnd = b.DateTimePicker(250, DTP_ValueChanged),
+            DTPStart = b.DateTimePicker(255, OnUserChanged),
+            DTPEnd = b.DateTimePicker(255, OnUserChanged),
+
+            GBoxContent = b.GroupBox(null,
+            [
+                LabelCountdownEnd = b.Label("当考试开始后, 显示"),
+                ComboBoxCountdownEnd = b.ComboBox(187, OnUserChanged, Ph.ComboBoxEndItems),
+                LabelCountdownFormat = b.Label("倒计时内容格式"),
+
+                ComboBoxCountdownFormat = b.ComboBox(117, (_, _) =>
+                {
+                    ButtonRulesMan.Enabled = ComboBoxCountdownFormat.SelectedIndex == 8;
+                    UserChanged();
+                }, Ph.ComboBoxFormatItems),
+
+                ButtonRulesMan = b.Button("管理规则(&R)", true, (_, _) =>
+                {
+                    var dialog = new RulesManager()
+                    {
+                        Data = Rules,
+                        FixedData = GetDefRules(),
+                    };
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        Rules = dialog.Data;
+                        DefaultRules = dialog.FixedData;
+                        UserChanged();
+                    }
+                }).Disable()
+            ]),
+
+            CheckBoxEnableSettings = b.CheckBox("为该考试使用特定的设置", (_, _) =>
+            {
+                EnableControls(CheckBoxEnableSettings.Checked);
+                UserChanged();
+            })
         ]);
 
         base.OnInitializing();
@@ -67,16 +117,56 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
         ArrangeControlYL(DTPEnd, DTPStart, 0, 3);
         CenterControlY(LabelStart, DTPStart);
         CenterControlY(LabelEnd, DTPEnd);
-        ArrangeCommonButtonsR(ButtonA, ButtonB, DTPEnd, 1, 3);
+        CheckBoxEnableSettings.BringToFront();
+        ArrangeControlYL(CheckBoxEnableSettings, LabelEnd, 10);
+        CompactControlY(CheckBoxEnableSettings, DTPEnd, 3);
+        ArrangeControlYL(GBoxContent, LabelEnd, 3);
+        CompactControlY(GBoxContent, DTPEnd, 5);
+        GroupBoxArrageFirstControl(ComboBoxCountdownEnd, 0, 3);
+        GroupBoxArrageFirstControl(LabelCountdownEnd, -3);
+        CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
+        CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
+        ArrangeControlYL(LabelCountdownFormat, LabelCountdownEnd);
+        ArrangeControlXT(ComboBoxCountdownFormat, LabelCountdownFormat);
+        CompactControlY(ComboBoxCountdownFormat, ComboBoxCountdownEnd, 4);
+        CenterControlY(LabelCountdownFormat, ComboBoxCountdownFormat);
+        ArrangeControlXT(ButtonRulesMan, ComboBoxCountdownFormat, 5);
+        CenterControlY(ButtonRulesMan, ComboBoxCountdownFormat);
+        GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 5);
+        GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
+        ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 0, 3);
     }
 
     protected override void OnLoad()
     {
-        if (Data != null)
+        if (data != null)
         {
-            TextBoxName.Text = Data.Name;
-            DTPStart.Value = Data.Start;
-            DTPEnd.Value = Data.End;
+            TextBoxName.Text = data.Name;
+            DTPStart.Value = data.Start;
+            DTPEnd.Value = data.End;
+            Settings = data.Settings;
+
+            if (Settings == null)
+            {
+                // .. 注意是否应该就地使用设置里的而不是配置
+                var a = App.AppConfig;
+                var d = a.Display;
+                Mode = d.Mode;
+                Format = d.Format;
+                DefaultRules = Format == CountdownFormat.Custom ? a.GlobalRules : null;
+            }
+            else
+            {
+                IsEnabled = Settings.Enabled;
+                Mode = Settings.Mode;
+                Format = Settings.Format;
+                Rules = Settings.Rules;
+                DefaultRules = Settings.GlobalRules;
+                CheckBoxEnableSettings.Checked = IsEnabled;
+            }
+
+            ComboBoxCountdownEnd.SelectedIndex = Mode;
+            ComboBoxCountdownFormat.SelectedIndex = (int)Format;
         }
         else
         {
@@ -84,6 +174,8 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
             DTPStart.Value = date;
             DTPEnd.Value = date;
         }
+
+        EnableControls(IsEnabled);
     }
 
     protected override bool OnClickButtonA()
@@ -129,14 +221,35 @@ public sealed class ExamDialog(Exam existing) : AppDialog, IListViewChildDialog<
         {
             Name = CurrentExamName,
             Start = start,
-            End = end
+            End = end,
+
+            Settings = new()
+            {
+                Enabled = CheckBoxEnableSettings.Checked,
+                Mode = ComboBoxCountdownEnd.SelectedIndex,
+                Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex,
+                Rules = Rules,
+                GlobalRules = DefaultRules
+            }
         };
 
         return base.OnClickButtonA();
     }
 
-    private void DTP_ValueChanged(object sender, EventArgs e)
+    private CountdownRule[] GetDefRules()
     {
-        UserChanged();
+        if (DefaultRules == null || DefaultRules.Length < 3)
+        {
+            return DefaultValues.GlobalDefaultRules;
+        }
+
+        return DefaultRules;
+    }
+
+    private void EnableControls(bool enabled)
+    {
+        ComboBoxCountdownEnd.Enabled = enabled;
+        ComboBoxCountdownFormat.Enabled = enabled;
+        ButtonRulesMan.Enabled = enabled && ComboBoxCountdownFormat.SelectedIndex == 8;
     }
 }

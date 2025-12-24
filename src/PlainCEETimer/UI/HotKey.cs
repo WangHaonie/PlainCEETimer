@@ -87,7 +87,12 @@ public readonly struct HotKey : IEquatable<HotKey>
 
     public override bool Equals(object obj)
     {
-        return Equals((HotKey)obj);
+        if (obj is HotKey hk)
+        {
+            return Equals(hk);
+        }
+
+        return false;
     }
 
     public override int GetHashCode()

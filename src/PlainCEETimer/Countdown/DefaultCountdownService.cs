@@ -24,16 +24,22 @@ public class DefaultCountdownService : ICountdownService
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
+    private bool sp_Flag;
     private int Mode;
-    private CountdownFormat SelectedField;
+    private int sp_Mode;
+    private CountdownFormat Format;
+    private CountdownFormat sp_Format;
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
+    private ExamSettings CurrentSettings;
     private Exam[] Exams;
     private CountdownRule DefaultRule;
     private CountdownRule[] CustomRules;
+    private CountdownRule[] sp_Rules;
     private CountdownRule[] GlobalRules;
+    private CountdownRule[] sp_DefaultRules;
     private CountdownRule[] CurrentRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
@@ -96,8 +102,7 @@ public class DefaultCountdownService : ICountdownService
         ExamIndex = value.ExamIndex;
         EnableAutoSwitch = value.AutoSwitch;
         Mode = value.Mode;
-        SelectedField = value.Format;
-        CanUseCustomText = SelectedField == CountdownFormat.Custom;
+        Format = value.Format;
         GlobalRules = value.GlobalRules;
         Exams = value.Exams;
         ExamsCount = Exams.Length;
@@ -137,7 +142,16 @@ public class DefaultCountdownService : ICountdownService
     private void UpdateExams()
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
-        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
+        CurrentSettings = CurrentExam.Settings;
+
+        if (sp_Flag = CurrentSettings.IsEnabled())
+        {
+            sp_Mode = CurrentSettings.Mode;
+            sp_Format = CurrentSettings.Format;
+        }
+
+        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || (sp_Flag ? sp_Mode : Mode) == 0);
+        CanUseCustomText = sp_Flag ? sp_Format == CountdownFormat.Custom : Format == CountdownFormat.Custom;
     }
 
     private Exam GetCurrentExam(Exam[] exams, ref int index)
@@ -196,22 +210,23 @@ public class DefaultCountdownService : ICountdownService
         var t = DateTime.Now;
         var s = exam.Start;
         var e = exam.End;
+        var m = sp_Flag ? sp_Mode : Mode;
 
-        if (Mode >= 0 && t < s)
+        if (m >= 0 && t < s)
         {
             phase = CountdownPhase.P1;
             span = s - t;
             return true;
         }
 
-        if (Mode >= 1 && t < e)
+        if (m >= 1 && t < e)
         {
             phase = CountdownPhase.P2;
             span = e - t;
             return true;
         }
 
-        if (Mode >= 2 && t > e)
+        if (m >= 2 && t > e)
         {
             phase = CountdownPhase.P3;
             span = t - e;
@@ -229,12 +244,12 @@ public class DefaultCountdownService : ICountdownService
         {
             CurrentRules =
             [..
-                CustomRules
+                (sp_Flag ? sp_Rules : CustomRules)
                 .Where(r => r.Phase == phase)
                 .OrderByDescending(x => x)
             ];
 
-            DefaultRule = GlobalRules[(int)phase];
+            DefaultRule = (sp_Flag ? sp_DefaultRules : GlobalRules)[(int)phase];
             CanUseRules = CanUseCustomText && CurrentRules.Length != 0;
             Phase = phase;
             CanUpdateRules = false;
@@ -265,7 +280,7 @@ public class DefaultCountdownService : ICountdownService
         }
     }
 
-    private string GetDefaultText() => SelectedField switch
+    private string GetDefaultText() => (sp_Flag ? sp_Format : Format) switch
     {
         CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
         CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
@@ -300,6 +315,12 @@ public class DefaultCountdownService : ICountdownService
         {
             CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(ExamIndex)), null);
             LastExamIndex = ExamIndex;
+        }
+
+        if (CanUpdateRules = sp_Flag)
+        {
+            sp_Rules = CurrentSettings.Rules ?? [];
+            sp_DefaultRules = CurrentSettings.GlobalRules ?? GlobalRules;
         }
     }
 

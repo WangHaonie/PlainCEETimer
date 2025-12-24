@@ -39,4 +39,24 @@ public static class Ph
         Minutes, TotalMinutes,
         Seconds, TotalSeconds
     ];
+
+    public static string[] ComboBoxFormatItems => field ??=
+    [
+        "默认",
+        "仅总天数",
+        "仅总天数 (一位小数)",
+        "仅总天数 (向上取整)",
+        "仅总小时",
+        "仅总小时 (一位小数)",
+        "仅总分钟",
+        "仅总秒数",
+        "自定义"
+    ];
+
+    public static string[] ComboBoxEndItems => field ??=
+    [
+        "<程序欢迎信息>",
+        "考试还有多久结束",
+        "考试还有多久结束 和 已过去了多久"
+    ];
 }

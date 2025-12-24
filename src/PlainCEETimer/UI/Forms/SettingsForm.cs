@@ -27,10 +27,12 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxAutoSwitchInterval;
     private PlainComboBox ComboBoxBorderColor;
     private PlainComboBox ComboBoxCountdownEnd;
+    private PlainComboBox ComboBoxCountdownFormat;
     private PlainComboBox ComboBoxNtpServers;
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
     private PlainLabel LabelCountdownEnd;
+    private PlainLabel LabelCountdownFormat;
     private PlainLabel LabelExamInfo;
     private PlainLabel LabelOpacity;
     private PlainLabel LabelPosition;
@@ -75,9 +77,6 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
-
-    private PlainLabel LabelCountdownFormat;
-    private PlainComboBox ComboBoxCountdownFormat;
 
     protected override void OnInitializing()
     {
@@ -201,30 +200,14 @@ public sealed class SettingsForm : AppForm
                     GBoxContent = b.GroupBox("倒计时",
                     [
                         LabelCountdownEnd = b.Label("当考试开始后, 显示"),
-
-                        ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged,
-                            "<程序欢迎信息>",
-                            "考试还有多久结束",
-                            "考试还有多久结束 和 已过去了多久"
-                        ),
-
+                        ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, Ph.ComboBoxEndItems),
                         LabelCountdownFormat = b.Label("倒计时内容格式"),
 
                         ComboBoxCountdownFormat = b.ComboBox(119, (_, _) =>
                         {
                             ButtonRulesMan.Enabled = ComboBoxCountdownFormat.SelectedIndex == 8;
                             SettingsChanged();
-                        },
-                            "默认",
-                            "仅总天数",
-                            "仅总天数 (一位小数)",
-                            "仅总天数 (向上取整)",
-                            "仅总小时",
-                            "仅总小时 (一位小数)",
-                            "仅总分钟",
-                            "仅总秒数",
-                            "自定义"
-                        ),
+                        }, Ph.ComboBoxFormatItems),
 
                         ButtonRulesMan = b.Button("管理规则(&R)", true, (_, _) =>
                         {
