@@ -26,8 +26,9 @@ public class AppConfig
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
-    } = [];
+    }
 
+    [JsonConverter(typeof(GlobalRulesConverter))]
     public CountdownRule[] GlobalRules
     {
         get;

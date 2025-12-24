@@ -59,7 +59,6 @@ public sealed class MainForm : AppForm
     private HotKeyDialog DialogHotKey;
     private HotKeyService[] hksvc;
     private Action<HotKeyPressEventArgs>[] hkevents;
-    private readonly CountdownRule[] DefaultRules = DefaultValues.GlobalDefaultRules;
     private const int PptsvcThreshold = 1;
 
     protected override void OnInitializing()
@@ -569,26 +568,17 @@ public sealed class MainForm : AppForm
 
     private CountdownRule[] GetDefRules()
     {
-        CountdownRule[] rules;
+        CountdownRule[] rules = AppConfig.GlobalRules;
 
-        if (Display.Format == CountdownFormat.Custom)
+        if (rules == null || rules.Length < 3)
         {
-            rules = AppConfig.GlobalRules;
-
-            if (rules == null || rules.Length < 3)
-            {
-                var f = Validator.ValidateNeeded;
-                Validator.ValidateNeeded = false;
-                var r = DefaultRules.Copy();
-                r.PopulateWith(rules);
-                AppConfig.GlobalRules = rules = r;
-                Validator.ValidateNeeded = f;
-                Validator.DemandConfig();
-            }
-        }
-        else
-        {
-            rules = DefaultRules;
+            var f = Validator.ValidateNeeded;
+            Validator.ValidateNeeded = false;
+            var r = DefaultValues.GlobalDefaultRules.Copy();
+            r.PopulateWith(rules);
+            AppConfig.GlobalRules = rules = r;
+            Validator.ValidateNeeded = f;
+            Validator.DemandConfig();
         }
 
         return rules;

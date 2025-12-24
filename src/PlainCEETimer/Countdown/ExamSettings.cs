@@ -1,4 +1,8 @@
-﻿namespace PlainCEETimer.Countdown;
+﻿using Newtonsoft.Json;
+using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.JsonConverters;
+
+namespace PlainCEETimer.Countdown;
 
 public class ExamSettings
 {
@@ -8,7 +12,16 @@ public class ExamSettings
 
     public CountdownFormat Format { get; set; }
 
-    public CountdownRule[] Rules { get; set; }
+    public CountdownRule[] Rules
+    {
+        get;
+        set => Validator.SetValue(ref field, value, ConfigField.PerExamCustomRulesArray);
+    }
 
-    public CountdownRule[] GlobalRules { get; set; }
+    [JsonConverter(typeof(GlobalRulesConverter))]
+    public CountdownRule[] GlobalRules
+    {
+        get;
+        set => Validator.SetValue(ref field, value, ConfigField.PerExamGlobalRulesArray);
+    }
 }

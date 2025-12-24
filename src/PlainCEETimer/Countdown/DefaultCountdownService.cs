@@ -24,28 +24,25 @@ public class DefaultCountdownService : ICountdownService
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
-    private bool sp_Flag;
     private int Mode;
-    private int sp_Mode;
     private CountdownFormat Format;
-    private CountdownFormat sp_Format;
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
-    private ExamSettings CurrentSettings;
+    private ExamSettings Settings;
     private Exam[] Exams;
+    private CountdownStartInfo Info;
     private CountdownRule DefaultRule;
     private CountdownRule[] CustomRules;
-    private CountdownRule[] sp_Rules;
     private CountdownRule[] GlobalRules;
-    private CountdownRule[] sp_DefaultRules;
     private CountdownRule[] CurrentRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
+    private readonly CountdownRule[] DefaultRules = DefaultValues.GlobalDefaultRules;
     private static readonly ColorPair DefaultColor = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
 
     public DefaultCountdownService()
@@ -101,12 +98,9 @@ public class DefaultCountdownService : ICountdownService
         AutoSwitchInterval = value.AutoSwitchInterval;
         ExamIndex = value.ExamIndex;
         EnableAutoSwitch = value.AutoSwitch;
-        Mode = value.Mode;
-        Format = value.Format;
-        GlobalRules = value.GlobalRules;
         Exams = value.Exams;
         ExamsCount = Exams.Length;
-        CustomRules = value.CustomRules;
+        Info = value;
         CanUpdateRules = true;
     }
 
@@ -142,16 +136,25 @@ public class DefaultCountdownService : ICountdownService
     private void UpdateExams()
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
-        CurrentSettings = CurrentExam.Settings;
+        Settings = CurrentExam.Settings;
 
-        if (sp_Flag = CurrentSettings.IsEnabled())
+        if (Settings.IsEnabled())
         {
-            sp_Mode = CurrentSettings.Mode;
-            sp_Format = CurrentSettings.Format;
+            Mode = Settings.Mode;
+            Format = Settings.Format;
+            CustomRules = Settings.Rules ?? [];
+            GlobalRules = Settings.GlobalRules ?? Info.GlobalRules;
+        }
+        else
+        {
+            Mode = Info.Mode;
+            Format = Info.Format;
+            CustomRules = Info.CustomRules ?? [];
+            GlobalRules = Info.GlobalRules ?? DefaultRules;
         }
 
-        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || (sp_Flag ? sp_Mode : Mode) == 0);
-        CanUseCustomText = sp_Flag ? sp_Format == CountdownFormat.Custom : Format == CountdownFormat.Custom;
+        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
+        CanUseCustomText = Format == CountdownFormat.Custom;
     }
 
     private Exam GetCurrentExam(Exam[] exams, ref int index)
@@ -210,23 +213,22 @@ public class DefaultCountdownService : ICountdownService
         var t = DateTime.Now;
         var s = exam.Start;
         var e = exam.End;
-        var m = sp_Flag ? sp_Mode : Mode;
 
-        if (m >= 0 && t < s)
+        if (Mode >= 0 && t < s)
         {
             phase = CountdownPhase.P1;
             span = s - t;
             return true;
         }
 
-        if (m >= 1 && t < e)
+        if (Mode >= 1 && t < e)
         {
             phase = CountdownPhase.P2;
             span = e - t;
             return true;
         }
 
-        if (m >= 2 && t > e)
+        if (Mode >= 2 && t > e)
         {
             phase = CountdownPhase.P3;
             span = t - e;
@@ -244,12 +246,12 @@ public class DefaultCountdownService : ICountdownService
         {
             CurrentRules =
             [..
-                (sp_Flag ? sp_Rules : CustomRules)
+                CustomRules
                 .Where(r => r.Phase == phase)
                 .OrderByDescending(x => x)
             ];
 
-            DefaultRule = (sp_Flag ? sp_DefaultRules : GlobalRules)[(int)phase];
+            DefaultRule = GlobalRules[(int)phase];
             CanUseRules = CanUseCustomText && CurrentRules.Length != 0;
             Phase = phase;
             CanUpdateRules = false;
@@ -276,11 +278,11 @@ public class DefaultCountdownService : ICountdownService
         }
         else
         {
-            OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), DefaultRule.Colors);
+            OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), DefaultRules[phase].Colors);
         }
     }
 
-    private string GetDefaultText() => (sp_Flag ? sp_Format : Format) switch
+    private string GetDefaultText() => Format switch
     {
         CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
         CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
@@ -315,12 +317,6 @@ public class DefaultCountdownService : ICountdownService
         {
             CurrentContext.Post(_ => ExamSwitched?.Invoke(this, new(ExamIndex)), null);
             LastExamIndex = ExamIndex;
-        }
-
-        if (CanUpdateRules = sp_Flag)
-        {
-            sp_Rules = CurrentSettings.Rules ?? [];
-            sp_DefaultRules = CurrentSettings.GlobalRules ?? GlobalRules;
         }
     }
 

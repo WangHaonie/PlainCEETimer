@@ -38,6 +38,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     private ExamSettings Settings;
     private CountdownRule[] Rules;
     private CountdownRule[] DefaultRules;
+    private CountdownRule[] GlobalRules;
 
     private string CurrentExamName;
     private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
@@ -145,15 +146,15 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             DTPStart.Value = data.Start;
             DTPEnd.Value = data.End;
             Settings = data.Settings;
+            var a = App.AppConfig;
+            GlobalRules = a.GlobalRules;
 
             if (Settings == null)
             {
                 // .. 注意是否应该就地使用设置里的而不是配置
-                var a = App.AppConfig;
                 var d = a.Display;
                 Mode = d.Mode;
                 Format = d.Format;
-                DefaultRules = Format == CountdownFormat.Custom ? a.GlobalRules : null;
             }
             else
             {
@@ -240,7 +241,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     {
         if (DefaultRules == null || DefaultRules.Length < 3)
         {
-            return DefaultValues.GlobalDefaultRules;
+            return GlobalRules;
         }
 
         return DefaultRules;

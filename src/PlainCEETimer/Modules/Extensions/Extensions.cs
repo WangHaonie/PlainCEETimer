@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
@@ -110,6 +111,24 @@ public static class Extensions
     public static bool IsEnabled(this ExamSettings settings)
         => settings != null && settings.Enabled;
 
+    public static StreamingContext SetContext<T>(this StreamingContext sc, T value, out StreamingContext original)
+    {
+        original = sc;
+        return new(sc.State, value);
+    }
+
+    public static bool CheckContext<T>(this StreamingContext sc, T expectation)
+    {
+        var context = sc.Context;
+
+        if (context != null)
+        {
+            return context.Equals(expectation);
+        }
+
+        return false;
+    }
+
     public static bool ArrayEquals<T>(this T[] arr1, T[] arr2)
     {
         // Enumerable.SequenceEqual 基于 IEnumerator，在比较数组类型时，速度可能略慢，故编写此方法专用于数组序列的比较。
@@ -128,7 +147,7 @@ public static class Extensions
 
         for (int i = 0; i < arr1.Length; i++)
         {
-            if (!comparer.Equals(arr1[i], arr2[2]))
+            if (!comparer.Equals(arr1[i], arr2[i]))
             {
                 return false;
             }

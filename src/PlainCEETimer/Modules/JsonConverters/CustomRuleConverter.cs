@@ -21,7 +21,7 @@ public sealed class CustomRuleConverter : JsonConverter<CountdownRule>
         }
 
         var tick = default(TimeSpan);
-        var is0tickAllowed = reader.Path.Contains(nameof(AppConfig.GlobalRules));
+        var is0tickAllowed = serializer.Context.CheckContext(Validator.DefaultCountdownRuleFlag);
 
         if (!is0tickAllowed)
         {

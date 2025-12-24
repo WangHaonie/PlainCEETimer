@@ -6,6 +6,8 @@ internal enum ConfigField
     ExamNameLength,
     CustomRulesArray,
     GlobalRulesArray,
+    PerExamCustomRulesArray,
+    PerExamGlobalRulesArray,
     HotKeysArray,
     ExamInfoArray,
     DateTimeLength,
