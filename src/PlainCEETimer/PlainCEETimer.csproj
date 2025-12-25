@@ -108,6 +108,7 @@
     <Compile Include="Countdown\Enums.cs" />
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
+    <Compile Include="Modules\CountdownRuleComparer.cs" />
     <Compile Include="Modules\HashCode.cs" />
     <Compile Include="Modules\Http\DownloadingEventHandler.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />

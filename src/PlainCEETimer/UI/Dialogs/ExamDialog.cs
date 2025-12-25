@@ -140,14 +140,15 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
     protected override void OnLoad()
     {
+        var a = App.AppConfig;
+        GlobalRules = a.GlobalRules;
+
         if (data != null)
         {
             TextBoxName.Text = data.Name;
             DTPStart.Value = data.Start;
             DTPEnd.Value = data.End;
             Settings = data.Settings;
-            var a = App.AppConfig;
-            GlobalRules = a.GlobalRules;
 
             if (Settings == null)
             {

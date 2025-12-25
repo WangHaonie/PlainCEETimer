@@ -129,7 +129,7 @@ public static class Extensions
         return false;
     }
 
-    public static bool ArrayEquals<T>(this T[] arr1, T[] arr2)
+    public static bool ArrayEquals<T>(this T[] arr1, T[] arr2, IEqualityComparer<T> comparer = null)
     {
         // Enumerable.SequenceEqual 基于 IEnumerator，在比较数组类型时，速度可能略慢，故编写此方法专用于数组序列的比较。
 
@@ -143,7 +143,7 @@ public static class Extensions
             return true;
         }
 
-        var comparer = EqualityComparer<T>.Default;
+        comparer ??= EqualityComparer<T>.Default;
 
         for (int i = 0; i < arr1.Length; i++)
         {

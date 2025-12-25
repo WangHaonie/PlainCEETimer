@@ -33,7 +33,7 @@ public class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 
     public override void WriteJson(JsonWriter writer, CountdownRule[] value, JsonSerializer serializer)
     {
-        if (value == null || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules)))
+        if (value == null || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, CountdownRuleComparer.Instance)))
         {
             writer.WriteNull();
         }
