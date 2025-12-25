@@ -9,7 +9,7 @@ using PlainCEETimer.UI;
 namespace PlainCEETimer.Countdown;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-[JsonConverter(typeof(CustomRuleConverter))]
+[JsonConverter(typeof(CountdownRuleConverter))]
 public class CountdownRule : IListViewData<CountdownRule>
 {
     public CountdownPhase Phase { get; set; }

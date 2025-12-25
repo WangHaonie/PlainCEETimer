@@ -19,7 +19,7 @@ public class ExamSettings
     }
 
     [JsonConverter(typeof(GlobalRulesConverter))]
-    public CountdownRule[] GlobalRules
+    public CountdownRule[] DefRules
     {
         get;
         set => Validator.SetValue(ref field, value, ConfigField.PerExamGlobalRulesArray);

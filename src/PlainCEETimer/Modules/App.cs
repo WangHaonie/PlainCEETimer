@@ -5,6 +5,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -18,14 +19,9 @@ internal static class App
     public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
     public static string ExecutablePath => field ??= Application.ExecutablePath;
     public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
+    public static AppConfig AppConfig { get; private set; }
     public static Icon AppIcon { get; private set; }
     public static Version AppVersionObject => field ??= Version.Parse(AppVersion);
-
-    public static AppConfig AppConfig
-    {
-        get => field ??= Validator.ReadConfig();
-        set;
-    }
 
     internal static event Action ActivateMain;
     internal static event Action AppExit;
@@ -78,11 +74,11 @@ internal static class App
 
     private static bool StartProgram(string[] args)
     {
-        ThemeManager.Initialize();
         AppIcon = HICON.FromFile(ExecutablePath).ToIcon();
         Args = Array.ConvertAll(args, x => x.ToLower());
         ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);
+        InitConfig();
 
         if (IsMainProcess)
         {
@@ -274,6 +270,24 @@ internal static class App
         catch
         {
             return false;
+        }
+    }
+
+    private static void InitConfig()
+    {
+        AppConfig = Validator.ReadConfig();
+        ThemeManager.Initialize();
+        CountdownRule[] rules = AppConfig.GlobalRules;
+
+        if (rules == null || rules.Length < 3)
+        {
+            var f = Validator.ValidateNeeded;
+            Validator.ValidateNeeded = false;
+            var r = DefaultValues.GlobalDefaultRules.Copy();
+            r.PopulateWith(rules);
+            AppConfig.GlobalRules = r;
+            Validator.ValidateNeeded = f;
+            Validator.DemandConfig();
         }
     }
 

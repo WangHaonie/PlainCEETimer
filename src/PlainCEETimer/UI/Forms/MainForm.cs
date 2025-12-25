@@ -329,7 +329,7 @@ public sealed class MainForm : AppForm
         {
             AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
             ExamIndex = ExamIndex,
-            GlobalRules = GetDefRules(),
+            GlobalRules = AppConfig.GlobalRules,
             AutoSwitch = General.AutoSwitch,
             Mode = Display.Mode,
             Format = Display.Format,
@@ -560,24 +560,6 @@ public sealed class MainForm : AppForm
         b.Separator(),
         b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
     ]);
-
-    private CountdownRule[] GetDefRules()
-    {
-        CountdownRule[] rules = AppConfig.GlobalRules;
-
-        if (rules == null || rules.Length < 3)
-        {
-            var f = Validator.ValidateNeeded;
-            Validator.ValidateNeeded = false;
-            var r = DefaultValues.GlobalDefaultRules.Copy();
-            r.PopulateWith(rules);
-            AppConfig.GlobalRules = rules = r;
-            Validator.ValidateNeeded = f;
-            Validator.DemandConfig();
-        }
-
-        return rules;
-    }
 
     private void RegisterHotKeys()
     {

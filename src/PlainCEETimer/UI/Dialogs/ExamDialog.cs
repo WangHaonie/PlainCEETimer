@@ -151,7 +151,6 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
             if (Settings == null)
             {
-                // .. 注意是否应该就地使用设置里的而不是配置
                 var d = a.Display;
                 Mode = d.Mode;
                 Format = d.Format;
@@ -162,7 +161,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
                 Mode = Settings.Mode;
                 Format = Settings.Format;
                 Rules = Settings.Rules;
-                DefaultRules = Settings.GlobalRules;
+                DefaultRules = Settings.DefRules;
                 CheckBoxEnableSettings.Checked = IsEnabled;
             }
 
@@ -230,7 +229,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
                 Mode = ComboBoxCountdownEnd.SelectedIndex,
                 Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex,
                 Rules = Rules,
-                GlobalRules = DefaultRules
+                DefRules = DefaultRules
             }
         };
 

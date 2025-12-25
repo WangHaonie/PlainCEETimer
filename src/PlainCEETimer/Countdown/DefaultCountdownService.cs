@@ -143,7 +143,7 @@ public class DefaultCountdownService : ICountdownService
             Mode = Settings.Mode;
             Format = Settings.Format;
             CustomRules = Settings.Rules ?? [];
-            GlobalRules = Settings.GlobalRules ?? Info.GlobalRules;
+            GlobalRules = Settings.DefRules ?? Info.GlobalRules;
         }
         else
         {

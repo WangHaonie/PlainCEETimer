@@ -241,7 +241,7 @@
     <Compile Include="UI\IListViewData.cs" />
     <Compile Include="UI\IListViewChildDialog.cs" />
     <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
-    <Compile Include="Modules\JsonConverters\CustomRuleConverter.cs" />
+    <Compile Include="Modules\JsonConverters\CountdownRuleConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
     <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />

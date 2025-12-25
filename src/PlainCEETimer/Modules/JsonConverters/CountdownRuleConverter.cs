@@ -8,7 +8,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class CustomRuleConverter : JsonConverter<CountdownRule>
+public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
 {
     public override CountdownRule ReadJson(JsonReader reader, Type objectType, CountdownRule existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
