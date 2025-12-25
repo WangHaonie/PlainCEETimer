@@ -348,7 +348,13 @@ public sealed class MainForm : AppForm
         ChangeCountdownFont(AppConfig.Font);
         ContextMenu = ContextMenuMain;
 
-        if (Exams.Length != 0)
+        if (Exams.IsNullOrEmpty())
+        {
+            var item = ExamSwitchMenuItems[0];
+            item.Checked = false;
+            item.Enabled = false;
+        }
+        else
         {
             ExamSwitchMenuItems.Clear();
 
@@ -427,24 +433,13 @@ public sealed class MainForm : AppForm
 
     private void SwitchToExam(int index)
     {
-        if (index < 0)
+        if (index >= 0 && index != ExamIndex)
         {
-            var item = ExamSwitchMenuItems[0];
-            item.Checked = false;
-            item.Enabled = false;
-        }
-        else
-        {
-            if (index != ExamIndex)
-            {
-                AppConfig.Exam = index;
-                Validator.DemandConfig();
-            }
-
             ExamSwitchMenu.DoRadioCheck(index);
+            ExamIndex = index;
+            AppConfig.Exam = index;
+            Validator.DemandConfig();
         }
-
-        ExamIndex = index;
     }
 
     private int GetAutoSwitchInterval(int Index) => Index switch
