@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
@@ -33,7 +34,7 @@ public class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 
     public override void WriteJson(JsonWriter writer, CountdownRule[] value, JsonSerializer serializer)
     {
-        if (value == null || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, CountdownRuleComparer.Instance)))
+        if (value == null || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, new CountdownRuleComparer())))
         {
             writer.WriteNull();
         }

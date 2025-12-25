@@ -9,19 +9,19 @@ namespace PlainCEETimer.UI;
 
 public static class ThemeManager
 {
-    public static bool IsDarkModeSupported => Supported;
-    public static bool ShouldUseDarkMode => UseDark;
-    public static bool NewThemeAvailable => CanUseNewTheme;
+    public static bool IsDarkModeSupported => m_IsDarkModeSupported;
+    public static bool ShouldUseDarkMode => m_ShouldUseDarkMode;
+    public static bool NewThemeAvailable => m_CanUseNewTheme;
 
-    private static bool Supported;
-    private static bool UseDark;
-    private static bool CanUseNewTheme;
+    private static bool m_IsDarkModeSupported;
+    private static bool m_ShouldUseDarkMode;
+    private static bool m_CanUseNewTheme;
     private static bool IsNewDwma;
     private static SystemTheme Theme;
 
     public static void Initialize()
     {
-        if (Supported = SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
+        if (m_IsDarkModeSupported = SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
         {
             var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
             Theme = tmp ? SystemTheme.Dark : SystemTheme.Light;
@@ -32,10 +32,10 @@ public static class ThemeManager
                 IsNewDwma = true;
             }
 
-            if (UseDark = (option == 0 && tmp) || option == 2)
+            if (m_ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
             {
                 Win32UI.EnableDarkModeForApp();
-                CanUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
+                m_CanUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
             }
         }
 
@@ -55,7 +55,7 @@ public static class ThemeManager
 
     public static void EnableDarkModeForControl(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
     {
-        if (CanUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
+        if (m_CanUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
         {
             type = NativeStyle.DarkTheme;
         }

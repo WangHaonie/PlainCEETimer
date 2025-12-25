@@ -9,6 +9,7 @@ using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
 
@@ -75,7 +76,7 @@ internal static class App
     private static bool StartProgram(string[] args)
     {
         AppIcon = HICON.FromFile(ExecutablePath).ToIcon();
-        Args = Array.ConvertAll(args, x => x.ToLower());
+        Args = args.ArraySelect(x => x.ToLower());
         ArgsLength = Args.Length;
         var AllArgs = string.Join(" ", args);
         InitConfig();

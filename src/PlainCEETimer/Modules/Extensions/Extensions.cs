@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions.Linq;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -18,7 +18,7 @@ public static class Extensions
         => -color.ToArgb();
 
     public static string RemoveIllegalChars(this string s)
-        => new([.. s.Trim().Where(x => !IllegalChars.Contains(x))]);
+        => new([.. s.Trim().Where(x => !IllegalChars.ArrayContains(x))]);
 
     public static string Format(this DateTime dateTime)
         => dateTime.ToString(Validator.DateTimeFormat);
@@ -97,17 +97,6 @@ public static class Extensions
     public static T Copy<T>(this T obj) where T : ICloneable
         => (T)obj.Clone();
 
-    public static void PopulateWith<T>(this T[] destination, T[] source)
-    {
-        if (source != null)
-        {
-            Array.Copy(source, destination, Math.Min(source.Length, destination.Length));
-        }
-    }
-
-    public static bool IsNullOrEmpty<T>(this T[] arr)
-        => arr == null || arr.Length == 0;
-
     public static bool IsEnabled(this ExamSettings settings)
         => settings != null && settings.Enabled;
 
@@ -127,32 +116,5 @@ public static class Extensions
         }
 
         return false;
-    }
-
-    public static bool ArrayEquals<T>(this T[] arr1, T[] arr2, IEqualityComparer<T> comparer = null)
-    {
-        // Enumerable.SequenceEqual 基于 IEnumerator，在比较数组类型时，速度可能略慢，故编写此方法专用于数组序列的比较。
-
-        if (arr1 == null || arr2 == null || arr1.Length != arr2.Length)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(arr1, arr2))
-        {
-            return true;
-        }
-
-        comparer ??= EqualityComparer<T>.Default;
-
-        for (int i = 0; i < arr1.Length; i++)
-        {
-            if (!comparer.Equals(arr1[i], arr2[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

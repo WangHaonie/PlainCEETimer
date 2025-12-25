@@ -7,44 +7,49 @@ using PlainCEETimer.Modules.JsonConverters;
 namespace PlainCEETimer.Countdown;
 
 [JsonConverter(typeof(ColorSetConverter))]
-public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
+public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 {
-    public Color Fore => foreColor;
+    public readonly Color Fore => fore;
 
-    public Color Back => backColor;
+    public readonly Color Back => back;
 
     public bool Readable
     {
         get
         {
-            //
-            // 对比度判断 参考:
-            //
-            // Guidance on Applying WCAG 2 to Non-Web Information and ...
-            // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
-            //
-
-            var L1 = GetRelativeLum(foreColor);
-            var L2 = GetRelativeLum(backColor);
-
-            if (L1 < L2)
+            if (!init)
             {
-                (L1, L2) = (L2, L1);
+                //
+                // 对比度判断 参考:
+                //
+                // Guidance on Applying WCAG 2 to Non-Web Information and ...
+                // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
+                //
+
+                var L1 = GetRelativeLum(Fore);
+                var L2 = GetRelativeLum(Back);
+
+                if (L1 < L2)
+                {
+                    (L1, L2) = (L2, L1);
+                }
+
+                field = (L1 + 0.05) / (L2 + 0.05) >= 3;
+                init = true;
             }
 
-            return (L1 + 0.05) / (L2 + 0.05) >= 3;
+            return field;
         }
     }
 
-    private readonly Color foreColor = fore;
-    private readonly Color backColor = back;
+    private bool init;
 
-    public bool Equals(ColorPair other)
+    public readonly bool Equals(ColorPair other)
     {
-        return foreColor == other.foreColor && backColor == other.backColor;
+        return Fore == other.Fore && Back == other.Back;
     }
 
-    public override bool Equals(object obj)
+    public readonly override bool Equals(object obj)
     {
         if (obj is ColorPair cp)
         {
@@ -54,15 +59,15 @@ public readonly struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
         return false;
     }
 
-    public override int GetHashCode()
+    public readonly override int GetHashCode()
     {
         return new HashCode()
-            .Add(foreColor)
-            .Add(backColor)
+            .Add(Fore)
+            .Add(Back)
             .Combine();
     }
 
-    private double GetRelativeLum(Color color)
+    private readonly double GetRelativeLum(Color color)
     {
         //
         // 亮度计算 参考:

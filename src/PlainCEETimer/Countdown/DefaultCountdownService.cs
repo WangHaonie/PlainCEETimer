@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
@@ -101,7 +101,6 @@ public class DefaultCountdownService : ICountdownService
         Exams = value.Exams;
         ExamsCount = Exams.Length;
         Info = value;
-        CanUpdateRules = true;
     }
 
     private void InternalStart()
@@ -155,6 +154,7 @@ public class DefaultCountdownService : ICountdownService
 
         CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
         CanUseCustomText = Format == CountdownFormat.Custom;
+        CanUpdateRules = true;
     }
 
     private Exam GetCurrentExam(Exam[] exams, ref int index)
@@ -244,12 +244,9 @@ public class DefaultCountdownService : ICountdownService
     {
         if (CanUpdateRules || Phase != phase)
         {
-            CurrentRules =
-            [..
-                CustomRules
-                .Where(r => r.Phase == phase)
-                .OrderByDescending(x => x)
-            ];
+            CurrentRules = CustomRules
+                .ArrayWhere(r => r.Phase == phase)
+                .ArrayOrderDescending(true);
 
             DefaultRule = GlobalRules[(int)phase];
             CanUseRules = CanUseCustomText && CurrentRules.Length != 0;

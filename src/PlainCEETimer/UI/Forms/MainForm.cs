@@ -9,6 +9,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
@@ -390,10 +391,11 @@ public sealed class MainForm : AppForm
                 }
 
                 var tmp = GetBaseContextMenu();
+                var mi = tmp.MenuItems;
 
                 for (int i = 0; i < 3; i++)
                 {
-                    tmp.MenuItems.RemoveAt(0);
+                    mi.RemoveAt(0);
                 }
 
                 TrayIcon = new()

@@ -142,8 +142,6 @@ public class ControlBuilder
         return ctrl;
     }
 
-    [Obsolete]
-    int _;
 #if false
     public PlainTabControl TabCtrl(int w, int h, bool multiline, TabPage[] pages)
     {

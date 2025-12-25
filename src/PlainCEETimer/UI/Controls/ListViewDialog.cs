@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;

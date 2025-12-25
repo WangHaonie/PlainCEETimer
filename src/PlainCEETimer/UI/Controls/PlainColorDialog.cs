@@ -5,6 +5,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Extensions.Linq;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -37,7 +38,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
                 App.AppConfig.CustomColors =
                 [..
                     customColors
-                    .Where(c => c != COLORREF.EmptyValue)
+                    .ArrayWhere(c => c != COLORREF.EmptyValue)
                     .Distinct()
                 ];
 

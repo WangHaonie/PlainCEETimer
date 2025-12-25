@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -253,7 +253,7 @@ public sealed partial class ColorBlock : PlainLabel
             var parent = base.Parent;
             var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
 
-            if (target != null && target is ColorBlock block && Fellows.Contains(block) && block != this)
+            if (target != null && target is ColorBlock block && Fellows.ArrayContains(block) && block != this)
             {
                 block.Color = Color;
             }

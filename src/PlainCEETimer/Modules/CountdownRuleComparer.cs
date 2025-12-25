@@ -5,8 +5,6 @@ namespace PlainCEETimer.Modules;
 
 public class CountdownRuleComparer : IEqualityComparer<CountdownRule>
 {
-    internal static readonly CountdownRuleComparer Instance = new();
-
     public bool Equals(CountdownRule x, CountdownRule y)
     {
         if (x == null || y == null)
