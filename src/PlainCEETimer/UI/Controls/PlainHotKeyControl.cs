@@ -85,7 +85,7 @@ public class PlainHotkeyControl : Control
         }
     }
 
-    protected override Size DefaultMinimumSize => new(100, 23);
+    protected override Size DefaultMinimumSize => new(100, 21);
 
     private Hotkey hotkey;
     private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
