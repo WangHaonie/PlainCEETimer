@@ -82,6 +82,24 @@ BOOL MenuCheckRadioItemByPosition(HMENU hMenu, UINT item)
     return FALSE;
 }
 
+BOOL MenuUncheckItemByPosition(HMENU hMenu, UINT item)
+{
+    if (hMenu)
+    {
+        MENUITEMINFO mii = { sizeof(mii) };
+        mii.fMask = MIIM_STATE | MIIM_FTYPE;
+
+        if (GetMenuItemInfo(hMenu, item, TRUE, &mii))
+        {
+            mii.fState = 0;
+            mii.fType &= ~MFT_RADIOCHECK;
+            return SetMenuItemInfo(hMenu, item, TRUE, &mii);
+        }
+    }
+
+    return FALSE;
+}
+
 LPCWSTR GetWindowTextEx(HWND hWnd)
 {
     if (hWnd)

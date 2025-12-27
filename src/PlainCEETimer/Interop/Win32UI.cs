@@ -111,6 +111,9 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#31")]
     public static extern bool MenuCheckRadioItemByPosition(IntPtr hMenu, int item);
 
+    [DllImport(App.NativesDll, EntryPoint = "#40")]
+    public static extern bool MenuUncheckItemByPosition(IntPtr hMenu, int item);
+
     [DllImport(App.NativesDll, EntryPoint = "#32", CharSet = CharSet.Unicode)]
     public static extern string GetWindowText(IntPtr hWnd);
 

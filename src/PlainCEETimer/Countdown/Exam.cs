@@ -90,11 +90,6 @@ public class Exam : IListViewData<Exam>
             && Name == other.Name;
     }
 
-    public override string ToString()
-    {
-        return $"{Name.Truncate(6)} ({Start.Format()})";
-    }
-
     public override bool Equals(object obj)
     {
         if (obj is Exam e)

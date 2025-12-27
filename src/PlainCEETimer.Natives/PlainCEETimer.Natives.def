@@ -47,3 +47,4 @@ EXPORTS
     ComdlgHookMessageBox @37 NONAME
     ComdlgUnhookMessageBox @38 NONAME
     IsDialog @39 NONAME
+    MenuUncheckItemByPosition @40 NONAME

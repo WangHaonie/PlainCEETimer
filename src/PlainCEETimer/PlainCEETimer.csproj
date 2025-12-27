@@ -225,6 +225,7 @@
     <Compile Include="UI\HotKey.cs" />
     <Compile Include="UI\HotKeyPressEventArgs.cs" />
     <Compile Include="UI\HotKeyService.cs" />
+    <Compile Include="UI\PagedContextMenu.cs" />
     <Compile Include="UI\ThemeManager.cs" />
     <Compile Include="Countdown\ColorPair.cs" />
     <Compile Include="Modules\Configuration\AppConfig.cs" />

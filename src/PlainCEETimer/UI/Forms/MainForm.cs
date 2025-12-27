@@ -49,12 +49,12 @@ public sealed class MainForm : AppForm
     private ContextMenu ContextMenuMain;
     private DisplayObject Display;
     private Exam[] Exams;
+    private string[] ExamItems;
     private Font CountdownFont;
     private GeneralObject General;
     private MemoryCleaner MemCleaner;
-    private MenuItem ExamSwitchMenu;
     private MenuItem FontNameMenuItem;
-    private Menu.MenuItemCollection ExamSwitchMenuItems;
+    private PagedContextMenu MenuSwitchExams;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
     private HotKeyDialog DialogHotKey;
@@ -170,17 +170,6 @@ public sealed class MainForm : AppForm
         }
 
         base.WndProc(ref m);
-    }
-
-    private void ExamItems_Click(object sender, EventArgs e)
-    {
-        int index = ((MenuItem)sender).Index;
-
-        if (!Win32UI.MenuGetItemCheckStateByPosition(ExamSwitchMenu.Handle, index))
-        {
-            MainCountdown.SwitchTo(SwitchOption.ByIndex, index);
-            SwitchToExam(index);
-        }
     }
 
     private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -300,7 +289,7 @@ public sealed class MainForm : AppForm
         if (MainCountdown == null)
         {
             MainCountdown = new DefaultCountdownService();
-            MainCountdown.ExamSwitched += (_, e) => SwitchToExam(e.Index);
+            MainCountdown.ExamSwitched += (_, e) => SwitchToExam(e.Index, true);
 
             MainCountdown.CountdownUpdated += (_, e) =>
             {
@@ -342,36 +331,44 @@ public sealed class MainForm : AppForm
     private void LoadContextMenu()
     {
         ContextMenuMain = GetBaseContextMenu();
-        ExamSwitchMenu = ContextMenuMain.MenuItems[0];
-        ExamSwitchMenuItems = ExamSwitchMenu.MenuItems;
-        FontNameMenuItem = ContextMenuMain.MenuItems[1].MenuItems[0];
+        FontNameMenuItem = ContextMenuMain.MenuItems[0].MenuItems[0];
         FontNameMenuItem.Enabled = false;
         ChangeCountdownFont(AppConfig.Font);
         ContextMenu = ContextMenuMain;
 
+        if (MenuSwitchExams == null)
+        {
+            MenuSwitchExams = new();
+
+            MenuSwitchExams.ItemClick += (_, _) =>
+            {
+                var index = MenuSwitchExams.SelectedIndex;
+                MainCountdown.SwitchTo(SwitchOption.ByIndex, index);
+                SwitchToExam(index, false);
+            };
+        }
+
+        MenuSwitchExams.Text = "切换(&Q)";
+        MenuSwitchExams.DefaultText = "请先添加考试信息";
+        MenuSwitchExams.SelectedIndex = ExamIndex;
+
         if (Exams.IsNullOrEmpty())
         {
-            var item = ExamSwitchMenuItems[0];
-            item.Checked = false;
-            item.Enabled = false;
+            ExamItems = [];
         }
         else
         {
-            ExamSwitchMenuItems.Clear();
+            ExamItems = new string[Exams.Length];
 
             for (int i = 0; i < Exams.Length; i++)
             {
-                var item = new MenuItem()
-                {
-                    Text = $"{i + 1}. {Exams[i]}",
-                    RadioCheck = true,
-                    Checked = i == ExamIndex
-                };
-
-                item.Click += ExamItems_Click;
-                ExamSwitchMenuItems.Add(item);
+                var e = Exams[i];
+                ExamItems[i] = $"{i + 1}. {e.Name.Truncate(6)} ({e.Start.Format()})";
             }
         }
+
+        MenuSwitchExams.Items = ExamItems;
+        ContextMenuMain.MenuItems.Add(0, MenuSwitchExams.MenuItem);
     }
 
     private void LoadTrayIcon()
@@ -433,11 +430,15 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private void SwitchToExam(int index)
+    private void SwitchToExam(int index, bool sw)
     {
         if (index >= 0 && index != ExamIndex)
         {
-            ExamSwitchMenu.DoRadioCheck(index);
+            if (sw)
+            {
+                MenuSwitchExams.SelectedIndex = index;
+            }
+
             ExamIndex = index;
             AppConfig.Exam = index;
             Validator.DemandConfig();
@@ -484,11 +485,6 @@ public sealed class MainForm : AppForm
         https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
 
         */
-
-        b.Menu("切换(&Q)",
-        [
-            b.Item("请先添加考试信息")
-        ]),
 
         b.Menu("字体(&F)",
         [

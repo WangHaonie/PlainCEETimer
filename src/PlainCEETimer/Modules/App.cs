@@ -31,7 +31,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/12/25";
+    public const string AppBuildDate = "2025/12/27";
     public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -56,9 +56,11 @@ internal static class App
     private static void Main(string[] args)
     {
         Application.SetCompatibleTextRenderingDefault(false);
+#if !DEBUG
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
+#endif
         MainMutex = new(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
 
         if (IsMainProcess)

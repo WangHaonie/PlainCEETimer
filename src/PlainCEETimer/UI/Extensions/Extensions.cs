@@ -75,8 +75,24 @@ public static class Extensions
         return new(p.X + xOffset, p.Y + yOffset);
     }
 
-    public static void DoRadioCheck(this MenuItem menu, int item)
+    public static void DoRadioCheck(this MenuItem menu, int item, out MenuItem menuItem)
     {
-        Win32UI.MenuCheckRadioItemByPosition(menu.Handle, item);
+        if (menu == null)
+        {
+            menuItem = null;
+        }
+        else
+        {
+            Win32UI.MenuCheckRadioItemByPosition(menu.Handle, item);
+            menuItem = menu.MenuItems[item];
+        }
+    }
+
+    public static void Uncheck(this MenuItem item)
+    {
+        if (item != null)
+        {
+            Win32UI.MenuUncheckItemByPosition(item.Parent.Handle, item.Index);
+        }
     }
 }
