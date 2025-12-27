@@ -331,7 +331,7 @@ public sealed class MainForm : AppForm
     private void LoadContextMenu()
     {
         ContextMenuMain = GetBaseContextMenu();
-        FontNameMenuItem = ContextMenuMain.MenuItems[0].MenuItems[0];
+        FontNameMenuItem = ContextMenuMain.MenuItems[1].MenuItems[0];
         FontNameMenuItem.Enabled = false;
         ChangeCountdownFont(AppConfig.Font);
         ContextMenu = ContextMenuMain;
@@ -348,7 +348,7 @@ public sealed class MainForm : AppForm
             };
         }
 
-        MenuSwitchExams.Text = "切换(&Q)";
+        MenuSwitchExams.Parent = ContextMenuMain.MenuItems[0];
         MenuSwitchExams.DefaultText = "请先添加考试信息";
         MenuSwitchExams.SelectedIndex = ExamIndex;
 
@@ -368,7 +368,7 @@ public sealed class MainForm : AppForm
         }
 
         MenuSwitchExams.Items = ExamItems;
-        ContextMenuMain.MenuItems.Add(0, MenuSwitchExams.MenuItem);
+        MenuSwitchExams.Build();
     }
 
     private void LoadTrayIcon()
@@ -485,6 +485,8 @@ public sealed class MainForm : AppForm
         https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
 
         */
+
+        b.Item("切换(&Q)"),
 
         b.Menu("字体(&F)",
         [

@@ -7,19 +7,6 @@ namespace PlainCEETimer.UI;
 
 public class PagedContextMenu
 {
-    public string Text
-    {
-        get;
-        set
-        {
-            if (field != value)
-            {
-                m_menu?.Text = value;
-                field = value;
-            }
-        }
-    }
-
     public string DefaultText
     {
         get;
@@ -43,7 +30,6 @@ public class PagedContextMenu
                 m_items = value;
                 totalCount = value.Length;
                 absoluteIndex = absoluteIndex.Clamp(0, totalCount - 1);
-                canRebuild = true;
             }
         }
     }
@@ -51,15 +37,7 @@ public class PagedContextMenu
     public int CountPerPage
     {
         get => ppCount;
-        set
-        {
-            if (!canRebuild)
-            {
-                canRebuild = ppCount != value;
-            }
-
-            ppCount = value.Clamp(10, 300);
-        }
+        set => ppCount = value.Clamp(10, 300);
     }
 
     public int SelectedIndex
@@ -75,23 +53,15 @@ public class PagedContextMenu
         }
     }
 
-    public MenuItem MenuItem
+    public MenuItem Parent
     {
-        get
+        get => m_parent;
+        set
         {
-            if (canRebuild)
+            if (value != null)
             {
-                isLoaded = false;
-                m_menu.Destory();
-                m_menu = null;
-                m_defitem = null;
-                CreateNewInstance();
-                isLoaded = true;
-                DoRadioCheck(absoluteIndex);
-                canRebuild = false;
+                m_parent = value;
             }
-
-            return m_menu;
         }
     }
 
@@ -113,27 +83,40 @@ public class PagedContextMenu
     private int totalCount;
     private int pageCount;
     private int absoluteIndex;
-    private bool canRebuild;
     private bool isPaged;
     private bool isLoaded;
     private string[] m_items;
-    private MenuItem m_menu;
+    private MenuItem m_parent;
     private MenuItem m_defitem;
     private MenuItem m_lastchecked;
     private MenuItem[] m_pages;
+    private Menu.MenuItemCollection m_target;
     private readonly int radioOffset = 2;
     private readonly MenuItem m_settings = new("设置每页最大项数");
     private readonly MenuItem m_separator = new("-");
 
+    public void Build()
+    {
+        if (m_parent != null && m_items != null)
+        {
+            isLoaded = false;
+            m_target = m_parent.MenuItems;
+            m_target.Clear();
+            m_defitem = null;
+            m_lastchecked = null;
+            CreateNewInstance();
+            isLoaded = true;
+            DoRadioCheck(absoluteIndex);
+        }
+    }
+
     private void CreateNewInstance()
     {
-        m_menu = new MenuItem(Text);
-        var items = m_menu.MenuItems;
-        items.AddRange([m_settings, m_separator]);
+        m_target.AddRange([m_settings, m_separator]);
 
         if (totalCount == 0)
         {
-            items.Add(m_defitem = new MenuItem(DefaultText) { Enabled = false });
+            m_target.Add(m_defitem = new MenuItem(DefaultText) { Enabled = false });
             isPaged = false;
             return;
         }
@@ -144,7 +127,7 @@ public class PagedContextMenu
             {
                 var item = new MenuItem(m_items[i]);
                 item.Click += Item_Click;
-                items.Add(item);
+                m_target.Add(item);
             }
 
             isPaged = false;
@@ -159,7 +142,7 @@ public class PagedContextMenu
             var ipStart = i * ppCount;
             var ipEnd = Math.Min(ipStart + ppCount, totalCount) - 1;
             var pageHeader = new MenuItem($"{ipStart + 1}~{ipEnd + 1}") { Tag = i };
-            items.Add(pageHeader);
+            m_target.Add(pageHeader);
             m_pages[i] = pageHeader;
             var pItems = pageHeader.MenuItems;
 
@@ -209,7 +192,7 @@ public class PagedContextMenu
             }
             else
             {
-                m_menu.DoRadioCheck(index + radioOffset, out m_lastchecked);
+                m_parent.DoRadioCheck(index + radioOffset, out m_lastchecked);
             }
         }
     }
