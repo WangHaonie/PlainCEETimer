@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;

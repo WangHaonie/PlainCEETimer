@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;

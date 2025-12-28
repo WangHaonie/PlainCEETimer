@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;

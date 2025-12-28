@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 

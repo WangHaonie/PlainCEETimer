@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -6,27 +7,25 @@ using System.Threading.Tasks;
 
 namespace PlainCEETimer.Modules.Http;
 
-public class NetworkTaskScheduler
+public class NetworkedAction(Action action)
 {
     private int m_flag;
-    private readonly Action m_operation;
 
-    public NetworkTaskScheduler(Action action)
+    public void Invoke()
     {
         if (action != null)
         {
-            m_operation = action;
-            CheckConnectivity();
+            CheckAndInvokeAsync();
         }
     }
 
-    private async void CheckConnectivity()
+    private async void CheckAndInvokeAsync()
     {
         if (Interlocked.Exchange(ref m_flag, 1) == 0)
         {
-            if (await CheckConnectivityCore().ConfigureAwait(false))
+            if (await CheckConnectivityAsync().ConfigureAwait(false))
             {
-                m_operation();
+                action();
                 NetworkChange.NetworkAddressChanged -= NetworkChange_NetworkAddressChanged;
                 NetworkChange.NetworkAvailabilityChanged -= NetworkChange_NetworkAvailabilityChanged;
             }
@@ -41,14 +40,14 @@ public class NetworkTaskScheduler
         }
     }
 
-    private async Task<bool> CheckConnectivityCore()
+    private async Task<bool> CheckConnectivityAsync()
     {
         try
         {
             using var req = new HttpRequestMessage(HttpMethod.Head, "http://www.gstatic.com/generate_204");
             using var res = await HttpService.SendAsync(req).ConfigureAwait(false);
 
-            return res.IsSuccessStatusCode || res.StatusCode == System.Net.HttpStatusCode.NoContent;
+            return res.IsSuccessStatusCode || res.StatusCode == HttpStatusCode.NoContent;
         }
         catch
         {
@@ -58,11 +57,11 @@ public class NetworkTaskScheduler
 
     private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
     {
-        CheckConnectivity();
+        CheckAndInvokeAsync();
     }
 
     private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
     {
-        CheckConnectivity();
+        CheckAndInvokeAsync();
     }
 }

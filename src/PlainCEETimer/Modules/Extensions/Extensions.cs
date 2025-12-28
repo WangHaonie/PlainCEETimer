@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules.Extensions;
 

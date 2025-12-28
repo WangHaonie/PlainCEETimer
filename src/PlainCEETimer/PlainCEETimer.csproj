@@ -114,8 +114,8 @@
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\JsonConverters\GlobalRulesConverter.cs" />
     <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
-    <Compile Include="Modules\Extensions\Linq\ArrayLinq.cs" />
-    <Compile Include="Modules\Http\NetworkTaskScheduler.cs" />
+    <Compile Include="Modules\Linq\ArrayLinq.cs" />
+    <Compile Include="Modules\Http\NetworkedAction.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\SystemVersion.cs" />
     <Compile Include="Modules\Xml.cs" />

@@ -9,8 +9,8 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Extensions.Linq;
 using PlainCEETimer.Modules.Http;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
@@ -89,7 +89,7 @@ public sealed class MainForm : AppForm
         RefreshSettings();
         Validator.ValidateNeeded = false;
         new Action(Startup.RefreshTaskState).Start();
-        new NetworkTaskScheduler(() => new Updater().CheckForUpdate(false, this));
+        new NetworkedAction(() => new Updater().CheckForUpdate(false, this)).Invoke();
     }
 
     /*

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Extensions.Linq;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlainCEETimer.Modules.Extensions;
 
-namespace PlainCEETimer.Modules.Extensions.Linq;
+namespace PlainCEETimer.Modules.Linq;
 
 /*
 
