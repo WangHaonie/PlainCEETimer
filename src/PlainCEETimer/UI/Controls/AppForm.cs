@@ -412,13 +412,9 @@ public abstract class AppForm : Form
         SetBounds(x, y, 0, 0, BoundsSpecified.Location);
     }
 
-    /// <summary>
-    /// 以父容器宽度为参考使 Label 单行内容达到一定长度时自动换行。
-    /// </summary>
-    /// <param name="target">目标 Label</param>
-    protected void SetLabelAutoWrap(PlainLabel target)
+    protected void SetLabelAutoWrap(PlainLabel target, bool useParent)
     {
-        SetLabelAutoWrap(target, target.Parent.Width - target.Left);
+        SetLabelAutoWrap(target, useParent ? (target.Parent.Width - target.Left) : (int)(GetCurrentScreenRect().Width * 0.75));
     }
 
     protected void SetLabelAutoWrap(PlainLabel target, int maxWidth)

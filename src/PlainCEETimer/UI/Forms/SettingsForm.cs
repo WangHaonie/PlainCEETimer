@@ -405,7 +405,7 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
 
         GroupBoxArrageFirstControl(LabelPptsvc);
-        SetLabelAutoWrap(LabelPptsvc);
+        SetLabelAutoWrap(LabelPptsvc, true);
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
@@ -454,7 +454,7 @@ public sealed class SettingsForm : AppForm
 
 
         GroupBoxArrageFirstControl(LabelSyncTime);
-        SetLabelAutoWrap(LabelSyncTime);
+        SetLabelAutoWrap(LabelSyncTime, true);
         ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
         ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 5);
         GroupBoxAutoAdjustHeight(GBoxSyncTime, ComboBoxNtpServers, 6);
@@ -462,7 +462,7 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
         GroupBoxArrageFirstControl(LabelRestart);
         UpdateSettingsArea(SettingsArea.Restart, false);
-        SetLabelAutoWrap(LabelRestart);
+        SetLabelAutoWrap(LabelRestart, true);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 

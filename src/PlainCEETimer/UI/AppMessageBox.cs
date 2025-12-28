@@ -39,7 +39,7 @@ public class AppMessageBox(AppForm parent = null)
             this.AddControls(b =>
             [
                 ImageIcon = b.Image(level.Icon),
-                LabelMessage = b.Label(message).With(c => SetLabelAutoWrap(c, (int)(GetCurrentScreenRect().Width * 0.75)))
+                LabelMessage = b.Label(message)
             ]);
 
             base.OnInitializing();
@@ -49,6 +49,7 @@ public class AppMessageBox(AppForm parent = null)
         protected override void RunLayout(bool isHighDpi)
         {
             ArrangeControlXT(LabelMessage, ImageIcon, 2);
+            SetLabelAutoWrap(LabelMessage, false);
             ArrangeCommonButtonsR(ButtonA, ButtonB, LabelMessage, -3, 3);
 
             if (ButtonA.Left < ImageIcon.Right)
