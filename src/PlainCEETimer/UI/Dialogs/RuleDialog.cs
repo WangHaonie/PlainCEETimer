@@ -97,10 +97,10 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
                 UserChanged();
             }, Ph.RuleTypes),
 
-            NUDDays = b.NumericUpDown(53, 65535M, OnUserChanged),
-            NUDHours = b.NumericUpDown(40, 23M, OnUserChanged),
-            NUDMinutes = b.NumericUpDown(40, 59M, OnUserChanged),
-            NUDSeconds = b.NumericUpDown(40, 59M, OnUserChanged),
+            NUDDays = b.NumericUpDown(53, 0M, 65535M, OnUserChanged),
+            NUDHours = b.NumericUpDown(40, 0M, 23M, OnUserChanged),
+            NUDMinutes = b.NumericUpDown(40, 0M, 59M, OnUserChanged),
+            NUDSeconds = b.NumericUpDown(40, 0M, 59M, OnUserChanged),
 
             ComboBoxPlaceholders = b.ComboBox(160, (_, _) =>
                 TextBoxCustomText.InputFlyout(Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex]),

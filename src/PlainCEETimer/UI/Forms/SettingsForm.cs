@@ -40,9 +40,11 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelRestart;
     private PlainLabel LabelScreens;
     private PlainLabel LabelSyncTime;
+    private PlainLabel LabelMaxCpp;
     private NavigationPage PageDisplay;
     private NavigationPage PageGeneral;
     private NavigationPage PageAdvanced;
+    private NavigationPage PageAppearance;
     private Panel PageNavPages;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
@@ -61,6 +63,7 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxTrayText;
     private PlainCheckBox CheckBoxUniTopMost;
     private PlainNumericUpDown NudOpacity;
+    private PlainNumericUpDown NudMaxCpp;
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
     private PlainGroupBox GBoxExamInfo;
@@ -76,6 +79,7 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
+    private const int MainViewHeight = 225;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
 
     protected override void OnInitializing()
@@ -85,7 +89,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            PageNavPages = b.Panel(56, 1, 334, 260,
+            PageNavPages = b.Panel(56, 1, 334, MainViewHeight,
             [
                 PageGeneral = b.NavPage(
                 [
@@ -130,13 +134,6 @@ public sealed class SettingsForm : AppForm
                         ).Disable()
                     ]),
 
-                    GBoxTheme = b.GroupBox("应用主题设定",
-                    [
-                        RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).Tag(0),
-                        RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).Tag(1),
-                        RadioButtonThemeDark = b.RadioButton("深色", RadioButtonTheme_CheckedChanged).Tag(2),
-                    ]),
-
                     GBoxOthers = b.GroupBox("其他",
                     [
                         CheckBoxStartup = b.CheckBox(null, (_, _) =>
@@ -166,7 +163,7 @@ public sealed class SettingsForm : AppForm
                             SettingsChanged();
                         }).Tag(IsTaskStartUp),
 
-                        CheckBoxMemClean = b.CheckBox("自动清理倒计时占用的运行内存(&M)", SettingsChanged),
+                        CheckBoxMemClean = b.CheckBox("自动清理程序占用的运行内存(&M)", SettingsChanged),
 
                         CheckBoxTopMost = b.CheckBox("顶置倒计时窗口(&T)", (_, _) =>
                         {
@@ -260,6 +257,45 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
+                PageAppearance = b.NavPage(
+                [
+                    GBoxTheme = b.GroupBox("应用主题设定",
+                    [
+                        RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).Tag(0),
+                        RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).Tag(1),
+                        RadioButtonThemeDark = b.RadioButton("深色", RadioButtonTheme_CheckedChanged).Tag(2),
+                    ]),
+
+                    GBoxMainForm = b.GroupBox("主窗口样式",
+                    [
+                        LabelOpacity = b.Label("窗口不透明度"),
+                        NudOpacity = b.NumericUpDown(50, Validator.MinOpacity, Validator.MaxOpacity, SettingsChanged),
+                        LabelMaxCpp = b.Label("考试切换菜单单页最大项数"),
+                        NudMaxCpp = b.NumericUpDown(50, Validator.MinCpp, Validator.MaxCpp, SettingsChanged),
+
+                        CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
+                        {
+                            var flag = CheckBoxBorderColor.Checked;
+                            ComboBoxBorderColor.Enabled = flag;
+                            BlockBorderColor.Enabled = flag;
+                            SettingsChanged();
+                        }),
+
+                        ComboBoxBorderColor = b.ComboBox(115, (_, _) =>
+                        {
+                            BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
+                            SettingsChanged();
+                        },
+                            "自定义",
+                            "跟随文字颜色",
+                            "跟随背景颜色",
+                            "跟随系统主题色"
+                        ).Disable(),
+
+                        BlockBorderColor = b.Block(true, null, SettingsChanged).Disable()
+                    ])
+                ]),
+
                 PageAdvanced = b.NavPage(
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
@@ -301,40 +337,13 @@ public sealed class SettingsForm : AppForm
                                 }
                             }
                         })
-                    ]),
-
-                    GBoxMainForm = b.GroupBox("主窗口样式",
-                    [
-                        LabelOpacity = b.Label("窗口不透明度 "),
-                        NudOpacity = b.NumericUpDown(50, Validator.MaxOpacity, SettingsChanged).With(x => x.Minimum = Validator.MinOpacity),
-
-                        CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
-                        {
-                            var flag = CheckBoxBorderColor.Checked;
-                            ComboBoxBorderColor.Enabled = flag;
-                            BlockBorderColor.Enabled = flag;
-                            SettingsChanged();
-                        }),
-
-                        ComboBoxBorderColor = b.ComboBox(115, (_, _) =>
-                        {
-                            BlockBorderColor.Visible = ComboBoxBorderColor.SelectedIndex == 0;
-                            SettingsChanged();
-                        },
-                            "自定义",
-                            "跟随文字颜色",
-                            "跟随背景颜色",
-                            "跟随系统主题色"
-                        ).Disable(),
-
-                        BlockBorderColor = b.Block(true, null, SettingsChanged).Disable()
                     ])
                 ])
             ]),
 
-            b.Panel(1, 1, 54, 260,
+            b.Panel(1, 1, 54, MainViewHeight,
             [
-                new NavigationBar(["基本", "显示", "高级"], [PageGeneral, PageDisplay, PageAdvanced])
+                new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced])
                 {
                     Indent = ScaleToDpi(5),
                     ItemHeight = ScaleToDpi(25)
@@ -358,21 +367,7 @@ public sealed class SettingsForm : AppForm
         CenterControlY(ComboBoxAutoSwitchInterval, ButtonExamInfo);
         GroupBoxAutoAdjustHeight(GBoxExamInfo, ButtonExamInfo, 7);
 
-        if (AllowThemeChanging)
-        {
-            ArrangeControlYL(GBoxTheme, GBoxExamInfo, 0, 2);
-
-            GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4);
-            ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
-            ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
-            GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 5);
-        }
-        else
-        {
-            RemoveControls(PageGeneral, GBoxTheme);
-        }
-
-        ArrangeControlYL(GBoxOthers, AllowThemeChanging ? GBoxTheme : GBoxExamInfo, 0, 2);
+        ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
 
         GroupBoxArrageFirstControl(CheckBoxStartup, 4, 2);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
@@ -416,17 +411,35 @@ public sealed class SettingsForm : AppForm
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
+        if (AllowThemeChanging)
+        {
+            GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4, 4);
+            ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
+            ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
+            GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 6);
+
+            ArrangeControlYL(GBoxMainForm, GBoxTheme, 0, 2);
+        }
+        else
+        {
+            RemoveControls(PageGeneral, GBoxTheme);
+        }
+
         GroupBoxArrageFirstControl(LabelOpacity);
         GroupBoxArrageFirstControl(NudOpacity, 0, 2);
         CenterControlY(LabelOpacity, NudOpacity);
-        CompactControlX(NudOpacity, LabelOpacity);
-        Control yLast = NudOpacity;
+        CompactControlX(NudOpacity, LabelOpacity, 5);
+        ArrangeControlYL(NudMaxCpp, NudOpacity, 0, 3);
+        ArrangeControlYL(LabelMaxCpp, LabelOpacity);
+        CenterControlY(LabelMaxCpp, NudMaxCpp);
+        CompactControlX(NudMaxCpp, LabelMaxCpp, 5);
+        Control yLast = NudMaxCpp;
 
         if (SystemVersion.IsWindows11)
         {
-            ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
+            ArrangeControlYL(CheckBoxBorderColor, LabelMaxCpp, 4);
             ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
-            CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
+            CompactControlY(ComboBoxBorderColor, NudMaxCpp, 4);
             CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
             ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
             CenterControlY(BlockBorderColor, ComboBoxBorderColor);
@@ -439,7 +452,7 @@ public sealed class SettingsForm : AppForm
 
         GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
 
-        ArrangeControlYL(GBoxSyncTime, GBoxMainForm, 0, 2);
+
         GroupBoxArrageFirstControl(LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime);
         ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
@@ -520,6 +533,7 @@ public sealed class SettingsForm : AppForm
         CheckBoxTopMost.Checked = General.TopMost;
         CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
         NudOpacity.Value = General.Opacity;
+        NudMaxCpp.Value = General.CountPerPage;
 
         if (SystemVersion.IsWindows11)
         {
@@ -630,6 +644,7 @@ public sealed class SettingsForm : AppForm
         General.TopMost = CheckBoxTopMost.Checked;
         General.UniTopMost = CheckBoxUniTopMost.Checked;
         General.Opacity = (int)NudOpacity.Value;
+        General.CountPerPage = (int)NudMaxCpp.Value;
         General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
         Display.Mode = ComboBoxCountdownEnd.SelectedIndex;

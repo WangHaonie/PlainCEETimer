@@ -90,9 +90,9 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainNumericUpDown NumericUpDown(int w, decimal maxValue, EventHandler onValueChanged)
+    public PlainNumericUpDown NumericUpDown(int w, decimal minValue, decimal maxValue, EventHandler onValueChanged)
     {
-        var ctrl = new PlainNumericUpDown() { Maximum = maxValue };
+        var ctrl = new PlainNumericUpDown() { Minimum = minValue, Maximum = maxValue };
         ctrl.SetBounds(0, 0, w, 23);
         ctrl.ValueChanged += onValueChanged;
         return ctrl;

@@ -351,6 +351,7 @@ public sealed class MainForm : AppForm
         MenuSwitchExams.Parent = ContextMenuMain.MenuItems[0];
         MenuSwitchExams.DefaultText = "请先添加考试信息";
         MenuSwitchExams.SelectedIndex = ExamIndex;
+        MenuSwitchExams.CountPerPage = General.CountPerPage;
 
         if (Exams.IsNullOrEmpty())
         {

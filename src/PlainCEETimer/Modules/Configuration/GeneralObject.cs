@@ -22,6 +22,13 @@ public class GeneralObject
     [DefaultValue(true)]
     public bool UniTopMost { get; set; } = true;
 
+    [DefaultValue(Validator.DefCpp)]
+    public int CountPerPage
+    {
+        get;
+        set => Validator.SetValue(ref field, value, Validator.MaxCpp, Validator.MinCpp, Validator.DefCpp);
+    } = Validator.DefCpp;
+
     [DefaultValue(Validator.MaxOpacity)]
     public int Opacity
     {

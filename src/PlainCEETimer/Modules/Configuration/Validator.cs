@@ -19,6 +19,9 @@ internal static class Validator
     public const int MinFontSize = 10;
     public const int MaxOpacity = 100;
     public const int MinOpacity = 20;
+    public const int MinCpp = MinFontSize;
+    public const int DefCpp = 30;
+    public const int MaxCpp = 300;
     public const int MaxCustomTextLength = 800;
     public const int HotKeyCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"

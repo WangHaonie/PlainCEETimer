@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
@@ -37,7 +38,7 @@ public class PagedContextMenu
     public int CountPerPage
     {
         get => ppCount;
-        set => ppCount = value.Clamp(10, 300);
+        set => ppCount = value.Clamp(Validator.MinCpp, Validator.MaxCpp);
     }
 
     public int SelectedIndex
@@ -67,18 +68,6 @@ public class PagedContextMenu
 
     public event EventHandler ItemClick;
 
-    public event EventHandler SettingsRequest
-    {
-        add
-        {
-            m_settings.Click += value;
-        }
-        remove
-        {
-            m_settings.Click -= value;
-        }
-    }
-
     private int ppCount = 30;
     private int totalCount;
     private int pageCount;
@@ -91,9 +80,6 @@ public class PagedContextMenu
     private MenuItem m_lastchecked;
     private MenuItem[] m_pages;
     private Menu.MenuItemCollection m_target;
-    private readonly int radioOffset = 2;
-    private readonly MenuItem m_settings = new("设置每页最大项数");
-    private readonly MenuItem m_separator = new("-");
 
     public void Build()
     {
@@ -112,8 +98,6 @@ public class PagedContextMenu
 
     private void CreateNewInstance()
     {
-        m_target.AddRange([m_settings, m_separator]);
-
         if (totalCount == 0)
         {
             m_target.Add(m_defitem = new MenuItem(DefaultText) { Enabled = false });
@@ -192,7 +176,7 @@ public class PagedContextMenu
             }
             else
             {
-                m_parent.DoRadioCheck(index + radioOffset, out m_lastchecked);
+                m_parent.DoRadioCheck(index, out m_lastchecked);
             }
         }
     }
@@ -204,7 +188,7 @@ public class PagedContextMenu
         if (item != m_lastchecked)
         {
             var index = item.Index;
-            absoluteIndex = index - radioOffset;
+            absoluteIndex = index;
             DoRadioCheck(absoluteIndex);
             OnItemClick(e);
         }
