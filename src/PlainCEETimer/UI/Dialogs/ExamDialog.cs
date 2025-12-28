@@ -249,6 +249,8 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
     private void EnableControls(bool enabled)
     {
+        LabelCountdownEnd.Enabled = enabled;
+        LabelCountdownFormat.Enabled = enabled;
         ComboBoxCountdownEnd.Enabled = enabled;
         ComboBoxCountdownFormat.Enabled = enabled;
         ButtonRulesMan.Enabled = enabled && ComboBoxCountdownFormat.SelectedIndex == 8;
