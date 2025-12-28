@@ -18,7 +18,7 @@ public class Downloader
         try
         {
             var report = new DownloadReport();
-            using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
+            using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             var total = 0L;
 
@@ -29,7 +29,7 @@ public class Downloader
 
             report.Total = total / 1024L;
             using var file = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, defaultBuffer, true);
-            using var http = await response.Content.ReadAsStreamAsync();
+            using var http = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             var buffer = new byte[defaultBuffer];
             var downloaded = 0L;
             var last = 0L;
@@ -38,9 +38,9 @@ public class Downloader
             var lastReport = sw.Elapsed;
             var elapsed = new TimeSpan();
 
-            while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+            while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false)) > 0)
             {
-                await file.WriteAsync(buffer, 0, read, token);
+                await file.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
                 downloaded += read;
                 elapsed = sw.Elapsed;
                 report.Downloaded = downloaded / 1024L;

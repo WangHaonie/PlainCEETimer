@@ -14,6 +14,11 @@ public static class HttpService
         Client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{App.AppVersion} (Windows NT; Win64; x64)");
     }
 
+    public static Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+    {
+        return Client.SendAsync(request);
+    }
+
     public static Task<HttpResponseMessage> GetAsync(string requestUri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
     {
         return Client.GetAsync(requestUri, completionOption, cancellationToken);
