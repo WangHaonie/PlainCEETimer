@@ -35,6 +35,17 @@ public class AppConfig
         set => Validator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
     }
 
+    [JsonProperty("GlobalColors")]
+    public ColorPair[] DefaultColors
+    {
+        get;
+        set
+        {
+            field = value;
+            DefaultValues.InitEssentials(true);
+        }
+    }
+
     public HotKey[] HotKeys
     {
         get;

@@ -85,7 +85,11 @@ public static class ArrayLinq
 
     public static T[] PopulateWith<T>(this T[] destination, T[] source)
     {
-        Array.Copy(source, destination, Math.Min(source.Length, destination.Length));
+        if (source != null)
+        {
+            Array.Copy(source, destination, Math.Min(source.Length, destination.Length));
+        }
+
         return destination;
     }
 

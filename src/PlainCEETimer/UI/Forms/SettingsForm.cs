@@ -24,6 +24,18 @@ public sealed class SettingsForm : AppForm
     private GeneralObject General;
     private DisplayObject Display;
     private ColorBlock BlockBorderColor;
+    private ColorBlock BlockColor11;
+    private ColorBlock BlockColor12;
+    private ColorBlock BlockColor21;
+    private ColorBlock BlockColor22;
+    private ColorBlock BlockColor31;
+    private ColorBlock BlockColor32;
+    private ColorBlock BlockColor41;
+    private ColorBlock BlockColor42;
+    private ColorBlock BlockPreviewColor1;
+    private ColorBlock BlockPreviewColor2;
+    private ColorBlock BlockPreviewColor3;
+    private ColorBlock BlockPreviewColor4;
     private PlainComboBox ComboBoxAutoSwitchInterval;
     private PlainComboBox ComboBoxBorderColor;
     private PlainComboBox ComboBoxCountdownEnd;
@@ -39,13 +51,20 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelPptsvc;
     private PlainLabel LabelRestart;
     private PlainLabel LabelScreens;
+    private PlainLabel LabelColor;
+    private PlainLabel LabelColorP1;
+    private PlainLabel LabelColorP2;
+    private PlainLabel LabelColorP3;
+    private PlainLabel LabelColorWelcome;
     private PlainLabel LabelSyncTime;
     private PlainLabel LabelMaxCpp;
     private NavigationView NavBar;
+    private NavigationPage PageAppearance;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
     private PlainButton ButtonRestart;
     private PlainButton ButtonRulesMan;
+    private PlainButton ButtonDefaultColor;
     private PlainButton ButtonSave;
     private PlainButton ButtonSyncTime;
     private PlainCheckBox CheckBoxAutoSwitch;
@@ -66,15 +85,18 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxMainForm;
     private PlainGroupBox GBoxOthers;
     private PlainGroupBox GBoxPptsvc;
+    private PlainGroupBox GBoxColors;
     private PlainGroupBox GBoxRestart;
     private PlainGroupBox GBoxSyncTime;
     private PlainGroupBox GBoxTheme;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
+    private Exam[] EditedExamInfo;
+    private ColorBlock[] ColorBlocks;
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
-    private Exam[] EditedExamInfo;
+    private ColorPair[] SelectedColors;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
 
     protected override void OnInitializing()
@@ -252,6 +274,55 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
+                PageAppearance = b.NavPage("外观",
+                [
+                    GBoxColors = b.GroupBox("字体颜色",
+                    [
+                        LabelColor = b.Label("点击色块来选择文字、背景颜色；将一个色块拖放到其它色块上可快速应用相同的颜色；将准心拖出本窗口可以选取屏幕上的颜色。"),
+                        LabelColorP1 = b.Label("[1]考试前"),
+                        LabelColorP2 = b.Label("[2]考试中"),
+                        LabelColorP3 = b.Label("[3]考试后"),
+                        LabelColorWelcome = b.Label("[4]欢迎信息"),
+
+                        ButtonDefaultColor = b.Button("重置(&M)", ContextMenuBuilder.Build(b =>
+                        [
+                            b.Menu("白底(&L)",
+                            [
+                                b.Item("所有", ItemsLight_Click).Default(),
+                                b.Separator(),
+                                b.Item("1", ItemsLight_Click),
+                                b.Item("2", ItemsLight_Click),
+                                b.Item("3", ItemsLight_Click),
+                                b.Item("4", ItemsLight_Click)
+                            ]),
+
+                            b.Menu("黑底(&D)",
+                            [
+                                b.Item("所有", ItemsDark_Click).Default(),
+                                b.Separator(),
+                                b.Item("1", ItemsDark_Click),
+                                b.Item("2", ItemsDark_Click),
+                                b.Item("3", ItemsDark_Click),
+                                b.Item("4", ItemsDark_Click)
+                            ]),
+                        ])),
+
+                        BlockPreviewColor1 = b.Block($"距离...{Ph.Start}..."),
+                        BlockPreviewColor2 = b.Block($"距离...{Ph.End}..."),
+                        BlockPreviewColor3 = b.Block($"距离...{Ph.Past}..."),
+                        BlockPreviewColor4 = b.Block("欢迎使用..."),
+
+                        BlockColor11 = b.Block(true, BlockPreviewColor1, SettingsChanged),
+                        BlockColor21 = b.Block(true, BlockPreviewColor2, SettingsChanged),
+                        BlockColor31 = b.Block(true, BlockPreviewColor3, SettingsChanged),
+                        BlockColor41 = b.Block(true, BlockPreviewColor4, SettingsChanged),
+                        BlockColor12 = b.Block(false, BlockPreviewColor1, SettingsChanged),
+                        BlockColor22 = b.Block(false, BlockPreviewColor2, SettingsChanged),
+                        BlockColor32 = b.Block(false, BlockPreviewColor3, SettingsChanged),
+                        BlockColor42 = b.Block(false, BlockPreviewColor4, SettingsChanged)
+                    ])
+                ]),
+
                 b.NavPage("样式",
                 [
                     GBoxTheme = b.GroupBox("应用主题样式",
@@ -340,6 +411,13 @@ public sealed class SettingsForm : AppForm
             ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
         ]);
 
+        ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
+
+        foreach (var block in ColorBlocks)
+        {
+            block.Fellows = ColorBlocks;
+        }
+
         UpdateSettingsArea(SettingsArea.StartUp, false);
     }
 
@@ -397,7 +475,29 @@ public sealed class SettingsForm : AppForm
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
-        if (SystemVersion.IsWindows11 && AllowThemeChanging)
+        GroupBoxArrageFirstControl(LabelColor);
+        SetLabelAutoWrap(LabelColor, true);
+        ArrangeControlYL(LabelColorP1, LabelColor, 0, 3);
+        ArrangeControlYL(LabelColorP2, LabelColorP1, 0, 6);
+        ArrangeControlYL(LabelColorP3, LabelColorP2, 0, 6);
+        ArrangeControlYL(LabelColorWelcome, LabelColorP3, 0, 6);
+        ArrangeControlYL(ButtonDefaultColor, LabelColorWelcome, isHighDpi ? 3 : 2, 4);
+        ArrangeControlXT(BlockColor41, LabelColorWelcome, 3, -1);
+        ArrangeControlXLT(BlockColor31, BlockColor41, LabelColorP3, 0, -1);
+        ArrangeControlXLT(BlockColor21, BlockColor31, LabelColorP2, 0, -1);
+        ArrangeControlXLT(BlockColor11, BlockColor21, LabelColorP1, 0, -1);
+        ArrangeControlXT(BlockColor42, BlockColor41, 6);
+        ArrangeControlXLT(BlockColor32, BlockColor42, BlockColor31);
+        ArrangeControlXLT(BlockColor22, BlockColor32, BlockColor21);
+        ArrangeControlXLT(BlockColor12, BlockColor22, BlockColor11);
+        ArrangeControlXT(BlockPreviewColor4, BlockColor42, 6);
+        ArrangeControlXLT(BlockPreviewColor3, BlockPreviewColor4, BlockColor32);
+        ArrangeControlXLT(BlockPreviewColor2, BlockPreviewColor3, BlockColor22);
+        ArrangeControlXLT(BlockPreviewColor1, BlockPreviewColor2, BlockColor12);
+        GroupBoxAutoAdjustHeight(GBoxColors, ButtonDefaultColor, 5);
+
+
+        if (AllowThemeChanging)
         {
             GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
@@ -490,6 +590,16 @@ public sealed class SettingsForm : AppForm
         SettingsChanged();
     }
 
+    private void ItemsDark_Click(object sender, EventArgs e)
+    {
+        ResetColor(true, sender);
+    }
+
+    private void ItemsLight_Click(object sender, EventArgs e)
+    {
+        ResetColor(false, sender);
+    }
+
     private void SettingsChanged()
     {
         SettingsChanged(null, null);
@@ -504,6 +614,7 @@ public sealed class SettingsForm : AppForm
         EditedExamInfo = AppConfig.Exams;
         EditedCustomRules = AppConfig.CustomRules;
         EditedGlobalRules = AppConfig.GlobalRules;
+        SelectedColors = AppConfig.DefaultColors;
         ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
         var dark = AppConfig.Dark;
         RadioButtonThemeSystem.Checked = dark == 0;
@@ -538,6 +649,8 @@ public sealed class SettingsForm : AppForm
         CheckBoxDraggable.Checked = Display.Draggable;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
         UpdateOptionsForPptsvc();
+
+        ApplyColorBlocks(SelectedColors);
 
         CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
         UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
@@ -600,7 +713,39 @@ public sealed class SettingsForm : AppForm
         SettingsChanged();
     }
 
-    private bool SaveChanges()
+    private void ApplyColorBlocks(ColorPair[] colors)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            ApplyColorBlocks(colors, i);
+        }
+    }
+
+    private void ResetColor(bool isDark, object sender)
+    {
+        var colors = isDark ? DefaultValues.DarkColors : DefaultValues.LightColors;
+        var item = (MenuItem)sender;
+        var index = item.Index - 2;
+
+        if (index < 0)
+        {
+            ApplyColorBlocks(colors);
+        }
+        else
+        {
+            ApplyColorBlocks(colors, index);
+        }
+
+        SettingsChanged();
+    }
+
+    private void ApplyColorBlocks(ColorPair[] colors, int index)
+    {
+        ColorBlocks[index].Color = colors[index].Fore;
+        ColorBlocks[index + 4].Color = colors[index].Back;
+    }
+
+    private bool CheckSyncTime()
     {
         if (IsSyncingTime)
         {
@@ -608,10 +753,49 @@ public sealed class SettingsForm : AppForm
             return false;
         }
 
-        CanSaveChanges = true;
-        UserChanged = false;
-        Close();
         return true;
+    }
+
+    private bool CollectColors()
+    {
+        int index = -1;
+        var length = 4;
+        SelectedColors = new ColorPair[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            var cp = new ColorPair(ColorBlocks[i].Color, ColorBlocks[i + length].Color);
+
+            if (!cp.Readable)
+            {
+                index = i;
+                break;
+            }
+
+            SelectedColors[i] = cp;
+        }
+
+        if (index != -1)
+        {
+            NavBar.SwitchTo(PageAppearance);
+            MessageX.Error($"第{index + 1}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool SaveChanges()
+    {
+        if (CheckSyncTime() && CollectColors())
+        {
+            CanSaveChanges = true;
+            UserChanged = false;
+            Close();
+            return true;
+        }
+
+        return false;
     }
 
     private void SaveSettings()
@@ -621,6 +805,7 @@ public sealed class SettingsForm : AppForm
         AppConfig.Exams = EditedExamInfo;
         AppConfig.CustomRules = EditedCustomRules;
         AppConfig.GlobalRules = EditedGlobalRules;
+        AppConfig.DefaultColors = SelectedColors;
         AppConfig.NtpServer = ComboBoxNtpServers.SelectedIndex;
         AppConfig.Dark = SelectedTheme;
 

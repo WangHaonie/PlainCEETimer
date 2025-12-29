@@ -280,16 +280,13 @@ internal static class App
     {
         AppConfig = Validator.ReadConfig();
         ThemeManager.Initialize();
+        DefaultValues.InitEssentials();
         CountdownRule[] rules = AppConfig.GlobalRules;
 
         if (rules == null || rules.Length < 3)
         {
-            var f = Validator.ValidateNeeded;
-            Validator.ValidateNeeded = false;
-            var r = DefaultValues.GlobalDefaultRules.Copy();
-            r.PopulateWith(rules);
-            AppConfig.GlobalRules = r;
-            Validator.ValidateNeeded = f;
+            using var scope = new Validator.InternalAccessScope();
+            AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
             Validator.DemandConfig();
         }
     }

@@ -13,6 +13,22 @@ namespace PlainCEETimer.Modules.Configuration;
 
 internal static class Validator
 {
+    internal sealed class InternalAccessScope : IDisposable
+    {
+        private readonly bool oldValue;
+
+        public InternalAccessScope()
+        {
+            oldValue = validateNeeded;
+            validateNeeded = false;
+        }
+
+        void IDisposable.Dispose()
+        {
+            validateNeeded = oldValue;
+        }
+    }
+
     public const int MaxExamNameLength = 15;
     public const int MinExamNameLength = 2;
     public const int MaxFontSize = 36;
@@ -36,9 +52,17 @@ internal static class Validator
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
     public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
 
-    public static bool ValidateNeeded { get; set; } = true;
+    public static bool ValidateNeeded
+    {
+        get => validateNeeded;
+        set
+        {
+            validateNeeded = value;
+        }
+    }
 
-    private static bool CanSaveConfig;
+    private static bool canSaveConfig;
+    private static bool validateNeeded = true;
 
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -57,17 +81,17 @@ internal static class Validator
 
     public static void DemandConfig()
     {
-        CanSaveConfig = true;
+        canSaveConfig = true;
     }
 
     public static void SaveConfig()
     {
         try
         {
-            if (CanSaveConfig)
+            if (canSaveConfig)
             {
                 File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
-                CanSaveConfig = false;
+                canSaveConfig = false;
             }
         }
         catch { }

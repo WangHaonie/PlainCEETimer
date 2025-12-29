@@ -37,12 +37,12 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] CustomRules;
     private CountdownRule[] GlobalRules;
     private CountdownRule[] CurrentRules;
+    private CountdownRule[] DefaultRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
-    private readonly CountdownRule[] DefaultRules = DefaultValues.GlobalDefaultRules;
     private static readonly ColorPair DefaultColor = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
 
     public DefaultCountdownService()
@@ -101,6 +101,7 @@ public class DefaultCountdownService : ICountdownService
         Exams = value.Exams;
         ExamsCount = Exams.Length;
         Info = value;
+        DefaultRules = DefaultValues.GlobalDefaultRules;
     }
 
     private void InternalStart()
