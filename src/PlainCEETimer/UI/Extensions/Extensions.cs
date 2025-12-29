@@ -40,6 +40,11 @@ public static class Extensions
         return control;
     }
 
+    public static void Delete(this Control control)
+    {
+        control.Parent.Controls.Remove(control);
+    }
+
     public static MenuItem Default(this MenuItem item)
     {
         item.DefaultItem = true;

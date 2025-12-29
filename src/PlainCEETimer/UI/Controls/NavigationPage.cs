@@ -3,9 +3,11 @@ using System.Windows.Forms;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class NavigationPage : Panel
+public sealed class NavigationPage : Panel
 {
-    public int Index { get; internal set; }
+    public new string Text { get; set; }
+
+    internal TreeNode Header { get; set; }
 
     public NavigationPage()
     {

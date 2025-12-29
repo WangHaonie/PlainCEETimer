@@ -165,9 +165,25 @@ public class ControlBuilder
     }
 #endif
 
-    public NavigationPage NavPage(Control[] controls)
+    public NavigationView NavBar(int x, int y, int bw, int pw, int h, int hh, int indent, NavigationPage[] pages)
     {
-        var ctrl = new NavigationPage();
+        var ctrl = new NavigationView()
+        {
+            Height = h,
+            HeaderHeight = hh,
+            NavigationBarWidth = bw,
+            NavigationPageWidth = pw,
+            HeaderIndent = indent,
+            Location = new(x, y)
+        };
+
+        ctrl.AddPages(pages);
+        return ctrl;
+    }
+
+    public NavigationPage NavPage(string text, Control[] controls)
+    {
+        var ctrl = new NavigationPage { Text = text };
         ctrl.Controls.AddRange(controls);
         return ctrl;
     }

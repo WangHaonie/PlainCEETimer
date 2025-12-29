@@ -41,11 +41,7 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelScreens;
     private PlainLabel LabelSyncTime;
     private PlainLabel LabelMaxCpp;
-    private NavigationPage PageDisplay;
-    private NavigationPage PageGeneral;
-    private NavigationPage PageAdvanced;
-    private NavigationPage PageAppearance;
-    private Panel PageNavPages;
+    private NavigationView NavBar;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
     private PlainButton ButtonRestart;
@@ -79,7 +75,6 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private Exam[] EditedExamInfo;
-    private const int MainViewHeight = 225;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
 
     protected override void OnInitializing()
@@ -89,9 +84,9 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            PageNavPages = b.Panel(56, 1, 334, MainViewHeight,
+            NavBar = b.NavBar(1, 1, 54, 334, 225, ScaleToDpi(25), ScaleToDpi(5),
             [
-                PageGeneral = b.NavPage(
+                b.NavPage("基本",
                 [
                     GBoxExamInfo = b.GroupBox("考试信息",
                     [
@@ -192,7 +187,7 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageDisplay = b.NavPage(
+                b.NavPage("显示",
                 [
                     GBoxContent = b.GroupBox("倒计时",
                     [
@@ -257,9 +252,9 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageAppearance = b.NavPage(
+                b.NavPage("样式",
                 [
-                    GBoxTheme = b.GroupBox("应用主题设定",
+                    GBoxTheme = b.GroupBox("应用主题样式",
                     [
                         RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).Tag(0),
                         RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).Tag(1),
@@ -296,11 +291,11 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
-                PageAdvanced = b.NavPage(
+                b.NavPage("高级",
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
                     [
-                        LabelSyncTime = b.Label("将尝试自动启动 Windows Time 服务, 并设置默认 NTP 服务器然后与之同步。"),
+                        LabelSyncTime = b.Label("将尝试设置自动启动 Windows Time 服务，以及更改默认 NTP 服务器并与之同步。"),
 
                         ComboBoxNtpServers = b.ComboBox(130, SettingsChanged,
                             "time.windows.com",
@@ -339,15 +334,6 @@ public sealed class SettingsForm : AppForm
                         })
                     ])
                 ])
-            ]),
-
-            b.Panel(1, 1, 54, MainViewHeight,
-            [
-                new NavigationBar(["基本", "显示", "外观", "高级"], [PageGeneral, PageDisplay, PageAppearance, PageAdvanced])
-                {
-                    Indent = ScaleToDpi(5),
-                    ItemHeight = ScaleToDpi(25)
-                }.AsFocus(this)
             ]),
 
             ButtonSave = b.Button("保存(&S)", (_, _) => SaveChanges()).Disable(),
@@ -411,7 +397,7 @@ public sealed class SettingsForm : AppForm
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
-        if (AllowThemeChanging)
+        if (SystemVersion.IsWindows11 && AllowThemeChanging)
         {
             GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
@@ -422,7 +408,7 @@ public sealed class SettingsForm : AppForm
         }
         else
         {
-            RemoveControls(PageGeneral, GBoxTheme);
+            GBoxTheme.Delete();
         }
 
         GroupBoxArrageFirstControl(LabelOpacity);
@@ -447,7 +433,9 @@ public sealed class SettingsForm : AppForm
         }
         else
         {
-            RemoveControls(GBoxMainForm, CheckBoxBorderColor, ComboBoxBorderColor, BlockBorderColor);
+            CheckBoxBorderColor.Delete();
+            ComboBoxBorderColor.Delete();
+            BlockBorderColor.Delete();
         }
 
         GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
@@ -466,7 +454,7 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
-        ArrangeCommonButtonsR(ButtonSave, ButtonCancel, PageNavPages, -4, 3);
+        ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, -4, 3);
     }
 
     protected override void OnLoad()

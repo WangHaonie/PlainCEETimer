@@ -129,6 +129,9 @@
     <Compile Include="UI\Controls\ColorBlock.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Controls\NavigationView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\PlainCommonDialog.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -148,9 +151,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\PlainListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\NavigationBar.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\NavigationPage.cs">

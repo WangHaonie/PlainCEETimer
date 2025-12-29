@@ -432,17 +432,6 @@ public abstract class AppForm : Form
         target.AutoSize = true;
     }
 
-    protected void RemoveControls(Control parent, params Control[] controls)
-    {
-        var ctrls = parent.Controls;
-
-        foreach (var c in controls)
-        {
-            ctrls.Remove(c);
-            c.Dispose();
-        }
-    }
-
     protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
