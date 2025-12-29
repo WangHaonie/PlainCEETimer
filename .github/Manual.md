@@ -57,7 +57,7 @@
 
 ## 🛠️ 运行环境准备
 + **Windows 7 SP1 x64** 及以上；
-+ **Microsoft Visual C++ 2015-2022 Redistributable x64**。大多数情况下系统中个别其它软件可能进行了安装，可以不用再次安装，若没有安装请到[官网](https://aka.ms/vs/17/release/vc_redist.x64.exe)下载或直接安装`微软常用运行库合集`；
++ **Microsoft Visual C++ v14 (2015-2022) Redistributable x64**。大多数情况下系统中个别其它软件可能进行了安装，可以不用再次安装，若没有安装请到下列链接下载或直接安装`微软常用运行库合集`；<br>&nbsp;&nbsp;&nbsp;&nbsp;**Windows 10/11**：[[点此下载 (v14, v14.50.x)](https://aka.ms/vc14/vc_redist.x64.exe)]<br>&nbsp;&nbsp;&nbsp;&nbsp;**其他 Windows 系统**：[[点此下载 (2015-2022, v14.44.x)](https://aka.ms/vs/17/release/vc_redist.x64.exe)]
 + **.NET Framework 4.8**。新版 Windows 10/11 自带，其他系统需自行下载 ([点此](https://dotnet.microsoft.com/zh-cn/download/dotnet-framework/thank-you/net48-offline-installer)进入)，并且可能需要预先安装相关系统更新及安全证书，请自行上网查询。
 
 ## 🛠️ 安装高考倒计时
