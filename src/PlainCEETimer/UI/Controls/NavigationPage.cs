@@ -1,8 +1,10 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.UI.Controls;
 
+[DebuggerDisplay("Text={Text}, Index={Header.Index}")]
 public sealed class NavigationPage : Panel
 {
     public new string Text { get; set; }

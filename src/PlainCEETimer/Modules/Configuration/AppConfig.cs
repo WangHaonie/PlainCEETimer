@@ -99,6 +99,6 @@ public class AppConfig
         Validator.SetValue(ref value, value, Exams.Length, 0);
         Exam = value;
 
-        Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Draggable);
+        Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Drag);
     }
 }

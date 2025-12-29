@@ -18,7 +18,7 @@ public class DisplayObject
     [DefaultValue(CountdownPosition.TopCenter)]
     public CountdownPosition Position { get; set; } = CountdownPosition.TopCenter;
 
-    public bool Draggable { get; set; }
+    public bool Drag { get; set; }
 
     public bool SeewoPptsvc { get; set; }
 

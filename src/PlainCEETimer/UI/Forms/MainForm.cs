@@ -214,7 +214,7 @@ public sealed class MainForm : AppForm
         General = AppConfig.General;
         Display = AppConfig.Display;
 
-        IsDraggable = Display.Draggable;
+        IsDraggable = Display.Drag;
         UniTopMost = General.UniTopMost;
         IsPPTService = Display.SeewoPptsvc;
         ScreenIndex = Display.Screen;
@@ -325,7 +325,9 @@ public sealed class MainForm : AppForm
             Mode = Display.Mode,
             Format = Display.Format,
             Exams = Exams,
-            CustomRules = AppConfig.CustomRules
+            CustomRules = AppConfig.CustomRules,
+            DefaultRules = DefaultValues.GlobalDefaultRules,
+            DefaultColor = DefaultValues.GlobalDefaultColor
         });
     }
 

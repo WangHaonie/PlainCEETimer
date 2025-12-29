@@ -12,9 +12,13 @@ public sealed class CountdownStartInfo
 
     public CountdownFormat Format { get; set; }
 
+    public ColorPair DefaultColor { get; set; }
+
     public Exam[] Exams { get; set; }
 
     public CountdownRule[] CustomRules { get; set; }
 
     public CountdownRule[] GlobalRules { get; set; }
+
+    public CountdownRule[] DefaultRules { get; set; }
 }

@@ -12,6 +12,19 @@ public static class DefaultValues
 {
     public static int[] ColorDialogColors => field ??= [.. Enumerable.Repeat(COLORREF.EmptyValue, 16)];
 
+    public static ColorPair GlobalDefaultColor
+    {
+        get
+        {
+            if (forceUpdate)
+            {
+                field = m_defaultcolors[3];
+            }
+
+            return field;
+        }
+    }
+
     public static ColorPair[] LightColors => m_lightcolor;
 
     public static ColorPair[] DarkColors => m_darkcolor;
@@ -51,7 +64,6 @@ public static class DefaultValues
             return field;
         }
     }
-    
 
     public static Font CountdownDefaultFont
     {

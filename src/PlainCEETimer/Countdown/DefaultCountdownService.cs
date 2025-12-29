@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading;
 using PlainCEETimer.Modules.Configuration;
@@ -31,6 +30,7 @@ public class DefaultCountdownService : ICountdownService
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
     private ExamSettings Settings;
+    private ColorPair DefaultColor;
     private Exam[] Exams;
     private CountdownStartInfo Info;
     private CountdownRule DefaultRule;
@@ -43,7 +43,6 @@ public class DefaultCountdownService : ICountdownService
     private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
-    private static readonly ColorPair DefaultColor = ThemeManager.ShouldUseDarkMode ? new(Color.White, Color.Black) : new(Color.Black, Color.White);
 
     public DefaultCountdownService()
     {
@@ -101,7 +100,8 @@ public class DefaultCountdownService : ICountdownService
         Exams = value.Exams;
         ExamsCount = Exams.Length;
         Info = value;
-        DefaultRules = DefaultValues.GlobalDefaultRules;
+        DefaultRules = value.DefaultRules;
+        DefaultColor = value.DefaultColor;
     }
 
     private void InternalStart()

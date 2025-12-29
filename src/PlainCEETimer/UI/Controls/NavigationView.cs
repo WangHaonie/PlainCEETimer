@@ -86,11 +86,14 @@ public sealed class NavigationView : Control
         }
     }
 
+    public event EventHandler<NavigationViewEventArgs> SelectedPageChanged;
+
     private int m_height = 150;
     private int m_barw = 40;
     private int m_pagew = 110;
     private int m_hindent = 5;
     private int m_hheight = 25;
+    private bool isSwitching;
     private Panel panelNavBar;
     private Panel panelNavPages;
     private NavigationBar navBar;
@@ -99,7 +102,7 @@ public sealed class NavigationView : Control
 
     public NavigationView()
     {
-        InitializeComponent();
+        Initialize();
     }
 
     public void AddPage(NavigationPage page)
@@ -126,18 +129,9 @@ public sealed class NavigationView : Control
 
     public void SwitchTo(NavigationPage page)
     {
-        var length = m_pages.Count;
-
-        for (int i = 0; i < length; i++)
-        {
-            ((NavigationPage)m_pages[i]).Visible = i == page.Header.Index;
-        }
-    }
-
-    protected override void OnGotFocus(EventArgs e)
-    {
+        var index = page.Header.Index;
+        SwitchToPageCore(page, index);
         navBar.Focus();
-        base.OnGotFocus(e);
     }
 
     private void UpdateView()
@@ -153,12 +147,57 @@ public sealed class NavigationView : Control
         base.Height = m_height;
     }
 
-    private void OnAfterSelect(object sender, TreeViewEventArgs e)
+    private void SwitchToPageCore(NavigationPage page, int index)
     {
-        SwitchTo((NavigationPage)m_pages[e.Node.Index]);
+        isSwitching = true;
+        var length = m_pages.Count;
+        var cindex = navBar.SelectedNode.Index;
+
+        for (int i = 0; i < length; i++)
+        {
+            var current = (NavigationPage)m_pages[i];
+
+            if (page == current && i == index)
+            {
+                current.Visible = true;
+                navBar.SelectedNode = page.Header;
+            }
+            else
+            {
+                current.Visible = false;
+            }
+        }
+
+        if (index != cindex)
+        {
+            OnSelectedPageChanged(index, page);
+        }
+
+        isSwitching = false;
     }
 
-    private void InitializeComponent()
+    protected override void OnGotFocus(EventArgs e)
+    {
+        navBar.Focus();
+        base.OnGotFocus(e);
+    }
+
+    private void OnAfterSelect(object sender, TreeViewEventArgs e)
+    {
+        if (!isSwitching)
+        {
+            var index = e.Node.Index;
+            var page = (NavigationPage)m_pages[index];
+            SwitchToPageCore(page, index);
+        }
+    }
+
+    private void OnSelectedPageChanged(int index, NavigationPage page)
+    {
+        SelectedPageChanged?.Invoke(this, new(index, page));
+    }
+
+    private void Initialize()
     {
         navBar = new();
         navBar.AfterSelect += OnAfterSelect;

@@ -18,7 +18,7 @@ public sealed class SettingsForm : AppForm
     private bool IsSyncingTime;
     private bool UserChanged;
     private bool CanSaveChanges;
-    private bool IsFunnyClick;
+    private bool AllowExit;
     private int SelectedTheme;
     private AppConfig AppConfig;
     private GeneralObject General;
@@ -387,14 +387,14 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelRestart = b.Label(null),
 
-                        ButtonRestart = b.Button(null, true, (_, _) => App.Exit(!IsFunnyClick)).With(x => x.MouseDown += (_, e) =>
+                        ButtonRestart = b.Button(null, true, (_, _) => App.Exit(!AllowExit)).With(x => x.MouseDown += (_, e) =>
                         {
                             if (e.Button == MouseButtons.Right)
                             {
                                 UpdateSettingsArea(SettingsArea.Restart);
-                                IsFunnyClick = true;
+                                AllowExit = true;
                             }
-                            else if (!IsFunnyClick && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+                            else if (!AllowExit && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
                             {
                                 if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
                                 {
@@ -646,7 +646,7 @@ public sealed class SettingsForm : AppForm
         ComboBoxCountdownFormat.SelectedIndex = (int)Display.Format;
         ComboBoxScreens.SelectedIndex = Display.Screen;
         ComboBoxPosition.SelectedIndex = (int)Display.Position;
-        CheckBoxDraggable.Checked = Display.Draggable;
+        CheckBoxDraggable.Checked = Display.Drag;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
         UpdateOptionsForPptsvc();
 
@@ -824,7 +824,7 @@ public sealed class SettingsForm : AppForm
         Display.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;
         Display.Screen = ComboBoxScreens.SelectedIndex;
         Display.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
-        Display.Draggable = CheckBoxDraggable.Checked;
+        Display.Drag = CheckBoxDraggable.Checked;
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
 
         Validator.DemandConfig();
