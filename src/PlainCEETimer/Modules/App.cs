@@ -31,8 +31,8 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2025/12/31";
-    public const string CopyrightInfo = "Copyright © 2023-2025 WangHaonie";
+    public const string AppBuildDate = "2026/1/1";
+    public const string CopyrightInfo = "Copyright © 2023-2026 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
     public const string User32Dll = "user32.dll";
@@ -183,7 +183,7 @@ internal static class App
     public static string WriteException(Exception ex)
     {
         var now = DateTime.Now;
-        var content = $"—————————————————— {AppNameEng} v{AppVersion} - {now.Format()} ——————————————————\n{ex}";
+        var content = $"—————————————————— {AppNameEng} v{AppVersion} ({AppBuildDate}) - {now.Format()} ——————————————————\n{ex}";
         var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
         var exFilePath = $"{ExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);
@@ -280,7 +280,7 @@ internal static class App
     {
         AppConfig = Validator.ReadConfig();
         ThemeManager.Initialize();
-        DefaultValues.InitEssentials();
+        DefaultValues.InitEssentials(true);
         CountdownRule[] rules = AppConfig.GlobalRules;
 
         if (rules == null || rules.Length < 3)

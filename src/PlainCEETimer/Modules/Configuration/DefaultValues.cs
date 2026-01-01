@@ -16,7 +16,7 @@ public static class DefaultValues
     {
         get
         {
-            if (forceUpdate)
+            if (true)
             {
                 field = m_defaultcolors[3];
             }
@@ -33,7 +33,7 @@ public static class DefaultValues
     {
         get
         {
-            if (forceUpdate)
+            if (m_update)
             {
                 field =
                 [
@@ -91,52 +91,51 @@ public static class DefaultValues
         }
     }
 
-    private static bool isFirst = true;
-    private static bool forceUpdate;
+    private static bool m_update;
     private static ColorPair[] m_defaultcolors;
     private static ColorPair[] m_lightcolor;
     private static ColorPair[] m_darkcolor;
 
-    public static void InitEssentials(bool flag = false)
+    public static void InitEssentials(bool isAppInit)
     {
-        if (isFirst)
-        {
-            isFirst = false;
-            return;
-        }
-
-        var dark = ThemeManager.ShouldUseDarkMode;
         var a = App.AppConfig;
-        var arr = a.DefaultColors;
-        var initial = arr == null || arr.Length < 4;
-
-        m_lightcolor =
-        [
-            new(Color.Red, Color.White),
-            new(Color.Green, Color.White),
-            new(Color.Blue, Color.White),
-            new(Color.Black, Color.White)
-        ];
-
-        m_darkcolor =
-        [
-            new(Color.Red, Color.Black),
-            new(Color.Lime, Color.Black),
-            new(Color.Aqua, Color.Black),
-            new(Color.White, Color.Black)
-        ];
-
-        if (initial)
+        
+        if (a != null)
         {
-            m_defaultcolors = dark ? m_darkcolor : m_lightcolor;
-            a.DefaultColors = m_defaultcolors.Copy().PopulateWith(arr);
-            Validator.DemandConfig();
-        }
+            var arr = a.DefaultColors;
 
-        if (!initial || flag)
-        {
+            if (isAppInit)
+            {
+                m_lightcolor =
+                [
+                    new(Color.Red, Color.White),
+                    new(Color.Green, Color.White),
+                    new(Color.Blue, Color.White),
+                    new(Color.Black, Color.White)
+                ];
+
+                m_darkcolor =
+                [
+                    new(Color.Red, Color.Black),
+                    new(Color.Lime, Color.Black),
+                    new(Color.Aqua, Color.Black),
+                    new(Color.White, Color.Black)
+                ];
+
+                var dark = ThemeManager.ShouldUseDarkMode;
+                var canInitAutoColors = arr == null || arr.Length < 4;
+
+                if (canInitAutoColors)
+                {
+                    m_defaultcolors = dark ? m_darkcolor : m_lightcolor;
+                    a.DefaultColors = m_defaultcolors.Copy().PopulateWith(arr);
+                    Validator.DemandConfig();
+                    return;
+                }
+            }
+
             m_defaultcolors = arr;
-            forceUpdate = true;
+            m_update = true;
         }
     }
 }
