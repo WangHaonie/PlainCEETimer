@@ -77,7 +77,8 @@ public static class Extensions
         {
             return min;
         }
-        else if (value > max)
+
+        if (value > max)
         {
             return max;
         }

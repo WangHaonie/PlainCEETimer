@@ -16,7 +16,7 @@ public sealed class FontFormatConverter : JsonConverter<Font>
         var part2 = (FontStyle)Enum.Parse(typeof(FontStyle), string.Join(Validator.ValueSeparatorString, parts.ArraySkip(2)));
         var size = part1.Size;
 
-        if ((size >= (SystemVersion.IsWindows7 ? 9.75F : Validator.MinFontSize)) && size <= Validator.MaxFontSize)
+        if ((size >= Validator.MinFontSize - Validator.MinFontSizeError) && size <= Validator.MaxFontSize)
         {
             return new Font(part1, part2);
         }

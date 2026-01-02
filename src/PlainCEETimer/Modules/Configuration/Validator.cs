@@ -33,6 +33,7 @@ internal static class Validator
     public const int MinExamNameLength = 2;
     public const int MaxFontSize = 36;
     public const int MinFontSize = 10;
+    public const float MinFontSizeError = 0.25F;
     public const int MaxOpacity = 100;
     public const int MinOpacity = 20;
     public const int MinCpp = MinFontSize;

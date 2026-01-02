@@ -7,7 +7,6 @@ namespace PlainCEETimer.Modules;
 public readonly struct SystemVersion
 {
     public static readonly bool IsWindows11;
-    public static readonly bool IsWindows7;
     public static readonly SystemVersion Current;
 
     public readonly int Major;
@@ -30,7 +29,6 @@ public readonly struct SystemVersion
         Current = new();
         var b = Current.Build;
         IsWindows11 = b >= WindowsBuilds.Windows11_21H2;
-        IsWindows7 = b == WindowsBuilds.Windows7;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
