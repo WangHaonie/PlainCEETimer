@@ -18,22 +18,22 @@ public static class DefaultValues
         {
             if (true)
             {
-                field = m_defaultcolors[3];
+                field = _defaultColors[3];
             }
 
             return field;
         }
     }
 
-    public static ColorPair[] LightColors => m_lightcolor;
+    public static ColorPair[] LightColors => _lightColors;
 
-    public static ColorPair[] DarkColors => m_darkcolor;
+    public static ColorPair[] DarkColors => _darkColors;
 
     public static CountdownRule[] GlobalDefaultRules
     {
         get
         {
-            if (m_update)
+            if (canUpdate)
             {
                 field =
                 [
@@ -41,21 +41,21 @@ public static class DefaultValues
                     {
                         IsDefault = true,
                         Phase = CountdownPhase.P1,
-                        Colors = m_defaultcolors[0],
+                        Colors = _defaultColors[0],
                         Text = Ph.P1
                     },
                     new()
                     {
                         IsDefault = true,
                         Phase = CountdownPhase.P2,
-                        Colors = m_defaultcolors[1],
+                        Colors = _defaultColors[1],
                         Text = Ph.P2
                     },
                     new()
                     {
                         IsDefault = true,
                         Phase = CountdownPhase.P3,
-                        Colors = m_defaultcolors[2],
+                        Colors = _defaultColors[2],
                         Text = Ph.P3
                     }
                 ];
@@ -91,22 +91,22 @@ public static class DefaultValues
         }
     }
 
-    private static bool m_update;
-    private static ColorPair[] m_defaultcolors;
-    private static ColorPair[] m_lightcolor;
-    private static ColorPair[] m_darkcolor;
+    private static bool canUpdate;
+    private static ColorPair[] _defaultColors;
+    private static ColorPair[] _lightColors;
+    private static ColorPair[] _darkColors;
 
     public static void InitEssentials(bool isAppInit)
     {
         var a = App.AppConfig;
-        
+
         if (a != null)
         {
             var arr = a.DefaultColors;
 
             if (isAppInit)
             {
-                m_lightcolor =
+                _lightColors =
                 [
                     new(Color.Red, Color.White),
                     new(Color.Green, Color.White),
@@ -114,7 +114,7 @@ public static class DefaultValues
                     new(Color.Black, Color.White)
                 ];
 
-                m_darkcolor =
+                _darkColors =
                 [
                     new(Color.Red, Color.Black),
                     new(Color.Lime, Color.Black),
@@ -127,15 +127,15 @@ public static class DefaultValues
 
                 if (canInitAutoColors)
                 {
-                    m_defaultcolors = dark ? m_darkcolor : m_lightcolor;
-                    a.DefaultColors = m_defaultcolors.Copy().PopulateWith(arr);
+                    _defaultColors = dark ? _darkColors : _lightColors;
+                    a.DefaultColors = _defaultColors.Copy().PopulateWith(arr);
                     Validator.DemandConfig();
                     return;
                 }
             }
 
-            m_defaultcolors = arr;
-            m_update = true;
+            _defaultColors = arr;
+            canUpdate = true;
         }
     }
 }

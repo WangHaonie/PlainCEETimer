@@ -31,7 +31,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2026/1/1";
+    public const string AppBuildDate = "2026/1/2";
     public const string CopyrightInfo = "Copyright © 2023-2026 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -45,6 +45,7 @@ internal static class App
 
     private static bool IsMainProcess;
     private static bool IsClosing;
+    private static string AllArgs;
     private static string[] Args;
     private static int ArgsLength;
     private static Mutex MainMutex;
@@ -80,7 +81,7 @@ internal static class App
         AppIcon = HICON.FromFile(ExecutablePath).ToIcon();
         Args = args.ArraySelect(x => x.ToLower());
         ArgsLength = Args.Length;
-        var AllArgs = string.Join(" ", args);
+        AllArgs = string.Join(" ", args);
         InitConfig();
 
         if (IsMainProcess)
@@ -149,35 +150,8 @@ internal static class App
 
         if (result != DialogResult.Ignore)
         {
-            Exit(result == DialogResult.Retry);
+            Exit(result == DialogResult.Retry, true);
         }
-    }
-
-    public static void Exit(bool restart = false)
-    {
-        IsClosing = true;
-        AppIcon.Destory();
-        AppExit?.Invoke();
-        AppExit = null;
-        ActivateMain = null;
-
-        if (MainMutex != null)
-        {
-            if (IsMainProcess)
-            {
-                MainMutex.ReleaseMutex();
-            }
-
-            MainMutex.Dispose();
-            MainMutex = null;
-        }
-
-        if (restart)
-        {
-            ProcessHelper.Run(ExecutablePath, null);
-        }
-
-        Environment.Exit(0);
     }
 
     public static string WriteException(Exception ex)
@@ -289,6 +263,33 @@ internal static class App
             AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
             Validator.DemandConfig();
         }
+    }
+
+    public static void Exit(bool restart = false, bool useArgs = false)
+    {
+        IsClosing = true;
+        AppIcon.Destory();
+        AppExit?.Invoke();
+        AppExit = null;
+        ActivateMain = null;
+
+        if (MainMutex != null)
+        {
+            if (IsMainProcess)
+            {
+                MainMutex.ReleaseMutex();
+            }
+
+            MainMutex.Dispose();
+            MainMutex = null;
+        }
+
+        if (restart)
+        {
+            ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+        }
+
+        Environment.Exit(0);
     }
 
     private static void HandleException(Exception ex)
