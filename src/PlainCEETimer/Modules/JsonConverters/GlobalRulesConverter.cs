@@ -18,7 +18,7 @@ public class GlobalRulesConverter : JsonConverter<CountdownRule[]>
             return null;
         }
 
-        serializer.Context = serializer.Context.SetContext(Validator.DefaultCountdownRuleFlag, out var context);
+        serializer.Context = serializer.Context.SetContext(ConfigValidator.DefaultCountdownRuleFlag, out var context);
         var jarr = JArray.Load(reader);
         var length = jarr.Count;
         var list = new List<CountdownRule>(length);

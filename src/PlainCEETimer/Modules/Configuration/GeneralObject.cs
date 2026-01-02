@@ -22,25 +22,25 @@ public class GeneralObject
     [DefaultValue(true)]
     public bool UniTopMost { get; set; } = true;
 
-    [DefaultValue(Validator.DefCpp)]
+    [DefaultValue(ConfigValidator.DefCpp)]
     public int CountPerPage
     {
         get;
-        set => Validator.SetValue(ref field, value, Validator.MaxCpp, Validator.MinCpp, Validator.DefCpp);
-    } = Validator.DefCpp;
+        set => ConfigValidator.SetValue(ref field, value, ConfigValidator.MaxCpp, ConfigValidator.MinCpp, ConfigValidator.DefCpp);
+    } = ConfigValidator.DefCpp;
 
-    [DefaultValue(Validator.MaxOpacity)]
+    [DefaultValue(ConfigValidator.MaxOpacity)]
     public int Opacity
     {
         get;
-        set => Validator.SetValue(ref field, value, Validator.MaxOpacity, Validator.MinOpacity, Validator.MaxOpacity);
-    } = Validator.MaxOpacity;
+        set => ConfigValidator.SetValue(ref field, value, ConfigValidator.MaxOpacity, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity);
+    } = ConfigValidator.MaxOpacity;
 
     public BorderColorObject BorderColor { get; set; }
 
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {
-        TrayText = Validator.ValidateBoolean(TrayText, TrayIcon);
+        TrayText = ConfigValidator.ValidateBoolean(TrayText, TrayIcon);
     }
 }

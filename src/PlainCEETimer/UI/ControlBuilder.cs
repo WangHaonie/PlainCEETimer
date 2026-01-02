@@ -102,7 +102,7 @@ public class ControlBuilder
     {
         var ctrl = new PlainTextBox(expandable);
         ctrl.SetBounds(0, 0, w, 23);
-        ctrl.MaxLength = Validator.MaxCustomTextLength;
+        ctrl.MaxLength = ConfigValidator.MaxCustomTextLength;
         ctrl.TextChanged += onTextChanged;
         return ctrl;
     }
@@ -128,7 +128,7 @@ public class ControlBuilder
 
     public DateTimePicker DateTimePicker(int w, EventHandler onValueChanged)
     {
-        var ctrl = new DateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = Validator.DTPFormat };
+        var ctrl = new DateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = ConfigValidator.DTPFormat };
         ctrl.SetBounds(0, 0, w, 23);
         ctrl.ValueChanged += onValueChanged;
         return ctrl;

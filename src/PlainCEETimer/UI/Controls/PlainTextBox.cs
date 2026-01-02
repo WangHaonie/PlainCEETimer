@@ -85,8 +85,8 @@ public sealed class PlainTextBox : TextBox
         {
             m_Text = ContentBox.Text;
             TextLength = ContentBox.Text.RemoveIllegalChars().Length;
-            LabelCounter.Text = TextLength + "/" + Validator.MaxCustomTextLength;
-            LabelCounter.ForeColor = !Validator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+            LabelCounter.Text = TextLength + "/" + ConfigValidator.MaxCustomTextLength;
+            LabelCounter.ForeColor = !ConfigValidator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
         }
     }
 
@@ -119,7 +119,7 @@ public sealed class PlainTextBox : TextBox
             BackColor = Colors.DarkBackText;
         }
 
-        MaxLength = Validator.MaxCustomTextLength;
+        MaxLength = ConfigValidator.MaxCustomTextLength;
 
         if (Expandable = expandable)
         {

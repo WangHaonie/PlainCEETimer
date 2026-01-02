@@ -32,9 +32,9 @@ public sealed class HotKeyDialog : AppDialog
 
         this.AddControls(b =>
         [
-            LabelHotKey1 = b.Label(Validator.GetHokKeyDescription(0)),
-            LabelHotKey2 = b.Label(Validator.GetHokKeyDescription(1)),
-            LabelHotKey3 = b.Label(Validator.GetHokKeyDescription(2)),
+            LabelHotKey1 = b.Label(ConfigValidator.GetHokKeyDescription(0)),
+            LabelHotKey2 = b.Label(ConfigValidator.GetHokKeyDescription(1)),
+            LabelHotKey3 = b.Label(ConfigValidator.GetHokKeyDescription(2)),
             HotkeyCtrl1 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl2 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl3 = b.HotkeyCtrl(185, OnUserChanged)
@@ -63,7 +63,7 @@ public sealed class HotKeyDialog : AppDialog
     {
         if (!HotKeys.IsNullOrEmpty())
         {
-            for (int i = 0; i < Math.Min(Validator.HotKeyCount, HotKeys.Length); i++)
+            for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, HotKeys.Length); i++)
             {
                 HotKeyCtrls[i].Hotkey = new(HotKeys[i]);
             }
@@ -72,9 +72,9 @@ public sealed class HotKeyDialog : AppDialog
 
     protected override bool OnClickButtonA()
     {
-        Dictionary<int, HotKey> hkdic = new(Validator.HotKeyCount);
+        Dictionary<int, HotKey> hkdic = new(ConfigValidator.HotKeyCount);
 
-        for (int i = 0; i < Validator.HotKeyCount; i++)
+        for (int i = 0; i < ConfigValidator.HotKeyCount; i++)
         {
             var hk = new HotKey(HotKeyCtrls[i].Hotkey);
             var flag = hkdic.ContainsValue(hk);
@@ -82,15 +82,15 @@ public sealed class HotKeyDialog : AppDialog
 
             if (HotKeyService.Test(hk) > 2 || (hk.IsValid && flag))
             {
-                MessageX.Error($"无法注册快捷键 \"{Validator.GetHokKeyDescription(i)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
+                MessageX.Error($"无法注册快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
                 return false;
             }
         }
 
-        var arr = new HotKey[Validator.HotKeyCount];
+        var arr = new HotKey[ConfigValidator.HotKeyCount];
         hkdic.Values.CopyTo(arr, 0);
         AppConfig.HotKeys = arr;
-        Validator.DemandConfig();
+        ConfigValidator.DemandConfig();
         return base.OnClickButtonA();
     }
 }

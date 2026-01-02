@@ -19,20 +19,20 @@ public class AppConfig
     public Exam[] Exams
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.ExamInfoArray);
+        set => ConfigValidator.SetValue(ref field, value, ConfigField.ExamInfoArray);
     } = [];
 
     public CountdownRule[] CustomRules
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.CustomRulesArray);
+        set => ConfigValidator.SetValue(ref field, value, ConfigField.CustomRulesArray);
     }
 
     [JsonConverter(typeof(GlobalRulesConverter))]
     public CountdownRule[] GlobalRules
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
+        set => ConfigValidator.SetValue(ref field, value, ConfigField.GlobalRulesArray);
     }
 
     [JsonProperty("GlobalColors")]
@@ -51,17 +51,17 @@ public class AppConfig
         get;
         set
         {
-            if (Validator.ValidateNeeded)
+            if (ConfigValidator.ValidateNeeded)
             {
-                HashSet<HotKey> hkset = new(Validator.HotKeyCount);
+                HashSet<HotKey> hkset = new(ConfigValidator.HotKeyCount);
 
-                for (int i = 0; i < Validator.HotKeyCount; i++)
+                for (int i = 0; i < ConfigValidator.HotKeyCount; i++)
                 {
                     var hk = value[i];
 
                     if (hk.IsValid && !hkset.Add(hk))
                     {
-                        throw Validator.InvalidTampering(ConfigField.HotKeysArray);
+                        throw ConfigValidator.InvalidTampering(ConfigField.HotKeysArray);
                     }
                 }
             }
@@ -78,13 +78,13 @@ public class AppConfig
     public int NtpServer
     {
         get;
-        set => Validator.SetValue(ref field, value, 3, 0);
+        set => ConfigValidator.SetValue(ref field, value, 3, 0);
     }
 
     public int Dark
     {
         get;
-        set => Validator.SetValue(ref field, value, 2, 0);
+        set => ConfigValidator.SetValue(ref field, value, 2, 0);
     }
 
     [JsonConverter(typeof(PointFormatConverter))]
@@ -96,9 +96,9 @@ public class AppConfig
     internal void OnDeserializedMethod(StreamingContext context)
     {
         var value = Exam;
-        Validator.SetValue(ref value, value, Exams.Length, 0);
+        ConfigValidator.SetValue(ref value, value, Exams.Length, 0);
         Exam = value;
 
-        Display.SeewoPptsvc = Validator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Drag);
+        Display.SeewoPptsvc = ConfigValidator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Drag);
     }
 }

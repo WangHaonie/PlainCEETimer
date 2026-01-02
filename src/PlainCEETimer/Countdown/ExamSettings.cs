@@ -15,13 +15,13 @@ public class ExamSettings
     public CountdownRule[] Rules
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.PerExamCustomRulesArray);
+        set => ConfigValidator.SetValue(ref field, value, ConfigField.PerExamCustomRulesArray);
     }
 
     [JsonConverter(typeof(GlobalRulesConverter))]
     public CountdownRule[] DefRules
     {
         get;
-        set => Validator.SetValue(ref field, value, ConfigField.PerExamGlobalRulesArray);
+        set => ConfigValidator.SetValue(ref field, value, ConfigField.PerExamGlobalRulesArray);
     }
 }

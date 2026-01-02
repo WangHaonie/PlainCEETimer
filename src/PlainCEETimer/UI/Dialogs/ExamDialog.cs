@@ -59,8 +59,8 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             {
                 CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
                 int count = CurrentExamName.Length;
-                LabelCounter.Text = $"{count}/{Validator.MaxExamNameLength}";
-                LabelCounter.ForeColor = Validator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+                LabelCounter.Text = $"{count}/{ConfigValidator.MaxExamNameLength}";
+                LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
                 UserChanged();
             }).With(c => c.MaxLength = 99),
 
@@ -181,7 +181,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
     protected override bool OnClickButtonA()
     {
-        if (string.IsNullOrWhiteSpace(CurrentExamName) || !Validator.IsValidExamLength(CurrentExamName.Length))
+        if (string.IsNullOrWhiteSpace(CurrentExamName) || !ConfigValidator.IsValidExamLength(CurrentExamName.Length))
         {
             MessageX.Error("输入的考试名称有误！\n\n请检查输入的考试名称是否太长或太短！");
             return false;

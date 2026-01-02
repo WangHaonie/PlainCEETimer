@@ -10,7 +10,7 @@ public class DisplayObject
     public int Mode
     {
         get;
-        set => Validator.SetValue(ref field, value, 2, 0, 2);
+        set => ConfigValidator.SetValue(ref field, value, 2, 0, 2);
     } = 2;
 
     public CountdownFormat Format { get; set; }

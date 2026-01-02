@@ -40,7 +40,7 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] DefaultRules;
     private readonly SynchronizationContext CurrentContext;
     private readonly MatchEvaluator DefaultMatchEvaluator;
-    private readonly Regex CountdownRegEx = new(Validator.RegexPhPatterns, RegexOptions.Compiled);
+    private readonly Regex CountdownRegEx = new(ConfigValidator.RegexPhPatterns, RegexOptions.Compiled);
     private readonly string[] PhCountdown = new string[12];
     private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
 
@@ -51,7 +51,7 @@ public class DefaultCountdownService : ICountdownService
         DefaultMatchEvaluator = m =>
         {
             var key = m.Value;
-            var i = Validator.GetPhIndex(key);
+            var i = ConfigValidator.GetPhIndex(key);
 
             if (i < 0)
             {

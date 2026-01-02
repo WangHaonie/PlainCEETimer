@@ -38,7 +38,7 @@ public class PagedContextMenu
     public int CountPerPage
     {
         get => ppCount;
-        set => ppCount = value.Clamp(Validator.MinCpp, Validator.MaxCpp);
+        set => ppCount = value.Clamp(ConfigValidator.MinCpp, ConfigValidator.MaxCpp);
     }
 
     public int SelectedIndex

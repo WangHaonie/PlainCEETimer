@@ -74,7 +74,7 @@ public sealed class MainForm : AppForm
             ApplyLocation();
         };
 
-        SystemEvents.SessionEnding += (_, _) => Validator.SaveConfig();
+        SystemEvents.SessionEnding += (_, _) => ConfigValidator.SaveConfig();
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -87,7 +87,7 @@ public sealed class MainForm : AppForm
     protected override void OnShown()
     {
         RefreshSettings();
-        Validator.ValidateNeeded = false;
+        ConfigValidator.ValidateNeeded = false;
         new Action(Startup.RefreshTaskState).Start();
         new NetworkedAction(() => new Updater().CheckForUpdate(false, this)).Invoke();
     }
@@ -147,7 +147,7 @@ public sealed class MainForm : AppForm
     private void SaveLocation()
     {
         AppConfig.Location = Location;
-        Validator.DemandConfig();
+        ConfigValidator.DemandConfig();
     }
 
     protected override bool OnClosing(CloseReason closeReason)
@@ -276,7 +276,7 @@ public sealed class MainForm : AppForm
 
         var newTheme = AppConfig.Dark;
 
-        if (!Validator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
         {
             MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
             App.Exit(true);
@@ -445,7 +445,7 @@ public sealed class MainForm : AppForm
 
             ExamIndex = index;
             AppConfig.Exam = index;
-            Validator.DemandConfig();
+            ConfigValidator.DemandConfig();
         }
     }
 
@@ -471,11 +471,11 @@ public sealed class MainForm : AppForm
         CountdownFont = newFont;
         FontNameMenuItem.Text = newFont.Format().Truncate(35);
 
-        if (!Validator.ValidateNeeded)
+        if (!ConfigValidator.ValidateNeeded)
         {
             MainCountdown.ForceRefresh();
             AppConfig.Font = CountdownFont;
-            Validator.DemandConfig();
+            ConfigValidator.DemandConfig();
         }
     }
 
@@ -579,7 +579,7 @@ public sealed class MainForm : AppForm
                 }
             }
 
-            hksvc = new HotKeyService[Validator.HotKeyCount];
+            hksvc = new HotKeyService[ConfigValidator.HotKeyCount];
 
             hkevents ??=
             [
@@ -594,13 +594,13 @@ public sealed class MainForm : AppForm
                 _ => MainCountdown.SwitchTo(SwitchOption.Next)
             ];
 
-            for (int i = 0; i < Math.Min(Validator.HotKeyCount, hks.Length); i++)
+            for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, hks.Length); i++)
             {
                 var svc = new HotKeyService(hks[i], hkevents[i]);
 
                 if (!svc.Register())
                 {
-                    MessageX.Warn($"快捷键 \"{Validator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
+                    MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
                 }
 
                 hksvc[i] = svc;
@@ -681,7 +681,7 @@ public sealed class MainForm : AppForm
         {
             ScreenIndex = 0;
             Display.Screen = 0;
-            Validator.DemandConfig();
+            ConfigValidator.DemandConfig();
         }
 
         SelectedScreenRect = screens[ScreenIndex].WorkingArea;

@@ -11,7 +11,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
 
-internal static class Validator
+internal static class ConfigValidator
 {
     internal sealed class InternalAccessScope : IDisposable
     {
@@ -75,7 +75,7 @@ internal static class Validator
 #endif
     };
 
-    static Validator()
+    static ConfigValidator()
     {
         App.AppExit += SaveConfig;
     }
@@ -151,19 +151,16 @@ internal static class Validator
         return ValidateNeeded ? value && condition : value;
     }
 
-    public static bool VerifyCustomText(string custom, out string warning, int index = 0)
+    public static bool VerifyCustomText(string custom)
     {
-        var i = index != 0 ? $"第{index}个自定义文本" : "自定义文本";
-
         if (string.IsNullOrWhiteSpace(custom))
         {
-            warning = $"{i}不能为空白！";
             return false;
         }
 
         var matches = Regex.Matches(custom, RegexPhPatterns);
         var count = matches.Count;
-        var isEmpty = true;
+        var isValid = false;
 
         if (matches.Count != 0)
         {
@@ -171,20 +168,13 @@ internal static class Validator
             {
                 if (GetPhIndex(matches[j].Value) >= 0)
                 {
-                    isEmpty = false;
+                    isValid = true;
                     break;
                 }
             }
         }
 
-        if (isEmpty)
-        {
-            warning = $"请在{i}中至少使用一个占位符！";
-            return false;
-        }
-
-        warning = null;
-        return true;
+        return isValid;
     }
 
     public static bool IsValidExamLength(int length)
@@ -237,7 +227,7 @@ internal static class Validator
             throw InvalidTampering(ConfigField.CustomTextLength);
         }
 
-        if (!VerifyCustomText(custom, out var _))
+        if (!VerifyCustomText(custom))
         {
             throw InvalidTampering(ConfigField.CustomTextFormat);
         }

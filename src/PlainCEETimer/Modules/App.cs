@@ -252,16 +252,16 @@ internal static class App
 
     private static void InitConfig()
     {
-        AppConfig = Validator.ReadConfig();
+        AppConfig = ConfigValidator.ReadConfig();
         ThemeManager.Initialize();
         DefaultValues.InitEssentials(true);
         CountdownRule[] rules = AppConfig.GlobalRules;
 
         if (rules == null || rules.Length < 3)
         {
-            using var scope = new Validator.InternalAccessScope();
+            using var scope = new ConfigValidator.InternalAccessScope();
             AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
-            Validator.DemandConfig();
+            ConfigValidator.DemandConfig();
         }
     }
 

@@ -28,7 +28,7 @@ public sealed class PointFormatConverter : JsonConverter<Point>
         }
         catch
         {
-            throw Validator.InvalidTampering(ConfigField.PointFormat);
+            throw ConfigValidator.InvalidTampering(ConfigField.PointFormat);
         }
     }
 

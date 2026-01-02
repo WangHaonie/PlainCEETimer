@@ -9,19 +9,19 @@ namespace PlainCEETimer.UI;
 
 public static class ThemeManager
 {
-    public static bool IsDarkModeSupported => m_IsDarkModeSupported;
-    public static bool ShouldUseDarkMode => m_ShouldUseDarkMode;
-    public static bool NewThemeAvailable => m_CanUseNewTheme;
+    public static bool IsDarkModeSupported => _isDarkModeSupported;
+    public static bool ShouldUseDarkMode => _shouldUseDarkMode;
+    public static bool NewThemeAvailable => _canUseNewTheme;
 
-    private static bool m_IsDarkModeSupported;
-    private static bool m_ShouldUseDarkMode;
-    private static bool m_CanUseNewTheme;
-    private static bool IsNewDwma;
+    private static bool _isDarkModeSupported;
+    private static bool _shouldUseDarkMode;
+    private static bool _canUseNewTheme;
+    private static bool isNewDwma;
     private static SystemTheme Theme;
 
     public static void Initialize()
     {
-        if (m_IsDarkModeSupported = SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
+        if (_isDarkModeSupported = SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
         {
             var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
             Theme = tmp ? SystemTheme.Dark : SystemTheme.Light;
@@ -29,13 +29,13 @@ public static class ThemeManager
 
             if (SystemVersion.Current >= WindowsBuilds.Windows10_20H1)
             {
-                IsNewDwma = true;
+                isNewDwma = true;
             }
 
-            if (m_ShouldUseDarkMode = (option == 0 && tmp) || option == 2)
+            if (_shouldUseDarkMode = (option == 0 && tmp) || option == 2)
             {
                 Win32UI.EnableDarkModeForApp();
-                m_CanUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
+                _canUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
             }
         }
 
@@ -45,7 +45,7 @@ public static class ThemeManager
 
     public static void EnableDarkModeForWindow(IntPtr hWnd)
     {
-        Win32UI.EnableDarkModeForWindowFrame(hWnd, IsNewDwma);
+        Win32UI.EnableDarkModeForWindowFrame(hWnd, isNewDwma);
     }
 
     public static void EnableDarkModeForControl(IWin32Window control, NativeStyle type, bool AutoUpgrade = false)
@@ -55,7 +55,7 @@ public static class ThemeManager
 
     public static void EnableDarkModeForControl(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
     {
-        if (m_CanUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
+        if (_canUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
         {
             type = NativeStyle.DarkTheme;
         }

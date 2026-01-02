@@ -214,11 +214,11 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             return false;
         }
 
-        var content = TextBoxCustomText.Text.RemoveIllegalChars();
+        var text = TextBoxCustomText.Text.RemoveIllegalChars();
 
-        if (!Validator.VerifyCustomText(content, out var ErrorMsg) && !string.IsNullOrEmpty(ErrorMsg))
+        if (!ConfigValidator.VerifyCustomText(text))
         {
-            MessageX.Error(ErrorMsg);
+            MessageX.Error("自定义文本不能为空且至少包含一个占位符！");
             return false;
         }
 
@@ -226,7 +226,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         {
             Phase = IsGlobal ? Data.Phase : (CountdownPhase)ComboBoxRuleType.SelectedIndex,
             Tick = IsGlobal ? default : new(d, h, m, s),
-            Text = content,
+            Text = text,
             Colors = colors,
             IsDefault = IsGlobal
         };

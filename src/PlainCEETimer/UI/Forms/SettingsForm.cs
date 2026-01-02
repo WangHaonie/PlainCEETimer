@@ -335,9 +335,9 @@ public sealed class SettingsForm : AppForm
                     GBoxMainForm = b.GroupBox("主窗口样式",
                     [
                         LabelOpacity = b.Label("窗口不透明度"),
-                        NudOpacity = b.NumericUpDown(50, Validator.MinOpacity, Validator.MaxOpacity, SettingsChanged),
+                        NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
                         LabelMaxCpp = b.Label("考试切换菜单单页最大项数"),
-                        NudMaxCpp = b.NumericUpDown(50, Validator.MinCpp, Validator.MaxCpp, SettingsChanged),
+                        NudMaxCpp = b.NumericUpDown(50, ConfigValidator.MinCpp, ConfigValidator.MaxCpp, SettingsChanged),
 
                         CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                         {
@@ -827,8 +827,8 @@ public sealed class SettingsForm : AppForm
         Display.Drag = CheckBoxDraggable.Checked;
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
 
-        Validator.DemandConfig();
-        Validator.SaveConfig();
+        ConfigValidator.DemandConfig();
+        ConfigValidator.SaveConfig();
         EndModelessDialog(true, false);
     }
 }

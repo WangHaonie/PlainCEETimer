@@ -19,9 +19,9 @@ public class Exam : IListViewData<Exam>
         {
             value = value.RemoveIllegalChars();
 
-            if (Validator.ValidateNeeded && !Validator.IsValidExamLength(value.Length))
+            if (ConfigValidator.ValidateNeeded && !ConfigValidator.IsValidExamLength(value.Length))
             {
-                throw Validator.InvalidTampering(ConfigField.ExamNameLength);
+                throw ConfigValidator.InvalidTampering(ConfigField.ExamNameLength);
             }
 
             field = value;
@@ -34,9 +34,9 @@ public class Exam : IListViewData<Exam>
         get;
         set
         {
-            if (Validator.ValidateNeeded)
+            if (ConfigValidator.ValidateNeeded)
             {
-                Validator.EnsureExamDate(value);
+                ConfigValidator.EnsureExamDate(value);
             }
 
             field = value.TruncateToSeconds();
@@ -49,9 +49,9 @@ public class Exam : IListViewData<Exam>
         get;
         set
         {
-            if (Validator.ValidateNeeded)
+            if (ConfigValidator.ValidateNeeded)
             {
-                Validator.EnsureExamDate(value);
+                ConfigValidator.EnsureExamDate(value);
             }
 
             field = value.TruncateToSeconds();

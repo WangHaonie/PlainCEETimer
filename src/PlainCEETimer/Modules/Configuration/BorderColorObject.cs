@@ -14,7 +14,7 @@ public struct BorderColorObject
     public int Type
     {
         get;
-        set => Validator.SetValue(ref field, value, 3, 0);
+        set => ConfigValidator.SetValue(ref field, value, 3, 0);
     }
 
     public Color Color { get; set; }

@@ -44,7 +44,7 @@ public class NetworkedAction(Action action)
     {
         try
         {
-            using var req = new HttpRequestMessage(HttpMethod.Head, "http://www.gstatic.com/generate_204");
+            using var req = new HttpRequestMessage(HttpMethod.Head, "http://g.cn/generate_204");
             using var res = await HttpService.SendAsync(req).ConfigureAwait(false);
 
             return res.IsSuccessStatusCode || res.StatusCode == HttpStatusCode.NoContent;

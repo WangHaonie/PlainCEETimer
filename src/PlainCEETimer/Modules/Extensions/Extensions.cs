@@ -21,7 +21,7 @@ public static class Extensions
         => new([.. s.Trim().Where(x => !IllegalChars.ArrayContains(x))]);
 
     public static string Format(this DateTime dateTime)
-        => dateTime.ToString(Validator.DateTimeFormat);
+        => dateTime.ToString(ConfigValidator.DateTimeFormat);
 
     public static string Format(this TimeSpan timeSpan)
         => timeSpan.ToString("d'天'h'时'm'分's'秒'");
@@ -58,7 +58,7 @@ public static class Extensions
 
     */
     public static DateTime TruncateToSeconds(this DateTime dt)
-        => new(dt.Ticks / Validator.MinTick * Validator.MinTick);
+        => new(dt.Ticks / ConfigValidator.MinTick * ConfigValidator.MinTick);
 
     public static int ToWin32(this Color color)
         => ColorTranslator.ToWin32(color);

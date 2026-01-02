@@ -14,10 +14,10 @@ public sealed class ColorSetConverter : JsonConverter<ColorPair>
 
         if (colors == null || colors.Length < 2)
         {
-            throw Validator.InvalidTampering(ConfigField.ColorSetPartsLength);
+            throw ConfigValidator.InvalidTampering(ConfigField.ColorSetPartsLength);
         }
 
-        return Validator.ParseColorPairFromConfig(colors[0], colors[1]);
+        return ConfigValidator.ParseColorPairFromConfig(colors[0], colors[1]);
     }
 
     public override void WriteJson(JsonWriter writer, ColorPair value, JsonSerializer serializer)

@@ -129,7 +129,7 @@ public static class DefaultValues
                 {
                     _defaultColors = dark ? _darkColors : _lightColors;
                     a.DefaultColors = _defaultColors.Copy().PopulateWith(arr);
-                    Validator.DemandConfig();
+                    ConfigValidator.DemandConfig();
                     return;
                 }
             }

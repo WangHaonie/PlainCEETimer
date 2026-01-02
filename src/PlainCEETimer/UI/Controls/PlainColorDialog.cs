@@ -42,7 +42,7 @@ public sealed class PlainColorDialog : PlainCommonDialog
                     .Distinct()
                 ];
 
-                Validator.DemandConfig();
+                ConfigValidator.DemandConfig();
             }
         }
 

@@ -17,25 +17,25 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
 
         if (phaseInt is < 0 or > 2)
         {
-            throw Validator.InvalidTampering(ConfigField.CustomRulePhase);
+            throw ConfigValidator.InvalidTampering(ConfigField.CustomRulePhase);
         }
 
         var tick = default(TimeSpan);
-        var is0tickAllowed = serializer.Context.CheckContext(Validator.DefaultCountdownRuleFlag);
+        var is0tickAllowed = serializer.Context.CheckContext(ConfigValidator.DefaultCountdownRuleFlag);
 
         if (!is0tickAllowed)
         {
             tick = TimeSpan.FromSeconds(json[nameof(existingValue.Tick)].ToObject<double>(serializer));
 
-            if (tick.Ticks is < Validator.MinTick or > Validator.MaxTick)
+            if (tick.Ticks is < ConfigValidator.MinTick or > ConfigValidator.MaxTick)
             {
-                throw Validator.InvalidTampering(ConfigField.CustomRuleTick);
+                throw ConfigValidator.InvalidTampering(ConfigField.CustomRuleTick);
             }
         }
 
-        var colors = Validator.ParseColorPairFromConfig(json[nameof(ColorPair.Fore)].ToObject<int>(serializer), json[nameof(ColorPair.Back)].ToObject<int>(serializer));
+        var colors = ConfigValidator.ParseColorPairFromConfig(json[nameof(ColorPair.Fore)].ToObject<int>(serializer), json[nameof(ColorPair.Back)].ToObject<int>(serializer));
         var text = json[nameof(existingValue.Text)].ToObject<string>(serializer).RemoveIllegalChars();
-        Validator.EnsureCustomText(text);
+        ConfigValidator.EnsureCustomText(text);
 
         return new()
         {

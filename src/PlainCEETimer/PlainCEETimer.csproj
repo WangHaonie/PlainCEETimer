@@ -261,7 +261,7 @@
     <Compile Include="Modules\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="UI\AppMessageBox.cs" />
-    <Compile Include="Modules\Configuration\Validator.cs" />
+    <Compile Include="Modules\Configuration\ConfigValidator.cs" />
     <Compile Include="Modules\WindowsBuilds.cs" />
     <Compile Include="UI\Controls\PlainLinkLabel.cs">
       <SubType>Component</SubType>
