@@ -35,19 +35,19 @@ public class ControlBuilder
         return new() { Hyperlink = link, Text = text };
     }
 
-    public PlainButton Button(string text, EventHandler onClick)
+    public PlainButton Button(string text)
     {
-        return Button(text, false, onClick, null);
+        return Button(text, false, null);
     }
 
-    public PlainButton Button(string text, ContextMenu menu)
+    public PlainButton Button(string text, EventHandler onClick)
     {
-        return Button(text, false, null, menu);
+        return Button(text, false, onClick);
     }
 
     public PlainButton Button(string text, int maxW, int maxH, EventHandler onClick)
     {
-        var ctrl = Button(text, false, onClick, null);
+        var ctrl = Button(text, false, onClick);
         ctrl.MinimumSize = new();
         ctrl.MaximumSize = new(maxW, maxH);
         return ctrl;
@@ -55,7 +55,16 @@ public class ControlBuilder
 
     public PlainButton Button(string text, bool autoSize, EventHandler onClick)
     {
-        return Button(text, autoSize, onClick, null);
+        var ctrl = new PlainButton() { Text = text, MinimumSize = new(0, 23) };
+
+        if (autoSize)
+        {
+            ctrl.AutoSize = true;
+            ctrl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        }
+
+        ctrl.Click += onClick;
+        return ctrl;
     }
 
     public PlainCheckBox CheckBox(string text, EventHandler onCheckedChanged)
@@ -222,20 +231,6 @@ public class ControlBuilder
         }
 
         ctrl.ColorChanged += onColorChanged;
-        return ctrl;
-    }
-
-    private PlainButton Button(string text, bool autoSize, EventHandler onClick, ContextMenu menu)
-    {
-        var ctrl = new PlainButton() { Text = text, MinimumSize = new(0, 23), ContextMenu = menu };
-
-        if (autoSize)
-        {
-            ctrl.AutoSize = true;
-            ctrl.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-        }
-
-        ctrl.Click += onClick;
         return ctrl;
     }
 }

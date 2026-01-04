@@ -14,6 +14,7 @@ internal readonly struct Colors
     public static readonly Color DarkBackText = Color.FromArgb(32, 32, 32);
     public static readonly Color DarkBackConsole = Color.FromArgb(12, 12, 12);
     public static readonly Color DarkBorder = Color.FromArgb(60, 60, 60);
+    public static readonly Color LightForeTextDisabled = Color.FromArgb(131, 131, 131);
     public static readonly Color LightForeLinkNormal = Color.FromArgb(0, 62, 146);
     public static readonly Color LightForeLinkOnClick = Color.FromArgb(0, 103, 192);
     public static readonly Color LightForeLinkDisabled = Color.FromArgb(109, 109, 109);

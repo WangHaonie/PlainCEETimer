@@ -66,6 +66,8 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
+    protected virtual bool AllowExcludeItems { get; }
+
     protected sealed override AppFormParam Params => AppFormParam.AllControl;
 
     private bool HasFixedData;
@@ -74,12 +76,15 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private MenuItem ContextDuplicate;
     private MenuItem ContextEdit;
     private MenuItem ContextDelete;
+    private MenuItem ContextExclude;
+    private MenuItem ContextInclude;
     private MenuItem ContextSelectAll;
     private PlainButton ButtonOperation;
     private HashSet<ListViewItem> FixedDataItemSet;
     private readonly string MsgDelete;
     private readonly string MsgAddDup;
     private readonly string MsgEditDup;
+    private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
     private readonly ListViewItemSet<TData> ItemSet = new();
     private readonly ListView.ListViewItemCollection Items;
     private readonly ListViewGroupCollection Groups;
@@ -119,7 +124,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         [
             ListViewMain,
 
-            ButtonOperation = b.Button("操作(&O) ▼", ContextMenuMain = ContextMenuBuilder.Build(b =>
+            ButtonOperation = b.Button("操作(&O) ▼").AttachContextMenu(b =>
             [
                 b.Item("添加(&A)", (_, _) =>
                 {
@@ -140,13 +145,30 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             ], (_, _) =>
             {
                 var count = ListViewMain.SelectedItemsCount;
-                var enable = count == 1;
-                ContextDelete.Enabled = count != 0;
-                ContextDuplicate.Enabled = enable;
-                ContextEdit.Enabled = enable;
+                var onlyOne = count == 1;
+                var hasSelected = count != 0;
+                ContextDelete.Enabled = hasSelected;
+                ContextDuplicate.Enabled = onlyOne;
+                ContextEdit.Enabled = onlyOne;
                 ContextSelectAll.Enabled = Items.Count != 0;
-            }))
+
+                if (AllowExcludeItems)
+                {
+                    ContextExclude.Enabled = hasSelected;
+                    ContextInclude.Enabled = hasSelected;
+                }
+            }, out ContextMenuMain)
         ]);
+
+        if (AllowExcludeItems)
+        {
+            ContextMenuMain.AddItems(b =>
+            [
+                b.Separator(),
+                ContextExclude = b.Item("排除(&X)", ContextExclude_Click),
+                ContextInclude = b.Item("包括(&I)", ContextInclude_Click)
+            ]);
+        }
 
         ListViewMain.ContextMenu = ContextMenuMain;
         base.OnInitializing();
@@ -194,21 +216,27 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected sealed override void OnKeyDown(KeyEventArgs e)
     {
-        var handled = false;
+        var handled = true;
 
         switch (e.Control, e.KeyCode)
         {
             case (true, Keys.A):
                 ContextSelectAll_Click(null, null);
-                handled = true;
                 break;
             case (true, Keys.C):
                 ContextDuplicate_Click(null, null);
-                handled = true;
+                break;
+            case (true, Keys.X):
+                ContextExclude_Click(null, null);
+                break;
+            case (true, Keys.I):
+                ContextInclude_Click(null, null);
                 break;
             case (false, Keys.Delete):
                 ContextDelete_Click(null, null);
-                handled = true;
+                break;
+            default:
+                handled = false;
                 break;
         }
 
@@ -319,6 +347,22 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
     }
 
+    private void ContextExclude_Click(object sender, EventArgs e)
+    {
+        if (AllowExcludeItems)
+        {
+            ExcludeSelectedItems();
+        }
+    }
+
+    private void ContextInclude_Click(object sender, EventArgs e)
+    {
+        if (AllowExcludeItems)
+        {
+            ExcludeSelectedItems(false);
+        }
+    }
+
     private void AddItemSafe(TData data)
     {
         if (ItemSet.CanAdd(data))
@@ -395,6 +439,11 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             FixedDataItemSet.Add(item);
         }
+
+        if (AllowExcludeItems && data.Excluded)
+        {
+            SetItemStateColor(item, true);
+        }
     }
 
     private void RemoveItem(ListViewItem item, TData data, bool isEdit = false)
@@ -404,6 +453,32 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             Items.Remove(item);
             ItemSet.Remove(data);
         }
+    }
+
+    private void ExcludeSelectedItems(bool exclude = true)
+    {
+        var selected = ListViewMain.SelectedItemsCount;
+
+        if (selected != 0)
+        {
+            var items = ListViewMain.SelectedItems;
+
+            for (int i = 0; i < selected; i++)
+            {
+                ExcludeItem(items[i], exclude);
+            }
+        }
+    }
+
+    private void ExcludeItem(ListViewItem item, bool exclude)
+    {
+        ((TData)item.Tag).Excluded = exclude;
+        SetItemStateColor(item, exclude);
+    }
+
+    private void SetItemStateColor(ListViewItem item, bool isExcluded)
+    {
+        item.ForeColor = isExcluded ? (UseDark ? Colors.DarkForeTextDisabled : Colors.LightForeTextDisabled) : (UseDark ? Colors.DarkForeText : SystemColors.WindowText);
     }
 
     private void RemoveAllItems()

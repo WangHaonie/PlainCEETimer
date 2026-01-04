@@ -79,6 +79,8 @@ public class CountdownRule : IListViewData<CountdownRule>
         return h.Add(Tick).Combine();
     }
 
+    bool IListViewData<CountdownRule>.Excluded { get; set; }
+
     bool IListViewData<CountdownRule>.InternalEquals(CountdownRule other)
     {
         return !IsDefault && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;

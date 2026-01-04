@@ -62,12 +62,12 @@ public sealed class ConsoleWindow : AppDialog
 
         if ((Param & ConsoleParam.NoMenu) != ConsoleParam.NoMenu)
         {
-            ConsoleBox.ContextMenu = ContextMenuBuilder.Build(b =>
+            ConsoleBox.AttachContextMenu(b =>
             [
                 ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
                 b.Separator(),
                 b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
-            ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText));
+            ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText), out var _);
         }
     }
 

@@ -60,6 +60,8 @@ public class Exam : IListViewData<Exam>
 
     public ExamSettings Settings { get; set; }
 
+    public bool Excluded { get; set; }
+
     public int CompareTo(Exam other)
     {
         if (other == null)

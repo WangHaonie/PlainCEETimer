@@ -29,6 +29,36 @@ public static class ArrayLinq
         return Array.ConvertAll(array, converter);
     }
 
+    public static TResult[] ArrayWhereSelect<TInput, TResult>(this TInput[] array, Func<TInput, bool> match, Func<TInput, TResult> converter)
+    {
+        if (array == null)
+        {
+            throw new ArgumentNullException(nameof(array));
+        }
+
+        if (match == null)
+        {
+            throw new ArgumentNullException(nameof(match));
+        }
+
+        if (converter == null)
+        {
+            throw new ArgumentNullException(nameof(converter));
+        }
+
+        var list = new List<TResult>();
+
+        foreach (var obj in array)
+        {
+            if (match(obj))
+            {
+                list.Add(converter(obj));
+            }
+        }
+
+        return [.. list];
+    }
+
     public static T[] ArrayOrder<T>(this T[] array)
     {
         Array.Sort(array);

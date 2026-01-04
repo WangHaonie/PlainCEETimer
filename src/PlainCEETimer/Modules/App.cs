@@ -31,7 +31,7 @@ internal static class App
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
     public const string AppVersion = "5.0.8";
-    public const string AppBuildDate = "2026/1/2";
+    public const string AppBuildDate = "2026/1/4";
     public const string CopyrightInfo = "Copyright © 2023-2026 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";

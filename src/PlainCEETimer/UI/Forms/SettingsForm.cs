@@ -284,7 +284,7 @@ public sealed class SettingsForm : AppForm
                         LabelColorP3 = b.Label("[3]考试后"),
                         LabelColorWelcome = b.Label("[4]欢迎信息"),
 
-                        ButtonDefaultColor = b.Button("重置(&M)", ContextMenuBuilder.Build(b =>
+                        ButtonDefaultColor = b.Button("重置(&M)").AttachContextMenu(b =>
                         [
                             b.Menu("白底(&L)",
                             [
@@ -305,7 +305,7 @@ public sealed class SettingsForm : AppForm
                                 b.Item("3", ItemsDark_Click),
                                 b.Item("4", ItemsDark_Click)
                             ]),
-                        ])),
+                        ], out var _),
 
                         BlockPreviewColor1 = b.Block($"距离...{Ph.Start}..."),
                         BlockPreviewColor2 = b.Block($"距离...{Ph.End}..."),

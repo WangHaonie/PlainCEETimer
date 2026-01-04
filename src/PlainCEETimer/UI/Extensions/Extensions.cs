@@ -15,6 +15,22 @@ public static class Extensions
         return control;
     }
 
+    public static TControl AttachContextMenu<TControl>(this TControl control, MenuItemBuilder builder, out ContextMenu instance)
+        where TControl : Control
+    {
+        return AttachContextMenu(control, builder, null, out instance);
+    }
+
+    public static TControl AttachContextMenu<TControl>(this TControl control, MenuItemBuilder builder, EventHandler onPopup, out ContextMenu instance)
+        where TControl : Control
+    {
+        var menu = new ContextMenu(builder(new()));
+        menu.Popup += onPopup;
+        control.ContextMenu = menu;
+        instance = menu;
+        return control;
+    }
+
     public static TControl Disable<TControl>(this TControl control)
         where TControl : Control
     {
@@ -49,6 +65,12 @@ public static class Extensions
     {
         item.DefaultItem = true;
         return item;
+    }
+
+    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder)
+    {
+        menu.MenuItems.AddRange(builder(new()));
+        return menu;
     }
 
     public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)

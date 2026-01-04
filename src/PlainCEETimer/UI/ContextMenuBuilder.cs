@@ -24,22 +24,4 @@ public class ContextMenuBuilder
     {
         return new("-");
     }
-
-    public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder)
-    {
-        return new(builder(new()));
-    }
-
-    public static ContextMenu Build(Func<ContextMenuBuilder, MenuItem[]> builder, EventHandler onPopup)
-    {
-        var menu = Build(builder);
-        menu.Popup += onPopup;
-        return menu;
-    }
-
-    public static ContextMenu Merge(ContextMenu target, ContextMenu reference)
-    {
-        target.MergeMenu(reference);
-        return target;
-    }
 }
