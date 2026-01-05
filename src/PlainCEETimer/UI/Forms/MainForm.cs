@@ -75,92 +75,6 @@ public sealed class MainForm : AppForm
         };
 
         SystemEvents.SessionEnding += (_, _) => ConfigValidator.SaveConfig();
-
-        MainContextMenuItemBuilder = b =>
-        [
-            /*
-
-            克隆 (重用) 现有 ContextMenuStrip 实例 参考：
-
-            .net - C# - Duplicate ContextMenuStrip Items into another - Stack Overflow
-            https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
-
-            */
-
-            b.Item("切换(&Q)"),
-
-            b.Menu("字体(&F)",
-            [
-                b.Item(null),
-                b.Separator(),
-
-                b.Item("更改字体(&C)", (_, _) =>
-                {
-                    var dialog = new PlainFontDialog(this, CountdownFont);
-
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        ChangeCountdownFont(dialog.Font);
-                    }
-                }),
-
-                b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(DefaultValues.CountdownDefaultFont))
-            ]),
-
-            b.Separator(),
-
-            b.Item("设置(&S)", (_, _) =>
-            {
-                if (FormSettings == null || FormSettings.IsDisposed)
-                {
-                    FormSettings = new();
-
-                    FormSettings.DialogEnd += dr =>
-                    {
-                        if (dr == DialogResult.OK)
-                        {
-                            RefreshSettings();
-                        }
-                    };
-                }
-
-                FormSettings.ReActivate();
-            }),
-
-            b.Item("关于(&A)", (_, _) =>
-            {
-                if (FormAbout == null || FormAbout.IsDisposed)
-                {
-                    FormAbout = new();
-                }
-
-                FormAbout.ReActivate();
-            }),
-
-            b.Separator(),
-
-            b.Item("快捷键(&K)", (_, _) =>
-            {
-                if (DialogHotKey == null)
-                {
-                    DialogHotKey = new();
-
-                    if (DialogHotKey.ShowDialog(this) == DialogResult.OK)
-                    {
-                        RegisterHotKeys();
-                    }
-
-                    DialogHotKey = null;
-                }
-                else
-                {
-                    DialogHotKey.ReActivate();
-                }
-            }),
-
-            b.Separator(),
-            b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
-        ];
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -308,7 +222,7 @@ public sealed class MainForm : AppForm
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
 
-        Exams = AppConfig.Exams;
+        Exams = AppConfig.Exams.ArrayWhere(e => !e.Excluded);
         ExamIndex = AppConfig.Exam;
 
         if (IsDraggable)
@@ -419,6 +333,92 @@ public sealed class MainForm : AppForm
 
     private void LoadContextMenu()
     {
+        MainContextMenuItemBuilder ??= b =>
+        [
+            /*
+
+            克隆 (重用) 现有 ContextMenuStrip 实例 参考：
+
+            .net - C# - Duplicate ContextMenuStrip Items into another - Stack Overflow
+            https://stackoverflow.com/questions/37884815/c-sharp-duplicate-contextmenustrip-items-into-another
+
+            */
+
+            b.Item("切换(&Q)"),
+
+            b.Menu("字体(&F)",
+            [
+                b.Item(null),
+                b.Separator(),
+
+                b.Item("更改字体(&C)", (_, _) =>
+                {
+                    var dialog = new PlainFontDialog(this, CountdownFont);
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        ChangeCountdownFont(dialog.Font);
+                    }
+                }),
+
+                b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(DefaultValues.CountdownDefaultFont))
+            ]),
+
+            b.Separator(),
+
+            b.Item("设置(&S)", (_, _) =>
+            {
+                if (FormSettings == null || FormSettings.IsDisposed)
+                {
+                    FormSettings = new();
+
+                    FormSettings.DialogEnd += dr =>
+                    {
+                        if (dr == DialogResult.OK)
+                        {
+                            RefreshSettings();
+                        }
+                    };
+                }
+
+                FormSettings.ReActivate();
+            }),
+
+            b.Item("关于(&A)", (_, _) =>
+            {
+                if (FormAbout == null || FormAbout.IsDisposed)
+                {
+                    FormAbout = new();
+                }
+
+                FormAbout.ReActivate();
+            }),
+
+            b.Separator(),
+
+            b.Item("快捷键(&K)", (_, _) =>
+            {
+                if (DialogHotKey == null)
+                {
+                    DialogHotKey = new();
+
+                    if (DialogHotKey.ShowDialog(this) == DialogResult.OK)
+                    {
+                        RegisterHotKeys();
+                    }
+
+                    DialogHotKey = null;
+                }
+                else
+                {
+                    DialogHotKey.ReActivate();
+                }
+            }),
+
+            b.Separator(),
+            b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
+        ];
+
         this.AttachContextMenu(MainContextMenuItemBuilder, out ContextMenuMain);
         FontNameMenuItem = ContextMenuMain.MenuItems[1].MenuItems[0];
         FontNameMenuItem.Enabled = false;
@@ -448,9 +448,10 @@ public sealed class MainForm : AppForm
         }
         else
         {
-            ExamItems = new string[Exams.Length];
+            var length = Exams.Length;
+            ExamItems = new string[length];
 
-            for (int i = 0; i < Exams.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var e = Exams[i];
                 ExamItems[i] = $"{i + 1}. {e.Name.Truncate(6)} ({e.Start.Format()})";
