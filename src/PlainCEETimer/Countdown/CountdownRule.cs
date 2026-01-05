@@ -79,6 +79,18 @@ public class CountdownRule : IListViewData<CountdownRule>
         return h.Add(Tick).Combine();
     }
 
+    public object Clone()
+    {
+        return new CountdownRule
+        {
+            Phase = Phase,
+            Tick = Tick,
+            Text = Text,
+            Colors = Colors,
+            IsDefault = IsDefault
+        };
+    }
+
     bool IListViewData<CountdownRule>.Excluded { get; set; }
 
     bool IListViewData<CountdownRule>.InternalEquals(CountdownRule other)

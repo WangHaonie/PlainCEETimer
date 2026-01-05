@@ -111,6 +111,18 @@ public class Exam : IListViewData<Exam>
             .Combine();
     }
 
+    public object Clone()
+    {
+        return new Exam()
+        {
+            Name = Name,
+            Start = Start,
+            End = End,
+            Settings = Settings,
+            Excluded = Excluded
+        };
+    }
+
     bool IListViewData<Exam>.InternalEquals(Exam other)
     {
         return Equals(other);

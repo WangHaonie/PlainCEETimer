@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
 
@@ -144,7 +145,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
             ], (_, _) =>
             {
-                var count = ListViewMain.SelectedItemsCount;
+                ListViewMain.GetSelection(out _, out _, out var count);
                 var onlyOne = count == 1;
                 var hasSelected = count != 0;
                 ContextDelete.Enabled = hasSelected;
@@ -279,10 +280,10 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ContextDuplicate_Click(object sender, EventArgs e)
     {
-        if (ListViewMain.SelectedItemsCount == 1)
-        {
-            var item = ListViewMain.SelectedItem;
+        ListViewMain.GetSelection(out _, out var item, out var count);
 
+        if (count == 1)
+        {
             if (!IsDefault(item))
             {
                 var dialog = GetChildDialog((TData)item.Tag);
@@ -297,9 +298,10 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ContextEdit_Click(object sender, EventArgs e)
     {
-        if (ListViewMain.SelectedItemsCount != 0)
+        ListViewMain.GetSelection(out _, out var item, out var count);
+
+        if (count != 0)
         {
-            var item = ListViewMain.SelectedItem;
             var data = (TData)item.Tag;
             var dialog = GetChildDialog(data);
 
@@ -312,23 +314,22 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ContextDelete_Click(object sender, EventArgs e)
     {
-        var selected = ListViewMain.SelectedItemsCount;
+        ListViewMain.GetSelection(out var items, out _, out var count);
 
-        if (selected != 0 &&
+        if (count != 0 &&
             MessageX.Warn(MsgDelete, MessageButtons.YesNo) == DialogResult.Yes)
         {
             ListViewMain.Suspend(() =>
             {
-                if (!HasFixedData && selected == Items.Count)
+                if (!HasFixedData && count == Items.Count)
                 {
                     RemoveAllItems();
                 }
                 else
                 {
-                    var items = ListViewMain.SelectedItems;
                     ListViewItem item;
 
-                    for (int i = selected - 1; i >= 0; i--)
+                    for (int i = count - 1; i >= 0; i--)
                     {
                         item = items[i];
                         RemoveItem(item, (TData)item.Tag);
@@ -390,9 +391,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             if ((bool)flag)
             {
-                var f = HasFixedData && FixedDataItemSet.Remove(item);
-                RemoveItem(item, oldData, true);
-                AddItem(newData, f);
+                EditItem(item, newData, oldData, HasFixedData && FixedDataItemSet.Remove(item));
             }
             else
             {
@@ -406,6 +405,12 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 }
             }
         }
+    }
+
+    private void EditItem(ListViewItem item, TData newData, TData oldData, bool isDefault)
+    {
+        RemoveItem(item, oldData, true);
+        AddItem(newData, isDefault);
     }
 
     private void AddItem(TData data, bool isDefault = false)
@@ -442,7 +447,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         if (AllowExcludeItems && data.Excluded)
         {
-            SetItemStateColor(item, true);
+            item.ForeColor = UseDark ? Colors.DarkForeTextDisabled : Colors.LightForeTextDisabled;
         }
     }
 
@@ -457,28 +462,34 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ExcludeSelectedItems(bool exclude = true)
     {
-        var selected = ListViewMain.SelectedItemsCount;
-
-        if (selected != 0)
+        ListViewMain.Suspend(() =>
         {
-            var items = ListViewMain.SelectedItems;
+            var changed = false;
+            var b = ListViewMain.SelectedIndices;
+            ListViewMain.GetSelection(out var items, out _, out var count);
 
-            for (int i = 0; i < selected; i++)
+            if (count != 0)
             {
-                ExcludeItem(items[i], exclude);
+                for (int i = 0; i < count; i++)
+                {
+                    var item = items[i];
+                    var data = (TData)item.Tag;
+
+                    if (data.Excluded != exclude)
+                    {
+                        var newData = data.Copy();
+                        newData.Excluded = exclude;
+                        EditItem(item, newData, data, false);
+                        changed = true;
+                    }
+                }
             }
-        }
-    }
 
-    private void ExcludeItem(ListViewItem item, bool exclude)
-    {
-        ((TData)item.Tag).Excluded = exclude;
-        SetItemStateColor(item, exclude);
-    }
-
-    private void SetItemStateColor(ListViewItem item, bool isExcluded)
-    {
-        item.ForeColor = isExcluded ? (UseDark ? Colors.DarkForeTextDisabled : Colors.LightForeTextDisabled) : (UseDark ? Colors.DarkForeText : SystemColors.WindowText);
+            if (changed)
+            {
+                UserChanged();
+            }
+        });
     }
 
     private void RemoveAllItems()

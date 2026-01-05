@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.UI;
 
-public interface IListViewData<T> : IComparable<T>, IEquatable<T>
+public interface IListViewData<T> : IComparable<T>, IEquatable<T>, ICloneable
 {
     bool Excluded { get; set; }
 

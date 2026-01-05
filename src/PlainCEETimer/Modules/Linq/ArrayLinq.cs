@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using PlainCEETimer.Modules.Extensions;
 
@@ -19,6 +20,13 @@ namespace PlainCEETimer.Modules.Linq;
 */
 public static class ArrayLinq
 {
+    public static T[] ToArray<T>(this ICollection collection)
+    {
+        var arr = new T[collection.Count];
+        collection.CopyTo(arr, 0);
+        return arr;
+    }
+
     public static T[] ArrayWhere<T>(this T[] array, Predicate<T> match)
     {
         return Array.FindAll(array, match);

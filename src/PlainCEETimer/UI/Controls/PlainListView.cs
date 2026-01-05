@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -38,10 +39,6 @@ public sealed class PlainListView : ListView
             }
         }
     }
-
-    public int SelectedItemsCount => SelectedItems.Count;
-
-    public ListViewItem SelectedItem => SelectedItems[0];
 
     public string[] Headers
     {
@@ -108,6 +105,20 @@ public sealed class PlainListView : ListView
         }
 
         Columns.Remove(BlankColumn);
+    }
+
+    public void GetSelection(out ListViewItem[] items, out ListViewItem item, out int count)
+    {
+        var selected = SelectedItems;
+        items = null;
+        item = null;
+        count = -1;
+
+        if (selected != null && (count = selected.Count) != 0)
+        {
+            items = selected.ToArray<ListViewItem>();
+            item = items[0];
+        }
     }
 
     protected override void OnHandleCreated(EventArgs e)
