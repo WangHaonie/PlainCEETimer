@@ -107,17 +107,17 @@ public sealed class PlainListView : ListView
         Columns.Remove(BlankColumn);
     }
 
-    public void GetSelection(out ListViewItem[] items, out ListViewItem item, out int count)
+    public void GetSelection(out ListViewItem[] items, out ListViewItem first, out int total)
     {
-        var selected = SelectedItems;
         items = null;
-        item = null;
-        count = -1;
+        first = null;
+        total = -1;
+        var selected = SelectedItems;
 
-        if (selected != null && (count = selected.Count) != 0)
+        if (selected != null && (total = selected.Count) != 0)
         {
             items = selected.ToArray<ListViewItem>();
-            item = items[0];
+            first = items[0];
         }
     }
 

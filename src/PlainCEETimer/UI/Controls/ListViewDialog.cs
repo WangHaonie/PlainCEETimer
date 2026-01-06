@@ -145,9 +145,9 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
             ], (_, _) =>
             {
-                ListViewMain.GetSelection(out _, out _, out var count);
-                var onlyOne = count == 1;
-                var hasSelected = count != 0;
+                ListViewMain.GetSelection(out _, out _, out var total);
+                var onlyOne = total == 1;
+                var hasSelected = total != 0;
                 ContextDelete.Enabled = hasSelected;
                 ContextDuplicate.Enabled = onlyOne;
                 ContextEdit.Enabled = onlyOne;
@@ -280,13 +280,13 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ContextDuplicate_Click(object sender, EventArgs e)
     {
-        ListViewMain.GetSelection(out _, out var item, out var count);
+        ListViewMain.GetSelection(out _, out var first, out var total);
 
-        if (count == 1)
+        if (total == 1)
         {
-            if (!IsDefault(item))
+            if (!IsDefault(first))
             {
-                var dialog = GetChildDialog((TData)item.Tag);
+                var dialog = GetChildDialog((TData)first.Tag);
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -298,30 +298,30 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ContextEdit_Click(object sender, EventArgs e)
     {
-        ListViewMain.GetSelection(out _, out var item, out var count);
+        ListViewMain.GetSelection(out _, out var first, out var total);
 
-        if (count != 0)
+        if (total != 0)
         {
-            var data = (TData)item.Tag;
+            var data = (TData)first.Tag;
             var dialog = GetChildDialog(data);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                EditItemSafe(item, dialog.Data, data);
+                EditItemSafe(first, dialog.Data, data);
             }
         }
     }
 
     private void ContextDelete_Click(object sender, EventArgs e)
     {
-        ListViewMain.GetSelection(out var items, out _, out var count);
+        ListViewMain.GetSelection(out var items, out _, out var total);
 
-        if (count != 0 &&
+        if (total != 0 &&
             MessageX.Warn(MsgDelete, MessageButtons.YesNo) == DialogResult.Yes)
         {
             ListViewMain.Suspend(() =>
             {
-                if (!HasFixedData && count == Items.Count)
+                if (!HasFixedData && total == Items.Count)
                 {
                     RemoveAllItems();
                 }
@@ -329,7 +329,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 {
                     ListViewItem item;
 
-                    for (int i = count - 1; i >= 0; i--)
+                    for (int i = total - 1; i >= 0; i--)
                     {
                         item = items[i];
                         RemoveItem(item, (TData)item.Tag);
@@ -391,7 +391,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             if ((bool)flag)
             {
-                EditItem(item, newData, oldData, HasFixedData && FixedDataItemSet.Remove(item));
+                EditItem(item, newData, oldData, HasFixedData && FixedDataItemSet.Remove(item), false);
             }
             else
             {
@@ -407,8 +407,9 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void EditItem(ListViewItem item, TData newData, TData oldData, bool isDefault)
+    private void EditItem(ListViewItem item, TData newData, TData oldData, bool isDefault, bool reverseEx)
     {
+        newData.Excluded = reverseEx ^ oldData.Excluded;
         RemoveItem(item, oldData, true);
         AddItem(newData, isDefault);
     }
@@ -465,21 +466,18 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ListViewMain.Suspend(() =>
         {
             var changed = false;
-            var b = ListViewMain.SelectedIndices;
-            ListViewMain.GetSelection(out var items, out _, out var count);
+            ListViewMain.GetSelection(out var items, out _, out var total);
 
-            if (count != 0)
+            if (total != 0)
             {
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < total; i++)
                 {
                     var item = items[i];
                     var data = (TData)item.Tag;
 
                     if (data.Excluded != exclude)
                     {
-                        var newData = data.Copy();
-                        newData.Excluded = exclude;
-                        EditItem(item, newData, data, false);
+                        EditItem(item, data.Copy(), data, false, true);
                         changed = true;
                     }
                 }
