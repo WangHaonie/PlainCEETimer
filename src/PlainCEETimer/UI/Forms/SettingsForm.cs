@@ -305,7 +305,7 @@ public sealed class SettingsForm : AppForm
                                 b.Item("3", ItemsDark_Click),
                                 b.Item("4", ItemsDark_Click)
                             ]),
-                        ], out var _),
+                        ], out _),
 
                         BlockPreviewColor1 = b.Block($"距离...{Ph.Start}..."),
                         BlockPreviewColor2 = b.Block($"距离...{Ph.End}..."),

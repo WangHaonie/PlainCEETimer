@@ -246,7 +246,7 @@
     <Compile Include="Modules\Http\HttpService.cs" />
     <Compile Include="UI\IListViewData.cs" />
     <Compile Include="UI\IListViewChildDialog.cs" />
-    <Compile Include="Modules\JsonConverters\ColorSetConverter.cs" />
+    <Compile Include="Modules\JsonConverters\ColorPairConverter.cs" />
     <Compile Include="Modules\JsonConverters\CountdownRuleConverter.cs" />
     <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
     <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />

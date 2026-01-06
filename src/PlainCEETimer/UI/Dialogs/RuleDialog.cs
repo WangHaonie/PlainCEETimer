@@ -168,7 +168,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
 
         if (IsEditMode)
         {
-            if (IsGlobal = Data.IsDefault)
+            if (IsGlobal = Data.Default)
             {
                 Control[] rtctrls = [ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds];
 
@@ -228,7 +228,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             Tick = IsGlobal ? default : new(d, h, m, s),
             Text = text,
             Colors = colors,
-            IsDefault = IsGlobal
+            Default = IsGlobal
         };
 
         return base.OnClickButtonA();

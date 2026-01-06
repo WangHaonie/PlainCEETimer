@@ -43,7 +43,7 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
             Tick = tick,
             Text = text,
             Colors = colors,
-            IsDefault = is0tickAllowed
+            Default = is0tickAllowed
         };
     }
 
@@ -54,7 +54,7 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
             { nameof(value.Phase), (int)value.Phase }
         };
 
-        if (!value.IsDefault)
+        if (!value.Default)
         {
             jo.Add(nameof(value.Tick), (long)value.Tick.TotalSeconds);
         }

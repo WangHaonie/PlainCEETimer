@@ -196,10 +196,9 @@ public abstract class AppForm : Form
     {
         if (DpiRatio == 0F)
         {
-            var g = CreateGraphics();
+            using var g = CreateGraphics();
             DpiRatio = g.DpiX / 96F;
             IsHighDpi = DpiRatio > 1F;
-            g.Dispose();
         }
 
         if (ThemeManager.ShouldUseDarkMode)

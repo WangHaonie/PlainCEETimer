@@ -23,14 +23,7 @@ public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
     protected override ListViewItem GetListViewItem(CountdownRule data)
     {
         var tmp = data.Colors;
-        var flag = data.IsDefault;
-        var item = new ListViewItem(flag ? "默认规则" : data.Tick.Format()) { UseItemStyleForSubItems = false };
-
-        if (flag)
-        {
-            item.ForeColor = UseDark ? Colors.DarkForeLinkDisabled : Colors.LightForeLinkDisabled;
-        }
-
+        var item = new ListViewItem(data.Tick.Format()) { UseItemStyleForSubItems = false };
         item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
         return item;
     }
@@ -39,7 +32,7 @@ public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
     {
         CountdownRule[] p = null;
 
-        if (data == null || !data.IsDefault)
+        if (data == null || !data.Default)
         {
             p = FixedData;
         }

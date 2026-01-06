@@ -67,7 +67,7 @@ public sealed class ConsoleWindow : AppDialog
                 ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
                 b.Separator(),
                 b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
-            ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText), out var _);
+            ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText), out _);
         }
     }
 

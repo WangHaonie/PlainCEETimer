@@ -39,21 +39,21 @@ public static class DefaultValues
                 [
                     new()
                     {
-                        IsDefault = true,
+                        Default = true,
                         Phase = CountdownPhase.P1,
                         Colors = _defaultColors[0],
                         Text = Ph.P1
                     },
                     new()
                     {
-                        IsDefault = true,
+                        Default = true,
                         Phase = CountdownPhase.P2,
                         Colors = _defaultColors[1],
                         Text = Ph.P2
                     },
                     new()
                     {
-                        IsDefault = true,
+                        Default = true,
                         Phase = CountdownPhase.P3,
                         Colors = _defaultColors[2],
                         Text = Ph.P3

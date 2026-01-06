@@ -82,6 +82,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private MenuItem ContextSelectAll;
     private PlainButton ButtonOperation;
     private HashSet<ListViewItem> FixedDataItemSet;
+    private readonly string DefaultItemDesc;
     private readonly string MsgDelete;
     private readonly string MsgAddDup;
     private readonly string MsgEditDup;
@@ -114,6 +115,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
 
         Items = ListViewMain.Items;
+        DefaultItemDesc = "默认" + desc;
         MsgDelete = $"确认删除所选{desc}吗？此操作将不可撤销！";
         MsgAddDup = $"列表中已存在该{desc}，请重新添加！";
         MsgEditDup = $"列表中已存在该{desc}，请重新编辑！";
@@ -168,7 +170,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 b.Separator(),
                 ContextExclude = b.Item("排除(&X)", ContextExclude_Click),
                 ContextInclude = b.Item("包括(&I)", ContextInclude_Click)
-            ]);
+            ], ContextSelectAll.Index - 1);
         }
 
         ListViewMain.ContextMenu = ContextMenuMain;
@@ -183,34 +185,34 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected sealed override void OnLoad()
     {
-        ListViewMain.Suspend(() =>
+        ListViewMain.BeginUpdate();
+
+        var hasData = !Data.IsNullOrEmpty();
+
+        if (HasFixedData)
         {
-            var hasData = !Data.IsNullOrEmpty();
-
-            if (HasFixedData)
+            for (int i = 0; i < fixedData.Length; i++)
             {
-                for (int i = 0; i < fixedData.Length; i++)
-                {
-                    AddItemCore(fixedData[i], isDefault: true);
-                }
+                AddItemCore(fixedData[i]);
             }
+        }
 
-            if (hasData)
+        if (hasData)
+        {
+            foreach (var d in Data)
             {
-                foreach (var d in Data)
-                {
-                    AddItemCore(d);
-                }
+                AddItemCore(d);
             }
+        }
 
-            if (HasFixedData || hasData)
-            {
-                Items[0].EnsureVisible();
-            }
+        if (HasFixedData || hasData)
+        {
+            Items[0].EnsureVisible();
+        }
 
-            ListViewMain.AutoAdjustColumnWidth();
-        });
+        ListViewMain.AutoAdjustColumnWidth();
 
+        ListViewMain.EndUpdate();
         ListViewMain.MouseDoubleClick += ContextEdit_Click;
         ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
     }
@@ -319,33 +321,34 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         if (total != 0 &&
             MessageX.Warn(MsgDelete, MessageButtons.YesNo) == DialogResult.Yes)
         {
-            ListViewMain.Suspend(() =>
+            ListViewMain.BeginUpdate();
+
+            if (!HasFixedData && total == Items.Count)
             {
-                if (!HasFixedData && total == Items.Count)
+                RemoveAllItems();
+            }
+            else
+            {
+                ListViewItem item;
+
+                for (int i = total - 1; i >= 0; i--)
                 {
-                    RemoveAllItems();
+                    item = items[i];
+                    RemoveItem(item, (TData)item.Tag);
                 }
-                else
-                {
-                    ListViewItem item;
+            }
 
-                    for (int i = total - 1; i >= 0; i--)
-                    {
-                        item = items[i];
-                        RemoveItem(item, (TData)item.Tag);
-                    }
-                }
-
-                ListViewMain.AutoAdjustColumnWidth();
-            });
-
+            ListViewMain.AutoAdjustColumnWidth();
+            ListViewMain.EndUpdate();
             UserChanged();
         }
     }
 
     private void ContextSelectAll_Click(object sender, EventArgs e)
     {
-        ListViewMain.Suspend(() => ListViewMain.SelectAll(true));
+        ListViewMain.BeginUpdate();
+        ListViewMain.SelectAll(true);
+        ListViewMain.EndUpdate();
     }
 
     private void ContextExclude_Click(object sender, EventArgs e)
@@ -411,24 +414,23 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         newData.Excluded = reverseEx ^ oldData.Excluded;
         RemoveItem(item, oldData, true);
-        AddItem(newData, isDefault);
+        AddItem(newData);
     }
 
-    private void AddItem(TData data, bool isDefault = false)
+    private void AddItem(TData data)
     {
-        ListViewMain.Suspend(() =>
-        {
-            ListViewMain.SelectAll(false);
-            AddItemCore(data, true, isDefault);
-            ListViewMain.AutoAdjustColumnWidth();
-        });
-
+        ListViewMain.BeginUpdate();
+        ListViewMain.SelectAll(false);
+        AddItemCore(data, true);
+        ListViewMain.AutoAdjustColumnWidth();
+        ListViewMain.EndUpdate();
         UserChanged();
     }
 
-    private void AddItemCore(TData data, bool isSelected = false, bool isDefault = false)
+    private void AddItemCore(TData data, bool isSelected = false)
     {
         var item = GetListViewItem(data);
+        var isDefault = data.Default;
         item.Group = Groups[GetGroupIndex(data)];
         item.Tag = data;
         item.Selected = isSelected;
@@ -443,6 +445,8 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         if (isDefault)
         {
+            item.Text = DefaultItemDesc;
+            item.ForeColor = UseDark ? Colors.DarkForeListViewDefaultItem : Colors.LightForeListViewDefaultItem;
             FixedDataItemSet.Add(item);
         }
 
@@ -463,31 +467,32 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private void ExcludeSelectedItems(bool exclude = true)
     {
-        ListViewMain.Suspend(() =>
+        ListViewMain.GetSelection(out var items, out _, out var total);
+
+        if (total != 0)
         {
             var changed = false;
-            ListViewMain.GetSelection(out var items, out _, out var total);
+            ListViewMain.BeginUpdate();
 
-            if (total != 0)
+            for (int i = 0; i < total; i++)
             {
-                for (int i = 0; i < total; i++)
-                {
-                    var item = items[i];
-                    var data = (TData)item.Tag;
+                var item = items[i];
+                var data = (TData)item.Tag;
 
-                    if (data.Excluded != exclude)
-                    {
-                        EditItem(item, data.Copy(), data, false, true);
-                        changed = true;
-                    }
+                if (data.Excluded != exclude)
+                {
+                    EditItem(item, data.Copy(), data, false, true);
+                    changed = true;
                 }
             }
+
+            ListViewMain.EndUpdate();
 
             if (changed)
             {
                 UserChanged();
             }
-        });
+        }
     }
 
     private void RemoveAllItems()

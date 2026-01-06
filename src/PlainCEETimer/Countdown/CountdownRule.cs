@@ -20,7 +20,8 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     public ColorPair Colors { get; set; }
 
-    internal bool IsDefault { get; set; }
+    [JsonIgnore]
+    public bool Default { get; set; }
 
     public int CompareTo(CountdownRule other)
     {
@@ -49,7 +50,7 @@ public class CountdownRule : IListViewData<CountdownRule>
 
         var flag = Phase == other.Phase;
 
-        if (IsDefault || other.IsDefault)
+        if (Default || other.Default)
         {
             return flag;
         }
@@ -71,7 +72,7 @@ public class CountdownRule : IListViewData<CountdownRule>
     {
         var h = new HashCode().Add(Phase);
 
-        if (IsDefault)
+        if (Default)
         {
             return h.Combine();
         }
@@ -87,7 +88,7 @@ public class CountdownRule : IListViewData<CountdownRule>
             Tick = Tick,
             Text = Text,
             Colors = Colors,
-            IsDefault = IsDefault
+            Default = Default
         };
     }
 
@@ -95,7 +96,7 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     bool IListViewData<CountdownRule>.InternalEquals(CountdownRule other)
     {
-        return !IsDefault && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
+        return !Default && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
     }
 
     private string DebuggerDisplay => $"{Phase}: {Tick.Format()}, {Text}";

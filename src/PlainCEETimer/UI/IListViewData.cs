@@ -6,5 +6,7 @@ public interface IListViewData<T> : IComparable<T>, IEquatable<T>, ICloneable
 {
     bool Excluded { get; set; }
 
+    bool Default { get; set; }
+
     bool InternalEquals(T other);
 }

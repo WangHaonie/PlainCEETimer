@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Countdown;
@@ -450,11 +451,19 @@ public sealed class MainForm : AppForm
         {
             var length = Exams.Length;
             ExamItems = new string[length];
+            var sb = new StringBuilder();
 
             for (int i = 0; i < length; i++)
             {
                 var e = Exams[i];
-                ExamItems[i] = $"{i + 1}. {e.Name.Truncate(6)} ({e.Start.Format()})";
+                sb.Clear();
+                sb.Append(i + 1);
+                sb.Append(". ");
+                sb.Append(e.Name.Truncate(6));
+                sb.Append(" (");
+                sb.Append(e.Start.Format());
+                sb.Append(")");
+                ExamItems[i] = sb.ToString();
             }
         }
 

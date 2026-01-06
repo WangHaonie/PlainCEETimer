@@ -6,7 +6,7 @@ using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Countdown;
 
-[JsonConverter(typeof(ColorSetConverter))]
+[JsonConverter(typeof(ColorPairConverter))]
 public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 {
     public readonly Color Fore => fore;
@@ -26,8 +26,8 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
                 // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
                 //
 
-                var L1 = GetRelativeLum(Fore);
-                var L2 = GetRelativeLum(Back);
+                var L1 = GetRelativeLum(fore);
+                var L2 = GetRelativeLum(back);
 
                 if (L1 < L2)
                 {

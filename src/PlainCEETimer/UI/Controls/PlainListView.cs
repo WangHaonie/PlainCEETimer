@@ -87,11 +87,9 @@ public sealed class PlainListView : ListView
         }
     }
 
-    public void Suspend(Action action)
+    public new void EndUpdate()
     {
-        BeginUpdate();
-        action();
-        EndUpdate();
+        base.EndUpdate();
         Focus();
     }
 

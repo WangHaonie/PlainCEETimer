@@ -56,9 +56,24 @@ public static class Extensions
         return control;
     }
 
-    public static void Delete(this Control control)
+    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder, int index = -1)
     {
-        control.Parent.Controls.Remove(control);
+        var items = menu.MenuItems;
+        var count = items.Count;
+        var newItems = builder(new());
+
+        if (index > 0 && index < count - 1)
+        {
+            for (int i = 0; i < newItems.Length; i++)
+            {
+                items.Add(index + i, newItems[i]);
+            }
+
+            return menu;
+        }
+
+        items.AddRange(newItems);
+        return menu;
     }
 
     public static MenuItem Default(this MenuItem item)
@@ -67,10 +82,9 @@ public static class Extensions
         return item;
     }
 
-    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder)
+    public static void Delete(this Control control)
     {
-        menu.MenuItems.AddRange(builder(new()));
-        return menu;
+        control.Parent.Controls.Remove(control);
     }
 
     public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)

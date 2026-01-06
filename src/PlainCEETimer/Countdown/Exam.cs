@@ -123,6 +123,8 @@ public class Exam : IListViewData<Exam>
         };
     }
 
+    bool IListViewData<Exam>.Default { get; set; }
+
     bool IListViewData<Exam>.InternalEquals(Exam other)
     {
         return Equals(other);
