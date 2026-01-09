@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.Properties;
+﻿namespace PlainCEETimer.Modules;
 
 internal static class AppInfo
 {

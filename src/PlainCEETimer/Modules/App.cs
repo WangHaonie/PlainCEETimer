@@ -10,7 +10,6 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
-using PlainCEETimer.Properties;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
 

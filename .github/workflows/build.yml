@@ -37,7 +37,7 @@ jobs:
 
           $Content = "## ♻️ 自动构建版本
           **🌏 构建日期**
-          + $($Date.ToString('yyyy''-''MM''-''dd dddd HH'':''mm'':''ss', $Culture)) (中国标准时间)
+          + $($Date.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss", $Culture)) (中国标准时间)
 
           **🎯 构建内容**
           + 详见 [Actions](https://github.com/WangHaonie/PlainCEETimer/actions)
@@ -48,13 +48,12 @@ jobs:
           + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新" >content.txt
 
           $AppInfo = "
-          namespace PlainCEETimer.Properties;
+          namespace PlainCEETimer.Modules;
           internal static class AppInfo
           {
               public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
               public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
-          }
-          " >src\PlainCEETimer\Properties\AppInfo.cs
+          }" >src\PlainCEETimer\Modules\AppInfo.cs
         
       - name: Restore & Build Project
         working-directory: ./src/

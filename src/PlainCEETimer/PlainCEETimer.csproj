@@ -119,7 +119,7 @@
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\SystemVersion.cs" />
     <Compile Include="Modules\Xml.cs" />
-    <Compile Include="Properties\AppInfo.cs" />
+    <Compile Include="Modules\AppInfo.cs" />
     <Compile Include="UI\Colors.cs" />
     <Compile Include="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>

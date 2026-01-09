@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Properties;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
@@ -74,7 +73,7 @@ public sealed class AboutForm : AppForm
         ArrangeControlYL(LinkVersion, ImageLogo, 1, -2);
         ArrangeControlYL(LabelLicense, ImageLogo, isHighDpi ? -3 : -2);
         CompactControlY(LabelLicense, LinkVersion, -4);
-        ArrangeCommonButtonsR(null, ButtonOK, LabelLicense);
+        ArrangeCommonButtonsR(null, ButtonOK, LabelLicense, -3);
         AlignControlXL(Links, LabelLicense, 2);
         CenterControlY(Links, ButtonOK, 2);
         LabelLicense.BringToFront();
