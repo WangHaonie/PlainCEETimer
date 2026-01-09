@@ -29,6 +29,32 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
+      - name: Generate Pre-Release Content
+        run: |
+          $Date = [DateTime]::Now.AddHours(8.0)
+          $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
+
+          $Content = "## ♻️ 自动构建版本
+          **🌏 构建日期**
+          + $($Date.ToString('yyyy''-''MM''-''dd dddd HH'':''mm'':''ss', $Culture)) (中国标准时间)
+
+          **🎯 构建内容**
+          + 详见 [Actions](https://github.com/WangHaonie/PlainCEETimer/actions)
+          
+          **⚠️ 注意事项**
+          + 自动构建版本的功能可能不稳定，不推荐作为长期使用
+          + 自动构建版本的更新频率较高，且该渠道的版本不支持自动检查更新，需用户主动到此页面下载最新版本
+          + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新" >content.txt
+
+          $AppInfo = "
+          namespace PlainCEETimer.Properties;
+          internal static class AppInfo
+          {
+              public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
+              public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
+          }
+          " >src\PlainCEETimer\Properties\AppInfo.cs
         
       - name: Restore & Build Project
         working-directory: ./src/
@@ -50,22 +76,6 @@ jobs:
           tag_name: Preview
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Pre-Release Content
-        run: |
-          Start-Process -FilePath ".github\workflows\getdate.exe" -RedirectStandardOutput "date.txt" -NoNewWindow -Wait
-          $Date = Get-Content ".\date.txt"
-          $Content = "## ♻️ 自动构建版本
-          **🌏 构建日期**
-          + ${Date} (中国标准时间)
-
-          **🎯 构建内容**
-          + 详见 [Actions](https://github.com/WangHaonie/PlainCEETimer/actions)
-          
-          **⚠️ 注意事项**
-          + 自动构建版本的功能可能不稳定，不推荐作为长期使用
-          + 自动构建版本的更新频率较高，且该渠道的版本不支持自动检查更新，需用户主动到此页面下载最新版本
-          + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新" >content.txt
 
       - name: Upload to Pre-Release
         uses: softprops/action-gh-release@v1
