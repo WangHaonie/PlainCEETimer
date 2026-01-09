@@ -31,6 +31,7 @@ internal static class ConfigValidator
 
     public const int MaxExamNameLength = 15;
     public const int MinExamNameLength = 2;
+    public const int DefExamNameTruncate = 6;
     public const int MaxFontSize = 36;
     public const int MinFontSize = 10;
     public const float MinFontSizeError = 0.25F;

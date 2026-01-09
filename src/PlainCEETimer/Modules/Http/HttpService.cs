@@ -6,26 +6,26 @@ namespace PlainCEETimer.Modules.Http;
 
 public static class HttpService
 {
-    private static readonly HttpClient Client;
+    private static readonly HttpClient client;
 
     static HttpService()
     {
-        Client = new();
-        Client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{App.AppVersion} (Windows NT; Win64; x64)");
+        client = new();
+        client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{App.AppVersion} (Windows NT; Win64; x64)");
     }
 
     public static Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
     {
-        return Client.SendAsync(request);
+        return client.SendAsync(request);
     }
 
     public static Task<HttpResponseMessage> GetAsync(string requestUri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
     {
-        return Client.GetAsync(requestUri, completionOption, cancellationToken);
+        return client.GetAsync(requestUri, completionOption, cancellationToken);
     }
 
     public static Task<string> GetStringAsync(string requestUri)
     {
-        return Client.GetStringAsync(requestUri);
+        return client.GetStringAsync(requestUri);
     }
 }

@@ -36,6 +36,13 @@ public class GeneralObject
         set => ConfigValidator.SetValue(ref field, value, ConfigValidator.MaxOpacity, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity);
     } = ConfigValidator.MaxOpacity;
 
+    [DefaultValue(ConfigValidator.DefExamNameTruncate)]
+    public int Truncate
+    {
+        get;
+        set => ConfigValidator.SetValue(ref field, value, ConfigValidator.MaxExamNameLength, ConfigValidator.MinExamNameLength, ConfigValidator.DefExamNameTruncate);
+    } = ConfigValidator.DefExamNameTruncate;
+
     public BorderColorObject BorderColor { get; set; }
 
     [OnDeserialized]

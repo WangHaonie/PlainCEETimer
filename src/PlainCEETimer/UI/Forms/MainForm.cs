@@ -452,6 +452,7 @@ public sealed class MainForm : AppForm
             var length = Exams.Length;
             ExamItems = new string[length];
             var sb = new StringBuilder();
+            var max = General.Truncate;
 
             for (int i = 0; i < length; i++)
             {
@@ -459,7 +460,7 @@ public sealed class MainForm : AppForm
                 sb.Clear();
                 sb.Append(i + 1);
                 sb.Append(". ");
-                sb.Append(e.Name.Truncate(6));
+                sb.Append(e.Name.Truncate(max));
                 sb.Append(" (");
                 sb.Append(e.Start.Format());
                 sb.Append(")");

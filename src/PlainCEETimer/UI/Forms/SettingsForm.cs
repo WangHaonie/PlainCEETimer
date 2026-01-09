@@ -58,6 +58,7 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelColorWelcome;
     private PlainLabel LabelSyncTime;
     private PlainLabel LabelMaxCpp;
+    private PlainLabel LabelTruncate;
     private NavigationView NavBar;
     private NavigationPage PageAppearance;
     private PlainButton ButtonCancel;
@@ -79,6 +80,7 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxUniTopMost;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
+    private PlainNumericUpDown NudTruncate;
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
     private PlainGroupBox GBoxExamInfo;
@@ -338,6 +340,8 @@ public sealed class SettingsForm : AppForm
                         NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
                         LabelMaxCpp = b.Label("考试切换菜单单页最大项数"),
                         NudMaxCpp = b.NumericUpDown(50, ConfigValidator.MinCpp, ConfigValidator.MaxCpp, SettingsChanged),
+                        LabelTruncate = b.Label("考试切换菜单考试名称长度上限"),
+                        NudTruncate = b.NumericUpDown(50, ConfigValidator.MinExamNameLength, ConfigValidator.MaxExamNameLength, SettingsChanged),
 
                         CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                         {
@@ -519,13 +523,17 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(LabelMaxCpp, LabelOpacity);
         CenterControlY(LabelMaxCpp, NudMaxCpp);
         CompactControlX(NudMaxCpp, LabelMaxCpp, 5);
-        Control yLast = NudMaxCpp;
+        ArrangeControlYL(NudTruncate, NudMaxCpp, 0, 3);
+        ArrangeControlYL(LabelTruncate, LabelMaxCpp);
+        CenterControlY(LabelTruncate, NudTruncate);
+        CompactControlX(NudTruncate, LabelTruncate, 5);
+        Control yLast = NudTruncate;
 
         if (SystemVersion.IsWindows11)
         {
-            ArrangeControlYL(CheckBoxBorderColor, LabelMaxCpp, 4);
+            ArrangeControlYL(CheckBoxBorderColor, LabelTruncate, 4);
             ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
-            CompactControlY(ComboBoxBorderColor, NudMaxCpp, 4);
+            CompactControlY(ComboBoxBorderColor, NudTruncate, 4);
             CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
             ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
             CenterControlY(BlockBorderColor, ComboBoxBorderColor);
@@ -633,6 +641,7 @@ public sealed class SettingsForm : AppForm
         CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
         NudOpacity.Value = General.Opacity;
         NudMaxCpp.Value = General.CountPerPage;
+        NudTruncate.Value = General.Truncate;
 
         if (SystemVersion.IsWindows11)
         {
@@ -818,6 +827,7 @@ public sealed class SettingsForm : AppForm
         General.UniTopMost = CheckBoxUniTopMost.Checked;
         General.Opacity = (int)NudOpacity.Value;
         General.CountPerPage = (int)NudMaxCpp.Value;
+        General.Truncate = (int)NudTruncate.Value;
         General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
         Display.Mode = ComboBoxCountdownEnd.SelectedIndex;
