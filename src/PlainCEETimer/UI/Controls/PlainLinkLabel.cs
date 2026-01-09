@@ -5,14 +5,6 @@ namespace PlainCEETimer.UI.Controls;
 
 public class PlainLinkLabel : LinkLabel
 {
-    public new bool Enabled
-    {
-        get => Links[0].Enabled;
-        set => Links[0].Enabled = value;
-    }
-
-    public string Hyperlink { get; set; }
-
     public PlainLinkLabel()
     {
         AutoSize = true;
@@ -37,9 +29,9 @@ public class PlainLinkLabel : LinkLabel
     {
         if (e.Button == MouseButtons.Left)
         {
-            if (!string.IsNullOrEmpty(Hyperlink))
+            if (e.Link.LinkData is string link && !string.IsNullOrEmpty(link))
             {
-                Process.Start(Hyperlink);
+                Process.Start(link);
             }
 
             base.OnLinkClicked(e);

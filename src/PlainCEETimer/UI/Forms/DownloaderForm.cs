@@ -25,6 +25,7 @@ public sealed class DownloaderForm : AppForm
     private PlainButton ButtonRetry;
     private PlainButton ButtonCancel;
     private PlainLinkLabel LinkBrowser;
+    private LinkLabel.Link LinkBrowserLink;
     private readonly string TargetVersion;
     private readonly long UpdateSize;
     private readonly CancellationTokenSource cts = new();
@@ -48,7 +49,7 @@ public sealed class DownloaderForm : AppForm
         this.AddControls(b =>
         [
             LabelDownloading = b.Label("正在下载更新文件，请稍侯..."),
-            LinkBrowser = b.Hyperlink("浏览器下载", null),
+            LinkBrowser = b.Hyperlink("浏览器下载").Link(null, out LinkBrowserLink),
             ProgressBarMain = b.New<PlainProgressBar>(344, 22, null),
             LabelSize = b.Label("已下载/总共: (获取中...)"),
             LabelSpeed = b.Label("下载速度: (获取中...)"),
@@ -93,7 +94,7 @@ public sealed class DownloaderForm : AppForm
     {
         if (Win32User.NotImpersonalOrElevated)
         {
-            LinkBrowser.Hyperlink = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
+            LinkBrowserLink.LinkData = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;
@@ -140,7 +141,7 @@ public sealed class DownloaderForm : AppForm
     {
         ButtonCancel.Enabled = false;
         ButtonRetry.Enabled = false;
-        LinkBrowser.Enabled = false;
+        LinkBrowserLink.Enabled = false;
         ProgressBarMain.Value = 100;
         ProgressBarMain.Style = ProgressStyle.Indeterminate;
         UpdateLabels("下载完成，请稍侯...", null, null);

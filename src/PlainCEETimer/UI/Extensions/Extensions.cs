@@ -45,6 +45,14 @@ public static class Extensions
         return control;
     }
 
+    public static TControl SetText<TControl, TData>(this TControl control, string newText, out string oldText)
+        where TControl : Control
+    {
+        oldText = control.Text;
+        control.Text = newText;
+        return control;
+    }
+
     public static TControl AsFocus<TControl>(this TControl control, AppForm parent)
         where TControl : Control
     {
@@ -80,6 +88,18 @@ public static class Extensions
     {
         item.DefaultItem = true;
         return item;
+    }
+
+    public static PlainLinkLabel Link(this PlainLinkLabel label, string link, out LinkLabel.Link instance)
+    {
+        instance = label.Links.Add(0, label.Text.Length, link);
+        return label;
+    }
+
+    public static PlainLinkLabel Link(this PlainLinkLabel label, int start, int length, string link, out LinkLabel.Link instance)
+    {
+        instance = label.Links.Add(start, length, link);
+        return label;
     }
 
     public static void Delete(this Control control)

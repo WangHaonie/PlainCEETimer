@@ -30,9 +30,9 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainLinkLabel Hyperlink(string text, string link)
+    public PlainLinkLabel Hyperlink(string text)
     {
-        return new() { Hyperlink = link, Text = text };
+        return new() { Text = text };
     }
 
     public PlainButton Button(string text)

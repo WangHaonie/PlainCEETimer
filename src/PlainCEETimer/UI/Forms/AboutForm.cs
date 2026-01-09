@@ -15,17 +15,16 @@ public sealed class AboutForm : AppForm
     private bool IsCheckingUpdate;
     private PlainButton ButtonOK;
     private PlainLabel LabelAppName;
-    private PlainLabel LabelVersion;
     private PlainLabel LabelLicense;
-    private PlainLinkLabel LinkCommit;
-    private PlainLinkLabel LinkGitHub;
-    private PlainLinkLabel LinkFeedback;
-    private PlainLinkLabel LinkTutorial;
+    private PlainLinkLabel Links;
+    private PlainLinkLabel LinkVersion;
     private PictureBox ImageLogo;
 
     protected override void OnInitializing()
     {
         Text = "关于";
+        const string buttonText = "确定(&O)";
+        const string versionText = $"v{App.AppVersion} x64 ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
 
         this.AddControls(b =>
         [
@@ -37,43 +36,48 @@ public sealed class AboutForm : AppForm
                 {
                     if (e.Button == MouseButtons.Left && !IsCheckingUpdate)
                     {
-                        IsCheckingUpdate = true;
                         ImageLogo.Enabled = false;
-                        LabelAppName.Text = $"{App.AppName}\n正在检查更新，请稍候...";
+                        ButtonOK.Text = "更新...";
+                        ButtonOK.Enabled = false;
+                        IsCheckingUpdate = true;
 
                         new Action(() => new Updater().CheckForUpdate(true, this)).Start(_ => Invoke(() =>
                         {
-                            LabelAppName.Text = App.AppName;
                             ImageLogo.Enabled = true;
+                            ButtonOK.Text = buttonText;
+                            ButtonOK.Enabled = true;
                             IsCheckingUpdate = false;
                         }));
                     }
                 };
             }),
 
-            LabelAppName = b.Label(App.AppName),
-            LabelVersion = b.Label($"v{App.AppVersion} x64 {AppInfo.BuildDate}"),
-            LinkCommit = b.Hyperlink(AppInfo.CommitSHA, $"https://github.com/WangHaonie/PlainCEETimer/commit/{AppInfo.CommitSHA}"),
+            LabelAppName = b.Label($"{App.AppNameEng}\n{App.AppName}"),
+
+            LinkVersion = b.Hyperlink(versionText)
+                .Link(versionText.Length - 8, 7, $"https://github.com/WangHaonie/PlainCEETimer/commit/{AppInfo.CommitSHA}", out _),
+
             LabelLicense = b.Label($"Licensed under the GNU GPL, v3.\n{App.CopyrightInfo}"),
-            LinkGitHub = b.Hyperlink("GitHub", "https://github.com/WangHaonie/PlainCEETimer"),
-            LinkFeedback = b.Hyperlink("反馈", "https://github.com/WangHaonie/PlainCEETimer/issues/new/choose"),
-            LinkTutorial = b.Hyperlink("教程", "https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md"),
-            ButtonOK = b.Button("确定(&O)", (_, _) => Close())
+
+            Links = b.Hyperlink("GitHub  反馈  教程")
+                .Link(0, 6, "https://github.com/WangHaonie/PlainCEETimer", out _)
+                .Link(8, 2, "https://github.com/WangHaonie/PlainCEETimer/issues/new/choose", out _)
+                .Link(12, 2, "https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md", out _),
+
+            ButtonOK = b.Button(buttonText, (_, _) => Close())
         ]);
     }
 
     protected override void RunLayout(bool isHighDpi)
     {
         ArrangeControlXT(LabelAppName, ImageLogo, 0, isHighDpi ? -3 : 0);
-        ArrangeControlYL(LabelVersion, LabelAppName);
-        ArrangeControlXT(LinkCommit, LabelVersion);
+        ArrangeControlYL(LinkVersion, ImageLogo, 1, -2);
         ArrangeControlYL(LabelLicense, ImageLogo, isHighDpi ? -3 : -2);
-        CompactControlY(LabelLicense, LabelVersion);
-        ArrangeCommonButtonsR(null, ButtonOK, LabelLicense, -3);
-        AlignControlXL(LinkGitHub, LabelLicense);
-        CenterControlY(LinkGitHub, ButtonOK);
-        ArrangeControlXT(LinkFeedback, LinkGitHub);
-        ArrangeControlXT(LinkTutorial, LinkFeedback);
+        CompactControlY(LabelLicense, LinkVersion, -4);
+        ArrangeCommonButtonsR(null, ButtonOK, LabelLicense);
+        AlignControlXL(Links, LabelLicense, 2);
+        CenterControlY(Links, ButtonOK, 2);
+        LabelLicense.BringToFront();
     }
 
     protected override bool OnClosing(CloseReason closeReason)
