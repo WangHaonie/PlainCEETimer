@@ -36,10 +36,12 @@ jobs:
         run: |
           $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/ci-release").Trim()
           Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "sha=$($env:GITHUB_SHA.Substring(0, 7))"
 
       - name: Generate Pre-Release Content
         run: |
           $Date = [DateTime]::Now.AddHours(8.0)
+          $($Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")) >date.txt
           $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
 
           $Content = "## ♻️ 自动构建版本
@@ -59,7 +61,7 @@ jobs:
           internal static class AppInfo
           {
               public const string Version = `"${{ steps.read_version.outputs.version }}`";
-              public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
+              public const string CommitSHA = `"${{ steps.read_version.outputs.sha }}`";
               public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
           }" >src\PlainCEETimer\Modules\AppInfo.cs
 
@@ -89,11 +91,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate JSON
+        run: |
+          $date = (Get-Content -Raw -Encoding UTF8 "date.txt").Trim()
+          $size = $((Get-Item 'src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
+
+          $json = @"
+          {"name":"${{ steps.read_version.outputs.version }}","published_at":"$date","size":$size,"commit":"${{ steps.read_version.outputs.sha }}"}
+          "@ >version.json
+
       - name: Upload to Pre-Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: Preview
           files: |
-            src/PlainCEETimer.Setup/*.exe
+            src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe
+            version.json
           prerelease: true
           body_path: content.txt

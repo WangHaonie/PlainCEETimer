@@ -78,5 +78,5 @@ jobs:
         with:
           tag_name: ${{ steps.read_version.outputs.tag }}
           files: |
-            src/PlainCEETimer.Setup/*.exe
+            src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe
           body_path: content.txt
