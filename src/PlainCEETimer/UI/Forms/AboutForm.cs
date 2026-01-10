@@ -23,7 +23,7 @@ public sealed class AboutForm : AppForm
     {
         Text = "关于";
         const string buttonText = "确定(&O)";
-        const string versionText = $"v{App.AppVersion} x64 ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
+        const string versionText = $"v{AppInfo.Version} x64 ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
 
         this.AddControls(b =>
         [

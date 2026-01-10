@@ -22,7 +22,7 @@ internal static class App
     public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
     public static AppConfig AppConfig { get; private set; }
     public static Icon AppIcon { get; private set; }
-    public static Version AppVersionObject => field ??= Version.Parse(AppVersion);
+    public static Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
     internal static event Action ActivateMain;
     internal static event Action AppExit;
@@ -30,7 +30,6 @@ internal static class App
     public const string AppName = "高考倒计时 by WangHaonie";
     public const string AppNameEng = "PlainCEETimer";
     public const string AppNameEngOld = "CEETimerCSharpWinForms";
-    public const string AppVersion = "5.0.8";
     public const string CopyrightInfo = "Copyright © 2023-2026 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
@@ -156,7 +155,7 @@ internal static class App
     public static string WriteException(Exception ex)
     {
         var now = DateTime.Now;
-        var content = $"—————————————————— {AppNameEng} v{AppVersion} ({AppInfo.BuildDate} {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
+        var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate} {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
         var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
         var exFilePath = $"{ExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);

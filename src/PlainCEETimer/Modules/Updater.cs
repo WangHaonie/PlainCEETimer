@@ -25,9 +25,9 @@ public class Updater
             var PublishDate = $"发布于 {GetDescription(pub)} ({pub.Format()})";
             var UpdateLog = Response.UpdateLog.Replace("\n", "\n· ");
 
-            if (Version.Parse(LatestVersion) > App.AppVersionObject)
+            if (Version.Parse(LatestVersion) > App.VersionObject)
             {
-                if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{App.AppVersion}\n最新版本: v{LatestVersion}\n{PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", MessageButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{AppInfo.Version}\n最新版本: v{LatestVersion}\n{PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     owner.BeginInvoke(() =>
                     {
@@ -42,7 +42,7 @@ public class Updater
             }
             else if (popup)
             {
-                MessageX.Info($"当前 v{App.AppVersion} 已是最新版本。\n\n获取到的版本: v{LatestVersion}\n{PublishDate}\n\n当前版本更新日志: {UpdateLog}");
+                MessageX.Info($"当前 v{AppInfo.Version} 已是最新版本。\n\n获取到的版本: v{LatestVersion}\n{PublishDate}\n\n当前版本更新日志: {UpdateLog}");
             }
         }
         catch (Exception ex)
