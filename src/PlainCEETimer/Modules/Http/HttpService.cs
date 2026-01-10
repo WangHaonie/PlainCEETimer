@@ -11,7 +11,7 @@ public static class HttpService
     static HttpService()
     {
         client = new();
-        client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{App.AppVersion} (Windows NT; Win64; x64)");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd($"{App.AppNameEng}/{AppInfo.Version} (Windows NT; Win64; x64)");
     }
 
     public static Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)

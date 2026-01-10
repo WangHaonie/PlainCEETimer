@@ -33,7 +33,7 @@ public sealed class DownloaderForm : AppForm
 
     public DownloaderForm(string version)
     {
-        TargetVersion = Version.TryParse(version, out _) ? version : App.AppVersion;
+        TargetVersion = Version.TryParse(version, out _) ? version : AppInfo.Version;
     }
 
     public DownloaderForm(string version, long size)

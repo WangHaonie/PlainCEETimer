@@ -1,0 +1,89 @@
+name: PlainCEETimer Stable Builder
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/stable-build.yml'
+      - '.github/triggers/stable-release'
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: windows-2022
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Install MSBuild
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Cache NuGet Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - id: read_version
+        name: Get Stable Release Version
+        run: |
+          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "tag=$('v'+$ver)"
+
+      - name: Generate Release Content
+        run: |
+          $Date = [DateTime]::Now.AddHours(8.0)
+          $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
+
+          $ChangeLog = (Get-Content -Raw -Encoding UTF8 ".github/build/stable-changelog.txt").Trim()
+
+          $Content = "## ${{ steps.read_version.outputs.tag }} 更新日志
+          >  ✨ 新功能、🛠️ 修复、⛔ 移除
+
+          $ChangeLog
+
+          ## 用户手册【墙裂建议先阅读再使用】
+          + [点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。" >content.txt
+
+          $AppInfo = "
+          namespace PlainCEETimer.Modules;
+          internal static class AppInfo
+          {
+              public const string Version = `"${{ steps.read_version.outputs.version }}`";
+              public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
+              public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
+          }" >src\PlainCEETimer\Modules\AppInfo.cs
+
+          $SetupPath = "src/PlainCEETimer.Setup/Setup.nsi"
+          $SetupScript = Get-Content -Encoding UTF8 $SetupPath
+          $SetupScript[0] = "!define SETUP_FILENAME_NO_V `"${{ steps.read_version.outputs.version }}`""
+          Set-Content -Path $SetupPath -Value $SetupScript -Encoding UTF8
+        
+      - name: Restore & Build Project
+        working-directory: ./src/
+        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
+
+      - name: Build Setup
+        run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
+
+      - name: Update Tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: ${{ steps.read_version.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.read_version.outputs.tag }}
+          files: |
+            src/PlainCEETimer.Setup/*.exe
+          body_path: content.txt

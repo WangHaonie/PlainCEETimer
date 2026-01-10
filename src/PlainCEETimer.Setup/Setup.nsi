@@ -1,4 +1,6 @@
-﻿RequestExecutionLevel user
+﻿!define SETUP_FILENAME_NO_V "0.0.0"
+
+RequestExecutionLevel user
 ManifestDPIAware true
 SetFont "Segoe UI" 9
 
@@ -45,7 +47,6 @@ launch:
 !include "FileFunc.nsh"
 !include "WinMessages.nsh"
 !define PRODUCT_NAME "高考倒计时"
-!define SETUP_FILENAME_NO_V "5.0.8"
 !define PRODUCT_VERSION "${SETUP_FILENAME_NO_V}"
 !define PRODUCT_TITLE "${PRODUCT_NAME} by ${PRODUCT_PUBLISHER}"
 !define PRODUCT_PUBLISHER "WangHaonie"

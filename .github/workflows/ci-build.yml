@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/**'
+      - '.github/workflows/ci-build.yml'
       - 'src/**'
 
 jobs:
@@ -30,6 +30,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - id: read_version
+        name: Get Mainline Version
+        run: |
+          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
+
       - name: Generate Pre-Release Content
         run: |
           $Date = [DateTime]::Now.AddHours(8.0)
@@ -51,16 +57,22 @@ jobs:
           namespace PlainCEETimer.Modules;
           internal static class AppInfo
           {
+              public const string Version = `"${{ steps.read_version.outputs.version }}`";
               public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
               public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
           }" >src\PlainCEETimer\Modules\AppInfo.cs
+
+          $SetupPath = "src/PlainCEETimer.Setup/Setup.nsi"
+          $SetupScript = Get-Content -Encoding UTF8 $SetupPath
+          $SetupScript[0] = "!define SETUP_FILENAME_NO_V `"${{ steps.read_version.outputs.version }}`""
+          Set-Content -Path $SetupPath -Value $SetupScript -Encoding UTF8
         
       - name: Restore & Build Project
         working-directory: ./src/
         run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
 
       - name: Build Setup
-        run: makensis src/PlainCEETimer.Setup/Setup.nsi
+        run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
       
       - name: Delete Previous Pre-Release
         uses: 8Mi-Tech/delete-release-assets-action@main
@@ -77,7 +89,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Pre-Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: Preview
           files: |
