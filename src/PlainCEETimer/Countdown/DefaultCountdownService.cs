@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Threading;
-using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
@@ -24,6 +23,7 @@ public class DefaultCountdownService : ICountdownService
     private bool CanUseRules;
     private bool CanUpdateRules;
     private int Mode;
+    private string DefaultText;
     private CountdownFormat Format;
     private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
@@ -39,27 +39,13 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
     private readonly SynchronizationContext CurrentContext;
-    private readonly MatchEvaluator DefaultMatchEvaluator;
-    private readonly Regex CountdownRegEx = new(ConfigValidator.RegexPhPatterns, RegexOptions.Compiled);
-    private readonly string[] PhCountdown = new string[12];
-    private readonly string[] DefaultTexts = [Ph.Start, Ph.End, Ph.Past];
+    private readonly string[] Phs = Ph.AllPhs.Copy();
+    private readonly string[] PhContent = new string[12];
+    private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
 
     public DefaultCountdownService()
     {
         CurrentContext = SynchronizationContext.Current;
-
-        DefaultMatchEvaluator = m =>
-        {
-            var key = m.Value;
-            var i = ConfigValidator.GetPhIndex(key);
-
-            if (i < 0)
-            {
-                return key;
-            }
-
-            return PhCountdown[i];
-        };
     }
 
     public void Start(CountdownStartInfo startInfo)
@@ -155,6 +141,19 @@ public class DefaultCountdownService : ICountdownService
 
         CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
         CanUseCustomText = Format == CountdownFormat.Custom;
+
+        DefaultText = Format switch
+        {
+            CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
+            CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
+            CountdownFormat.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
+            CountdownFormat.HoursOnly => "距离{x}{ht}{th}小时",
+            CountdownFormat.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
+            CountdownFormat.MinutesOnly => "距离{x}{ht}{tm}分钟",
+            CountdownFormat.SecondsOnly => "距离{x}{ht}{ts}秒",
+            _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
+        };
+
         CanUpdateRules = true;
     }
 
@@ -195,9 +194,9 @@ public class DefaultCountdownService : ICountdownService
         {
             SetPhase(phase);
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < Ph.Count; i++)
             {
-                PhCountdown[i] = TranslatePh(i, span, phase);
+                PhContent[i] = TranslatePh(i, span, phase);
             }
 
             ApplyCustomRule((int)phase, span);
@@ -266,31 +265,31 @@ public class DefaultCountdownService : ICountdownService
                 {
                     if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
                     {
-                        OnCountdownUpdated(CountdownRegEx.Replace(rule.Text, DefaultMatchEvaluator), rule.Colors);
+                        OnCountdownUpdated(BuildContent(rule.Text), rule.Colors);
                         return;
                     }
                 }
             }
 
-            OnCountdownUpdated(CountdownRegEx.Replace(DefaultRule.Text, DefaultMatchEvaluator), DefaultRule.Colors);
+            OnCountdownUpdated(BuildContent(DefaultRule.Text), DefaultRule.Colors);
         }
         else
         {
-            OnCountdownUpdated(CountdownRegEx.Replace(GetDefaultText(), DefaultMatchEvaluator), DefaultRules[phase].Colors);
+            OnCountdownUpdated(BuildContent(DefaultText), DefaultRules[phase].Colors);
         }
     }
 
-    private string GetDefaultText() => Format switch
+    private string BuildContent(string format)
     {
-        CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
-        CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
-        CountdownFormat.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
-        CountdownFormat.HoursOnly => "距离{x}{ht}{th}小时",
-        CountdownFormat.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
-        CountdownFormat.MinutesOnly => "距离{x}{ht}{tm}分钟",
-        CountdownFormat.SecondsOnly => "距离{x}{ht}{ts}秒",
-        _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
-    };
+        var sb = new StringBuilder(format);
+
+        for (int i = 0; i < Ph.Count; i++)
+        {
+            sb.Replace(Phs[i], PhContent[i]);
+        }
+
+        return sb.ToString();
+    }
 
     private string TranslatePh(int i, TimeSpan span, CountdownPhase phase) => i switch
     {
@@ -305,7 +304,7 @@ public class DefaultCountdownService : ICountdownService
         8 => span.TotalMinutes.ToString("0"),
         9 => span.Seconds.ToString("00"),
         10 => span.TotalSeconds.ToString("0"),
-        11 => CanUseCustomText ? string.Empty : DefaultTexts[(int)phase],
+        11 => CanUseCustomText ? string.Empty : PhHints[(int)phase],
         _ => string.Empty
     };
 

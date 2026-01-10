@@ -457,14 +457,14 @@ public sealed class MainForm : AppForm
             for (int i = 0; i < length; i++)
             {
                 var e = Exams[i];
-                sb.Clear();
-                sb.Append(i + 1);
-                sb.Append(". ");
-                sb.Append(e.Name.Truncate(max));
-                sb.Append(" (");
-                sb.Append(e.Start.Format());
-                sb.Append(")");
-                ExamItems[i] = sb.ToString();
+                ExamItems[i] = sb.Clear()
+                    .Append(i + 1)
+                    .Append(". ")
+                    .Append(e.Name.Truncate(max))
+                    .Append(" (")
+                    .Append(e.Start.Format())
+                    .Append(")")
+                    .ToString();
             }
         }
 

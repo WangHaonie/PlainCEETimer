@@ -16,6 +16,8 @@ public static class Ph
     public const string TotalMinutes = "{tm}";
     public const string Seconds = "{s}";
     public const string TotalSeconds = "{ts}";
+    public const string Hint = "{ht}";
+    public const int Count = 12;
 
     public const string Start = "还有";
     public const string End = "结束还有";
@@ -38,6 +40,16 @@ public static class Ph
         Hours, TotalHours, DecimalHours,
         Minutes, TotalMinutes,
         Seconds, TotalSeconds
+    ];
+
+    public static string[] AllPhs => field ??=
+    [
+        ExamName,
+        Days, DecimalDays, CeilingDays,
+        Hours, TotalHours, DecimalHours,
+        Minutes, TotalMinutes,
+        Seconds, TotalSeconds,
+        Hint
     ];
 
     public static string[] ComboBoxFormatItems => field ??=

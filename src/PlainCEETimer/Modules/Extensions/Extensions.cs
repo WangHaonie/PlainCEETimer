@@ -12,7 +12,6 @@ namespace PlainCEETimer.Modules.Extensions;
 
 public static class Extensions
 {
-    private static readonly StringBuilder _sb = new();
     private static readonly HashSet<char> _illegalChars = [' ', '\n', '\r', '\t', '\v', '\f', '\b'];
 
     public static int ToInt32(this Color color)
@@ -25,7 +24,7 @@ public static class Extensions
             return s;
         }
 
-        _sb.Clear();
+        var sb = new StringBuilder(s.Length);
 
         for (int i = 0; i < s.Length; i++)
         {
@@ -33,11 +32,11 @@ public static class Extensions
 
             if (!_illegalChars.Contains(c))
             {
-                _sb.Append(c);
+                sb.Append(c);
             }
         }
 
-        return _sb.ToString();
+        return sb.ToString();
     }
 
     public static string Format(this DateTime dateTime)

@@ -50,9 +50,9 @@ internal static class ConfigValidator
     public const long MinDateSeconds = MinDate / MinTick;
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
-    public const string RegexPhPatterns = @"\{(x|d|dd|cd|h|th|dh|m|tm|s|ts|ht)\}";
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
     public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
+    private static readonly Regex CountdownRegex = new(@"\{(x|d|dd|cd|h|th|dh|m|tm|s|ts|ht)\}", RegexOptions.Compiled);
 
     public static bool ValidateNeeded
     {
@@ -159,7 +159,7 @@ internal static class ConfigValidator
             return false;
         }
 
-        var matches = Regex.Matches(custom, RegexPhPatterns);
+        var matches = CountdownRegex.Matches(custom);
         var count = matches.Count;
         var isValid = false;
 
