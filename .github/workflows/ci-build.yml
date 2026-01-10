@@ -40,7 +40,7 @@ jobs:
 
       - name: Generate Pre-Release Content
         run: |
-          $Date = [DateTime]::Now.AddHours(8.0)
+          $Date = [DateTime]::UtcNow.AddHours(8.0)
           $($Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")) >date.txt
           $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
 
