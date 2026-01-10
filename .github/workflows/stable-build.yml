@@ -1,4 +1,4 @@
-name: PlainCEETimer Stable Builder
+name: Stable Build
 
 on:
   push:
@@ -72,13 +72,6 @@ jobs:
 
       - name: Build Setup
         run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
-
-      - name: Update Tag
-        uses: richardsimko/update-tag@v1
-        with:
-          tag_name: ${{ steps.read_version.outputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2

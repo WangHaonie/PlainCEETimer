@@ -1,4 +1,4 @@
-name: PlainCEETimer CI/CD Builder
+name: CI Build
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/ci-build.yml'
+      - '.github/triggers/ci-release'
       - 'src/**'
 
 jobs:
@@ -33,7 +34,7 @@ jobs:
       - id: read_version
         name: Get Mainline Version
         run: |
-          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
+          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/ci-release").Trim()
           Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
 
       - name: Generate Pre-Release Content
