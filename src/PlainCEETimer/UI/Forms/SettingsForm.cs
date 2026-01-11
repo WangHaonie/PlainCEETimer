@@ -78,6 +78,7 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxTrayIcon;
     private PlainCheckBox CheckBoxTrayText;
     private PlainCheckBox CheckBoxUniTopMost;
+    private PlainCheckBox CheckBoxShowNo;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
     private PlainNumericUpDown NudTruncate;
@@ -85,6 +86,7 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxDraggable;
     private PlainGroupBox GBoxExamInfo;
     private PlainGroupBox GBoxMainForm;
+    private PlainGroupBox GBoxExamsMenu;
     private PlainGroupBox GBoxOthers;
     private PlainGroupBox GBoxPptsvc;
     private PlainGroupBox GBoxColors;
@@ -338,10 +340,6 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelOpacity = b.Label("窗口不透明度"),
                         NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
-                        LabelMaxCpp = b.Label("考试切换菜单单页最大项数"),
-                        NudMaxCpp = b.NumericUpDown(50, ConfigValidator.MinCpp, ConfigValidator.MaxCpp, SettingsChanged),
-                        LabelTruncate = b.Label("考试切换菜单考试名称长度上限"),
-                        NudTruncate = b.NumericUpDown(50, ConfigValidator.MinExamNameLength, ConfigValidator.MaxExamNameLength, SettingsChanged),
 
                         CheckBoxBorderColor = b.CheckBox("窗口边框颜色", (_, _) =>
                         {
@@ -363,6 +361,15 @@ public sealed class SettingsForm : AppForm
                         ).Disable(),
 
                         BlockBorderColor = b.Block(true, null, SettingsChanged).Disable()
+                    ]),
+
+                    GBoxExamsMenu = b.GroupBox("考试切换菜单",
+                    [
+                        LabelMaxCpp = b.Label("单页最大项数"),
+                        NudMaxCpp = b.NumericUpDown(50, ConfigValidator.MinCpp, ConfigValidator.MaxCpp, SettingsChanged),
+                        LabelTruncate = b.Label("考试名称长度上限"),
+                        NudTruncate = b.NumericUpDown(50, ConfigValidator.MinExamNameLength, ConfigValidator.MaxExamNameLength, SettingsChanged),
+                        CheckBoxShowNo = b.CheckBox("在考试名称前显示序号", SettingsChanged)
                     ])
                 ]),
 
@@ -427,7 +434,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void RunLayout(bool isHighDpi)
     {
-        GroupBoxArrageFirstControl(LabelExamInfo, 0, 2);
+        GroupBoxArrageControl(LabelExamInfo, 0, 2);
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
         ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
         CenterControlY(CheckBoxAutoSwitch, ButtonExamInfo, 1);
@@ -437,7 +444,7 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
 
-        GroupBoxArrageFirstControl(CheckBoxStartup, 4, 2);
+        GroupBoxArrageControl(CheckBoxStartup, 4, 2);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
         ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
         ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
@@ -446,8 +453,8 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxOthers, CheckBoxTrayText, 4);
 
 
-        GroupBoxArrageFirstControl(ComboBoxCountdownEnd);
-        GroupBoxArrageFirstControl(LabelCountdownEnd);
+        GroupBoxArrageControl(ComboBoxCountdownEnd);
+        GroupBoxArrageControl(LabelCountdownEnd);
         CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
         CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
         ArrangeControlYL(LabelCountdownFormat, LabelCountdownEnd);
@@ -460,8 +467,8 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxDraggable, GBoxContent, 0, 2);
 
-        GroupBoxArrageFirstControl(ComboBoxScreens, 0, 2);
-        GroupBoxArrageFirstControl(LabelScreens);
+        GroupBoxArrageControl(ComboBoxScreens, 0, 2);
+        GroupBoxArrageControl(LabelScreens);
         CenterControlY(LabelScreens, ComboBoxScreens);
         CompactControlX(ComboBoxScreens, LabelScreens);
         ArrangeControlXRT(LabelPosition, ComboBoxScreens, LabelScreens);
@@ -472,14 +479,14 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
 
-        GroupBoxArrageFirstControl(LabelPptsvc);
+        GroupBoxArrageControl(LabelPptsvc);
         SetLabelAutoWrap(LabelPptsvc, true);
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
         GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
 
 
-        GroupBoxArrageFirstControl(LabelColor);
+        GroupBoxArrageControl(LabelColor);
         SetLabelAutoWrap(LabelColor, true);
         ArrangeControlYL(LabelColorP1, LabelColor, 0, 3);
         ArrangeControlYL(LabelColorP2, LabelColorP1, 0, 6);
@@ -503,7 +510,7 @@ public sealed class SettingsForm : AppForm
 
         if (AllowThemeChanging)
         {
-            GroupBoxArrageFirstControl(RadioButtonThemeSystem, 4, 4);
+            GroupBoxArrageControl(RadioButtonThemeSystem, 4, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
             ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
             GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 6);
@@ -515,25 +522,18 @@ public sealed class SettingsForm : AppForm
             GBoxTheme.Delete();
         }
 
-        GroupBoxArrageFirstControl(LabelOpacity);
-        GroupBoxArrageFirstControl(NudOpacity, 0, 2);
+        GroupBoxArrageControl(LabelOpacity);
+        GroupBoxArrageControl(NudOpacity, 0, 2);
         CenterControlY(LabelOpacity, NudOpacity);
         CompactControlX(NudOpacity, LabelOpacity, 5);
         ArrangeControlYL(NudMaxCpp, NudOpacity, 0, 3);
-        ArrangeControlYL(LabelMaxCpp, LabelOpacity);
-        CenterControlY(LabelMaxCpp, NudMaxCpp);
-        CompactControlX(NudMaxCpp, LabelMaxCpp, 5);
-        ArrangeControlYL(NudTruncate, NudMaxCpp, 0, 3);
-        ArrangeControlYL(LabelTruncate, LabelMaxCpp);
-        CenterControlY(LabelTruncate, NudTruncate);
-        CompactControlX(NudTruncate, LabelTruncate, 5);
-        Control yLast = NudTruncate;
+        Control yLast = NudOpacity;
 
         if (SystemVersion.IsWindows11)
         {
-            ArrangeControlYL(CheckBoxBorderColor, LabelTruncate, 4);
+            ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
             ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
-            CompactControlY(ComboBoxBorderColor, NudTruncate, 4);
+            CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
             CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
             ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
             CenterControlY(BlockBorderColor, ComboBoxBorderColor);
@@ -549,14 +549,28 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
 
 
-        GroupBoxArrageFirstControl(LabelSyncTime);
+        ArrangeControlYL(GBoxExamsMenu, GBoxMainForm);
+        GroupBoxArrageControl(NudMaxCpp, 0, 3);
+        GroupBoxArrageControl(LabelMaxCpp);
+        CenterControlY(LabelMaxCpp, NudMaxCpp);
+        CompactControlX(NudMaxCpp, LabelMaxCpp);
+        CompactControlX(NudMaxCpp, LabelMaxCpp, 5);
+        ArrangeControlYL(NudTruncate, NudMaxCpp, 0, 3);
+        ArrangeControlYL(LabelTruncate, LabelMaxCpp);
+        CenterControlY(LabelTruncate, NudTruncate);
+        CompactControlX(NudTruncate, LabelTruncate, 5);
+        ArrangeControlYL(CheckBoxShowNo, LabelTruncate, 4);
+        CompactControlY(CheckBoxShowNo, NudTruncate, 3);
+        GroupBoxAutoAdjustHeight(GBoxExamsMenu, CheckBoxShowNo, 5);
+
+        GroupBoxArrageControl(LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime, true);
         ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
         ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 5);
         GroupBoxAutoAdjustHeight(GBoxSyncTime, ComboBoxNtpServers, 6);
 
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
-        GroupBoxArrageFirstControl(LabelRestart);
+        GroupBoxArrageControl(LabelRestart);
         UpdateSettingsArea(SettingsArea.Restart, false);
         SetLabelAutoWrap(LabelRestart, true);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
@@ -642,6 +656,7 @@ public sealed class SettingsForm : AppForm
         NudOpacity.Value = General.Opacity;
         NudMaxCpp.Value = General.CountPerPage;
         NudTruncate.Value = General.Truncate;
+        CheckBoxShowNo.Checked = General.No;
 
         if (SystemVersion.IsWindows11)
         {
@@ -828,6 +843,7 @@ public sealed class SettingsForm : AppForm
         General.Opacity = (int)NudOpacity.Value;
         General.CountPerPage = (int)NudMaxCpp.Value;
         General.Truncate = (int)NudTruncate.Value;
+        General.No = CheckBoxShowNo.Checked;
         General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
 
         Display.Mode = ComboBoxCountdownEnd.SelectedIndex;

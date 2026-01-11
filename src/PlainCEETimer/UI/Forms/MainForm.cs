@@ -453,17 +453,22 @@ public sealed class MainForm : AppForm
             ExamItems = new string[length];
             var sb = new StringBuilder();
             var max = General.Truncate;
+            var no = General.No;
 
             for (int i = 0; i < length; i++)
             {
                 var e = Exams[i];
-                ExamItems[i] = sb.Clear()
-                    .Append(i + 1)
-                    .Append(". ")
-                    .Append(e.Name.Truncate(max))
-                    .Append('\t')
-                    .Append(e.Start.Format())
-                    .ToString();
+                sb.Clear();
+
+                if (no)
+                {
+                    sb.Append(i + 1).Append(". ");
+                }
+
+                ExamItems[i] = sb.Append(e.Name.Truncate(max))
+                .Append('\t')
+                .Append(e.Start.Format())
+                .ToString();
             }
         }
 

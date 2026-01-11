@@ -378,7 +378,7 @@ public abstract class AppForm : Form
         target.Top = reference.Bottom + ScaleToDpi(yOffset);
     }
 
-    protected void GroupBoxArrageFirstControl(Control target, int xOffset = 0, int yOffset = 0)
+    protected void GroupBoxArrageControl(Control target, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }

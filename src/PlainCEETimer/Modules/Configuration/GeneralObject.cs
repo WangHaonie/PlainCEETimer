@@ -22,6 +22,9 @@ public class GeneralObject
     [DefaultValue(true)]
     public bool UniTopMost { get; set; } = true;
 
+    [DefaultValue(true)]
+    public bool No { get; set; } = true;
+
     [DefaultValue(ConfigValidator.DefCpp)]
     public int CountPerPage
     {
