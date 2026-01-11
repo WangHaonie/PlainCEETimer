@@ -155,7 +155,7 @@ internal static class App
     public static string WriteException(Exception ex)
     {
         var now = DateTime.Now;
-        var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate} {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
+        var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
         var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
         var exFilePath = $"{ExecutableDir}{exFileName}";
         File.AppendAllText(exFilePath, content);

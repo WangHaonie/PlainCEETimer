@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.UI;
 
-internal readonly struct Colors
+internal static class Colors
 {
     public static readonly Color DarkForeText = Color.White;
     public static readonly Color DarkForeTextDisabled = Color.FromArgb(124, 124, 124);

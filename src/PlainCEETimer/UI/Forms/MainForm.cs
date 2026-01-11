@@ -451,12 +451,12 @@ public sealed class MainForm : AppForm
         {
             var length = Exams.Length;
             ExamItems = new string[length];
-            var sb = new StringBuilder();
             var max = General.Truncate;
             var no = General.No;
 
             for (int i = 0; i < length; i++)
             {
+                var sb = new StringBuilder(32);
                 var e = Exams[i];
                 sb.Clear();
 
