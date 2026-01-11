@@ -398,7 +398,7 @@ public sealed class SettingsForm : AppForm
                                 UpdateSettingsArea(SettingsArea.Restart);
                                 AllowExit = true;
                             }
-                            else if (!AllowExit && e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+                            else if (!AllowExit && e.Button == MouseButtons.Left && PressedCtrlKey)
                             {
                                 if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
                                 {

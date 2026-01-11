@@ -15,9 +15,12 @@ public abstract class AppForm : Form
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
     /// </summary>
     public AppMessageBox MessageX { get; }
+
     public Control FocusControl { get; set; }
 
     protected virtual AppFormParam Params => AppFormParam.None;
+
+    protected bool PressedCtrlKey => (ModifierKeys & Keys.Control) == Keys.Control;
 
     public event Action<DialogResult> DialogEnd;
 

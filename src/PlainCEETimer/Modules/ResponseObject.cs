@@ -16,4 +16,7 @@ public class ResponseObject
 
     [JsonProperty("body")]
     public string UpdateLog { get; set; }
+
+    [JsonProperty("commit")]
+    public string Commit { get; set; }
 }

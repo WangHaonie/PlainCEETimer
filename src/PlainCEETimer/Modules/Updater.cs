@@ -13,27 +13,36 @@ public class Updater
 {
     private DownloaderForm FormDownloader;
 
-    public void CheckForUpdate(bool popup, AppForm owner)
+    public void CheckForUpdate(bool popup, AppForm owner, bool isPreview = false)
     {
         var MessageX = owner.MessageX;
 
         try
         {
-            var Response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
-            var LatestVersion = Response.Version;
-            var pub = Response.PublishDate;
-            var PublishDate = $"发布于 {GetDescription(pub)} ({pub.Format()})";
-            var UpdateLog = Response.UpdateLog.Replace("\n", "\n· ");
+            var response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json").Result);
+            var latest = response.Version;
+            var date = response.PublishDate;
+            var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
+            var content = response.UpdateLog.Replace("\n", "\n· ");
 
-            if (Version.Parse(LatestVersion) > App.VersionObject)
+            if (Version.Parse(latest) > App.VersionObject)
             {
-                if (MessageX.Info($"检测到新版本，是否下载并安装？\n\n当前版本: v{AppInfo.Version}\n最新版本: v{LatestVersion}\n{PublishDate}\n\nv{LatestVersion}更新日志: {UpdateLog}", MessageButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Info(
+                    $"""
+                    检测到新版本，是否下载并安装？
+                    
+                    当前版本: v{AppInfo.Version}
+                    最新版本: v{latest}
+                    {dateDesc}
+                    
+                    v{latest}更新日志: {content}
+                    """, MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     owner.BeginInvoke(() =>
                     {
                         if (FormDownloader == null || FormDownloader.IsDisposed)
                         {
-                            FormDownloader = new(LatestVersion, Response.UpdateSize);
+                            FormDownloader = new(latest, response.UpdateSize);
                         }
 
                         FormDownloader.ReActivate();
@@ -42,7 +51,15 @@ public class Updater
             }
             else if (popup)
             {
-                MessageX.Info($"当前 v{AppInfo.Version} 已是最新版本。\n\n获取到的版本: v{LatestVersion}\n{PublishDate}\n\n当前版本更新日志: {UpdateLog}");
+                MessageX.Info(
+                    $"""
+                    当前 v{AppInfo.Version} 已是最新版本。
+                    
+                    获取到的版本: v{latest}
+                    {dateDesc}
+                    
+                    当前版本更新日志: {content}
+                    """);
             }
         }
         catch (Exception ex)
