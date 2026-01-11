@@ -461,9 +461,8 @@ public sealed class MainForm : AppForm
                     .Append(i + 1)
                     .Append(". ")
                     .Append(e.Name.Truncate(max))
-                    .Append(" (")
+                    .Append('\t')
                     .Append(e.Start.Format())
-                    .Append(")")
                     .ToString();
             }
         }
