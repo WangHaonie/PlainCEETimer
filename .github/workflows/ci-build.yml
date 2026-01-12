@@ -102,6 +102,8 @@ jobs:
         run: |
           $date = (Get-Content -Raw -Encoding UTF8 "date.txt").Trim()
           $size = $((Get-Item 'src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
+          ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
+          $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
 
           cd PlainCEETimerStatic
 
@@ -110,7 +112,7 @@ jobs:
 
           md api -ErrorAction Ignore
           $json = @"
-          {"name":"${{ steps.read_version.outputs.version }}","published_at":"$date","size":$size,"commit":"${{ steps.read_version.outputs.sha }}"}
+          {"name":"${{ steps.read_version.outputs.version }}","published_at":"$date","body":"$log","size":$size,"commit":"${{ steps.read_version.outputs.sha }}"}
           "@ >api\ci.json
 
           md download/ci -ErrorAction Ignore
