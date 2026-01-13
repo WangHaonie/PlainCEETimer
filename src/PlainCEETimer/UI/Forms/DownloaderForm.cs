@@ -9,7 +9,6 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PlainCEETimer.UI.Forms;
 
@@ -164,11 +163,11 @@ public sealed class DownloaderForm : AppForm
         UpdateLabels("下载完成，请稍侯...", null, null);
         IsCancelled = true;
 
-        2500.AsDelay(() =>
+        2500.AsDelay(new Action(() =>
         {
             ProcessHelper.Run(DownloadPath, "/Skip");
             App.Exit();
-        }, this);
+        }).WithUI(this));
     }
 
     private void UpdateLabels(string info, string size, string speed)

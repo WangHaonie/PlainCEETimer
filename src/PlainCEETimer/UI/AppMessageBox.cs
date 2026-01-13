@@ -87,7 +87,7 @@ public class AppMessageBox(AppForm parent = null)
 
             if (autoClose)
             {
-                3200.AsDelay(Close, this);
+                3200.AsDelay(new Action(Close).WithUI(this));
             }
         }
 
