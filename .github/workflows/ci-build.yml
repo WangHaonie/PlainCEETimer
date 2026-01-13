@@ -116,8 +116,8 @@ jobs:
           "@ >api\ci.json
 
           md download/ci -ErrorAction Ignore
-          Copy-Item -Path "../src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/ci/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
-          Copy-Item -Path "download/ci/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/ci/CEETimerCSharpWinForms_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
+          Get-ChildItem -LiteralPath "download/ci" -File | Remove-Item -Force -ErrorAction Stop
+          Copy-Item -Path "../src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/ci/CEETimerCSharpWinForms_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
 
           git add .
           git commit -m "ci: WangHaonie/PlainCEETimer@${{ steps.read_version.outputs.sha }}"
