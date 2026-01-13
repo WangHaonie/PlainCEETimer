@@ -43,6 +43,7 @@ jobs:
           $Date = [DateTime]::UtcNow.AddHours(8.0)
           $($Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")) >date.txt
           $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
+          $Timestamp = [Math]::Truncate($Date.Ticks / 10000000 - 55287792000)
 
           $Content = "## ♻️ 自动构建版本
           **🌏 构建日期**
@@ -63,6 +64,7 @@ jobs:
               public const string Version = `"${{ steps.read_version.outputs.version }}`";
               public const string CommitSHA = `"${{ steps.read_version.outputs.sha }}`";
               public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
+              public const long Timestamp = $Timestamp;
           }" >src\PlainCEETimer\Modules\AppInfo.cs
 
           $SetupPath = "src/PlainCEETimer.Setup/Setup.nsi"

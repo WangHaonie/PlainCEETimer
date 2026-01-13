@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -94,7 +95,7 @@ public sealed class DownloaderForm : AppForm
     {
         if (Win32User.NotImpersonalOrElevated)
         {
-            LinkBrowserLink.LinkData = DownloadUrl = string.Format("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe", TargetVersion);
+            LinkBrowserLink.LinkData = DownloadUrl = new StringBuilder(120).Append("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_").Append(TargetVersion).Append("_x64_Setup.exe").ToString();
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;

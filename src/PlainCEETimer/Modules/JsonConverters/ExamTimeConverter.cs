@@ -2,6 +2,7 @@
 using System.Globalization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
@@ -17,7 +18,7 @@ public sealed class ExamTimeConverter : JsonConverter<DateTime>
                 return value;
             }
 
-            return new((Convert.ToInt64(reader.Value) + ConfigValidator.MinDateSeconds) * ConfigValidator.MinTick);
+            return Convert.ToInt64(reader.Value).ToDateTime();
         }
         catch
         {
@@ -27,6 +28,6 @@ public sealed class ExamTimeConverter : JsonConverter<DateTime>
 
     public override void WriteJson(JsonWriter writer, DateTime value, JsonSerializer serializer)
     {
-        writer.WriteValue((value.Ticks / ConfigValidator.MinTick) - ConfigValidator.MinDateSeconds);
+        writer.WriteValue(value.ToTimestamp());
     }
 }

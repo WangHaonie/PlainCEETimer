@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 
@@ -41,6 +42,12 @@ public static class Extensions
 
     public static string Format(this DateTime dateTime)
         => dateTime.ToString(ConfigValidator.DateTimeFormat);
+
+    public static long ToTimestamp(this DateTime dt)
+        => (dt.Ticks / ConfigValidator.MinTick) - ConfigValidator.MinDateSeconds;
+
+    public static DateTime ToDateTime(this long timestamp)
+        => new((timestamp + ConfigValidator.MinDateSeconds) * ConfigValidator.MinTick);
 
     public static string Format(this TimeSpan timeSpan)
         => timeSpan.ToString("d'天'h'时'm'分's'秒'");
