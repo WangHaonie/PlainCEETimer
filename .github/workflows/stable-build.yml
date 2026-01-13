@@ -35,11 +35,13 @@ jobs:
         run: |
           $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
           Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "sha=$($env:GITHUB_SHA.Substring(0, 7))"
           Add-Content -Path $env:GITHUB_OUTPUT -Value "tag=$('v'+$ver)"
 
       - name: Generate Release Content
         run: |
-          $Date = [DateTime]::Now.AddHours(8.0)
+          $Date = [DateTime]::UtcNow.AddHours(8.0)
+          $($Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")) >date.txt
           $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
 
           $ChangeLog = (Get-Content -Raw -Encoding UTF8 ".github/build/stable-changelog.txt").Trim()
@@ -57,7 +59,7 @@ jobs:
           internal static class AppInfo
           {
               public const string Version = `"${{ steps.read_version.outputs.version }}`";
-              public const string CommitSHA = `"$($env:GITHUB_SHA.Substring(0, 7))`";
+              public const string CommitSHA = `"${{ steps.read_version.outputs.sha }}`";
               public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
           }" >src\PlainCEETimer\Modules\AppInfo.cs
 
@@ -72,6 +74,38 @@ jobs:
 
       - name: Build Setup
         run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
+
+      - name: Checkout PlainCEETimerStatic
+        uses: actions/checkout@v4
+        with:
+          repository: WangHaonie/PlainCEETimerStatic
+          ssh-key: ${{ secrets.TRIGGER_PRIVATE_KEY }}
+          path: PlainCEETimerStatic
+
+      - name: Push to PlainCEETimerStatic
+        run: |
+          $date = (Get-Content -Raw -Encoding UTF8 "date.txt").Trim()
+          $size = $((Get-Item 'src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
+          ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
+          $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
+
+          cd PlainCEETimerStatic
+
+          git config user.name "WangHaonie"
+          git config user.email "68315280+WangHaonie@users.noreply.github.com"
+
+          md api -ErrorAction Ignore
+          $json = @"
+          {"name":"${{ steps.read_version.outputs.version }}","published_at":"$date","body":"$log","size":$size,"commit":"${{ steps.read_version.outputs.sha }}"}
+          "@ >api\stable-test.json
+
+          md download/stable-test -ErrorAction Ignore
+          Copy-Item -Path "../src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/stable-test/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
+          Copy-Item -Path "download/stable-test/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/stable-test/CEETimerCSharpWinForms_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
+
+          git add .
+          git commit -m "WangHaonie/PlainCEETimer@${{ steps.read_version.outputs.sha }}"
+          git push
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
