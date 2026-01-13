@@ -9,6 +9,7 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PlainCEETimer.UI.Forms;
 
@@ -17,6 +18,7 @@ public sealed class DownloaderForm : AppForm
     protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
 
     private bool IsCancelled;
+    private bool IsPreview;
     private string DownloadUrl;
     private string DownloadPath;
     private PlainLabel LabelDownloading;
@@ -34,11 +36,13 @@ public sealed class DownloaderForm : AppForm
 
     public DownloaderForm(string version)
     {
+        IsPreview = version == "/pre";
         TargetVersion = Version.TryParse(version, out _) ? version : AppInfo.Version;
     }
 
-    public DownloaderForm(string version, long size)
+    public DownloaderForm(bool isPreview, string version, long size)
     {
+        IsPreview = isPreview;
         TargetVersion = version;
         UpdateSize = size;
     }
@@ -95,7 +99,19 @@ public sealed class DownloaderForm : AppForm
     {
         if (Win32User.NotImpersonalOrElevated)
         {
-            LinkBrowserLink.LinkData = DownloadUrl = new StringBuilder(120).Append("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_").Append(TargetVersion).Append("_x64_Setup.exe").ToString();
+            var sb = new StringBuilder(120)
+            .Append("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/");
+
+            if (IsPreview)
+            {
+                sb.Append("ci/");
+            }
+
+            sb.Append("CEETimerCSharpWinForms_")
+            .Append(TargetVersion)
+            .Append("_x64_Setup.exe");
+
+            LinkBrowserLink.LinkData = DownloadUrl = sb.ToString();
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Contexts;
-using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -9,7 +7,6 @@ using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PlainCEETimer.Modules;
 
@@ -43,7 +40,7 @@ public class Updater
                     {
                         if (FormDownloader == null || FormDownloader.IsDisposed)
                         {
-                            FormDownloader = new(latest, response.UpdateSize);
+                            FormDownloader = new(isPreview, latest, response.UpdateSize);
                         }
 
                         FormDownloader.ReActivate();

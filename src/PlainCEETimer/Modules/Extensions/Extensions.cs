@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Configuration;
 
