@@ -23,7 +23,7 @@ public static class Win32User
 
     public static string ProcessOwner => processOwner;
     public static string LogonUser => logonUser;
-    public static bool NotImpersonalOrElevated { get; }
+    public static bool NotImpersonal { get; }
 
     private static readonly string processOwner;
     private static readonly string logonUser;
@@ -32,7 +32,7 @@ public static class Win32User
     {
         processOwner = WindowsIdentity.GetCurrent().Name;
         logonUser = GetLogonUserName();
-        NotImpersonalOrElevated = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
+        NotImpersonal = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#4", CharSet = CharSet.Unicode)]

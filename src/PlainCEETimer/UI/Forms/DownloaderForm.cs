@@ -97,7 +97,7 @@ public sealed class DownloaderForm : AppForm
 
     protected override void OnShown()
     {
-        if (Win32User.NotImpersonalOrElevated)
+        if (Win32User.NotImpersonal)
         {
             var sb = new StringBuilder(120)
             .Append("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/");

@@ -9,7 +9,7 @@ internal static class Startup
 {
     public static bool IsTaskSchd { get; private set; }
 
-    private static readonly bool NotElevated = Win32User.NotImpersonalOrElevated;
+    private static readonly bool NotElevated = Win32User.NotImpersonal;
     private static readonly string UserName = Win32User.LogonUser;
     private static readonly string UserNameOnly = UserName.Split('\\')[1];
     private static readonly string TaskName = $"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})";
