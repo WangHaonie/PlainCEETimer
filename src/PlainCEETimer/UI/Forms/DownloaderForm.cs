@@ -92,6 +92,7 @@ public sealed class DownloaderForm : AppForm
         ArrangeControlXT(LinkBrowser, LabelDownloading, 1);
         AlignControlXR(LinkBrowser, ProgressBarMain, 3);
         ArrangeCommonButtonsR(ButtonRetry, ButtonCancel, ProgressBarMain, 1, 6);
+        InitWindowSize(ButtonCancel, 4, 6);
     }
 
     protected override void OnShown()

@@ -77,6 +77,7 @@ public sealed class AboutForm : AppForm
         AlignControlXL(Links, LabelLicense, 2);
         CenterControlY(Links, ButtonOK, 2);
         LabelLicense.BringToFront();
+        InitWindowSize(ButtonOK, 6, 5);
     }
 
     protected override bool OnClosing(CloseReason closeReason)

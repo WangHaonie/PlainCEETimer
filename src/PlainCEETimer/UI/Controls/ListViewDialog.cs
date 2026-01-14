@@ -181,6 +181,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
         ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
+        InitWindowSize(ButtonB, 3, 3);
     }
 
     protected sealed override void OnLoad()

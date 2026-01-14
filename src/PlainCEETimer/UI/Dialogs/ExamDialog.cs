@@ -55,7 +55,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             LabelEnd = b.Label("考试结束"),
             LabelCounter = b.Label("00/00"),
 
-            TextBoxName = b.TextBox(215, false, (_, _) =>
+            TextBoxName = b.TextBox(218, false, (_, _) =>
             {
                 CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
                 int count = CurrentExamName.Length;
@@ -136,6 +136,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 5);
         GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
         ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 0, 3);
+        InitWindowSize(ButtonB, 5, 5);
     }
 
     protected override void OnLoad()

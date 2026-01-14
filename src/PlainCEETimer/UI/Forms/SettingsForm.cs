@@ -577,6 +577,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
         ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, -4, 3);
+        InitWindowSize(ButtonCancel, 6, 6);
     }
 
     protected override void OnLoad()

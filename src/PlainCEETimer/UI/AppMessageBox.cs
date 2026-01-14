@@ -63,6 +63,8 @@ public class AppMessageBox(AppForm parent = null)
                 CompactControlY(ButtonA, ImageIcon);
                 ArrangeControlXT(ButtonB, ButtonA, 3);
             }
+
+            InitWindowSize(ButtonB, 6, 6);
         }
 
         protected override void OnLoad()

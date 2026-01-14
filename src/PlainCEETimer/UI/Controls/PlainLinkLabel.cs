@@ -9,6 +9,7 @@ public class PlainLinkLabel : LinkLabel
     {
         AutoSize = true;
         LinkBehavior = LinkBehavior.HoverUnderline;
+
         var normal = Colors.LightForeLinkNormal;
         var click = Colors.LightForeLinkOnClick;
         var disabled = Colors.LightForeLinkDisabled;

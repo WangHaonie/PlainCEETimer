@@ -57,6 +57,7 @@ public sealed class HotKeyDialog : AppDialog
         CenterControlY(LabelHotKey2, HotkeyCtrl2, -1);
         CenterControlY(LabelHotKey3, HotkeyCtrl3, -1);
         ArrangeCommonButtonsR(ButtonA, ButtonB, HotkeyCtrl3, 1, 5);
+        InitWindowSize(ButtonB, 5, 5);
     }
 
     protected override void OnLoad()

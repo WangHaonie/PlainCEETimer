@@ -37,7 +37,6 @@ public sealed class PlainTextBox : TextBox
         protected override void OnInitializing()
         {
             base.OnInitializing();
-            AutoSize = true;
             Location = parent.LocationToScreen(-4, -4);
 
             this.AddControls(b =>
@@ -58,6 +57,7 @@ public sealed class PlainTextBox : TextBox
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
             parent.OnExpandableVisibleChanged(true);
+            InitWindowSize(ButtonApply, 3, 3);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

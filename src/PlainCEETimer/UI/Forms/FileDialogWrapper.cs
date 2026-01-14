@@ -7,6 +7,8 @@ namespace PlainCEETimer.UI.Forms;
 
 internal sealed class FileDialogWrapper(string title) : AppForm
 {
+    private PlainLabel LabelMessage;
+
     protected override void OnInitializing()
     {
         Text = nameof(FileDialogWrapper);
@@ -14,7 +16,12 @@ internal sealed class FileDialogWrapper(string title) : AppForm
         MinimizeBox = false;
         ControlBox = false;
         StartPosition = FormStartPosition.WindowsDefaultLocation;
-        this.AddControls(b => [b.Label(title)]);
+        this.AddControls(b => [LabelMessage = b.Label(title)]);
+    }
+
+    protected override void RunLayout(bool isHighDpi)
+    {
+        InitWindowSize(LabelMessage, 1, 3);
     }
 
     public static DialogResult ShowDialog(FileDialog dialog, params FileFilter[] filters)

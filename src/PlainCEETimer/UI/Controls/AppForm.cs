@@ -58,8 +58,6 @@ public abstract class AppForm : Form
         SuspendLayout();
         AutoScaleDimensions = new(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
-        AutoSize = true;
-        AutoSizeMode = AutoSizeMode.GrowAndShrink;
         Font = AppFont;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -68,7 +66,6 @@ public abstract class AppForm : Form
 
         if (SetRoundCorner)
         {
-            AutoSize = false;
             ControlBox = false;
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
@@ -78,9 +75,10 @@ public abstract class AppForm : Form
             {
                 RoundCornerRadius = 7;
             }
+
+            ClientSize = default;
         }
 
-        ClientSize = new();
         OnInitializing();
         ResumeLayout(true);
     }
@@ -386,6 +384,12 @@ public abstract class AppForm : Form
     protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
     {
         groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
+    }
+
+    protected void InitWindowSize(Control xyLast, int xOffset = 0, int yOffset = 0)
+    {
+        ClientSize = new(xyLast.Right + ScaleToDpi(xOffset), xyLast.Bottom + ScaleToDpi(yOffset));
+        MinimumSize = Size;
     }
 
     protected void EndModelessDialog(bool success, bool close = true)

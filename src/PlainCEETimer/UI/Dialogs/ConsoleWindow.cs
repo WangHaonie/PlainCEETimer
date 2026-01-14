@@ -75,6 +75,7 @@ public sealed class ConsoleWindow : AppDialog
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
         CenterControlY(LabelMessage, ButtonA);
+        InitWindowSize(ButtonB, 3, 3);
     }
 
     protected override void OnShown()

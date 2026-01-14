@@ -160,6 +160,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         ArrangeControlXLT(ComboBoxPlaceholders, TextBoxCustomText, BlockFore, 0, -6);
         ComboBoxPlaceholders.BringToFront();
         ComboBoxPlaceholders.Visible = false;
+        InitWindowSize(ButtonB, 5, 5);
     }
 
     protected override void OnLoad()

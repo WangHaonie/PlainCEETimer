@@ -167,7 +167,6 @@ public sealed partial class ColorBlock : PlainLabel
 
     public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
     {
-        AutoSize = true;
         BorderStyle = BorderStyle.FixedSingle;
         IsPreview = isPreview;
         IsFore = isFore;
