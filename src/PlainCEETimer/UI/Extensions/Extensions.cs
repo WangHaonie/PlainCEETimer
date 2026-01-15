@@ -45,14 +45,6 @@ public static class Extensions
         return control;
     }
 
-    public static TControl SetText<TControl, TData>(this TControl control, string newText, out string oldText)
-        where TControl : Control
-    {
-        oldText = control.Text;
-        control.Text = newText;
-        return control;
-    }
-
     public static TControl AsFocus<TControl>(this TControl control, AppForm parent)
         where TControl : Control
     {
@@ -138,11 +130,9 @@ public static class Extensions
 
     public static void DoRadioCheck(this MenuItem menu, int item, out MenuItem menuItem)
     {
-        if (menu == null)
-        {
-            menuItem = null;
-        }
-        else
+        menuItem = null;
+
+        if (menu != null)
         {
             Win32UI.MenuCheckRadioItemByPosition(menu.Handle, item);
             menuItem = menu.MenuItems[item];
