@@ -168,17 +168,45 @@ public sealed class PlainListView : ListView
         const int CDDS_ITEMPREPAINT = 0x00010000 | CDDS_PREPAINT;
         const int CDRF_DODEFAULT = 0x00000000;
 
-        if (m.Msg == WM_NOTIFY && Marshal.ReadInt32(m.LParam, 16 /* NMHDR.code */) == NM_CUSTOMDRAW)
+        const int TTN_FIRST = -520;
+        const int TTN_GETDISPINFOW = TTN_FIRST - 10;
+        const int WM_USER = 0x0400;
+        const int TTM_SETMAXTIPWIDTH = WM_USER + 24;
+
+        const int NMHDR_code = 16;
+        const int NMCUSTOMDRAW_dwDrawStage = 24;
+        const int NMCUSTOMDRAW_hdc = 32;
+
+        if (m.Msg == WM_NOTIFY)
         {
-            switch (Marshal.ReadInt32(m.LParam, 24 /* NMCUSTOMDRAW.dwDrawStage */))
+            switch (Marshal.ReadInt32(m.LParam, NMHDR_code))
             {
-                case CDDS_PREPAINT:
-                    m.Result = new(CDRF_NOTIFYITEMDRAW);
-                    return;
-                case CDDS_ITEMPREPAINT:
-                    Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, 32 /* NMCUSTOMDRAW.hdc */),
-                        UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
-                    m.Result = new(CDRF_DODEFAULT);
+                case NM_CUSTOMDRAW:
+                    switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW_dwDrawStage))
+                    {
+                        case CDDS_PREPAINT:
+                            m.Result = new(CDRF_NOTIFYITEMDRAW);
+                            return;
+                        case CDDS_ITEMPREPAINT:
+                            Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW_hdc),
+                                UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
+                            m.Result = new(CDRF_DODEFAULT);
+                            return;
+                    }
+                    break;
+
+                case TTN_GETDISPINFOW:
+                    /*
+                    
+                    ToolTip 自动换行 参考：
+
+                    How to Implement Multiline Tooltips - Win32 apps | Microsoft Learn
+                    https://learn.microsoft.com/en-us/windows/win32/controls/implement-multiline-tooltips
+
+                     */
+
+                    base.WndProc(ref m);
+                    Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), TTM_SETMAXTIPWIDTH, 0, Width);
                     return;
             }
         }
