@@ -115,8 +115,8 @@ jobs:
           git config user.name "WangHaonie"
           git config user.email "68315280+WangHaonie@users.noreply.github.com"
 
-          md static/badges -ErrorAction Ignore
-          curl "https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-${loc}k-blue" >static/badges/loc.svg
+          md badges -ErrorAction Ignore
+          curl "https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-${loc}k-blue" >badges\loc.svg
 
           md api -ErrorAction Ignore
           $json = @"
