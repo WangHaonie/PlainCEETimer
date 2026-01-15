@@ -108,7 +108,8 @@ jobs:
           $size = $((Get-Item 'src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
           ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
           $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
-          $loc = ((cloc src --include-lang="C/C++ Header,C#,C++" --json | ConvertFrom-Json).SUM.code / 1000).ToString("0.0")
+          $loc = [Math]::Round((cloc src --include-lang="C/C++ Header,C#,C++" --json | ConvertFrom-Json).SUM.code / 1000, 1)
+          cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
 
           cd PlainCEETimerStatic
 
@@ -117,6 +118,9 @@ jobs:
 
           md badges -ErrorAction Ignore
           curl "https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-${loc}k-blue" >badges\loc.svg
+
+          md md -ErrorAction Ignore
+          Copy-Item -Path "../loc.md" -Destination "md/loc.md"
 
           md api -ErrorAction Ignore
           $json = @"
