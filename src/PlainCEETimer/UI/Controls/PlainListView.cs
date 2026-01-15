@@ -59,6 +59,13 @@ public sealed class PlainListView : ListView
         }
     }
 
+    public int ColumnMaxWidth
+    {
+        get => columnMaxWidth;
+        set => columnMaxWidth = value;
+    }
+
+    private int columnMaxWidth;
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
     private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
@@ -100,6 +107,11 @@ public sealed class PlainListView : ListView
         foreach (ColumnHeader column in Columns)
         {
             column.Width = -2;
+
+            if (columnMaxWidth > 0 && column.Width > columnMaxWidth)
+            {
+                column.Width = columnMaxWidth;
+            }
         }
 
         Columns.Remove(BlankColumn);
