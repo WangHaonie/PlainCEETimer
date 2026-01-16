@@ -7,8 +7,6 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
 {
-    private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
-
     public RulesManager()
         : base(460, ["时刻", "效果预览"], Ph.RuleTypes, "规则")
     {

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Linq;
@@ -63,8 +64,9 @@ internal static class ConfigValidator
         }
     }
 
-    private static bool canSaveConfig;
     private static bool validateNeeded = true;
+    private static volatile bool canSaveConfig;
+    private static readonly object _lock = new();
 
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -79,6 +81,7 @@ internal static class ConfigValidator
     static ConfigValidator()
     {
         App.AppExit += SaveConfig;
+        SystemEvents.SessionEnding += (_, _) => SaveConfig();
     }
 
     public static void DemandConfig()
@@ -88,15 +91,18 @@ internal static class ConfigValidator
 
     public static void SaveConfig()
     {
-        try
+        lock (_lock)
         {
-            if (canSaveConfig)
+            try
             {
-                File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
-                canSaveConfig = false;
+                if (canSaveConfig)
+                {
+                    File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
+                    canSaveConfig = false;
+                }
             }
+            catch { }
         }
-        catch { }
     }
 
     public static AppConfig ReadConfig()

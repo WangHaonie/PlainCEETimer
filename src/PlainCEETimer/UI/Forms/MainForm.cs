@@ -74,8 +74,6 @@ public sealed class MainForm : AppForm
             SetCountdownAutoWrap();
             ApplyLocation();
         };
-
-        SystemEvents.SessionEnding += (_, _) => ConfigValidator.SaveConfig();
     }
 
     protected override void OnPaint(PaintEventArgs e)

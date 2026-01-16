@@ -13,16 +13,16 @@ public readonly struct COLORREF
 {
     public const int EmptyValue = 0xFFFFFF;
 
-    private readonly int Value;
+    private readonly int value;
 
     private COLORREF(Color color)
     {
-        Value = color.ToWin32();
+        value = color.ToWin32();
     }
 
     public Color ToColor()
     {
-        return Value.ToColor();
+        return value.ToColor();
     }
 
     public static implicit operator COLORREF(Color c)
@@ -34,7 +34,7 @@ public readonly struct COLORREF
     {
         get
         {
-            var color = Value.ToColor();
+            var color = value.ToColor();
             return $"RGB({color.R}, {color.G}, {color.B})";
         }
     }
@@ -42,22 +42,22 @@ public readonly struct COLORREF
 
 public readonly struct LPCUSTCOLORS : IDisposable
 {
-    private readonly IntPtr Value;
+    private readonly IntPtr value;
 
     public LPCUSTCOLORS(int[] colors)
     {
-        Value = Marshal.AllocHGlobal(16 * sizeof(int));
-        Marshal.Copy(colors, 0, Value, 16);
+        value = Marshal.AllocHGlobal(16 * sizeof(int));
+        Marshal.Copy(colors, 0, value, 16);
     }
 
     public readonly void Populate(int[] colors)
     {
-        Marshal.Copy(Value, colors, 0, 16);
+        Marshal.Copy(value, colors, 0, 16);
     }
 
     public void Dispose()
     {
-        Marshal.FreeHGlobal(Value);
+        Marshal.FreeHGlobal(value);
     }
 }
 
@@ -78,11 +78,11 @@ public struct RECT
 
 public readonly struct HICON
 {
-    private readonly IntPtr Value;
+    private readonly IntPtr value;
 
     public Icon ToIcon()
     {
-        var result = Icon.FromHandle(Value).Copy();
+        var result = Icon.FromHandle(value).Copy();
         Win32UI.DestroyIcon(this);
         return result;
     }
