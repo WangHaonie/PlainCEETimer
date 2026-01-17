@@ -31,14 +31,28 @@ void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TY
     ReleasePPI(&prt);
 }
 
-void TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
+BOOL TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 {
-    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init
+        && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt))
+        && SUCCEEDED(prt->get_Xml(pXml)))
     {
-        prt->get_Xml(pXml);
+        return TRUE;
     }
 
     ReleasePPI(&prt);
+    return FALSE;
+}
+
+BOOL TaskSchedulerExistsTask(LPCWSTR path)
+{
+    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    {
+        return TRUE;
+    }
+
+    ReleasePPI(&prt);
+    return FALSE;
 }
 
 void TaskSchedulerEnableTask(LPCWSTR path)

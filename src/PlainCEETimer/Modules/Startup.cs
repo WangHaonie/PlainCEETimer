@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.Interop;
+﻿using System.Text;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
 
@@ -9,10 +10,10 @@ internal static class Startup
 {
     public static bool IsTaskSchd { get; private set; }
 
+    private static string TaskName;
     private static readonly bool NotElevated = Win32User.NotImpersonal;
     private static readonly string UserName = Win32User.LogonUser;
     private static readonly string UserNameOnly = UserName.Split('\\')[1];
-    private static readonly string TaskName = $"WangHaonie\\PlainCEETimer AutoStartup ({UserName.GetHashCode():X})";
     private static readonly string AppPath = $"\"{App.ExecutablePath}\"";
     private static readonly string StartupKey = App.AppNameEngOld;
     private static readonly RegistryHelper Registry = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
@@ -73,7 +74,7 @@ internal static class Startup
     {
         if (CheckStartUpState() is 1 or 2)
         {
-            Win32TaskScheduler.Import(TaskName, $@"<Task xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><Description>用于在 {UserNameOnly} 登录时自动运行</Description></RegistrationInfo><Triggers><LogonTrigger><UserId>{UserName}</UserId></LogonTrigger></Triggers><Settings><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries></Settings><Actions><Exec><Command>{AppPath}</Command></Exec></Actions></Task>", TaskLogonType.InteractiveToken);
+            ImportTask();
             RefreshTaskState();
         }
     }
@@ -103,6 +104,43 @@ internal static class Startup
         }
     }
 
+    public static void RenameTaskToNew()
+    {
+        if (NotElevated)
+        {
+            var sb = new StringBuilder(52)
+            .Append("WangHaonie\\PlainCEETimer AutoStartup (")
+            .Append(new HashCode()
+                .Add(UserName)
+                .Add(App.ExecutablePath)
+                .Combine()
+                .ToString("X"))
+            .Append(')');
+
+            TaskName = sb.ToString();
+
+            if (!Win32TaskScheduler.Exists(TaskName))
+            {
+                var oldName = sb.Clear()
+                .Append("WangHaonie\\PlainCEETimer AutoStartup (")
+                .Append(UserName.GetHashCode().ToString("X"))
+                .Append(')')
+                .ToString();
+
+                if (Win32TaskScheduler.Exists(oldName))
+                {
+                    Win32TaskScheduler.Delete(oldName);
+                    ImportTask();
+                }
+            }
+        }
+    }
+
+    private static void ImportTask()
+    {
+        Win32TaskScheduler.Import(TaskName, $@"<Task xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task""><RegistrationInfo><Author>WangHaonie</Author><Description>用于在 {UserNameOnly} 登录时自动运行</Description></RegistrationInfo><Triggers><LogonTrigger><UserId>{UserName}</UserId></LogonTrigger></Triggers><Settings><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries></Settings><Actions><Exec><Command>{AppPath}</Command></Exec></Actions></Task>", TaskLogonType.InteractiveToken);
+    }
+
     /// <summary>
     /// 获取本程序在任务计划程序中的自启动状态。
     /// </summary>
@@ -111,11 +149,9 @@ internal static class Startup
     {
         if (NotElevated)
         {
-            Win32TaskScheduler.Export(TaskName, out var raw);
-
-            if (!string.IsNullOrEmpty(raw))
+            if (Win32TaskScheduler.Export(TaskName, out var rawXml))
             {
-                var xml = Xml.FormString(raw);
+                var xml = Xml.FormString(rawXml);
                 EnableTask();
 
                 if (xml.Check("true", true, "Triggers", "LogonTrigger", "Enabled") &&

@@ -17,6 +17,7 @@ EXPORTS
     TaskSchedulerImportTaskFromXml @11 NONAME
     TaskSchedulerExportTaskAsXml @12 NONAME
     TaskSchedulerEnableTask @13 NONAME
+    TaskSchedulerExistsTask @41 NONAME
     TaskSchedulerDeleteTask @14 NONAME
     ReleaseTaskScheduler @15 NONAME
 

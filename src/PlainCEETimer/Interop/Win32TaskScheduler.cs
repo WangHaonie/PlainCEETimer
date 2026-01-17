@@ -15,7 +15,10 @@ public static class Win32TaskScheduler
     public static extern void Import(string path, string xmlText, TaskLogonType logonType);
 
     [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
-    public static extern void Export(string path, [MarshalAs(UnmanagedType.BStr)] out string pXml);
+    public static extern bool Export(string path, [MarshalAs(UnmanagedType.BStr)] out string pXml);
+
+    [DllImport(App.NativesDll, EntryPoint = "#41", CharSet = CharSet.Unicode)]
+    public static extern bool Exists(string path);
 
     [DllImport(App.NativesDll, EntryPoint = "#13", CharSet = CharSet.Unicode)]
     public static extern void Enable(string path);

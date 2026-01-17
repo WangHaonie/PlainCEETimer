@@ -87,7 +87,13 @@ public sealed class MainForm : AppForm
     {
         RefreshSettings();
         ConfigValidator.ValidateNeeded = false;
-        new Action(Startup.RefreshTaskState).Start();
+
+        new Action(() =>
+        {
+            Startup.RenameTaskToNew();
+            Startup.RefreshTaskState();
+        }).Start();
+
         new NetworkedAction(() => new Updater().CheckForUpdate(false, this)).Invoke();
     }
 
