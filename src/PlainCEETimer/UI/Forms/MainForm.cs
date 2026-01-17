@@ -90,7 +90,7 @@ public sealed class MainForm : AppForm
 
         new Action(() =>
         {
-            Startup.RenameTaskToNew();
+            Startup.Initialize();
             Startup.RefreshTaskState();
         }).Start();
 

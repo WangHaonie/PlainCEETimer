@@ -11,11 +11,13 @@ internal static class Startup
     public static bool IsTaskSchd { get; private set; }
 
     private static string TaskName;
+    private static string StartupKey;
     private static readonly bool NotElevated = Win32User.NotImpersonal;
     private static readonly string UserName = Win32User.LogonUser;
     private static readonly string UserNameOnly = UserName.Split('\\')[1];
     private static readonly string AppPath = $"\"{App.ExecutablePath}\"";
-    private static readonly string StartupKey = App.AppNameEngOld;
+    private static readonly string Id = new HashCode().Add(UserName).Add(App.ExecutablePath).Combine().ToString("X");
+    private static readonly string IdOld = UserName.GetHashCode().ToString("X");
     private static readonly RegistryHelper Registry = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 
     static Startup()
@@ -66,7 +68,7 @@ internal static class Startup
     {
         if (!GetRegistryState())
         {
-            Registry.Set(StartupKey, AppPath);
+            SetRegistryCore();
         }
     }
 
@@ -104,17 +106,21 @@ internal static class Startup
         }
     }
 
-    public static void RenameTaskToNew()
+    public static void Initialize()
     {
         if (NotElevated)
         {
+            StartupKey = $"{App.AppNameEngOld}_{Id}";
+
+            if (Registry.Check(App.AppNameEngOld, AppPath, ""))
+            {
+                Registry.Delete(App.AppNameEngOld);
+                SetRegistryCore();
+            }
+
             var sb = new StringBuilder(52)
             .Append("WangHaonie\\PlainCEETimer AutoStartup (")
-            .Append(new HashCode()
-                .Add(UserName)
-                .Add(App.ExecutablePath)
-                .Combine()
-                .ToString("X"))
+            .Append(Id)
             .Append(')');
 
             TaskName = sb.ToString();
@@ -123,7 +129,7 @@ internal static class Startup
             {
                 var oldName = sb.Clear()
                 .Append("WangHaonie\\PlainCEETimer AutoStartup (")
-                .Append(UserName.GetHashCode().ToString("X"))
+                .Append(IdOld)
                 .Append(')')
                 .ToString();
 
@@ -134,6 +140,11 @@ internal static class Startup
                 }
             }
         }
+    }
+
+    private static void SetRegistryCore()
+    {
+        Registry.Set(StartupKey, AppPath);
     }
 
     private static void ImportTask()
