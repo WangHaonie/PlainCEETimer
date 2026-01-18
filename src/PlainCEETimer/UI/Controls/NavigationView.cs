@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 
@@ -98,7 +99,8 @@ public sealed class NavigationView : Control
     private Panel panelNavPages;
     private NavigationBar navBar;
     private TreeNodeCollection m_headers;
-    private ControlCollection m_pages;
+    private ControlCollection m_ctrls;
+    private List<NavigationPage> m_pages;
 
     public NavigationView()
     {
@@ -108,6 +110,7 @@ public sealed class NavigationView : Control
     public void AddPage(NavigationPage page)
     {
         page.Header = m_headers.Add(page.Text);
+        m_ctrls.Add(page);
         m_pages.Add(page);
     }
 
@@ -118,12 +121,14 @@ public sealed class NavigationView : Control
             page.Header = m_headers.Add(page.Text);
         }
 
+        m_ctrls.AddRange(pages);
         m_pages.AddRange(pages);
     }
 
     public void RemovePage(NavigationPage page)
     {
         m_headers.Remove(page.Header);
+        m_ctrls.Remove(page);
         m_pages.Remove(page);
     }
 
@@ -155,7 +160,7 @@ public sealed class NavigationView : Control
 
         for (int i = 0; i < length; i++)
         {
-            var current = (NavigationPage)m_pages[i];
+            var current = m_pages[i];
 
             if (page == current && i == index)
             {
@@ -187,7 +192,7 @@ public sealed class NavigationView : Control
         if (!isSwitching)
         {
             var index = e.Node.Index;
-            var page = (NavigationPage)m_pages[index];
+            var page = m_pages[index];
             SwitchToPageCore(page, index);
         }
     }
@@ -206,7 +211,8 @@ public sealed class NavigationView : Control
         panelNavBar = new();
         panelNavBar.Controls.Add(navBar);
         panelNavPages = new();
-        m_pages = panelNavPages.Controls;
+        m_ctrls = panelNavPages.Controls;
+        m_pages = [];
         UpdateView();
         Controls.AddRange([panelNavBar, panelNavPages]);
         SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
