@@ -9,7 +9,7 @@ using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public class GlobalRulesConverter : JsonConverter<CountdownRule[]>
+public sealed class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 {
     public override CountdownRule[] ReadJson(JsonReader reader, Type objectType, CountdownRule[] existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
@@ -34,7 +34,8 @@ public class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 
     public override void WriteJson(JsonWriter writer, CountdownRule[] value, JsonSerializer serializer)
     {
-        if (value == null || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, new CountdownRuleComparer())))
+        if (value == null
+            || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, new CountdownRuleComparer())))
         {
             writer.WriteNull();
         }

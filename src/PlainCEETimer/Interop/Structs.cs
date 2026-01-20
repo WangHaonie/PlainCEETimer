@@ -44,7 +44,7 @@ public readonly struct LPCUSTCOLORS : IDisposable
 {
     private readonly IntPtr value;
 
-    public LPCUSTCOLORS(int[] colors)
+    private LPCUSTCOLORS(int[] colors)
     {
         value = Marshal.AllocHGlobal(16 * sizeof(int));
         Marshal.Copy(colors, 0, value, 16);
@@ -58,6 +58,11 @@ public readonly struct LPCUSTCOLORS : IDisposable
     public void Dispose()
     {
         Marshal.FreeHGlobal(value);
+    }
+
+    public static explicit operator LPCUSTCOLORS(int[] colors)
+    {
+        return new(colors);
     }
 }
 

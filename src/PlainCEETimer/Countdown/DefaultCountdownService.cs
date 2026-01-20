@@ -39,7 +39,7 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
     private readonly SynchronizationContext CurrentContext;
-    private readonly string[] Phs = Ph.AllPhs.Copy();
+    private readonly string[] Phs = Ph.AllPhs;
     private readonly string[] PhContent = new string[12];
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
 

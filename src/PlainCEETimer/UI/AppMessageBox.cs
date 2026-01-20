@@ -113,11 +113,11 @@ public class AppMessageBox(AppForm parent = null)
         }
     }
 
-    private struct MessageLevel
+    private class MessageLevel
     {
-        public static MessageLevel Info => field.init ? field : field = new("提示 - 高考倒计时", ref InfoIcon, 76, SystemSounds.Asterisk);
-        public static MessageLevel Warning => field.init ? field : field = new("警告 - 高考倒计时", ref WarningIcon, 79, SystemSounds.Exclamation);
-        public static MessageLevel Error => field.init ? field : field = new("错误 - 高考倒计时", ref ErrorIcon, 93, SystemSounds.Hand);
+        public static MessageLevel Info => field ??= new("提示 - 高考倒计时", ref InfoIcon, 76, SystemSounds.Asterisk);
+        public static MessageLevel Warning => field ??= new("警告 - 高考倒计时", ref WarningIcon, 79, SystemSounds.Exclamation);
+        public static MessageLevel Error => field ??= new("错误 - 高考倒计时", ref ErrorIcon, 93, SystemSounds.Hand);
 
         private static Bitmap InfoIcon;
         private static Bitmap WarningIcon;
@@ -126,8 +126,6 @@ public class AppMessageBox(AppForm parent = null)
         public readonly string Description;
         public readonly Bitmap Icon;
         public readonly SystemSound Sound;
-
-        private readonly bool init;
 
         /*
 
@@ -150,7 +148,6 @@ public class AppMessageBox(AppForm parent = null)
             icon ??= HICON.FromFile("imageres.dll", iconIndex).ToIcon().ToBitmap();
             Icon = icon;
             Sound = sound;
-            init = true;
         }
     }
 

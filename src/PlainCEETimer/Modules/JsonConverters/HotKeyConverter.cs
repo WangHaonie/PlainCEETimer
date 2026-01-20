@@ -4,7 +4,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public class HotKeyConverter : JsonConverter<HotKey>
+public sealed class HotKeyConverter : JsonConverter<HotKey>
 {
     public override HotKey ReadJson(JsonReader reader, Type objectType, HotKey existingValue, bool hasExistingValue, JsonSerializer serializer)
     {

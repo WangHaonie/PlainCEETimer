@@ -20,8 +20,6 @@ public abstract class AppForm : Form
 
     protected virtual AppFormParam Params => AppFormParam.None;
 
-    protected bool PressedCtrlKey => (ModifierKeys & Keys.Control) == Keys.Control;
-
     public event Action<DialogResult> DialogEnd;
 
     private bool IsLoading = true;
@@ -289,6 +287,11 @@ public abstract class AppForm : Form
     protected int ScaleToDpi(int px)
     {
         return (int)(px * DpiRatio);
+    }
+
+    protected bool IsModkeysPressed(Keys keys)
+    {
+        return (ModifierKeys & keys) == keys;
     }
 
     protected Rectangle GetCurrentScreenRect()

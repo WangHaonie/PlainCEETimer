@@ -40,7 +40,7 @@ public sealed class AboutForm : AppForm
                         ButtonOK.Enabled = false;
                         IsCheckingUpdate = true;
 
-                        new Action(() => new Updater().CheckForUpdate(true, this, PressedCtrlKey)).Start(new Action(() =>
+                        new Action(() => new Updater().CheckForUpdate(true, this, IsModkeysPressed(Keys.Control))).Start(new Action(() =>
                         {
                             ImageLogo.Enabled = true;
                             ButtonOK.Text = buttonText;

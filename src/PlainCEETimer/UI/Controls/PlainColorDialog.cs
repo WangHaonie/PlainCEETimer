@@ -9,23 +9,18 @@ using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainColorDialog : PlainCommonDialog
+public sealed class PlainColorDialog(AppForm owner, Color existing) : PlainCommonDialog(owner, "选取颜色 - 高考倒计时")
 {
     public Color Color => color.ToColor();
 
-    private COLORREF color;
-    private readonly int[] customColors;
+    private COLORREF color = existing;
 
-    public PlainColorDialog(AppForm owner, Color existing) : base(owner, "选取颜色 - 高考倒计时")
-    {
-        color = existing;
-        customColors = DefaultValues.ColorDialogColors.Copy();
-        customColors.PopulateWith(App.AppConfig.CustomColors);
-    }
+    private readonly int[] customColors = DefaultValues.ColorDialogColors
+        .Copy().PopulateWith(App.AppConfig.CustomColors);
 
     protected override bool StartDialog(IntPtr hWndOwner)
     {
-        using LPCUSTCOLORS lpColors = new(customColors);
+        using var lpColors = (LPCUSTCOLORS)customColors;
         var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, lpColors);
 
         if (result)

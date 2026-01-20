@@ -43,7 +43,7 @@ public sealed class MainForm : AppForm
     private BorderColorObject BorderColor;
     private Point LastLocation;
     private Point LastMouseLocation;
-    private Rectangle SelectedScreenRect;
+    private Rectangle ScreenRect;
     private CountdownPosition CountdownPos;
     private ICountdownService MainCountdown;
     private AboutForm FormAbout;
@@ -642,7 +642,7 @@ public sealed class MainForm : AppForm
     {
         if (IsPPTService)
         {
-            var screenRect = SelectedScreenRect;
+            var screenRect = ScreenRect;
             var screenRectX = screenRect.X;
 
             if (Top == screenRect.Y && Left == screenRectX)
@@ -664,31 +664,31 @@ public sealed class MainForm : AppForm
             switch (CountdownPos)
             {
                 case CountdownPosition.LeftCenter:
-                    SetLocation(SelectedScreenRect.X, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
+                    SetLocation(ScreenRect.X, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
                     break;
                 case CountdownPosition.BottomLeft:
-                    SetLocation(SelectedScreenRect.X, SelectedScreenRect.Bottom - Height);
+                    SetLocation(ScreenRect.X, ScreenRect.Bottom - Height);
                     break;
                 case CountdownPosition.TopCenter:
-                    SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Y);
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Y);
                     break;
                 case CountdownPosition.Center:
-                    SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
                     break;
                 case CountdownPosition.BottomCenter:
-                    SetLocation(SelectedScreenRect.X + (SelectedScreenRect.Width - Width) / 2, SelectedScreenRect.Bottom - Height);
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Bottom - Height);
                     break;
                 case CountdownPosition.TopRight:
-                    SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Y);
+                    SetLocation(ScreenRect.Right - Width, ScreenRect.Y);
                     break;
                 case CountdownPosition.RightCenter:
-                    SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Y + (SelectedScreenRect.Height - Height) / 2);
+                    SetLocation(ScreenRect.Right - Width, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
                     break;
                 case CountdownPosition.BottomRight:
-                    SetLocation(SelectedScreenRect.Right - Width, SelectedScreenRect.Bottom - Height);
+                    SetLocation(ScreenRect.Right - Width, ScreenRect.Bottom - Height);
                     break;
                 default:
-                    SetLocation(IsPPTService ? SelectedScreenRect.X + PptsvcThreshold : SelectedScreenRect.X, SelectedScreenRect.Y);
+                    SetLocation(IsPPTService ? ScreenRect.X + PptsvcThreshold : ScreenRect.X, ScreenRect.Y);
                     break;
             }
         }
@@ -705,7 +705,7 @@ public sealed class MainForm : AppForm
             ConfigValidator.DemandConfig();
         }
 
-        SelectedScreenRect = screens[ScreenIndex].WorkingArea;
+        ScreenRect = screens[ScreenIndex].WorkingArea;
     }
 
     private void SetBorderColor(bool enabled, COLORREF color)

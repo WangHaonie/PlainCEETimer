@@ -165,7 +165,7 @@ public sealed class SettingsForm : AppForm
                             {
                                 if (flag)
                                 {
-                                    if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+                                    if (IsModkeysPressed(Keys.Shift))
                                     {
                                         CheckBoxStartup.Tag = true;
                                         UpdateSettingsArea(SettingsArea.StartUp);
@@ -405,7 +405,7 @@ public sealed class SettingsForm : AppForm
                                 UpdateSettingsArea(SettingsArea.Restart);
                                 AllowExit = true;
                             }
-                            else if (!AllowExit && e.Button == MouseButtons.Left && PressedCtrlKey)
+                            else if (!AllowExit && e.Button == MouseButtons.Left && IsModkeysPressed(Keys.Control))
                             {
                                 if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
                                 {
@@ -714,27 +714,9 @@ public sealed class SettingsForm : AppForm
         var topmost = CheckBoxTopMost.Checked;
         var topleft = ComboBoxPosition.SelectedIndex == 0;
         var drag = CheckBoxDraggable.Checked;
-
-        bool working;
-        int sub;
-
-        if (!topmost)
-        {
-            working = false;
-            sub = 0;
-        }
-        else if (topleft || drag)
-        {
-            working = true;
-            sub = 0;
-        }
-        else
-        {
-            working = false;
-            sub = 1;
-        }
-
-        UpdateSettingsArea(SettingsArea.PPTService, working, sub);
+        var working = topmost && (topleft || drag);
+        var subcase = topmost && !topleft && !drag ? 1 : 0;
+        UpdateSettingsArea(SettingsArea.PPTService, working, subcase);
         SettingsChanged();
     }
 
