@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -80,7 +80,7 @@ internal static class App
         Args = args.ArraySelect(x => x.ToLower());
         ArgsLength = Args.Length;
         AllArgs = string.Join(" ", args);
-        InitConfig();
+        InternalInit();
 
         if (IsMainProcess)
         {
@@ -248,19 +248,14 @@ internal static class App
         }
     }
 
-    private static void InitConfig()
+    private static void InternalInit()
     {
         AppConfig = ConfigValidator.ReadConfig();
         ThemeManager.Initialize();
         DefaultValues.InitEssentials(true);
-        CountdownRule[] rules = AppConfig.GlobalRules;
-
-        if (rules == null || rules.Length < 3)
-        {
-            using var scope = new ConfigValidator.InternalAccessScope();
-            AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
-            ConfigValidator.DemandConfig();
-        }
+        ConfigValidator.Validate();
+        ConfigurationManager.AppSettings.Set("EnableWindowsFormsHighDpiAutoResizing", "true");
+        Application.EnableVisualStyles();
     }
 
     public static void Exit(bool restart = false, bool useArgs = false)

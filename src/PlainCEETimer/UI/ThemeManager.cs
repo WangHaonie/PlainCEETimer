@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -21,26 +20,22 @@ public static class ThemeManager
 
     public static void Initialize()
     {
-        if (_isDarkModeSupported = SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
+        if (SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
         {
             var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
             Theme = tmp ? SystemTheme.Dark : SystemTheme.Light;
             var option = App.AppConfig.Dark;
 
-            if (SystemVersion.Current >= WindowsBuilds.Windows10_20H1)
-            {
-                isNewDwma = true;
-            }
-
-            if (_shouldUseDarkMode = (option == 0 && tmp) || option == 2)
+            if ((option == 0 && tmp) || option == 2)
             {
                 Win32UI.EnableDarkModeForApp();
                 _canUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
+                _shouldUseDarkMode = true;
             }
-        }
 
-        Application.EnableVisualStyles();
-        ConfigurationManager.AppSettings.Set("EnableWindowsFormsHighDpiAutoResizing", "true");
+            _isDarkModeSupported = true;
+            isNewDwma = SystemVersion.Current >= WindowsBuilds.Windows10_20H1;
+        }
     }
 
     public static void EnableDarkModeForWindow(IntPtr hWnd)

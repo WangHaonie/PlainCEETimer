@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
@@ -14,22 +15,6 @@ namespace PlainCEETimer.Modules.Configuration;
 
 internal static class ConfigValidator
 {
-    internal sealed class InternalAccessScope : IDisposable
-    {
-        private readonly bool oldValue;
-
-        public InternalAccessScope()
-        {
-            oldValue = validateNeeded;
-            validateNeeded = false;
-        }
-
-        void IDisposable.Dispose()
-        {
-            validateNeeded = oldValue;
-        }
-    }
-
     public const int MaxExamNameLength = 15;
     public const int MinExamNameLength = 2;
     public const int DefExamNameTruncate = 6;
@@ -82,6 +67,19 @@ internal static class ConfigValidator
     {
         App.AppExit += SaveConfig;
         SystemEvents.SessionEnding += (_, _) => SaveConfig();
+    }
+
+    public static void Validate()
+    {
+        var rules = App.AppConfig.GlobalRules;
+
+        if (rules == null || rules.Length < 3)
+        {
+            validateNeeded = false;
+            App.AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
+            DemandConfig();
+            validateNeeded = true;
+        }
     }
 
     public static void DemandConfig()
