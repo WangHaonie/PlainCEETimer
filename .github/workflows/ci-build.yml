@@ -21,9 +21,6 @@ jobs:
         
       - name: Install MSBuild
         uses: microsoft/setup-msbuild@v2
-
-      - name: Install cloc
-        run: choco install cloc -y
         
       - name: Cache NuGet Packages
         uses: actions/cache@v4
@@ -106,10 +103,14 @@ jobs:
         run: |
           $date = (Get-Content -Raw -Encoding UTF8 "date.txt").Trim()
           $size = $((Get-Item 'src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
+
           ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
           $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
-          $loc = [Math]::Round((cloc src --include-lang="C/C++ Header,C#,C++" --json | ConvertFrom-Json).SUM.code / 1000, 1)
-          cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
+
+          irm -OutFile cloc.exe https://github.com/AlDanial/cloc/releases/download/v2.06/cloc-2.06.exe
+          ./cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
+          $locnum = [double]::Parse((((Get-Content -Path "loc.md" -Tail 1) -split '\|') | ForEach-Object { $_.Trim() } | Select-Object -Last 1))
+          $loc = [Math]::Round($locnum / 1000, 1)
 
           cd PlainCEETimerStatic
 
