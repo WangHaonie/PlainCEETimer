@@ -137,9 +137,9 @@ void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 
 void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc)
 {
-    if (!g_CbtHookProc && lpfnCbtHookProc)
+    if (!g_CbtHookProc && lpfnCbtHookProc
+        && ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW))
     {
-        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW);
         g_CbtHookProc = lpfnCbtHookProc;
     }
 }

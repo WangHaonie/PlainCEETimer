@@ -2,8 +2,8 @@
 
 #include <Windows.h>
 
-#define HOOK_OPENNCTHEMEDATA_ARGS "comctl32.dll", "uxtheme.dll", nullptr, 49, IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT
-#define HOOK_GETSYSCOLOR_ARGS "comctl32.dll", "user32.dll", "GetSysColor", 0, IMAGE_DIRECTORY_ENTRY_IMPORT
+#define HOOK_OPENNCTHEMEDATA_ARGS "comctl32.dll", "uxtheme.dll", nullptr, 49, true
+#define HOOK_GETSYSCOLOR_ARGS "comctl32.dll", "user32.dll", "GetSysColor", 0, false
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
 

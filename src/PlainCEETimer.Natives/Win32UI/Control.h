@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#define HOOK_MESSAGEBOXW_ARGS "comdlg32.dll", "user32.dll", "MessageBoxW", 0, IMAGE_DIRECTORY_ENTRY_IMPORT
+#define HOOK_MESSAGEBOXW_ARGS "comdlg32.dll", "user32.dll", "MessageBoxW", 0, false
 
 cexport(void) ListViewSelectAllItems(HWND hLV, BOOL selected);
 cexport(void) SetTopMostWindow(HWND hWnd);

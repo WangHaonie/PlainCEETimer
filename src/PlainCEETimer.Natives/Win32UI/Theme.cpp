@@ -41,7 +41,7 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 {
-    if (WString_Equals(pszClassList, L"ScrollBar", false))
+    if (WString_Equals(pszClassList, WC_SCROLLBAR, false))
     {
         hWnd = nullptr;
         pszClassList = L"DarkMode_Explorer::ScrollBar";
@@ -95,9 +95,9 @@ void EnableDarkModeForApp()
 
 void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 {
-    if (!g_GetSysColor)
+    if (!g_GetSysColor
+        && ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor))
     {
-        ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor);
         g_crFore = crFore;
         g_crBack = crBack;
     }

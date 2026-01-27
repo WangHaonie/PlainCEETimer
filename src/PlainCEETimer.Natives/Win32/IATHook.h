@@ -100,33 +100,34 @@ inline PIMAGE_THUNK_DATA FindDelayLoadThunkInModule(void* moduleBase, const char
 }
 
 template <typename TFunc>
-inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, size_t entryID, TFunc pNewFunc, TFunc* ppOldFunc)
+inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc, TFunc* ppOldFunc)
+{
+    if (addr)
+    {
+        DWORD oldProtect = 0;
+
+        if (VirtualProtect(&addr->u1.Function, sizeof(void*), PAGE_READWRITE, &oldProtect))
+        {
+            if (ppOldFunc)
+            {
+                *ppOldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
+            }
+
+            addr->u1.Function = reinterpret_cast<ULONGLONG>(pNewFunc);
+            VirtualProtect(&addr->u1.Function, sizeof(void*), oldProtect, &oldProtect);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+template <typename TFunc>
+inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, bool fDelayImport, TFunc pNewFunc, TFunc* ppOldFunc)
 {
     if (String_IsNullOrEmpty(targetModuleName) || String_IsNullOrEmpty(importedModuleName))
     {
         return false;
-    }
-
-    bool delayLoad = false;
-
-    switch (entryID)
-    {
-        case IMAGE_DIRECTORY_ENTRY_IMPORT:
-        {
-            delayLoad = false;
-            break;
-        }
-
-        case IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT:
-        {
-            delayLoad = true;
-            break;
-        }
-
-        default:
-        {
-            return false;
-        }
     }
 
     HMODULE hModule = GetModuleHandleA(targetModuleName);
@@ -138,26 +139,11 @@ inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* impor
 
     if (hModule)
     {
-        auto addr = delayLoad
+        auto addr = fDelayImport
             ? FindDelayLoadThunkInModule(hModule, importedModuleName, importedFuncName, importedFuncOrdinal)
             : FindIatThunkInModule(hModule, importedModuleName, importedFuncName, importedFuncOrdinal);
 
-        if (addr)
-        {
-            DWORD oldProtect = 0;
-
-            if (VirtualProtect(&addr->u1.Function, sizeof(IMAGE_THUNK_DATA), PAGE_READWRITE, &oldProtect))
-            {
-                if (ppOldFunc)
-                {
-                    *ppOldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
-                }
-
-                addr->u1.Function = reinterpret_cast<ULONG_PTR>(pNewFunc);
-                VirtualProtect(&addr->u1.Function, sizeof(IMAGE_THUNK_DATA), oldProtect, &oldProtect);
-                return true;
-            }
-        }
+        return ReplaceFunctionCore(addr, pNewFunc, ppOldFunc);
     }
 
     return false;
