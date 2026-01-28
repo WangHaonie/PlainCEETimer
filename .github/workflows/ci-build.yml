@@ -38,6 +38,15 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
           Add-Content -Path $env:GITHUB_OUTPUT -Value "sha=$($env:GITHUB_SHA.Substring(0, 7))"
 
+      - id: count_loc
+        name: Count Lines of Code
+        run: |
+          irm -OutFile cloc.exe https://github.com/AlDanial/cloc/releases/download/v2.06/cloc-2.06.exe
+          ./cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
+          $locnum = [double]::Parse((((Get-Content -Path "loc.md" -Tail 1) -split '\|') | ForEach-Object { $_.Trim() } | Select-Object -Last 1))
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "loc=$locnum"
+          Write-Host "Lines of Code: $locnum"
+
       - name: Generate Pre-Release Content
         run: |
           $Date = [DateTime]::UtcNow.AddHours(8.0)
@@ -107,17 +116,13 @@ jobs:
           ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
           $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
 
-          irm -OutFile cloc.exe https://github.com/AlDanial/cloc/releases/download/v2.06/cloc-2.06.exe
-          ./cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
-          $locnum = [double]::Parse((((Get-Content -Path "loc.md" -Tail 1) -split '\|') | ForEach-Object { $_.Trim() } | Select-Object -Last 1))
-          $loc = [Math]::Round($locnum / 1000, 1)
-
           cd PlainCEETimerStatic
 
           git config user.name "WangHaonie"
           git config user.email "68315280+WangHaonie@users.noreply.github.com"
 
           md badges -ErrorAction Ignore
+          $loc = [Math]::Round(${{ steps.count_loc.outputs.loc }} / 1000, 1)
           curl "https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-${loc}k-blue" >badges\loc.svg
 
           md md -ErrorAction Ignore
