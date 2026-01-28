@@ -136,6 +136,7 @@ public sealed class NavigationView : Control
     {
         var index = page.Header.Index;
         SwitchToPageCore(page, index);
+        navBar.SelectedNode = page.Header;
         navBar.Focus();
     }
 
@@ -161,16 +162,7 @@ public sealed class NavigationView : Control
         for (int i = 0; i < length; i++)
         {
             var current = m_pages[i];
-
-            if (page == current && i == index)
-            {
-                current.Visible = true;
-                navBar.SelectedNode = page.Header;
-            }
-            else
-            {
-                current.Visible = false;
-            }
+            current.Visible = page == current && i == index;
         }
 
         if (index != cindex)

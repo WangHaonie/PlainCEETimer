@@ -98,19 +98,6 @@ public abstract class AppForm : Form
         KeepOnScreen();
     }
 
-    internal void ShowFlyout(AppForm flyout, Func<Point> GetPos)
-    {
-        LocationChanged += (_, _) =>
-        {
-            if (!flyout.IsDisposed)
-            {
-                flyout.Location = GetPos();
-            }
-        };
-
-        flyout.Show(this);
-    }
-
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();

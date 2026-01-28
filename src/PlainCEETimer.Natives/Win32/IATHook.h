@@ -6,7 +6,6 @@
 #pragma once
 
 #include <cstdint>
-#include <string.h>
 #include <utils.h>
 #include <Windows.h>
 
@@ -34,68 +33,66 @@ constexpr T DataDirectoryFromModuleBase(void* moduleBase, size_t entryID)
     return RVA2VA<T>(moduleBase, dataDir[entryID].VirtualAddress);
 }
 
-inline PIMAGE_THUNK_DATA FindAddressByName(void* moduleBase, PIMAGE_THUNK_DATA impName, PIMAGE_THUNK_DATA impAddr, const char* funcName)
+inline PIMAGE_THUNK_DATA FindAddress(void* moduleBase, PIMAGE_THUNK_DATA impName, PIMAGE_THUNK_DATA impAddr, const char* funcName, uint16_t ordinal)
 {
+    bool hasName = !String_IsNullOrEmpty(funcName);
+
     for (; impName->u1.Ordinal; ++impName, ++impAddr)
     {
         if (IMAGE_SNAP_BY_ORDINAL(impName->u1.Ordinal))
-            continue;
-
-        auto import = RVA2VA<PIMAGE_IMPORT_BY_NAME>(moduleBase, impName->u1.AddressOfData);
-        if (strcmp(import->Name, funcName) != 0)
-            continue;
-        return impAddr;
+        {
+            if (!hasName
+                && IMAGE_ORDINAL(impName->u1.Ordinal) == ordinal)
+            {
+                return impAddr;
+            }
+        }
+        else
+        {
+            if (hasName
+                && String_Equals(RVA2VA<PIMAGE_IMPORT_BY_NAME>(moduleBase, impName->u1.AddressOfData)->Name, funcName, true))
+            {
+                return impAddr;
+            }
+        }
     }
-    return nullptr;
-}
 
-inline PIMAGE_THUNK_DATA FindAddressByOrdinal(void* moduleBase, PIMAGE_THUNK_DATA impName, PIMAGE_THUNK_DATA impAddr, uint16_t ordinal)
-{
-    for (; impName->u1.Ordinal; ++impName, ++impAddr)
-    {
-        if (IMAGE_SNAP_BY_ORDINAL(impName->u1.Ordinal) && IMAGE_ORDINAL(impName->u1.Ordinal) == ordinal)
-            return impAddr;
-    }
     return nullptr;
-}
-
-inline PIMAGE_THUNK_DATA FindAddress(void* moduleBase, PIMAGE_THUNK_DATA impName, PIMAGE_THUNK_DATA impAddr, const char* funcName, uint16_t ordinal)
-{
-    if (String_IsNullOrEmpty(funcName))
-        return FindAddressByOrdinal(moduleBase, impName, impAddr, ordinal);
-    else
-        return FindAddressByName(moduleBase, impName, impAddr, funcName);
 }
 
 inline PIMAGE_THUNK_DATA FindIatThunkInModule(void* moduleBase, const char* dllName, const char* funcName, uint16_t ordinal)
 {
     auto imports = DataDirectoryFromModuleBase<PIMAGE_IMPORT_DESCRIPTOR>(moduleBase, IMAGE_DIRECTORY_ENTRY_IMPORT);
+
     for (; imports->Name; ++imports)
     {
-        if (_stricmp(RVA2VA<LPCSTR>(moduleBase, imports->Name), dllName) != 0)
-            continue;
-
-        return FindAddress(moduleBase,
-            RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->OriginalFirstThunk),
-            RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->FirstThunk),
-            funcName, ordinal);
+        if (String_Equals(RVA2VA<LPCSTR>(moduleBase, imports->Name), dllName, true))
+        {
+            return FindAddress(moduleBase,
+                RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->OriginalFirstThunk),
+                RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->FirstThunk),
+                funcName, ordinal);
+        }
     }
+
     return nullptr;
 }
 
 inline PIMAGE_THUNK_DATA FindDelayLoadThunkInModule(void* moduleBase, const char* dllName, const char* funcName, uint16_t ordinal)
 {
     auto imports = DataDirectoryFromModuleBase<PIMAGE_DELAYLOAD_DESCRIPTOR>(moduleBase, IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT);
+
     for (; imports->DllNameRVA; ++imports)
     {
-        if (_stricmp(RVA2VA<LPCSTR>(moduleBase, imports->DllNameRVA), dllName) != 0)
-            continue;
-
-        return FindAddress(moduleBase,
-            RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->ImportNameTableRVA),
-            RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->ImportAddressTableRVA),
-            funcName, ordinal);
+        if (String_Equals(RVA2VA<LPCSTR>(moduleBase, imports->DllNameRVA), dllName, true))
+        {
+            return FindAddress(moduleBase,
+                RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->ImportNameTableRVA),
+                RVA2VA<PIMAGE_THUNK_DATA>(moduleBase, imports->ImportAddressTableRVA),
+                funcName, ordinal);
+        }
     }
+
     return nullptr;
 }
 

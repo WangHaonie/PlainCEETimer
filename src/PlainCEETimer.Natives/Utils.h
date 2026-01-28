@@ -9,6 +9,26 @@ inline bool __cdecl String_IsNullOrEmpty(const char* str) noexcept
     return !str || !*str;
 }
 
+inline bool __cdecl String_Equals(const char* strA, const char* strB, bool fIgnoreCase)
+{
+    if (!strA || !strB)
+    {
+        return false;
+    }
+
+    if (strA == strB)
+    {
+        return true;
+    }
+
+    if (fIgnoreCase)
+    {
+        return _stricmp(strA, strB) == 0;
+    }
+
+    return strcmp(strA, strB) == 0;
+}
+
 inline bool __cdecl WString_IsNullOrEmpty(const wchar_t* str) noexcept
 {
     return !str || !*str;

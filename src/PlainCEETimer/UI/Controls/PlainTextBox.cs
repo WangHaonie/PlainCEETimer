@@ -57,7 +57,7 @@ public sealed class PlainTextBox : TextBox
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
             parent.OnExpandableVisibleChanged(true);
-            InitWindowSize(ButtonApply, 3, 3);
+            InitWindowSize(ButtonClose, 3, 3);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -133,9 +133,12 @@ public sealed class PlainTextBox : TextBox
                     {
                         Text = Child.Content;
                     }
+
+                    ParentForm.LocationChanged -= OnParentLocationChanged;
                 };
 
-                ParentForm.ShowFlyout(Child, () => this.LocationToScreen(-4, -4));
+                ParentForm.LocationChanged += OnParentLocationChanged;
+                Child.Show(ParentForm);
             }).With(x =>
             {
                 x.Cursor = Cursors.Arrow;
@@ -209,6 +212,11 @@ public sealed class PlainTextBox : TextBox
     {
         e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
         base.OnKeyDown(e);
+    }
+
+    private void OnParentLocationChanged(object sender, EventArgs e)
+    {
+        Child.Location = this.LocationToScreen(-4, -4);
     }
 
     private void OnExpandableVisibleChanged(bool visible)
