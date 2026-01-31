@@ -70,3 +70,26 @@ public enum HotKeyModifiers : uint
     Shit = 0x0004,
     Win = 0x0008
 }
+
+public enum HotKeyStatus
+{
+    /// <summary>
+    /// 热键无效
+    /// </summary>
+    Invalid,
+
+    /// <summary>
+    /// 已在当前应用程序注册
+    /// </summary>
+    Ready,
+
+    /// <summary>
+    /// 可以注册
+    /// </summary>
+    Success,
+
+    /// <summary>
+    /// 无法注册
+    /// </summary>
+    Failed
+}

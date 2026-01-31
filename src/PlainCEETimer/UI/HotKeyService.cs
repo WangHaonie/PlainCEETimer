@@ -149,24 +149,24 @@ public class HotKeyService(HotKey hk, Action<HotKeyPressEventArgs> onHotKeyPress
         return id;
     }
 
-    public static int Test(HotKey hk)
+    public static HotKeyStatus Test(HotKey hk)
     {
         if (!hk.IsValid)
         {
-            return 2; // 热键无效
+            return HotKeyStatus.Invalid;
         }
 
         if (hks != null && hks.ContainsValue(hk))
         {
-            return 1; // 已在当前应用程序注册
+            return HotKeyStatus.Ready;
         }
 
         if (TestCore(hk))
         {
-            return 0; // 可以注册
+            return HotKeyStatus.Success;
         }
 
-        return 3; // 无法注册
+        return HotKeyStatus.Failed;
     }
 
     private static bool TestCore(HotKey hk)
