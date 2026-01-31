@@ -147,19 +147,23 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
             ], (_, _) =>
             {
-                ListViewMain.GetSelection(out _, out _, out var total);
-                var onlyOne = total == 1;
-                var hasSelected = total != 0;
-                ContextDelete.Enabled = hasSelected;
-                ContextDuplicate.Enabled = onlyOne;
-                ContextEdit.Enabled = onlyOne;
+                ListViewMain.GetSelection(out _, out var item, out var total);
+
+                var atMost1 = total == 1;
+                var selected = total != 0;
+
+                ContextDelete.Enabled = selected;
+                ContextDuplicate.Enabled = atMost1;
+                ContextEdit.Enabled = atMost1;
                 ContextSelectAll.Enabled = Items.Count != 0;
 
                 if (AllowExcludeItems)
                 {
-                    ContextExclude.Enabled = hasSelected;
-                    ContextInclude.Enabled = hasSelected;
+                    var excluded = selected && ((TData)item.Tag).Excluded;
+                    ContextExclude.Enabled = selected && (!atMost1 || !excluded);
+                    ContextInclude.Enabled = selected && (!atMost1 || excluded);
                 }
+
             }, out ContextMenuMain)
         ]);
 
