@@ -14,15 +14,16 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 > 自 v5.0.0 起，本项目名称由 [CEETimerCSharpWinForms](https://github.com/WangHaonie/CEETimerCSharpWinForms/) 更改为 PlainCEETimer。
 
 ## 📷 运行截图
-> v5.0.8, Windows 11, 1920x1080, 125% 缩放
+> v5.0.9, Windows 11, 1920x1080, 125% 缩放
 
 ![主窗口](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Screenshot.png?raw=true)
 
 ## 🔥 主要功能
 + 🔥 自定义考试名称
 + 🔥 自定义考试开始/结束日期时间
-+ 🔥 自定义倒计时字体颜色、大小
 + 🔥 自定义不同时刻的倒计时内容格式、颜色等
++ 🔥 为每个考试应用独立的设置 (Per-Exam Settings)
++ 🔥 自定义倒计时字体颜色、大小
 + 🔥 支持添加多个考试，以及自动/手动切换进行倒计时
 + 🔥 顶置显示倒计时
 + 🔥 防误关闭倒计时
@@ -40,11 +41,11 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ <更多功能等你来探索>
 
 ## 📢 用户手册【墙裂建议先阅读再使用】
-+ 适用于 v5.0.8，2025/9/10 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
++ 适用于 v5.0.9，2026/2/1 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
 
 ## 🧑‍💻 开发环境
-+ Windows 11 Pro x64 (26220.7523)
-+ Visual Studio 2026 (18.1.1)
++ Windows 11 Pro x64 (26220.7670)
++ Visual Studio 2026 (18.2.1)
 + .NET Framework (4.8)
 + WinForms
 + C# 14 (Preview)
