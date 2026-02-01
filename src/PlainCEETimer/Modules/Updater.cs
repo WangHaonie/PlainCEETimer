@@ -29,7 +29,7 @@ public class Updater
             var date = response.PublishDate;
             var datep = date.ToTimestamp();
             var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
-            var content = response.UpdateLog.Replace("\n", "\n· ");
+            var content = response.UpdateLog.Replace("\n\r", "\n\r· ");
             var sha = response.Commit;
 
             if (Version.Parse(latest) > App.VersionObject || isPreview && sha != AppInfo.CommitSHA && datep > AppInfo.Timestamp)
