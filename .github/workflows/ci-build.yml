@@ -33,8 +33,7 @@ jobs:
       - id: read_version
         name: Get Mainline Version
         run: |
-          # $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
-          $ver = "5.0.8"
+          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
           Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
           Add-Content -Path $env:GITHUB_OUTPUT -Value "sha=$($env:GITHUB_SHA.Substring(0, 7))"
 
