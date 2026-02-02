@@ -77,7 +77,6 @@ internal static class ConfigValidator
         {
             validateNeeded = false;
             App.AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
-            DemandConfig();
             validateNeeded = true;
         }
     }
