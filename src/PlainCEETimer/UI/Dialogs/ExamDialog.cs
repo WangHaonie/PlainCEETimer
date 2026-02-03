@@ -55,17 +55,17 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             LabelEnd = b.Label("考试结束"),
             LabelCounter = b.Label("00/00"),
 
-            TextBoxName = b.TextBox(218, false, (_, _) =>
+            TextBoxName = b.TextBox(223, false, (_, _) =>
             {
                 CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
                 int count = CurrentExamName.Length;
                 LabelCounter.Text = $"{count}/{ConfigValidator.MaxExamNameLength}";
                 LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
                 UserChanged();
-            }).With(c => c.MaxLength = 99),
+            }).With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
 
-            DTPStart = b.DateTimePicker(255, OnUserChanged),
-            DTPEnd = b.DateTimePicker(255, OnUserChanged),
+            DTPStart = b.DateTimePicker(260, OnUserChanged),
+            DTPEnd = b.DateTimePicker(260, OnUserChanged),
 
             GBoxContent = b.GroupBox(null,
             [
@@ -135,8 +135,8 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         CenterControlY(ButtonRulesMan, ComboBoxCountdownFormat);
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 5);
         GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
-        ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 0, 3);
-        InitWindowSize(ButtonB, 5, 5);
+        ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 1, 3);
+        InitWindowSize(ButtonB, 4, 4);
     }
 
     protected override void OnLoad()
