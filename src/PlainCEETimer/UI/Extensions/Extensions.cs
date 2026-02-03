@@ -99,7 +99,7 @@ public static class Extensions
         control.Parent.Controls.Remove(control);
     }
 
-    public static void AddControls(this Control control, Func<ControlBuilder, Control[]> builder)
+    public static void AddControls(this Control control, ControlsBuilder builder)
     {
         var ctrls = builder(new());
         var collection = control.Controls;
