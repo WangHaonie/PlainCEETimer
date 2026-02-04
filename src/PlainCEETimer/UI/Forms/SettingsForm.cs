@@ -582,6 +582,11 @@ public sealed class SettingsForm : AppForm
 
     protected override void OnLoad()
     {
+        SystemContextMenu.FromWindow(this)
+            .InsertItem(-2, "导入配置", null)
+            .InsertItem(-2, "导出配置", null)
+            .InsertSeparator(-2);
+
         RefreshSettings();
     }
 

@@ -12,6 +12,25 @@ public enum HotkeyF : byte
     Ext = 0x08
 }
 
+[Flags]
+public enum MenuFlag
+{
+    ByCommand = 0x0000,
+    ByPosition = 0x0400,
+    Bitmap = 0x0004,
+    Checked = 0x0008,
+    Disabled = 0x0002,
+    Enabled = 0x0000,
+    Grayed = 0x0001,
+    MenuBarBreak = 0x0020,
+    MenuBreak = 0x0040,
+    OwnerDraw = 0x0100,
+    Popup = 0x0010,
+    Separator = 0x0800,
+    String = 0x0000,
+    Unchecked = 0x0000,
+}
+
 public enum ShowWindowCommand
 {
     Normal = 1,

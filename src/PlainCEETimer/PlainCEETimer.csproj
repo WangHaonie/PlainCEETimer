@@ -120,6 +120,7 @@
     <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
     <Compile Include="Modules\Linq\ArrayLinq.cs" />
     <Compile Include="Modules\Http\NetworkedAction.cs" />
+    <Compile Include="Modules\RandomUID.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\SystemVersion.cs" />
     <Compile Include="Modules\Xml.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="UI\HotKeyPressEventArgs.cs" />
     <Compile Include="UI\HotKeyService.cs" />
     <Compile Include="UI\MenuItemBuilder.cs" />
+    <Compile Include="UI\SystemContextMenu.cs" />
     <Compile Include="UI\NavigationViewEventArgs.cs" />
     <Compile Include="UI\PagedContextMenu.cs" />
     <Compile Include="UI\ThemeManager.cs" />

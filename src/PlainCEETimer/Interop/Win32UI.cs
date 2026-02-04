@@ -75,6 +75,18 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern int FillRect(IntPtr hDC, ref RECT lprc, IntPtr hbr);
 
+    [DllImport(App.User32Dll)]
+    public static extern bool IsMenu(IntPtr hMenu);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+    [DllImport(App.User32Dll)]
+    public static extern int GetMenuItemCount(IntPtr hMenu);
+
+    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+    public static extern bool InsertMenu(IntPtr hMenu, int uPosition, MenuFlag uFlags, long uIDNewItem, string lpNewItem);
+
     [DllImport(App.NativesDll, EntryPoint = "#20")]
     public static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, LPCUSTCOLORS lpCustomColors);
 
