@@ -6,9 +6,8 @@
 
 cexport(void) ListViewSelectAllItems(HWND hLV, BOOL selected);
 cexport(void) SetTopMostWindow(HWND hWnd);
-cexport(BOOL) MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item);
-cexport(BOOL) MenuCheckRadioItemByPosition(HMENU hMenu, UINT item);
-cexport(BOOL) MenuUncheckItemByPosition(HMENU hMenu, UINT item);
+cexport(BOOL) MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition);
+cexport(BOOL) MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition);
 cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
 cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
 cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);

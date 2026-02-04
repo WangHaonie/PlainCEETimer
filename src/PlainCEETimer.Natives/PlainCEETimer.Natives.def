@@ -13,39 +13,38 @@ EXPORTS
     TaskbarListSetProgressValue @8 NONAME
     ReleaseTaskbarList @9 NONAME
 
-    InitializeTaskScheduler @10 NONAME
-    TaskSchedulerImportTaskFromXml @11 NONAME
-    TaskSchedulerExportTaskAsXml @12 NONAME
-    TaskSchedulerEnableTask @13 NONAME
-    TaskSchedulerExistsTask @41 NONAME
-    TaskSchedulerDeleteTask @14 NONAME
-    ReleaseTaskScheduler @15 NONAME
+    InitializeShellLink @10 NONAME
+    ShellLinkCreateLnk @11 NONAME
+    ShellLinkQueryLnk @12 NONAME
+    ReleaseShellLink @13 NONAME
 
-    InitializeShellLink @16 NONAME
-    ShellLinkCreateLnk @17 NONAME
-    ShellLinkQueryLnk @18 NONAME
-    ReleaseShellLink @19 NONAME
+    InitializeTaskScheduler @14 NONAME
+    TaskSchedulerImportTaskFromXml @15 NONAME
+    TaskSchedulerExportTaskAsXml @16 NONAME
+    TaskSchedulerExistsTask @17 NONAME
+    TaskSchedulerEnableTask @18 NONAME
+    TaskSchedulerDeleteTask @19 NONAME
+    ReleaseTaskScheduler @20 NONAME
 
-    RunColorDialog @20 NONAME
-    RunFontDialog @21 NONAME
+    RunColorDialog @21 NONAME
+    RunFontDialog @22 NONAME
 
-    SetRoundCorner @22 NONAME
-    SetRoundCornerEx @23 NONAME
-    EnableDarkModeForApp @24 NONAME
-    EnableDarkModeForWindowFrame @25 NONAME
-    SetWindowBorderColor @26 NONAME
-    GetSystemAccentColor @27 NONAME
+    SetRoundCorner @23 NONAME
+    SetRoundCornerEx @24 NONAME
+    EnableDarkModeForApp @25 NONAME
+    EnableDarkModeForWindowFrame @26 NONAME
+    SetWindowBorderColor @27 NONAME
+    GetSystemAccentColor @28 NONAME
 
-    ListViewSelectAllItems @28 NONAME
-    SetTopMostWindow @29 NONAME
-    MenuGetItemCheckStateByPosition @30 NONAME
-    MenuCheckRadioItemByPosition @31 NONAME
-    GetWindowTextEx @32 NONAME
-    GetWindowClassName @33 NONAME
-    ComctlHookSysColor @34 NONAME
-    ComctlUnhookSysColor @35 NONAME
-    RemoveWindowExStyle @36 NONAME
-    ComdlgHookMessageBox @37 NONAME
-    ComdlgUnhookMessageBox @38 NONAME
-    IsDialog @39 NONAME
-    MenuUncheckItemByPosition @40 NONAME
+    ListViewSelectAllItems @29 NONAME
+    SetTopMostWindow @30 NONAME
+    MenuGetItemCheckState @31 NONAME
+    MenuUncheckItem @32 NONAME
+    GetWindowTextEx @33 NONAME
+    GetWindowClassName @34 NONAME
+    ComctlHookSysColor @35 NONAME
+    ComctlUnhookSysColor @36 NONAME
+    RemoveWindowExStyle @37 NONAME
+    ComdlgHookMessageBox @38 NONAME
+    ComdlgUnhookMessageBox @39 NONAME
+    IsDialog @40 NONAME

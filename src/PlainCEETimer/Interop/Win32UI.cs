@@ -84,70 +84,70 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern int GetMenuItemCount(IntPtr hMenu);
 
+    [DllImport(App.User32Dll)]
+    public static extern bool CheckMenuRadioItem(IntPtr hmenu, int first, int last, int check, MenuFlag flags);
+
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool InsertMenu(IntPtr hMenu, int uPosition, MenuFlag uFlags, long uIDNewItem, string lpNewItem);
 
-    [DllImport(App.NativesDll, EntryPoint = "#20")]
+    [DllImport(App.NativesDll, EntryPoint = "#21")]
     public static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, LPCUSTCOLORS lpCustomColors);
 
-    [DllImport(App.NativesDll, EntryPoint = "#21")]
+    [DllImport(App.NativesDll, EntryPoint = "#22")]
     public static extern bool RunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
 
-    [DllImport(App.NativesDll, EntryPoint = "#22")]
+    [DllImport(App.NativesDll, EntryPoint = "#23")]
     public static extern void SetRoundCorner(IntPtr hWnd, int width, int height, int radius);
 
-    [DllImport(App.NativesDll, EntryPoint = "#23")]
+    [DllImport(App.NativesDll, EntryPoint = "#24")]
     public static extern void SetRoundCornerEx(IntPtr hWnd, bool smallCorner);
 
-    [DllImport(App.NativesDll, EntryPoint = "#24")]
+    [DllImport(App.NativesDll, EntryPoint = "#25")]
     public static extern void EnableDarkModeForApp();
 
-    [DllImport(App.NativesDll, EntryPoint = "#25")]
+    [DllImport(App.NativesDll, EntryPoint = "#26")]
     public static extern void EnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1);
 
-    [DllImport(App.NativesDll, EntryPoint = "#26")]
+    [DllImport(App.NativesDll, EntryPoint = "#27")]
     public static extern void SetBorderColor(IntPtr hWnd, COLORREF color, bool enabled);
 
-    [DllImport(App.NativesDll, EntryPoint = "#27")]
+    [DllImport(App.NativesDll, EntryPoint = "#28")]
     public static extern int GetSystemAccentColor();
 
-    [DllImport(App.NativesDll, EntryPoint = "#28")]
+    [DllImport(App.NativesDll, EntryPoint = "#29")]
     public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
 
-    [DllImport(App.NativesDll, EntryPoint = "#29")]
+    [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern void SetTopMostWindow(IntPtr hWnd);
 
-    [DllImport(App.NativesDll, EntryPoint = "#30")]
-    public static extern bool MenuGetItemCheckStateByPosition(IntPtr hMenu, int item);
-
     [DllImport(App.NativesDll, EntryPoint = "#31")]
-    public static extern bool MenuCheckRadioItemByPosition(IntPtr hMenu, int item);
+    public static extern bool MenuGetItemCheckState(IntPtr hMenu, int item, bool fByPosition);
 
-    [DllImport(App.NativesDll, EntryPoint = "#40")]
-    public static extern bool MenuUncheckItemByPosition(IntPtr hMenu, int item);
-
-    [DllImport(App.NativesDll, EntryPoint = "#32", CharSet = CharSet.Unicode)]
-    public static extern string GetWindowText(IntPtr hWnd);
+    [DllImport(App.NativesDll, EntryPoint = "#32")]
+    public static extern bool MenuUncheckItem(IntPtr hMenu, int item, bool fByPosition);
 
     [DllImport(App.NativesDll, EntryPoint = "#33", CharSet = CharSet.Unicode)]
+    public static extern string GetWindowText(IntPtr hWnd);
+
+    [DllImport(App.NativesDll, EntryPoint = "#34", CharSet = CharSet.Unicode)]
     public static extern string GetClassName(IntPtr hWnd);
 
-    [DllImport(App.NativesDll, EntryPoint = "#34")]
+    [DllImport(App.NativesDll, EntryPoint = "#35")]
     public static extern void ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
 
-    [DllImport(App.NativesDll, EntryPoint = "#35")]
+    [DllImport(App.NativesDll, EntryPoint = "#36")]
     public static extern void ComctlUnhookSysColor();
 
-    [DllImport(App.NativesDll, EntryPoint = "#36")]
+    [DllImport(App.NativesDll, EntryPoint = "#37")]
     public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
 
-    [DllImport(App.NativesDll, EntryPoint = "#37")]
+    [DllImport(App.NativesDll, EntryPoint = "#38")]
     public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc);
 
-    [DllImport(App.NativesDll, EntryPoint = "#38")]
+    [DllImport(App.NativesDll, EntryPoint = "#39")]
     public static extern void ComdlgUnhookMessageBox();
 
-    [DllImport(App.NativesDll, EntryPoint = "#39")]
+    [DllImport(App.NativesDll, EntryPoint = "#40")]
     public static extern bool IsDialog(IntPtr lpCreateStruct);
 
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)

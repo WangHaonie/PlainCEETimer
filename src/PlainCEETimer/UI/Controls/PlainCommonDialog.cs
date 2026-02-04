@@ -47,6 +47,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     }
 
     private IntPtr Handle;
+    private IntPtr MsgBoxHandle;
     private HOOKPROC CBTHookProc;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
@@ -84,10 +85,21 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         return msg switch
         {
-            WM_INITDIALOG => WmInitDialog(hWnd),
-            WM_CTLCOLORDLG or WM_CTLCOLOREDIT or WM_CTLCOLORSTATIC or WM_CTLCOLORLISTBOX or WM_CTLCOLORBTN => WmCtlColor(wparam),
-            WM_DESTROY => WmDestroy(),
-            _ => IntPtr.Zero,
+            WM_INITDIALOG
+                => WmInitDialog(hWnd),
+
+            WM_CTLCOLORDLG
+            or WM_CTLCOLOREDIT
+            or WM_CTLCOLORSTATIC
+            or WM_CTLCOLORLISTBOX
+            or WM_CTLCOLORBTN
+                => WmCtlColor(wparam),
+
+            WM_DESTROY
+                => WmDestroy(),
+
+            _
+                => IntPtr.Zero,
         };
     }
 
@@ -185,36 +197,48 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private IntPtr CbtHookProc(int nCode, IntPtr wParam, IntPtr lParam)
     {
         const int HCBT_CREATEWND = 3;
+        const int HCBT_DESTROYWND = 4;
 
-        if (nCode == HCBT_CREATEWND)
+        switch (nCode)
         {
-            var lpcs = Marshal.ReadIntPtr(lParam);
+            case HCBT_CREATEWND:
+                var lpcs = Marshal.ReadIntPtr(lParam);
 
-            if (Win32UI.IsDialog(lpcs))
-            {
-                const int CREATESTRUCT_hwndParent = 24;
-                const int CREATESTRUCT_cy = 32;
-                const int CREATESTRUCT_cx = 36;
-                const int CREATESTRUCT_y = 40;
-                const int CREATESTRUCT_x = 44;
+                if (Win32UI.IsDialog(lpcs))
+                {
+                    const int CREATESTRUCT_hwndParent = 24;
+                    const int CREATESTRUCT_cy = 32;
+                    const int CREATESTRUCT_cx = 36;
+                    const int CREATESTRUCT_y = 40;
+                    const int CREATESTRUCT_x = 44;
 
-                Win32UI.GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT_hwndParent), out var lprc);
+                    Win32UI.GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT_hwndParent), out var lprc);
 
-                Win32UI.MakeCenter
-                (
-                    new
+                    Win32UI.MakeCenter
                     (
-                        Marshal.ReadInt32(lpcs, CREATESTRUCT_x),
-                        Marshal.ReadInt32(lpcs, CREATESTRUCT_y),
-                        Marshal.ReadInt32(lpcs, CREATESTRUCT_cx),
-                        Marshal.ReadInt32(lpcs, CREATESTRUCT_cy)
-                    ), lprc, out var r
-                );
+                        new
+                        (
+                            Marshal.ReadInt32(lpcs, CREATESTRUCT_x),
+                            Marshal.ReadInt32(lpcs, CREATESTRUCT_y),
+                            Marshal.ReadInt32(lpcs, CREATESTRUCT_cx),
+                            Marshal.ReadInt32(lpcs, CREATESTRUCT_cy)
+                        ), lprc, out var r
+                    );
 
-                Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
-                Marshal.WriteInt32(lpcs, CREATESTRUCT_y, r.Y);
-                Win32UI.RegisterUnmanagedWindow(wParam);
-            }
+                    Marshal.WriteInt32(lpcs, CREATESTRUCT_x, r.X);
+                    Marshal.WriteInt32(lpcs, CREATESTRUCT_y, r.Y);
+                    Win32UI.RegisterUnmanagedWindow(MsgBoxHandle = wParam);
+                }
+
+                break;
+            case HCBT_DESTROYWND:
+
+                if (wParam == MsgBoxHandle)
+                {
+                    Win32UI.UnregisterUnmanagedWindow(wParam);
+                }
+
+                break;
         }
 
         return new(-1);

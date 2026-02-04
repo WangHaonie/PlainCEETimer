@@ -56,14 +56,14 @@ void SetTopMostWindow(HWND hWnd)
     }
 }
 
-BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
+BOOL MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition)
 {
     if (hMenu)
     {
         MENUITEMINFO mii = { sizeof(mii) };
         mii.fMask = MIIM_STATE;
 
-        if (GetMenuItemInfo(hMenu, item, TRUE, &mii) && (mii.fState & MFS_CHECKED) != 0)
+        if (GetMenuItemInfo(hMenu, item, fByPosition, &mii) && (mii.fState & MFS_CHECKED) != 0)
         {
             return TRUE;
         }
@@ -72,24 +72,14 @@ BOOL MenuGetItemCheckStateByPosition(HMENU hMenu, UINT item)
     return FALSE;
 }
 
-BOOL MenuCheckRadioItemByPosition(HMENU hMenu, UINT item)
-{
-    if (hMenu)
-    {
-        return CheckMenuRadioItem(hMenu, 0, GetMenuItemCount(hMenu) - 1, item, MF_BYPOSITION);
-    }
-
-    return FALSE;
-}
-
-BOOL MenuUncheckItemByPosition(HMENU hMenu, UINT item)
+BOOL MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition)
 {
     if (hMenu)
     {
         MENUITEMINFO mii = { sizeof(mii) };
         mii.fMask = MIIM_STATE | MIIM_FTYPE;
 
-        if (GetMenuItemInfo(hMenu, item, TRUE, &mii))
+        if (GetMenuItemInfo(hMenu, item, fByPosition, &mii))
         {
             mii.fState = 0;
             mii.fType &= ~MFT_RADIOCHECK;

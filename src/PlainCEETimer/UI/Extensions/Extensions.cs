@@ -134,7 +134,8 @@ public static class Extensions
 
         if (menu != null)
         {
-            Win32UI.MenuCheckRadioItemByPosition(menu.Handle, item);
+            var hmenu = menu.Handle;
+            Win32UI.CheckMenuRadioItem(hmenu, 0, Win32UI.GetMenuItemCount(hmenu) - 1, item, MenuFlag.ByPosition);
             menuItem = menu.MenuItems[item];
         }
     }
@@ -143,7 +144,7 @@ public static class Extensions
     {
         if (item != null)
         {
-            Win32UI.MenuUncheckItemByPosition(item.Parent.Handle, item.Index);
+            Win32UI.MenuUncheckItem(item.Parent.Handle, item.Index, true);
         }
     }
 }

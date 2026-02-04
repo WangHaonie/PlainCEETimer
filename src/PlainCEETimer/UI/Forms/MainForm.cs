@@ -61,7 +61,7 @@ public sealed class MainForm : AppForm
     private SettingsForm FormSettings;
     private HotKeyDialog DialogHotKey;
     private HotKeyService[] hksvc;
-    private Action<HotKeyPressEventArgs>[] hkevents;
+    private EventHandler<HotKeyPressEventArgs>[] hkevents;
     private const int PptsvcThreshold = 1;
 
     protected override void OnInitializing()
@@ -604,15 +604,15 @@ public sealed class MainForm : AppForm
 
             hkevents ??=
             [
-                _ =>
+                (_, _) =>
                 {
                     IsHotKey1Activated = !IsHotKey1Activated;
                     Opacity = IsHotKey1Activated ? 0D : 1D;
                     ReActivate();
                 },
 
-                _ => MainCountdown.SwitchTo(SwitchOption.Previous),
-                _ => MainCountdown.SwitchTo(SwitchOption.Next)
+                (_, _) => MainCountdown.SwitchTo(SwitchOption.Previous),
+                (_, _) => MainCountdown.SwitchTo(SwitchOption.Next)
             ];
 
             for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, hks.Length); i++)

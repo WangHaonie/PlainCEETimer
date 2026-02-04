@@ -8,24 +8,24 @@ namespace PlainCEETimer.Interop;
 /// </summary>
 public static class Win32TaskScheduler
 {
-    [DllImport(App.NativesDll, EntryPoint = "#10")]
+    [DllImport(App.NativesDll, EntryPoint = "#14")]
     public static extern void Initialize();
 
-    [DllImport(App.NativesDll, EntryPoint = "#11", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#15", CharSet = CharSet.Unicode)]
     public static extern void Import(string path, string xmlText, TaskLogonType logonType);
 
-    [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#16", CharSet = CharSet.Unicode)]
     public static extern bool Export(string path, [MarshalAs(UnmanagedType.BStr)] out string pXml);
 
-    [DllImport(App.NativesDll, EntryPoint = "#41", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#17", CharSet = CharSet.Unicode)]
     public static extern bool Exists(string path);
 
-    [DllImport(App.NativesDll, EntryPoint = "#13", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#18", CharSet = CharSet.Unicode)]
     public static extern void Enable(string path);
 
-    [DllImport(App.NativesDll, EntryPoint = "#14", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#19", CharSet = CharSet.Unicode)]
     public static extern void Delete(string path);
 
-    [DllImport(App.NativesDll, EntryPoint = "#15")]
+    [DllImport(App.NativesDll, EntryPoint = "#20")]
     public static extern void Release();
 }

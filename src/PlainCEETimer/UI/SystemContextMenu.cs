@@ -8,7 +8,7 @@ namespace PlainCEETimer.UI;
 
 public class SystemContextMenu
 {
-    private class ParentNativeWindow : NativeWindow
+    private sealed class ParentNativeWindow : NativeWindow
     {
         internal List<NativeMenuItem> items;
 
@@ -57,10 +57,10 @@ public class SystemContextMenu
         }
     }
 
+    private ParentNativeWindow pnw;
     private readonly IntPtr m_hmenu;
     private readonly IntPtr m_owner;
     private readonly RandomUID uids;
-    private ParentNativeWindow pnw;
 
     public SystemContextMenu(IntPtr hMenu, IntPtr hOwner)
     {
