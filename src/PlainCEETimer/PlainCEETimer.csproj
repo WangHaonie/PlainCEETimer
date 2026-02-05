@@ -235,7 +235,7 @@
     <Compile Include="UI\HotKeyPressEventArgs.cs" />
     <Compile Include="UI\HotKeyService.cs" />
     <Compile Include="UI\MenuItemBuilder.cs" />
-    <Compile Include="UI\SystemContextMenu.cs" />
+    <Compile Include="UI\SystemMenu.cs" />
     <Compile Include="UI\NavigationViewEventArgs.cs" />
     <Compile Include="UI\PagedContextMenu.cs" />
     <Compile Include="UI\ThemeManager.cs" />

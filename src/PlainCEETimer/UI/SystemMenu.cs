@@ -6,16 +6,22 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI;
 
-public class SystemContextMenu
+public class SystemMenu
 {
-    private sealed class ParentNativeWindow : NativeWindow
+    private sealed class ParentNativeWindow(IntPtr hWnd) : NativeWindow
     {
-        internal List<NativeMenuItem> items;
+        private bool _assigned;
+        private readonly List<NativeMenuItem> items = [];
 
-        public ParentNativeWindow(IntPtr hWnd)
+        internal void Add(NativeMenuItem item)
         {
-            items = [];
-            AssignHandle(hWnd);
+            if (!_assigned)
+            {
+                AssignHandle(hWnd);
+                _assigned = true;
+            }
+
+            items.Add(item);
         }
 
         protected override void WndProc(ref Message m)
@@ -28,14 +34,11 @@ public class SystemContextMenu
 
                 for (int i = 0; i < count; i++)
                 {
-                    var result = items[i].WmSysCommand(ref m);
-
-                    if (result != IntPtr.Zero)
+                    if (items[i].WmSysCommand(ref m))
                     {
-                        break;
+                        m.Result = IntPtr.Zero;
+                        return;
                     }
-
-                    m.Result = result;
                 }
             }
 
@@ -45,15 +48,15 @@ public class SystemContextMenu
 
     private class NativeMenuItem(IntPtr id, EventHandler onClick)
     {
-        internal IntPtr WmSysCommand(ref Message m)
+        internal bool WmSysCommand(ref Message m)
         {
             if (m.WParam == id)
             {
                 onClick(this, EventArgs.Empty);
-                return new(1);
+                return true;
             }
 
-            return IntPtr.Zero;
+            return false;
         }
     }
 
@@ -62,42 +65,41 @@ public class SystemContextMenu
     private readonly IntPtr m_owner;
     private readonly RandomUID uids;
 
-    public SystemContextMenu(IntPtr hMenu, IntPtr hOwner)
+    public SystemMenu(IntPtr hMenu, IntPtr hOwner)
     {
         if (Win32UI.IsMenu(hMenu))
         {
             m_hmenu = hMenu;
             m_owner = hOwner;
             uids = new(1000, 0xF000);
+            return;
         }
-        else
-        {
-            throw new InvalidOperationException();
-        }
+
+        throw new InvalidOperationException();
     }
 
-    public SystemContextMenu InsertItem(int index, string text, EventHandler onClick)
+    public SystemMenu InsertItem(int index, string text, EventHandler onClick)
     {
         int id;
 
         if ((id = InsertMenu(index, MenuFlag.String, text)) > 0 && onClick != null)
         {
-            pnw.items.Add(new(new(id), onClick));
+            pnw.Add(new(new(id), onClick));
         }
 
         return this;
     }
 
-    public SystemContextMenu InsertSeparator(int index)
+    public SystemMenu InsertSeparator(int index)
     {
         InsertMenu(index, MenuFlag.Separator, null);
         return this;
     }
 
-    public static SystemContextMenu FromWindow(Form wnd)
+    public static SystemMenu From(Form wnd)
     {
         var hwnd = wnd.Handle;
-        var ncm = new SystemContextMenu(Win32UI.GetSystemMenu(hwnd, false), hwnd);
+        var ncm = new SystemMenu(Win32UI.GetSystemMenu(hwnd, false), hwnd);
         return ncm;
     }
 

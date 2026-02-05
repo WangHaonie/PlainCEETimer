@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
@@ -583,7 +584,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void OnLoad()
     {
-        SystemContextMenu.FromWindow(this)
+        SystemMenu.From(this)
             .InsertItem(-2, "导入配置(&I)", (_, _) =>
             {
                 if (FileDialogHelper.ShowDialog<OpenFileDialog>("选择配置文件 - 高考倒计时",
@@ -593,6 +594,12 @@ public sealed class SettingsForm : AppForm
                     FileFilter.ConfigFile, FileFilter.AllFiles))
                 {
                     var file = dialog.FileName;
+
+                    if (new FileInfo(file).Length > 6 * 1024 * 1024)
+                    {
+                        MessageX.Error("选择的文件过大！");
+                        return;
+                    }
 
                     if (MessageX.Warn("确认导入此配置文件？\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
                     {

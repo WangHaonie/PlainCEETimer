@@ -47,6 +47,7 @@ internal static class App
     private static string[] Args;
     private static int ArgsLength;
     private static Mutex MainMutex;
+    private static readonly object _lock = new();
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
@@ -154,12 +155,15 @@ internal static class App
 
     public static string WriteException(Exception ex)
     {
-        var now = DateTime.Now;
-        var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
-        var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
-        var exFilePath = $"{ExecutableDir}{exFileName}";
-        File.AppendAllText(exFilePath, content);
-        return "安装目录：\n" + exFileName;
+        lock (_lock)
+        {
+            var now = DateTime.Now;
+            var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
+            var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
+            var exFilePath = $"{ExecutableDir}{exFileName}";
+            File.AppendAllText(exFilePath, content);
+            return "安装目录：\n" + exFileName;
+        }
     }
 
     internal static void OnActivateMain()

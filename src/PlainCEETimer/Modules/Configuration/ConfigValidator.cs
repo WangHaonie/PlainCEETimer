@@ -243,7 +243,7 @@ internal static class ConfigValidator
     {
         if (TryReadConfig(path, out var config, out _))
         {
-            SuppressConfig();
+            isSuppressing = true;
             WriteToConfig(App.ConfigFilePath, config);
             return true;
         }
@@ -254,11 +254,6 @@ internal static class ConfigValidator
     internal static void ExportConfig(string path)
     {
         WriteToConfig(path, App.AppConfig);
-    }
-
-    private static void SuppressConfig()
-    {
-        isSuppressing = true;
     }
 
     private static void WriteToConfig(string path, AppConfig config)
