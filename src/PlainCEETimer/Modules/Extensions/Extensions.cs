@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.Serialization;
+using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 
 namespace PlainCEETimer.Modules.Extensions;
 
 public static class Extensions
 {
+    public static bool AsBool(this DialogResult dr)
+        => dr is DialogResult.OK or DialogResult.Yes;
+
     public static int ToInt32(this Color color)
         => -color.ToArgb();
 

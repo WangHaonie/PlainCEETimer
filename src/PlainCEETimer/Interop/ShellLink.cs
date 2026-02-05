@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI;
-using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Interop;
 
@@ -13,7 +12,6 @@ public static class ShellLink
     private static readonly string LnkName = "高考倒计时.lnk";
     private static readonly string AppPath = App.ExecutablePath;
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
-    private static SaveFileDialog Dialog;
 
     public static void CreateAppShortcut(bool allowCustom = false)
     {
@@ -31,15 +29,13 @@ public static class ShellLink
     {
         if (allowCustom)
         {
-            Dialog ??= new()
+            if (FileDialogHelper.ShowDialog<SaveFileDialog>(
+                "保存快捷方式 - 高考倒计时",
+                LnkName,
+                out var dialog,
+                FileFilter.Shortcut))
             {
-                Title = "保存快捷方式 - 高考倒计时",
-                FileName = LnkName
-            };
-
-            if (FileDialogWrapper.ShowDialog(Dialog, FileFilter.Shortcut) == DialogResult.OK)
-            {
-                ResetAppShortcut(Dialog.FileName);
+                ResetAppShortcut(dialog.FileName);
                 return true;
             }
         }

@@ -113,6 +113,7 @@
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
     <Compile Include="Modules\Extensions\TaskExtensions.cs" />
     <Compile Include="Modules\Extensions\Win32Extensions.cs" />
+    <Compile Include="Modules\FileDialogHelper.cs" />
     <Compile Include="Modules\HashCode.cs" />
     <Compile Include="Modules\Http\DownloadingEventHandler.cs" />
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />

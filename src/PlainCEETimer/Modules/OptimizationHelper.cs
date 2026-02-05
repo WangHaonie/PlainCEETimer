@@ -1,16 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Dialogs;
-using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules;
 
-public class OptimizationHelper(bool isAuto) : IDisposable
+public class OptimizationHelper(bool isAuto)
 {
-    private OpenFileDialog Dialog;
     private const string NGen = "ngen.exe";
     private readonly string NGenPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\Microsoft.NET\Framework64\";
     private readonly string NetFxVersion = "v4*";
@@ -62,25 +59,20 @@ public class OptimizationHelper(bool isAuto) : IDisposable
 
     public void Dispose()
     {
-        Dialog.Destory();
         GC.SuppressFinalize(this);
     }
 
     private void Retry()
     {
-        Dialog ??= new()
+        if (FileDialogHelper.ShowDialog<OpenFileDialog>(
+            $"选择 {NGen} - 高考倒计时",
+            NGen,
+            out var dialog,
+            FileFilter.Application, FileFilter.AllFiles))
         {
-            Title = $"选择 {NGen} - 高考倒计时",
-            InitialDirectory = @"C:\Windows",
-            FileName = NGen
-        };
-
-        if (FileDialogWrapper.ShowDialog(Dialog,
-            FileFilter.Application, FileFilter.AllFiles) == DialogResult.OK)
-        {
-            if (Dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
+            if (dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
             {
-                Start(Dialog.FileName);
+                Start(dialog.FileName);
             }
             else
             {
@@ -116,6 +108,4 @@ public class OptimizationHelper(bool isAuto) : IDisposable
             App.Exit(true);
         }
     }
-
-    ~OptimizationHelper() => Dispose();
 }

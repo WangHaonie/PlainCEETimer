@@ -4,6 +4,7 @@ using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
@@ -583,8 +584,44 @@ public sealed class SettingsForm : AppForm
     protected override void OnLoad()
     {
         SystemContextMenu.FromWindow(this)
-            .InsertItem(-2, "导入配置(&I)", null)
-            .InsertItem(-2, "导出配置(&E)", null)
+            .InsertItem(-2, "导入配置(&I)", (_, _) =>
+            {
+                if (FileDialogHelper.ShowDialog<OpenFileDialog>("选择配置文件 - 高考倒计时",
+                    null,
+                    this,
+                    out var dialog,
+                    FileFilter.ConfigFile, FileFilter.AllFiles))
+                {
+                    var file = dialog.FileName;
+
+                    if (MessageX.Warn("确认导入此配置文件？\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
+                    {
+                        if (ConfigValidator.ImportConfig(file))
+                        {
+                            MessageX.Info("配置文件导入成功，需要立即重启！");
+                            App.Exit(true);
+                        }
+                        else
+                        {
+                            MessageX.Error("配置文件内容格式错误！");
+                        }
+                    }
+                }
+            })
+
+            .InsertItem(-2, "导出配置(&E)", (_, _) =>
+            {
+                if (FileDialogHelper.ShowDialog<SaveFileDialog>("保存配置文件",
+                    "PlainCEETimer.config",
+                    this,
+                    out var dialog,
+                    FileFilter.ConfigFile, FileFilter.AllFiles))
+                {
+                    ConfigValidator.ExportConfig(dialog.FileName);
+                    MessageX.Info("配置文件导出完成！");
+                }
+            })
+
             .InsertSeparator(-2);
 
         RefreshSettings();

@@ -26,3 +26,9 @@ public enum UacNotifyLevel
     AppsOnlyDimmed = 3,
     AlwaysDimmed = 4,
 }
+
+public enum FileDialogKind
+{
+    OpenFile,
+    SaveFile
+}

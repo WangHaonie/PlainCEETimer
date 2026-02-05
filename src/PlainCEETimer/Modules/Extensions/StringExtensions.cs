@@ -46,4 +46,16 @@ public static class StringExtensions
 
         return str.Substring(0, maxLength) + "...";
     }
+
+    public static string Truncate(this string str, int maxLength, int rearLength)
+    {
+        var length = str.Length;
+
+        if (str == null || length <= maxLength || rearLength > length)
+        {
+            return str;
+        }
+
+        return str.Substring(0, maxLength) + "..." + str.Substring(length - rearLength, rearLength);
+    }
 }

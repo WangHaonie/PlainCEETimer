@@ -51,6 +51,7 @@ internal static class ConfigValidator
 
     private static bool validateNeeded = true;
     private static volatile bool canSaveConfig;
+    private static volatile bool isSuppressing;
     private static readonly object _lock = new();
 
     private static readonly JsonSerializerSettings Settings = new()
@@ -90,36 +91,22 @@ internal static class ConfigValidator
     {
         lock (_lock)
         {
-            try
+            if (!isSuppressing && canSaveConfig)
             {
-                if (canSaveConfig)
-                {
-                    File.WriteAllText(App.ConfigFilePath, JsonConvert.SerializeObject(App.AppConfig, Settings));
-                    canSaveConfig = false;
-                }
+                WriteToConfig(App.ConfigFilePath, App.AppConfig);
+                canSaveConfig = false;
             }
-            catch { }
         }
     }
 
     public static AppConfig ReadConfig()
     {
-        try
-        {
-            var config = App.ConfigFilePath;
-
-            if (File.Exists(config))
-            {
-                return JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(config)) ?? AppConfig.Empty;
-            }
-
-            return AppConfig.Empty;
-        }
-        catch (Exception ex)
+        if (!TryReadConfig(App.ConfigFilePath, out var config, out var ex) && ex != null)
         {
             App.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{App.WriteException(ex)}\n\n" + ex.Message, App.AppName);
-            return AppConfig.Empty;
         }
+
+        return config;
     }
 
     public static void SetValue(ref int field, int value, int max, int min, int defvalue = 0)
@@ -250,6 +237,59 @@ internal static class ConfigValidator
         }
 
         throw InvalidTampering(ConfigField.ColorSetContrast);
+    }
+
+    internal static bool ImportConfig(string path)
+    {
+        if (TryReadConfig(path, out var config, out _))
+        {
+            SuppressConfig();
+            WriteToConfig(App.ConfigFilePath, config);
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static void ExportConfig(string path)
+    {
+        WriteToConfig(path, App.AppConfig);
+    }
+
+    private static void SuppressConfig()
+    {
+        isSuppressing = true;
+    }
+
+    private static void WriteToConfig(string path, AppConfig config)
+    {
+        try
+        {
+            File.WriteAllText(path, JsonConvert.SerializeObject(config, Settings));
+        }
+        catch { }
+    }
+
+    private static bool TryReadConfig(string path, out AppConfig config, out Exception ex)
+    {
+        ex = null;
+        config = AppConfig.Empty;
+
+        try
+        {
+            if (File.Exists(path))
+            {
+                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path)) ?? AppConfig.Empty;
+                return true;
+            }
+
+            return false;
+        }
+        catch (Exception e)
+        {
+            ex = e;
+            return false;
+        }
     }
 
     private static Color GetColorFromInt32(int c)
