@@ -96,7 +96,10 @@ public static class Extensions
 
     public static void Delete(this Control control)
     {
-        control.Parent.Controls.Remove(control);
+        if (control is not Form)
+        {
+            control.Parent.Controls.Remove(control);
+        }
     }
 
     public static void AddControls(this Control control, ControlsBuilder builder)

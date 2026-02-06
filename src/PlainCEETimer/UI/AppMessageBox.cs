@@ -64,11 +64,6 @@ public class AppMessageBox(AppForm parent = null)
                 ArrangeControlXT(ButtonB, ButtonA, 3);
             }
 
-            InitWindowSize(ButtonB, 6, 6);
-        }
-
-        protected override void OnLoad()
-        {
             switch (buttons)
             {
                 case MessageButtons.YesNo:
@@ -76,11 +71,12 @@ public class AppMessageBox(AppForm parent = null)
                     ButtonB.Text = "否(&N)";
                     break;
                 case MessageButtons.OK:
-                    ButtonA.Visible = false;
-                    ButtonA.Enabled = false;
+                    ButtonA.Delete();
                     ButtonB.Text = "确定(&O)";
                     break;
             }
+
+            InitWindowSize(ButtonB, 6, 6);
         }
 
         protected override void OnShown()

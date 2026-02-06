@@ -123,27 +123,30 @@ public sealed class PlainTextBox : TextBox
 
         if (Expandable = expandable)
         {
-            this.AddControls(b => [ButtonExpand = b.Button("..", 18, 20, (_, _) =>
-            {
-                Child = new(this);
-
-                Child.DialogEnd += dr =>
+            this.AddControls(b =>
+            [
+                ButtonExpand = b.Button("..", 18, 20, (_, _) =>
                 {
-                    if (dr == DialogResult.OK)
+                    Child = new(this);
+
+                    Child.DialogEnd += dr =>
                     {
-                        Text = Child.Content;
-                    }
+                        if (dr == DialogResult.OK)
+                        {
+                            Text = Child.Content;
+                        }
 
-                    ParentForm.LocationChanged -= OnParentLocationChanged;
-                };
+                        ParentForm.LocationChanged -= OnParentLocationChanged;
+                    };
 
-                ParentForm.LocationChanged += OnParentLocationChanged;
-                Child.Show(ParentForm);
-            }).With(x =>
-            {
-                x.Cursor = Cursors.Arrow;
-                x.Dock = DockStyle.Right;
-            })]);
+                    ParentForm.LocationChanged += OnParentLocationChanged;
+                    Child.Show(ParentForm);
+                }).With(x =>
+                {
+                    x.Cursor = Cursors.Arrow;
+                    x.Dock = DockStyle.Right;
+                })
+            ]);
         }
     }
 
