@@ -601,7 +601,7 @@ public sealed class SettingsForm : AppForm
                         return;
                     }
 
-                    if (MessageX.Warn("确认导入此配置文件？\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
+                    if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
                     {
                         if (ConfigValidator.ImportConfig(file))
                         {

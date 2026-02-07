@@ -244,6 +244,7 @@ internal static class ConfigValidator
         if (TryReadConfig(path, out var config, out _))
         {
             isSuppressing = true;
+            BackupConfig();
             WriteToConfig(App.ConfigFilePath, config);
             return true;
         }
@@ -261,6 +262,27 @@ internal static class ConfigValidator
         try
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(config, Settings));
+        }
+        catch { }
+    }
+
+    private static void BackupConfig()
+    {
+        try
+        {
+            var cfg = App.ConfigFilePath;
+
+            if (File.Exists(cfg))
+            {
+                var bak = cfg + ".bak";
+
+                if (File.Exists(bak))
+                {
+                    File.Delete(cfg);
+                }
+
+                WriteToConfig(bak, App.AppConfig);
+            }
         }
         catch { }
     }
