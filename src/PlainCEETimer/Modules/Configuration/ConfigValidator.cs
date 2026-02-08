@@ -106,7 +106,7 @@ internal static class ConfigValidator
             App.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{App.WriteException(ex)}\n\n" + ex.Message, App.AppName);
         }
 
-        return config;
+        return config ?? AppConfig.Empty;
     }
 
     public static void SetValue(ref int field, int value, int max, int min, int defvalue = 0)
@@ -241,7 +241,7 @@ internal static class ConfigValidator
 
     internal static bool ImportConfig(string path)
     {
-        if (TryReadConfig(path, out var config, out _))
+        if (TryReadConfig(path, out var config, out _) && config != null)
         {
             isSuppressing = true;
             BackupConfig();
@@ -254,6 +254,11 @@ internal static class ConfigValidator
 
     internal static void ExportConfig(string path)
     {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+
         WriteToConfig(path, App.AppConfig);
     }
 
@@ -290,13 +295,13 @@ internal static class ConfigValidator
     private static bool TryReadConfig(string path, out AppConfig config, out Exception ex)
     {
         ex = null;
-        config = AppConfig.Empty;
+        config = null;
 
         try
         {
             if (File.Exists(path))
             {
-                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path)) ?? AppConfig.Empty;
+                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path));
                 return true;
             }
 

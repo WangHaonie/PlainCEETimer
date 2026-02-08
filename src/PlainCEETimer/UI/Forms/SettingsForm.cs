@@ -591,7 +591,7 @@ public sealed class SettingsForm : AppForm
                     null,
                     this,
                     out var dialog,
-                    FileFilter.ConfigFile, FileFilter.AllFiles))
+                    FileFilter.ConfigFile))
                 {
                     var file = dialog.FileName;
 
@@ -618,11 +618,11 @@ public sealed class SettingsForm : AppForm
 
             .InsertItem(-2, "导出配置(&E)", (_, _) =>
             {
-                if (FileDialogHelper.ShowDialog<SaveFileDialog>("保存配置文件",
+                if (FileDialogHelper.ShowDialog<SaveFileDialog>("保存配置文件 - 高考倒计时",
                     "PlainCEETimer.config",
                     this,
                     out var dialog,
-                    FileFilter.ConfigFile, FileFilter.AllFiles))
+                    FileFilter.ConfigFile))
                 {
                     ConfigValidator.ExportConfig(dialog.FileName);
                     MessageX.Info("配置文件导出完成！");
