@@ -64,8 +64,8 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
                 UserChanged();
             }).With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
 
-            DTPStart = b.DateTimePicker(260, OnUserChanged),
-            DTPEnd = b.DateTimePicker(260, OnUserChanged),
+            DTPStart = b.DateTimePicker(254, OnUserChanged),
+            DTPEnd = b.DateTimePicker(254, OnUserChanged),
 
             GBoxContent = b.GroupBox(null,
             [
