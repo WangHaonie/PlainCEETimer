@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.UI;
@@ -6,13 +7,29 @@ namespace PlainCEETimer.UI;
 public class ListViewItemSet<TData>()
     where TData : IListViewData<TData>
 {
+    [DebuggerDisplay("{Data}")]
     private struct Element(TData data, ListViewItem item)
     {
         public TData Data = data;
         public ListViewItem Item = item;
     }
 
-    private readonly HashSet<Element> ItemsSet = [];
+    private class ItemSetComparer : IEqualityComparer<Element>
+    {
+        private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
+
+        bool IEqualityComparer<Element>.Equals(Element x, Element y)
+        {
+            return Comparer.Equals(x.Data, y.Data);
+        }
+
+        int IEqualityComparer<Element>.GetHashCode(Element obj)
+        {
+            return Comparer.GetHashCode(obj.Data);
+        }
+    }
+
+    private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
 
     public bool CanAdd(TData data)
     {

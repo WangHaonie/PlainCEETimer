@@ -217,7 +217,6 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
 
         ListViewMain.AutoAdjustColumnWidth();
-
         ListViewMain.EndUpdate();
         ListViewMain.MouseDoubleClick += ContextEdit_Click;
         ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
