@@ -24,7 +24,7 @@ public sealed class ConsoleWindow : AppDialog
     private ConsoleParam Param;
     private Action<ConsoleWindow> Complete;
     private PlainLabel LabelMessage;
-    private MenuItem ContextCopy;
+    private MenuItem MenuItemCopy;
     private Process ElevatedProc;
     private PlainTextBox ConsoleBox;
     private TaskbarProgress tbp;
@@ -64,10 +64,10 @@ public sealed class ConsoleWindow : AppDialog
         {
             ConsoleBox.AttachContextMenu(b =>
             [
-                ContextCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
+                MenuItemCopy = b.Item("复制(&C)", (_, _) => Clipboard.SetText(ConsoleBox.SelectedText)),
                 b.Separator(),
                 b.Item("全选(&A)", (_, _) => ConsoleBox.SelectAll())
-            ], (_, _) => ContextCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText), out _);
+            ], (_, _) => MenuItemCopy.Enabled = !string.IsNullOrWhiteSpace(ConsoleBox.SelectedText), out _);
         }
     }
 

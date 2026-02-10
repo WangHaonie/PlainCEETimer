@@ -55,7 +55,7 @@ public sealed class MainForm : AppForm
     private Font CountdownFont;
     private GeneralObject General;
     private MemoryCleaner MemCleaner;
-    private MenuItem FontNameMenuItem;
+    private MenuItem MenuItemFontName;
     private PagedContextMenu MenuSwitchExams;
     private NotifyIcon TrayIcon;
     private SettingsForm FormSettings;
@@ -425,8 +425,8 @@ public sealed class MainForm : AppForm
         ];
 
         this.AttachContextMenu(MainContextMenuItemBuilder, out ContextMenuMain);
-        FontNameMenuItem = ContextMenuMain.MenuItems[1].MenuItems[0];
-        FontNameMenuItem.Enabled = false;
+        MenuItemFontName = ContextMenuMain.MenuItems[1].MenuItems[0];
+        MenuItemFontName.Enabled = false;
         ChangeCountdownFont(AppConfig.Font);
         ContextMenu = ContextMenuMain;
 
@@ -574,7 +574,7 @@ public sealed class MainForm : AppForm
     private void ChangeCountdownFont(Font newFont)
     {
         CountdownFont = newFont;
-        FontNameMenuItem.Text = newFont.Format().Truncate(35);
+        MenuItemFontName.Text = newFont.Format().Truncate(35);
 
         if (!ConfigValidator.ValidateNeeded)
         {

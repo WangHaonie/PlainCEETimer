@@ -74,12 +74,12 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private bool HasFixedData;
     private TData[] fixedData;
     private ContextMenu ContextMenuMain;
-    private MenuItem ContextDuplicate;
-    private MenuItem ContextEdit;
-    private MenuItem ContextDelete;
-    private MenuItem ContextExclude;
-    private MenuItem ContextInclude;
-    private MenuItem ContextSelectAll;
+    private MenuItem MenuItemDuplicate;
+    private MenuItem MenuItemEdit;
+    private MenuItem MenuItemDelete;
+    private MenuItem MenuItemExclude;
+    private MenuItem MenuItemInclude;
+    private MenuItem MenuItemSelectAll;
     private PlainButton ButtonOperation;
     private HashSet<ListViewItem> FixedDataItemSet;
     private readonly string DefaultItemDesc;
@@ -140,11 +140,11 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 }).Default(),
 
                 b.Separator(),
-                ContextDuplicate = b.Item("重复(&C)", ContextDuplicate_Click),
-                ContextEdit = b.Item("编辑(&E)", ContextEdit_Click),
-                ContextDelete = b.Item("删除(&D)", ContextDelete_Click),
+                MenuItemDuplicate = b.Item("重复(&C)", MenuItemDuplicate_Click),
+                MenuItemEdit = b.Item("编辑(&E)", MenuItemEdit_Click),
+                MenuItemDelete = b.Item("删除(&D)", MenuItemDelete_Click),
                 b.Separator(),
-                ContextSelectAll = b.Item("全选(&Q)", ContextSelectAll_Click)
+                MenuItemSelectAll = b.Item("全选(&Q)", MenuItemSelectAll_Click)
             ], (_, _) =>
             {
                 ListViewMain.GetSelection(out _, out var item, out var total);
@@ -152,16 +152,18 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 var atMost1 = total == 1;
                 var selected = total != 0;
 
-                ContextDelete.Enabled = selected;
-                ContextDuplicate.Enabled = atMost1;
-                ContextEdit.Enabled = atMost1;
-                ContextSelectAll.Enabled = Items.Count != 0;
+                var def = atMost1 && HasFixedData && IsDefault(item);
+
+                MenuItemDelete.Enabled = selected && !def;
+                MenuItemDuplicate.Enabled = atMost1 && !def;
+                MenuItemEdit.Enabled = atMost1;
+                MenuItemSelectAll.Enabled = Items.Count != 0;
 
                 if (AllowExcludeItems)
                 {
                     var excluded = selected && ((TData)item.Tag).Excluded;
-                    ContextExclude.Enabled = selected && (!atMost1 || !excluded);
-                    ContextInclude.Enabled = selected && (!atMost1 || excluded);
+                    MenuItemExclude.Enabled = selected && (!atMost1 || !excluded);
+                    MenuItemInclude.Enabled = selected && (!atMost1 || excluded);
                 }
 
             }, out ContextMenuMain)
@@ -172,9 +174,9 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             ContextMenuMain.AddItems(b =>
             [
                 b.Separator(),
-                ContextExclude = b.Item("排除(&X)", ContextExclude_Click),
-                ContextInclude = b.Item("包括(&I)", ContextInclude_Click)
-            ], ContextSelectAll.Index - 1);
+                MenuItemExclude = b.Item("排除(&X)", MenuItemExclude_Click),
+                MenuItemInclude = b.Item("包括(&I)", MenuItemInclude_Click)
+            ], MenuItemSelectAll.Index - 1);
         }
 
         ListViewMain.ContextMenu = ContextMenuMain;
@@ -218,7 +220,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         ListViewMain.AutoAdjustColumnWidth();
         ListViewMain.EndUpdate();
-        ListViewMain.MouseDoubleClick += ContextEdit_Click;
+        ListViewMain.MouseDoubleClick += MenuItemEdit_Click;
         ListViewMain.ListViewItemSorter = new ListViewItemComparer<TData>();
     }
 
@@ -229,19 +231,19 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         switch (e.Control, e.KeyCode)
         {
             case (true, Keys.A):
-                ContextSelectAll_Click(null, null);
+                MenuItemSelectAll_Click(null, null);
                 break;
             case (true, Keys.C):
-                ContextDuplicate_Click(null, null);
+                MenuItemDuplicate_Click(null, null);
                 break;
             case (true, Keys.X):
-                ContextExclude_Click(null, null);
+                MenuItemExclude_Click(null, null);
                 break;
             case (true, Keys.I):
-                ContextInclude_Click(null, null);
+                MenuItemInclude_Click(null, null);
                 break;
             case (false, Keys.Delete):
-                ContextDelete_Click(null, null);
+                MenuItemDelete_Click(null, null);
                 break;
             default:
                 handled = false;
@@ -285,7 +287,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected abstract IListViewChildDialog<TData> GetChildDialog(TData data = default);
 
-    private void ContextDuplicate_Click(object sender, EventArgs e)
+    private void MenuItemDuplicate_Click(object sender, EventArgs e)
     {
         ListViewMain.GetSelection(out _, out var first, out var total);
 
@@ -303,7 +305,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void ContextEdit_Click(object sender, EventArgs e)
+    private void MenuItemEdit_Click(object sender, EventArgs e)
     {
         ListViewMain.GetSelection(out _, out var first, out var total);
 
@@ -319,7 +321,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void ContextDelete_Click(object sender, EventArgs e)
+    private void MenuItemDelete_Click(object sender, EventArgs e)
     {
         ListViewMain.GetSelection(out var items, out _, out var total);
 
@@ -349,14 +351,14 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void ContextSelectAll_Click(object sender, EventArgs e)
+    private void MenuItemSelectAll_Click(object sender, EventArgs e)
     {
         ListViewMain.BeginUpdate();
         ListViewMain.SelectAll(true);
         ListViewMain.EndUpdate();
     }
 
-    private void ContextExclude_Click(object sender, EventArgs e)
+    private void MenuItemExclude_Click(object sender, EventArgs e)
     {
         if (AllowExcludeItems)
         {
@@ -364,7 +366,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void ContextInclude_Click(object sender, EventArgs e)
+    private void MenuItemInclude_Click(object sender, EventArgs e)
     {
         if (AllowExcludeItems)
         {
