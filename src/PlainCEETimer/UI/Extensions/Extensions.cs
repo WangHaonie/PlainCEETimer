@@ -113,6 +113,11 @@ public static class Extensions
         }
     }
 
+    public static void Pin(this Control control, AnchorStyles anchor)
+    {
+        control.Anchor = anchor;
+    }
+
     public static AppForm FindParentForm(this Control control)
     {
         return (AppForm)control.FindForm();

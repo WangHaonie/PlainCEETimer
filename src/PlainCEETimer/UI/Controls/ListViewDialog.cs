@@ -69,7 +69,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected virtual bool AllowExcludeItems { get; }
 
-    protected sealed override AppFormParam Params => AppFormParam.AllControl;
+    protected sealed override AppFormParam Params => AppFormParam.AllControl | AppFormParam.Sizable;
 
     private bool HasFixedData;
     private TData[] fixedData;
@@ -94,7 +94,8 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private readonly PlainListView ListViewMain = new()
     {
         Location = new(3, 3),
-        UseCompatibleStateImageBehavior = false
+        UseCompatibleStateImageBehavior = false,
+        BorderStyle = BorderStyle.None
     };
 
     protected ListViewDialog(int listViewWidth, string[] headers, string[] groups, string itemDesc = null)
@@ -189,6 +190,10 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
         InitWindowSize(ButtonB, 3, 3);
         ListViewMain.ColumnMaxWidth = ScaleToDpi(500);
+        ListViewMain.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
+        ButtonA.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+        ButtonB.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+        ButtonOperation.Pin(AnchorStyles.Left | AnchorStyles.Bottom);
     }
 
     protected sealed override void OnLoad()

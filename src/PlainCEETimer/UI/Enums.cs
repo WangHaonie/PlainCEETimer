@@ -50,6 +50,7 @@ public enum AppFormParam
     RoundCorner = 1 << 6,
     RoundCornerSmall = 1 << 7 | RoundCorner,
     ModelessDialog = 1 << 8,
+    Sizable = 1 << 9,
     AllControl = BindButtons | KeyPreview
 }
 

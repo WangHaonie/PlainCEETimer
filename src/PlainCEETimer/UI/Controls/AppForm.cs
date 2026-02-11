@@ -4,7 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Extensions;
 using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls;
@@ -24,8 +26,12 @@ public abstract class AppForm : Form
 
     private bool IsLoading = true;
     private bool SetRoundRegion;
+    private bool canSaveSize;
+    private FormWindowState lastState;
+    private Size lastSize;
     private readonly AppFormParam ParamsInternal;
     private readonly int RoundCornerRadius = 13;
+    private readonly bool IsSizable;
     private readonly bool SetRoundCorner;
     private readonly bool SmallRoundCorner;
     private readonly bool Special;
@@ -44,6 +50,7 @@ public abstract class AppForm : Form
         KeyPreview = CheckParam(AppFormParam.KeyPreview);
         SetRoundCorner = CheckParam(AppFormParam.RoundCorner);
         SmallRoundCorner = CheckParam(AppFormParam.RoundCornerSmall);
+        IsSizable = CheckParam(AppFormParam.Sizable);
         App.ActivateMain += App_ActivateMain;
         MessageX = new(this);
 
@@ -61,6 +68,13 @@ public abstract class AppForm : Form
         MaximizeBox = false;
         StartPosition = FormStartPosition.Manual;
         ShowIcon = false;
+
+        if (IsSizable)
+        {
+            MaximizeBox = true;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            SizeGripStyle = SizeGripStyle.Hide;
+        }
 
         if (SetRoundCorner)
         {
@@ -102,6 +116,7 @@ public abstract class AppForm : Form
     {
         SuspendLayout();
         RunLayout(IsHighDpi);
+        InitToUserSize();
         ResumeLayout(true);
         OnLoad();
         base.OnLoad(e);
@@ -111,13 +126,33 @@ public abstract class AppForm : Form
             CenterToScreen();
         }
     }
-
     protected sealed override void OnShown(EventArgs e)
     {
         IsLoading = false;
         OnShown();
         FocusControl?.Focus();
         base.OnShown(e);
+    }
+
+    protected override void OnResizeBegin(EventArgs e)
+    {
+        if (IsSizable)
+        {
+            SuspendLayout();
+        }
+
+        base.OnResizeBegin(e);
+    }
+
+    protected override void OnResizeEnd(EventArgs e)
+    {
+        if (IsSizable)
+        {
+            Size = KeepOnScreen(Size, true);
+            ResumeLayout();
+        }
+
+        base.OnResizeEnd(e);
     }
 
     protected override void OnSizeChanged(EventArgs e)
@@ -150,6 +185,7 @@ public abstract class AppForm : Form
     protected sealed override void OnClosed(EventArgs e)
     {
         OnClosed();
+        SaveWindowParameters();
         base.OnClosed(e);
         Dispose(true);
 
@@ -208,6 +244,22 @@ public abstract class AppForm : Form
             {
                 SetRoundRegion = true;
             }
+        }
+
+        if (IsSizable)
+        {
+            SystemMenu.From(this)
+                .InsertItem(-2, "默认大小(&D)", (_, _) =>
+                {
+                    var def = MinimumSize;
+
+                    if (def != Size)
+                    {
+                        Size = def;
+                    }
+                })
+
+                .InsertSeparator(-2);
         }
 
         base.OnHandleCreated(e);
@@ -274,6 +326,24 @@ public abstract class AppForm : Form
     protected int ScaleToDpi(int px)
     {
         return (int)(px * DpiRatio);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int UnscaleToDpi(int px)
+    {
+        return (int)(px / DpiRatio);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected Size ScaleToDpi(Size sz)
+    {
+        return new(ScaleToDpi(sz.Width), ScaleToDpi(sz.Height));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected Size UnscaleToDpi(Size sz)
+    {
+        return new(UnscaleToDpi(sz.Width), UnscaleToDpi(sz.Height));
     }
 
     protected bool IsModkeysPressed(Keys keys)
@@ -435,6 +505,68 @@ public abstract class AppForm : Form
         var y = Top.Clamp(screen.Y, screen.Bottom - Height);
         SetLocation(x, y);
         return new(x, y);
+    }
+
+    protected Size KeepOnScreen(Size sz, bool keep)
+    {
+        var screen = GetCurrentScreenRect();
+        var w = sz.Width.Clamp(0, screen.Width);
+        var h = sz.Height.Clamp(0, screen.Height);
+        sz = new(w, h);
+
+        if (keep && sz != lastSize)
+        {
+            var x = Left.Clamp(screen.X, screen.Right - Width);
+            var y = Top.Clamp(screen.Y, screen.Bottom - Height);
+            SetLocation(x, y);
+        }
+
+        return sz;
+    }
+
+    private void InitToUserSize()
+    {
+        if (IsSizable)
+        {
+            var dic = App.AppConfig.Sizes;
+
+            if (dic != null && dic.TryGetValue(Name, out var szobj))
+            {
+                var sz = ScaleToDpi(szobj.Size);
+
+                if (sz != Size.Empty && sz != ClientSize)
+                {
+                    ClientSize = KeepOnScreen(sz, false);
+                }
+
+                if (szobj.Maximize)
+                {
+                    WindowState = lastState = FormWindowState.Maximized;
+                }
+
+                lastSize = Size;
+            }
+        }
+    }
+
+    private void SaveWindowParameters()
+    {
+        if (IsSizable)
+        {
+            var sz = Size;
+            var csz = ClientSize;
+            var usz = IsHighDpi ? UnscaleToDpi(sz) : sz;
+            var ucsz = UnscaleToDpi(csz);
+            var st = WindowState == FormWindowState.Maximized;
+            var changed = sz != lastSize;
+            var isdef = sz == MinimumSize;
+
+            if ((st ^ (lastState == FormWindowState.Maximized)) || (changed && !isdef && !st))
+            {
+                App.AppConfig.Sizes[Name] = new(st, (st || isdef) ? Size.Empty : ucsz);
+                ConfigValidator.DemandConfig();
+            }
+        }
     }
 
     private void App_ActivateMain()

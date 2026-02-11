@@ -108,6 +108,7 @@
     <Compile Include="Countdown\Enums.cs" />
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
+    <Compile Include="Modules\Configuration\WindowSizeObject.cs" />
     <Compile Include="Modules\CountdownRuleComparer.cs" />
     <Compile Include="Modules\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
     <Compile Include="Modules\JsonConverters\GlobalRulesConverter.cs" />
     <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
+    <Compile Include="Modules\JsonConverters\SizeFormatConverter.cs" />
     <Compile Include="Modules\Linq\ArrayLinq.cs" />
     <Compile Include="Modules\Http\NetworkedAction.cs" />
     <Compile Include="Modules\RandomUID.cs" />

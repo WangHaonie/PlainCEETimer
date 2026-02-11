@@ -14,6 +14,7 @@ public sealed class ExamManager : ListViewDialog<Exam, ExamDialog>
         : base(480, ["考试名称", "开始日期和时间", "结束日期和时间", "考试设置"], ["已过去的", "正在进行", "未开始的"], "考试信息")
     {
         Text = "管理考试信息 - 高考倒计时";
+        Name = "LVDEM";
     }
 
     protected override int GetGroupIndex(Exam data)

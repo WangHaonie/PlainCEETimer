@@ -11,6 +11,7 @@ public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
         : base(460, ["时刻", "效果预览"], Ph.RuleTypes, "规则")
     {
         Text = "管理自定义规则 - 高考倒计时";
+        Name = "LVDRM";
     }
 
     protected override int GetGroupIndex(CountdownRule data)
