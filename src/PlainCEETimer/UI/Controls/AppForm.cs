@@ -255,6 +255,8 @@ public abstract class AppForm : Form
                     {
                         Size = def;
                     }
+
+                    WindowState = FormWindowState.Normal;
                 })
 
                 .InsertSeparator(-2);
