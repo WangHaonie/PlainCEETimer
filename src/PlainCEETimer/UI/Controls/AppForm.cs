@@ -6,7 +6,6 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.UI.Extensions;
 using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls;
@@ -26,7 +25,6 @@ public abstract class AppForm : Form
 
     private bool IsLoading = true;
     private bool SetRoundRegion;
-    private bool canSaveSize;
     private FormWindowState lastState;
     private Size lastSize;
     private readonly AppFormParam ParamsInternal;
@@ -554,16 +552,15 @@ public abstract class AppForm : Form
         if (IsSizable)
         {
             var sz = Size;
-            var csz = ClientSize;
-            var usz = IsHighDpi ? UnscaleToDpi(sz) : sz;
-            var ucsz = UnscaleToDpi(csz);
-            var st = WindowState == FormWindowState.Maximized;
-            var changed = sz != lastSize;
+            var ismax = WindowState == FormWindowState.Maximized;
             var isdef = sz == MinimumSize;
 
-            if ((st ^ (lastState == FormWindowState.Maximized)) || (changed && !isdef && !st))
+            if ((ismax ^ (lastState == FormWindowState.Maximized))
+                || (!ismax && sz != lastSize && !isdef)
+                || (!ismax && isdef && lastSize != Size.Empty))
             {
-                App.AppConfig.Sizes[Name] = new(st, (st || isdef) ? Size.Empty : ucsz);
+                var dic = App.AppConfig.Sizes ??= [];
+                dic[Name] = new(ismax, ismax ? lastSize : isdef ? Size.Empty : UnscaleToDpi(ClientSize));
                 ConfigValidator.DemandConfig();
             }
         }

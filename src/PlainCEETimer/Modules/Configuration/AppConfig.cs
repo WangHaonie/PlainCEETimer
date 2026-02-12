@@ -90,7 +90,7 @@ public class AppConfig
     [JsonConverter(typeof(PointFormatConverter))]
     public Point Location { get; set; }
 
-    public Dictionary<string, WindowSizeObject> Sizes { get; set; } = [];
+    public Dictionary<string, WindowSizeObject> Sizes { get; set; }
 
     public static readonly AppConfig Empty = new();
 
