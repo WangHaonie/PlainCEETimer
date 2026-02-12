@@ -19,8 +19,7 @@ public class GeneralObject
     [DefaultValue(true)]
     public bool TopMost { get; set; } = true;
 
-    [DefaultValue(true)]
-    public bool UniTopMost { get; set; } = true;
+    public bool UniTopMost { get; set; }
 
     [DefaultValue(true)]
     public bool No { get; set; } = true;
