@@ -539,12 +539,12 @@ public abstract class AppForm : Form
                     ClientSize = KeepOnScreen(sz, false);
                 }
 
+                lastSize = Size;
+
                 if (szobj.Maximize)
                 {
                     WindowState = lastState = FormWindowState.Maximized;
                 }
-
-                lastSize = Size;
             }
         }
     }
