@@ -290,7 +290,7 @@ public sealed class SettingsForm : AppForm
                         LabelColorP3 = b.Label("[3]考试后"),
                         LabelColorWelcome = b.Label("[4]欢迎信息"),
 
-                        ButtonDefaultColor = b.Button("重置(&M)").AttachContextMenu(b =>
+                        ButtonDefaultColor = b.Button("重置").AttachContextMenu(b =>
                         [
                             b.Menu("白底(&L)",
                             [

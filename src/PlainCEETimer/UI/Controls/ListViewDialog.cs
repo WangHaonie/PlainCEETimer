@@ -128,7 +128,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         [
             ListViewMain,
 
-            ButtonOperation = b.Button("操作(&O) ▼").AttachContextMenu(b =>
+            ButtonOperation = b.Button("操作").AttachContextMenu(b =>
             [
                 b.Item("添加(&A)", (_, _) =>
                 {
