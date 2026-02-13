@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
@@ -21,6 +20,7 @@ public sealed class SettingsForm : AppForm
     private bool UserChanged;
     private bool CanSaveChanges;
     private bool AllowExit;
+    private bool ShowingDialog;
     private int SelectedTheme;
     private AppConfig AppConfig;
     private GeneralObject General;
@@ -587,45 +587,53 @@ public sealed class SettingsForm : AppForm
         SystemMenu.From(this)
             .InsertItem(-2, "导入配置(&I)", (_, _) =>
             {
-                if (FileDialogHelper.ShowDialog<OpenFileDialog>("选择配置文件 - 高考倒计时",
-                    null,
-                    this,
-                    out var dialog,
-                    FileFilter.ConfigFile))
+                if (!ShowingDialog)
                 {
-                    var file = dialog.FileName;
+                    ShowingDialog = true;
 
-                    if (new FileInfo(file).Length > 6 * 1024 * 1024)
+                    if (FileDialogHelper.ShowDialog<OpenFileDialog>("选择配置文件 - 高考倒计时",
+                        null,
+                        this,
+                        out var dialog,
+                        FileFilter.ConfigFile))
                     {
-                        MessageX.Error("选择的文件过大！");
-                        return;
+                        var file = dialog.FileName;
+
+                        if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
+                        {
+                            if (ConfigValidator.ImportConfig(file))
+                            {
+                                MessageX.Info("配置文件导入成功，需要立即重启！");
+                                App.Exit(true);
+                            }
+                            else
+                            {
+                                MessageX.Error("配置文件不合规！");
+                            }
+                        }
                     }
 
-                    if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
-                    {
-                        if (ConfigValidator.ImportConfig(file))
-                        {
-                            MessageX.Info("配置文件导入成功，需要立即重启！");
-                            App.Exit(true);
-                        }
-                        else
-                        {
-                            MessageX.Error("配置文件内容格式错误！");
-                        }
-                    }
+                    ShowingDialog = false;
                 }
             })
 
             .InsertItem(-2, "导出配置(&E)", (_, _) =>
             {
-                if (FileDialogHelper.ShowDialog<SaveFileDialog>("保存配置文件 - 高考倒计时",
-                    "PlainCEETimer.config",
-                    this,
-                    out var dialog,
-                    FileFilter.ConfigFile))
+                if (!ShowingDialog)
                 {
-                    ConfigValidator.ExportConfig(dialog.FileName);
-                    MessageX.Info("配置文件导出完成！");
+                    ShowingDialog = true;
+
+                    if (FileDialogHelper.ShowDialog<SaveFileDialog>("保存配置文件 - 高考倒计时",
+                        "PlainCEETimer.config",
+                        this,
+                        out var dialog,
+                        FileFilter.ConfigFile))
+                    {
+                        ConfigValidator.ExportConfig(dialog.FileName);
+                        MessageX.Info("配置文件导出完成！");
+                    }
+
+                    ShowingDialog = false;
                 }
             })
 

@@ -10,7 +10,7 @@ public class ControlBuilder
 {
     public PlainLabel Label(string text)
     {
-        return new(text);
+        return new() { Text = text };
     }
 
     public ColorBlock Block(string text)

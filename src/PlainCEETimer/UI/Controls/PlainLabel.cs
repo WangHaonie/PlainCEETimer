@@ -7,9 +7,8 @@ public class PlainLabel : Label
 {
     private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-    public PlainLabel(string text)
+    public PlainLabel()
     {
-        Text = text;
         AutoSize = true;
     }
 

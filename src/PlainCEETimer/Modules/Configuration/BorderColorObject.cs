@@ -19,19 +19,23 @@ public struct BorderColorObject
 
     public Color Color { get; set; }
 
-    internal readonly int Value => ((byte)Enabled.ToWin32() << 28) | ((byte)Type << 24) | Color.ToWin32();
+    internal readonly int Value => value;
+
+    private readonly int value;
 
     public BorderColorObject(bool enabled, int selection, Color color)
     {
-        Enabled = (bool)enabled;
+        Enabled = enabled;
         Type = selection;
         Color = color;
+        value = ((byte)enabled.ToWin32() << 28) | ((byte)selection << 24) | color.ToWin32();
     }
 
-    internal BorderColorObject(int w)
+    internal BorderColorObject(int dw)
     {
-        Enabled = ((w >> 28) & 0xF).ToBool();
-        Type = ((w) >> 24) & 0xF;
-        Color = (w & COLORREF.EmptyValue).ToColor();
+        Enabled = ((dw >> 28) & 0xF).ToBool();
+        Type = ((dw) >> 24) & 0xF;
+        Color = (dw & COLORREF.EmptyValue).ToColor();
+        value = dw;
     }
 }

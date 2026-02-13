@@ -165,8 +165,9 @@ public sealed partial class ColorBlock : PlainLabel
     private readonly ColorBlock PreviewBlock;
     private static CancellationMessageFilter MsgFilter;
 
-    public ColorBlock(bool isPreview, bool isFore, ColorBlock preview) : base("          ")
+    public ColorBlock(bool isPreview, bool isFore, ColorBlock preview)
     {
+        Text = "          ";
         BorderStyle = BorderStyle.FixedSingle;
         IsPreview = isPreview;
         IsFore = isFore;

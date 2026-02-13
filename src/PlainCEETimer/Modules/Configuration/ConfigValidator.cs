@@ -34,6 +34,7 @@ internal static class ConfigValidator
     public const long MaxDate = 3155378975999999999L; // DateTime.Max
     public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
     public const long MinDateSeconds = MinDate / MinTick;
+    public const long MaxConfigFileSize = 6L * 1024 * 1024; // 6 MB
     public const char ValueSeparator = ',';
     public const string ValueSeparatorString = ", ";
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
@@ -301,8 +302,15 @@ internal static class ConfigValidator
         {
             if (File.Exists(path))
             {
-                config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path));
-                return true;
+                if (new FileInfo(path).Length < MaxConfigFileSize)
+                {
+                    config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path));
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("The config file size is too large.");
+                }
             }
 
             return false;
