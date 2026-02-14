@@ -59,7 +59,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         set
         {
-            if (FixedDataItemSet == null && (HasFixedData = !value.IsNullOrEmpty()))
+            if (FixedDataItemSet == null && (hasFixedData = !value.IsNullOrEmpty()))
             {
                 FixedDataItemSet = new(value.Length);
                 fixedData = value;
@@ -71,7 +71,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected sealed override AppFormParam Params => AppFormParam.AllControl | AppFormParam.Sizable;
 
-    private bool HasFixedData;
+    private bool hasFixedData;
     private TData[] fixedData;
     private ContextMenu ContextMenuMain;
     private MenuItem MenuItemDuplicate;
@@ -153,7 +153,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 var atMost1 = total == 1;
                 var selected = total != 0;
 
-                var def = atMost1 && HasFixedData && IsDefault(item);
+                var def = atMost1 && hasFixedData && IsDefault(item);
 
                 MenuItemDelete.Enabled = selected && !def;
                 MenuItemDuplicate.Enabled = atMost1 && !def;
@@ -202,7 +202,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         var hasData = !Data.IsNullOrEmpty();
 
-        if (HasFixedData)
+        if (hasFixedData)
         {
             for (int i = 0; i < fixedData.Length; i++)
             {
@@ -218,7 +218,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             }
         }
 
-        if (HasFixedData || hasData)
+        if (hasFixedData || hasData)
         {
             Items[0].EnsureVisible();
         }
@@ -263,7 +263,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         TData[] data = [];
         var total = Items.Count;
-        var length = total - (HasFixedData ? fixedData.Length : 0);
+        var length = total - (hasFixedData ? fixedData.Length : 0);
 
         if (length != 0)
         {
@@ -335,7 +335,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             ListViewMain.BeginUpdate();
 
-            if (!HasFixedData && total == Items.Count)
+            if (!hasFixedData && total == Items.Count)
             {
                 RemoveAllItems();
             }
@@ -406,7 +406,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             if ((bool)flag)
             {
-                EditItem(item, newData, oldData, HasFixedData && FixedDataItemSet.Remove(item), false);
+                EditItem(item, newData, oldData, false);
             }
             else
             {
@@ -422,8 +422,13 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void EditItem(ListViewItem item, TData newData, TData oldData, bool isDefault, bool reverseEx)
+    private void EditItem(ListViewItem item, TData newData, TData oldData, bool reverseEx)
     {
+        if (hasFixedData)
+        {
+            FixedDataItemSet.Remove(item);
+        }
+
         newData.Excluded = reverseEx ^ oldData.Excluded;
         RemoveItem(item, oldData, true);
         AddItem(newData);
@@ -493,7 +498,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
                 if (data.Excluded != exclude)
                 {
-                    EditItem(item, data.Copy(), data, false, true);
+                    EditItem(item, data.Copy(), data, true);
                     changed = true;
                 }
             }
@@ -515,6 +520,6 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     private bool IsDefault(ListViewItem item)
     {
-        return HasFixedData && FixedDataItemSet.Contains(item);
+        return hasFixedData && FixedDataItemSet.Contains(item);
     }
 }

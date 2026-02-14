@@ -175,13 +175,15 @@ public sealed class PlainListView : ListView
     protected override void WndProc(ref Message m)
     {
         const int WM_NOTIFY = 0x004E;
-        const int NM_CUSTOMDRAW = -12;
+        const int WM_FIRST = (int)(0U - 0U);
+        const int NM_CUSTOMDRAW = WM_FIRST - 12;
         const int CDDS_PREPAINT = 0x00000001;
         const int CDRF_NOTIFYITEMDRAW = 0x00000020;
-        const int CDDS_ITEMPREPAINT = 0x00010000 | CDDS_PREPAINT;
+        const int CDDS_ITEM = 0x00010000;
+        const int CDDS_ITEMPREPAINT = CDDS_ITEM | CDDS_PREPAINT;
         const int CDRF_DODEFAULT = 0x00000000;
 
-        const int TTN_FIRST = -520;
+        const int TTN_FIRST = unchecked((int)(0U - 520U));
         const int TTN_GETDISPINFOW = TTN_FIRST - 10;
         const int WM_USER = 0x0400;
         const int TTM_SETMAXTIPWIDTH = WM_USER + 24;
@@ -190,38 +192,44 @@ public sealed class PlainListView : ListView
         const int NMCUSTOMDRAW_dwDrawStage = 24;
         const int NMCUSTOMDRAW_hdc = 32;
 
-        if (m.Msg == WM_NOTIFY)
+        switch (m.Msg)
         {
-            switch (Marshal.ReadInt32(m.LParam, NMHDR_code))
-            {
-                case NM_CUSTOMDRAW:
-                    switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW_dwDrawStage))
-                    {
-                        case CDDS_PREPAINT:
-                            m.Result = new(CDRF_NOTIFYITEMDRAW);
-                            return;
-                        case CDDS_ITEMPREPAINT:
-                            Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW_hdc),
-                                UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
-                            m.Result = new(CDRF_DODEFAULT);
-                            return;
-                    }
-                    break;
+            case WM_NOTIFY:
 
-                case TTN_GETDISPINFOW:
-                    /*
-                    
-                    ToolTip 自动换行 参考：
+                switch (Marshal.ReadInt32(m.LParam, NMHDR_code))
+                {
+                    case NM_CUSTOMDRAW:
 
-                    How to Implement Multiline Tooltips - Win32 apps | Microsoft Learn
-                    https://learn.microsoft.com/en-us/windows/win32/controls/implement-multiline-tooltips
+                        switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW_dwDrawStage))
+                        {
+                            case CDDS_PREPAINT:
+                                m.Result = new(CDRF_NOTIFYITEMDRAW);
+                                return;
+                            case CDDS_ITEMPREPAINT:
+                                Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW_hdc),
+                                    UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
+                                m.Result = new(CDRF_DODEFAULT);
+                                return;
+                        }
 
-                     */
+                        break;
 
-                    base.WndProc(ref m);
-                    Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), TTM_SETMAXTIPWIDTH, 0, Width);
-                    return;
-            }
+                    case TTN_GETDISPINFOW:
+                        /*
+
+                        ToolTip 自动换行 参考：
+
+                        How to Implement Multiline Tooltips - Win32 apps | Microsoft Learn
+                        https://learn.microsoft.com/en-us/windows/win32/controls/implement-multiline-tooltips
+
+                         */
+
+                        base.WndProc(ref m);
+                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), TTM_SETMAXTIPWIDTH, 0, Width);
+                        return;
+                }
+
+                break;
         }
 
         base.WndProc(ref m);

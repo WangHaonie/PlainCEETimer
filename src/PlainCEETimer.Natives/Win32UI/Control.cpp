@@ -8,13 +8,13 @@
 using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
 
 static fnMessageBoxW g_MessageBoxW = nullptr;
-static HOOKPROC g_CbtHookProc = nullptr;
+static HOOKPROC g_MsgBoxCbtProc = nullptr;
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (g_CbtHookProc)
+    if (g_MsgBoxCbtProc)
     {
-        LRESULT hr = g_CbtHookProc(nCode, wParam, lParam);
+        LRESULT hr = g_MsgBoxCbtProc(nCode, wParam, lParam);
 
         if (SUCCEEDED(hr))
         {
@@ -125,12 +125,12 @@ void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
     SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void ComdlgHookMessageBox(HOOKPROC lpfnCbtHookProc)
+void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc)
 {
-    if (!g_CbtHookProc && lpfnCbtHookProc
+    if (!g_MsgBoxCbtProc && lpfnCbtProc
         && ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW))
     {
-        g_CbtHookProc = lpfnCbtHookProc;
+        g_MsgBoxCbtProc = lpfnCbtProc;
     }
 }
 
@@ -139,7 +139,7 @@ void ComdlgUnhookMessageBox()
     if (g_MessageBoxW)
     {
         ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, g_MessageBoxW, nullptr);
-        g_CbtHookProc = nullptr;
+        g_MsgBoxCbtProc = nullptr;
     }
 }
 

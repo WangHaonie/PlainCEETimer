@@ -146,7 +146,14 @@ public abstract class AppForm : Form
     {
         if (IsSizable)
         {
-            Size = KeepOnScreen(Size, true);
+            var sz = KeepOnScreen(Size);
+            Size = sz;
+
+            if (sz != lastSize)
+            {
+                KeepOnScreen();
+            }
+
             ResumeLayout();
         }
 
@@ -200,11 +207,11 @@ public abstract class AppForm : Form
     {
         get
         {
-            const int WS_EX_COMPOSITED = 0x02000000;
             var cp = base.CreateParams;
 
             if (CheckParam(AppFormParam.CompositedStyle))
             {
+                const int WS_EX_COMPOSITED = 0x02000000;
                 cp.ExStyle |= WS_EX_COMPOSITED;
             }
 
@@ -507,21 +514,12 @@ public abstract class AppForm : Form
         return new(x, y);
     }
 
-    protected Size KeepOnScreen(Size sz, bool keep)
+    protected Size KeepOnScreen(Size size)
     {
         var screen = GetCurrentScreenRect();
-        var w = sz.Width.Clamp(0, screen.Width);
-        var h = sz.Height.Clamp(0, screen.Height);
-        sz = new(w, h);
-
-        if (keep && sz != lastSize)
-        {
-            var x = Left.Clamp(screen.X, screen.Right - Width);
-            var y = Top.Clamp(screen.Y, screen.Bottom - Height);
-            SetLocation(x, y);
-        }
-
-        return sz;
+        var w = size.Width.Clamp(0, screen.Width);
+        var h = size.Height.Clamp(0, screen.Height);
+        return new(w, h);
     }
 
     private void InitToUserSize()
@@ -536,7 +534,7 @@ public abstract class AppForm : Form
 
                 if (sz != Size.Empty && sz != ClientSize)
                 {
-                    ClientSize = KeepOnScreen(sz, false);
+                    ClientSize = KeepOnScreen(sz);
                 }
 
                 lastSize = Size;
