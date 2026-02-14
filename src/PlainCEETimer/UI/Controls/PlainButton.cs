@@ -11,10 +11,10 @@ public sealed class PlainButton : Button
     {
         private readonly PlainButton instance;
 
-        public ParentNativeWindow(PlainButton pb, IntPtr hwndParent)
+        public ParentNativeWindow(PlainButton pb)
         {
             instance = pb;
-            AssignHandle(hwndParent);
+            AssignHandle(pb.Parent.Handle);
         }
 
         protected override void WndProc(ref Message m)
@@ -23,11 +23,13 @@ public sealed class PlainButton : Button
 
             if (m.Msg == WM_NOTIFY)
             {
+                const int NMHDR_hwndFrom = 0;
                 const int NMHDR_code = 16;
                 const int BCN_FIRST = unchecked((int)(0U - 1250U));
                 const int BCN_DROPDOWN = BCN_FIRST + 0x0002;
 
-                if (Marshal.ReadInt32(m.LParam, NMHDR_code) == BCN_DROPDOWN)
+                if (Marshal.ReadInt32(m.LParam, NMHDR_code) == BCN_DROPDOWN
+                    && Marshal.ReadIntPtr(m.LParam, NMHDR_hwndFrom) == instance.Handle)
                 {
                     instance.ContextMenu.Show(instance, new(0, instance.Height));
                 }
@@ -68,7 +70,7 @@ public sealed class PlainButton : Button
 
         if (ContextMenu != null)
         {
-            new ParentNativeWindow(this, Parent.Handle);
+            new ParentNativeWindow(this);
         }
 
         base.OnHandleCreated(e);

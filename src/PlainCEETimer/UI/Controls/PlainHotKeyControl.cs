@@ -30,8 +30,8 @@ public class PlainHotkeyControl : Control
 
         public ParentNativeWindow(PlainHotkeyControl ctrl)
         {
-            AssignHandle(ctrl.Parent.Handle);
             Ctrl = ctrl;
+            AssignHandle(ctrl.Parent.Handle);
         }
 
         protected override void WndProc(ref Message m)

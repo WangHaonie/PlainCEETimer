@@ -28,8 +28,9 @@ public sealed class PlainListView : ListView
         protected override void WndProc(ref Message m)
         {
             const int WM_SETCURSOR = 0x0020;
+            const int WM_CONTEXTMENU = 0x007B;
 
-            if (m.Msg == WM_SETCURSOR)
+            if (m.Msg is WM_SETCURSOR or WM_CONTEXTMENU)
             {
                 m.Result = new(1);
             }
