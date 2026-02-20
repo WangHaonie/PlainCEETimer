@@ -23,7 +23,7 @@ public class NetworkedAction(Action action)
     {
         if (Interlocked.Exchange(ref m_flag, 1) == 0)
         {
-            if (await CheckConnectivityAsync().ConfigureAwait(false))
+            if (await CheckConnectivityAsync())
             {
                 action();
                 NetworkChange.NetworkAddressChanged -= NetworkChange_NetworkAddressChanged;
@@ -45,7 +45,7 @@ public class NetworkedAction(Action action)
         try
         {
             using var req = new HttpRequestMessage(HttpMethod.Head, "http://g.cn/generate_204");
-            using var res = await HttpService.SendAsync(req).ConfigureAwait(false);
+            using var res = await HttpService.SendAsync(req);
 
             return res.IsSuccessStatusCode || res.StatusCode == HttpStatusCode.NoContent;
         }

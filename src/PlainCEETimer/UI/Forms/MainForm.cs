@@ -12,6 +12,7 @@ using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.Modules.Linq;
+using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;

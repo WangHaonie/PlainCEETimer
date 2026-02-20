@@ -10,6 +10,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
+using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
 
@@ -105,7 +106,7 @@ internal static class App
                             UacHelper.PopupReport();
                             break;
                         case "/fr":
-                            Application.Run(new DownloaderForm(GetNextArg()));
+                            new Updater().InteractiveDownload(GetNextArg(), GetNextArg(1));
                             break;
                         case "/op":
                             UacHelper.CheckAdmin();
@@ -219,11 +220,11 @@ internal static class App
         catch { }
     }
 
-    private static string GetNextArg()
+    private static string GetNextArg(int ofs = 0)
     {
         if (ArgsLength > 1)
         {
-            return Args[1];
+            return Args[1 + ofs];
         }
 
         return null;

@@ -13,23 +13,18 @@ public class Downloader
     public event Action<Exception> Error;
     public event Action Completed;
 
-    public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength, int defaultBuffer = 1024 * 16)
+    public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength = -1, int defaultBuffer = 1024 * 16)
     {
         try
         {
             var report = new DownloadReport();
-            using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false);
+            using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
             response.EnsureSuccessStatusCode();
-            var total = 0L;
-
-            if ((total = response.Content.Headers.ContentLength ?? contentLength) == 0L)
-            {
-                total = 378880L;
-            }
+            var total = response.Content.Headers.ContentLength ?? contentLength;
 
             report.Total = total / 1024L;
             using var file = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, defaultBuffer, true);
-            using var http = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            using var http = await response.Content.ReadAsStreamAsync();
             var buffer = new byte[defaultBuffer];
             var downloaded = 0L;
             var last = 0L;
@@ -38,9 +33,9 @@ public class Downloader
             var lastReport = sw.Elapsed;
             var elapsed = new TimeSpan();
 
-            while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false)) > 0)
+            while ((read = await http.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
             {
-                await file.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
+                await file.WriteAsync(buffer, 0, read, token);
                 downloaded += read;
                 elapsed = sw.Elapsed;
                 report.Downloaded = downloaded / 1024L;

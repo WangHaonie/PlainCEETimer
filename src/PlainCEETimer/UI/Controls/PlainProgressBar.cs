@@ -27,7 +27,7 @@ public sealed class PlainProgressBar : ProgressBar
         get;
         set
         {
-            if (init)
+            if (init && field != value)
             {
                 tbp.SetState(value);
             }

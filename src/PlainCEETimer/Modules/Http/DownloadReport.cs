@@ -1,6 +1,6 @@
 ﻿namespace PlainCEETimer.Modules.Http;
 
-public struct DownloadReport
+public class DownloadReport
 {
     public long Total;
     public long Downloaded;

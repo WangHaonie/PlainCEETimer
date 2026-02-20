@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Http;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Forms;
 
-namespace PlainCEETimer.Modules;
+namespace PlainCEETimer.Modules.Update;
 
-public class Updater
+internal class Updater
 {
     private DownloaderForm FormDownloader;
 
@@ -20,31 +18,19 @@ public class Updater
 
         try
         {
-            var url = isPreview
-                ? "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/ci.json"
-                : "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json";
-
-            var response = JsonConvert.DeserializeObject<ResponseObject>(HttpService.GetStringAsync(url).Result);
+            var response = AppUpdate.FetchAsync(UpdateSource.GiteeStable).Result;
             var latest = response.Version;
-            var date = response.PublishDate;
-            var datep = date.ToTimestamp();
+            var date = response.ReleaseDate;
             var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
-            var content = response.UpdateLog.Replace("\n\r", "\n\r· ");
+            var content = response.Changelog;
             var sha = response.Commit;
 
-            if (Version.Parse(latest) > App.VersionObject || isPreview && sha != AppInfo.CommitSHA && datep > AppInfo.Timestamp)
+            if (latest > App.VersionObject
+                || (isPreview && sha != AppInfo.CommitSHA && date.ToTimestamp() > AppInfo.Timestamp))
             {
                 if (MessageX.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == DialogResult.Yes)
                 {
-                    owner.BeginInvoke(() =>
-                    {
-                        if (FormDownloader == null || FormDownloader.IsDisposed)
-                        {
-                            FormDownloader = new(isPreview, latest, response.UpdateSize);
-                        }
-
-                        FormDownloader.ReActivate();
-                    });
+                    owner.BeginInvoke(() => ShowDownloaderUI(response.Url, response.Size));
                 }
             }
             else if (popup)
@@ -61,6 +47,30 @@ public class Updater
         }
     }
 
+    public void InteractiveDownload(string version, string source)
+    {
+        if (string.IsNullOrEmpty(version) || !Version.TryParse(version, out _))
+        {
+            version = AppInfo.Version;
+        }
+
+        var src = default(UpdateSource);
+
+        if (!string.IsNullOrEmpty(source))
+        {
+            if (int.TryParse(source, out var val) && Enum.IsDefined(typeof(UpdateSource), val))
+            {
+                src = (UpdateSource)val;
+            }
+            else
+            {
+                Enum.TryParse(source, true, out src);
+            }
+        }
+
+        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 370 * 1024L);
+    }
+
     private string GetDescription(DateTime pub)
     {
         var span = DateTime.Now - pub;
@@ -73,7 +83,7 @@ public class Updater
         return $"{span.TotalDays:0.0} 天前";
     }
 
-    private string GetMessage(bool hasUpdate, bool isPreview, string latest, string sha, string date, string content)
+    private string GetMessage(bool hasUpdate, bool isPreview, Version latest, string sha, string date, string content)
     {
         var sb = new StringBuilder(120);
 
@@ -120,5 +130,22 @@ public class Updater
         }
 
         return sb.ToString();
+    }
+
+    private void ShowDownloaderUI(string url, long size)
+    {
+        if (FormDownloader == null || FormDownloader.IsDisposed)
+        {
+            FormDownloader = new(url, size);
+        }
+
+        if (Application.MessageLoop)
+        {
+            FormDownloader.ReActivate();
+        }
+        else
+        {
+            Application.Run(FormDownloader);
+        }
     }
 }

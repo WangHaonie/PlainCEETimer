@@ -126,6 +126,9 @@
     <Compile Include="Modules\RandomUID.cs" />
     <Compile Include="Modules\Startup.cs" />
     <Compile Include="Modules\SystemVersion.cs" />
+    <Compile Include="Modules\Update\AppUpdate.cs" />
+    <Compile Include="Modules\Update\AppUpdateInfo.cs" />
+    <Compile Include="Modules\Update\UpdateSource.cs" />
     <Compile Include="Modules\Xml.cs" />
     <Compile Include="Modules\AppInfo.cs" />
     <Compile Include="UI\Colors.cs" />
@@ -269,8 +272,7 @@
     <Compile Include="Modules\ProcessHelper.cs" />
     <Compile Include="Modules\UacHelper.cs" />
     <Compile Include="Modules\RegistryHelper.cs" />
-    <Compile Include="Modules\ResponseObject.cs" />
-    <Compile Include="Modules\Updater.cs" />
+    <Compile Include="Modules\Update\Updater.cs" />
     <Compile Include="Modules\App.cs" />
     <Compile Include="UI\AppMessageBox.cs" />
     <Compile Include="Modules\Configuration\ConfigValidator.cs" />
@@ -306,5 +308,6 @@
   <ItemGroup>
     <Content Include="Properties\AppIcon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

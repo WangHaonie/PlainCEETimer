@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 

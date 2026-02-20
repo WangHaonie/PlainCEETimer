@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -12,13 +11,11 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms;
 
-public sealed class DownloaderForm : AppForm
+public sealed class DownloaderForm(string url, long size) : AppForm
 {
     protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing;
 
     private bool IsCancelled;
-    private bool IsPreview;
-    private string DownloadUrl;
     private string DownloadPath;
     private PlainLabel LabelDownloading;
     private PlainLabel LabelSize;
@@ -28,23 +25,8 @@ public sealed class DownloaderForm : AppForm
     private PlainButton ButtonCancel;
     private PlainLinkLabel LinkBrowser;
     private LinkLabel.Link LinkBrowserLink;
-    private readonly string TargetVersion;
-    private readonly long UpdateSize;
     private readonly CancellationTokenSource cts = new();
     private readonly Downloader UpdateDownloader = new();
-
-    public DownloaderForm(string version)
-    {
-        IsPreview = version == "/pre";
-        TargetVersion = Version.TryParse(version, out _) ? version : AppInfo.Version;
-    }
-
-    public DownloaderForm(bool isPreview, string version, long size)
-    {
-        IsPreview = isPreview;
-        TargetVersion = version;
-        UpdateSize = size;
-    }
 
     protected override void OnInitializing()
     {
@@ -99,19 +81,7 @@ public sealed class DownloaderForm : AppForm
     {
         if (Win32User.NotImpersonal)
         {
-            var sb = new StringBuilder(120)
-            .Append("https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/");
-
-            if (IsPreview)
-            {
-                sb.Append("ci/");
-            }
-
-            sb.Append("CEETimerCSharpWinForms_")
-            .Append(TargetVersion)
-            .Append("_x64_Setup.exe");
-
-            LinkBrowserLink.LinkData = DownloadUrl = sb.ToString();
+            LinkBrowserLink.LinkData = url;
             DownloadPath = Path.Combine(Path.GetTempPath(), "PlainCEETimer-Installer.exe");
             UpdateDownloader.Downloading += UpdateDownloader_Downloading;
             UpdateDownloader.Error += UpdateDownloader_Error;
@@ -135,13 +105,14 @@ public sealed class DownloaderForm : AppForm
     {
         IsCancelled = false;
         ButtonRetry.Enabled = false;
-        await UpdateDownloader.DownloadAsync(DownloadUrl, DownloadPath, cts.Token, UpdateSize);
+        await UpdateDownloader.DownloadAsync(url, DownloadPath, cts.Token, size);
     }
 
     private void UpdateDownloader_Downloading(object sender, ref DownloadReport report)
     {
         UpdateLabels(null, $"已下载/总共: {report.Downloaded} KB / {report.Total} KB", $"下载速度: {report.Speed:0.00} KB/s");
-        ProgressBarMain.Value = report.Progress;
+        var p = report.Progress;
+        ProgressBarMain.Value = report.Progress.Clamp(0, 100);
     }
 
     private void UpdateDownloader_Error(Exception ex)
