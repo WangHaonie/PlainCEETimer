@@ -58,4 +58,22 @@ public static class StringExtensions
 
         return str.Substring(0, maxLength) + "..." + str.Substring(length - rearLength, rearLength);
     }
+
+    public static bool StartsWith(this string str, params char[] values)
+    {
+        if (!string.IsNullOrEmpty(str))
+        {
+            var first = str[0];
+
+            foreach (var c in values)
+            {
+                if (first == c)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

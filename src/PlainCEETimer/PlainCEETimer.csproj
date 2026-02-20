@@ -99,6 +99,7 @@
     <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Structs.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
+    <Compile Include="Modules\CliOption.cs" />
     <Compile Include="Modules\Configuration\BorderColorObject.cs" />
     <Compile Include="Modules\Configuration\Enums.cs" />
     <Compile Include="Modules\Configuration\InvalidTamperingException.cs" />

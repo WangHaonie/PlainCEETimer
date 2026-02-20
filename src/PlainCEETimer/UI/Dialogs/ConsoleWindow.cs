@@ -137,7 +137,7 @@ public sealed class ConsoleWindow : AppDialog
             {
                 try
                 {
-                    ElevatedProc = ProcessHelper.RunElevated(App.ExecutablePath, "/run " + Key + " " + ExePath + " " + ExeArgs);
+                    ElevatedProc = ProcessHelper.RunElevated(App.ExecutablePath, string.Concat("/run ", Key, " /exe ", ExePath, " /args ", CliOption.Quote(ExeArgs)));
                 }
                 catch (Exception ex)
                 {

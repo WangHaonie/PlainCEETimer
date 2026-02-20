@@ -3,13 +3,11 @@ using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
@@ -19,13 +17,19 @@ namespace PlainCEETimer.Modules;
 internal static class App
 {
     public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
+
     public static string ExecutablePath => field ??= Application.ExecutablePath;
+
     public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
+
+    public static Icon AppIcon => appIcon ??= HICON.FromFile(ExecutablePath).ToIcon();
+
     public static AppConfig AppConfig { get; private set; }
-    public static Icon AppIcon { get; private set; }
+
     public static Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
     internal static event Action ActivateMain;
+
     internal static event Action AppExit;
 
     public const string AppName = "高考倒计时 by WangHaonie";
@@ -45,8 +49,7 @@ internal static class App
     private static bool IsMainProcess;
     private static bool IsClosing;
     private static string AllArgs;
-    private static string[] Args;
-    private static int ArgsLength;
+    private static Icon appIcon;
     private static Mutex MainMutex;
     private static readonly object _lock = new();
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
@@ -63,32 +66,29 @@ internal static class App
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #endif
         MainMutex = new(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
+        AllArgs = string.Join(" ", args);
 
         if (IsMainProcess)
         {
             new Action(StartPipeServer).Start();
         }
 
-        if (!StartProgram(args))
+        if (!StartProgram(args.Length, CliOption.Parse(args)))
         {
             StartPipeClient();
             Exit();
         }
     }
 
-    private static bool StartProgram(string[] args)
+    private static bool StartProgram(int argc, CliOption args)
     {
-        AppIcon = HICON.FromFile(ExecutablePath).ToIcon();
-        Args = args.ArraySelect(x => x.ToLower());
-        ArgsLength = Args.Length;
-        AllArgs = string.Join(" ", args);
         InternalInit();
 
         if (IsMainProcess)
         {
             if (ExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
             {
-                if (ArgsLength == 0)
+                if (argc == 0)
                 {
                     new Action(UacHelper.CheckAdmin).Start();
                     Win32TaskScheduler.Initialize();
@@ -96,26 +96,26 @@ internal static class App
                 }
                 else
                 {
-                    switch (Args[0])
+                    switch (args.FirstOption)
                     {
-                        case "/?":
-                        case "/h":
+                        case "?":
+                        case "h":
                             PopupHelp();
                             break;
-                        case "/ac":
+                        case "ac":
                             UacHelper.PopupReport();
                             break;
-                        case "/fr":
-                            new Updater().InteractiveDownload(GetNextArg(), GetNextArg(1));
+                        case "fr":
+                            new Updater().InteractiveDownload(args.GetFirst(), args.Get("src"));
                             break;
-                        case "/op":
+                        case "op":
                             UacHelper.CheckAdmin();
-                            new OptimizationHelper(GetNextArg() == "/auto").Optimize();
+                            new OptimizationHelper(args.Defined("auto")).Optimize();
                             break;
-                        case "/lnk":
-                            ShellLink.CreateAppShortcut(GetNextArg() == "/custom");
+                        case "lnk":
+                            ShellLink.CreateAppShortcut(args.Defined("custom"));
                             break;
-                        case "/uninst":
+                        case "uninst":
                             Startup.DeleteAll();
                             DeleteExtraFiles();
                             break;
@@ -133,9 +133,9 @@ internal static class App
 
             return true;
         }
-        else if (!(ArgsLength > 3 && Args[0] == "/run" && StartPipeClient(args[1], args[2], string.Join(" ", args.Skip(3)))))
+        else if (!(args.FirstOption == "run" && StartPipeClient(args.GetFirst(), args.Get("exe"), args.Get("args"))))
         {
-            if (ArgsLength != 0)
+            if (argc != 0)
             {
                 MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
             }
@@ -220,16 +220,6 @@ internal static class App
         catch { }
     }
 
-    private static string GetNextArg(int ofs = 0)
-    {
-        if (ArgsLength > 1)
-        {
-            return Args[1 + ofs];
-        }
-
-        return null;
-    }
-
     private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
     {
         var isRedirector = !string.IsNullOrEmpty(pipe);
@@ -266,7 +256,7 @@ internal static class App
     public static void Exit(bool restart = false, bool useArgs = false)
     {
         IsClosing = true;
-        AppIcon.Destory();
+        appIcon.Destory();
         AppExit?.Invoke();
         AppExit = null;
         ActivateMain = null;

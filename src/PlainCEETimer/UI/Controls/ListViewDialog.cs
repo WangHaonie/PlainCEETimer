@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;

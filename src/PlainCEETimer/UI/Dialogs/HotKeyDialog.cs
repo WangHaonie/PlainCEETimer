@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Linq;
