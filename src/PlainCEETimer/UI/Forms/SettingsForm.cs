@@ -411,7 +411,7 @@ public sealed class SettingsForm : AppForm
                             {
                                 if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
                                 {
-                                    ProcessHelper.Run("cmd", $"/k title PlainCEETimer && \"{App.ExecutablePath}\" /? & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.ExecutableDir}", true);
+                                    ProcessHelper.Run("cmd", $"/k title PlainCEETimer & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.ExecutableDir}", true);
                                     App.Exit();
                                 }
                             }

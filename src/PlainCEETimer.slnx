@@ -2,7 +2,11 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
+  <Project Path="PlainCEETimer.Appcom/PlainCEETimer.Appcom.vcxproj" Id="526ccfc5-fb2d-4946-8af8-51d1213f1230">
+    <BuildType Project="Release" />
+  </Project>
   <Project Path="PlainCEETimer.Natives/PlainCEETimer.Natives.vcxproj" Id="86cb09fc-384d-42e6-a102-7c54c154d111">
+    <BuildDependency Project="PlainCEETimer.Appcom/PlainCEETimer.Appcom.vcxproj" />
     <BuildType Project="Release" />
   </Project>
   <Project Path="PlainCEETimer/PlainCEETimer.csproj" Id="ba4d9680-5e05-4fdb-b198-f16e3a64b582">

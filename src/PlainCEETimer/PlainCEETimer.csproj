@@ -98,6 +98,7 @@
     <Compile Include="Interop\FunctionPointers.cs" />
     <Compile Include="Interop\ShellLink.cs" />
     <Compile Include="Interop\Structs.cs" />
+    <Compile Include="Interop\Win32.cs" />
     <Compile Include="Interop\Win32TaskScheduler.cs" />
     <Compile Include="Modules\CliOption.cs" />
     <Compile Include="Modules\Configuration\BorderColorObject.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
     <Compile Include="Countdown\ICountdownService.cs" />
     <Compile Include="Modules\Configuration\WindowSizeObject.cs" />
+    <Compile Include="Modules\ConsoleHelper.cs" />
     <Compile Include="Modules\CountdownRuleComparer.cs" />
     <Compile Include="Modules\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Modules\Extensions\StringExtensions.cs" />

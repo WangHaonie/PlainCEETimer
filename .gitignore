@@ -5,6 +5,7 @@
 **/NSIS/*.exe
 **/PlainCEETimer/bin/
 **/PlainCEETimer/obj/
+**/PlainCEETimer.Appcom/x64/
 **/PlainCEETimer.Natives/x64/
 **/PlainCEETimer.Setup/*.exe
 *.aps

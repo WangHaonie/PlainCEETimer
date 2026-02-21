@@ -159,7 +159,7 @@ internal static class App
         lock (_lock)
         {
             var now = DateTime.Now;
-            var content = $"—————————————————— {AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA}) - {now.Format()} ——————————————————\n{ex}";
+            var content = $"—————————————————— {GetAppDescription()} - {now.Format()} ——————————————————\n{ex}";
             var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
             var exFilePath = $"{ExecutableDir}{exFileName}";
             File.AppendAllText(exFilePath, content);
@@ -175,23 +175,28 @@ internal static class App
 
     private static void PopupHelp()
     {
-        MessageX.Info(
-            """
-            可用的命令行参数: 
+        Win32.AllocConsole();
 
-            /h
-                    显示此帮助信息
-            /ac
-                    检测当前用户是否具有管理员权限
-            /fr [<版本号>]
-                    强制下载并安装指定的版本，留空则当前版本，推荐
-                    在特殊情况下使用，不支持老版本
-            /op
-                    优化本程序，提升运行速度
-            /lnk [/custom]
-                    向开始菜单文件夹和桌面创建指向本程序的快捷方式
-                    /custom 表示用户将自行选择保存快捷方式的文件夹
-            """);
+        new ConsoleHelper()
+            .WriteLine(GetAppDescription(), ConsoleColor.White)
+            .WriteLine(AppName, ConsoleColor.White)
+            .WriteLine()
+            .WriteLine("用法:")
+            .WriteLine($"{AppNameEng} [options]", ConsoleColor.White)
+            .WriteLine()
+            .WriteLine("命令行选项:")
+            .WriteLine("/?, /h", ConsoleColor.White)
+                .WriteLine("\t显示此帮助信息.")
+            .WriteLine("/ac", ConsoleColor.White)
+                .WriteLine("\t检测当前用户是否具有管理员权限.")
+            .WriteLine("/fr [<版本号>] [/src <UpdateSource>]", ConsoleColor.White)
+                .WriteLine("\t强制下载并安装指定的版本, 留空则当前版本, 推荐在特殊情况下使用, 不支持老版本.")
+                .WriteLine($"\t可用的更新源: [ {nameof(UpdateSource.GiteeStable)},0 | {nameof(UpdateSource.GitHubStable)},1 | {nameof(UpdateSource.GiteeCI)},2 | {nameof(UpdateSource.GitHubCI)},3 ]")
+                .WriteLine($"\t默认 {nameof(UpdateSource.GiteeStable)},0")
+            .WriteLine("/lnk [/custom]", ConsoleColor.White)
+                .WriteLine("\t向开始菜单文件夹和桌面创建指向本程序的快捷方式. /custom 表示自行选择保存快捷方式的文件夹.")
+            .WriteLine("/op", ConsoleColor.White)
+                .WriteLine("\t优化当前程序集, 提升运行速度.");
     }
 
     private static void DeleteExtraFiles()
@@ -286,5 +291,10 @@ internal static class App
         {
             PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
+    }
+
+    private static string GetAppDescription()
+    {
+        return $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
     }
 }
