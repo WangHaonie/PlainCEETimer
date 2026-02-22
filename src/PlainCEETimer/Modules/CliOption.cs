@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 
@@ -11,7 +12,7 @@ public class CliOption
     private bool init;
     private string m_first;
     private Dictionary<string, string> m_argsdic;
-    private readonly char[] m_idchars = ['/', '-'];
+    private static readonly char[] m_idchars = ['/', '-'];
 
     public static CliOption Parse(string[] args)
     {
@@ -40,14 +41,80 @@ public class CliOption
         return init && m_argsdic.ContainsKey(option);
     }
 
-    public static string Quote(string str)
+    public static string Quote(string arg)
     {
-        if (str != null)
+        /*
+        
+        转义命令行参数中 \ 或 " 参考：
+
+        Environment.GetCommandLineArgs Method (System) | Microsoft Learn
+        https://learn.microsoft.com/en-us/dotnet/api/system.environment.getcommandlineargs
+
+        runtime/src/libraries/System.Private.CoreLib/src/System/PasteArguments.cs at main · dotnet/runtime
+        https://github.com/dotnet/runtime/blob/e2a94a1b7a621ea9339ad4c4919d732b9f4aadf7/src/libraries/System.Private.CoreLib/src/System/PasteArguments.cs#L10-L79
+
+         */
+
+        if (arg == null)
         {
-            return "\"^" + str + "\"";
+            return arg;
         }
 
-        return str;
+        var length = arg.Length;
+
+        if (length != 0 && ContainsNoWhitespaceOrQuotes(arg))
+        {
+            return arg;
+        }
+
+        var outer = IsOption(arg) ? @"""\""" : "\"";
+        var sb = new StringBuilder().Append(outer);
+
+        int i = 0;
+        const char Quote = '"';
+        const char Backslash = '\\';
+
+        while (i < length)
+        {
+            var c = arg[i++];
+
+            if (c == Backslash)
+            {
+                var numBackSlash = 1;
+
+                while (i < length && arg[i] == Backslash)
+                {
+                    i++;
+                    numBackSlash++;
+                }
+
+                if (i == length)
+                {
+                    sb.Append(Backslash, numBackSlash * 2);
+                }
+                else if (arg[i] == Quote)
+                {
+                    sb.Append(Backslash, numBackSlash * 2 + 1);
+                    sb.Append(Quote);
+                    i++;
+                }
+                else
+                {
+                    sb.Append(Backslash, numBackSlash);
+                }
+            }
+            else if (c == Quote)
+            {
+                sb.Append(Backslash);
+                sb.Append(Quote);
+            }
+            else
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.Append(outer).ToString();
     }
 
     private void ParseInternal(string[] args)
@@ -61,7 +128,7 @@ public class CliOption
             {
                 var arg = args[i];
 
-                if (arg.StartsWith(m_idchars))
+                if (IsOption(arg))
                 {
                     var op = arg.Substring(1).ToLower();
                     string value = null;
@@ -72,9 +139,9 @@ public class CliOption
                         {
                             var next = args[i + 1];
 
-                            if (!next.StartsWith(m_idchars))
+                            if (!IsOption(next))
                             {
-                                value = next.StartsWith('^') ? next.Substring(1) : next;
+                                value = Unquote(next);
                                 i++;
                             }
                         }
@@ -87,5 +154,56 @@ public class CliOption
 
             init = true;
         }
+    }
+
+    private static bool IsOption(string arg)
+    {
+        if (!string.IsNullOrEmpty(arg))
+        {
+            foreach (var c in m_idchars)
+            {
+                if (arg.StartsWith(c))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private string Unquote(string arg)
+    {
+        if (!string.IsNullOrEmpty(arg)
+            && arg.StartsWith('"') && arg.EndsWith('"'))
+        {
+            var length = arg.Length;
+
+            if (length == 2)
+            {
+                return string.Empty;
+            }
+
+            return arg.Substring(1, length - 2);
+        }
+
+        return arg;
+    }
+
+    private static bool ContainsNoWhitespaceOrQuotes(string s)
+    {
+        var length = s.Length;
+
+        for (int i = 0; i < length; i++)
+        {
+            var c = s[i];
+
+            if (char.IsWhiteSpace(c) || c == '"')
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

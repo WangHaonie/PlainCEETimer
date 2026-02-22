@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace PlainCEETimer.Modules.Extensions;
@@ -59,21 +60,15 @@ public static class StringExtensions
         return str.Substring(0, maxLength) + "..." + str.Substring(length - rearLength, rearLength);
     }
 
-    public static bool StartsWith(this string str, params char[] values)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool StartsWith(this string s, char value)
     {
-        if (!string.IsNullOrEmpty(str))
-        {
-            var first = str[0];
+        return s[0] == value;
+    }
 
-            foreach (var c in values)
-            {
-                if (first == c)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool EndsWith(this string s, char value)
+    {
+        return s[s.Length - 1] == value;
     }
 }
