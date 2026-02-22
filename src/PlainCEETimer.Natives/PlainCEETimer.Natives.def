@@ -48,3 +48,5 @@ EXPORTS
     ComdlgHookMessageBox @38 NONAME
     ComdlgUnhookMessageBox @39 NONAME
     IsDialog @40 NONAME
+
+    AllocConsoleForApp @41 NONAME

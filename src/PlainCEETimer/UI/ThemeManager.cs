@@ -29,7 +29,8 @@ public static class ThemeManager
             if ((option == 0 && tmp) || option == 2)
             {
                 Win32UI.EnableDarkModeForApp();
-                _canUseNewTheme = SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
+                _canUseNewTheme = SystemVersion.IsWindows11
+                    && SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
                 _shouldUseDarkMode = true;
             }
 
