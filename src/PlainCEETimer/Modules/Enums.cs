@@ -27,6 +27,13 @@ public enum UacNotifyLevel
     AlwaysDimmed = 4,
 }
 
+public enum AdminRights
+{
+    Unknown,
+    Yes,
+    No
+}
+
 public enum FileDialogKind
 {
     OpenFile,

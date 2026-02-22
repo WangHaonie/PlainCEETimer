@@ -92,6 +92,7 @@
     <Compile Include="Countdown\CountdownUpdatedEventHandler.cs" />
     <Compile Include="Countdown\ExamSettings.cs" />
     <Compile Include="Countdown\ExamSwitchedEventHandler.cs" />
+    <Compile Include="Interop\CStd.cs" />
     <Compile Include="Interop\DisplayHelper.cs" />
     <Compile Include="Interop\Enums.cs" />
     <Compile Include="Interop\Extensions.cs" />

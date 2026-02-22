@@ -84,6 +84,11 @@ internal static class App
     {
         InternalInit();
 
+        if (argc != 0)
+        {
+            Win32.AllocConsole();
+        }
+
         if (IsMainProcess)
         {
             if (ExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
@@ -100,10 +105,10 @@ internal static class App
                     {
                         case "?":
                         case "h":
-                            PopupHelp();
+                            PrintHelp();
                             break;
                         case "ac":
-                            UacHelper.PopupReport();
+                            UacHelper.PrintReport();
                             break;
                         case "fr":
                             new Updater().InteractiveDownload(args.GetFirst(), args.Get("src"));
@@ -137,7 +142,7 @@ internal static class App
         {
             if (argc != 0)
             {
-                MessageX.Error("请先退出已打开的实例再使用命令行功能。", autoClose: true);
+                ConsoleHelper.Instance.WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red);
             }
         }
 
@@ -173,11 +178,9 @@ internal static class App
         ActivateMain?.Invoke();
     }
 
-    private static void PopupHelp()
+    private static void PrintHelp()
     {
-        Win32.AllocConsole();
-
-        new ConsoleHelper()
+        ConsoleHelper.Instance
             .WriteLine(GetAppDescription(), ConsoleColor.White)
             .WriteLine(AppName, ConsoleColor.White)
             .WriteLine()

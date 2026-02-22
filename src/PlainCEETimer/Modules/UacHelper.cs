@@ -1,6 +1,7 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using Microsoft.Win32;
 using PlainCEETimer.Interop;
-using PlainCEETimer.UI;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
@@ -30,23 +31,25 @@ public static class UacHelper
         Level = GetNotifyLevel();
     }
 
-    public static void PopupReport()
+    public static void PrintReport()
     {
         CheckAdmin();
 
-        AppMessageBox.Instance.Info(
-            $"""
-            检测结果:
-                                
-            当前系统
-                UAC 状态: {Level} ({(int)Level}/4)
-                用户名: {Win32User.LogonUser}
-                管理员权限: {GetUserAdmin(true)}
+        var ard = GetUserAdminDesc(false, out var ar);
+        var ardL = GetUserAdminDesc(true, out var arL);
 
-            当前进程
-                所有者: {Win32User.ProcessOwner}
-                管理员权限: {GetUserAdmin(false)}
-            """);
+        ConsoleHelper.Instance
+            .WriteLine("\t======== 检测结果 ========")
+            .WriteLine()
+            .WriteLine("当前系统", ConsoleColor.Cyan)
+                .Write("\tUAC 状态\t").Write(Level, Level.ToConsoleColor()).Write(" (").Write((int)Level).WriteLine("/4)")
+                .Write("\t用户名\t\t").WriteLine(Win32User.LogonUser, ConsoleColor.White)
+                .Write("\t管理员权限\t").WriteLine(ardL, arL.ToConsoleColor())
+            .WriteLine()
+            .WriteLine("当前进程", ConsoleColor.Cyan)
+                .Write("\t所有者\t\t").WriteLine(Win32User.ProcessOwner, ConsoleColor.White)
+                .Write("\t管理员权限\t").Write(ard, ar.ToConsoleColor())
+            .WriteLine();
     }
 
     public static void CheckAdmin()
@@ -69,18 +72,30 @@ public static class UacHelper
         };
     }
 
-    private static string GetUserAdmin(bool logon)
+    private static string GetUserAdminDesc(bool logon, out AdminRights rights)
+    {
+        rights = GetUserAdmin(logon);
+
+        return rights switch
+        {
+            AdminRights.Yes => "有",
+            AdminRights.No => "无",
+            _ => "未知"
+        };
+    }
+
+    private static AdminRights GetUserAdmin(bool logon)
     {
         if (!logon)
         {
-            return IsAdmin ? "有" : "无";
+            return IsAdmin ? AdminRights.Yes : AdminRights.No;
         }
 
         if (ProcessHelper.RunAsLogonUser(AcExe, AcArg, out var code))
         {
-            return code == 0 ? "有" : "无";
+            return code == 0 ? AdminRights.Yes : AdminRights.No;
         }
 
-        return "未知";
+        return AdminRights.Unknown;
     }
 }

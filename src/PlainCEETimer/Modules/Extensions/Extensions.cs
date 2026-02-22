@@ -66,4 +66,21 @@ public static class Extensions
 
         return false;
     }
+
+    public static ConsoleColor ToConsoleColor(this UacNotifyLevel level) => level switch
+    {
+        UacNotifyLevel.AlwaysDimmed => ConsoleColor.Green,
+        UacNotifyLevel.AppsOnlyDimmed => ConsoleColor.Green,
+        UacNotifyLevel.AppsOnlyNoDimmed => ConsoleColor.Yellow,
+        UacNotifyLevel.NeverNotify => ConsoleColor.Yellow,
+        UacNotifyLevel.Disabled => ConsoleColor.Gray,
+        _ => ConsoleColor.Gray,
+    };
+
+    public static ConsoleColor ToConsoleColor(this AdminRights ar) => ar switch
+    {
+        AdminRights.Yes => ConsoleColor.Green,
+        AdminRights.No => ConsoleColor.Red,
+        _ => ConsoleColor.Gray
+    };
 }
