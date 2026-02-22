@@ -125,7 +125,10 @@ internal static class App
                             DeleteExtraFiles();
                             break;
                         default:
-                            MessageX.Error($"无法解析的命令行参数: \n{AllArgs}", autoClose: true);
+                            ConsoleHelper.Instance
+                                .WriteLine("无法解析的命令行参数:", ConsoleColor.White)
+                                .WriteLine(AllArgs, ConsoleColor.Red)
+                                .Timeout(3);
                             break;
                     }
                 }
@@ -142,7 +145,9 @@ internal static class App
         {
             if (argc != 0)
             {
-                ConsoleHelper.Instance.WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red);
+                ConsoleHelper.Instance
+                    .WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red)
+                    .Timeout(3);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
 
@@ -12,22 +13,12 @@ public class ConsoleHelper
         return this;
     }
 
-    public ConsoleHelper Write<T>(T obj)
-    {
-        return Write(obj.ToString());
-    }
-
     public ConsoleHelper Write(string s, ConsoleColor color)
     {
         Console.ForegroundColor = color;
         Write(s);
         Console.ResetColor();
         return this;
-    }
-
-    public ConsoleHelper Write<T>(T obj, ConsoleColor color)
-    {
-        return Write(obj.ToString(), color);
     }
 
     public ConsoleHelper WriteLine()
@@ -47,8 +38,23 @@ public class ConsoleHelper
         return WriteLine();
     }
 
+    public ConsoleHelper Write<T>(T obj)
+    {
+        return Write(obj.ToString());
+    }
+
+    public ConsoleHelper Write<T>(T obj, ConsoleColor color)
+    {
+        return Write(obj.ToString(), color);
+    }
+
     public ConsoleHelper WriteLine<T>(T obj, ConsoleColor color)
     {
         return WriteLine(obj.ToString(), color);
+    }
+
+    public void Timeout(int seconds)
+    {
+        CStd.system($"timeout {seconds} >nul");
     }
 }
