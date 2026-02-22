@@ -1,3 +1,3 @@
 #pragma once
 
-cexport(HWND) AllocConsoleForApp(PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr);
+cexport(HWND) AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr);
