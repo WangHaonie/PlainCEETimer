@@ -18,7 +18,7 @@ internal class Updater
 
         try
         {
-            var response = AppUpdate.FetchAsync(UpdateSource.GiteeStable).Result;
+            var response = AppUpdate.FetchAsync(isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable).Result;
             var latest = response.Version;
             var date = response.ReleaseDate;
             var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
