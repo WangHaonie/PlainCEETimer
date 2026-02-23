@@ -43,7 +43,7 @@ public class Downloader
                 report.Speed = (downloaded - last) / (elapsed - lastReport).TotalSeconds / 1024D;
                 last = downloaded;
                 lastReport = elapsed;
-                Downloading?.Invoke(this, ref report);
+                OnDownloading(report);
 
                 if (token.IsCancellationRequested)
                 {
@@ -56,7 +56,7 @@ public class Downloader
 
             report.Progress = 100;
             report.Speed = 0;
-            Downloading?.Invoke(this, ref report);
+            OnDownloading(report);
             Completed?.Invoke();
         }
         catch (Exception ex)
@@ -66,5 +66,10 @@ public class Downloader
                 Error?.Invoke(ex);
             }
         }
+    }
+
+    private void OnDownloading(DownloadReport report)
+    {
+        Downloading?.Invoke(this, report);
     }
 }

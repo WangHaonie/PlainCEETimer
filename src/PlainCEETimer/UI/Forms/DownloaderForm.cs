@@ -18,7 +18,9 @@ public sealed class DownloaderForm(string url, long size) : AppForm
     private bool IsCancelled;
     private string DownloadPath;
     private PlainLabel LabelDownloading;
+    private PlainLabel LabelSizeLabel;
     private PlainLabel LabelSize;
+    private PlainLabel LabelSpeedLabel;
     private PlainLabel LabelSpeed;
     private PlainProgressBar ProgressBarMain;
     private PlainButton ButtonRetry;
@@ -37,14 +39,16 @@ public sealed class DownloaderForm(string url, long size) : AppForm
             LabelDownloading = b.Label("正在下载更新文件，请稍侯..."),
             LinkBrowser = b.Hyperlink("浏览器下载").Link(null, out LinkBrowserLink),
             ProgressBarMain = b.New<PlainProgressBar>(344, 22, null),
-            LabelSize = b.Label("已下载/总共: (获取中...)"),
-            LabelSpeed = b.Label("下载速度: (获取中...)"),
+            LabelSizeLabel = b.Label("已下载/总共:"),
+            LabelSpeedLabel = b.Label("下载速度:"),
+            LabelSize = b.Label("(获取中...)"),
+            LabelSpeed = b.Label("(获取中...)"),
 
             ButtonRetry = b.Button("重试(&R)", (_, _) =>
             {
                 ProgressBarMain.Style = ProgressStyle.Normal;
                 ProgressBarMain.Value = 0;
-                UpdateLabels("正在重新下载更新文件，请稍侯...", "已下载/总共: (获取中...)", "下载速度: (获取中...)");
+                UpdateLabels("正在重新下载更新文件，请稍侯...", "(获取中...)", "(获取中...)");
                 DownloadUpdate();
             }).Disable(),
 
@@ -69,8 +73,10 @@ public sealed class DownloaderForm(string url, long size) : AppForm
     {
         ArrangeFirstControl(LabelDownloading);
         ArrangeControlYL(ProgressBarMain, LabelDownloading, 2);
-        ArrangeControlYL(LabelSize, ProgressBarMain, -2);
-        ArrangeControlYL(LabelSpeed, LabelSize);
+        ArrangeControlYL(LabelSizeLabel, ProgressBarMain, -2);
+        ArrangeControlYL(LabelSpeedLabel, LabelSizeLabel);
+        ArrangeControlXT(LabelSize, LabelSizeLabel);
+        ArrangeControlXT(LabelSpeed, LabelSpeedLabel);
         ArrangeControlXT(LinkBrowser, LabelDownloading, 1);
         AlignControlXR(LinkBrowser, ProgressBarMain, 3);
         ArrangeCommonButtonsR(ButtonRetry, ButtonCancel, ProgressBarMain, 1, 6);
@@ -108,17 +114,16 @@ public sealed class DownloaderForm(string url, long size) : AppForm
         await UpdateDownloader.DownloadAsync(url, DownloadPath, cts.Token, size);
     }
 
-    private void UpdateDownloader_Downloading(object sender, ref DownloadReport report)
+    private void UpdateDownloader_Downloading(object sender, DownloadReport report)
     {
-        UpdateLabels(null, $"已下载/总共: {report.Downloaded} KB / {report.Total} KB", $"下载速度: {report.Speed:0.00} KB/s");
-        var p = report.Progress;
+        UpdateLabels(null, $"{report.Downloaded} KB / {report.Total} KB", $"{report.Speed:0.00} KB/s");
         ProgressBarMain.Value = report.Progress.Clamp(0, 100);
     }
 
     private void UpdateDownloader_Error(Exception ex)
     {
         MessageX.Error("无法下载更新文件！", ex);
-        UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "已下载/总共: N/A", "下载速度: N/A");
+        UpdateLabels("下载失败，你可以点击 重试 来重新启动下载。", "N/A", "N/A");
         ButtonRetry.Enabled = true;
         IsCancelled = true;
         ProgressBarMain.Value = 100;

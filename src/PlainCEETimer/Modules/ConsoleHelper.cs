@@ -53,8 +53,9 @@ public class ConsoleHelper
         return WriteLine(obj.ToString(), color);
     }
 
-    public void Timeout(int seconds)
+    public ConsoleHelper Timeout(int seconds)
     {
         CStd.system($"timeout {seconds} >nul");
+        return this;
     }
 }
