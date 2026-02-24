@@ -112,7 +112,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(1, 1, 54, 334, 225, ScaleToDpi(25), ScaleToDpi(5),
+            NavBar = b.NavBar(5, 1, 54, 334, 225, ScaleToDpi(25), ScaleToDpi(5),
             [
                 b.NavPage("基本",
                 [
@@ -579,7 +579,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
         ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, -4, 3);
-        InitWindowSize(ButtonCancel, 6, 6);
+        InitWindowSize(ButtonCancel, 5, 5);
     }
 
     protected override void OnLoad()
