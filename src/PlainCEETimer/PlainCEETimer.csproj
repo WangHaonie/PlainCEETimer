@@ -1,317 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>preview</LangVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{BA4D9680-5E05-4FDB-B198-F16E3A64B582}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
     <RootNamespace>PlainCEETimer</RootNamespace>
     <AssemblyName>PlainCEETimer</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>preview</LangVersion>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\.output\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Deterministic>true</Deterministic>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-  </PropertyGroup>
-  <PropertyGroup>
+    <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Properties\AppIcon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\.output\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\.output\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
+    <Compile Remove="UI\Controls\PlainTabControl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Properties\AppIcon256px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UI\Controls\PlainTabControl.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Countdown\CountdownUpdatedEventHandler.cs" />
-    <Compile Include="Countdown\ExamSettings.cs" />
-    <Compile Include="Countdown\ExamSwitchedEventHandler.cs" />
-    <Compile Include="Interop\CStd.cs" />
-    <Compile Include="Interop\DisplayHelper.cs" />
-    <Compile Include="Interop\Enums.cs" />
-    <Compile Include="Interop\Extensions.cs" />
-    <Compile Include="Interop\FunctionPointers.cs" />
-    <Compile Include="Interop\ShellLink.cs" />
-    <Compile Include="Interop\Structs.cs" />
-    <Compile Include="Interop\Win32.cs" />
-    <Compile Include="Interop\Win32TaskScheduler.cs" />
-    <Compile Include="Modules\CliOption.cs" />
-    <Compile Include="Modules\Configuration\BorderColorObject.cs" />
-    <Compile Include="Modules\Configuration\Enums.cs" />
-    <Compile Include="Modules\Configuration\InvalidTamperingException.cs" />
-    <Compile Include="Countdown\CountdownStartInfo.cs" />
-    <Compile Include="Countdown\CountdownUpdatedEventArgs.cs" />
-    <Compile Include="Countdown\DefaultCountdownService.cs" />
-    <Compile Include="Countdown\Enums.cs" />
-    <Compile Include="Countdown\ExamSwitchedEventArgs.cs" />
-    <Compile Include="Countdown\ICountdownService.cs" />
-    <Compile Include="Modules\Configuration\WindowSizeObject.cs" />
-    <Compile Include="Modules\ConsoleHelper.cs" />
-    <Compile Include="Modules\CountdownRuleComparer.cs" />
-    <Compile Include="Modules\Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Modules\Extensions\StringExtensions.cs" />
-    <Compile Include="Modules\Extensions\TaskExtensions.cs" />
-    <Compile Include="Modules\Extensions\Win32Extensions.cs" />
-    <Compile Include="Modules\FileDialogHelper.cs" />
-    <Compile Include="Modules\HashCode.cs" />
-    <Compile Include="Modules\Http\DownloadingEventHandler.cs" />
-    <Compile Include="Modules\JsonConverters\BorderColorConverter.cs" />
-    <Compile Include="Modules\JsonConverters\GlobalRulesConverter.cs" />
-    <Compile Include="Modules\JsonConverters\HotKeyConverter.cs" />
-    <Compile Include="Modules\JsonConverters\SizeFormatConverter.cs" />
-    <Compile Include="Modules\Linq\ArrayLinq.cs" />
-    <Compile Include="Modules\Http\NetworkedAction.cs" />
-    <Compile Include="Modules\RandomUID.cs" />
-    <Compile Include="Modules\Startup.cs" />
-    <Compile Include="Modules\SystemVersion.cs" />
-    <Compile Include="Modules\Update\AppUpdate.cs" />
-    <Compile Include="Modules\Update\AppUpdateInfo.cs" />
-    <Compile Include="Modules\Update\UpdateSource.cs" />
-    <Compile Include="Modules\Xml.cs" />
-    <Compile Include="Modules\AppInfo.cs" />
-    <Compile Include="UI\Colors.cs" />
-    <Compile Include="UI\ControlsBuilder.cs" />
-    <Compile Include="UI\Controls\AppForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\AppDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ColorBlock.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\NavigationView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainCommonDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainFontDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\ListViewDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainHotkeyControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\NavigationPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainGroupBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainNumericUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainProgressBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainRadioButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <None Include="UI\Controls\PlainTabControl.cs">
-      <SubType>Component</SubType>
-    </None>
-    <Compile Include="UI\Controls\PlainTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ConsoleWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ExamDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\ExamManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\HotKeyDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\FileDialogWrapper.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\RuleDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Dialogs\RulesManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Enums.cs" />
-    <Compile Include="Modules\FileFilter.cs" />
-    <Compile Include="UI\Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\DownloaderForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Controls\PlainColorDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Interop\Win32User.cs" />
-    <Compile Include="UI\ContextMenuBuilder.cs" />
-    <Compile Include="Interop\Win32UI.cs" />
-    <Compile Include="Interop\MemoryCleaner.cs" />
-    <Compile Include="Interop\TaskbarProgress.cs" />
-    <Compile Include="UI\HotKey.cs" />
-    <Compile Include="UI\HotKeyPressEventArgs.cs" />
-    <Compile Include="UI\HotKeyService.cs" />
-    <Compile Include="UI\MenuItemBuilder.cs" />
-    <Compile Include="UI\SystemMenu.cs" />
-    <Compile Include="UI\NavigationViewEventArgs.cs" />
-    <Compile Include="UI\PagedContextMenu.cs" />
-    <Compile Include="UI\ThemeManager.cs" />
-    <Compile Include="Countdown\ColorPair.cs" />
-    <Compile Include="Modules\Configuration\AppConfig.cs" />
-    <Compile Include="Modules\Configuration\DefaultValues.cs" />
-    <Compile Include="Modules\Configuration\DisplayObject.cs" />
-    <Compile Include="Countdown\Exam.cs" />
-    <Compile Include="Modules\Configuration\GeneralObject.cs" />
-    <Compile Include="Countdown\CountdownRule.cs" />
-    <Compile Include="Countdown\Ph.cs" />
-    <Compile Include="UI\ControlBuilder.cs" />
-    <Compile Include="Modules\Http\Downloader.cs" />
-    <Compile Include="Modules\Enums.cs" />
-    <Compile Include="Modules\Extensions\Extensions.cs" />
-    <Compile Include="Modules\Http\DownloadReport.cs" />
-    <Compile Include="Modules\Http\HttpService.cs" />
-    <Compile Include="UI\IListViewData.cs" />
-    <Compile Include="UI\IListViewChildDialog.cs" />
-    <Compile Include="Modules\JsonConverters\ColorPairConverter.cs" />
-    <Compile Include="Modules\JsonConverters\CountdownRuleConverter.cs" />
-    <Compile Include="Modules\JsonConverters\ExamTimeConverter.cs" />
-    <Compile Include="Modules\JsonConverters\FontFormatConverter.cs" />
-    <Compile Include="Modules\JsonConverters\PointFormatConverter.cs" />
-    <Compile Include="UI\ComboData.cs" />
-    <Compile Include="Modules\OptimizationHelper.cs" />
-    <Compile Include="UI\ListViewItemSet.cs" />
-    <Compile Include="UI\PlainButtonBase.cs" />
-    <Compile Include="Modules\ProcessHelper.cs" />
-    <Compile Include="Modules\UacHelper.cs" />
-    <Compile Include="Modules\RegistryHelper.cs" />
-    <Compile Include="Modules\Update\Updater.cs" />
-    <Compile Include="Modules\App.cs" />
-    <Compile Include="UI\AppMessageBox.cs" />
-    <Compile Include="Modules\Configuration\ConfigValidator.cs" />
-    <Compile Include="Modules\WindowsBuilds.cs" />
-    <Compile Include="UI\Controls\PlainLinkLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Extensions\Extensions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.lock.json" />
-    <None Include="Properties\app.manifest" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.8 %28x86 和 x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Http">
-      <Version>4.3.4</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Properties\AppIcon.ico" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

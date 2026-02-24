@@ -13,4 +13,110 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="UI\Controls\AppDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\AppForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\ColorBlock.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\ListViewDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\NavigationPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\NavigationView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainColorDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainCommonDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainFontDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainHotKeyControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <None Update="UI\Controls\PlainTabControl.cs">
+      <SubType>Component</SubType>
+    </None>
+    <Compile Update="UI\Controls\PlainTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\ConsoleWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\ExamDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\ExamManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\HotKeyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\RuleDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Dialogs\RulesManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Forms\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Forms\DownloaderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Forms\FileDialogWrapper.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="UI\Controls\PlainTabControl.cs">
+      <SubType>Component</SubType>
+    </None>
+  </ItemGroup>
 </Project>
