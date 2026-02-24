@@ -30,14 +30,34 @@ public sealed class PlainListView : ListView
             const int WM_SETCURSOR = 0x0020;
             const int WM_CONTEXTMENU = 0x007B;
 
-            if (m.Msg is WM_SETCURSOR or WM_CONTEXTMENU)
+            const int HDM_FIRST = 0x1200;
+            const int HDM_LAYOUT = HDM_FIRST + 5;
+
+            switch (m.Msg)
             {
-                m.Result = new(1);
+                case WM_SETCURSOR:
+                case WM_CONTEXTMENU:
+                    m.Result = new(1);
+                    return;
+                case HDM_LAYOUT:
+                    base.WndProc(ref m);
+
+                    const int HDLAYOUT_prc = 0;
+                    const int HDLAYOUT_pwpos = 8;
+                    const int WINDOWPOS_cy = 28;
+                    const int RECT_top = 4;
+
+                    var lparam = m.LParam;
+                    var prc = Marshal.ReadIntPtr(lparam, HDLAYOUT_prc);
+                    var pwpos = Marshal.ReadIntPtr(lparam, HDLAYOUT_pwpos);
+                    var height = Marshal.ReadInt32(pwpos, WINDOWPOS_cy);
+                    height += (int)(height * 0.2F);
+                    Marshal.WriteInt32(pwpos, WINDOWPOS_cy, height);
+                    Marshal.WriteInt32(prc, RECT_top, height);
+                    return;
             }
-            else
-            {
-                base.WndProc(ref m);
-            }
+
+            base.WndProc(ref m);
         }
     }
 
