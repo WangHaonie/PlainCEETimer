@@ -12,7 +12,7 @@ internal static class Colors
     public static readonly Color DarkForeLinkDisabled = DarkForeConsole;
     public static readonly Color DarkForeListViewHeader = Color.FromArgb(222, 222, 222);
     public static readonly Color DarkForeListViewDefaultItem = Color.FromArgb(144, 202, 249);
-    public static readonly Color DarkBackText = Color.FromArgb(32, 32, 32);
+    public static readonly Color DarkBackText = Color.FromArgb(25, 25, 25);
     public static readonly Color DarkBackConsole = Color.FromArgb(12, 12, 12);
     public static readonly Color DarkBorder = Color.FromArgb(60, 60, 60);
     public static readonly Color LightForeTextDisabled = Color.FromArgb(131, 131, 131);

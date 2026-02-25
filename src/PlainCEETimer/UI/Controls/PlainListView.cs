@@ -182,6 +182,15 @@ public sealed class PlainListView : ListView
             Win32UI.SetRoundCornerEx(hToolTips, true);
         }
 
+        var fh = FontHeight;
+        fh += (int)(fh * 0.38F);
+
+        SmallImageList = new ImageList()
+        {
+            ColorDepth = ColorDepth.Depth32Bit,
+            ImageSize = new(1, fh)
+        };
+
         base.OnHandleCreated(e);
     }
 
