@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Win32.h"
-#include <wincon.h>
+#include <Windows.h>
 
 HWND AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
 {

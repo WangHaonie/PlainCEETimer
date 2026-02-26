@@ -5,12 +5,13 @@ using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules;
 
-public class CliOption
+public class CliOption(ArgumentType type = ArgumentType.Internal)
 {
     public string FirstOption => m_first;
 
     private bool init;
     private string m_first;
+    private StringBuilder m_args;
     private Dictionary<string, string> m_argsdic;
     private static readonly char[] m_idchars = ['/', '-'];
 
@@ -41,7 +42,19 @@ public class CliOption
         return init && m_argsdic.ContainsKey(option);
     }
 
-    public static string Quote(string arg)
+    public CliOption Add(string arg)
+    {
+        m_args ??= new();
+        AppendArg(arg, m_args);
+        return this;
+    }
+
+    public string ToArgs()
+    {
+        return m_args?.ToString();
+    }
+
+    private void AppendArg(string arg, StringBuilder sb)
     {
         /*
         
@@ -57,18 +70,24 @@ public class CliOption
 
         if (arg == null)
         {
-            return arg;
+            return;
+        }
+
+        if (sb.Length != 0)
+        {
+            sb.Append(' ');
         }
 
         var length = arg.Length;
 
         if (length != 0 && ContainsNoWhitespaceOrQuotes(arg))
         {
-            return arg;
+            sb.Append(arg);
+            return;
         }
 
-        var outer = IsOption(arg) ? @"""\""" : "\"";
-        var sb = new StringBuilder().Append(outer);
+        var outer = type == ArgumentType.Internal && IsOption(arg) ? @"""\""" : "\"";
+        sb.Append(outer);
 
         int i = 0;
         const char Quote = '"';
@@ -114,7 +133,7 @@ public class CliOption
             }
         }
 
-        return sb.Append(outer).ToString();
+        sb.Append(outer);
     }
 
     private void ParseInternal(string[] args)

@@ -73,7 +73,11 @@ internal static class App
             new Action(StartPipeServer).Start();
         }
 
-        if (!StartProgram(args.Length, CliOption.Parse(args)))
+        var parsed = CliOption.Parse(args);
+        var hasArgs = !string.IsNullOrEmpty(parsed.FirstOption);
+        var argc = hasArgs ? args.Length : 0;
+
+        if (!StartProgram(argc, parsed))
         {
             StartPipeClient();
             Exit();
@@ -135,8 +139,13 @@ internal static class App
             }
             else
             {
-                MessageX.Error($"为了您的使用体验，请不要更改程序文件名! 程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。\n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}", autoClose: true);
-                ProcessHelper.Run("cmd", $"/c ren \"{ExecutablePath}\" {OriginalFileName} && start \"\" \"{ExecutableDir}{OriginalFileName}\" {AllArgs}");
+                MessageX.Error($"为了您的使用体验，请不要更改程序文件名! \n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}\n\n程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。", autoClose: true);
+
+                ProcessHelper.Run("cmd", new CliOption(ArgumentType.System)
+                    .Add("/c")
+                    .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
+                    .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
+                    .ToArgs());
             }
 
             return true;

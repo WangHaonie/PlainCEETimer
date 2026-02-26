@@ -34,8 +34,8 @@ public enum AdminRights
     No
 }
 
-public enum FileDialogKind
+public enum ArgumentType
 {
-    OpenFile,
-    SaveFile
+    Internal,
+    System
 }
