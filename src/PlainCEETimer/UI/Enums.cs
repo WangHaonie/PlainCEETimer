@@ -58,7 +58,6 @@ public enum ConsoleParam
 {
     None,
     AutoClose,
-    ShowLeftButton,
     NoMenu
 }
 

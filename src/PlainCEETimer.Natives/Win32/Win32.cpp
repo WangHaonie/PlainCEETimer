@@ -1,6 +1,33 @@
 #include "pch.h"
 #include "Win32.h"
+#include <TlHelp32.h>
 #include <Windows.h>
+
+static void KillProcessTreeCore(DWORD dwProcessId)
+{
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32 pe32 = { sizeof(pe32) };
+
+    if (Process32First(hSnapshot, &pe32))
+    {
+        do
+        {
+            if (pe32.th32ParentProcessID == dwProcessId)
+            {
+                KillProcessTreeCore(pe32.th32ProcessID);
+            }
+        }
+        while (Process32Next(hSnapshot, &pe32));
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcessId);
+
+    if (hProcess)
+    {
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hProcess);
+    }
+}
 
 HWND AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
 {
@@ -44,4 +71,9 @@ HWND AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDL
     }
 
     return GetConsoleWindow();
+}
+
+void KillProcessTree(DWORD dwProcessId)
+{
+    KillProcessTreeCore(dwProcessId);
 }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -17,23 +18,23 @@ public sealed class ConsoleWindow : AppDialog
 {
     protected override AppFormParam Params => AppFormParam.AllControl;
 
-    private DateTime taskStartTime;
+    private int finalCount;
     private int closeClickCount;
-    private DateTime lastClickTime = DateTime.MinValue;
     private int ConsoleTimerTick;
-    private bool ElevateNeeded;
     private bool IsRunning;
     private string Key;
     private string ExePath;
     private string ExeArgs;
     private ConsoleParam Param;
+    private DateTime taskStartTime;
+    private DateTime lastClickTime;
     private Action<ConsoleWindow> Complete;
     private PlainLabel LabelMessage;
     private MenuItem MenuItemCopy;
-    private Process ElevatedProc;
     private PlainTextBox ConsoleBox;
     private TaskbarProgress tbp;
     private PlainToolTip ToolTipCloseInfo;
+    private Process ExternalProc;
     private readonly Timer ConsoleTimer = new();
 
     protected override void OnInitializing()
@@ -61,8 +62,6 @@ public sealed class ConsoleWindow : AppDialog
 
         ConsoleTimer.Interval = 1000;
         ConsoleTimer.Tick += ConsoleTimer_Tick;
-        ButtonA.Text = "确认(&O)";
-        ButtonA.Visible = false;
         ButtonB.Text = "关闭(&C)";
         ButtonB.Enabled = false;
 
@@ -88,6 +87,7 @@ public sealed class ConsoleWindow : AppDialog
         ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
         CenterControlY(LabelMessage, ButtonA);
         InitWindowSize(ButtonB, 3, 3);
+        ButtonA.Delete();
     }
 
     protected override void OnShown()
@@ -105,10 +105,10 @@ public sealed class ConsoleWindow : AppDialog
             {
                 try
                 {
-                    ProcessHelper.Run(ExePath, ExeArgs, (proc, _) =>
+                    WaitForExit(ProcessHelper.Run(ExePath, ExeArgs, (proc, _) =>
                     {
                         SafeWrite(ProcessHelper.GetExitMessage(proc));
-                    }, (_, e) => SafeWrite(e.Data));
+                    }, (_, e) => SafeWrite(e.Data)));
                 }
                 catch (Exception ex)
                 {
@@ -123,7 +123,6 @@ public sealed class ConsoleWindow : AppDialog
         else
         {
             MessageX.Warn("检测到当前用户不具有管理员权限，将尝试自动提权。\n\n若弹出 UAC 对话框，请点击 是。" + (UacHelper.IsUacDisabled ? "\n(当前系统貌似已禁用 UAC，可能会导致提权失败)" : ""));
-            ElevateNeeded = true;
 
             new Action(() =>
             {
@@ -134,15 +133,7 @@ public sealed class ConsoleWindow : AppDialog
 
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line == "```3")
-                    {
-                        Final();
-                        break;
-                    }
-                    else
-                    {
-                        SafeWrite(line);
-                    }
+                    SafeWrite(line);
                 }
             }).Start();
 
@@ -150,15 +141,18 @@ public sealed class ConsoleWindow : AppDialog
             {
                 try
                 {
-                    ElevatedProc = ProcessHelper.RunElevated(App.ExecutablePath, new CliOption()
+                    WaitForExit(ProcessHelper.RunElevated(App.ExecutablePath, new CliOption()
                         .Add("/run").Add(Key)
                         .Add("/exe").Add(ExePath)
                         .Add("/args").Add(ExeArgs)
-                        .ToArgs());
+                        .ToArgs()));
                 }
                 catch (Exception ex)
                 {
                     SafeWrite(ProcessHelper.GetExceptionMessage(ex));
+                }
+                finally
+                {
                     Final();
                 }
             }).Start();
@@ -167,7 +161,7 @@ public sealed class ConsoleWindow : AppDialog
 
     protected override bool OnClosing(CloseReason closeReason)
     {
-        var flag = IsRunning || (ElevatedProc != null && !ElevatedProc.HasExited);
+        var flag = IsRunning || (ExternalProc?.HasExited == false);
 
         if (!flag)
         {
@@ -198,6 +192,7 @@ public sealed class ConsoleWindow : AppDialog
         if (closeClickCount >= 10)
         {
             cancel = false;
+            Win32.KillProcessTree(ExternalProc.Id);
             ToolTipCloseInfo.Hide(this);
             Final();
         }
@@ -210,14 +205,9 @@ public sealed class ConsoleWindow : AppDialog
         return cancel;
     }
 
-    public void UpdateState(string text)
+    public static void Run(string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
     {
-        SafeExecute(() => LabelMessage.Text += text);
-    }
-
-    public static DialogResult Run(string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
-    {
-        return new ConsoleWindow
+        new ConsoleWindow
         {
             Param = param,
             Complete = onComplete,
@@ -235,7 +225,7 @@ public sealed class ConsoleWindow : AppDialog
 
         try
         {
-            if (ElevateNeeded && IsRunning && ElevatedProc.HasExited)
+            if (ExternalProc != null && ExternalProc.HasExited)
             {
                 Final();
             }
@@ -243,35 +233,15 @@ public sealed class ConsoleWindow : AppDialog
         catch { }
     }
 
-    private void Final()
-    {
-        SafeExecute(() =>
-        {
-            IsRunning = false;
-            ConsoleTimer.Stop();
-            LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
-            tbp.SetState(ProgressStyle.Normal);
-            tbp.SetValue(1, 1);
-            Complete?.Invoke(this);
-
-            ButtonB.Enabled = true;
-
-            if ((Param & ConsoleParam.ShowLeftButton) == ConsoleParam.ShowLeftButton)
-            {
-                ButtonA.Visible = true;
-                ButtonA.Enabled = true;
-            }
-
-            if ((Param & ConsoleParam.AutoClose) == ConsoleParam.AutoClose)
-            {
-                Close();
-            }
-        });
-    }
-
     private void SafeWrite(string line)
     {
         SafeExecute(() => Write(line));
+    }
+
+    private void WaitForExit(Process process)
+    {
+        ExternalProc = process;
+        process.WaitForExit();
     }
 
     private void SafeExecute(Action action)
@@ -292,6 +262,28 @@ public sealed class ConsoleWindow : AppDialog
         {
             ConsoleBox.AppendText(line);
             ConsoleBox.AppendText("\r\n");
+        }
+    }
+
+    private void Final()
+    {
+        if (Interlocked.Exchange(ref finalCount, 1) == 0)
+        {
+            SafeExecute(() =>
+            {
+                IsRunning = false;
+                ConsoleTimer.Stop();
+                LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
+                tbp.SetState(ProgressStyle.Normal);
+                tbp.SetValue(1, 1);
+                Complete?.Invoke(this);
+                ButtonB.Enabled = true;
+
+                if ((Param & ConsoleParam.AutoClose) == ConsoleParam.AutoClose)
+                {
+                    Close();
+                }
+            });
         }
     }
 }

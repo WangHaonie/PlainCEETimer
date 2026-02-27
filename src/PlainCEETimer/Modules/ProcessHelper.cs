@@ -29,7 +29,6 @@ public static class ProcessHelper
         proc.OutputDataReceived += onOutputDataReceived;
         proc.Start();
         proc.BeginOutputReadLine();
-        proc.WaitForExit();
         return proc;
     }
 
@@ -82,15 +81,11 @@ public static class ProcessHelper
         try
         {
             w.AutoFlush = true;
-            Run(path, args, (proc, _) => w.WriteLine(GetExitMessage(proc)), (_, e) => w.WriteLine(e.Data));
+            Run(path, args, (proc, _) => w.WriteLine(GetExitMessage(proc)), (_, e) => w.WriteLine(e.Data)).WaitForExit();
         }
         catch (Exception ex)
         {
             w.WriteLine(GetExceptionMessage(ex));
-        }
-        finally
-        {
-            w.WriteLine("```3");
         }
     }
 

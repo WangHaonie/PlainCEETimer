@@ -50,3 +50,4 @@ EXPORTS
     IsDialog @40 NONAME
 
     AllocConsoleForApp @41 NONAME
+    KillProcessTree @42 NONAME

@@ -88,24 +88,24 @@ public class OptimizationHelper(bool isAuto)
 
     private void Start(string path)
     {
-        var param = ConsoleParam.ShowLeftButton;
+        var param = ConsoleParam.None;
         Action<ConsoleWindow> complete = null;
 
         if (isAuto)
         {
             param |= ConsoleParam.AutoClose | ConsoleParam.NoMenu;
         }
-
-        if (!isAuto)
+        else
         {
-            complete = c => c.UpdateState("是否重启倒计时?");
+            complete = c =>
+            {
+                if (c.MessageX.Info("是否重启倒计时?", MessageButtons.YesNo) == DialogResult.OK)
+                {
+                    App.Exit(true);
+                }
+            };
         }
 
-        var result = ConsoleWindow.Run(path, $"install \"{App.ExecutablePath}\" /verbose", complete, param);
-
-        if (!isAuto && result == DialogResult.OK)
-        {
-            App.Exit(true);
-        }
+        ConsoleWindow.Run(path, $"install \"{App.ExecutablePath}\" /verbose", complete, param);
     }
 }
