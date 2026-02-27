@@ -74,6 +74,9 @@
     <Compile Update="UI\Controls\PlainRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <None Update="UI\Controls\PlainTabControl.cs">
       <SubType>Component</SubType>
     </None>

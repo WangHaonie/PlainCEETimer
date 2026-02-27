@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.UI.Controls;
@@ -154,5 +156,30 @@ public static class Extensions
         {
             Win32UI.MenuUncheckItem(item.Parent.Handle, item.Index, true);
         }
+    }
+
+    public static IntPtr GetHandle<T>(this T component, MemberTypes type = MemberTypes.Property, string name = nameof(IWin32Window.Handle))
+        where T : Component
+    {
+        if (component is IWin32Window w)
+        {
+            return w.Handle;
+        }
+
+        switch (type)
+        {
+            case MemberTypes.Field:
+                var f = typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
+                if (f != null)
+                    return (IntPtr)f.GetValue(component);
+                break;
+            case MemberTypes.Property:
+                var prop = typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (prop != null)
+                    return (IntPtr)prop.GetValue(component);
+                break;
+        }
+
+        return IntPtr.Zero;
     }
 }

@@ -22,7 +22,7 @@ public static class ProcessHelper
         return 0;
     }
 
-    public static void Run(string path, string args, EventHandler onExited, DataReceivedEventHandler onOutputDataReceived)
+    public static Process Run(string path, string args, EventHandler onExited, DataReceivedEventHandler onOutputDataReceived)
     {
         var proc = MakeProc(path, args, false, false, false, true);
         proc.Exited += onExited;
@@ -30,6 +30,7 @@ public static class ProcessHelper
         proc.Start();
         proc.BeginOutputReadLine();
         proc.WaitForExit();
+        return proc;
     }
 
     public static Process RunElevated(string path, string args)

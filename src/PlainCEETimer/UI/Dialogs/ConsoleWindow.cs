@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Windows.Forms;
@@ -8,6 +9,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PlainCEETimer.UI.Dialogs;
 
@@ -15,6 +17,9 @@ public sealed class ConsoleWindow : AppDialog
 {
     protected override AppFormParam Params => AppFormParam.AllControl;
 
+    private DateTime taskStartTime;
+    private int closeClickCount;
+    private DateTime lastClickTime = DateTime.MinValue;
     private int ConsoleTimerTick;
     private bool ElevateNeeded;
     private bool IsRunning;
@@ -28,6 +33,7 @@ public sealed class ConsoleWindow : AppDialog
     private Process ElevatedProc;
     private PlainTextBox ConsoleBox;
     private TaskbarProgress tbp;
+    private PlainToolTip ToolTipCloseInfo;
     private readonly Timer ConsoleTimer = new();
 
     protected override void OnInitializing()
@@ -60,6 +66,12 @@ public sealed class ConsoleWindow : AppDialog
         ButtonB.Text = "关闭(&C)";
         ButtonB.Enabled = false;
 
+        ToolTipCloseInfo = new()
+        {
+            ToolTipIcon = ToolTipIcon.Info,
+            ToolTipTitle = "提示"
+        };
+
         if ((Param & ConsoleParam.NoMenu) != ConsoleParam.NoMenu)
         {
             ConsoleBox.AttachContextMenu(b =>
@@ -81,10 +93,11 @@ public sealed class ConsoleWindow : AppDialog
     protected override void OnShown()
     {
         tbp = new(Handle);
-
         tbp.SetState(ProgressStyle.Indeterminate);
         ConsoleTimer_Tick(null, null);
         ConsoleTimer.Start();
+        taskStartTime = DateTime.Now;
+        ToolTipCloseInfo.InitStyle();
 
         if (UacHelper.IsAdmin)
         {
@@ -154,7 +167,47 @@ public sealed class ConsoleWindow : AppDialog
 
     protected override bool OnClosing(CloseReason closeReason)
     {
-        return IsRunning || (ElevatedProc != null && !ElevatedProc.HasExited);
+        var flag = IsRunning || (ElevatedProc != null && !ElevatedProc.HasExited);
+
+        if (!flag)
+        {
+            return false;
+        }
+
+        var now = DateTime.Now;
+        var uptime = now - taskStartTime;
+
+        if (uptime.TotalSeconds <= 10D)
+        {
+            return true;
+        }
+
+        var cancel = true;
+
+        if ((now - lastClickTime).TotalSeconds > 3D)
+        {
+            closeClickCount = 1;
+        }
+        else
+        {
+            closeClickCount++;
+        }
+
+        lastClickTime = now;
+
+        if (closeClickCount >= 10)
+        {
+            cancel = false;
+            ToolTipCloseInfo.Hide(this);
+            Final();
+        }
+        else
+        {
+            var fh = FontHeight * 2;
+            ToolTipCloseInfo.Show($"再点击 {10 - closeClickCount} 次强制关闭本窗口", this, new Point(ClientSize.Width - fh, fh), 2000);
+        }
+
+        return cancel;
     }
 
     public void UpdateState(string text)
