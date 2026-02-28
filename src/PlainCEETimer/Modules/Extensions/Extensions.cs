@@ -73,7 +73,7 @@ public static class Extensions
         UacNotifyLevel.AppsOnlyDimmed => ConsoleColor.Green,
         UacNotifyLevel.AppsOnlyNoDimmed => ConsoleColor.Yellow,
         UacNotifyLevel.NeverNotify => ConsoleColor.Yellow,
-        UacNotifyLevel.Disabled => ConsoleColor.Gray,
+        UacNotifyLevel.Disabled => ConsoleColor.Red,
         _ => ConsoleColor.Gray,
     };
 
