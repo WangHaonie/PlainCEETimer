@@ -122,7 +122,7 @@ internal static class ConfigValidator
         {
             if (ValidateNeeded)
             {
-                HashSet<T> set = [];
+                HashSet<T> set = new(value.Length);
 
                 foreach (var item in value)
                 {

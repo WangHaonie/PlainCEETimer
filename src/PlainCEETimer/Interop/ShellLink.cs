@@ -82,7 +82,7 @@ public static class ShellLink
             needed = true;
         }
 
-        if (!string.IsNullOrEmpty(args))
+        if (!string.IsNullOrWhiteSpace(args))
         {
             lnk.Args = string.Empty;
             needed = true;

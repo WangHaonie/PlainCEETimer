@@ -578,8 +578,8 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
-        ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, -4, 3);
-        InitWindowSize(ButtonCancel, 5, 5);
+        ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, 1, 3);
+        InitWindowSize(ButtonCancel, 5, 4);
     }
 
     protected override void OnLoad()

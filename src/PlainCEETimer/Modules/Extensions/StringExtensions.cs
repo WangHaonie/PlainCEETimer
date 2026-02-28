@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace PlainCEETimer.Modules.Extensions;
 
 public static class StringExtensions
 {
-    private static readonly HashSet<char> _illegalChars = [' ', '\n', '\r', '\t', '\v', '\f', '\b'];
-
     public static string RemoveIllegalChars(this string s)
     {
         if (string.IsNullOrEmpty(s))
@@ -21,7 +18,7 @@ public static class StringExtensions
         {
             var c = s[i];
 
-            if (!_illegalChars.Contains(c))
+            if (!char.IsWhiteSpace(c))
             {
                 sb.Append(c);
             }

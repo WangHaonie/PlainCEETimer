@@ -199,7 +199,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             return false;
         }
 
-        var tmp = "";
+        string tmp = null;
 
         if (span.TotalDays > 4)
         {
@@ -214,7 +214,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             tmp = ts.ToString("0") + " 秒";
         }
 
-        if (!string.IsNullOrEmpty(tmp) && MessageX.Warn($"检测到设置的考试时间太长或太短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)
+        if (tmp != null && MessageX.Warn($"检测到设置的考试时间太长或太短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", MessageButtons.YesNo) != DialogResult.Yes)
         {
             return false;
         }

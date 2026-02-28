@@ -1,6 +1,6 @@
 #define EXE L"PlainCEETimer.exe"
 
-#include <windows.h>
+#include <Windows.h>
 
 int main()
 {

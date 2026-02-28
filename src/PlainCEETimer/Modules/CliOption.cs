@@ -152,7 +152,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
                     var op = arg.Substring(1).ToLower();
                     string value = null;
 
-                    if (!string.IsNullOrEmpty(op))
+                    if (!string.IsNullOrWhiteSpace(op))
                     {
                         if (i + 1 < length)
                         {
@@ -177,7 +177,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
 
     private static bool IsOption(string arg)
     {
-        if (!string.IsNullOrEmpty(arg))
+        if (!string.IsNullOrWhiteSpace(arg))
         {
             foreach (var c in m_idchars)
             {
@@ -193,7 +193,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
 
     private string Unquote(string arg)
     {
-        if (!string.IsNullOrEmpty(arg)
+        if (!string.IsNullOrWhiteSpace(arg)
             && arg.StartsWith('"') && arg.EndsWith('"'))
         {
             var length = arg.Length;

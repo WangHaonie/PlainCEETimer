@@ -74,7 +74,7 @@ internal static class App
         }
 
         var parsed = CliOption.Parse(args);
-        var hasArgs = !string.IsNullOrEmpty(parsed.FirstOption);
+        var hasArgs = !string.IsNullOrWhiteSpace(parsed.FirstOption);
         var argc = hasArgs ? args.Length : 0;
 
         if (!StartProgram(argc, parsed))

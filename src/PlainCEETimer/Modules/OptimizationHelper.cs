@@ -99,7 +99,7 @@ public class OptimizationHelper(bool isAuto)
         {
             complete = c =>
             {
-                if (c.MessageX.Info("是否重启倒计时?", MessageButtons.YesNo) == DialogResult.OK)
+                if (c.MessageX.Info("是否重启倒计时?", MessageButtons.YesNo) == DialogResult.Yes)
                 {
                     App.Exit(true);
                 }
