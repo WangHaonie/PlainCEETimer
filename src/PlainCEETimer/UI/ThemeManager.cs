@@ -44,16 +44,16 @@ public static class ThemeManager
         Win32UI.EnableDarkModeForWindowFrame(hWnd, isNewDwma);
     }
 
-    public static void EnableDarkModeForControl(IWin32Window control, NativeStyle type, bool AutoUpgrade = false)
+    public static void EnableDarkModeForControl(IWin32Window control, SystemStyle type, bool AutoUpgrade = false)
     {
         EnableDarkModeForControl(control.Handle, type, AutoUpgrade);
     }
 
-    public static void EnableDarkModeForControl(IntPtr hWnd, NativeStyle type, bool AutoUpgrade = false)
+    public static void EnableDarkModeForControl(IntPtr hWnd, SystemStyle type, bool AutoUpgrade = false)
     {
-        if (_canUseNewTheme && AutoUpgrade && type == NativeStyle.CfdDark)
+        if (_canUseNewTheme && AutoUpgrade && type == SystemStyle.CfdDark)
         {
-            type = NativeStyle.DarkTheme;
+            type = SystemStyle.DarkTheme;
         }
 
         Win32UI.SetWindowTheme(hWnd, GetSubAppName(type), null);
@@ -84,15 +84,15 @@ public static class ThemeManager
 
     */
 
-    private static string GetSubAppName(NativeStyle style)
+    private static string GetSubAppName(SystemStyle style)
     {
         return style switch
         {
-            NativeStyle.ExplorerDark => "DarkMode_Explorer",
-            NativeStyle.CfdDark => "DarkMode_CFD",
-            NativeStyle.ItemsViewDark => "DarkMode_ItemsView",
-            NativeStyle.ItemsView => "ItemsView",
-            NativeStyle.DarkTheme => "DarkMode_DarkTheme",
+            SystemStyle.ExplorerDark => "DarkMode_Explorer",
+            SystemStyle.CfdDark => "DarkMode_CFD",
+            SystemStyle.ItemsViewDark => "DarkMode_ItemsView",
+            SystemStyle.ItemsView => "ItemsView",
+            SystemStyle.DarkTheme => "DarkMode_DarkTheme",
             _ => "Explorer",
         };
     }

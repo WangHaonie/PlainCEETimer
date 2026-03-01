@@ -1,6 +1,6 @@
 ﻿namespace PlainCEETimer.Modules;
 
-public enum NativeStyle
+public enum SystemStyle
 {
     Explorer,
     ExplorerDark,
@@ -24,7 +24,7 @@ public enum UacNotifyLevel
     NeverNotify = 1,
     AppsOnlyNoDimmed = 2,
     AppsOnlyDimmed = 3,
-    AlwaysDimmed = 4,
+    AlwaysDimmed = 4
 }
 
 public enum AdminRights

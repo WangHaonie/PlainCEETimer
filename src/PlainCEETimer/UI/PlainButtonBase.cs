@@ -17,7 +17,7 @@ public class PlainButtonBase
         {
             if (ThemeManager.NewThemeAvailable)
             {
-                target.HandleCreated += (_, _) => ThemeManager.EnableDarkModeForControl(Target.Handle, NativeStyle.DarkTheme);
+                target.HandleCreated += (_, _) => ThemeManager.EnableDarkModeForControl(Target.Handle, SystemStyle.DarkTheme);
             }
             else
             {
@@ -30,6 +30,6 @@ public class PlainButtonBase
     private void UpdateStyle()
     {
         Target.FlatStyle = Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
-        ThemeManager.EnableDarkModeForControl(Target, NativeStyle.ExplorerDark);
+        ThemeManager.EnableDarkModeForControl(Target, SystemStyle.ExplorerDark);
     }
 }

@@ -5,7 +5,12 @@ namespace PlainCEETimer.Modules;
 
 public class ConsoleHelper
 {
-    public static readonly ConsoleHelper Instance = new();
+    public static ConsoleHelper Instance { get; } = new();
+
+    static ConsoleHelper()
+    {
+        Win32.AllocConsole();
+    }
 
     public ConsoleHelper Write(string s)
     {

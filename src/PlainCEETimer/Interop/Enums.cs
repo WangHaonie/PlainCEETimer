@@ -28,7 +28,7 @@ public enum MenuFlag
     Popup = 0x0010,
     Separator = 0x0800,
     String = 0x0000,
-    Unchecked = 0x0000,
+    Unchecked = 0x0000
 }
 
 public enum ShowWindowCommand

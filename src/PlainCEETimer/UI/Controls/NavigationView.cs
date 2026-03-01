@@ -26,11 +26,11 @@ public sealed class NavigationView : Control
             {
                 ForeColor = Colors.DarkForeText;
                 BackColor = Colors.DarkBackText;
-                ThemeManager.EnableDarkModeForControl(this, NativeStyle.ExplorerDark);
+                ThemeManager.EnableDarkModeForControl(this, SystemStyle.ExplorerDark);
             }
             else
             {
-                ThemeManager.EnableDarkModeForControl(this, NativeStyle.Explorer);
+                ThemeManager.EnableDarkModeForControl(this, SystemStyle.Explorer);
             }
 
             base.OnHandleCreated(e);

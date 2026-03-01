@@ -18,7 +18,7 @@ public sealed class PlainToolTip : ToolTip
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkModeForControl(hWnd, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkModeForControl(hWnd, SystemStyle.ExplorerDark);
         }
     }
 }

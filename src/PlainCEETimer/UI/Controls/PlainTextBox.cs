@@ -170,7 +170,7 @@ public sealed class PlainTextBox : TextBox
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkModeForControl(this, NativeStyle.CfdDark, true);
+            ThemeManager.EnableDarkModeForControl(this, SystemStyle.CfdDark, true);
         }
 
         base.OnHandleCreated(e);

@@ -88,11 +88,6 @@ internal static class App
     {
         InternalInit();
 
-        if (argc != 0)
-        {
-            Win32.AllocConsole();
-        }
-
         if (IsMainProcess)
         {
             if (ExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))

@@ -136,7 +136,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             {
                 if (ThemeManager.NewThemeAvailable)
                 {
-                    ThemeManager.EnableDarkModeForControl(hCtrl, NativeStyle.DarkTheme);
+                    ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
                 }
                 else
                 {
@@ -174,24 +174,24 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private NativeStyle GetNativeStyle(IntPtr hWnd, out bool up)
+    private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
         var cn = Win32UI.GetClassName(hWnd);
 
         if (cn == "ComboBox")
         {
             up = false;
-            return NativeStyle.CfdDark;
+            return SystemStyle.CfdDark;
         }
 
         if (cn == "Edit")
         {
             up = true;
-            return NativeStyle.CfdDark;
+            return SystemStyle.CfdDark;
         }
 
         up = true;
-        return NativeStyle.ExplorerDark;
+        return SystemStyle.ExplorerDark;
     }
 
     private IntPtr CbtHookProc(int nCode, IntPtr wParam, IntPtr lParam)

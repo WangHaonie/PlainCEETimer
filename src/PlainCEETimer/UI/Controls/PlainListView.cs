@@ -163,13 +163,13 @@ public sealed class PlainListView : ListView
         IntPtr hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, 0, 0);
         new SysHeader32NativeWindow(hHeader);
 
-        var LVstyle = NativeStyle.ItemsView;
-        var TTstyle = NativeStyle.Explorer;
+        var LVstyle = SystemStyle.ItemsView;
+        var TTstyle = SystemStyle.Explorer;
 
         if (UseDark)
         {
-            LVstyle = NativeStyle.ItemsViewDark;
-            TTstyle = NativeStyle.ExplorerDark;
+            LVstyle = SystemStyle.ItemsViewDark;
+            TTstyle = SystemStyle.ExplorerDark;
         }
 
         ThemeManager.EnableDarkModeForControl(hListView, LVstyle);
