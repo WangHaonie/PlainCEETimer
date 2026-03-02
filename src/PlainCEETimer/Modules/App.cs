@@ -110,7 +110,7 @@ internal static class App
                             UacHelper.PrintReport();
                             break;
                         case "fr":
-                            new Updater().InteractiveDownload(args.GetFirst(), args.Get("src"));
+                            Updater.Instance.InteractiveDownload(args.GetFirst(), args.Get("src"));
                             break;
                         case "op":
                             UacHelper.CheckAdmin();

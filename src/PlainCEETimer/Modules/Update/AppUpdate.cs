@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Http;
 
@@ -6,9 +7,9 @@ namespace PlainCEETimer.Modules.Update;
 
 internal static class AppUpdate
 {
-    public static async Task<AppUpdateInfo> FetchAsync(UpdateSource src)
+    public static async Task<AppUpdateInfo> FetchAsync(UpdateSource src, CancellationToken cancellationToken)
     {
-        var res = await HttpService.GetStringAsync(GetUpdateApi(src)).ConfigureAwait(false);
+        var res = await HttpService.GetStringAsync(GetUpdateApi(src), cancellationToken).ConfigureAwait(false);
         return JsonConvert.DeserializeObject<AppUpdateInfo>(res).SetUrl(GetDownloadUrl(src));
     }
 

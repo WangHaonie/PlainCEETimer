@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
@@ -8,17 +10,33 @@ using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Update;
 
-internal class Updater
+internal class Updater : IDisposable
 {
+    public static Updater Instance { get; } = new();
+
+    private CancellationTokenSource cts;
     private DownloaderForm FormDownloader;
+    private readonly object lockobj;
+
+    private Updater()
+    {
+        lockobj = new();
+    }
 
     public void CheckForUpdate(bool popup, AppForm owner, bool isPreview = false)
     {
+        lock (lockobj)
+        {
+            Cancel();
+            cts = new();
+        }
+
+        var token = cts.Token;
         var MessageX = owner.MessageX;
 
         try
         {
-            var response = AppUpdate.FetchAsync(isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable).Result;
+            var response = AppUpdate.FetchAsync(isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable, token).Result;
             var latest = response.Version;
             var date = response.ReleaseDate;
             var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
@@ -40,7 +58,7 @@ internal class Updater
         }
         catch (Exception ex)
         {
-            if (popup)
+            if (ex is not TaskCanceledException && popup)
             {
                 MessageX.Error("检查更新时发生错误! ", ex);
             }
@@ -69,6 +87,22 @@ internal class Updater
         }
 
         ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 370 * 1024L);
+    }
+
+    public void Dispose()
+    {
+        Cancel();
+        GC.SuppressFinalize(this);
+    }
+
+    private void Cancel()
+    {
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Destory();
+            cts = null;
+        }
     }
 
     private string GetDescription(DateTime pub)

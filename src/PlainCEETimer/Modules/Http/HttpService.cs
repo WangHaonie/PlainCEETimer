@@ -24,8 +24,10 @@ public static class HttpService
         return client.GetAsync(requestUri, completionOption, cancellationToken);
     }
 
-    public static Task<string> GetStringAsync(string requestUri)
+    public static async Task<string> GetStringAsync(string requestUri, CancellationToken cancellationToken)
     {
-        return client.GetStringAsync(requestUri);
+        using var r = await client.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
+        r.EnsureSuccessStatusCode();
+        return await r.Content.ReadAsStringAsync().ConfigureAwait(false);
     }
 }

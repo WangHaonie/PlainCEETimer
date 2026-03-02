@@ -95,7 +95,7 @@ public sealed class MainForm : AppForm
             Startup.RefreshTaskState();
         }).Start();
 
-        new NetworkedAction(() => new Updater().CheckForUpdate(false, this)).Invoke();
+        new NetworkedAction(() => Updater.Instance.CheckForUpdate(false, this)).Invoke();
     }
 
     /*
