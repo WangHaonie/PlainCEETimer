@@ -38,7 +38,7 @@ public enum MessageButtons
 }
 
 [Flags]
-public enum AppFormParam
+public enum AppWindowStyle
 {
     None,
     BindButtons = 1,

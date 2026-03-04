@@ -11,6 +11,7 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
+using PlainCEETimer.WPF.Views;
 
 namespace PlainCEETimer.Modules;
 
@@ -96,7 +97,15 @@ internal static class App
                 {
                     new Action(UacHelper.CheckAdmin).Start();
                     Win32TaskScheduler.Initialize();
-                    Application.Run(new MainForm());
+
+                    if (AppConfig.Display.UseWPF)
+                    {
+                        Application.Run(new MainWindow());
+                    }
+                    else
+                    {
+                        Application.Run(new MainForm());
+                    }
                 }
                 else
                 {

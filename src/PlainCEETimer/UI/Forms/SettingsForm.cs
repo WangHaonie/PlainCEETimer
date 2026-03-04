@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class SettingsForm : AppForm
 {
-    protected override AppFormParam Params => AppFormParam.CenterScreen | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog | AppFormParam.CompositedStyle;
+    protected override AppWindowStyle Params => AppWindowStyle.CenterScreen | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
 
     private bool AllowThemeChanging;
     private bool IsSyncingTime;
@@ -71,6 +71,7 @@ public sealed class SettingsForm : AppForm
     private PlainButton ButtonSave;
     private PlainButton ButtonSyncTime;
     private PlainCheckBox CheckBoxAutoSwitch;
+    private PlainCheckBox CheckBoxMainFormUseWPF;
     private PlainCheckBox CheckBoxBorderColor;
     private PlainCheckBox CheckBoxDraggable;
     private PlainCheckBox CheckBoxMemClean;
@@ -112,7 +113,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 334, 225, ScaleToDpi(25), ScaleToDpi(5),
+            NavBar = b.NavBar(5, 1, 54, 334, 225, RelativeToFont(1.6), RelativeToFont(0.4),
             [
                 b.NavPage("基本",
                 [
@@ -340,6 +341,7 @@ public sealed class SettingsForm : AppForm
 
                     GBoxMainForm = b.GroupBox("主窗口样式",
                     [
+                        CheckBoxMainFormUseWPF = b.CheckBox("使用 WPF 渲染 (开发中)", SettingsChanged).Disable(),
                         LabelOpacity = b.Label("窗口不透明度"),
                         NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
 
@@ -528,6 +530,8 @@ public sealed class SettingsForm : AppForm
         GroupBoxArrageControl(NudOpacity, 0, 2);
         CenterControlY(LabelOpacity, NudOpacity);
         CompactControlX(NudOpacity, LabelOpacity, 5);
+        ArrangeControlXT(CheckBoxMainFormUseWPF, NudOpacity, 15);
+        CenterControlY(CheckBoxMainFormUseWPF, NudOpacity);
         ArrangeControlYL(NudMaxCpp, NudOpacity, 0, 3);
         Control yLast = NudOpacity;
 
@@ -710,7 +714,7 @@ public sealed class SettingsForm : AppForm
         CheckBoxTrayText.Checked = General.TrayText;
         CheckBoxMemClean.Checked = General.MemClean;
         CheckBoxTopMost.Checked = General.TopMost;
-        CheckBoxUniTopMost.Checked = MainForm.UniTopMost;
+        CheckBoxUniTopMost.Checked = General.UniTopMost;
         NudOpacity.Value = General.Opacity;
         NudMaxCpp.Value = General.CountPerPage;
         NudTruncate.Value = General.Truncate;
@@ -729,6 +733,7 @@ public sealed class SettingsForm : AppForm
         ComboBoxScreens.SelectedIndex = Display.Screen;
         ComboBoxPosition.SelectedIndex = (int)Display.Position;
         CheckBoxDraggable.Checked = Display.Drag;
+        CheckBoxMainFormUseWPF.Checked = Display.UseWPF;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
         UpdateOptionsForPptsvc();
 
@@ -892,6 +897,7 @@ public sealed class SettingsForm : AppForm
         Display.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
         Display.Drag = CheckBoxDraggable.Checked;
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
+        Display.UseWPF = CheckBoxMainFormUseWPF.Checked;
 
         ConfigValidator.DemandConfig();
         ConfigValidator.SaveConfig();

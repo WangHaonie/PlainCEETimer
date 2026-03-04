@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
-using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Update;
@@ -23,8 +22,14 @@ internal class Updater : IDisposable
         lockobj = new();
     }
 
-    public void CheckForUpdate(bool popup, AppForm owner, bool isPreview = false)
+    public void CheckForUpdate(bool popup, IAppWindow owner, bool isPreview = false)
     {
+#if DEBUG
+        if (!popup)
+        {
+            return;
+        }
+#endif
         lock (lockobj)
         {
             Cancel();
@@ -86,7 +91,7 @@ internal class Updater : IDisposable
             }
         }
 
-        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 370 * 1024L);
+        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 600 * 1024L);
     }
 
     public void Dispose()

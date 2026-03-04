@@ -14,7 +14,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 {
     public Exam Data => data;
 
-    protected override AppFormParam Params => AppFormParam.BindButtons;
+    protected override AppWindowStyle Params => AppWindowStyle.BindButtons;
 
     private int Mode;
     private bool IsEnabled;

@@ -31,6 +31,29 @@ public enum MenuFlag
     Unchecked = 0x0000
 }
 
+[Flags]
+public enum TrackPopupMenu
+{
+    LeftAlign = 0x0000,
+    RightAlign = 0x0008,
+    HorizontalCenterAlign = 0x0004,
+
+    BottomAlign = 0x0020,
+    TopAlign = 0x0000,
+    VerticalCenterAlign = 0x0010,
+
+    NoNotify = 0x0080,
+    ReturnCmd = 0x0100,
+
+    LeftButton = 0x0000,
+    RightButton = 0x0002,
+
+    Horizontal = 0x0000,
+    Vertical = 0x0040,
+
+    Default = LeftAlign | TopAlign | RightButton | Vertical
+}
+
 public enum ShowWindowCommand
 {
     Normal = 1,

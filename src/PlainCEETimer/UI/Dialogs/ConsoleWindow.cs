@@ -16,7 +16,7 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class ConsoleWindow : AppDialog
 {
-    protected override AppFormParam Params => AppFormParam.AllControl;
+    protected override AppWindowStyle Params => AppWindowStyle.AllControl;
 
     private int finalCount;
     private int closeClickCount;

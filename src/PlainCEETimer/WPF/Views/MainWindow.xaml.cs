@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Text;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Microsoft.Win32;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
@@ -13,59 +13,68 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.Modules.Update;
-using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI;
 using PlainCEETimer.UI.Dialogs;
 using PlainCEETimer.UI.Extensions;
+using PlainCEETimer.UI.Forms;
+using PlainCEETimer.WPF.Controls;
+using PlainCEETimer.WPF.Extensions;
+using PlainCEETimer.WPF.ViewModels;
+using WFColor = System.Drawing.Color;
+using WFContextMenu = System.Windows.Forms.ContextMenu;
+using WFDialogResult = System.Windows.Forms.DialogResult;
+using WFMenuItem = System.Windows.Forms.MenuItem;
+using WFMouseEventArgs = System.Windows.Forms.MouseEventArgs;
+using WFRectagle = System.Drawing.Rectangle;
 
-namespace PlainCEETimer.UI.Forms;
+namespace PlainCEETimer.WPF.Views;
 
-public sealed class MainForm : AppForm
+public partial class MainWindow : AppWindow
 {
+    public static bool UniTopMost { get; private set; } = true;
+
     protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
 
     private int CurrentTheme;
-    private int CountdownMaxWidth;
     private int ExamIndex;
-    private int ScreenIndex;
+    private bool IsDragging;
     private bool IsDraggable;
     private bool IsPPTService;
-    private bool IsReadyToMove;
-    private bool ShowTrayIcon;
-    private bool ShowTrayText;
-    private bool TrayIconReopen;
     private bool IsHotKey1Activated;
     private bool BorderUseAccentColor;
-    private bool IsWpf;
-    private string CountdownContent;
-    private Color CountdownForeColor;
-    private BorderColorObject BorderColor;
-    private Point LastLocation;
-    private Point LastMouseLocation;
-    private Rectangle ScreenRect;
+    private bool TrayIconReopen;
     private CountdownPosition CountdownPos;
-    private ICountdownService MainCountdown;
-    private AboutForm FormAbout;
+    private Point LastLocation;
+    private WFRectagle ScreenRect;
+    private BorderColorObject BorderColor;
     private AppConfig AppConfig;
-    private ContextMenu ContextMenuMain;
     private DisplayObject Display;
-    private Exam[] Exams;
-    private string[] ExamItems;
-    private Font CountdownFont;
     private GeneralObject General;
     private MemoryCleaner MemCleaner;
-    private MenuItem MenuItemFontName;
-    private PagedContextMenu MenuSwitchExams;
-    private NotifyIcon TrayIcon;
+    private AboutForm FormAbout;
     private SettingsForm FormSettings;
     private HotKeyDialog DialogHotKey;
-    private HotKeyService[] hksvc;
-    private EventHandler<HotKeyPressEventArgs>[] hkevents;
+    private NotifyIcon TrayIcon;
     private MenuItemBuilder MainContextMenuItemBuilder;
+    private HotKeyService[] hksvc;
+    private WFMenuItem MenuItemFontName;
+    private PagedContextMenu MenuSwitchExams;
+    private string[] ExamItems;
+    private WFContextMenu ContextMenuMain;
+    private EventHandler<HotKeyPressEventArgs>[] hkevents;
+    private Exam[] Exams;
+    private readonly MainViewModel vm;
+    private bool ShowTrayIcon;
+    private bool ShowTrayText;
+    private int ScreenIndex;
+    private bool IsWpf;
     private const int PptsvcThreshold = 1;
 
-    protected override void OnInitializing()
+    public MainWindow()
     {
-        Text = "高考倒计时";
+        vm = new() { View = this };
+        DataContext = vm;
+        InitializeComponent();
 
         SystemEvents.DisplaySettingsChanged += (_, _) =>
         {
@@ -75,14 +84,7 @@ public sealed class MainForm : AppForm
         };
     }
 
-    protected override void OnPaint(PaintEventArgs e)
-    {
-        var g = e.Graphics;
-        g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-        TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
-    }
-
-    protected override void OnShown()
+    protected override void OnInitialized(EventArgs e)
     {
         RefreshSettings();
         ConfigValidator.ValidateNeeded = false;
@@ -94,47 +96,25 @@ public sealed class MainForm : AppForm
         }).Start();
 
         new NetworkedAction(() => Updater.Instance.CheckForUpdate(false, this)).Invoke();
+
+        base.OnInitialized(e);
     }
 
-    /*
-
-    无边框窗口的拖动 参考:
-
-    C#创建无边框可拖动窗口 - 掘金
-    https://juejin.cn/post/6989144829607280648
-
-    */
-
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
-        if (IsDraggable && e.Button == MouseButtons.Left)
-        {
-            IsReadyToMove = true;
-            Cursor = Cursors.SizeAll;
-            LastMouseLocation = e.Location;
-            LastLocation = Location;
-        }
-
-        base.OnMouseDown(e);
+        VerifyLocation();
+        base.OnRenderSizeChanged(sizeInfo);
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
-    {
-        if (IsDraggable && IsReadyToMove)
-        {
-            SetLocation(MousePosition.X - LastMouseLocation.X, MousePosition.Y - LastMouseLocation.Y);
-        }
-
-        base.OnMouseMove(e);
-    }
-
-    protected override void OnMouseUp(MouseEventArgs e)
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         if (IsDraggable)
         {
-            Cursor = Cursors.Default;
+            LastLocation = Location;
+            IsDragging = true;
+            DragMove();
 
-            if (IsReadyToMove && Location != LastLocation)
+            if (Location != LastLocation)
             {
                 KeepOnScreen();
                 CompatibleWithPPTService();
@@ -142,32 +122,21 @@ public sealed class MainForm : AppForm
                 SaveLocation();
             }
 
-            IsReadyToMove = false;
+            IsDragging = false;
         }
 
-        base.OnMouseUp(e);
+        base.OnMouseLeftButtonDown(e);
     }
 
-    private void SaveLocation()
-    {
-        AppConfig.Location = Location;
-        ConfigValidator.DemandConfig();
-    }
-
-    protected override bool OnClosing(CloseReason closeReason)
+    protected override bool OnClosing()
     {
         return true;
     }
 
-    protected override void OnClosed()
+    protected override void OnClosed(EventArgs e)
     {
-        MainCountdown.Destory();
-    }
-
-    protected override void OnSizeChanged(EventArgs e)
-    {
-        base.OnSizeChanged(e);
-        VerifyLocation();
+        vm.Countdown.Destory();
+        base.OnClosed(e);
     }
 
     protected override void WndProc(ref Message m)
@@ -176,32 +145,10 @@ public sealed class MainForm : AppForm
 
         if (m.Msg == WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
         {
-            SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
+            vm.BorderColor = ThemeManager.GetAccentColor(m.WParam).ToColor();
         }
 
         base.WndProc(ref m);
-    }
-
-    private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
-    {
-        if (e.Button == MouseButtons.Left)
-        {
-            App.OnActivateMain();
-        }
-    }
-
-    private void VerifyLocation()
-    {
-        if (!IsReadyToMove)
-        {
-            ApplyLocation();
-            var p = Location;
-
-            if (KeepOnScreen() != p)
-            {
-                SaveLocation();
-            }
-        }
     }
 
     private void RefreshSettings()
@@ -213,7 +160,7 @@ public sealed class MainForm : AppForm
         LoadTrayIcon();
         SetCountdownAutoWrap();
         ApplyStyle();
-        RunCountdown();
+        vm.RunCountdown();
         RegisterHotKeys();
     }
 
@@ -224,6 +171,7 @@ public sealed class MainForm : AppForm
         Display = AppConfig.Display;
 
         IsDraggable = Display.Drag;
+        UniTopMost = General.UniTopMost;
         IsPPTService = Display.SeewoPptsvc;
         ScreenIndex = Display.Screen;
         CountdownPos = Display.Position;
@@ -235,7 +183,7 @@ public sealed class MainForm : AppForm
 
         if (IsDraggable)
         {
-            Location = AppConfig.Location;
+            Location = AppConfig.DipLocation;
         }
         else
         {
@@ -254,100 +202,18 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private void ApplyStyle()
+    private void CompatibleWithPPTService()
     {
-        var topmost = General.TopMost;
-        BorderColor = General.BorderColor;
-        TopMost = false;
-        TopMost = topmost;
-        WindowManager.Current.OnTopMostChanged(topmost);
-        ShowInTaskbar = !topmost;
-        Opacity = General.Opacity / 100D;
+        if (IsPPTService)
+        {
+            var screenRect = ScreenRect;
+            var screenRectX = screenRect.X;
 
-        if (!BorderColor.Enabled)
-        {
-            SetBorderColor(false, default);
-        }
-        else
-        {
-            switch (BorderColor.Type)
+            if (Top == Px2DipY(screenRect.Y) && Left == Px2DipX(screenRectX))
             {
-                case 0:
-                    SetBorderColor(true, BorderColor.Color);
-                    break;
-                case 3:
-                    BorderUseAccentColor = true;
-                    SetBorderColor(true, ThemeManager.GetAccentColor());
-                    break;
+                Left = Px2DipX(screenRectX + PptsvcThreshold);
             }
         }
-
-        var newIsWpf = Display.UseWPF;
-
-        if (!ConfigValidator.ValidateNeeded && IsWpf != newIsWpf)
-        {
-            MessageX.Warn("需要重启程序以更换主窗口渲染方式！");
-            App.Exit(true);
-            return;
-        }
-
-        IsWpf = newIsWpf;
-        var newTheme = AppConfig.Dark;
-
-        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
-        {
-            MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
-            App.Exit(true);
-            return;
-        }
-
-        CurrentTheme = newTheme;
-    }
-
-    private void RunCountdown()
-    {
-        if (MainCountdown == null)
-        {
-            MainCountdown = new DefaultCountdownService();
-            MainCountdown.ExamSwitched += (_, e) => SwitchToExam(e.Index, true);
-
-            MainCountdown.CountdownUpdated += (_, e) =>
-            {
-                var content = e.Content;
-                var back = e.BackColor;
-                CountdownContent = content;
-                CountdownForeColor = e.ForeColor;
-                BackColor = back;
-                Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak);
-                Invalidate();
-
-                if (ShowTrayText)
-                {
-                    UpdateTrayIconText(content);
-                }
-
-                var type = BorderColor.Type;
-
-                if (BorderColor.Enabled && type is 1 or 2)
-                {
-                    SetBorderColor(true, type == 1 ? CountdownForeColor : back);
-                }
-            };
-        }
-
-        MainCountdown.Start(new()
-        {
-            AutoSwitchInterval = GetAutoSwitchInterval(General.Interval),
-            ExamIndex = ExamIndex,
-            GlobalRules = AppConfig.GlobalRules,
-            AutoSwitch = General.AutoSwitch,
-            Mode = Display.Mode,
-            Format = Display.Format,
-            Exams = Exams,
-            CustomRules = AppConfig.CustomRules,
-            DefaultRules = DefaultValues.GlobalDefaultRules,
-            DefaultColor = DefaultValues.GlobalDefaultColor
-        });
     }
 
     private void LoadContextMenu()
@@ -370,17 +236,9 @@ public sealed class MainForm : AppForm
                 b.Item(null),
                 b.Separator(),
 
-                b.Item("更改字体(&C)", (_, _) =>
-                {
-                    var dialog = new PlainFontDialog(this, CountdownFont);
+                b.Item("更改字体(&C)", (_, _) => {}),
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        ChangeCountdownFont(dialog.Font);
-                    }
-                }),
-
-                b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(DefaultValues.CountdownDefaultFont))
+                b.Item("恢复默认(&R)", (_, _) => {})
             ]),
 
             b.Separator(),
@@ -393,7 +251,7 @@ public sealed class MainForm : AppForm
 
                     FormSettings.DialogEnd += dr =>
                     {
-                        if (dr == DialogResult.OK)
+                        if (dr == WFDialogResult.OK)
                         {
                             RefreshSettings();
                         }
@@ -421,7 +279,7 @@ public sealed class MainForm : AppForm
                 {
                     DialogHotKey = new();
 
-                    if (DialogHotKey.ShowDialog(this) == DialogResult.OK)
+                    if (DialogHotKey.ShowDialog(this) == WFDialogResult.OK)
                     {
                         RegisterHotKeys();
                     }
@@ -438,11 +296,11 @@ public sealed class MainForm : AppForm
             b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
         ];
 
-        this.AttachContextMenu(MainContextMenuItemBuilder, out ContextMenuMain);
+        ContextMenuMain = new(MainContextMenuItemBuilder(new()));
         MenuItemFontName = ContextMenuMain.MenuItems[1].MenuItems[0];
         MenuItemFontName.Enabled = false;
-        ChangeCountdownFont(AppConfig.Font);
-        ContextMenu = ContextMenuMain;
+        //ChangeCountdownFont(AppConfig.Font);
+        NativeContextMenu = ContextMenuMain;
 
         if (MenuSwitchExams == null)
         {
@@ -451,7 +309,7 @@ public sealed class MainForm : AppForm
             MenuSwitchExams.ItemClick += (_, _) =>
             {
                 var index = MenuSwitchExams.SelectedIndex;
-                MainCountdown.SwitchTo(SwitchOption.ByIndex, index);
+                vm.Countdown.SwitchTo(SwitchOption.ByIndex, index);
                 SwitchToExam(index, false);
             };
         }
@@ -502,7 +360,7 @@ public sealed class MainForm : AppForm
             {
                 if (TrayIconReopen)
                 {
-                    if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == DialogResult.Yes)
+                    if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == WFDialogResult.Yes)
                     {
                         App.Exit(true);
                     }
@@ -510,7 +368,7 @@ public sealed class MainForm : AppForm
                     return;
                 }
 
-                var tmp = new ContextMenu(MainContextMenuItemBuilder(new()));
+                var tmp = new WFContextMenu(MainContextMenuItemBuilder(new()));
                 var mi = tmp.MenuItems;
 
                 for (int i = 0; i < 3; i++)
@@ -521,7 +379,7 @@ public sealed class MainForm : AppForm
                 TrayIcon = new()
                 {
                     Visible = true,
-                    Text = Text,
+                    Text = Title,
                     Icon = App.AppIcon,
 
                     ContextMenu = tmp.AddItems(b =>
@@ -553,7 +411,28 @@ public sealed class MainForm : AppForm
         }
     }
 
-    private void SwitchToExam(int index, bool sw)
+    private void TrayIcon_MouseClick(object sender, WFMouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+        {
+            App.OnActivateMain();
+        }
+    }
+
+    internal void UpdateTrayIconText(string content)
+    {
+        try
+        {
+            if (TrayIcon != null)
+            {
+                var text = content.Truncate(60);
+                TrayIcon.Text = text;
+            }
+        }
+        catch { }
+    }
+
+    internal void SwitchToExam(int index, bool sw)
     {
         if (index >= 0 && index != ExamIndex)
         {
@@ -564,36 +443,6 @@ public sealed class MainForm : AppForm
 
             ExamIndex = index;
             AppConfig.Exam = index;
-            ConfigValidator.DemandConfig();
-        }
-    }
-
-    private int GetAutoSwitchInterval(int Index) => Index switch
-    {
-        1 => 15_000, // 15 s
-        2 => 30_000, // 30 s
-        3 => 45_000, // 45 s
-        4 => 60_000, // 1 min
-        5 => 120_000, // 2 min
-        6 => 180_000, // 3 min
-        7 => 300_000, // 5 min
-        8 => 600_000, // 10 min
-        9 => 900_000, // 15 min
-        10 => 1800_000, // 30 min
-        11 => 2700_000, // 45 min
-        12 => 3600_000, // 1 h
-        _ => 10_000 // 10 s
-    };
-
-    private void ChangeCountdownFont(Font newFont)
-    {
-        CountdownFont = newFont;
-        MenuItemFontName.Text = newFont.Format().Truncate(35);
-
-        if (!ConfigValidator.ValidateNeeded)
-        {
-            MainCountdown.ForceRefresh();
-            AppConfig.Font = CountdownFont;
             ConfigValidator.DemandConfig();
         }
     }
@@ -619,7 +468,7 @@ public sealed class MainForm : AppForm
                 (_, _) =>
                 {
                     IsHotKey1Activated = !IsHotKey1Activated;
-                    Opacity = IsHotKey1Activated ? 0D : 1D;
+                    Hide(IsHotKey1Activated);
 
                     if (IsHotKey1Activated)
                     {
@@ -627,8 +476,8 @@ public sealed class MainForm : AppForm
                     }
                 },
 
-                (_, _) => MainCountdown.SwitchTo(SwitchOption.Previous),
-                (_, _) => MainCountdown.SwitchTo(SwitchOption.Next)
+                (_, _) => vm.Countdown.SwitchTo(SwitchOption.Previous),
+                (_, _) => vm.Countdown.SwitchTo(SwitchOption.Next)
             ];
 
             for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, hks.Length); i++)
@@ -641,75 +490,6 @@ public sealed class MainForm : AppForm
                 }
 
                 hksvc[i] = svc;
-            }
-        }
-    }
-
-    private void UpdateTrayIconText(string content)
-    {
-        try
-        {
-            if (TrayIcon != null)
-            {
-                var text = content.Truncate(60);
-                TrayIcon.Text = text;
-            }
-        }
-        catch { }
-    }
-
-    private void CompatibleWithPPTService()
-    {
-        if (IsPPTService)
-        {
-            var screenRect = ScreenRect;
-            var screenRectX = screenRect.X;
-
-            if (Top == screenRect.Y && Left == screenRectX)
-            {
-                Left = screenRectX + PptsvcThreshold;
-            }
-        }
-    }
-
-    private void SetCountdownAutoWrap()
-    {
-        CountdownMaxWidth = GetCurrentScreenRect().Width - 10;
-    }
-
-    private void ApplyLocation()
-    {
-        if (!IsDraggable)
-        {
-            switch (CountdownPos)
-            {
-                case CountdownPosition.LeftCenter:
-                    SetLocation(ScreenRect.X, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
-                    break;
-                case CountdownPosition.BottomLeft:
-                    SetLocation(ScreenRect.X, ScreenRect.Bottom - Height);
-                    break;
-                case CountdownPosition.TopCenter:
-                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Y);
-                    break;
-                case CountdownPosition.Center:
-                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
-                    break;
-                case CountdownPosition.BottomCenter:
-                    SetLocation(ScreenRect.X + (ScreenRect.Width - Width) / 2, ScreenRect.Bottom - Height);
-                    break;
-                case CountdownPosition.TopRight:
-                    SetLocation(ScreenRect.Right - Width, ScreenRect.Y);
-                    break;
-                case CountdownPosition.RightCenter:
-                    SetLocation(ScreenRect.Right - Width, ScreenRect.Y + (ScreenRect.Height - Height) / 2);
-                    break;
-                case CountdownPosition.BottomRight:
-                    SetLocation(ScreenRect.Right - Width, ScreenRect.Bottom - Height);
-                    break;
-                default:
-                    SetLocation(IsPPTService ? ScreenRect.X + PptsvcThreshold : ScreenRect.X, ScreenRect.Y);
-                    break;
             }
         }
     }
@@ -728,8 +508,123 @@ public sealed class MainForm : AppForm
         ScreenRect = screens[ScreenIndex].WorkingArea;
     }
 
-    private void SetBorderColor(bool enabled, COLORREF color)
+    private void SetCountdownAutoWrap()
+    {
+        TextBlockCountdown.MaxWidth = Px2DipX(GetCurrentScreenRect().Width - 10);
+    }
+
+    private void ApplyStyle()
+    {
+        var topmost = General.TopMost;
+        BorderColor = General.BorderColor;
+        Topmost = false;
+        Topmost = topmost;
+        WindowManager.Current.OnTopMostChanged(topmost);
+        ShowInTaskbar = !topmost;
+        Opacity = General.Opacity / 100D;
+
+        if (!BorderColor.Enabled)
+        {
+            SetBorderColor(false, default);
+        }
+        else
+        {
+            switch (BorderColor.Type)
+            {
+                case 0:
+                    SetBorderColor(true, BorderColor.Color);
+                    break;
+                case 3:
+                    BorderUseAccentColor = true;
+                    SetBorderColor(true, ThemeManager.GetAccentColor());
+                    break;
+            }
+        }
+
+        var newIsWpf = Display.UseWPF;
+
+        if (!ConfigValidator.ValidateNeeded && IsWpf != newIsWpf)
+        {
+            MessageX.Warn("需要重启程序以更换主窗口渲染方式！");
+            App.Exit(true);
+            return;
+        }
+
+        IsWpf = newIsWpf;
+        var newTheme = AppConfig.Dark;
+
+        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+        {
+            MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
+            App.Exit(true);
+            return;
+        }
+
+        CurrentTheme = newTheme;
+    }
+
+    private void SetBorderColor(bool enabled, WFColor color)
     {
         Win32UI.SetBorderColor(Handle, color, enabled);
+    }
+
+    private void ApplyLocation()
+    {
+        if (!IsDraggable)
+        {
+            var w = Dip2PxX(Width);
+            var h = Dip2PxY(Height);
+
+            switch (CountdownPos)
+            {
+                case CountdownPosition.LeftCenter:
+                    SetLocation(ScreenRect.X, ScreenRect.Y + (ScreenRect.Height - h) / 2);
+                    break;
+                case CountdownPosition.BottomLeft:
+                    SetLocation(ScreenRect.X, ScreenRect.Bottom - h);
+                    break;
+                case CountdownPosition.TopCenter:
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - w) / 2, ScreenRect.Y);
+                    break;
+                case CountdownPosition.Center:
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - w) / 2, ScreenRect.Y + (ScreenRect.Height - h) / 2);
+                    break;
+                case CountdownPosition.BottomCenter:
+                    SetLocation(ScreenRect.X + (ScreenRect.Width - w) / 2, ScreenRect.Bottom - h);
+                    break;
+                case CountdownPosition.TopRight:
+                    SetLocation(ScreenRect.Right - w, ScreenRect.Y);
+                    break;
+                case CountdownPosition.RightCenter:
+                    SetLocation(ScreenRect.Right - w, ScreenRect.Y + (ScreenRect.Height - h) / 2);
+                    break;
+                case CountdownPosition.BottomRight:
+                    SetLocation(ScreenRect.Right - w, ScreenRect.Bottom - h);
+                    break;
+                default:
+                    SetLocation(IsPPTService ? ScreenRect.X + PptsvcThreshold : ScreenRect.X, ScreenRect.Y);
+                    break;
+            }
+        }
+    }
+
+    private void VerifyLocation()
+    {
+        if (!IsDragging)
+        {
+            ApplyLocation();
+            var p = Location;
+
+            if (KeepOnScreen() != p)
+            {
+                SaveLocation();
+            }
+        }
+    }
+
+    private void SaveLocation()
+    {
+        AppConfig.DipLocation = Location;
+        ConfigValidator.DemandConfig();
     }
 }

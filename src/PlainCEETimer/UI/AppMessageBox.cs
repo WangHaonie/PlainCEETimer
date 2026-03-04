@@ -9,19 +9,19 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI;
 
-public class AppMessageBox(AppForm parent = null)
+public class AppMessageBox(IAppWindow parent = null)
 {
-    private sealed class MessageBox(AppForm owner, MessageLevel level, string message, MessageButtons buttons, bool autoClose) : AppDialog
+    private sealed class MessageBox(IAppWindow owner, MessageLevel level, string message, MessageButtons buttons, bool autoClose) : AppDialog
     {
-        protected override AppFormParam Params
+        protected override AppWindowStyle Params
         {
             get
             {
-                var param = AppFormParam.KeyPreview | AppFormParam.OnEscClosing;
+                var param = AppWindowStyle.KeyPreview | AppWindowStyle.OnEscClosing;
 
                 if (owner == null)
                 {
-                    param |= AppFormParam.CenterScreen;
+                    param |= AppWindowStyle.CenterScreen;
                 }
 
                 return param;

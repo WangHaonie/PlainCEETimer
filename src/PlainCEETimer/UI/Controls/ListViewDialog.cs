@@ -68,7 +68,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
     protected virtual bool AllowExcludeItems { get; }
 
-    protected sealed override AppFormParam Params => AppFormParam.AllControl | AppFormParam.Sizable;
+    protected sealed override AppWindowStyle Params => AppWindowStyle.AllControl | AppWindowStyle.Sizable;
 
     private bool hasFixedData;
     private TData[] fixedData;

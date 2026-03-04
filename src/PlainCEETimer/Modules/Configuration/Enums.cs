@@ -19,5 +19,6 @@ internal enum ConfigField
     CustomRuleTick,
     CountdownFont,
     PointFormat,
-    DateTimeFormat
+    DateTimeFormat,
+    DipPointFormat
 }

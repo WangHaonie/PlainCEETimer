@@ -6,11 +6,10 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class AppForm : Form
+public abstract class AppForm : Form, IAppWindow
 {
     /// <summary>
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
@@ -19,7 +18,7 @@ public abstract class AppForm : Form
 
     public Control FocusControl { get; set; }
 
-    protected virtual AppFormParam Params => AppFormParam.None;
+    protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
     public event Action<DialogResult> DialogEnd;
 
@@ -27,7 +26,7 @@ public abstract class AppForm : Form
     private bool SetRoundRegion;
     private FormWindowState lastState;
     private Size lastSize;
-    private readonly AppFormParam ParamsInternal;
+    private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly bool IsSizable;
     private readonly bool SetRoundCorner;
@@ -35,7 +34,7 @@ public abstract class AppForm : Form
     private readonly bool Special;
     private readonly bool OnEscClosing;
 
-    private static float DpiRatio;
+    private static double DpiRatio;
     private static bool IsHighDpi;
     private static readonly Font AppFont;
     private static readonly int CurrentFontHeight;
@@ -43,19 +42,20 @@ public abstract class AppForm : Form
     protected AppForm()
     {
         ParamsInternal = Params;
-        Special = CheckParam(AppFormParam.Special);
-        OnEscClosing = CheckParam(AppFormParam.OnEscClosing);
-        KeyPreview = CheckParam(AppFormParam.KeyPreview);
-        SetRoundCorner = CheckParam(AppFormParam.RoundCorner);
-        SmallRoundCorner = CheckParam(AppFormParam.RoundCornerSmall);
-        IsSizable = CheckParam(AppFormParam.Sizable);
+        Special = CheckParam(AppWindowStyle.Special);
+        OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
+        KeyPreview = CheckParam(AppWindowStyle.KeyPreview);
+        SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
+        SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
+        IsSizable = CheckParam(AppWindowStyle.Sizable);
         App.ActivateMain += App_ActivateMain;
         MessageX = new(this);
 
         if (!Special)
         {
-            MainForm.UniTopMostChanged += MainForm_UniTopMostChanged;
-            MainForm_UniTopMostChanged();
+            var wm = WindowManager.Current;
+            wm.TopMostChanged += AppWindow_TopMostChanged;
+            TopMost = wm.TopMost;
         }
 
         SuspendLayout();
@@ -102,8 +102,8 @@ public abstract class AppForm : Form
     public void ReActivate()
     {
         var tmp = TopMost;
-        TopMost = true;
         WindowState = FormWindowState.Normal;
+        TopMost = true;
         Show();
         Activate();
         TopMost = tmp;
@@ -119,7 +119,7 @@ public abstract class AppForm : Form
         OnLoad();
         base.OnLoad(e);
 
-        if (CheckParam(AppFormParam.CenterScreen))
+        if (CheckParam(AppWindowStyle.CenterScreen))
         {
             CenterToScreen();
         }
@@ -182,9 +182,10 @@ public abstract class AppForm : Form
 
     protected sealed override void OnFormClosing(FormClosingEventArgs e)
     {
+        base.OnFormClosing(e);
+
         var reason = e.CloseReason;
         e.Cancel = reason != CloseReason.WindowsShutDown && OnClosing(reason);
-        base.OnFormClosing(e);
     }
 
     protected sealed override void OnClosed(EventArgs e)
@@ -194,7 +195,7 @@ public abstract class AppForm : Form
         base.OnClosed(e);
         Dispose(true);
 
-        if (CheckParam(AppFormParam.ModelessDialog))
+        if (CheckParam(AppWindowStyle.ModelessDialog))
         {
             DialogEnd?.Invoke(DialogResult);
             DialogEnd = null;
@@ -209,7 +210,7 @@ public abstract class AppForm : Form
         {
             var cp = base.CreateParams;
 
-            if (CheckParam(AppFormParam.CompositedStyle))
+            if (CheckParam(AppWindowStyle.CompositedStyle))
             {
                 const int WS_EX_COMPOSITED = 0x02000000;
                 cp.ExStyle |= WS_EX_COMPOSITED;
@@ -306,7 +307,7 @@ public abstract class AppForm : Form
     protected virtual void OnClosed() { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected bool CheckParam(AppFormParam param)
+    protected bool CheckParam(AppWindowStyle param)
     {
         return (ParamsInternal & param) == param;
     }
@@ -327,6 +328,12 @@ public abstract class AppForm : Form
             default:
                 return true;
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int RelativeToFont(double ratio)
+    {
+        return (int)(ratio * CurrentFontHeight);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -575,8 +582,8 @@ public abstract class AppForm : Form
         }
     }
 
-    private void MainForm_UniTopMostChanged()
+    private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
     {
-        TopMost = !IsDisposed && MainForm.UniTopMost;
+        TopMost = e.IsTopMost;
     }
 }

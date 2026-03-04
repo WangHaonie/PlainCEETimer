@@ -13,7 +13,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
 {
     public CountdownRule Data => data;
 
-    protected override AppFormParam Params => AppFormParam.AllControl | AppFormParam.CompositedStyle;
+    protected override AppWindowStyle Params => AppWindowStyle.AllControl | AppWindowStyle.CompositedStyle;
 
     private bool IsEditMode;
     private bool IsGlobal;

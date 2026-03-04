@@ -1,0 +1,32 @@
+﻿<base:AppWindow x:Class="PlainCEETimer.WPF.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:c="clr-namespace:PlainCEETimer.WPF.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PlainCEETimer.WPF.ViewModels"
+    xmlns:local="clr-namespace:PlainCEETimer.WPF.Views"
+    xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+    Title="高考倒计时" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+    WindowStartupLocation="Manual" Height="10" Width="10">
+    <Window.Resources>
+        <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    </Window.Resources>
+    <Border BorderThickness="1" SnapsToDevicePixels="True"
+        CornerRadius="{Binding CornerRadius}"
+        BorderBrush="{Binding BorderColor, Converter={StaticResource ColorToBrushConverter}}"
+        Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}}">
+        <Grid>
+            <TextBlock x:Name="TextBlockCountdown"
+                Margin="5,0,5,1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Text="{Binding Content}"
+                Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}}"
+                FontFamily="{Binding Font.FontFamily}"
+                FontSize="{Binding Font.Size}"
+                FontWeight="{Binding Font.Weight}"
+                FontStyle="{Binding Font.Style}" />
+        </Grid>
+    </Border>
+</base:AppWindow>

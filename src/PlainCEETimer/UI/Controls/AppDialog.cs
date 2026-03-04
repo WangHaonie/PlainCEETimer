@@ -21,7 +21,7 @@ public abstract class AppDialog : AppForm
             ButtonB = b.Button("取消(&C)", (_, _) => OnClickButtonB())
         ]);
 
-        if (CheckParam(AppFormParam.BindButtons))
+        if (CheckParam(AppWindowStyle.BindButtons))
         {
             AcceptButton = ButtonA;
             CancelButton = ButtonB;

@@ -10,7 +10,7 @@ namespace PlainCEETimer.UI.Dialogs;
 
 public sealed class HotKeyDialog : AppDialog
 {
-    protected override AppFormParam Params => AppFormParam.AllControl;
+    protected override AppWindowStyle Params => AppWindowStyle.AllControl;
 
     private EventHandler OnUserChanged;
     private PlainLabel LabelHotKey1;

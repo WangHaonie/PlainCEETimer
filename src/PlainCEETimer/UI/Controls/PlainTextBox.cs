@@ -19,7 +19,7 @@ public sealed class PlainTextBox : TextBox
             set => ContentBox.Text = value;
         }
 
-        protected override AppFormParam Params => AppFormParam.RoundCornerSmall | AppFormParam.OnEscClosing | AppFormParam.ModelessDialog;
+        protected override AppWindowStyle Params => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog;
 
         private PlainTextBox ContentBox;
         private PlainButton ButtonClose;

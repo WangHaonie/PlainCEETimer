@@ -37,7 +37,7 @@ public sealed partial class ColorBlock : PlainLabel
             }
         }
 
-        protected override AppFormParam Params => AppFormParam.RoundCorner;
+        protected override AppWindowStyle Params => AppWindowStyle.RoundCorner;
 
         public ScreenColorPicker()
         {

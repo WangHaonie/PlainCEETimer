@@ -23,4 +23,6 @@ public class DisplayObject
     public bool SeewoPptsvc { get; set; }
 
     public int Screen { get; set; }
+
+    public bool UseWPF { get; set; }
 }
