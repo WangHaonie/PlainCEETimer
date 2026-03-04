@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.WPF;
-using PlainCEETimer.WPF.Controls;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -85,12 +83,4 @@ public static class Extensions
         AdminRights.No => ConsoleColor.Red,
         _ => ConsoleColor.Gray
     };
-
-    extension(Application)
-    {
-        public static void Run(AppWindow window)
-        {
-            new WPFApp().Run(window);
-        }
-    }
 }

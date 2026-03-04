@@ -385,7 +385,7 @@ public partial class MainWindow : AppWindow
                     ContextMenu = tmp.AddItems(b =>
                     [
                         b.Separator(),
-                        b.Item("显示界面(&X)", (_, _) => App.OnActivateMain()).Default(),
+                        b.Item("显示界面(&X)", (_, _) => WindowManager.Current.OnActivateRequested()).Default(),
 
                         b.Menu("关闭(&C)",
                         [
@@ -415,7 +415,7 @@ public partial class MainWindow : AppWindow
     {
         if (e.Button == MouseButtons.Left)
         {
-            App.OnActivateMain();
+            WindowManager.Current.OnActivateRequested();
         }
     }
 
@@ -519,7 +519,7 @@ public partial class MainWindow : AppWindow
         BorderColor = General.BorderColor;
         Topmost = false;
         Topmost = topmost;
-        WindowManager.Current.OnTopMostChanged(topmost);
+        WindowManager.Current.OnTopMostChanged(General.UniTopMost);
         ShowInTaskbar = !topmost;
         Opacity = General.Opacity / 100D;
 

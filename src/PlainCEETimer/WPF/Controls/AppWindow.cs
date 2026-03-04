@@ -82,13 +82,15 @@ public class AppWindow : Window, IAppWindow
 
     public AppWindow()
     {
+        var wm = WindowManager.Current;
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
+        wm.ActivateRequested += App_ActivateRequested;
 
         if (!Special)
         {
-            var wm = WindowManager.Current;
+            wm = WindowManager.Current;
             wm.TopMostChanged += AppWindow_TopMostChanged;
             Topmost = wm.TopMost;
         }
@@ -117,11 +119,6 @@ public class AppWindow : Window, IAppWindow
 
         MessageX = new(this);
         UpdateDpiScale(VisualTreeHelper.GetDpi(this));
-    }
-
-    private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
-    {
-        Topmost = e.IsTopMost;
     }
 
     public object Invoke(Delegate method)
@@ -195,6 +192,17 @@ public class AppWindow : Window, IAppWindow
         }
 
         DefWndProc(ref m);
+    }
+
+    private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
+    {
+        Topmost = e.IsTopMost;
+    }
+
+    private void App_ActivateRequested(object sender, EventArgs e)
+    {
+        ReActivate();
+        KeepOnScreen();
     }
 
     private void DefWndProc(ref Message m)

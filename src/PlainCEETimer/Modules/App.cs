@@ -29,8 +29,6 @@ internal static class App
 
     public static Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
-    internal static event Action ActivateMain;
-
     internal static event Action AppExit;
 
     public const string AppName = "高考倒计时 by WangHaonie";
@@ -97,15 +95,7 @@ internal static class App
                 {
                     new Action(UacHelper.CheckAdmin).Start();
                     Win32TaskScheduler.Initialize();
-
-                    if (AppConfig.Display.UseWPF)
-                    {
-                        Application.Run(new MainWindow());
-                    }
-                    else
-                    {
-                        Application.Run(new MainForm());
-                    }
+                    WindowManager.RunUI(AppConfig.Display.UseWPF ? new MainWindow() : new MainForm());
                 }
                 else
                 {
@@ -190,12 +180,6 @@ internal static class App
         }
     }
 
-    internal static void OnActivateMain()
-    {
-        Win32UI.ActivateUnmanagedWindows();
-        ActivateMain?.Invoke();
-    }
-
     private static void PrintHelp()
     {
         ConsoleHelper.Instance
@@ -240,7 +224,7 @@ internal static class App
             {
                 using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
                 server.WaitForConnection();
-                OnActivateMain();
+                WindowManager.Current.OnActivateRequested();
             }
         }
         catch { }
@@ -285,7 +269,6 @@ internal static class App
         appIcon.Destory();
         AppExit?.Invoke();
         AppExit = null;
-        ActivateMain = null;
 
         if (MainMutex != null)
         {

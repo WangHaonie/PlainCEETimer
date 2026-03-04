@@ -41,6 +41,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected AppForm()
     {
+        var wm = WindowManager.Current;
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
@@ -48,12 +49,12 @@ public abstract class AppForm : Form, IAppWindow
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
         IsSizable = CheckParam(AppWindowStyle.Sizable);
-        App.ActivateMain += App_ActivateMain;
+        wm.ActivateRequested += App_ActivateRequested;
         MessageX = new(this);
 
         if (!Special)
         {
-            var wm = WindowManager.Current;
+            wm = WindowManager.Current;
             wm.TopMostChanged += AppWindow_TopMostChanged;
             TopMost = wm.TopMost;
         }
@@ -200,8 +201,6 @@ public abstract class AppForm : Form, IAppWindow
             DialogEnd?.Invoke(DialogResult);
             DialogEnd = null;
         }
-
-        App.ActivateMain -= App_ActivateMain;
     }
 
     protected sealed override CreateParams CreateParams
@@ -573,17 +572,14 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void App_ActivateMain()
-    {
-        if (!IsDisposed)
-        {
-            ReActivate();
-            KeepOnScreen();
-        }
-    }
-
     private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
     {
         TopMost = e.IsTopMost;
+    }
+
+    private void App_ActivateRequested(object sender, EventArgs e)
+    {
+        ReActivate();
+        KeepOnScreen();
     }
 }

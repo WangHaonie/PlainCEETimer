@@ -186,7 +186,7 @@ public sealed class MainForm : AppForm
     {
         if (e.Button == MouseButtons.Left)
         {
-            App.OnActivateMain();
+            WindowManager.Current.OnActivateRequested();
         }
     }
 
@@ -260,7 +260,7 @@ public sealed class MainForm : AppForm
         BorderColor = General.BorderColor;
         TopMost = false;
         TopMost = topmost;
-        WindowManager.Current.OnTopMostChanged(topmost);
+        WindowManager.Current.OnTopMostChanged(General.UniTopMost);
         ShowInTaskbar = !topmost;
         Opacity = General.Opacity / 100D;
 
@@ -527,7 +527,7 @@ public sealed class MainForm : AppForm
                     ContextMenu = tmp.AddItems(b =>
                     [
                         b.Separator(),
-                        b.Item("显示界面(&X)", (_, _) => App.OnActivateMain()).Default(),
+                        b.Item("显示界面(&X)", (_, _) => WindowManager.Current.OnActivateRequested()).Default(),
 
                         b.Menu("关闭(&C)",
                         [
