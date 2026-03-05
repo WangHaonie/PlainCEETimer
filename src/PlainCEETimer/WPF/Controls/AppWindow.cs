@@ -70,10 +70,13 @@ public class AppWindow : Window, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
+    protected WindowManager WindowManager { get; } = WindowManager.Current;
+
     private double DpiScaleX;
     private double DpiScaleY;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
+    private const double PtToDipRatio = 96.0 / 72.0;
     private readonly int RoundCornerRadius = 8;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
@@ -82,18 +85,12 @@ public class AppWindow : Window, IAppWindow
 
     public AppWindow()
     {
-        var wm = WindowManager.Current;
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
-        wm.ActivateRequested += App_ActivateRequested;
-
-        if (!Special)
-        {
-            wm = WindowManager.Current;
-            wm.TopMostChanged += AppWindow_TopMostChanged;
-            Topmost = wm.TopMost;
-        }
+        InitEvents();
+        FontFamily = new("Segoe UI, Microsoft YaHei");
+        FontSize = Pt2Dip(9.0);
 
         if (SetRoundCorner)
         {
@@ -171,9 +168,21 @@ public class AppWindow : Window, IAppWindow
         e.Cancel = !WPFApp.IsSystemClosing && OnClosing();
     }
 
+    protected sealed override void OnClosed(EventArgs e)
+    {
+        OnClosed();
+        ClearEvents();
+        base.OnClosed(e);
+    }
+
     protected virtual bool OnClosing()
     {
         return false;
+    }
+
+    protected virtual void OnClosed()
+    {
+        return;
     }
 
     protected virtual void WndProc(ref Message m)
@@ -194,12 +203,33 @@ public class AppWindow : Window, IAppWindow
         DefWndProc(ref m);
     }
 
-    private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
+
+    private void InitEvents()
+    {
+        WindowManager.ActivateRequested += WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+        }
+    }
+
+    private void ClearEvents()
+    {
+        WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
+        }
+    }
+
+    private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
     {
         Topmost = e.IsTopMost;
     }
 
-    private void App_ActivateRequested(object sender, EventArgs e)
+    private void WindowManager_ActivateRequested(object sender, EventArgs e)
     {
         ReActivate();
         KeepOnScreen();
@@ -282,6 +312,12 @@ public class AppWindow : Window, IAppWindow
     protected int Dip2PxY(double dip)
     {
         return (int)(dip * DpiScaleY);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected double Pt2Dip(double pt)
+    {
+        return pt * PtToDipRatio;
     }
 
     protected WFRectagle GetCurrentScreenRect()

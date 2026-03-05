@@ -14,16 +14,13 @@ public class FontModel : IEquatable<FontModel>
 
     public FontWeight Weight { get; set; }
 
-    public FontStyle Style { get; set; }
-
     public static FontModel FromGdiFont(Font font)
     {
         return new FontModel()
         {
             FontFamily = new(font.FontFamily.Name),
             Size = font.SizeInPoints * 96D / 72,
-            Weight = font.Bold ? FontWeights.Bold : FontWeights.Normal,
-            Style = font.Italic ? FontStyles.Italic : FontStyles.Normal
+            Weight = font.Bold ? FontWeights.Bold : FontWeights.Normal
         };
     }
 
@@ -36,8 +33,7 @@ public class FontModel : IEquatable<FontModel>
 
         return FontFamily.Source == other.FontFamily.Source
             && Size == other.Size
-            && Weight == other.Weight
-            && Style == other.Style;
+            && Weight == other.Weight;
     }
 
     public override bool Equals(object obj)
@@ -51,7 +47,6 @@ public class FontModel : IEquatable<FontModel>
             .Add(FontFamily?.Source)
             .Add(Size)
             .Add(Weight)
-            .Add(Style)
             .Combine();
     }
 }

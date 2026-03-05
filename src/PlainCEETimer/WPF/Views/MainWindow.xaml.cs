@@ -133,10 +133,9 @@ public partial class MainWindow : AppWindow
         return true;
     }
 
-    protected override void OnClosed(EventArgs e)
+    protected override void OnClosed()
     {
         vm.Countdown.Destory();
-        base.OnClosed(e);
     }
 
     protected override void WndProc(ref Message m)

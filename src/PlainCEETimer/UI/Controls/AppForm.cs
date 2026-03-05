@@ -20,6 +20,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
+    protected WindowManager WindowManager { get; } = WindowManager.Current;
+
     public event Action<DialogResult> DialogEnd;
 
     private bool IsLoading = true;
@@ -41,7 +43,6 @@ public abstract class AppForm : Form, IAppWindow
 
     protected AppForm()
     {
-        var wm = WindowManager.Current;
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
@@ -49,15 +50,8 @@ public abstract class AppForm : Form, IAppWindow
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
         IsSizable = CheckParam(AppWindowStyle.Sizable);
-        wm.ActivateRequested += App_ActivateRequested;
+        InitEvents();
         MessageX = new(this);
-
-        if (!Special)
-        {
-            wm = WindowManager.Current;
-            wm.TopMostChanged += AppWindow_TopMostChanged;
-            TopMost = wm.TopMost;
-        }
 
         SuspendLayout();
         AutoScaleDimensions = new(96F, 96F);
@@ -194,6 +188,7 @@ public abstract class AppForm : Form, IAppWindow
         OnClosed();
         SaveWindowParameters();
         base.OnClosed(e);
+        ClearEvents();
         Dispose(true);
 
         if (CheckParam(AppWindowStyle.ModelessDialog))
@@ -572,12 +567,32 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void AppWindow_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
+    private void InitEvents()
+    {
+        WindowManager.ActivateRequested += WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+        }
+    }
+
+    private void ClearEvents()
+    {
+        WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
+        }
+    }
+
+    private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
     {
         TopMost = e.IsTopMost;
     }
 
-    private void App_ActivateRequested(object sender, EventArgs e)
+    private void WindowManager_ActivateRequested(object sender, EventArgs e)
     {
         ReActivate();
         KeepOnScreen();
