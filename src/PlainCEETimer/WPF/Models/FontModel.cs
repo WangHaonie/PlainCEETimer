@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using Newtonsoft.Json;
 using PlainCEETimer.Modules;
 using Font = System.Drawing.Font;
 
@@ -12,6 +13,22 @@ public class FontModel : IEquatable<FontModel>
 
     public double Size { get; set; }
 
+    [JsonIgnore]
+    public double SizePt
+    {
+        get
+        {
+            if (field == default)
+            {
+                field = Size / (96.0 / 72.0);
+            }
+
+            return field;
+        }
+
+        set;
+    }
+
     public FontWeight Weight { get; set; }
 
     public static FontModel FromGdiFont(Font font)
@@ -19,7 +36,8 @@ public class FontModel : IEquatable<FontModel>
         return new FontModel()
         {
             FontFamily = new(font.FontFamily.Name),
-            Size = font.SizeInPoints * 96D / 72,
+            SizePt = font.SizeInPoints,
+            Size = font.SizeInPoints * (96.0 / 72.0),
             Weight = font.Bold ? FontWeights.Bold : FontWeights.Normal
         };
     }

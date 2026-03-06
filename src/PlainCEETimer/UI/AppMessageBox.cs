@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI;
 
-public class AppMessageBox(IAppWindow parent = null)
+public class AppMessageBox(IAppWindow parent = null) : IDialogService
 {
     private sealed class MessageBox(IAppWindow owner, MessageLevel level, string message, MessageButtons buttons, bool autoClose) : AppDialog
     {

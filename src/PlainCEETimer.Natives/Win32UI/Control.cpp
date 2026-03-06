@@ -155,3 +155,14 @@ BOOL IsDialog(LPCREATESTRUCT lpCreateStruct)
 
     return FALSE;
 }
+
+void RemoveWindowIcon(HWND hWnd)
+{
+    if (hWnd)
+    {
+        SendMessage(hWnd, WM_SETICON, ICON_BIG, 0);
+        SendMessage(hWnd, WM_SETICON, ICON_SMALL, 0);
+        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_DLGMODALFRAME);
+        SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+}

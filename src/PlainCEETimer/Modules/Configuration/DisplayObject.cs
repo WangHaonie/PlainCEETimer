@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.UI;
+using PlainCEETimer.WPF.Models;
 
 namespace PlainCEETimer.Modules.Configuration;
 
@@ -25,4 +26,6 @@ public class DisplayObject
     public int Screen { get; set; }
 
     public bool UseWPF { get; set; }
+
+    public FontModel Font { get; set; }
 }

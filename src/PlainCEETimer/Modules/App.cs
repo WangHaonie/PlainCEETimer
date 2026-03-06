@@ -53,7 +53,7 @@ internal static class App
     private static readonly object _lock = new();
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
-    private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
+    private static readonly IDialogService MessageX = AppMessageBox.Instance;
 
     [STAThread]
     private static void Main(string[] args)

@@ -14,3 +14,4 @@ cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
 cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtProc);
 cexport(void) ComdlgUnhookMessageBox();
 cexport(BOOL) IsDialog(LPCREATESTRUCT lpCreateStruct);
+cexport(void) RemoveWindowIcon(HWND hWnd);

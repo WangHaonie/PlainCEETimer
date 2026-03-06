@@ -11,7 +11,7 @@ public class OptimizationHelper(bool isAuto)
     private const string NGen = "ngen.exe";
     private readonly string NGenPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\Microsoft.NET\Framework64\";
     private readonly string NetFxVersion = "v4*";
-    private readonly AppMessageBox MessageX = AppMessageBox.Instance;
+    private readonly IDialogService MessageX = AppMessageBox.Instance;
 
     public void Optimize()
     {

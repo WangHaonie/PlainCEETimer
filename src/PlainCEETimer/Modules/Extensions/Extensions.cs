@@ -20,26 +20,6 @@ public static class Extensions
     public static string Format(this Font font)
         => $"{font.Name}, {font.Size}pt, {font.Style}";
 
-    public static int Clamp(this int value, int min, int max)
-    {
-        if (min > max)
-        {
-            (min, max) = (max, min);
-        }
-
-        if (value < min)
-        {
-            return min;
-        }
-
-        if (value > max)
-        {
-            return max;
-        }
-
-        return value;
-    }
-
     public static void Destory(this IDisposable obj)
         => obj?.Dispose();
 

@@ -153,6 +153,9 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#40")]
     public static extern bool IsDialog(IntPtr lpCreateStruct);
 
+    [DllImport(App.NativesDll, EntryPoint = "#43")]
+    public static extern void RemoveWindowIcon(IntPtr hWnd);
+
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);

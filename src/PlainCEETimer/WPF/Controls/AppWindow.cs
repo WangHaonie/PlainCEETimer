@@ -66,7 +66,7 @@ public class AppWindow : Window, IAppWindow
 
     public bool InvokeRequired => !Dispatcher.CheckAccess();
 
-    public AppMessageBox MessageX { get; }
+    public IDialogService MessageX { get; }
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
@@ -114,7 +114,7 @@ public class AppWindow : Window, IAppWindow
             }
         }
 
-        MessageX = new(this);
+        MessageX = new AppMessageBox(this);
         UpdateDpiScale(VisualTreeHelper.GetDpi(this));
     }
 
@@ -142,15 +142,18 @@ public class AppWindow : Window, IAppWindow
     protected override void OnSourceInitialized(EventArgs e)
     {
         window = new(this);
+        var hwnd = Handle;
+
+        Win32UI.RemoveWindowIcon(hwnd);
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkModeForWindow(Handle);
+            ThemeManager.EnableDarkModeForWindow(hwnd);
         }
 
         if (SystemRoundCorner)
         {
-            Win32UI.SetRoundCornerEx(Handle, false);
+            Win32UI.SetRoundCornerEx(hwnd, false);
         }
 
         base.OnSourceInitialized(e);
@@ -198,67 +201,6 @@ public class AppWindow : Window, IAppWindow
             case WM_COMMAND:
                 WmCommand(ref m);
                 return;
-        }
-
-        DefWndProc(ref m);
-    }
-
-
-    private void InitEvents()
-    {
-        WindowManager.ActivateRequested += WindowManager_ActivateRequested;
-
-        if (!Special)
-        {
-            WindowManager.TopMostChanged += WindowManager_TopMostChanged;
-        }
-    }
-
-    private void ClearEvents()
-    {
-        WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
-
-        if (!Special)
-        {
-            WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
-        }
-    }
-
-    private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
-    {
-        Topmost = e.IsTopMost;
-    }
-
-    private void WindowManager_ActivateRequested(object sender, EventArgs e)
-    {
-        ReActivate();
-        KeepOnScreen();
-    }
-
-    private void DefWndProc(ref Message m)
-    {
-        window.DefWndProc(ref m);
-    }
-
-    private void WmContextMenu(ref Message m)
-    {
-        var cm = NativeContextMenu;
-
-        if (cm != null)
-        {
-            var pos = m.LParam.AsPoint();
-            Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
-            return;
-        }
-
-        DefWndProc(ref m);
-    }
-
-    private void WmCommand(ref Message m)
-    {
-        if (m.LParam == IntPtr.Zero && Command.DispatchID(m.WParam.ToInt32().LoWord))
-        {
-            return;
         }
 
         DefWndProc(ref m);
@@ -323,6 +265,66 @@ public class AppWindow : Window, IAppWindow
     protected WFRectagle GetCurrentScreenRect()
     {
         return Special ? Screen.FromHandle(Handle).WorkingArea : Screen.GetWorkingArea(WFCursor.Position);
+    }
+
+    private void InitEvents()
+    {
+        WindowManager.ActivateRequested += WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+        }
+    }
+
+    private void ClearEvents()
+    {
+        WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
+
+        if (!Special)
+        {
+            WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
+        }
+    }
+
+    private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
+    {
+        Topmost = e.IsTopMost;
+    }
+
+    private void WindowManager_ActivateRequested(object sender, EventArgs e)
+    {
+        ReActivate();
+        KeepOnScreen();
+    }
+
+    private void DefWndProc(ref Message m)
+    {
+        window.DefWndProc(ref m);
+    }
+
+    private void WmContextMenu(ref Message m)
+    {
+        var cm = NativeContextMenu;
+
+        if (cm != null)
+        {
+            var pos = m.LParam.AsPoint();
+            Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
+            return;
+        }
+
+        DefWndProc(ref m);
+    }
+
+    private void WmCommand(ref Message m)
+    {
+        if (m.LParam == IntPtr.Zero && Command.DispatchID(m.WParam.ToInt32().LoWord))
+        {
+            return;
+        }
+
+        DefWndProc(ref m);
     }
 
     private WindowInteropHelper EnsureInteropHelper()

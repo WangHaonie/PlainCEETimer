@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
+using PlainCEETimer.WPF.Models;
 using DipPoint = System.Windows.Point;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -97,6 +98,11 @@ public class AppConfig
     public Dictionary<string, WindowSizeObject> Sizes { get; set; }
 
     public static readonly AppConfig Empty = new();
+
+    internal FontModel GetFont()
+    {
+        return Display.Font ?? FontModel.FromGdiFont(Font);
+    }
 
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)

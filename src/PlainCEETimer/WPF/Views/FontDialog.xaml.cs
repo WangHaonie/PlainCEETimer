@@ -1,4 +1,6 @@
 ﻿using PlainCEETimer.WPF.Controls;
+using PlainCEETimer.WPF.Models;
+using PlainCEETimer.WPF.ViewModels;
 
 namespace PlainCEETimer.WPF.Views
 {
@@ -7,9 +9,21 @@ namespace PlainCEETimer.WPF.Views
     /// </summary>
     public partial class FontDialog : AppWindow
     {
-        public FontDialog()
+        public FontModel Font { get; private set; }
+
+        private readonly FontDialogViewModel vm;
+
+        public FontDialog(FontModel font = null)
         {
             InitializeComponent();
+            vm = new FontDialogViewModel(font, MessageX);
+            vm.ParseResult += fnt => Font = fnt;
+            DataContext = vm;
+        }
+
+        protected override bool OnClosing()
+        {
+            return !vm.CanClose();
         }
     }
 }

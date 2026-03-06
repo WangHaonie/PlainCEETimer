@@ -14,7 +14,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
     /// </summary>
-    public AppMessageBox MessageX { get; }
+    public IDialogService MessageX { get; }
 
     public Control FocusControl { get; set; }
 
@@ -51,7 +51,7 @@ public abstract class AppForm : Form, IAppWindow
         SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
         IsSizable = CheckParam(AppWindowStyle.Sizable);
         InitEvents();
-        MessageX = new(this);
+        MessageX = new AppMessageBox(this);
 
         SuspendLayout();
         AutoScaleDimensions = new(96F, 96F);

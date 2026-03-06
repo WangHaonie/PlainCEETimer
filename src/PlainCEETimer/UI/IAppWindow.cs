@@ -7,7 +7,7 @@ public interface IAppWindow : IWin32Window
 {
     bool InvokeRequired { get; }
 
-    AppMessageBox MessageX { get; }
+    IDialogService MessageX { get; }
 
     object Invoke(Delegate method);
 

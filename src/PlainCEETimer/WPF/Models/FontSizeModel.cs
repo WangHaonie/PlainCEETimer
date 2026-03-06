@@ -7,7 +7,7 @@ public class FontSizeModel(double value)
 {
     public string Display => value.ToString();
 
-    public double Size => value;
+    public double SizePt => value;
 
     public static IEnumerable<FontSizeModel> Yield(double minSize, double maxSize, double step)
     {
