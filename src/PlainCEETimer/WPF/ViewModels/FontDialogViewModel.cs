@@ -102,7 +102,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         MessageX = service;
 
         FontFamilyText = initFont;
-        FontSizeText = initSize.ToString();
+        FontSizeText = initSize.Format();
         FontWeight = FontWeightCollection.FirstOrDefault(x => x.FontWeight == initWeight) ?? FontWeightCollection[3];
 
         UpdateView();

@@ -232,8 +232,8 @@ public class AppWindow : Window, IAppWindow
     protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
-        var x = Dip2PxX(Left).Clamp(screen.X, screen.Right - Dip2PxY(Width));
-        var y = Dip2PxY(Top).Clamp(screen.Y, screen.Bottom - Dip2PxY(Height));
+        var x = Dip2PxX(Left).Clamp(screen.X, screen.Right - Dip2PxY(ActualWidth));
+        var y = Dip2PxY(Top).Clamp(screen.Y, screen.Bottom - Dip2PxY(ActualHeight));
         SetLocation(x, y);
         return Location;
     }
@@ -290,6 +290,7 @@ public class AppWindow : Window, IAppWindow
         if (!Special)
         {
             WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+            Topmost = WindowManager.TopMost;
         }
     }
 
