@@ -574,6 +574,7 @@ public abstract class AppForm : Form, IAppWindow
         if (!Special)
         {
             WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+            TopMost = WindowManager.TopMost;
         }
     }
 

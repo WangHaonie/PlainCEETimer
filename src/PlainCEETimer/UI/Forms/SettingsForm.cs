@@ -341,7 +341,11 @@ public sealed class SettingsForm : AppForm
 
                     GBoxMainForm = b.GroupBox("主窗口样式",
                     [
-                        CheckBoxMainFormUseWPF = b.CheckBox("使用 WPF 渲染 (开发中)", SettingsChanged).Disable(),
+                        CheckBoxMainFormUseWPF = b.CheckBox("使用 WPF 渲染 (开发中)", SettingsChanged)
+#if !DEBUG
+                        .Disable()
+#endif
+                        ,
                         LabelOpacity = b.Label("窗口不透明度"),
                         NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
 

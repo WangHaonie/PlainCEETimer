@@ -290,6 +290,7 @@ public class AppWindow : Window, IAppWindow
         if (!Special)
         {
             WindowManager.TopMostChanged += WindowManager_TopMostChanged;
+            Topmost = WindowManager.TopMost;
         }
     }
 

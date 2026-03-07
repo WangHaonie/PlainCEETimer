@@ -15,7 +15,7 @@ namespace PlainCEETimer.WPF.Views
 
         public FontDialog(FontModel font = null)
         {
-            vm = new FontDialogViewModel(font, MessageX);
+            vm = new(font, MessageX);
 
             vm.ParseResult += fnt =>
             {
