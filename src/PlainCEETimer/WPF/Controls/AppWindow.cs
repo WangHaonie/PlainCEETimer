@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -7,10 +6,11 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Internal;
 using PlainCEETimer.UI;
+using PlainCEETimer.WPF.Extensions;
+using ThemeColors = PlainCEETimer.UI.Colors;
 using WFContextMenu = System.Windows.Forms.ContextMenu;
 using WFCursor = System.Windows.Forms.Cursor;
 using WFPoint = System.Drawing.Point;
@@ -36,20 +36,6 @@ public class AppWindow : Window, IAppWindow
         }
     }
 
-    public Form ParentForm
-    {
-        get;
-        set
-        {
-            if (value != null)
-            {
-                EnsureInteropHelper().Owner = value.Handle;
-            }
-
-            field = value;
-        }
-    }
-
     public Point Location
     {
         get => new(Left, Top);
@@ -72,15 +58,16 @@ public class AppWindow : Window, IAppWindow
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
+    private bool IsClosing;
     private double DpiScaleX;
     private double DpiScaleY;
+    private IAppWindow _owner;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
     private const double PtToDipRatio = 96.0 / 72.0;
     private readonly int RoundCornerRadius = 8;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
-    private readonly bool SystemRoundCorner;
     private readonly AppWindowStyle ParamsInternal;
 
     public AppWindow()
@@ -95,23 +82,15 @@ public class AppWindow : Window, IAppWindow
         if (SetRoundCorner)
         {
             WindowStyle = WindowStyle.None;
+            AllowsTransparency = true;
+            Background = Brushes.Transparent;
 
-            if (SystemVersion.IsWindows11)
+            WindowChrome.SetWindowChrome(this, new()
             {
-                SystemRoundCorner = true;
-            }
-            else
-            {
-                AllowsTransparency = true;
-                Background = Brushes.Transparent;
-
-                WindowChrome.SetWindowChrome(this, new()
-                {
-                    CaptionHeight = 0,
-                    CornerRadius = new(RoundCornerRadius),
-                    GlassFrameThickness = new(0)
-                });
-            }
+                CaptionHeight = 0,
+                CornerRadius = new(RoundCornerRadius),
+                GlassFrameThickness = new(0)
+            });
         }
 
         MessageX = new AppMessageBox(this);
@@ -139,21 +118,51 @@ public class AppWindow : Window, IAppWindow
         KeepOnScreen();
     }
 
+    public bool ShowDialog(IAppWindow owner)
+    {
+        SetOwner(owner);
+        return (bool)ShowDialog();
+    }
+
+    public void Show(IAppWindow owner)
+    {
+        SetOwner(owner);
+        Show();
+    }
+
+    public new void Close()
+    {
+        if (!IsClosing)
+        {
+            base.Close();
+        }
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         window = new(this);
+
+        if (_owner != null)
+        {
+            EnsureInteropHelper().Owner = _owner.Handle;
+        }
+
         var hwnd = Handle;
 
-        Win32UI.RemoveWindowIcon(hwnd);
+        if (WindowStyle != WindowStyle.None)
+        {
+            Win32UI.RemoveWindowIcon(hwnd);
+        }
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkModeForWindow(hwnd);
-        }
+            if (!SetRoundCorner)
+            {
+                Foreground = new SolidColorBrush(ThemeColors.DarkForeText.ToColor());
+                Background = new SolidColorBrush(ThemeColors.DarkBackText.ToColor());
+            }
 
-        if (SystemRoundCorner)
-        {
-            Win32UI.SetRoundCornerEx(hwnd, false);
+            ThemeManager.EnableDarkModeForWindow(hwnd);
         }
 
         base.OnSourceInitialized(e);
@@ -163,12 +172,6 @@ public class AppWindow : Window, IAppWindow
     {
         UpdateDpiScale(newDpi);
         base.OnDpiChanged(oldDpi, newDpi);
-    }
-
-    protected sealed override void OnClosing(CancelEventArgs e)
-    {
-        base.OnClosing(e);
-        e.Cancel = !WPFApp.IsSystemClosing && OnClosing();
     }
 
     protected sealed override void OnClosed(EventArgs e)
@@ -190,16 +193,24 @@ public class AppWindow : Window, IAppWindow
 
     protected virtual void WndProc(ref Message m)
     {
+        const int WM_CLOSE = 0x0010;
         const int WM_CONTEXTMENU = 0x007B;
         const int WM_COMMAND = 0x0111;
+        const int WM_SYSCOMMAND = 0x0112;
 
         switch (m.Msg)
         {
+            case WM_CLOSE:
+                WmClose(ref m);
+                return;
             case WM_CONTEXTMENU:
                 WmContextMenu(ref m);
                 return;
             case WM_COMMAND:
                 WmCommand(ref m);
+                return;
+            case WM_SYSCOMMAND:
+                WmSysCommand(ref m);
                 return;
         }
 
@@ -242,6 +253,11 @@ public class AppWindow : Window, IAppWindow
     protected Point Px2Dip(WFPoint p)
     {
         return new(Px2DipX(p.X), Px2DipY(p.Y));
+    }
+
+    protected WFPoint Dip2Px(Point p)
+    {
+        return new(Dip2PxX(p.X), Dip2PxY(p.Y));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -303,6 +319,16 @@ public class AppWindow : Window, IAppWindow
         window.DefWndProc(ref m);
     }
 
+    private void WmClose(ref Message m)
+    {
+        if (FireOnClosing())
+        {
+            return;
+        }
+
+        DefWndProc(ref m);
+    }
+
     private void WmContextMenu(ref Message m)
     {
         var cm = NativeContextMenu;
@@ -325,6 +351,38 @@ public class AppWindow : Window, IAppWindow
         }
 
         DefWndProc(ref m);
+    }
+
+    private void WmSysCommand(ref Message m)
+    {
+        const int SC_CLOSE = 0xF060;
+
+        if ((m.WParam.ToInt32() & 0xFFF0) == SC_CLOSE && FireOnClosing())
+        {
+            return;
+        }
+
+        DefWndProc(ref m);
+    }
+
+    private bool FireOnClosing()
+    {
+        IsClosing = true;
+        var result = !WPFApp.IsSystemClosing && OnClosing();
+        IsClosing = false;
+        return result;
+    }
+
+    private void SetOwner(IAppWindow owner)
+    {
+        if (owner is AppWindow wnd)
+        {
+            Owner = wnd;
+        }
+        else
+        {
+            _owner = owner;
+        }
     }
 
     private WindowInteropHelper EnsureInteropHelper()

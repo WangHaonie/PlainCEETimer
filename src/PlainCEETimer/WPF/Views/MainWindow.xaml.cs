@@ -19,6 +19,7 @@ using PlainCEETimer.UI.Extensions;
 using PlainCEETimer.UI.Forms;
 using PlainCEETimer.WPF.Controls;
 using PlainCEETimer.WPF.Extensions;
+using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.ViewModels;
 using WFColor = System.Drawing.Color;
 using WFContextMenu = System.Windows.Forms.ContextMenu;
@@ -31,8 +32,6 @@ namespace PlainCEETimer.WPF.Views;
 
 public partial class MainWindow : AppWindow
 {
-    public static bool UniTopMost { get; private set; } = true;
-
     protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
 
     private int CurrentTheme;
@@ -170,7 +169,6 @@ public partial class MainWindow : AppWindow
         Display = AppConfig.Display;
 
         IsDraggable = Display.Drag;
-        UniTopMost = General.UniTopMost;
         IsPPTService = Display.SeewoPptsvc;
         ScreenIndex = Display.Screen;
         CountdownPos = Display.Position;
@@ -182,7 +180,8 @@ public partial class MainWindow : AppWindow
 
         if (IsDraggable)
         {
-            Location = AppConfig.DipLocation;
+            Location = Px2Dip(AppConfig.Location);
+            var p = Location;
         }
         else
         {
@@ -235,9 +234,17 @@ public partial class MainWindow : AppWindow
                 b.Item(null),
                 b.Separator(),
 
-                b.Item("更改字体(&C)", (_, _) => {}),
+                b.Item("更改字体(&C)", (_, _) =>
+                {
+                    var dialog = new FontDialog();
 
-                b.Item("恢复默认(&R)", (_, _) => {})
+                    if (dialog.ShowDialog(this))
+                    {
+                        vm.ChangeCountdownFont(dialog.Font);
+                    }
+                }),
+
+                b.Item("恢复默认(&R)", (_, _) => vm.ChangeCountdownFont(FontModel.FromGdiFont(DefaultValues.CountdownDefaultFont)))
             ]),
 
             b.Separator(),
@@ -298,7 +305,7 @@ public partial class MainWindow : AppWindow
         ContextMenuMain = new(MainContextMenuItemBuilder(new()));
         MenuItemFontName = ContextMenuMain.MenuItems[1].MenuItems[0];
         MenuItemFontName.Enabled = false;
-        //ChangeCountdownFont(AppConfig.Font);
+        vm.ChangeCountdownFont(AppConfig.GetFont());
         NativeContextMenu = ContextMenuMain;
 
         if (MenuSwitchExams == null)
@@ -446,6 +453,11 @@ public partial class MainWindow : AppWindow
         }
     }
 
+    public void UpdateFontNameItem(string content)
+    {
+        MenuItemFontName.Text = content;
+    }
+
     private void RegisterHotKeys()
     {
         var hks = AppConfig.HotKeys;
@@ -564,7 +576,7 @@ public partial class MainWindow : AppWindow
 
     private void SetBorderColor(bool enabled, WFColor color)
     {
-        Win32UI.SetBorderColor(Handle, color, enabled);
+        vm.BorderColor = enabled ? color.ToColor() : System.Windows.Media.Colors.Gray;
     }
 
     private void ApplyLocation()
@@ -623,7 +635,7 @@ public partial class MainWindow : AppWindow
 
     private void SaveLocation()
     {
-        AppConfig.DipLocation = Location;
+        AppConfig.Location = Dip2Px(Location);
         ConfigValidator.DemandConfig();
     }
 }

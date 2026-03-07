@@ -15,10 +15,16 @@ namespace PlainCEETimer.WPF.Views
 
         public FontDialog(FontModel font = null)
         {
-            InitializeComponent();
             vm = new FontDialogViewModel(font, MessageX);
-            vm.ParseResult += fnt => Font = fnt;
+
+            vm.ParseResult += fnt =>
+            {
+                Font = fnt;
+                DialogResult = fnt != null;
+            };
+
             DataContext = vm;
+            InitializeComponent();
         }
 
         protected override bool OnClosing()

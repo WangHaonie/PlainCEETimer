@@ -41,4 +41,9 @@ public static class NumericExtensions
 
         return value;
     }
+
+    public static string Format(this double value)
+    {
+        return value.ToString("0.#");
+    }
 }

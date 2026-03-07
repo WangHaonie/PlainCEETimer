@@ -6,7 +6,6 @@ using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 using PlainCEETimer.WPF.Models;
-using DipPoint = System.Windows.Point;
 
 namespace PlainCEETimer.Modules.Configuration;
 
@@ -91,9 +90,6 @@ public class AppConfig
 
     [JsonConverter(typeof(PointFormatConverter))]
     public Point Location { get; set; }
-
-    [JsonConverter(typeof(DipPointFormatConverter))]
-    public DipPoint DipLocation { get; set; }
 
     public Dictionary<string, WindowSizeObject> Sizes { get; set; }
 

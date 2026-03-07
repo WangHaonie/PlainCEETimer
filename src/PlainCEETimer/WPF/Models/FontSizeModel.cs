@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.WPF.Models;
 
 public class FontSizeModel(double value)
 {
-    public string Display => value.ToString();
+    public string Display => value.Format();
 
     public double SizePt => value;
 
@@ -16,17 +17,12 @@ public class FontSizeModel(double value)
             throw new InvalidOperationException();
         }
 
-        if (minSize == maxSize)
-        {
-            yield return new(minSize);
-        }
-
         if (minSize > maxSize)
         {
             (minSize, maxSize) = (maxSize, minSize);
         }
 
-        double current = minSize;
+        var current = minSize;
 
         yield return new(current);
 

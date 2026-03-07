@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.Views;
@@ -102,4 +103,17 @@ public sealed partial class MainViewModel : ObservableObject
         12 => 3600_000, // 1 h
         _ => 10_000 // 10 s
     };
+
+    public void ChangeCountdownFont(FontModel newFont)
+    {
+        Font = newFont;
+        View.UpdateFontNameItem(newFont.ToString().Truncate(35));
+
+        if (!ConfigValidator.ValidateNeeded)
+        {
+            MainCountdown.ForceRefresh();
+            App.AppConfig.Display.Font = newFont;
+            ConfigValidator.DemandConfig();
+        }
+    }
 }

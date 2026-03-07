@@ -156,6 +156,9 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#43")]
     public static extern void RemoveWindowIcon(IntPtr hWnd);
 
+    [DllImport(App.NativesDll, EntryPoint = "#43")]
+    public static extern void MoveWindowEx(IntPtr hWnd, int x, int y);
+
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);

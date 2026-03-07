@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,15 +18,12 @@ namespace PlainCEETimer.WPF.ViewModels;
 public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClose
 {
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(UserChanged))]
-    public partial string FontFamily { get; set; }
+    public partial string FontFamilyText { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(UserChanged))]
     public partial string FontSizeText { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(UserChanged))]
     public partial FontWeightModel FontWeight { get; set; }
 
     [ObservableProperty]
@@ -37,6 +35,10 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     [ObservableProperty]
     public partial bool IsFontValid { get; set; }
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveChangesCommand))]
+    public partial bool UserChanged { get; set; }
+
     public string PreviewText
     {
         get => previewText;
@@ -46,10 +48,6 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
             SetProperty(ref previewText, newValue);
         }
     }
-
-    public bool UserChanged => FontFamily != initFont
-        || ParseSizeTextPt(FontSizeText) != initSize
-        || FontWeight?.FontWeight != initWeight;
 
     public ObservableCollection<FontWeightModel> FontWeightCollection => field ??=
     [
@@ -80,6 +78,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     public event Action<FontModel> ParseResult;
 
     private string previewText;
+    private readonly bool init = true;
     private readonly string initFont;
     private readonly double initSize;
     private readonly FontWeight initWeight;
@@ -102,46 +101,46 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         initWeight = font.Weight;
         MessageX = service;
 
-        FontFamily = initFont;
+        FontFamilyText = initFont;
         FontSizeText = initSize.ToString();
         FontWeight = FontWeightCollection.FirstOrDefault(x => x.FontWeight == initWeight) ?? FontWeightCollection[3];
 
         UpdateView();
+        init = false;
     }
 
     public bool CanClose()
     {
-        if (UserChanged
-            && MessageX.Warn("是否保存当前更改？", MessageButtons.YesNo).AsBool())
+        if (UserChanged)
         {
-            return SaveChangesCore();
+            return ShowUnsavedWarning("是否保存当前更改？", SaveChangesCore);
         }
 
-        return false;
+        return true;
     }
 
-    partial void OnFontFamilyChanged(string value)
+    partial void OnFontFamilyTextChanged(string value)
     {
+        InvokeUserChanged();
         UpdateView();
-        SaveChangesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnFontWeightChanged(FontWeightModel value)
     {
-        SaveChangesCommand.NotifyCanExecuteChanged();
+        InvokeUserChanged();
     }
 
     partial void OnFontSizeTextChanged(string value)
     {
+        InvokeUserChanged();
         UpdateView();
-        SaveChangesCommand.NotifyCanExecuteChanged();
     }
 
     private void UpdateView()
     {
         try
         {
-            var ff = FontFamily;
+            var ff = FontFamilyText;
             var font = new FontFamily(ff);
             PreviewFontFamily = font;
             IsFontValid = font.BaseUri == null && !string.IsNullOrWhiteSpace(ff);
@@ -180,7 +179,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
 
                 if (clamped != result)
                 {
-                    ResetFontSizeText(clamped.ToString());
+                    ResetFontSizeText(clamped.Format());
                 }
 
                 return clamped;
@@ -209,9 +208,11 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     {
         if (!IsFontValid)
         {
-            MessageX.Error("字体名称无效！");
+            MessageX.Error("输入的字体无效！");
             return false;
         }
+
+        UserChanged = false;
 
         OnParseResult(new FontModel()
         {
@@ -232,5 +233,27 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     private void OnParseResult(FontModel result)
     {
         ParseResult?.Invoke(result);
+    }
+
+    private void InvokeUserChanged()
+    {
+        if (!init)
+        {
+            UserChanged = true;
+        }
+    }
+
+    private bool ShowUnsavedWarning(string msg, Func<bool> SaveChanges)
+    {
+        switch (MessageX.Warn(msg, MessageButtons.YesNo))
+        {
+            case DialogResult.Yes:
+                return SaveChanges();
+            case DialogResult.No:
+                UserChanged = false;
+                return true;
+            default:
+                return false;
+        }
     }
 }

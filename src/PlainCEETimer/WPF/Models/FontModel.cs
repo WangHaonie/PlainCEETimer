@@ -59,6 +59,11 @@ public class FontModel : IEquatable<FontModel>
         return Equals(obj as FontModel);
     }
 
+    public override string ToString()
+    {
+        return FontFamily.Source;
+    }
+
     public override int GetHashCode()
     {
         return new HashCode()

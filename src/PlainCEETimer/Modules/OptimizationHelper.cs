@@ -57,11 +57,6 @@ public class OptimizationHelper(bool isAuto)
         }
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-    }
-
     private void Retry()
     {
         if (FileDialogHelper.ShowDialog<OpenFileDialog>(
