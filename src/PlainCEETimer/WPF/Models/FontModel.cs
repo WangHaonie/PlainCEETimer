@@ -9,9 +9,9 @@ namespace PlainCEETimer.WPF.Models;
 
 public class FontModel : IEquatable<FontModel>
 {
-    public FontFamily FontFamily { get; set; }
+    public FontFamily FontFamily { get; init; }
 
-    public double Size { get; set; }
+    public double Size { get; init; }
 
     [JsonIgnore]
     public double SizePt
@@ -26,10 +26,10 @@ public class FontModel : IEquatable<FontModel>
             return field;
         }
 
-        set;
+        init;
     }
 
-    public FontWeight Weight { get; set; }
+    public FontWeight Weight { get; init; }
 
     public static FontModel FromGdiFont(Font font)
     {
@@ -47,6 +47,11 @@ public class FontModel : IEquatable<FontModel>
         if (other == null)
         {
             return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
         }
 
         return FontFamily.Source == other.FontFamily.Source

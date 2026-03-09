@@ -8,8 +8,8 @@ namespace PlainCEETimer.Modules.Configuration;
 [DebuggerDisplay("{Maximize}, {Size}")]
 public class WindowSizeObject(bool maximized, Size size)
 {
-    public bool Maximize { get; set; } = maximized;
+    public bool Maximize { get; init; } = maximized;
 
     [JsonConverter(typeof(SizeFormatConverter))]
-    public Size Size { get; set; } = size;
+    public Size Size { get; init; } = size;
 }

@@ -20,8 +20,8 @@ public sealed class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 
         serializer.Context = serializer.Context.SetContext(ConfigValidator.DefaultCountdownRuleFlag, out var context);
         var jarr = JArray.Load(reader);
-        var length = jarr.Count;
-        var list = new List<CountdownRule>(length);
+        var length = ConfigValidator.MaxGlobalRulesCount;
+        var list = new HashSet<CountdownRule>(length, CountdownRule.PhaseOnlyComparer);
 
         for (int i = 0; i < length; i++)
         {
@@ -35,7 +35,8 @@ public sealed class GlobalRulesConverter : JsonConverter<CountdownRule[]>
     public override void WriteJson(JsonWriter writer, CountdownRule[] value, JsonSerializer serializer)
     {
         if (value == null
-            || (writer.Path != nameof(AppConfig.GlobalRules) && value.ArrayEquals(App.AppConfig.GlobalRules, new CountdownRuleComparer())))
+            || (writer.Path != nameof(AppConfig.GlobalRules)
+                && value.ArrayEquals(App.AppConfig.GlobalRules, CountdownRule.FullComparer)))
         {
             writer.WriteNull();
         }

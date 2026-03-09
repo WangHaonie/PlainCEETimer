@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
@@ -12,16 +13,122 @@ namespace PlainCEETimer.Countdown;
 [JsonConverter(typeof(CountdownRuleConverter))]
 public class CountdownRule : IListViewData<CountdownRule>
 {
-    public CountdownPhase Phase { get; set; }
+    internal static readonly CountdownRuleFullComparer FullComparer = new();
 
-    public TimeSpan Tick { get; set; }
+    internal static readonly CountdownRulePhaseOnlyComparer PhaseOnlyComparer = new();
 
-    public string Text { get; set; }
+    internal static readonly CountdownRuleNormalComparer NormalComparer = new();
 
-    public ColorPair Colors { get; set; }
+    internal class CountdownRuleFullComparer : IEqualityComparer<CountdownRule>
+    {
+        public static CountdownRuleFullComparer Instance = new();
+
+        public bool Equals(CountdownRule x, CountdownRule y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            return x.Phase == y.Phase
+                && x.Tick == y.Tick
+                && x.Colors.Equals(y.Colors)
+                && x.Text == y.Text;
+        }
+
+        public int GetHashCode(CountdownRule obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            return new HashCode()
+                .Add(obj.Phase)
+                .Add(obj.Tick)
+                .Add(obj.Colors)
+                .Add(obj.Text)
+                .Combine();
+        }
+    }
+
+    internal class CountdownRulePhaseOnlyComparer : IEqualityComparer<CountdownRule>
+    {
+        public bool Equals(CountdownRule x, CountdownRule y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            return x.Phase == y.Phase;
+        }
+
+        public int GetHashCode(CountdownRule obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            return new HashCode()
+                .Add(obj.Phase)
+                .Combine();
+        }
+    }
+
+    internal class CountdownRuleNormalComparer : IEqualityComparer<CountdownRule>
+    {
+        public bool Equals(CountdownRule x, CountdownRule y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            return x.Phase == y.Phase
+                && x.Tick == y.Tick;
+        }
+
+        public int GetHashCode(CountdownRule obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            return new HashCode()
+                .Add(obj.Phase)
+                .Add(obj.Tick)
+                .Combine();
+        }
+    }
+
+    public CountdownPhase Phase { get; init; }
+
+    public TimeSpan Tick { get; init; }
+
+    public string Text { get; init; }
+
+    public ColorPair Colors { get; init; }
 
     [JsonIgnore]
-    public bool Default { get; set; }
+    public bool Default { get; init; }
 
     public int CompareTo(CountdownRule other)
     {
@@ -48,36 +155,27 @@ public class CountdownRule : IListViewData<CountdownRule>
             return false;
         }
 
-        var flag = Phase == other.Phase;
-
         if (Default || other.Default)
         {
-            return flag;
+            return PhaseOnlyComparer.Equals(this, other);
         }
 
-        return flag && Tick == other.Tick;
+        return NormalComparer.Equals(this, other);
     }
 
     public override bool Equals(object obj)
     {
-        if (obj is CountdownRule r)
-        {
-            return Equals(r);
-        }
-
-        return false;
+        return Equals(obj as CountdownRule);
     }
 
     public override int GetHashCode()
     {
-        var h = new HashCode().Add(Phase);
-
         if (Default)
         {
-            return h.Combine();
+            return PhaseOnlyComparer.GetHashCode(this);
         }
 
-        return h.Add(Tick).Combine();
+        return NormalComparer.GetHashCode(this);
     }
 
     public object Clone()
@@ -96,7 +194,7 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     bool IListViewData<CountdownRule>.InternalEquals(CountdownRule other)
     {
-        return !Default && Equals(other) && Colors.Equals(other.Colors) && Text == other.Text;
+        return !Default && FullComparer.Equals(this, other);
     }
 
     private string DebuggerDisplay => $"{Phase}: {Tick.Format()}, {Text}";

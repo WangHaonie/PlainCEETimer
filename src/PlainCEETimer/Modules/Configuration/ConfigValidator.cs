@@ -28,6 +28,7 @@ internal static class ConfigValidator
     public const int MaxCpp = 300;
     public const int MaxCustomTextLength = 800;
     public const int HotKeyCount = 3;
+    public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"
     public const long MaxTick = 56623103990000000L; // 65535d 23h 59m 59s
     public const long MinTick = TimeSpan.TicksPerSecond; // 1s

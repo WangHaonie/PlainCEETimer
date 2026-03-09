@@ -6,19 +6,19 @@ namespace PlainCEETimer.Modules.Update;
 internal class AppUpdateInfo
 {
     [JsonProperty("name")]
-    public Version Version { get; set; }
+    public Version Version { get; init; }
 
     [JsonProperty("published_at")]
-    public DateTime ReleaseDate { get; set; }
+    public DateTime ReleaseDate { get; init; }
 
     [JsonProperty("body")]
-    public string Changelog { get; set; }
+    public string Changelog { get; init; }
 
     [JsonProperty("size")]
-    public long Size { get; set; }
+    public long Size { get; init; }
 
     [JsonProperty("commit")]
-    public string Commit { get; set; }
+    public string Commit { get; init; }
 
     internal string Url => url;
 

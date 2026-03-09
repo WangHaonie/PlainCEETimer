@@ -1,4 +1,6 @@
-﻿namespace PlainCEETimer.Modules;
+﻿using System.Collections.Generic;
+
+namespace PlainCEETimer.Modules;
 
 public class HashCode
 {
@@ -11,12 +13,27 @@ public class HashCode
 
     public HashCode Add<T>(T value)
     {
-        hash = unchecked((hash * 397) ^ (value?.GetHashCode() ?? 0));
+        CombineCore(value?.GetHashCode() ?? 0);
+        return this;
+    }
+
+    public HashCode Add<T>(T[] value, IEqualityComparer<T> comparer)
+    {
+        foreach (var item in value)
+        {
+            CombineCore(comparer.GetHashCode(item));
+        }
+
         return this;
     }
 
     public int Combine()
     {
         return hash;
+    }
+
+    private void CombineCore(int hashCode)
+    {
+        hash = unchecked((hash * 397) ^ hashCode);
     }
 }

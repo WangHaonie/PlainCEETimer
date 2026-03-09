@@ -7,17 +7,17 @@ using PlainCEETimer.Modules.JsonConverters;
 namespace PlainCEETimer.Modules.Configuration;
 
 [JsonConverter(typeof(BorderColorConverter))]
-public struct BorderColorObject
+public readonly struct BorderColorObject
 {
-    public bool Enabled { get; set; }
+    public bool Enabled { get; init; }
 
     public int Type
     {
         get;
-        set => ConfigValidator.SetValue(ref field, value, 3, 0);
+        init => ConfigValidator.SetValue(ref field, value, 3, 0);
     }
 
-    public Color Color { get; set; }
+    public Color Color { get; init; }
 
     internal readonly int Value => value;
 

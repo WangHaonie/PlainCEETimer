@@ -15,7 +15,7 @@ public class Exam : IListViewData<Exam>
     public string Name
     {
         get;
-        set
+        init
         {
             value = value.RemoveIllegalChars();
 
@@ -32,7 +32,7 @@ public class Exam : IListViewData<Exam>
     public DateTime Start
     {
         get;
-        set
+        init
         {
             if (ConfigValidator.ValidateNeeded)
             {
@@ -47,7 +47,7 @@ public class Exam : IListViewData<Exam>
     public DateTime End
     {
         get;
-        set
+        init
         {
             if (ConfigValidator.ValidateNeeded)
             {
@@ -58,7 +58,7 @@ public class Exam : IListViewData<Exam>
         }
     } = DateTime.Now;
 
-    public ExamSettings Settings { get; set; }
+    public ExamSettings Settings { get; init; }
 
     public bool Excluded { get; set; }
 
@@ -86,20 +86,25 @@ public class Exam : IListViewData<Exam>
 
     public bool Equals(Exam other)
     {
-        return other != null
-            && Start == other.Start
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Start == other.Start
             && End == other.End
-            && Name == other.Name;
+            && Name == other.Name
+            && Settings.Equals(other.Settings);
     }
 
     public override bool Equals(object obj)
     {
-        if (obj is Exam e)
-        {
-            return Equals(e);
-        }
-
-        return false;
+        return Equals(obj as Exam);
     }
 
     public override int GetHashCode()
@@ -123,7 +128,7 @@ public class Exam : IListViewData<Exam>
         };
     }
 
-    bool IListViewData<Exam>.Default { get; set; }
+    bool IListViewData<Exam>.Default { get; init; }
 
     bool IListViewData<Exam>.InternalEquals(Exam other)
     {
