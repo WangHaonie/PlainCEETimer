@@ -21,8 +21,6 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     internal class CountdownRuleFullComparer : IEqualityComparer<CountdownRule>
     {
-        public static CountdownRuleFullComparer Instance = new();
-
         public bool Equals(CountdownRule x, CountdownRule y)
         {
             if (x == null || y == null)
@@ -81,9 +79,7 @@ public class CountdownRule : IListViewData<CountdownRule>
                 return 0;
             }
 
-            return new HashCode()
-                .Add(obj.Phase)
-                .Combine();
+            return obj.Phase.GetHashCode();
         }
     }
 
