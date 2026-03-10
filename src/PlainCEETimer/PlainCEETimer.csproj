@@ -14,7 +14,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Deterministic>true</Deterministic>
     <PdbFile>$(OutputPath)$(AssemblyName).exe.pdb</PdbFile>
-    <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Properties\AppIcon.ico</ApplicationIcon>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
