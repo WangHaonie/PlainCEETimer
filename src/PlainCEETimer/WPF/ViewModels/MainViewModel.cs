@@ -5,6 +5,7 @@ using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.Views;
@@ -80,7 +81,7 @@ public sealed partial class MainViewModel : ObservableObject
             AutoSwitch = g.AutoSwitch,
             Mode = d.Mode,
             Format = d.Format,
-            Exams = a.Exams,
+            Exams = a.Exams.ArrayWhere(x => !x.Excluded),
             CustomRules = a.CustomRules,
             DefaultRules = DefaultValues.GlobalDefaultRules,
             DefaultColor = DefaultValues.GlobalDefaultColor

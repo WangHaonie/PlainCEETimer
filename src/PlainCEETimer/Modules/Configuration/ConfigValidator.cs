@@ -27,6 +27,7 @@ internal static class ConfigValidator
     public const int DefCpp = 30;
     public const int MaxCpp = 300;
     public const int MaxCustomTextLength = 800;
+    public const int MaxFontFamilyLength = 100;
     public const int HotKeyCount = 3;
     public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"

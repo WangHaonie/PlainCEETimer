@@ -3,10 +3,12 @@ using System.Windows;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.JsonConverters;
 using Font = System.Drawing.Font;
 
 namespace PlainCEETimer.WPF.Models;
 
+[JsonConverter(typeof(FontModelConverter))]
 public class FontModel : IEquatable<FontModel>
 {
     public FontFamily FontFamily { get; init; }

@@ -152,22 +152,22 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
     /// </summary>
     public static AppMessageBox Instance { get; } = new();
 
-    public DialogResult Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+    public bool? Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
     {
         return Popup(message, MessageLevel.Info, buttons, autoClose);
     }
 
-    public DialogResult Warn(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+    public bool? Warn(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
     {
         return Popup(message, MessageLevel.Warning, buttons, autoClose);
     }
 
-    public DialogResult Error(string message, Exception ex = null, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
+    public bool? Error(string message, Exception ex = null, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
     {
         return Popup(GetExMessage(message, ex), MessageLevel.Error, buttons, autoClose);
     }
 
-    private DialogResult Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
+    private bool? Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
     {
         if (parent != null)
         {
@@ -182,17 +182,24 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
                 */
 
-                return (DialogResult)parent.Invoke(() => Popup(message, level, buttons, autoClose));
+                return (bool?)parent.Invoke(() => Popup(message, level, buttons, autoClose));
             }
 
             parent.ReActivate();
         }
 
-        return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();
+        return DR2Boolean(new MessageBox(parent, level, message, buttons, autoClose).ShowCore());
     }
 
     private string GetExMessage(string msg, Exception ex)
     {
         return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
     }
+
+    private bool? DR2Boolean(DialogResult dialogResult) => dialogResult switch
+    {
+        DialogResult.Yes or DialogResult.OK => true,
+        DialogResult.None or DialogResult.Ignore => null,
+        _ => false
+    };
 }

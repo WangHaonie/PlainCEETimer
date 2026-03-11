@@ -35,14 +35,22 @@ public static class StringExtensions
     https://stackoverflow.com/a/2776689
 
     */
-    public static string Truncate(this string str, int maxLength)
+
+    public static string Truncate(this string str, int maxLength, bool appendEllipses = true)
     {
         if (str == null || str.Length <= maxLength)
         {
             return str;
         }
 
-        return str.Substring(0, maxLength) + "...";
+        var result = str.Substring(0, maxLength);
+
+        if (appendEllipses)
+        {
+            return result + "...";
+        }
+
+        return result;
     }
 
     public static string Truncate(this string str, int maxLength, int rearLength)

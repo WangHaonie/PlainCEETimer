@@ -330,7 +330,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ListViewMain.GetSelection(out var items, out _, out var total);
 
         if (total != 0 &&
-            MessageX.Warn(MsgDelete, MessageButtons.YesNo) == DialogResult.Yes)
+            MessageX.Warn(MsgDelete, MessageButtons.YesNo) == true)
         {
             ListViewMain.BeginUpdate();
 

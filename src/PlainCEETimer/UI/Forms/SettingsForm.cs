@@ -415,7 +415,7 @@ public sealed class SettingsForm : AppForm
                             }
                             else if (!AllowExit && e.Button == MouseButtons.Left && IsModkeysPressed(Keys.Control))
                             {
-                                if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == DialogResult.Yes)
+                                if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == true)
                                 {
                                     ProcessHelper.Run("cmd", $"/k title PlainCEETimer & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.ExecutableDir}", true);
                                     App.Exit();
@@ -607,7 +607,7 @@ public sealed class SettingsForm : AppForm
                     {
                         var file = dialog.FileName;
 
-                        if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == DialogResult.Yes)
+                        if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == true)
                         {
                             if (ConfigValidator.ImportConfig(file))
                             {

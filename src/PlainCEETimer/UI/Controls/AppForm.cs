@@ -313,9 +313,9 @@ public abstract class AppForm : Form, IAppWindow
     {
         switch (MessageX.Warn(msg, MessageButtons.YesNo))
         {
-            case DialogResult.Yes:
+            case true:
                 return !SaveChanges();
-            case DialogResult.No:
+            case false:
                 flagUserChanged = false;
                 Close();
                 return false;

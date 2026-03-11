@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlainCEETimer.WPF.Views"
         xmlns:vm="clr-namespace:PlainCEETimer.WPF.ViewModels"
+        xmlns:m="clr-namespace:PlainCEETimer.Modules.Configuration"
         xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:FontDialogViewModel}"
         Title="字体设置 - 高考倒计时" ResizeMode="NoResize" Height="300" Width="450"
@@ -29,7 +30,7 @@
                    Text="字体家族" />
         <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
                  Margin="0,0,0,15" Padding="1,3,1,3"
-                 MaxLength="100"
+                 MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
                  Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=500}">
             <TextBox.Style>
                 <Style TargetType="TextBox">

@@ -37,7 +37,7 @@ internal class Updater : IDisposable
         }
 
         var token = cts.Token;
-        var MessageX = owner.MessageX;
+        var mx = owner.MessageX;
 
         try
         {
@@ -51,21 +51,21 @@ internal class Updater : IDisposable
             if (latest > App.VersionObject
                 || (isPreview && sha != AppInfo.CommitSHA && date.ToTimestamp() > AppInfo.Timestamp))
             {
-                if (MessageX.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == DialogResult.Yes)
+                if (mx.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == true)
                 {
                     owner.BeginInvoke(() => ShowDownloaderUI(response.Url, response.Size));
                 }
             }
             else if (popup)
             {
-                MessageX.Info(GetMessage(false, isPreview, latest, sha, dateDesc, content));
+                mx.Info(GetMessage(false, isPreview, latest, sha, dateDesc, content));
             }
         }
         catch (Exception ex)
         {
             if (ex is not TaskCanceledException && popup)
             {
-                MessageX.Error("检查更新时发生错误! ", ex);
+                mx.Error("检查更新时发生错误! ", ex);
             }
         }
     }

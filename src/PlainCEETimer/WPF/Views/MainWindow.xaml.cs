@@ -366,7 +366,7 @@ public partial class MainWindow : AppWindow
             {
                 if (TrayIconReopen)
                 {
-                    if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == WFDialogResult.Yes)
+                    if (MessageX.Warn("由于系统限制，重新开关托盘图标需要重启应用程序后方可正常显示。\n\n是否立即重启？", MessageButtons.YesNo) == true)
                     {
                         App.Exit(true);
                     }

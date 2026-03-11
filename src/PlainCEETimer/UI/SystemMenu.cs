@@ -67,7 +67,7 @@ public class SystemMenu
 
     public SystemMenu(IntPtr hMenu, IntPtr hOwner)
     {
-        if (Win32UI.IsMenu(hMenu))
+        if (hMenu != IntPtr.Zero && Win32UI.IsMenu(hMenu))
         {
             m_hmenu = hMenu;
             m_owner = hOwner;

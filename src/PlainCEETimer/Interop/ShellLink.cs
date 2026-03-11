@@ -43,7 +43,7 @@ public static class ShellLink
         {
             if (Win32User.NotImpersonal)
             {
-                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == DialogResult.Yes)
+                if (MessageX.Warn("确认检查并重设 开始菜单 和 桌面 快捷方式？", MessageButtons.YesNo) == true)
                 {
                     var path = @"\" + LnkName;
                     var programsdir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Programs)}\\{App.AppName}";

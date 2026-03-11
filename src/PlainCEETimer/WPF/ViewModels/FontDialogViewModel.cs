@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -140,7 +139,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     {
         try
         {
-            var ff = FontFamilyText;
+            var ff = FontFamilyText.Truncate(ConfigValidator.MaxFontFamilyLength, false);
             var font = new FontFamily(ff);
             PreviewFontFamily = font;
             IsFontValid = font.BaseUri == null && !string.IsNullOrWhiteSpace(ff);
@@ -247,9 +246,9 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     {
         switch (MessageX.Warn(msg, MessageButtons.YesNo))
         {
-            case DialogResult.Yes:
+            case true:
                 return SaveChanges();
-            case DialogResult.No:
+            case false:
                 UserChanged = false;
                 return true;
             default:

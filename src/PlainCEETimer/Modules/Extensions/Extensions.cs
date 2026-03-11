@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
 
 namespace PlainCEETimer.Modules.Extensions;
@@ -63,4 +65,19 @@ public static class Extensions
         AdminRights.No => ConsoleColor.Red,
         _ => ConsoleColor.Gray
     };
+
+    public static T GetValue<T>(this JObject json, string propertyName, T defaultValue, JsonSerializer serializer)
+    {
+        if (json.TryGetValue(propertyName, StringComparison.OrdinalIgnoreCase, out var jt))
+        {
+            var tmp = jt.ToObject<T>(serializer);
+
+            if (tmp != null)
+            {
+                return tmp;
+            }
+        }
+
+        return defaultValue;
+    }
 }
