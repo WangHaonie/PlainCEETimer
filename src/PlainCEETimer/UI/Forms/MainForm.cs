@@ -34,7 +34,7 @@ public sealed class MainForm : AppForm
             WindowMessageService = new WindowMessageService(base.WndProc),
             WindowStyles = new WinFormsWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),
-            ScreenService = new ScreenHelper(this),
+            ScreenService = ScreenService,
             UnifiedFontService = new WinFormsFontService(this)
         });
 

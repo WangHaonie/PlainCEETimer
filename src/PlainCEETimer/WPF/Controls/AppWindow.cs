@@ -65,6 +65,8 @@ public class AppWindow : Window, IAppWindow
 
     public IDialogService MessageX { get; }
 
+    protected IScreenService ScreenService { get; }
+
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
@@ -89,6 +91,7 @@ public class AppWindow : Window, IAppWindow
         InitEvents();
         FontFamily = new("Segoe UI, Microsoft YaHei");
         FontSize = Pt2Dip(9.0);
+        ScreenService = new WPFScreenHelper(Special ? this : null);
 
         if (SetRoundCorner)
         {
@@ -301,7 +304,7 @@ public class AppWindow : Window, IAppWindow
 
     protected WFRectagle GetCurrentScreenRect()
     {
-        return new ScreenHelper(Special ? this : null).GetWorkingArea();
+        return ScreenService.GetWorkingArea();
     }
 
     private void InitEvents()

@@ -21,6 +21,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
+    protected IScreenService ScreenService { get; }
+
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
     public event Action<DialogResult> DialogEnd;
@@ -53,6 +55,7 @@ public abstract class AppForm : Form, IAppWindow
         IsSizable = CheckParam(AppWindowStyle.Sizable);
         InitEvents();
         MessageX = new AppMessageBox(this);
+        ScreenService = new ScreenHelper(Special ? this : null);
 
         SuspendLayout();
         AutoScaleDimensions = new(96F, 96F);
@@ -389,7 +392,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected Rectangle GetCurrentScreenRect()
     {
-        return new ScreenHelper(Special ? this : null).GetWorkingArea();
+        return ScreenService.GetWorkingArea();
     }
 
     protected void ArrangeFirstControl(Control control, int x = 3, int y = 3)

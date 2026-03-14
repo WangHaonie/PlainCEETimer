@@ -25,7 +25,7 @@ public partial class MainWindow : AppWindow
             WindowMessageService = new WindowMessageService(base.WndProc),
             WindowStyles = new WPFWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),
-            ScreenService = new ScreenHelper(this),
+            ScreenService = ScreenService,
             UnifiedFontService = new WPFFontService(this)
         });
 
