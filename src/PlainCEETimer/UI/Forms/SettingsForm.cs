@@ -15,7 +15,7 @@ public sealed class SettingsForm : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.CenterScreen | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
 
-    private bool AllowThemeChanging;
+    private bool AllowTheme;
     private bool IsSyncingTime;
     private bool UserChanged;
     private bool CanSaveChanges;
@@ -109,7 +109,10 @@ public sealed class SettingsForm : AppForm
     protected override void OnInitializing()
     {
         Text = "设置 - 高考倒计时";
-        AllowThemeChanging = ThemeManager.IsDarkModeSupported;
+        AllowTheme = ThemeManager.IsDarkModeSupported;
+        AppConfig = App.AppConfig;
+        General = AppConfig.General;
+        Display = AppConfig.Display;
 
         this.AddControls(b =>
         [
@@ -341,11 +344,12 @@ public sealed class SettingsForm : AppForm
 
                     GBoxMainForm = b.GroupBox("主窗口样式",
                     [
-                        CheckBoxMainFormUseWPF = b.CheckBox("使用 WPF 渲染 (开发中)", SettingsChanged)
-#if !DEBUG
-                        .Disable()
-#endif
-                        ,
+                        CheckBoxMainFormUseWPF = b.CheckBox("使用 WPF 渲染", (_, _) =>
+                        {
+                            UpdateSettingsArea(SettingsArea.BorderColor, CheckBoxMainFormUseWPF.Checked);
+                            SettingsChanged();
+                        }),
+
                         LabelOpacity = b.Label("窗口不透明度"),
                         NudOpacity = b.NumericUpDown(50, ConfigValidator.MinOpacity, ConfigValidator.MaxOpacity, SettingsChanged),
 
@@ -355,7 +359,7 @@ public sealed class SettingsForm : AppForm
                             ComboBoxBorderColor.Enabled = flag;
                             BlockBorderColor.Enabled = flag;
                             SettingsChanged();
-                        }),
+                        }).Disable(),
 
                         ComboBoxBorderColor = b.ComboBox(115, (_, _) =>
                         {
@@ -516,7 +520,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxColors, ButtonDefaultColor, 5);
 
 
-        if (AllowThemeChanging)
+        if (AllowTheme)
         {
             GroupBoxArrageControl(RadioButtonThemeSystem, 4, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
@@ -537,26 +541,15 @@ public sealed class SettingsForm : AppForm
         ArrangeControlXT(CheckBoxMainFormUseWPF, NudOpacity, 15);
         CenterControlY(CheckBoxMainFormUseWPF, NudOpacity);
         ArrangeControlYL(NudMaxCpp, NudOpacity, 0, 3);
-        Control yLast = NudOpacity;
 
-        if (SystemVersion.IsWindows11)
-        {
-            ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
-            ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
-            CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
-            CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
-            ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
-            CenterControlY(BlockBorderColor, ComboBoxBorderColor);
-            yLast = ComboBoxBorderColor;
-        }
-        else
-        {
-            CheckBoxBorderColor.Delete();
-            ComboBoxBorderColor.Delete();
-            BlockBorderColor.Delete();
-        }
+        ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
+        ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
+        CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
+        CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
+        ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
+        CenterControlY(BlockBorderColor, ComboBoxBorderColor);
 
-        GroupBoxAutoAdjustHeight(GBoxMainForm, yLast, 6);
+        GroupBoxAutoAdjustHeight(GBoxMainForm, ComboBoxBorderColor, 6);
 
 
         ArrangeControlYL(GBoxExamsMenu, GBoxMainForm);
@@ -695,10 +688,6 @@ public sealed class SettingsForm : AppForm
 
     private void RefreshSettings()
     {
-        AppConfig = App.AppConfig;
-        General = AppConfig.General;
-        Display = AppConfig.Display;
-
         EditedExamInfo = AppConfig.Exams;
         EditedCustomRules = AppConfig.CustomRules;
         EditedGlobalRules = AppConfig.GlobalRules;
@@ -723,15 +712,6 @@ public sealed class SettingsForm : AppForm
         NudMaxCpp.Value = General.CountPerPage;
         NudTruncate.Value = General.Truncate;
         CheckBoxShowNo.Checked = General.No;
-
-        if (SystemVersion.IsWindows11)
-        {
-            var border = General.BorderColor;
-            CheckBoxBorderColor.Checked = border.Enabled;
-            ComboBoxBorderColor.SelectedIndex = border.Type;
-            BlockBorderColor.Color = border.Color;
-        }
-
         ComboBoxCountdownEnd.SelectedIndex = Display.Mode;
         ComboBoxCountdownFormat.SelectedIndex = (int)Display.Format;
         ComboBoxScreens.SelectedIndex = Display.Screen;
@@ -745,6 +725,7 @@ public sealed class SettingsForm : AppForm
 
         CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
         UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
+        UpdateSettingsArea(SettingsArea.BorderColor, Display.UseWPF);
     }
 
     private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
@@ -771,6 +752,16 @@ public sealed class SettingsForm : AppForm
                 break;
             case SettingsArea.StartUp:
                 CheckBoxStartup.Text = $"开机时自动运行倒计时{(isWorking ? "*" : "")}(&B)";
+                break;
+            case SettingsArea.BorderColor:
+                var enable = SystemVersion.IsWindows11 || isWorking;
+                var border = General.BorderColor;
+                CheckBoxBorderColor.Enabled = enable;
+                ComboBoxBorderColor.Enabled = enable && CheckBoxBorderColor.Checked;
+                BlockBorderColor.Enabled = enable;
+                CheckBoxBorderColor.Checked = border.Enabled && enable;
+                ComboBoxBorderColor.SelectedIndex = border.Type;
+                BlockBorderColor.Color = border.Color;
                 break;
         }
     }

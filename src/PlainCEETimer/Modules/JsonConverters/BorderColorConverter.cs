@@ -1,18 +1,16 @@
-﻿using System;
-using Newtonsoft.Json;
-using PlainCEETimer.Modules.Configuration;
+﻿using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class BorderColorConverter : JsonConverter<BorderColorObject>
+public sealed class BorderColorConverter : SimpleJsonConverter<BorderColorObject, int>
 {
-    public override BorderColorObject ReadJson(JsonReader reader, Type objectType, BorderColorObject existingValue, bool hasExistingValue, JsonSerializer serializer)
+    protected override BorderColorObject Deserialize(int value)
     {
-        return new(serializer.Deserialize<int>(reader));
+        return new(value);
     }
 
-    public override void WriteJson(JsonWriter writer, BorderColorObject value, JsonSerializer serializer)
+    protected override int Serialize(BorderColorObject obj)
     {
-        writer.WriteValue(SystemVersion.IsWindows11 ? value.Value : default);
+        return obj.Value;
     }
 }

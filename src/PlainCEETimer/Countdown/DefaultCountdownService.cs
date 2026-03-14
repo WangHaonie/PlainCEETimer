@@ -38,6 +38,7 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] GlobalRules;
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
+    private volatile bool IsDisposing;
     private readonly SynchronizationContext CurrentContext;
     private readonly string[] Phs = Ph.AllPhs;
     private readonly string[] PhContent = new string[12];
@@ -73,6 +74,7 @@ public class DefaultCountdownService : ICountdownService
 
     public void Dispose()
     {
+        IsDisposing = true;
         StopAutoSwitchTimer();
         StopMainTimer();
         GC.SuppressFinalize(this);
@@ -177,6 +179,11 @@ public class DefaultCountdownService : ICountdownService
 
     private void AutoSwitchCallback(object state)
     {
+        if (IsDisposing)
+        {
+            return;
+        }
+
         do
         {
             ExamIndex = (ExamIndex + 1) % ExamsCount;
@@ -190,6 +197,11 @@ public class DefaultCountdownService : ICountdownService
 
     private void CountdownCallback(object state)
     {
+        if (IsDisposing)
+        {
+            return;
+        }
+
         if (CanStart && TestExam(CurrentExam, out var phase, out var span))
         {
             SetPhase(phase);

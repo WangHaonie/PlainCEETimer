@@ -28,7 +28,8 @@ public enum SettingsArea
     Restart,
     SyncTime,
     PPTService,
-    StartUp
+    StartUp,
+    BorderColor
 }
 
 public enum MessageButtons

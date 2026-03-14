@@ -1,18 +1,16 @@
-﻿using System;
-using Newtonsoft.Json;
-using PlainCEETimer.UI;
+﻿using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class HotKeyConverter : JsonConverter<HotKey>
+public sealed class HotKeyConverter : SimpleJsonConverter<HotKey, ushort>
 {
-    public override HotKey ReadJson(JsonReader reader, Type objectType, HotKey existingValue, bool hasExistingValue, JsonSerializer serializer)
+    protected override HotKey Deserialize(ushort value)
     {
-        return new(serializer.Deserialize<ushort>(reader));
+        return new(value);
     }
 
-    public override void WriteJson(JsonWriter writer, HotKey value, JsonSerializer serializer)
+    protected override ushort Serialize(HotKey obj)
     {
-        writer.WriteValue(value.GetHashCode());
+        return (ushort)obj.GetHashCode();
     }
 }

@@ -483,7 +483,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
         if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
         {
-            MessageX.Warn("由于更改了应用主题设置，需要立即重启倒计时！");
+            MessageX.Warn("需要重启程序以更改应用主题！");
             App.Exit(true);
             return;
         }

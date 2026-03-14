@@ -1,20 +1,17 @@
-﻿using System;
-using System.Drawing;
-using Newtonsoft.Json;
+﻿using System.Drawing;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-public sealed class SizeFormatConverter : JsonConverter<Size>
+public sealed class SizeFormatConverter : SimpleJsonConverter<Size, int>
 {
-    public override Size ReadJson(JsonReader reader, Type objectType, Size existingValue, bool hasExistingValue, JsonSerializer serializer)
+    protected override Size Deserialize(int value)
     {
-        var raw = serializer.Deserialize<int>(reader);
-        return new(raw.HiWord, raw.LoWord);
+        return new(value.HiWord, value.LoWord);
     }
 
-    public override void WriteJson(JsonWriter writer, Size value, JsonSerializer serializer)
+    protected override int Serialize(Size obj)
     {
-        serializer.Serialize(writer, int.MakeLong(value.Height, value.Width));
+        return int.MakeLong(obj.Height, obj.Width);
     }
 }
