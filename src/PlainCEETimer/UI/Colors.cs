@@ -21,4 +21,5 @@ internal static class Colors
     public static readonly Color LightForeLinkDisabled = Color.FromArgb(109, 109, 109);
     public static readonly Color LightForeListViewHeader = Color.FromArgb(76, 96, 122);
     public static readonly Color LightForeListViewDefaultItem = Color.FromArgb(30, 136, 229);
+    public static readonly Color WindowBorder = Color.FromArgb(97, 97, 97);
 }

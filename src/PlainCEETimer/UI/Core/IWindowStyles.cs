@@ -2,9 +2,9 @@
 
 public interface IWindowStyles
 {
-    public bool TopMost { get; set; }
+    bool TopMost { get; set; }
 
-    public bool ShowInTaskbar { get; set; }
+    bool ShowInTaskbar { get; set; }
 
-    public double Opacity { get; set; }
+    double Opacity { get; set; }
 }

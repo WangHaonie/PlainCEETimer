@@ -6,6 +6,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Core;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -388,7 +389,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected Rectangle GetCurrentScreenRect()
     {
-        return Special ? Screen.GetWorkingArea(this) : Screen.GetWorkingArea(Cursor.Position);
+        return new ScreenHelper(Special ? this : null).GetWorkingArea();
     }
 
     protected void ArrangeFirstControl(Control control, int x = 3, int y = 3)

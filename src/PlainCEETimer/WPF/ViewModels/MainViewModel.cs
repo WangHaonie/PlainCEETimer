@@ -21,7 +21,7 @@ using PlainCEETimer.UI.Forms;
 using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.Modules;
-using Colors = System.Windows.Media.Colors;
+using Colors = PlainCEETimer.UI.Colors;
 using Rect = System.Drawing.Rectangle;
 using WFColor = System.Drawing.Color;
 
@@ -671,7 +671,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void SetBorderColor(bool enabled, WFColor color)
     {
-        BorderColor = enabled ? color.ToColor() : Colors.Gray;
+        BorderColor = (enabled ? color : Colors.WindowBorder).ToColor();
         BorderColorService?.SetBorderColor(enabled, color);
     }
 

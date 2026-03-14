@@ -37,6 +37,7 @@ public class WPFWindowDragService : IWindowDragService
             window.Cursor = Cursors.SizeAll;
             window.DragMove();
             window.Cursor = null;
+            drag = false;
             DragEnd?.Invoke(this, new(p, window.Location));
         }
     }

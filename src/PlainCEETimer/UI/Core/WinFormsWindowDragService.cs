@@ -40,6 +40,7 @@ public class WinFormsWindowDragService : IWindowDragService
                 form.Cursor = Cursors.SizeAll;
                 form.DragMove();
                 form.Cursor = Cursors.Default;
+                drag = false;
                 DragEnd?.Invoke(this, new(p, form.Location.ToDouble()));
             }
         }

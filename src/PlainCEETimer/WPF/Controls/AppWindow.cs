@@ -13,7 +13,6 @@ using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
 using NativeContextMenu = System.Windows.Forms.ContextMenu;
 using ThemeColors = PlainCEETimer.UI.Colors;
-using WFCursor = System.Windows.Forms.Cursor;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
 using WFSize = System.Drawing.Size;
@@ -302,7 +301,7 @@ public class AppWindow : Window, IAppWindow
 
     protected WFRectagle GetCurrentScreenRect()
     {
-        return Special ? Screen.FromHandle(Handle).WorkingArea : Screen.GetWorkingArea(WFCursor.Position);
+        return new ScreenHelper(Special ? this : null).GetWorkingArea();
     }
 
     private void InitEvents()
