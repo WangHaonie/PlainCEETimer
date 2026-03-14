@@ -105,6 +105,33 @@ public abstract class AppForm : Form, IAppWindow
         KeepOnScreen();
     }
 
+    internal protected Point KeepOnScreen()
+    {
+        var screen = GetCurrentScreenRect();
+        var x = Left.Clamp(screen.X, screen.Right - Width);
+        var y = Top.Clamp(screen.Y, screen.Bottom - Height);
+        SetLocation(x, y);
+        return new(x, y);
+    }
+
+    internal protected void DragMove()
+    {
+        if (IsHandleCreated && WindowState == FormWindowState.Normal)
+        {
+            const int WM_SYSCOMMAND = 0x0112;
+            const int SC_MOVE = 0xF010;
+            const int HTCAPTION = 2;
+
+            Capture = false;
+            Win32UI.SendMessage(Handle, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+        }
+    }
+
+    internal protected void SetLocation(int x, int y)
+    {
+        SetBounds(x, y, 0, 0, BoundsSpecified.Location);
+    }
+
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();
@@ -481,11 +508,6 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    protected void SetLocation(int x, int y)
-    {
-        SetBounds(x, y, 0, 0, BoundsSpecified.Location);
-    }
-
     protected void SetLabelAutoWrap(PlainLabel target, bool useParent)
     {
         SetLabelAutoWrap(target, useParent ? (target.Parent.Width - target.Left) : (int)(GetCurrentScreenRect().Width * 0.75));
@@ -504,15 +526,6 @@ public abstract class AppForm : Form, IAppWindow
 
         target.MaximumSize = new(maxWidth, 0);
         target.AutoSize = true;
-    }
-
-    protected Point KeepOnScreen()
-    {
-        var screen = GetCurrentScreenRect();
-        var x = Left.Clamp(screen.X, screen.Right - Width);
-        var y = Top.Clamp(screen.Y, screen.Bottom - Height);
-        SetLocation(x, y);
-        return new(x, y);
     }
 
     protected Size KeepOnScreen(Size size)

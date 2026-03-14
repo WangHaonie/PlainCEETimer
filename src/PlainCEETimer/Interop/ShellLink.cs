@@ -33,7 +33,7 @@ public static class ShellLink
                 "保存快捷方式 - 高考倒计时",
                 LnkName,
                 out var dialog,
-                FileFilter.Shortcut))
+                FileFilter.Shortcut) == true)
             {
                 ResetAppShortcut(dialog.FileName);
                 return true;

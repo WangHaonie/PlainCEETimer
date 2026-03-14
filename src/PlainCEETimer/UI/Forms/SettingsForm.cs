@@ -295,7 +295,7 @@ public sealed class SettingsForm : AppForm
                         [
                             b.Menu("白底(&L)",
                             [
-                                b.Item("所有", ItemsLight_Click).Default(),
+                                b.Item("所有", ItemsLight_Click).AsDefault(),
                                 b.Separator(),
                                 b.Item("1", ItemsLight_Click),
                                 b.Item("2", ItemsLight_Click),
@@ -305,7 +305,7 @@ public sealed class SettingsForm : AppForm
 
                             b.Menu("黑底(&D)",
                             [
-                                b.Item("所有", ItemsDark_Click).Default(),
+                                b.Item("所有", ItemsDark_Click).AsDefault(),
                                 b.Separator(),
                                 b.Item("1", ItemsDark_Click),
                                 b.Item("2", ItemsDark_Click),
@@ -603,7 +603,7 @@ public sealed class SettingsForm : AppForm
                         null,
                         this,
                         out var dialog,
-                        FileFilter.ConfigFile))
+                        FileFilter.ConfigFile) == true)
                     {
                         var file = dialog.FileName;
 
@@ -635,7 +635,7 @@ public sealed class SettingsForm : AppForm
                         "PlainCEETimer.config",
                         this,
                         out var dialog,
-                        FileFilter.ConfigFile))
+                        FileFilter.ConfigFile) == true)
                     {
                         ConfigValidator.ExportConfig(dialog.FileName);
                         MessageX.Info("配置文件导出完成！");

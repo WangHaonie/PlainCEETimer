@@ -216,7 +216,7 @@ public struct LOGFONT
     public static LOGFONT FromFont(Font font)
     {
         object lfobj = default(LOGFONT);
-        font.ToLogFont(lfobj);
+        font?.ToLogFont(lfobj);
         return (LOGFONT)lfobj;
     }
 }

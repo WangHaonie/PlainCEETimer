@@ -63,7 +63,7 @@ public class OptimizationHelper(bool isAuto)
             $"选择 {NGen} - 高考倒计时",
             NGen,
             out var dialog,
-            FileFilter.Application, FileFilter.AllFiles))
+            FileFilter.Application, FileFilter.AllFiles) == true)
         {
             if (dialog.SafeFileName.Equals(NGen, StringComparison.OrdinalIgnoreCase))
             {

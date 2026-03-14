@@ -10,8 +10,12 @@ namespace PlainCEETimer.Modules.Extensions;
 
 public static class Extensions
 {
-    public static bool AsBool(this DialogResult dr)
-        => dr is DialogResult.OK or DialogResult.Yes;
+    public static bool? AsBoolean(this DialogResult dialogResult) => dialogResult switch
+    {
+        DialogResult.Yes or DialogResult.OK => true,
+        DialogResult.None or DialogResult.Ignore => null,
+        _ => false
+    };
 
     public static int ToInt32(this Color color)
         => -color.ToArgb();

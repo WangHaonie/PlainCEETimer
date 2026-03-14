@@ -94,7 +94,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     {
         previewText = DefaultPreviewText;
 
-        font ??= App.AppConfig.GetFont();
+        font ??= App.AppConfig.GetFont().Font1;
         initFont = font.FontFamily.Source;
         initSize = font.SizePt;
         initWeight = font.Weight;

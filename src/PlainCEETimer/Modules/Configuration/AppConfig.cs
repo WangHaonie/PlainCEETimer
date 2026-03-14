@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
+using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Models;
 
 namespace PlainCEETimer.Modules.Configuration;
@@ -95,9 +96,22 @@ public class AppConfig
 
     public static readonly AppConfig Empty = new();
 
-    internal FontModel GetFont()
+    internal UnifiedFont GetFont()
     {
-        return Display.Font ?? FontModel.FromGdiFont(Font);
+        return new()
+        {
+            Font1 = Display.Font ?? FontModel.FromGdiFont(Font),
+            Font2 = Font
+        };
+    }
+
+    internal UnifiedFont GetDefaultFont()
+    {
+        return new()
+        {
+            Font1 = FontModel.FromGdiFont(DefaultValues.CountdownDefaultFont),
+            Font2 = DefaultValues.CountdownDefaultFont
+        };
     }
 
     [OnDeserialized]

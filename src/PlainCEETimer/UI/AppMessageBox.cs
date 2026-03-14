@@ -152,6 +152,8 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
     /// </summary>
     public static AppMessageBox Instance { get; } = new();
 
+    public IAppWindow Owner => parent;
+
     public bool? Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false)
     {
         return Popup(message, MessageLevel.Info, buttons, autoClose);
@@ -188,18 +190,11 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
             parent.ReActivate();
         }
 
-        return DR2Boolean(new MessageBox(parent, level, message, buttons, autoClose).ShowCore());
+        return new MessageBox(parent, level, message, buttons, autoClose).ShowCore().AsBoolean();
     }
 
     private string GetExMessage(string msg, Exception ex)
     {
         return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
     }
-
-    private bool? DR2Boolean(DialogResult dialogResult) => dialogResult switch
-    {
-        DialogResult.Yes or DialogResult.OK => true,
-        DialogResult.None or DialogResult.Ignore => null,
-        _ => false
-    };
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
+using PlainCEETimer.UI.Core;
 
 namespace PlainCEETimer.UI;
 
-public interface IAppWindow : IWin32Window
+public interface IAppWindow : IHasContextMenu, IWin32Window
 {
     bool InvokeRequired { get; }
 

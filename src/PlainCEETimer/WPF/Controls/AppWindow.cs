@@ -7,14 +7,16 @@ using System.Windows.Media;
 using System.Windows.Shell;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Internal;
+using PlainCEETimer.Modules.Internals;
 using PlainCEETimer.UI;
+using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
+using NativeContextMenu = System.Windows.Forms.ContextMenu;
 using ThemeColors = PlainCEETimer.UI.Colors;
-using WFContextMenu = System.Windows.Forms.ContextMenu;
 using WFCursor = System.Windows.Forms.Cursor;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
+using WFSize = System.Drawing.Size;
 
 namespace PlainCEETimer.WPF.Controls;
 
@@ -46,7 +48,17 @@ public class AppWindow : Window, IAppWindow
         }
     }
 
-    public WFContextMenu NativeContextMenu { get; set; }
+    public Size Size
+    {
+        get => new(ActualWidth, ActualHeight);
+        set
+        {
+            Width = value.Width;
+            Height = value.Height;
+        }
+    }
+
+    public NativeContextMenu NativeContextMenu { get; set; }
 
     public IntPtr Handle => EnsureInteropHelper().EnsureHandle();
 
@@ -118,10 +130,10 @@ public class AppWindow : Window, IAppWindow
         KeepOnScreen();
     }
 
-    public bool ShowDialog(IAppWindow owner)
+    public bool? ShowDialog(IAppWindow owner)
     {
         SetOwner(owner);
-        return (bool)ShowDialog();
+        return ShowDialog();
     }
 
     public void Show(IAppWindow owner)
@@ -229,7 +241,7 @@ public class AppWindow : Window, IAppWindow
         Top = Px2DipY(y);
     }
 
-    protected Point KeepOnScreen()
+    internal protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
         var x = Dip2PxX(Left).Clamp(screen.X, screen.Right - Dip2PxY(ActualWidth));
@@ -239,35 +251,45 @@ public class AppWindow : Window, IAppWindow
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected double Px2DipX(int px)
+    internal protected double Px2DipX(int px)
     {
         return px / DpiScaleX;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected double Px2DipY(int px)
+    internal protected double Px2DipY(int px)
     {
         return px / DpiScaleY;
     }
 
-    protected Point Px2Dip(WFPoint p)
+    internal protected Point Px2Dip(WFPoint p)
     {
         return new(Px2DipX(p.X), Px2DipY(p.Y));
     }
 
-    protected WFPoint Dip2Px(Point p)
+    internal protected WFPoint Dip2Px(Point p)
     {
         return new(Dip2PxX(p.X), Dip2PxY(p.Y));
     }
 
+    internal protected Size Px2Dip(WFSize p)
+    {
+        return new(Px2DipX(p.Width), Px2DipY(p.Height));
+    }
+
+    internal protected WFSize Dip2Px(Size p)
+    {
+        return new(Dip2PxX(p.Width), Dip2PxY(p.Width));
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int Dip2PxX(double dip)
+    internal protected int Dip2PxX(double dip)
     {
         return (int)(dip * DpiScaleX);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int Dip2PxY(double dip)
+    internal protected int Dip2PxY(double dip)
     {
         return (int)(dip * DpiScaleY);
     }
@@ -402,5 +424,11 @@ public class AppWindow : Window, IAppWindow
     {
         DpiScaleX = dpiScale.DpiScaleX;
         DpiScaleY = dpiScale.DpiScaleY;
+    }
+
+    NativeContextMenu IHasContextMenu.ContextMenu
+    {
+        get => NativeContextMenu;
+        set => NativeContextMenu = value;
     }
 }

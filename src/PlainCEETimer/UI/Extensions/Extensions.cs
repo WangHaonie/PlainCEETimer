@@ -17,22 +17,6 @@ public static class Extensions
         return control;
     }
 
-    public static TControl AttachContextMenu<TControl>(this TControl control, MenuItemBuilder builder, out ContextMenu instance)
-        where TControl : Control
-    {
-        return AttachContextMenu(control, builder, null, out instance);
-    }
-
-    public static TControl AttachContextMenu<TControl>(this TControl control, MenuItemBuilder builder, EventHandler onPopup, out ContextMenu instance)
-        where TControl : Control
-    {
-        var menu = new ContextMenu(builder(new()));
-        menu.Popup += onPopup;
-        control.ContextMenu = menu;
-        instance = menu;
-        return control;
-    }
-
     public static TControl Disable<TControl>(this TControl control)
         where TControl : Control
     {
@@ -56,32 +40,6 @@ public static class Extensions
         }
 
         return control;
-    }
-
-    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder, int index = -1)
-    {
-        var items = menu.MenuItems;
-        var count = items.Count;
-        var newItems = builder(new());
-
-        if (index > 0 && index < count - 1)
-        {
-            for (int i = 0; i < newItems.Length; i++)
-            {
-                items.Add(index + i, newItems[i]);
-            }
-
-            return menu;
-        }
-
-        items.AddRange(newItems);
-        return menu;
-    }
-
-    public static MenuItem Default(this MenuItem item)
-    {
-        item.DefaultItem = true;
-        return item;
     }
 
     public static PlainLinkLabel Link(this PlainLinkLabel label, string link, out LinkLabel.Link instance)

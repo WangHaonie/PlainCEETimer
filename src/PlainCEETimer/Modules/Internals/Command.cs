@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace PlainCEETimer.Modules.Internal;
+namespace PlainCEETimer.Modules.Internals;
 
 internal static class Command
 {

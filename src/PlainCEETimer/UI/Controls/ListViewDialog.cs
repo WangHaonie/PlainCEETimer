@@ -137,7 +137,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                     {
                         AddItemSafe(dialog.Data);
                     }
-                }).Default(),
+                }).AsDefault(),
 
                 b.Separator(),
                 MenuItemDuplicate = b.Item("重复(&C)", MenuItemDuplicate_Click),

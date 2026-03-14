@@ -4,6 +4,8 @@ namespace PlainCEETimer.UI;
 
 public interface IDialogService
 {
+    IAppWindow Owner { get; }
+
     bool? Info(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false);
 
     bool? Warn(string message, MessageButtons buttons = MessageButtons.OK, bool autoClose = false);
