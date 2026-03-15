@@ -67,8 +67,8 @@ jobs:
           + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新" >content.txt
 
           $AppInfo = "
-          namespace PlainCEETimer.Modules;
-          internal static class AppInfo
+          using PlainCEETimer.Modules.Fody; namespace PlainCEETimer.Modules;
+          [NoConstants, CompilerRemove] internal static class AppInfo
           {
               public const string Version = `"${{ steps.read_version.outputs.version }}`";
               public const string CommitSHA = `"${{ steps.read_version.outputs.sha }}`";
