@@ -8,11 +8,13 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
 
+[NoConstants]
 internal static class ConfigValidator
 {
     public const int MaxExamNameLength = 15;
