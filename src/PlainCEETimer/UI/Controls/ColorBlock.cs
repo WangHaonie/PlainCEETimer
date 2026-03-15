@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
@@ -113,9 +114,7 @@ public sealed partial class ColorBlock : PlainLabel
 
         public bool PreFilterMessage(ref Message m)
         {
-            const int WM_KEYDOWN = 0x0100;
-
-            if (m.Msg == WM_KEYDOWN && m.WParam == EscKey)
+            if (m.Msg == WM.KEYDOWN && m.WParam == EscKey)
             {
                 ctrl.CancelScreenColorPicker();
             }

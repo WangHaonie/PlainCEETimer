@@ -68,6 +68,7 @@ public readonly struct LPCUSTCOLORS : IDisposable
     }
 }
 
+[NoConstants]
 [DebuggerDisplay("{Left}, {Top}, {Right}, {Bottom}")]
 [StructLayout(LayoutKind.Sequential)]
 public struct RECT
@@ -76,6 +77,11 @@ public struct RECT
     public int Top;
     public int Right;
     public int Bottom;
+
+    public const int left = 0;
+    public const int top = 4;
+    public const int right = 8;
+    public const int bottom = 16;
 
     public static implicit operator Rectangle(RECT r)
     {

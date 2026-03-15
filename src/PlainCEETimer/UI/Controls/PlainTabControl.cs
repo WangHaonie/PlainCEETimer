@@ -34,21 +34,15 @@ public class PlainTabControl : TabControl
             }
         }
 
-        const int WM_CHANGEUISTATE = 0x0127;
-        const int UIS_SET = 1;
-        const int UISF_HIDEFOCUS = 0x1;
-        Win32UI.SendMessage(Handle, WM_CHANGEUISTATE, int.MakeLong(UIS_SET, UISF_HIDEFOCUS), 0);
+        Win32UI.SendMessage(Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
 
         base.OnHandleCreated(e);
     }
 
     protected override void WndProc(ref Message m)
     {
-        const int WM_PARENTNOTIFY = 0x0210;
-        const int WM_CREATE = 0x0001;
-
-        if (UseDark && m.Msg == WM_PARENTNOTIFY
-            && m.WParam.ToInt32().LoWord == WM_CREATE)
+        if (UseDark && m.Msg == WM.PARENTNOTIFY
+            && m.WParam.ToInt32().LoWord == WM.CREATE)
         {
             ThemeManager.EnableDarkModeForControl(m.LParam, NativeStyle.ExplorerDark);
         }

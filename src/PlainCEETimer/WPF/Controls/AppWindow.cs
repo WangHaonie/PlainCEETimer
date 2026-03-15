@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Shell;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Internals;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
@@ -19,6 +20,7 @@ using WFSize = System.Drawing.Size;
 
 namespace PlainCEETimer.WPF.Controls;
 
+[NoConstants]
 public class AppWindow : Window, IAppWindow
 {
     private sealed class AppNativeWindow : NativeWindow
@@ -207,23 +209,18 @@ public class AppWindow : Window, IAppWindow
 
     protected virtual void WndProc(ref Message m)
     {
-        const int WM_CLOSE = 0x0010;
-        const int WM_CONTEXTMENU = 0x007B;
-        const int WM_COMMAND = 0x0111;
-        const int WM_SYSCOMMAND = 0x0112;
-
         switch (m.Msg)
         {
-            case WM_CLOSE:
+            case WM.CLOSE:
                 WmClose(ref m);
                 return;
-            case WM_CONTEXTMENU:
+            case WM.CONTEXTMENU:
                 WmContextMenu(ref m);
                 return;
-            case WM_COMMAND:
+            case WM.COMMAND:
                 WmCommand(ref m);
                 return;
-            case WM_SYSCOMMAND:
+            case WM.SYSCOMMAND:
                 WmSysCommand(ref m);
                 return;
         }

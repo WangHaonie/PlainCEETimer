@@ -26,9 +26,7 @@ public class SystemMenu
 
         protected override void WndProc(ref Message m)
         {
-            const int WM_SYSCOMMAND = 0x0112;
-
-            if (m.Msg == WM_SYSCOMMAND)
+            if (m.Msg == WM.SYSCOMMAND)
             {
                 var count = items.Count;
 

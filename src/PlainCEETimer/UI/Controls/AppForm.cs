@@ -122,12 +122,8 @@ public abstract class AppForm : Form, IAppWindow
     {
         if (IsHandleCreated && WindowState == FormWindowState.Normal)
         {
-            const int WM_SYSCOMMAND = 0x0112;
-            const int SC_MOVE = 0xF010;
-            const int HTCAPTION = 2;
-
             Capture = false;
-            Win32UI.SendMessage(Handle, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+            Win32UI.SendMessage(Handle, WM.SYSCOMMAND, NativeConstants.SC_MOVE | NativeConstants.HTCAPTION, 0);
         }
     }
 
@@ -237,8 +233,7 @@ public abstract class AppForm : Form, IAppWindow
 
             if (CheckParam(AppWindowStyle.CompositedStyle))
             {
-                const int WS_EX_COMPOSITED = 0x02000000;
-                cp.ExStyle |= WS_EX_COMPOSITED;
+                cp.ExStyle |= WS.EX_COMPOSITED;
             }
 
             return cp;

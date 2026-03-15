@@ -57,9 +57,7 @@ public static class ProcessHelper
 
     public static string GetExceptionMessage(Exception ex)
     {
-        const int ERROR_CANCELLED = 1223;
-
-        if (ex is Win32Exception w32ex && w32ex.NativeErrorCode == ERROR_CANCELLED)
+        if (ex is Win32Exception w32ex && w32ex.NativeErrorCode == ERROR.CANCELLED)
         {
             /*
 

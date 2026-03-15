@@ -43,6 +43,6 @@
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup>
-  <WeaverFiles Include="$(SolutionDir)PlainCEETimer.Fody\bin\x64\Release\netstandard2.0\PlainCEETimer.Fody.dll" />
+    <WeaverFiles Include="$(OutputPath)PlainCEETimer.Fody.dll" />
   </ItemGroup>
 </Project>

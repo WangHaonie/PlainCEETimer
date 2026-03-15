@@ -18,7 +18,7 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
     .net - Set global hotkeys using C# - Stack Overflow
     https://stackoverflow.com/a/27309185/21094697
 
-    WM_HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
+    WM.HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
     https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey
 
     */
@@ -27,15 +27,13 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
     {
         public HotKeyMessageWindow()
         {
-            const int HWND_MESSAGE = -3;
-            CreateHandle(new() { Parent = new(HWND_MESSAGE) });
+            CreateHandle(new() { Parent = new(NativeConstants.HWND_MESSAGE) });
         }
 
         protected override void WndProc(ref Message m)
         {
-            const int WM_HOTKEY = 0x0312;
 
-            if (m.Msg == WM_HOTKEY && hksvcs != null)
+            if (m.Msg == WM.HOTKEY && hksvcs != null)
             {
                 var count = hksvcs.Count;
 
@@ -111,9 +109,9 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
         hkids ??= new(0x0001, 0xBFFF);
         hkmw ??= new();
         hhkmw = hkmw.Handle;
-        const ushort MOD_NOREPEAT = 0x4000;
 
-        if (TestCore(hk) && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
+        if (TestCore(hk)
+            && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), NativeConstants.MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
         {
             hksvcs ??= [];
             hid = new(m_id);

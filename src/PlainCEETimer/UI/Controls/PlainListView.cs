@@ -27,33 +27,22 @@ public sealed class PlainListView : ListView
 
         protected override void WndProc(ref Message m)
         {
-            const int WM_SETCURSOR = 0x0020;
-            const int WM_CONTEXTMENU = 0x007B;
-
-            const int HDM_FIRST = 0x1200;
-            const int HDM_LAYOUT = HDM_FIRST + 5;
 
             switch (m.Msg)
             {
-                case WM_SETCURSOR:
-                case WM_CONTEXTMENU:
+                case WM.SETCURSOR:
+                case WM.CONTEXTMENU:
                     m.Result = new(1);
                     return;
-                case HDM_LAYOUT:
+                case NativeConstants.HDM_LAYOUT:
                     base.WndProc(ref m);
-
-                    const int HDLAYOUT_prc = 0;
-                    const int HDLAYOUT_pwpos = 8;
-                    const int WINDOWPOS_cy = 28;
-                    const int RECT_top = 4;
-
                     var lparam = m.LParam;
-                    var prc = Marshal.ReadIntPtr(lparam, HDLAYOUT_prc);
-                    var pwpos = Marshal.ReadIntPtr(lparam, HDLAYOUT_pwpos);
-                    var height = Marshal.ReadInt32(pwpos, WINDOWPOS_cy);
+                    var prc = Marshal.ReadIntPtr(lparam, HDLAYOUT.prc);
+                    var pwpos = Marshal.ReadIntPtr(lparam, HDLAYOUT.pwpos);
+                    var height = Marshal.ReadInt32(pwpos, WINDOWPOS.cy);
                     height += (int)(height * 0.2F);
-                    Marshal.WriteInt32(pwpos, WINDOWPOS_cy, height);
-                    Marshal.WriteInt32(prc, RECT_top, height);
+                    Marshal.WriteInt32(pwpos, WINDOWPOS.cy, height);
+                    Marshal.WriteInt32(prc, RECT.top, height);
                     return;
             }
 
@@ -154,13 +143,10 @@ public sealed class PlainListView : ListView
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        const int LVM_FIRST = 0x1000;
-        const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
-        const int LVM_GETHEADER = LVM_FIRST + 31;
 
         IntPtr hListView = Handle;
-        IntPtr hHeader = Win32UI.SendMessage(hListView, LVM_GETHEADER, 0, 0);
-        IntPtr hToolTips = Win32UI.SendMessage(hListView, LVM_GETTOOLTIPS, 0, 0);
+        IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
+        IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
         new SysHeader32NativeWindow(hHeader);
 
         var LVstyle = SystemStyle.ItemsView;
@@ -203,47 +189,29 @@ public sealed class PlainListView : ListView
 
     protected override void WndProc(ref Message m)
     {
-        const int WM_NOTIFY = 0x004E;
-        const int WM_FIRST = (int)(0U - 0U);
-        const int NM_CUSTOMDRAW = WM_FIRST - 12;
-        const int CDDS_PREPAINT = 0x00000001;
-        const int CDRF_NOTIFYITEMDRAW = 0x00000020;
-        const int CDDS_ITEM = 0x00010000;
-        const int CDDS_ITEMPREPAINT = CDDS_ITEM | CDDS_PREPAINT;
-        const int CDRF_DODEFAULT = 0x00000000;
-
-        const int TTN_FIRST = unchecked((int)(0U - 520U));
-        const int TTN_GETDISPINFOW = TTN_FIRST - 10;
-        const int WM_USER = 0x0400;
-        const int TTM_SETMAXTIPWIDTH = WM_USER + 24;
-
-        const int NMHDR_code = 16;
-        const int NMCUSTOMDRAW_dwDrawStage = 24;
-        const int NMCUSTOMDRAW_hdc = 32;
-
         switch (m.Msg)
         {
-            case WM_NOTIFY:
+            case WM.NOTIFY:
 
-                switch (Marshal.ReadInt32(m.LParam, NMHDR_code))
+                switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
                 {
-                    case NM_CUSTOMDRAW:
+                    case NativeConstants.NM_CUSTOMDRAW:
 
-                        switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW_dwDrawStage))
+                        switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW.dwDrawStage))
                         {
-                            case CDDS_PREPAINT:
-                                m.Result = new(CDRF_NOTIFYITEMDRAW);
+                            case NativeConstants.CDDS_PREPAINT:
+                                m.Result = new(NativeConstants.CDRF_NOTIFYITEMDRAW);
                                 return;
-                            case CDDS_ITEMPREPAINT:
-                                Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW_hdc),
+                            case NativeConstants.CDDS_ITEMPREPAINT:
+                                Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW.hdc),
                                     UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
-                                m.Result = new(CDRF_DODEFAULT);
+                                m.Result = new(NativeConstants.CDRF_DODEFAULT);
                                 return;
                         }
 
                         break;
 
-                    case TTN_GETDISPINFOW:
+                    case NativeConstants.TTN_GETDISPINFOW:
                         /*
 
                         ToolTip 自动换行 参考：
@@ -254,7 +222,7 @@ public sealed class PlainListView : ListView
                          */
 
                         base.WndProc(ref m);
-                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), TTM_SETMAXTIPWIDTH, 0, Width);
+                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), NativeConstants.TTM_SETMAXTIPWIDTH, 0, Width);
                         return;
                 }
 

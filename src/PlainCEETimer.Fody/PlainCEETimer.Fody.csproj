@@ -3,7 +3,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <AssemblyName>PlainCEETimer.Fody</AssemblyName>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
+	<OutputPath>..\.output\</OutputPath>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+	<DebugType>portable</DebugType>
+	<PdbFile>$(OutputPath)$(AssemblyName).dll.pdb</PdbFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FodyHelpers" Version="6.9.3" />

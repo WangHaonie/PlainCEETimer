@@ -36,10 +36,7 @@ public class PlainHotkeyControl : Control
 
         protected override void WndProc(ref Message m)
         {
-            const int EN_CHANGE = 0x0300;
-            const int WM_COMMAND = 0x0111;
-
-            if (m.Msg == WM_COMMAND && m.LParam == Ctrl.Handle && m.WParam.ToInt32().HiWord == EN_CHANGE)
+            if (m.Msg == WM.COMMAND && m.LParam == Ctrl.Handle && m.WParam.ToInt32().HiWord == NativeConstants.EN_CHANGE)
             {
                 Ctrl.OnHotKeyChanged();
             }
@@ -56,8 +53,7 @@ public class PlainHotkeyControl : Control
         {
             if (IsHandleCreated)
             {
-                const int HKM_GETHOTKEY = 0x0400 + 2;
-                hotkey = new((ushort)Win32UI.SendMessage(Handle, HKM_GETHOTKEY, 0, 0).ToInt32());
+                hotkey = new((ushort)Win32UI.SendMessage(Handle, NativeConstants.HKM_GETHOTKEY, 0, 0).ToInt32());
             }
 
             return hotkey;
@@ -77,10 +73,9 @@ public class PlainHotkeyControl : Control
     {
         get
         {
-            const int WS_BORDER = 0x00800000;
             var cp = base.CreateParams;
             cp.ClassName = "msctls_hotkey32";
-            cp.Style |= WS_BORDER;
+            cp.Style |= WS.BORDER;
             return cp;
         }
     }
@@ -100,13 +95,9 @@ public class PlainHotkeyControl : Control
     {
         base.OnHandleCreated(e);
 
-        const int WS_EX_CLIENTEDGE = 0x00000200;
-        Win32UI.RemoveWindowExStyle(Handle, WS_EX_CLIENTEDGE);
+        Win32UI.RemoveWindowExStyle(Handle, WS.EX_CLIENTEDGE);
 
-        const int HKM_SETRULES = 0x0400 + 3;
-        const int HKCOMB_NONE = 0x0001;
-        const int HKCOMB_S = 0x0002;
-        Win32UI.SendMessage(Handle, HKM_SETRULES, HKCOMB_NONE | HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
+        Win32UI.SendMessage(Handle, NativeConstants.HKM_SETRULES, NativeConstants.HKCOMB_NONE | NativeConstants.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
 
         SetHotKey(hotkey);
 
@@ -117,23 +108,20 @@ public class PlainHotkeyControl : Control
     {
         if (UseDark)
         {
-            const int WM_ERASEBKGND = 0x0014;
-            const int WM_PAINT = 0x000F;
-            const int WM_DESTROY = 0x0002;
 
             switch (m.Msg)
             {
-                case WM_ERASEBKGND:
+                case WM.ERASEBKGND:
                     Win32UI.GetClientRect(m.HWnd, out var rc);
                     Win32UI.FillRect(m.WParam, ref rc, hBrush);
                     m.Result = new(1);
                     return;
-                case WM_PAINT:
+                case WM.PAINT:
                     Win32UI.ComctlHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
                     base.WndProc(ref m);
                     Win32UI.ComctlUnhookSysColor();
                     return;
-                case WM_DESTROY:
+                case WM.DESTROY:
                     Win32UI.DeleteObject(hBrush);
                     break;
             }
@@ -144,8 +132,7 @@ public class PlainHotkeyControl : Control
 
     private void SetHotKey(Hotkey hk)
     {
-        const int HKM_SETHOTKEY = 0x0400 + 1;
-        Win32UI.SendMessage(Handle, HKM_SETHOTKEY, hk, 0);
+        Win32UI.SendMessage(Handle, NativeConstants.HKM_SETHOTKEY, hk, 0);
     }
 
     private void OnHotKeyChanged()

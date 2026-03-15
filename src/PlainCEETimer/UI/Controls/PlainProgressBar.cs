@@ -32,19 +32,14 @@ public sealed class PlainProgressBar : ProgressBar
                 tbp.SetState(value);
             }
 
-            const int PBM_SETSTATE = 0x0410;
-            const int PBST_NORMAL = 1;
-            const int PBST_ERROR = 2;
-            const int PBST_PAUSED = 3;
-
             var pbs = value switch
             {
-                ProgressStyle.Error => PBST_ERROR,
-                ProgressStyle.Paused => PBST_PAUSED,
-                _ => PBST_NORMAL
+                ProgressStyle.Error => NativeConstants.PBST_ERROR,
+                ProgressStyle.Paused => NativeConstants.PBST_PAUSED,
+                _ => NativeConstants.PBST_NORMAL
             };
 
-            Win32UI.SendMessage(Handle, PBM_SETSTATE, pbs, 0);
+            Win32UI.SendMessage(Handle, NativeConstants.PBM_SETSTATE, pbs, 0);
             field = value;
         }
     }

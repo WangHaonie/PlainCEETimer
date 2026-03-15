@@ -165,9 +165,6 @@ public sealed class PlainTextBox : TextBox
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        const int EM_SETMARGINS = 0x00D3;
-        const int EC_RIGHTMARGIN = 0x0002;
-
         if (ThemeManager.ShouldUseDarkMode)
         {
             ThemeManager.EnableDarkModeForControl(this, SystemStyle.CfdDark, true);
@@ -186,7 +183,7 @@ public sealed class PlainTextBox : TextBox
 
             */
 
-            Win32UI.SendMessage(Handle, EM_SETMARGINS, EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
+            Win32UI.SendMessage(Handle, NativeConstants.EM_SETMARGINS, NativeConstants.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
         }
 
         OnTextChanged(EventArgs.Empty);
@@ -195,9 +192,7 @@ public sealed class PlainTextBox : TextBox
 
     protected override void WndProc(ref Message m)
     {
-        const int WM_PASTE = 0x0302;
-
-        if (m.Msg == WM_PASTE)
+        if (m.Msg == WM.PASTE)
         {
             if (Clipboard.ContainsText())
             {
