@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Dialogs;
 
 namespace PlainCEETimer.Modules;
 
+[NoConstants]
 public class OptimizationHelper(bool isAuto)
 {
     private const string NGen = "ngen.exe";

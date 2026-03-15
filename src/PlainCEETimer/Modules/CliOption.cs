@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules;
 
+[NoConstants]
 public class CliOption(ArgumentType type = ArgumentType.Internal)
 {
     public string FirstOption => m_first;
@@ -14,6 +16,8 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
     private StringBuilder m_args;
     private Dictionary<string, string> m_argsdic;
     private static readonly char[] m_idchars = ['/', '-'];
+    private const char Quote = '"';
+    private const char Backslash = '\\';
 
     public static CliOption Parse(string[] args)
     {
@@ -90,8 +94,6 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         sb.Append(outer);
 
         int i = 0;
-        const char Quote = '"';
-        const char Backslash = '\\';
 
         while (i < length)
         {
@@ -194,7 +196,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
     private string Unquote(string arg)
     {
         if (!string.IsNullOrWhiteSpace(arg)
-            && arg.StartsWith('"') && arg.EndsWith('"'))
+            && arg.StartsWith(Quote) && arg.EndsWith(Quote))
         {
             var length = arg.Length;
 
@@ -217,7 +219,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         {
             var c = s[i];
 
-            if (char.IsWhiteSpace(c) || c == '"')
+            if (char.IsWhiteSpace(c) || c == Quote)
             {
                 return false;
             }

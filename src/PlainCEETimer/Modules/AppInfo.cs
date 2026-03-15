@@ -1,5 +1,9 @@
-﻿namespace PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules.Fody;
 
+namespace PlainCEETimer.Modules;
+
+[NoConstants]
+[CompilerRemove]
 internal static class AppInfo
 {
     public const string Version = "9999.9";

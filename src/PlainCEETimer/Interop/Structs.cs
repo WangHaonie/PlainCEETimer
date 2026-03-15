@@ -4,10 +4,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Interop;
 
+[NoConstants]
 [DebuggerDisplay("{DebuggerDisplay}")]
 public readonly struct COLORREF
 {

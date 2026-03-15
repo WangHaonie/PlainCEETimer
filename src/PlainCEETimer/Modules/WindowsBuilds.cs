@@ -1,5 +1,9 @@
-﻿namespace PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules.Fody;
 
+namespace PlainCEETimer.Modules;
+
+[NoConstants]
+[CompilerRemove]
 public static class WindowsBuilds
 {
     public const int Windows7 = 7601;

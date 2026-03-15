@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
 
@@ -9,6 +10,7 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed partial class ColorBlock : PlainLabel
 {
+    [NoConstants]
     private sealed class ScreenColorPicker : AppForm
     {
         private int HeightWidth;

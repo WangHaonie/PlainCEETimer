@@ -10,6 +10,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Http;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.Modules.Update;
@@ -27,6 +28,7 @@ using WFColor = System.Drawing.Color;
 
 namespace PlainCEETimer.WPF.ViewModels;
 
+[NoConstants]
 public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 {
     [ObservableProperty]

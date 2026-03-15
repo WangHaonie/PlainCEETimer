@@ -1,8 +1,11 @@
-﻿namespace PlainCEETimer.Countdown;
+﻿using PlainCEETimer.Modules.Fody;
+
+namespace PlainCEETimer.Countdown;
 
 /// <summary>
 /// 存储倒计时所用到的占位符。
 /// </summary>
+[NoConstants]
 public static class Ph
 {
     public const string ExamName = "{x}";

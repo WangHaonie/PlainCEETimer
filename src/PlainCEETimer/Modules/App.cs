@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
@@ -15,6 +16,7 @@ using PlainCEETimer.WPF.Views;
 
 namespace PlainCEETimer.Modules;
 
+[NoConstants]
 internal static class App
 {
     public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
