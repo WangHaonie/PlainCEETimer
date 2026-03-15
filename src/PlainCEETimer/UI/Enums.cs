@@ -94,3 +94,12 @@ public enum HotKeyStatus
     /// </summary>
     Failed
 }
+
+public enum TaskbarPosition
+{
+    None,
+    Left,
+    Top,
+    Right,
+    Bottom,
+}

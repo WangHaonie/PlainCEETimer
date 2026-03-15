@@ -2,12 +2,15 @@
 
 namespace PlainCEETimer.UI.Core;
 
-public class WPFScreenHelper(IAppWindow window = null) : ScreenHelper(window)
+public class WPFScreenHelper(IAppWindow window) : ScreenHelper(window)
 {
-    public override Rectangle GetWorkingArea()
+    public override Rectangle WorkingArea
     {
-        var rect = base.GetWorkingArea();
-        rect.Height -= 1;
-        return rect;
+        get
+        {
+            var rect = base.WorkingArea;
+            rect.Height -= 1;
+            return rect;
+        }
     }
 }

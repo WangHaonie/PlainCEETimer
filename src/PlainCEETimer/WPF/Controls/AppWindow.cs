@@ -304,7 +304,7 @@ public class AppWindow : Window, IAppWindow
 
     protected WFRectagle GetCurrentScreenRect()
     {
-        return ScreenService.GetWorkingArea();
+        return ScreenService.WorkingArea;
     }
 
     private void InitEvents()

@@ -666,7 +666,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void SetCountdownAutoWrap()
     {
-        MaximumWidth = Screen.GetWorkingArea().Width - 10;
+        MaximumWidth = Screen.WorkingArea.Width - 10;
     }
 
     private void SetBorderColor(bool enabled, WFColor color)

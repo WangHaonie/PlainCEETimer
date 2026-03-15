@@ -392,7 +392,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected Rectangle GetCurrentScreenRect()
     {
-        return ScreenService.GetWorkingArea();
+        return ScreenService.WorkingArea;
     }
 
     protected void ArrangeFirstControl(Control control, int x = 3, int y = 3)

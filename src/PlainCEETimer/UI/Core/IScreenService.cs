@@ -5,7 +5,11 @@ namespace PlainCEETimer.UI.Core;
 
 public interface IScreenService
 {
+    Screen Screen { get; }
+
     Screen[] AllScreens { get; }
 
-    Rectangle GetWorkingArea();
+    TaskbarPosition TaskbarPosition { get; }
+
+    Rectangle WorkingArea { get; }
 }
