@@ -132,6 +132,11 @@ public abstract class AppForm : Form, IAppWindow
         SetBounds(x, y, 0, 0, BoundsSpecified.Location);
     }
 
+    internal protected void Hide(bool hide)
+    {
+        Opacity = hide ? 0D : 1D;
+    }
+
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();

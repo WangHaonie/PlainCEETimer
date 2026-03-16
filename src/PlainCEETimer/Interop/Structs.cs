@@ -3,70 +3,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Interop;
-
-[NoConstants]
-[DebuggerDisplay("{DebuggerDisplay}")]
-public readonly struct COLORREF
-{
-    public const int EmptyValue = 0xFFFFFF;
-
-    private readonly int value;
-
-    private COLORREF(Color color)
-    {
-        value = color.ToWin32();
-    }
-
-    public Color ToColor()
-    {
-        return value.ToColor();
-    }
-
-    public static implicit operator COLORREF(Color c)
-    {
-        return new(c);
-    }
-
-    private string DebuggerDisplay
-    {
-        get
-        {
-            var color = value.ToColor();
-            return $"RGB({color.R}, {color.G}, {color.B})";
-        }
-    }
-}
-
-public readonly struct LPCUSTCOLORS : IDisposable
-{
-    private readonly IntPtr value;
-
-    private LPCUSTCOLORS(int[] colors)
-    {
-        value = Marshal.AllocHGlobal(16 * sizeof(int));
-        Marshal.Copy(colors, 0, value, 16);
-    }
-
-    public readonly void Populate(int[] colors)
-    {
-        Marshal.Copy(value, colors, 0, 16);
-    }
-
-    public void Dispose()
-    {
-        Marshal.FreeHGlobal(value);
-    }
-
-    public static explicit operator LPCUSTCOLORS(int[] colors)
-    {
-        return new(colors);
-    }
-}
 
 [NoConstants]
 [DebuggerDisplay("{Left}, {Top}, {Right}, {Bottom}")]
@@ -164,6 +107,76 @@ public readonly struct Hotkey
     private readonly ushort MakeValue(HotkeyF fKeys, Keys key)
     {
         return ushort.MakeWord((byte)key, (byte)fKeys);
+    }
+}
+
+[NoConstants]
+[DebuggerDisplay("{DebuggerDisplay}")]
+[JsonConverter(typeof(Win32ColorFormatConverter))]
+public readonly struct COLORREF : IEquatable<COLORREF>
+{
+    public const int EmptyValue = 0x00FFFFFF;
+    public const int LPCUSTCOLORS_Length = 16;
+
+    private readonly int value;
+
+    private COLORREF(int i)
+    {
+        value = i & EmptyValue;
+    }
+
+    private COLORREF(Color color) : this(color.ToWin32())
+    {
+        return;
+    }
+
+    public static implicit operator COLORREF(Color c)
+    {
+        return new(c);
+    }
+
+    public static implicit operator int(COLORREF cr)
+    {
+        return cr.value;
+    }
+
+    public static explicit operator COLORREF(int i)
+    {
+        return new(i);
+    }
+
+    public static explicit operator Color(COLORREF cr)
+    {
+        return cr.value.ToColor();
+    }
+
+    private string DebuggerDisplay
+    {
+        get
+        {
+            var color = value.ToColor();
+            return $"RGB({color.R}, {color.G}, {color.B})";
+        }
+    }
+
+    public bool Equals(COLORREF other)
+    {
+        return value == other.value;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is COLORREF cr)
+        {
+            return Equals(cr);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return value;
     }
 }
 

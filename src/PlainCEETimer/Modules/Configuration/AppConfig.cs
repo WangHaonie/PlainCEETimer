@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
@@ -72,7 +73,7 @@ public class AppConfig
         }
     }
 
-    public int[] CustomColors { get; set; }
+    public COLORREF[] CustomColors { get; set; }
 
     [JsonConverter(typeof(FontFormatConverter))]
     public Font Font { get; set; } = DefaultValues.CountdownDefaultFont;

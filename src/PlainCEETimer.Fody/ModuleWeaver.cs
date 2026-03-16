@@ -26,7 +26,8 @@ public class ModuleWeaver : BaseModuleWeaver
 
     public override void Execute()
     {
-        Handle_NoConstantsAttribute(new("NoConstantsAttribute", "PlainCEETimer.Modules.Fody.NoConstantsAttribute"));
+        Handle_NoConstantsAttribute(new("NoConstantsAttribute", "PlainCEETimer.Modules.Fody.NoConstantsAttribute"),
+            new("ConstantAttribute", "PlainCEETimer.Modules.Fody.ConstantAttribute"));
         Handle_CompilerRemoveAttribute(new("CompilerRemoveAttribute", "PlainCEETimer.Modules.Fody.CompilerRemoveAttribute"));
     }
 
@@ -35,15 +36,44 @@ public class ModuleWeaver : BaseModuleWeaver
         yield return "mscorlib";
     }
 
-    private void Handle_NoConstantsAttribute(TypeBasicInfo info)
+    private void Handle_NoConstantsAttribute(TypeBasicInfo mainInfo, TypeBasicInfo excludeFlag)
     {
-        var types = GetTypeFromAttribute(info, t => t.IsClass || t.IsStruct, out var length);
+        var types = GetTypeFromAttribute(mainInfo, t => t.IsClass || t.IsStruct, out var length);
 
         for (int i = 0; i < length; i++)
         {
             var current = types[i];
             var fields = current.Type.Fields;
-            var consts = fields.Where(f => f.IsLiteral).ToList();
+
+            var consts = fields.Where(f =>
+            {
+                if (f.IsLiteral)
+                {
+                    if (f.HasCustomAttributes)
+                    {
+                        if (f.CustomAttributes.Any(a =>
+                        {
+                            var at = a.AttributeType;
+
+                            if (at.Name == excludeFlag.Name && at.FullName == excludeFlag.FullName)
+                            {
+                                f.CustomAttributes.Remove(a);
+                                return true;
+                            }
+
+                            return false;
+                        }))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }).ToList();
+
             var count = consts.Count;
 
             for (int j = 0; j < count; j++)
@@ -54,7 +84,8 @@ public class ModuleWeaver : BaseModuleWeaver
             RemoveAttribute(current);
         }
 
-        DeleteType(info);
+        TryDeleteType(mainInfo);
+        TryDeleteType(excludeFlag);
     }
 
     private void Handle_CompilerRemoveAttribute(TypeBasicInfo info)
@@ -63,10 +94,10 @@ public class ModuleWeaver : BaseModuleWeaver
 
         for (int i = 0; i < count; i++)
         {
-            DeleteType(types[i].Type);
+            TryDeleteType(types[i].Type);
         }
 
-        DeleteType(info);
+        TryDeleteType(info);
     }
 
     private List<TypeAndAttribute> GetTypeFromAttribute(TypeBasicInfo info, Predicate<TypeDefinition> IsAttributeTarget, out int count)
@@ -98,16 +129,31 @@ public class ModuleWeaver : BaseModuleWeaver
         typeAndAttribute.Type.CustomAttributes.Remove(typeAndAttribute.Attribute);
     }
 
-    private void DeleteType(TypeBasicInfo info)
+    private bool TryDeleteType(TypeBasicInfo info)
     {
-        DeleteType(ModuleDefinition.Types.FirstOrDefault(x => x.Name == info.Name && x.FullName == info.FullName));
+        return TryDeleteType(ModuleDefinition.Types.FirstOrDefault(x => x.Name == info.Name && x.FullName == info.FullName));
     }
 
-    private void DeleteType(TypeDefinition type)
+    private bool TryDeleteType(TypeDefinition type)
     {
-        if (type != null)
+        try
         {
-            ModuleDefinition.Types.Remove(type);
+            if (type != null)
+            {
+                if (type.IsNested)
+                {
+                    type.DeclaringType.NestedTypes.Remove(type);
+                }
+
+                ModuleDefinition.Types.Remove(type);
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

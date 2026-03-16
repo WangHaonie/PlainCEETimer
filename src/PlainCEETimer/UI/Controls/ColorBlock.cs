@@ -181,7 +181,7 @@ public sealed partial class ColorBlock : PlainLabel
         {
             var dialog = new PlainColorDialog(ParentForm, Color);
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
                 Color = dialog.Color;
             }
@@ -286,6 +286,6 @@ public sealed partial class ColorBlock : PlainLabel
 
     private void HideParentForm(bool hide = true)
     {
-        ParentForm.Opacity = hide ? 0 : 1;
+        ParentForm.Hide(hide);
     }
 }

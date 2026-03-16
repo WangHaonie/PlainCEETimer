@@ -8,7 +8,7 @@ public class WinFormsFontService(AppForm form) : IUnifiedFontService
     public bool? ShowFontDialog(UnifiedFont font)
     {
         var dialog = new PlainFontDialog(form, font.Font2);
-        var result = dialog.ShowDialog().AsBoolean();
+        var result = dialog.ShowDialog();
 
         if (result == true)
         {

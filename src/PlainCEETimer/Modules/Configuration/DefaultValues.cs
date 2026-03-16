@@ -10,7 +10,7 @@ namespace PlainCEETimer.Modules.Configuration;
 
 public static class DefaultValues
 {
-    public static int[] ColorDialogColors => field ??= [.. Enumerable.Repeat(COLORREF.EmptyValue, 16)];
+    public static COLORREF[] ColorDialogColors => field ??= [.. Enumerable.Repeat((COLORREF)COLORREF.EmptyValue, COLORREF.LPCUSTCOLORS_Length)];
 
     public static ColorPair GlobalDefaultColor
     {

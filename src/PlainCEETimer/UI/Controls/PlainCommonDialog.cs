@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -51,9 +52,9 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
     private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
-    public new DialogResult ShowDialog()
+    public new bool? ShowDialog()
     {
-        return ShowDialog(owner);
+        return ShowDialog(owner).AsBoolean();
     }
 
     protected abstract bool StartDialog(IntPtr hWndOwner);

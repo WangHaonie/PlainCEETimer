@@ -94,7 +94,7 @@ public static class Win32UI
     public static extern bool InsertMenu(IntPtr hMenu, int uPosition, MenuFlag uFlags, long uIDNewItem, string lpNewItem);
 
     [DllImport(App.NativesDll, EntryPoint = "#21")]
-    public static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref COLORREF lpColor, LPCUSTCOLORS lpCustomColors);
+    public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
 
     [DllImport(App.NativesDll, EntryPoint = "#22")]
     public static extern bool RunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);

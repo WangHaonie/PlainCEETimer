@@ -11,36 +11,38 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainColorDialog(AppForm owner, Color existing) : PlainCommonDialog(owner, "选取颜色 - 高考倒计时")
 {
-    public Color Color => color.ToColor();
+    public Color Color => (Color)color;
 
     private COLORREF color = existing;
 
-    private readonly int[] customColors = DefaultValues.ColorDialogColors
+    private readonly COLORREF[] customColors = DefaultValues.ColorDialogColors
         .Copy().PopulateWith(App.AppConfig.CustomColors);
 
-    protected override bool StartDialog(IntPtr hWndOwner)
+    protected unsafe override bool StartDialog(IntPtr hWndOwner)
     {
-        using var lpColors = (LPCUSTCOLORS)customColors;
-        var result = Win32UI.RunColorDialog(hWndOwner, HookProc, ref color, lpColors);
-
-        if (result)
+        fixed (COLORREF* lpColor = &color)
+        fixed (COLORREF* lpColors = customColors)
         {
-            var previous = customColors.Copy();
-            lpColors.Populate(customColors);
+            var result = Win32UI.RunColorDialog(hWndOwner, HookProc, lpColor, lpColors);
 
-            if (!customColors.ArrayEquals(previous))
+            if (result)
             {
-                App.AppConfig.CustomColors =
-                [..
-                    customColors
-                    .ArrayWhere(c => c != COLORREF.EmptyValue)
-                    .Distinct()
-                ];
+                var r = !customColors.AsSpan().SequenceEqual(new ReadOnlySpan<COLORREF>(lpColor, COLORREF.LPCUSTCOLORS_Length));
 
-                ConfigValidator.DemandConfig();
+                if (r)
+                {
+                    App.AppConfig.CustomColors =
+                    [..
+                        customColors
+                        .ArrayWhere(c => c != COLORREF.EmptyValue)
+                        .Distinct()
+                    ];
+
+                    ConfigValidator.DemandConfig();
+                }
             }
-        }
 
-        return result;
+            return result;
+        }
     }
 }

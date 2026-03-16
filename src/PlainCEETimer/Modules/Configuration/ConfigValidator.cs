@@ -29,7 +29,6 @@ internal static class ConfigValidator
     public const int DefCpp = 30;
     public const int MaxCpp = 300;
     public const int MaxCustomTextLength = 800;
-    public const int MaxFontFamilyLength = 100;
     public const int HotKeyCount = 3;
     public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"
@@ -43,6 +42,10 @@ internal static class ConfigValidator
     public const string ValueSeparatorString = ", ";
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
     public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
+
+    [Constant]
+    public const int MaxFontFamilyLength = 100;
+
     private static readonly Regex CountdownRegex = new(@"\{(x|d|dd|cd|h|th|dh|m|tm|s|ts|ht)\}", RegexOptions.Compiled);
 
     public static bool ValidateNeeded
