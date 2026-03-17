@@ -219,7 +219,7 @@ public struct LNKFILEINFO(string lnkPath)
     public string Args;
     public string WorkingDir;
     public Hotkey Hotkey;
-    public ShowWindowCommand ShowCmd;
+    public int ShowCmd;
     public string Description;
     public string IconPath;
     public int IconIndex;

@@ -79,7 +79,7 @@ public static class Win32UI
     public static extern bool IsMenu(IntPtr hMenu);
 
     [DllImport(App.User32Dll)]
-    public static extern bool TrackPopupMenuEx(IntPtr hMenu, TrackPopupMenu uFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
+    public static extern bool TrackPopupMenuEx(IntPtr hMenu, int uFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
@@ -88,10 +88,10 @@ public static class Win32UI
     public static extern int GetMenuItemCount(IntPtr hMenu);
 
     [DllImport(App.User32Dll)]
-    public static extern bool CheckMenuRadioItem(IntPtr hmenu, int first, int last, int check, MenuFlag flags);
+    public static extern bool CheckMenuRadioItem(IntPtr hmenu, int first, int last, int check, int flags);
 
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    public static extern bool InsertMenu(IntPtr hMenu, int uPosition, MenuFlag uFlags, long uIDNewItem, string lpNewItem);
+    public static extern bool InsertMenu(IntPtr hMenu, int uPosition, int uFlags, long uIDNewItem, string lpNewItem);
 
     [DllImport(App.NativesDll, EntryPoint = "#21")]
     public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);

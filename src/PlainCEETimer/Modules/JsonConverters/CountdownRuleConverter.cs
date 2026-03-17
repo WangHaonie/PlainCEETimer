@@ -12,8 +12,8 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
 {
     public override CountdownRule ReadJson(JsonReader reader, Type objectType, CountdownRule existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        var json = JObject.Load(reader);
-        var phaseInt = json[nameof(existingValue.Phase)].ToObject<int>(serializer);
+        var json = reader.Load(serializer);
+        var phaseInt = json.GetValue(nameof(existingValue.Phase), 0);
 
         if (phaseInt is < 0 or > 2)
         {
@@ -25,7 +25,7 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
 
         if (!is0tickAllowed)
         {
-            tick = TimeSpan.FromSeconds(json[nameof(existingValue.Tick)].ToObject<double>(serializer));
+            tick = TimeSpan.FromSeconds(json.GetValue(nameof(existingValue.Tick), 0D));
 
             if (tick.Ticks is < ConfigValidator.MinTick or > ConfigValidator.MaxTick)
             {
@@ -33,8 +33,9 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
             }
         }
 
-        var colors = ConfigValidator.ParseColorPairFromConfig(json[nameof(ColorPair.Fore)].ToObject<int>(serializer), json[nameof(ColorPair.Back)].ToObject<int>(serializer));
-        var text = json[nameof(existingValue.Text)].ToObject<string>(serializer).RemoveIllegalChars();
+        var colors = ConfigValidator.ParseColorPairFromConfig(json.GetValue(nameof(ColorPair.Fore), 0), json.GetValue(nameof(ColorPair.Back), 0));
+
+        var text = json.GetValue(nameof(existingValue.Text), string.Empty).RemoveIllegalChars();
         ConfigValidator.EnsureCustomText(text);
 
         return new()

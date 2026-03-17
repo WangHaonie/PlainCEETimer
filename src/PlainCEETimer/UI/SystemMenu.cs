@@ -101,7 +101,7 @@ public class SystemMenu
         return ncm;
     }
 
-    private int InsertMenu(int index, MenuFlag flags, string text)
+    private int InsertMenu(int index, int flags, string text)
     {
         pnw ??= new(m_owner);
 

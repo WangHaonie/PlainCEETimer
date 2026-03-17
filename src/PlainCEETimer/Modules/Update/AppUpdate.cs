@@ -36,5 +36,4 @@ internal static class AppUpdate
         _
             => "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe"
     };
-
 }

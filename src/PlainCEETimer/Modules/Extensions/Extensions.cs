@@ -70,18 +70,8 @@ public static class Extensions
         _ => ConsoleColor.Gray
     };
 
-    public static T GetValue<T>(this JObject json, string propertyName, T defaultValue, JsonSerializer serializer)
+    public static JsonReadHelper Load(this JsonReader reader, JsonSerializer serializer)
     {
-        if (json.TryGetValue(propertyName, StringComparison.OrdinalIgnoreCase, out var jt))
-        {
-            var tmp = jt.ToObject<T>(serializer);
-
-            if (tmp != null)
-            {
-                return tmp;
-            }
-        }
-
-        return defaultValue;
+        return new(JObject.Load(reader), serializer);
     }
 }

@@ -12,10 +12,10 @@ public sealed class FontModelConverter : JsonConverter<FontModel>
 {
     public override FontModel ReadJson(JsonReader reader, Type objectType, FontModel existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        var json = JObject.Load(reader);
-        var ffvalue = json.GetValue(nameof(FontModel.FontFamily), "#GLOBAL USER INTERFACE", serializer).Truncate(ConfigValidator.MaxFontFamilyLength, false);
-        var fsvalue = json.GetValue(nameof(FontModel.Size), default(double), serializer);
-        var fwvalue = json.GetValue(nameof(FontModel.Weight), default(int), serializer).Clamp(1, 999);
+        var json = reader.Load(serializer);
+        var ffvalue = json.GetValue(nameof(FontModel.FontFamily), "#GLOBAL USER INTERFACE").Truncate(ConfigValidator.MaxFontFamilyLength, false);
+        var fsvalue = json.GetValue(nameof(FontModel.Size), default(double));
+        var fwvalue = json.GetValue(nameof(FontModel.Weight), default(int)).Clamp(1, 999);
 
         return new()
         {

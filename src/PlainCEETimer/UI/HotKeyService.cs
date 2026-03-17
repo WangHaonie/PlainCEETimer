@@ -32,7 +32,6 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
 
         protected override void WndProc(ref Message m)
         {
-
             if (m.Msg == WM.HOTKEY && hksvcs != null)
             {
                 var count = hksvcs.Count;

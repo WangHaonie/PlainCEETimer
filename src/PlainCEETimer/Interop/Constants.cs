@@ -106,3 +106,51 @@ public static class WS
     public const int EX_CLIENTEDGE = 0x00000200;
     public const int BORDER = 0x00800000;
 }
+
+[NoConstants]
+[CompilerRemove]
+public static class MenuFlag
+{
+    public const int ByCommand = 0x0000;
+    public const int ByPosition = 0x0400;
+    public const int Bitmap = 0x0004;
+    public const int Checked = 0x0008;
+    public const int Disabled = 0x0002;
+    public const int Enabled = 0x0000;
+    public const int Grayed = 0x0001;
+    public const int MenuBarBreak = 0x0020;
+    public const int MenuBreak = 0x0040;
+    public const int OwnerDraw = 0x0100;
+    public const int Popup = 0x0010;
+    public const int Separator = 0x0800;
+    public const int String = 0x0000;
+    public const int Unchecked = 0x0000;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class TrackPopupMenu
+{
+    public const int LeftAlign = 0x0000;
+    public const int RightAlign = 0x0008;
+    public const int HorizontalCenterAlign = 0x0004;
+    public const int BottomAlign = 0x0020;
+    public const int TopAlign = 0x0000;
+    public const int VerticalCenterAlign = 0x0010;
+    public const int NoNotify = 0x0080;
+    public const int ReturnCmd = 0x0100;
+    public const int LeftButton = 0x0000;
+    public const int RightButton = 0x0002;
+    public const int Horizontal = 0x0000;
+    public const int Vertical = 0x0040;
+    public const int Default = LeftAlign | TopAlign | RightButton | Vertical;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class ShowWindowCommand
+{
+    public const int Normal = 1;
+    public const int Maximize = 3;
+    public const int Minimize = 7;
+}

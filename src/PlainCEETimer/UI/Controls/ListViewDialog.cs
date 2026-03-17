@@ -403,7 +403,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         if (flag != null)
         {
-            if ((bool)flag)
+            if (flag == true)
             {
                 EditItem(item, newData, oldData, false);
             }

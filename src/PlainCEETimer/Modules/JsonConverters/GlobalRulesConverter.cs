@@ -20,7 +20,7 @@ public sealed class GlobalRulesConverter : JsonConverter<CountdownRule[]>
 
         serializer.Context = serializer.Context.SetContext(ConfigValidator.DefaultCountdownRuleFlag, out var context);
         var jarr = JArray.Load(reader);
-        var length = ConfigValidator.MaxGlobalRulesCount;
+        var length = Math.Min(jarr.Count, ConfigValidator.MaxGlobalRulesCount);
         var list = new HashSet<CountdownRule>(length, CountdownRule.PhaseOnlyComparer);
 
         for (int i = 0; i < length; i++)

@@ -4,13 +4,13 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.WPF.Models;
 
-public class FontSizeModel(double value)
+public class FontSizeItem(double value)
 {
     public string Display => value.Format();
 
     public double SizePt => value;
 
-    public static IEnumerable<FontSizeModel> Yield(double minSize, double maxSize, double step)
+    public static IEnumerable<FontSizeItem> Yield(double minSize, double maxSize, double step)
     {
         if (minSize <= 0 || maxSize <= 0)
         {

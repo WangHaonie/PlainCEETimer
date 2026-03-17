@@ -23,7 +23,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     public partial string FontSizeText { get; set; }
 
     [ObservableProperty]
-    public partial FontWeightModel FontWeight { get; set; }
+    public partial FontWeightItem FontWeight { get; set; }
 
     [ObservableProperty]
     public partial FontFamily PreviewFontFamily { get; set; }
@@ -48,7 +48,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         }
     }
 
-    public ObservableCollection<FontWeightModel> FontWeightCollection => field ??=
+    public ObservableCollection<FontWeightItem> FontWeightCollection => field ??=
     [
         /*
          
@@ -71,8 +71,8 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         new("特黑", FontWeights.ExtraBlack)
     ];
 
-    public ObservableCollection<FontSizeModel> FontSizeCollection => field ??=
-        new(FontSizeModel.Yield(ConfigValidator.MinFontSize, ConfigValidator.MaxFontSize, 2.0));
+    public ObservableCollection<FontSizeItem> FontSizeCollection => field ??=
+        new(FontSizeItem.Yield(ConfigValidator.MinFontSize, ConfigValidator.MaxFontSize, 2.0));
 
     public event Action<FontModel> ParseResult;
 
@@ -124,7 +124,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         UpdateView();
     }
 
-    partial void OnFontWeightChanged(FontWeightModel value)
+    partial void OnFontWeightChanged(FontWeightItem value)
     {
         InvokeUserChanged();
     }
