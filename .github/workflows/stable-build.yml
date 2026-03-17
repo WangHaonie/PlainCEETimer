@@ -16,13 +16,15 @@ jobs:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         
       - name: Install MSBuild
         uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
         
       - name: Cache NuGet Packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ${{ env.NUGET_PACKAGES }}
@@ -42,7 +44,7 @@ jobs:
         name: Count Lines of Code
         run: |
           irm -OutFile cloc.exe https://github.com/AlDanial/cloc/releases/download/v2.06/cloc-2.06.exe
-          ./cloc src --include-lang="C/C++ Header,C#,C++" --by-file --md --out loc.md
+          ./cloc src --include-lang="C/C++ Header,C#,C++,XAML" --by-file --md --out loc.md
           $locnum = [double]::Parse((((Get-Content -Path "loc.md" -Tail 1) -split '\|') | ForEach-Object { $_.Trim() } | Select-Object -Last 1))
           Add-Content -Path $env:GITHUB_OUTPUT -Value "loc=$locnum"
           Write-Host "Lines of Code: $locnum"
@@ -65,8 +67,8 @@ jobs:
           + [点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。" >content.txt
 
           $AppInfo = "
-          namespace PlainCEETimer.Modules;
-          internal static class AppInfo
+          using PlainCEETimer.Modules.Fody; namespace PlainCEETimer.Modules;
+          [NoConstants, CompilerRemove] internal static class AppInfo
           {
               public const string Version = `"${{ steps.read_version.outputs.version }}`";
               public const string CommitSHA = `"${{ steps.read_version.outputs.sha }}`";
@@ -87,7 +89,7 @@ jobs:
         run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
 
       - name: Checkout PlainCEETimerStatic
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: WangHaonie/PlainCEETimerStatic
           ssh-key: ${{ secrets.TRIGGER_PRIVATE_KEY }}
@@ -119,6 +121,7 @@ jobs:
           "@ >api\github.json
 
           md download -ErrorAction Ignore
+          Get-ChildItem -Path "download/*.exe" -File | Remove-Item -Force -ErrorAction Stop
           Copy-Item -Path "../src/PlainCEETimer.Setup/PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "download/CEETimerCSharpWinForms_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
 
           git add .
