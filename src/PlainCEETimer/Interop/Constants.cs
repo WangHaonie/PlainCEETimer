@@ -42,6 +42,7 @@ public static class NativeConstants
     public const int BS_SPLITBUTTON = 0x0000000C;
 
     public const int SC_MOVE = 0xF010;
+    public const int SC_CLOSE = 0xF060;
     public const int HTCAPTION = 2;
 
     public const int HDM_FIRST = 0x1200;

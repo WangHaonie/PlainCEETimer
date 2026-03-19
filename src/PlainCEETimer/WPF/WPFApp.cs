@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using PlainCEETimer.Modules;
 using PlainCEETimer.UI;
 using PlainCEETimer.WPF.Extensions;
 
@@ -21,10 +22,12 @@ public sealed class WPFApp : Application
 
     private void InitializeComponent()
     {
+        var a = !SystemVersion.BeforeWinNT10;
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         Resources.MergedDictionaries
-            .AddResource("WPF/Themes/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml"))
-            .AddResource("WPF/Themes/Default.xaml");
+            .AddResource("WPF/Themes/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml"), a)
+            .AddResource("WPF/Themes/Default.xaml", a)
+            .AddResource("WPF/Themes/Appearance.xaml", a && SystemVersion.IsWindows11);
     }
 }

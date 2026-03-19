@@ -35,9 +35,13 @@ public static class Extensions
         return new((int)size.Width, (int)size.Height);
     }
 
-    public static Collection<ResourceDictionary> AddResource(this Collection<ResourceDictionary> dict, string uri)
+    public static Collection<ResourceDictionary> AddResource(this Collection<ResourceDictionary> dict, string uri, bool condition = true)
     {
-        dict.Add(new() { Source = new(uri, UriKind.Relative) });
+        if (condition)
+        {
+            dict.Add(new() { Source = new(uri, UriKind.Relative) });
+        }
+
         return dict;
     }
 }

@@ -370,9 +370,7 @@ public class AppWindow : Window, IAppWindow
 
     private void WmSysCommand(ref Message m)
     {
-        const int SC_CLOSE = 0xF060;
-
-        if ((m.WParam.ToInt32() & 0xFFF0) == SC_CLOSE && FireOnClosing())
+        if ((m.WParam.ToInt32() & 0xFFF0) == NativeConstants.SC_CLOSE && FireOnClosing())
         {
             return;
         }
