@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="ForeText" Color="#1F1F1F"/>
+    <SolidColorBrush x:Key="BackText" Color="#FFFFFF"/>
+
+    <SolidColorBrush x:Key="BorderTextBox" Color="#EEEEEE"/>
+
+    <SolidColorBrush x:Key="ForeButtonDisabled" Color="#999999"/>
+    <SolidColorBrush x:Key="BackButton" Color="#F9F9F9"/>
+    <SolidColorBrush x:Key="BackButtonHot" Color="#E0EEF9"/>
+    <SolidColorBrush x:Key="BackButtonClick" Color="#CCE4F7"/>
+    <SolidColorBrush x:Key="BorderButton" Color="#D2D2D2"/>
+    <SolidColorBrush x:Key="BorderButtonHot" Color="#2F90DB"/>
+    <SolidColorBrush x:Key="BorderButtonClick" Color="#0F5D9E"/>
+    <SolidColorBrush x:Key="BorderButtonDisabled" Color="#EAEAEA"/>
+</ResourceDictionary>

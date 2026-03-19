@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.UI.Controls;
+using PlainCEETimer.UI.Forms;
 using PlainCEETimer.WPF;
-using PlainCEETimer.WPF.Controls;
+using PlainCEETimer.WPF.Views;
 
 namespace PlainCEETimer.UI;
 
@@ -19,21 +19,15 @@ public class WindowManager
 
     private bool _topmost = true;
 
-    internal static void RunUI(IAppWindow window)
+    internal static void RunMainUI(bool isWpf)
     {
-        if (window != null)
+        if (isWpf)
         {
-            if (window is AppWindow aw)
-            {
-                new WPFApp().Run(aw);
-                return;
-            }
-
-            if (window is AppForm af)
-            {
-                Application.Run(af);
-                return;
-            }
+            new WPFApp().Run(new MainWindow());
+        }
+        else
+        {
+            Application.Run(new MainForm());
         }
     }
 

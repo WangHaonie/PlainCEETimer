@@ -74,4 +74,11 @@ public static class Extensions
     {
         return new(JObject.Load(reader), serializer);
     }
+
+#if DEBUG
+    public static string Dump<T>(this T obj)
+    {
+        return JsonConvert.SerializeObject(obj, Formatting.Indented);
+    }
+#endif
 }

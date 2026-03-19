@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Media;
 using WFColor = System.Drawing.Color;
 using WFPoint = System.Drawing.Point;
@@ -31,5 +33,11 @@ public static class Extensions
     public static WFSize Truncate(this Size size)
     {
         return new((int)size.Width, (int)size.Height);
+    }
+
+    public static Collection<ResourceDictionary> AddResource(this Collection<ResourceDictionary> dict, string uri)
+    {
+        dict.Add(new() { Source = new(uri, UriKind.Relative) });
+        return dict;
     }
 }

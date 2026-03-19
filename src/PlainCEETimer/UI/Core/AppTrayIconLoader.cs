@@ -36,7 +36,14 @@ public class AppTrayIconLoader : ITrayIconLoader
     public AppTrayIconLoader()
     {
         trayIcon = new();
-        trayIcon.Click += (_, _) => WindowManager.Current.OnActivateRequested();
+
+        trayIcon.MouseClick += (_, e) =>
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                WindowManager.Current.OnActivateRequested();
+            }
+        };
     }
 
     public void Dispose()

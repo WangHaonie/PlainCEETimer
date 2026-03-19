@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -8,13 +9,15 @@ using CommunityToolkit.Mvvm.Input;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.Modules;
 
 namespace PlainCEETimer.WPF.ViewModels;
 
-public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClose
+[NoConstants]
+public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClose, IDataErrorInfo
 {
     [ObservableProperty]
     public partial string FontFamilyText { get; set; }
@@ -47,6 +50,10 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
             SetProperty(ref previewText, newValue);
         }
     }
+
+    public string this[string columnName] => IsFontValid ? null : string.Empty;
+
+    public string Error => null;
 
     public ObservableCollection<FontWeightItem> FontWeightCollection => field ??=
     [
@@ -83,7 +90,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     private readonly FontWeight initWeight;
     private readonly IDialogService MessageX;
 
-    private readonly string DefaultPreviewText =
+    private const string DefaultPreviewText =
         """
         天地玄黄，宇宙洪荒。
         Pack my box with five dozen liquor jugs.

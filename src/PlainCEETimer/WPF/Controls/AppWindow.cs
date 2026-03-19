@@ -11,9 +11,7 @@ using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Internals;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
-using PlainCEETimer.WPF.Extensions;
 using NativeContextMenu = System.Windows.Forms.ContextMenu;
-using ThemeColors = PlainCEETimer.UI.Colors;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
 using WFSize = System.Drawing.Size;
@@ -87,6 +85,7 @@ public class AppWindow : Window, IAppWindow
 
     public AppWindow()
     {
+        SetResourceReference(StyleProperty, typeof(Window));
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
@@ -172,12 +171,6 @@ public class AppWindow : Window, IAppWindow
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            if (!SetRoundCorner)
-            {
-                Foreground = new SolidColorBrush(ThemeColors.DarkForeText.ToColor());
-                Background = new SolidColorBrush(ThemeColors.DarkBackText.ToColor());
-            }
-
             ThemeManager.EnableDarkModeForWindow(hwnd);
         }
 

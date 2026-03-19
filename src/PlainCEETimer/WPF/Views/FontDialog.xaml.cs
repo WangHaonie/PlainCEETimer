@@ -4,9 +4,6 @@ using PlainCEETimer.WPF.ViewModels;
 
 namespace PlainCEETimer.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for FontDialog.xaml
-    /// </summary>
     public partial class FontDialog : AppWindow
     {
         public FontModel Font { get; private set; }
