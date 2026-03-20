@@ -11,14 +11,13 @@
     <SolidColorBrush x:Key="BackButtonHot" Color="#454545"/>
     <SolidColorBrush x:Key="BackButtonClick" Color="#666666"/>
     <SolidColorBrush x:Key="BorderButton" Color="#9B9B9B"/>
-    <SolidColorBrush x:Key="BorderButtonHot" Color="#9B9B9B"/>
-    <SolidColorBrush x:Key="BorderButtonClick" Color="#9B9B9B"/>
     <SolidColorBrush x:Key="BorderButtonDisabled" Color="#404040"/>
 
     <SolidColorBrush x:Key="BorderComboBox" Color="#9B9B9B"/>
     <SolidColorBrush x:Key="BorderComboBoxDropDown" Color="#0172CB"/>
+    <SolidColorBrush x:Key="BackComboBox" Color="#333333"/>
+    <SolidColorBrush x:Key="BackComboBoxEdit" Color="#191919"/>
     <SolidColorBrush x:Key="BackComboBoxDropDown" Color="#191919"/>
     <SolidColorBrush x:Key="BackComboBoxItemHot" Color="#4D4D4D"/>
     <SolidColorBrush x:Key="BackComboBoxItemSelected" Color="#0078D7"/>
-    <SolidColorBrush x:Key="BackComboBox" Color="#333333"/>
 </ResourceDictionary>

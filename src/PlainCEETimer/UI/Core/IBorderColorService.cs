@@ -4,5 +4,5 @@ namespace PlainCEETimer.UI.Core;
 
 public interface IBorderColorService
 {
-    void SetBorderColor(bool enabled, Color color);
+    bool SetBorderColor(bool enabled, Color color);
 }

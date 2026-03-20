@@ -671,8 +671,10 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void SetBorderColor(bool enabled, WFColor color)
     {
-        BorderColor = (enabled ? color : Colors.WindowBorder).ToColor();
-        BorderColorService?.SetBorderColor(enabled, color);
+        if (BorderColorService?.SetBorderColor(enabled, color) != true)
+        {
+            BorderColor = (enabled ? color : Colors.WindowBorder).ToColor();
+        }
     }
 
     private void NotifyModelChanged()

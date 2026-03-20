@@ -7,15 +7,13 @@
         xmlns:local="clr-namespace:PlainCEETimer.WPF.Views"
         xmlns:vm="clr-namespace:PlainCEETimer.WPF.ViewModels"
         xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
-        xmlns:m="clr-namespace:PlainCEETimer.WPF.Modules"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="高考倒计时" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
         WindowStartupLocation="Manual" Height="5" Width="5">
     <Window.Resources>
         <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
     </Window.Resources>
-    <Border BorderThickness="1" SnapsToDevicePixels="True"
-            CornerRadius="{x:Static m:StaticStyles.CornerRadius}"
+    <Border Style="{DynamicResource RoundCornerBorder}"
             BorderBrush="{Binding BorderColor, Converter={StaticResource ColorToBrushConverter}}"
             Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}}">
         <Grid>

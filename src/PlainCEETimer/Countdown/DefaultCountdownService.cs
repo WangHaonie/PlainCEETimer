@@ -7,7 +7,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
 
-public class DefaultCountdownService : ICountdownService
+public class DefaultCountdownService(SynchronizationContext context = null) : ICountdownService
 {
     public event ExamSwitchedEventHandler ExamSwitched;
     public event CountdownUpdatedEventHandler CountdownUpdated;
@@ -39,15 +39,10 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
     private volatile bool IsDisposing;
-    private readonly SynchronizationContext CurrentContext;
     private readonly string[] Phs = Ph.AllPhs;
     private readonly string[] PhContent = new string[12];
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
-
-    public DefaultCountdownService()
-    {
-        CurrentContext = SynchronizationContext.Current;
-    }
+    private readonly SynchronizationContext CurrentContext = context ?? SynchronizationContext.Current;
 
     public void Start(CountdownStartInfo startInfo)
     {

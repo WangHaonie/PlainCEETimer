@@ -6,6 +6,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Internals;
@@ -78,9 +79,9 @@ public class AppWindow : Window, IAppWindow
     private AppNativeWindow window;
     private WindowInteropHelper wih;
     private const double PtToDipRatio = 96.0 / 72.0;
-    private readonly int RoundCornerRadius = 8;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
+    private readonly bool NativeRoundCorner;
     private readonly AppWindowStyle ParamsInternal;
 
     public AppWindow()
@@ -100,12 +101,19 @@ public class AppWindow : Window, IAppWindow
             AllowsTransparency = true;
             Background = Brushes.Transparent;
 
-            WindowChrome.SetWindowChrome(this, new()
+            if (!SystemVersion.IsWindows11)
             {
-                CaptionHeight = 0,
-                CornerRadius = new(RoundCornerRadius),
-                GlassFrameThickness = new(0)
-            });
+                WindowChrome.SetWindowChrome(this, new()
+                {
+                    CaptionHeight = 0,
+                    CornerRadius = (TryFindResource("WindowBorderCornerRadius") is CornerRadius cr) ? cr : default,
+                    GlassFrameThickness = new(0)
+                });
+            }
+            else
+            {
+                NativeRoundCorner = true;
+            }
         }
 
         MessageX = new AppMessageBox(this);
@@ -163,6 +171,11 @@ public class AppWindow : Window, IAppWindow
         }
 
         var hwnd = Handle;
+
+        if (NativeRoundCorner)
+        {
+            Win32UI.SetRoundCornerEx(hwnd, false);
+        }
 
         if (WindowStyle != WindowStyle.None)
         {

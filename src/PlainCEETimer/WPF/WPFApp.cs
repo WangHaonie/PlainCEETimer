@@ -26,8 +26,9 @@ public sealed class WPFApp : Application
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         Resources.MergedDictionaries
-            .AddResource("WPF/Themes/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml"), a)
-            .AddResource("WPF/Themes/Default.xaml", a)
-            .AddResource("WPF/Themes/Appearance.xaml", a && SystemVersion.IsWindows11);
+            .AddResource("WPF/Appearance/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml"), a)
+            .AddResource("WPF/Appearance/Default.xaml", a)
+            .AddResource("WPF/Appearance/Default.Windows11.xaml", a && SystemVersion.IsWindows11)
+            .AddResource("WPF/Appearance/RoundCorner.xaml");
     }
 }

@@ -17,8 +17,9 @@
 
     <SolidColorBrush x:Key="BorderComboBox" Color="#D2D2D2"/>
     <SolidColorBrush x:Key="BorderComboBoxDropDown" Color="#0172CB"/>
+    <SolidColorBrush x:Key="BackComboBox" Color="#FDFDFD"/>
+    <SolidColorBrush x:Key="BackComboBoxEdit" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="BackComboBoxDropDown" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="BackComboBoxItemHot" Color="#E5F3FF"/>
     <SolidColorBrush x:Key="BackComboBoxItemSelected" Color="#0078D7"/>
-    <SolidColorBrush x:Key="BackComboBox" Color="#FDFDFD"/>
 </ResourceDictionary>
