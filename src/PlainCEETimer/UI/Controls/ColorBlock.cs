@@ -251,12 +251,16 @@ public sealed partial class ColorBlock : PlainLabel
             Cursor = Cursors.Default;
             Capture = false;
 
-            var parent = base.Parent;
-            var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
-
-            if (target != null && target is ColorBlock block && Fellows.ArrayContains(block) && block != this)
+            var parent = Parent;
+            
+            if (parent != null)
             {
-                block.Color = Color;
+                var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
+
+                if (target != null && target is ColorBlock block && Fellows.ArrayContains(block) && block != this)
+                {
+                    block.Color = Color;
+                }
             }
 
             if (IsPicking)
