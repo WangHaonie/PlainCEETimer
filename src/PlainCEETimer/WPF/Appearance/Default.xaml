@@ -72,7 +72,7 @@
     </Style>
 
     <Style x:Key="Default_ComboBoxItemStyle" TargetType="ComboBoxItem">
-        <Setter Property="Margin" Value="1" />
+        <Setter Property="Padding" Value="4,1,1,1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
@@ -106,6 +106,7 @@
     </Style>
 
     <Style TargetType="ComboBox">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>
         <Setter Property="Background" Value="{DynamicResource BackComboBox}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderComboBox}"/>
@@ -115,6 +116,7 @@
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <ToggleButton Name="ToggleButton" Grid.Column="2" Focusable="false" ClickMode="Press"
+                                SnapsToDevicePixels="True"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -148,15 +150,17 @@
                             Style="{StaticResource Default_ComboBoxEditStyle}"
                             IsReadOnly="{TemplateBinding IsReadOnly}"/>
 
-                        <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
-                               AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                            <Grid Name="DropDown" SnapsToDevicePixels="True" 
+                        <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                               SnapsToDevicePixels="True" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                            <Grid Name="DropDown"
                                   MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                <Border Name="DropDownBorder" Background="{DynamicResource BackComboBoxDropDown}" 
-                                        BorderThickness="1" BorderBrush="{DynamicResource BorderComboBoxDropDown}"/>
-                                <ScrollViewer Margin="0" SnapsToDevicePixels="True">
-                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                </ScrollViewer>
+                                <Border Name="DropDownBorder" BorderThickness="1" Margin="0,0,0.5,0.5"
+                                        Background="{DynamicResource BackComboBoxDropDown}" 
+                                        BorderBrush="{DynamicResource BorderComboBoxDropDown}">
+                                    <ScrollViewer Margin="0" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
                             </Grid>
                         </Popup>
                     </Grid>
