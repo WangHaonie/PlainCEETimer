@@ -286,6 +286,8 @@ internal static class App
             ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
         }
 
+        250.AsDelay(_ => Win32.ExitProcess(0));
+        WindowManager.TryExitUI();
         Environment.Exit(0);
     }
 
