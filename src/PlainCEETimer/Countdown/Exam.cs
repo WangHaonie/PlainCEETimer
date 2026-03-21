@@ -98,8 +98,7 @@ public class Exam : IListViewData<Exam>
 
         return Start == other.Start
             && End == other.End
-            && Name == other.Name
-            && Settings.Equals(other.Settings);
+            && Name == other.Name;
     }
 
     public override bool Equals(object obj)
@@ -132,7 +131,7 @@ public class Exam : IListViewData<Exam>
 
     bool IListViewData<Exam>.InternalEquals(Exam other)
     {
-        return Equals(other);
+        return Equals(other) && Settings.Equals(other.Settings);
     }
 
     private string DebuggerDisplay => $"{Name}: {Start.Format()} ~ {End.Format()}";

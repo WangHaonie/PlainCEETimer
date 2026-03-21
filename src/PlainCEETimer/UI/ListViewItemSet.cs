@@ -33,17 +33,12 @@ public class ListViewItemSet<TData>()
 
     public bool CanAdd(TData data)
     {
-        return !ItemsSet.Contains(new(data, null));
+        return CanAddCore(data, out _);
     }
 
     public bool? CanEdit(TData newData, ListViewItem existing)
     {
-        if (CanAdd(newData))
-        {
-            return true;
-        }
-
-        if (ItemsSet.TryGetValue(new(newData, null), out var actual) && existing.Equals(actual.Item))
+        if (!CanAddCore(newData, out var actual) && existing.Equals(actual.Item))
         {
             return newData.InternalEquals(actual.Data) ? null : true;
         }
@@ -64,5 +59,10 @@ public class ListViewItemSet<TData>()
     public void Clear()
     {
         ItemsSet.Clear();
+    }
+
+    private bool CanAddCore(TData data, out Element actualElement)
+    {
+        return !ItemsSet.TryGetValue(new(data, null), out actualElement);
     }
 }

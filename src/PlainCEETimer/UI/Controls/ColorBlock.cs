@@ -252,7 +252,7 @@ public sealed partial class ColorBlock : PlainLabel
             Capture = false;
 
             var parent = Parent;
-            
+
             if (parent != null)
             {
                 var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));

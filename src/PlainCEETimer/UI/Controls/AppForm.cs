@@ -151,6 +151,7 @@ public abstract class AppForm : Form, IAppWindow
             CenterToScreen();
         }
     }
+
     protected sealed override void OnShown(EventArgs e)
     {
         IsLoading = false;
