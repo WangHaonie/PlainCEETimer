@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Http;
@@ -7,33 +8,52 @@ namespace PlainCEETimer.Modules.Update;
 
 internal static class AppUpdate
 {
+    private class UpdateUrlBuilder(bool action, UpdateSource src)
+    {
+        private readonly bool isgh = src is UpdateSource.GitHubCI or UpdateSource.GitHubStable;
+        private readonly bool isci = src is UpdateSource.GitHubCI or UpdateSource.GitHubCI;
+
+        internal string Url
+        {
+            get
+            {
+                var sb = new StringBuilder(120)
+                    .Append("https://")
+                    .Append(isgh ? "github.com" : "gitee.com")
+                    .Append('/')
+                    .Append(isgh ? "WangHaonie/PlainCEETimerStatic" : "WangHaonie/CEETimerCSharpWinForms")
+                    .Append("/raw/main");
+
+                if (action)
+                {
+                    sb.Append("/download")
+                      .Append(isci ? "/ci/" : "/")
+                      .Append("CEETimerCSharpWinForms_{0}_x64_Setup.exe");
+                }
+                else
+                {
+                    sb.Append("/api/")
+                      .Append(isci ? "ci.json" : "github.json");
+                }
+
+                return sb.ToString();
+            }
+        }
+    }
+
     public static async Task<AppUpdateInfo> FetchAsync(UpdateSource src, CancellationToken cancellationToken)
     {
         var res = await HttpService.GetStringAsync(GetUpdateApi(src), cancellationToken).ConfigureAwait(false);
         return JsonConvert.DeserializeObject<AppUpdateInfo>(res).SetUrl(GetDownloadUrl(src));
     }
 
-    public static string GetUpdateApi(UpdateSource src) => src switch
+    public static string GetUpdateApi(UpdateSource src)
     {
-        UpdateSource.GiteeCI
-            => "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/ci.json",
-        UpdateSource.GitHubCI
-            => "https://github.com/WangHaonie/PlainCEETimerStatic/raw/main/api/ci.json",
-        UpdateSource.GitHubStable
-            => "https://github.com/WangHaonie/PlainCEETimerStatic/raw/main/api/github.json",
-        _
-            => "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/api/github.json"
-    };
+        return new UpdateUrlBuilder(false, src).Url;
+    }
 
-    public static string GetDownloadUrl(UpdateSource src) => src switch
+    public static string GetDownloadUrl(UpdateSource src)
     {
-        UpdateSource.GiteeCI
-            => "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/ci/CEETimerCSharpWinForms_{0}_x64_Setup.exe",
-        UpdateSource.GitHubCI
-            => "https://github.com/WangHaonie/PlainCEETimerStatic/raw/main/download/ci/CEETimerCSharpWinForms_{0}_x64_Setup.exe",
-        UpdateSource.GitHubStable
-            => "https://github.com/WangHaonie/PlainCEETimerStatic/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe",
-        _
-            => "https://gitee.com/WangHaonie/CEETimerCSharpWinForms/raw/main/download/CEETimerCSharpWinForms_{0}_x64_Setup.exe"
-    };
+        return new UpdateUrlBuilder(true, src).Url;
+    }
 }
