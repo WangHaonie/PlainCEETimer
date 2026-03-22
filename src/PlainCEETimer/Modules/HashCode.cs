@@ -19,11 +19,7 @@ public class HashCode
 
     public HashCode Add<T>(T[] value, IEqualityComparer<T> comparer)
     {
-        foreach (var item in value)
-        {
-            CombineCore(comparer.GetHashCode(item));
-        }
-
+        CombineCore(new ArrayEqualityComparer<T>(comparer).GetHashCode(value));
         return this;
     }
 

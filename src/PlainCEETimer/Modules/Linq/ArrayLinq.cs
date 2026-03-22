@@ -138,27 +138,7 @@ public static class ArrayLinq
 
     public static bool ArrayEquals<T>(this T[] array1, T[] array2, IEqualityComparer<T> comparer = null)
     {
-        if (array1 == null || array2 == null || array1.Length != array2.Length)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(array1, array2))
-        {
-            return true;
-        }
-
-        comparer ??= EqualityComparer<T>.Default;
-
-        for (int i = 0; i < array1.Length; i++)
-        {
-            if (!comparer.Equals(array1[i], array2[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return new ArrayEqualityComparer<T>(comparer ?? EqualityComparer<T>.Default).Equals(array1, array2);
     }
 
     public static bool ArrayContains<T>(this T[] array, T value)
