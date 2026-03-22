@@ -38,7 +38,12 @@ public class ListViewItemSet<TData>()
 
     public bool? CanEdit(TData newData, ListViewItem existing)
     {
-        if (!CanAddCore(newData, out var actual) && existing.Equals(actual.Item))
+        if (CanAddCore(newData, out var actual))
+        {
+            return true;
+        }
+
+        if (existing.Equals(actual.Item))
         {
             return newData.InternalEquals(actual.Data) ? null : true;
         }
