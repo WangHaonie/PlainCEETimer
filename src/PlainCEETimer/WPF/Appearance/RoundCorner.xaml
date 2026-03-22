@@ -1,5 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <CornerRadius x:Key="ButtonCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="WindowBorderCornerRadius">8</CornerRadius>
+
     <Style x:Key="RoundCornerBorder" TargetType="Border">
         <Setter Property="CornerRadius" Value="{DynamicResource WindowBorderCornerRadius}" />
         <Setter Property="BorderThickness" Value="1" />

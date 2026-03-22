@@ -3,9 +3,6 @@
     <SolidColorBrush x:Key="BorderButtonHot" Color="#9B9B9B"/>
     <SolidColorBrush x:Key="BorderButtonClick" Color="#9B9B9B"/>
     
-    <CornerRadius x:Key="ButtonCornerRadius">0</CornerRadius>
-    <CornerRadius x:Key="WindowBorderCornerRadius">8</CornerRadius>
-    
     <Style TargetType="Window">
         <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>
         <Setter Property="Background" Value="{DynamicResource BackText}"/>
