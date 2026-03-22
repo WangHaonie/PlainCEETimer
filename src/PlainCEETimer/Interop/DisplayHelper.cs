@@ -16,9 +16,14 @@ public static class DisplayHelper
             return true;
         });
 
+        if (tmp.Count == 0)
+        {
+            tmp.Add("<未知>");
+        }
+
         return [.. tmp];
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#3")]
-    private static extern void EnumSystemDisplays(EnumDisplayProc lpfnEnum);
+    private static extern bool EnumSystemDisplays(EnumDisplayProc lpfnEnum);
 }

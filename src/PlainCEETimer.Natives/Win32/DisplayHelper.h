@@ -14,6 +14,12 @@ struct SystemDisplay
     double refreshRate;
 };
 
-using EnumDisplayProc = BOOL (CALLBACK*)(SystemDisplay info);
+using EnumDisplayProc = BOOL(CALLBACK*)(SystemDisplay info);
 
-cexport(void) EnumSystemDisplays(EnumDisplayProc lpfnEnum);
+struct EnumDisplayData
+{
+    EnumDisplayProc lpfnEnum;
+    int index;
+};
+
+cexport(BOOL) EnumSystemDisplays(EnumDisplayProc lpfnEnum);

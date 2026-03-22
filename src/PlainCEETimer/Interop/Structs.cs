@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
@@ -193,20 +194,79 @@ public readonly struct SystemDisplay
 
     public readonly override string ToString()
     {
-        return string.Format("{0}. {1} {2}, {3}, {4}x{5}, {6:0.0} Hz", Index + 1, Name, GetId(Id), Path, Bounds.Width, Bounds.Height, RefreshRate);
+        var sb = new StringBuilder(64)
+            .Append(Index + 1)
+            .Append(". ");
+
+        var appendComma = false;
+
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            sb.Append(Name);
+            appendComma = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(Id))
+        {
+            var id = GetId(Id);
+
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                var appendSpace = false;
+
+                if (appendComma)
+                {
+                    appendSpace = true;
+                }
+
+                appendComma = true;
+
+                if (appendSpace)
+                {
+                    sb.Append(" ");
+                }
+
+                sb.Append(id);
+            }
+        }
+
+        if (appendComma)
+        {
+            sb.Append(", ");
+        }
+
+        if (!string.IsNullOrWhiteSpace(Path))
+        {
+            sb.Append(Path)
+              .Append(", ");
+        }
+
+        sb.Append(Bounds.Width)
+          .Append('x')
+          .Append(Bounds.Height)
+          .Append(", ")
+          .Append(RefreshRate.Format())
+          .Append(" Hz");
+
+        return sb.ToString();
     }
 
     private readonly string GetId(string did)
     {
-        var dids = did.Split('\\');
-        var iname = did;
-
-        if (dids.Length > 2)
+        if (did != null)
         {
-            iname = dids[1];
+            var dids = did.Split('\\');
+            var iname = did;
+
+            if (dids.Length > 2)
+            {
+                iname = dids[1];
+            }
+
+            return iname;
         }
 
-        return iname;
+        return string.Empty;
     }
 }
 
