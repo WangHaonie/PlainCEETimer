@@ -1,11 +1,15 @@
 name: Stable Build
 
 on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason'
+        required: true
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/stable-build.yml'
       - '.github/triggers/stable-release'
 
 jobs:
@@ -16,10 +20,10 @@ jobs:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: Install MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
         with:
           msbuild-architecture: x64
         
@@ -89,7 +93,7 @@ jobs:
         run: makensis /INPUTCHARSET UTF8 src/PlainCEETimer.Setup/Setup.nsi
 
       - name: Checkout PlainCEETimerStatic
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: WangHaonie/PlainCEETimerStatic
           ssh-key: ${{ secrets.TRIGGER_PRIVATE_KEY }}
