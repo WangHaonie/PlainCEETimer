@@ -11,7 +11,7 @@ internal static class AppUpdate
     private class UpdateUrlBuilder(bool action, UpdateSource src)
     {
         private readonly bool isgh = src is UpdateSource.GitHubCI or UpdateSource.GitHubStable;
-        private readonly bool isci = src is UpdateSource.GitHubCI or UpdateSource.GitHubCI;
+        private readonly bool isci = src is UpdateSource.GitHubCI or UpdateSource.GiteeCI;
 
         internal string Url
         {

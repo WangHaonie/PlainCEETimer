@@ -117,7 +117,7 @@ public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEquality
 
         indices[0] = start;
 
-        var leftStep = (double)(mid - start) / (leftCount + 1);
+        var leftStep = (mid - start) / (leftCount + 1D);
 
         for (int i = 1; i <= leftCount; i++)
         {
@@ -126,7 +126,7 @@ public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEquality
 
         indices[leftCount + 1] = mid;
 
-        var rightStep = (double)(end - mid) / (rightCount + 1);
+        var rightStep = (end - mid) / (rightCount + 1D);
 
         for (int i = 1; i <= rightCount; i++)
         {
