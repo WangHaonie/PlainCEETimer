@@ -9,7 +9,7 @@ namespace PlainCEETimer.Modules;
 public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEqualityComparer<T[]>
 {
     private const int SampleSize = 16;
-    private static readonly Dictionary<int, int[]> samplingIndices = [];
+    private static Dictionary<int, int[]> samplingIndices;
 
     public bool Equals(T[] x, T[] y)
     {
@@ -98,6 +98,8 @@ public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEquality
 
     private int[] EnsureIndices(int total)
     {
+        samplingIndices ??= [];
+
         if (!samplingIndices.TryGetValue(total, out var result))
         {
             result = CreateSampleIndices(0, total, SampleSize);
