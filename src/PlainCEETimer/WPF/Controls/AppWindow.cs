@@ -93,7 +93,7 @@ public class AppWindow : Window, IAppWindow
         InitEvents();
         FontFamily = new("Segoe UI, Microsoft YaHei");
         FontSize = Pt2Dip(9.0);
-        ScreenService = new WPFScreenHelper(Special ? this : null);
+        ScreenService = new ScreenHelper(Special ? this : null);
 
         if (SetRoundCorner)
         {

@@ -31,46 +31,46 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0"
-                   Margin="0,0,10,15" VerticalAlignment="Center"
-                   Text="字体家族" />
+            Margin="0,0,10,15" VerticalAlignment="Center"
+            Text="字体家族" />
         <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-                 Margin="0,0,0,15" Padding="1,3,1,3"
-                 MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
-                 Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=500}"
-                 mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
-                 mod:TextBoxErrorActionHelper.ErrorAction="Highlight"/>
+            Margin="0,0,0,15" Padding="1,3,1,3"
+            MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
+            Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=500}"
+            mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
+            mod:TextBoxErrorActionHelper.ErrorAction="Highlight"/>
         <TextBlock Grid.Row="1" Grid.Column="0"
-                   Margin="0,0,10,15" VerticalAlignment="Center"
-                   Text="字体粗细" />
+            Margin="0,0,10,15" VerticalAlignment="Center"
+            Text="字体粗细" />
 
         <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal">
             <ComboBox Margin="0,0,15,15" Width="70"
-                      ItemsSource="{Binding FontWeightCollection}"
-                      SelectedItem="{Binding FontWeight, UpdateSourceTrigger=PropertyChanged}"
-                      DisplayMemberPath="Display"/>
+                ItemsSource="{Binding FontWeightCollection}"
+                SelectedItem="{Binding FontWeight, UpdateSourceTrigger=PropertyChanged}"
+                DisplayMemberPath="Display"/>
             <TextBlock VerticalAlignment="Center" Margin="0,0,10,15"
-                       Text="字体大小"/>
+                Text="字体大小"/>
             <ComboBox Margin="0,0,0,15" Width="70"
-                      IsEditable="True"
-                      Text="{Binding FontSizeText, UpdateSourceTrigger=PropertyChanged, Delay=200}"
-                      ItemsSource="{Binding FontSizeCollection}"
-                      DisplayMemberPath="Display"/>
+                IsEditable="True" DisplayMemberPath="Display"
+                Text="{Binding FontSizeText, UpdateSourceTrigger=PropertyChanged, Delay=200}"
+                ItemsSource="{Binding FontSizeCollection}"/>
         </StackPanel>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,0,5"
-                   Text="字体预览"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
+            Margin="0,0,0,5"
+            Text="字体预览"/>
 
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,0,12"
                 BorderBrush="{DynamicResource BorderTextBox}">
             <Grid>
                 <TextBox AcceptsReturn="True" TextWrapping="Wrap" MaxLength="200"
-                         VerticalScrollBarVisibility="Auto"
-                         Text="{Binding PreviewText, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                         FontFamily="{Binding PreviewFontFamily}"
-                         FontWeight="{Binding FontWeight.FontWeight}"
-                         FontSize="{Binding PreviewFontSize}"
-                         mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
-                         mod:TextBoxErrorActionHelper.ErrorAction="Hidden"/>
+                    VerticalScrollBarVisibility="Auto"
+                    Text="{Binding PreviewText, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                    FontFamily="{Binding PreviewFontFamily}"
+                    FontWeight="{Binding FontWeight.FontWeight}"
+                    FontSize="{Binding PreviewFontSize}"
+                    mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
+                    mod:TextBoxErrorActionHelper.ErrorAction="Hidden"/>
                 <TextBlock Text="输入的字体无效！" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
@@ -96,11 +96,11 @@
         </Border>
 
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" 
-                    Orientation="Horizontal" HorizontalAlignment="Right">
+                Orientation="Horizontal" HorizontalAlignment="Right">
             <Button IsDefault="True" Content="确定(_O)" Width="75" Height="23" Margin="0,0,5,0"
-                    Command="{Binding SaveChangesCommand}"/>
+                Command="{Binding SaveChangesCommand}"/>
             <Button IsCancel="True" Content="取消(_C)" Width="75" Height="23"
-                    Command="{Binding CloseCommand}"/>
+                Command="{Binding CloseCommand}"/>
         </StackPanel>
     </Grid>
 </base:AppWindow>

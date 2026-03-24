@@ -9,7 +9,7 @@
         xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="高考倒计时" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
-        WindowStartupLocation="Manual" Height="5" Width="5">
+        WindowStartupLocation="Manual" Height="5" Width="5" UseLayoutRounding="True">
     <Window.Resources>
         <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
     </Window.Resources>
@@ -18,12 +18,12 @@
             Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}}">
         <Grid>
             <TextBlock x:Name="TextBlockCountdown"
-                       Margin="5,0,5,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Text="{Binding Content}"
-                       Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}}"
-                       FontFamily="{Binding Font.FontFamily}"
-                       FontSize="{Binding Font.Size}"
-                       FontWeight="{Binding Font.Weight}" />
+                Margin="5,0,5,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Text="{Binding Content}"
+                Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}}"
+                FontFamily="{Binding Font.FontFamily}"
+                FontSize="{Binding Font.Size}"
+                FontWeight="{Binding Font.Weight}" />
         </Grid>
     </Border>
 </base:AppWindow>
