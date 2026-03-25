@@ -106,7 +106,7 @@ public class AppConfig
         };
     }
 
-    internal UnifiedFont GetDefaultFont()
+    internal static UnifiedFont GetDefaultFont()
     {
         return new()
         {

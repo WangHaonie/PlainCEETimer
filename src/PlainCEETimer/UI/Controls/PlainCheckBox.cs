@@ -6,6 +6,6 @@ public sealed class PlainCheckBox : CheckBox
 {
     public PlainCheckBox()
     {
-        new PlainButtonBase(this);
+        _ = new PlainButtonBase(this);
     }
 }

@@ -35,7 +35,7 @@ public class CountdownRule : IListViewData<CountdownRule>
 
             return x.Phase == y.Phase
                 && x.Tick == y.Tick
-                && x.Colors.Equals(y.Colors)
+                && x.Colors == y.Colors
                 && x.Text == y.Text;
         }
 

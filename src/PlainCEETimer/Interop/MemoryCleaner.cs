@@ -4,6 +4,7 @@ using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.Interop;
@@ -11,29 +12,41 @@ namespace PlainCEETimer.Interop;
 [NoConstants]
 public class MemoryCleaner : IDisposable
 {
-    private bool IsRunning;
+    public bool Enabled
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                if (value)
+                {
+                    Start();
+                }
+                else
+                {
+                    Dispose();
+                }
+            }
+        }
+    }
+
+    public static MemoryCleaner Instance => field ??= new();
+
     private Timer MainTimer;
     private ManagementObjectSearcher WmiSearcher;
     private const int MemCleanerInterval = 300_000;
     private const ulong Threshold = 9UL * 1024 * 1024;
 
-    public void Start()
+    private MemoryCleaner()
     {
-        if (!IsRunning)
-        {
-            MainTimer = new(_ => Clean(), null, 3000, MemCleanerInterval);
-            IsRunning = true;
-        }
+        return;
     }
 
     public void Dispose()
     {
-        if (IsRunning)
-        {
-            MainTimer.Dispose();
-            IsRunning = false;
-        }
-
+        MainTimer.Destory();
+        MainTimer = null;
         GC.SuppressFinalize(this);
     }
 
@@ -57,6 +70,11 @@ public class MemoryCleaner : IDisposable
         WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId());
         var obj = WmiSearcher.Get().Cast<ManagementBaseObject>().FirstOrDefault();
         return obj == default ? default : (ulong)obj.GetPropertyValue("WorkingSetPrivate");
+    }
+
+    private void Start()
+    {
+        MainTimer ??= new(_ => Clean(), null, 3000, MemCleanerInterval);
     }
 
     ~MemoryCleaner()

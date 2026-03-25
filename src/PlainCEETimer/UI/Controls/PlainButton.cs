@@ -63,7 +63,7 @@ public sealed class PlainButton : Button
 
         if (ContextMenu != null)
         {
-            new ParentNativeWindow(this);
+            _ = new ParentNativeWindow(this);
         }
 
         base.OnHandleCreated(e);

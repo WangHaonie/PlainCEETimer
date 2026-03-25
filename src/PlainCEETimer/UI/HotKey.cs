@@ -75,7 +75,7 @@ public readonly struct HotKey : IEquatable<HotKey>
         m_value = MakeValue(fsModifiers, vk);
     }
 
-    private readonly ushort MakeValue(HotKeyModifiers fsModifiers, Keys vk)
+    private static ushort MakeValue(HotKeyModifiers fsModifiers, Keys vk)
     {
         return ushort.MakeWord((byte)fsModifiers, (byte)vk);
     }
@@ -98,5 +98,15 @@ public readonly struct HotKey : IEquatable<HotKey>
     public override int GetHashCode()
     {
         return m_value;
+    }
+
+    public static bool operator ==(HotKey left, HotKey right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(HotKey left, HotKey right)
+    {
+        return !(left == right);
     }
 }

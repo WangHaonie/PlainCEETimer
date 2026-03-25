@@ -81,9 +81,8 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
                     {
                         var index = ComboBoxRuleType.SelectedIndex;
 
-                        if (TemporaryChanges.ContainsKey(index))
+                        if (TemporaryChanges.TryGetValue(index, out var tmp))
                         {
-                            var tmp = TemporaryChanges[index];
                             ApplyColorBlock(new(tmp.ForeColor, tmp.BackColor));
                             TextBoxCustomText.Text = tmp.Content;
                         }

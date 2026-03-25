@@ -4,6 +4,6 @@ namespace PlainCEETimer.Interop;
 
 public static class CStd
 {
-    [DllImport("ucrtbase.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ucrtbase.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern int system(string _Command);
 }

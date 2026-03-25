@@ -147,7 +147,7 @@ public sealed class PlainListView : ListView
         IntPtr hListView = Handle;
         IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
         IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
-        new SysHeader32NativeWindow(hHeader);
+        _ = new SysHeader32NativeWindow(hHeader);
 
         var LVstyle = SystemStyle.ItemsView;
         var TTstyle = SystemStyle.Explorer;

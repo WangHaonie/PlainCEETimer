@@ -300,7 +300,7 @@ public class AppWindow : Window, IAppWindow
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected double Pt2Dip(double pt)
+    protected static double Pt2Dip(double pt)
     {
         return pt * PtToDipRatio;
     }

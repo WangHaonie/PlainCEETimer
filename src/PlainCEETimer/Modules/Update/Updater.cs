@@ -110,7 +110,7 @@ internal class Updater : IDisposable
         }
     }
 
-    private string GetDescription(DateTime pub)
+    private static string GetDescription(DateTime pub)
     {
         var span = DateTime.Now - pub;
         var tm = (int)span.TotalMinutes;
@@ -122,7 +122,7 @@ internal class Updater : IDisposable
         return $"{span.TotalDays:0.0} 天前";
     }
 
-    private string GetMessage(bool hasUpdate, bool isPreview, Version latest, string sha, string date, string content)
+    private static string GetMessage(bool hasUpdate, bool isPreview, Version latest, string sha, string date, string content)
     {
         var sb = new StringBuilder(120);
 

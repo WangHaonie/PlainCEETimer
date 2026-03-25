@@ -193,7 +193,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
         return new MessageBox(parent, level, message, buttons, autoClose).ShowCore().AsBoolean();
     }
 
-    private string GetExMessage(string msg, Exception ex)
+    private static string GetExMessage(string msg, Exception ex)
     {
         return ex == null ? msg : $"{msg}\n\n错误信息: \n{ex.Message}\n\n错误详情: \n{ex}";
     }

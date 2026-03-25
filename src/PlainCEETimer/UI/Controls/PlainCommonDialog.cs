@@ -126,7 +126,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                 }
                 else
                 {
-                    new GroupBoxNativeWindow(hCtrl);
+                    _ = new GroupBoxNativeWindow(hCtrl);
                 }
             }
         }
@@ -158,7 +158,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         return IntPtr.Zero;
     }
 
-    private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
+    private static SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
         var cn = Win32UI.GetClassName(hWnd);
 

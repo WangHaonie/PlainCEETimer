@@ -96,7 +96,7 @@ public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEquality
         return hashCode.Combine();
     }
 
-    private int[] EnsureIndices(int total)
+    private static int[] EnsureIndices(int total)
     {
         samplingIndices ??= [];
 
@@ -109,7 +109,7 @@ public class ArrayEqualityComparer<T>(IEqualityComparer<T> comparer) : IEquality
         return result;
     }
 
-    private int[] CreateSampleIndices(int start, int end, int count)
+    private static int[] CreateSampleIndices(int start, int end, int count)
     {
         var indices = new int[count];
         var mid = start + (end - start) / 2;

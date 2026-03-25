@@ -105,7 +105,7 @@ public readonly struct Hotkey
         return h.m_value;
     }
 
-    private readonly ushort MakeValue(HotkeyF fKeys, Keys key)
+    private static ushort MakeValue(HotkeyF fKeys, Keys key)
     {
         return ushort.MakeWord((byte)key, (byte)fKeys);
     }
@@ -179,6 +179,16 @@ public readonly struct COLORREF : IEquatable<COLORREF>
     {
         return value;
     }
+
+    public static bool operator ==(COLORREF left, COLORREF right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(COLORREF left, COLORREF right)
+    {
+        return !(left == right);
+    }
 }
 
 [DebuggerDisplay("{ToString(),nq}")]
@@ -223,7 +233,7 @@ public readonly struct SystemDisplay
 
                 if (appendSpace)
                 {
-                    sb.Append(" ");
+                    sb.Append(' ');
                 }
 
                 sb.Append(id);
@@ -251,7 +261,7 @@ public readonly struct SystemDisplay
         return sb.ToString();
     }
 
-    private readonly string GetId(string did)
+    private static string GetId(string did)
     {
         if (did != null)
         {

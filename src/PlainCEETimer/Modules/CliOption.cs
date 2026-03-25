@@ -177,7 +177,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         }
     }
 
-    private bool IsOption(string arg)
+    private static bool IsOption(string arg)
     {
         if (!string.IsNullOrWhiteSpace(arg))
         {
@@ -193,7 +193,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         return false;
     }
 
-    private string Unquote(string arg)
+    private static string Unquote(string arg)
     {
         if (!string.IsNullOrWhiteSpace(arg)
             && arg.StartsWith(Quote) && arg.EndsWith(Quote))
@@ -211,7 +211,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         return arg;
     }
 
-    private bool ContainsNoWhitespaceOrQuotes(string s)
+    private static bool ContainsNoWhitespaceOrQuotes(string s)
     {
         var length = s.Length;
 

@@ -154,24 +154,6 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
         CanUpdateRules = true;
     }
 
-    private Exam GetCurrentExam(Exam[] exams, ref int index)
-    {
-        var length = exams.Length;
-        var newIndex = index;
-
-        if (length == 0)
-        {
-            newIndex = -1;
-        }
-        else if (newIndex == -1 || length <= index)
-        {
-            newIndex = 0;
-        }
-
-        index = newIndex;
-        return index < 0 ? new() : exams[index];
-    }
-
     private void AutoSwitchCallback(object state)
     {
         if (IsDisposing)
@@ -338,6 +320,24 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     {
         MainTimer.Destory();
         IsRunning = false;
+    }
+
+    private static Exam GetCurrentExam(Exam[] exams, ref int index)
+    {
+        var length = exams.Length;
+        var newIndex = index;
+
+        if (length == 0)
+        {
+            newIndex = -1;
+        }
+        else if (newIndex == -1 || length <= index)
+        {
+            newIndex = 0;
+        }
+
+        index = newIndex;
+        return index < 0 ? new() : exams[index];
     }
 
     ~DefaultCountdownService()

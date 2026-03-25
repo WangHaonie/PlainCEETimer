@@ -101,7 +101,7 @@ public class PlainHotkeyControl : Control
 
         SetHotKey(hotkey);
 
-        new ParentNativeWindow(this);
+        _ = new ParentNativeWindow(this);
     }
 
     protected override void WndProc(ref Message m)

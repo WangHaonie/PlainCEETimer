@@ -18,6 +18,7 @@
     <ApplicationIcon>Properties\AppIcon.ico</ApplicationIcon>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="UI\Controls\PlainTabControl.cs" />

@@ -40,7 +40,17 @@ public class NetworkedAction(Action action)
         }
     }
 
-    private async Task<bool> CheckConnectivityAsync()
+    private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
+    {
+        CheckAndInvokeAsync();
+    }
+
+    private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
+    {
+        CheckAndInvokeAsync();
+    }
+
+    private static async Task<bool> CheckConnectivityAsync()
     {
         try
         {
@@ -53,15 +63,5 @@ public class NetworkedAction(Action action)
         {
             return false;
         }
-    }
-
-    private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
-    {
-        CheckAndInvokeAsync();
-    }
-
-    private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
-    {
-        CheckAndInvokeAsync();
     }
 }

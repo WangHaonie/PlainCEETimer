@@ -24,7 +24,7 @@ public class PlainLabel : Label
         }
     }
 
-    private TextFormatFlags CA2TFF(ContentAlignment alignment) => alignment switch
+    private static TextFormatFlags CA2TFF(ContentAlignment alignment) => alignment switch
     {
         ContentAlignment.TopLeft => TextFormatFlags.Top | TextFormatFlags.Left,
         ContentAlignment.TopCenter => TextFormatFlags.Top | TextFormatFlags.HorizontalCenter,

@@ -6,6 +6,6 @@ public sealed class PlainRadioButton : RadioButton
 {
     public PlainRadioButton()
     {
-        new PlainButtonBase(this);
+        _ = new PlainButtonBase(this);
     }
 }

@@ -67,7 +67,17 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
             .Combine();
     }
 
-    private readonly double GetRelativeLum(Color color)
+    public static bool operator ==(ColorPair left, ColorPair right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ColorPair left, ColorPair right)
+    {
+        return !(left == right);
+    }
+
+    private static double GetRelativeLum(Color color)
     {
         //
         // 亮度计算 参考:

@@ -67,7 +67,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private GeneralObject General;
     private MenuItem MenuItemFontName;
     private PagedContextMenu MenuSwitchExams;
-    private MemoryCleaner MemCleaner;
     private SettingsForm FormSettings;
     private AboutForm FormAbout;
     private HotKeyDialog DialogHotKey;
@@ -352,16 +351,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             RefreshScreen();
         }
 
-        if (General.MemClean)
-        {
-            MemCleaner ??= new();
-            MemCleaner.Start();
-        }
-        else
-        {
-            MemCleaner.Destory();
-            MemCleaner = null;
-        }
+        MemoryCleaner.Instance.Enabled = General.MemClean;
     }
 
     private void LoadContextMenu()
@@ -570,7 +560,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
     }
 
-    private int GetAutoSwitchInterval(int Index) => Index switch
+    private static int GetAutoSwitchInterval(int Index) => Index switch
     {
         1 => 15_000, // 15 s
         2 => 30_000, // 30 s

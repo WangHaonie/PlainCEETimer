@@ -357,36 +357,36 @@ public abstract class AppForm : Form, IAppWindow
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int RelativeToFont(double ratio)
+    protected static int RelativeToFont(double ratio)
     {
         return (int)(ratio * CurrentFontHeight);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int ScaleToDpi(int px)
+    protected static int ScaleToDpi(int px)
     {
         return (int)(px * DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int UnscaleToDpi(int px)
+    protected static int UnscaleToDpi(int px)
     {
         return (int)(px / DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected Size ScaleToDpi(Size sz)
+    protected static Size ScaleToDpi(Size sz)
     {
         return new(ScaleToDpi(sz.Width), ScaleToDpi(sz.Height));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected Size UnscaleToDpi(Size sz)
+    protected static Size UnscaleToDpi(Size sz)
     {
         return new(UnscaleToDpi(sz.Width), UnscaleToDpi(sz.Height));
     }
 
-    protected bool IsModkeysPressed(Keys keys)
+    protected static bool IsModkeysPressed(Keys keys)
     {
         return (ModifierKeys & keys) == keys;
     }
@@ -396,7 +396,7 @@ public abstract class AppForm : Form, IAppWindow
         return ScreenService.WorkingArea;
     }
 
-    protected void ArrangeFirstControl(Control control, int x = 3, int y = 3)
+    protected static void ArrangeFirstControl(Control control, int x = 3, int y = 3)
     {
         control.SetBounds(x, y, 0, 0, BoundsSpecified.Location);
     }
@@ -404,7 +404,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
     /// </summary>
-    protected void ArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    protected static void ArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference.Right + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -412,7 +412,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 左边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
     /// </summary>
-    protected void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+    protected static void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference1.Left + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -420,7 +420,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 右边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
     /// </summary>
-    protected void ArrangeControlXRT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+    protected static void ArrangeControlXRT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference1.Right + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -428,12 +428,12 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 Y 方向上竖直排列目标控件，并在 X 方向上与指定控件的左边缘对齐
     /// </summary>
-    protected void ArrangeControlYL(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    protected static void ArrangeControlYL(Control target, Control reference, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference.Left + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
 
-    protected void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
+    protected static void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
     {
         button2.SetBounds(reference.Right - button2.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         button1?.SetBounds(button2.Left - button1.Width - ScaleToDpi(3), button2.Top, 0, 0, BoundsSpecified.Location);
@@ -442,12 +442,12 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件的左边缘在 X 方向上与参考控件的左边缘对齐
     /// </summary>
-    protected void AlignControlXL(Control target, Control reference, int xOffset = 0)
+    protected static void AlignControlXL(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Left + ScaleToDpi(xOffset);
     }
 
-    protected void AlignControlXR(Control target, Control reference, int xOffset = 0)
+    protected static void AlignControlXR(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Right - target.Width + ScaleToDpi(xOffset);
     }
@@ -455,7 +455,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 Y 方向上与参考控件居中
     /// </summary>
-    protected void CenterControlY(Control target, Control reference, int yOffset = 0)
+    protected static void CenterControlY(Control target, Control reference, int yOffset = 0)
     {
         target.Top = reference.Top + (reference.Height - target.Height) / 2 + ScaleToDpi(yOffset);
     }
@@ -463,7 +463,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 X 方向上与参考控件保持紧凑
     /// </summary>
-    protected void CompactControlX(Control target, Control reference, int xOffset = 0)
+    protected static void CompactControlX(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Right + ScaleToDpi(xOffset);
     }
@@ -471,17 +471,17 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 Y 方向上与参考控件保持紧凑
     /// </summary>
-    protected void CompactControlY(Control target, Control reference, int yOffset = 0)
+    protected static void CompactControlY(Control target, Control reference, int yOffset = 0)
     {
         target.Top = reference.Bottom + ScaleToDpi(yOffset);
     }
 
-    protected void GroupBoxArrageControl(Control target, int xOffset = 0, int yOffset = 0)
+    protected static void GroupBoxArrageControl(Control target, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
 
-    protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
+    protected static void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
     {
         groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
     }
@@ -518,7 +518,7 @@ public abstract class AppForm : Form, IAppWindow
         SetLabelAutoWrap(target, useParent ? (target.Parent.Width - target.Left) : (int)(GetCurrentScreenRect().Width * 0.75));
     }
 
-    protected void SetLabelAutoWrap(PlainLabel target, int maxWidth)
+    protected static void SetLabelAutoWrap(PlainLabel target, int maxWidth)
     {
         /*
 

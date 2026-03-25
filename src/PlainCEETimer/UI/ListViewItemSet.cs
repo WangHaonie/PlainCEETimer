@@ -16,7 +16,7 @@ public class ListViewItemSet<TData>()
 
     private class ItemSetComparer : IEqualityComparer<Element>
     {
-        private readonly IEqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
+        private readonly EqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
 
         bool IEqualityComparer<Element>.Equals(Element x, Element y)
         {

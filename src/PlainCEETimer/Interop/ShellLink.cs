@@ -11,7 +11,7 @@ public static class ShellLink
 {
     private static readonly string LnkName = "高考倒计时.lnk";
     private static readonly string AppPath = App.ExecutablePath;
-    private static readonly IDialogService MessageX = AppMessageBox.Instance;
+    private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
     public static void CreateAppShortcut(bool allowCustom = false)
     {

@@ -13,7 +13,7 @@ public class ScreenHelper(IAppWindow window) : IScreenService
 
     public virtual Rectangle WorkingArea => Screen.WorkingArea;
 
-    private TaskbarPosition GetTaskbarPosition(Screen screen)
+    private static TaskbarPosition GetTaskbarPosition(Screen screen)
     {
         var w = screen.WorkingArea;
         var b = screen.Bounds;
