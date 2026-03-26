@@ -2,23 +2,23 @@
 
 public sealed class CountdownStartInfo
 {
-    public int Mode { get; set; }
+    public int Mode { get; init; }
 
-    public int AutoSwitchInterval { get; set; }
+    public int AutoSwitchInterval { get; init; }
 
-    public int ExamIndex { get; set; }
+    public int ExamIndex { get; init; }
 
-    public bool AutoSwitch { get; set; }
+    public bool AutoSwitch { get; init; }
 
-    public CountdownFormat Format { get; set; }
+    public CountdownFormat Format { get; init; }
 
-    public ColorPair DefaultColor { get; set; }
+    public required ColorPair DefaultColor { get; init; }
 
-    public Exam[] Exams { get; set; }
+    public required Exam[] Exams { get; init; }
 
-    public CountdownRule[] CustomRules { get; set; }
+    public required CountdownRule[] CustomRules { get; init; }
 
-    public CountdownRule[] GlobalRules { get; set; }
+    public required CountdownRule[] GlobalRules { get; init; }
 
-    public CountdownRule[] DefaultRules { get; set; }
+    public required CountdownRule[] DefaultRules { get; init; }
 }
