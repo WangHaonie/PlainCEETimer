@@ -24,6 +24,12 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
+    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+    public static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool DestroyWindow(IntPtr hWnd);
+
     [DllImport(App.User32Dll)]
     public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
@@ -145,7 +151,7 @@ public static class Win32UI
     public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
 
     [DllImport(App.NativesDll, EntryPoint = "#38")]
-    public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc);
+    public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
 
     [DllImport(App.NativesDll, EntryPoint = "#39")]
     public static extern void ComdlgUnhookMessageBox();

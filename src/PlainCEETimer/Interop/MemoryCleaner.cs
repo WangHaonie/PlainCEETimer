@@ -67,7 +67,7 @@ public class MemoryCleaner : IDisposable
 
     private ulong GetMemory()
     {
-        WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + GetCurrentProcessId());
+        WmiSearcher ??= new("select WorkingSetPrivate from Win32_PerfFormattedData_PerfProc_Process where IDProcess=" + Win32.GetCurrentProcessId());
         var obj = WmiSearcher.Get().Cast<ManagementBaseObject>().FirstOrDefault();
         return obj == default ? default : (ulong)obj.GetPropertyValue("WorkingSetPrivate");
     }
@@ -87,7 +87,4 @@ public class MemoryCleaner : IDisposable
 
     [DllImport(App.NativesDll, EntryPoint = "#2")]
     private static extern void ClearProcessWS();
-
-    [DllImport(App.Kernel32Dll)]
-    private static extern uint GetCurrentProcessId();
 }

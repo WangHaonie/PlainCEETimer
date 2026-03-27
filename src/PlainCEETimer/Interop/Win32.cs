@@ -25,4 +25,10 @@ public static class Win32
 
     [DllImport(App.Kernel32Dll)]
     public static extern void ExitProcess(int uExitCode);
+
+    [DllImport(App.Kernel32Dll)]
+    public static extern int GetCurrentProcessId();
+
+    [DllImport(App.Kernel32Dll)]
+    public static extern int GetCurrentThreadId();
 }

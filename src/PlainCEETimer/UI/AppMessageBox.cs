@@ -169,6 +169,33 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
         return Popup(GetExMessage(message, ex), MessageLevel.Error, buttons, autoClose);
     }
 
+    public int Popup(int uType, string message)
+    {
+        return ParseFromNativeAndPopup(uType, message);
+    }
+
+    private int ParseFromNativeAndPopup(int uType, string message)
+    {
+        const int MB_TYPEMASK = 0x0000000F;
+        const int MB_ICONMASK = 0x000000F0;
+
+        const int MB_YESNO = 0x00000004;
+
+        const int MB_ICONEXCLAMATION = 0x00000030;
+        const int MB_ICONHAND = 0x00000010;
+
+        var buttons = ((uType & MB_TYPEMASK) == MB_YESNO) ? MessageButtons.YesNo : MessageButtons.OK;
+
+        var level = (uType & MB_ICONMASK) switch
+        {
+            MB_ICONEXCLAMATION => MessageLevel.Warning,
+            MB_ICONHAND => MessageLevel.Error,
+            _ => MessageLevel.Info
+        };
+
+        return ToDialogResult(Popup(message, level, buttons, false), buttons);
+    }
+
     private bool? Popup(string message, MessageLevel level, MessageButtons buttons, bool autoClose)
     {
         if (parent != null)
@@ -191,6 +218,23 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
         }
 
         return new MessageBox(parent, level, message, buttons, autoClose).ShowCore().AsBoolean();
+    }
+
+    private static int ToDialogResult(bool? result, MessageButtons buttons)
+    {
+        DialogResult dr = DialogResult.None;
+
+        switch (buttons)
+        {
+            case MessageButtons.OK:
+                if (result == true) dr = DialogResult.OK;
+                break;
+            case MessageButtons.YesNo:
+                dr = result == true ? DialogResult.Yes : DialogResult.No;
+                break;
+        }
+
+        return (int)dr;
     }
 
     private static string GetExMessage(string msg, Exception ex)

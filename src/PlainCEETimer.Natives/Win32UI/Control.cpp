@@ -5,9 +5,8 @@
 #include <CommCtrl.h>
 #include <Windows.h>
 
-using fnMessageBoxW = int (WINAPI*)(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
-
 static fnMessageBoxW g_MessageBoxW = nullptr;
+static fnMessageBoxW g_UserMessageBoxW = nullptr;
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -125,12 +124,21 @@ void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
     SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc)
+void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
 {
-    if (!g_MsgBoxCbtProc && lpfnCbtProc
-        && ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW))
+    if (dwHookFlag == HMBF_GETMSGBOX && lpfnCbtProc)
     {
-        g_MsgBoxCbtProc = lpfnCbtProc;
+        if (!g_MsgBoxCbtProc && ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW) && g_MessageBoxW)
+        {
+            g_MsgBoxCbtProc = lpfnCbtProc;
+            return;
+        }
+    }
+
+    if (dwHookFlag == HMBF_REPMSGBOX && lpfnMessageBoxW && !g_MsgBoxCbtProc)
+    {
+        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, lpfnMessageBoxW, &g_MessageBoxW);
+        g_UserMessageBoxW = lpfnMessageBoxW;
     }
 }
 
@@ -139,7 +147,9 @@ void ComdlgUnhookMessageBox()
     if (g_MessageBoxW)
     {
         ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, g_MessageBoxW, nullptr);
+        g_MessageBoxW = nullptr;
         g_MsgBoxCbtProc = nullptr;
+        g_UserMessageBoxW = nullptr;
     }
 }
 

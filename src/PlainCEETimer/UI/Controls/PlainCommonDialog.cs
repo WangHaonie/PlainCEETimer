@@ -44,9 +44,36 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         }
     }
 
+    private class IAppWindowWrapper(IntPtr hWnd) : IAppWindow
+    {
+        public bool InvokeRequired => false;
+
+        public IDialogService MessageX => new AppMessageBox(this);
+
+        public ContextMenu ContextMenu { get; set; }
+
+        public IntPtr Handle => hWnd;
+
+        public IAsyncResult BeginInvoke(Delegate method)
+        {
+            return default;
+        }
+
+        public object Invoke(Delegate method)
+        {
+            return 0;
+        }
+
+        public void ReActivate()
+        {
+            return;
+        }
+    }
+
     private IntPtr Handle;
     private IntPtr MsgBoxHandle;
     private HOOKPROC CBTHookProc;
+    private static FnMessageBoxW fnMessageBox;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
@@ -95,8 +122,10 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         Handle = hWnd;
         owner.ReActivate();
         CBTHookProc = CbtHookProc;
+        fnMessageBox ??= MessageBoxW;
         Win32UI.RegisterUnmanagedWindow(hWnd);
-        Win32UI.ComdlgHookMessageBox(CBTHookProc);
+        const int HMBF_REPMSGBOX = 1;
+        Win32UI.ComdlgHookMessageBox(CBTHookProc, fnMessageBox, HMBF_REPMSGBOX);
 
         if (dialogTitle != null)
         {
@@ -217,6 +246,28 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         }
 
         return new(-1);
+    }
+
+    private static int MessageBoxW(IntPtr hWnd, string lpText, string lpCaption, int uType)
+    {
+        var result = new IAppWindowWrapper(hWnd).MessageX.Popup(uType, lpText);
+        ClearParkingWindowChildControls();
+        return result;
+    }
+
+    private static void ClearParkingWindowChildControls()
+    {
+        var hWnd = Win32UI.FindWindowEx(new(NativeConstants.HWND_MESSAGE), IntPtr.Zero, null, "WindowsFormsParkingWindow");
+
+        if (hWnd != IntPtr.Zero)
+        {
+            Win32UI.EnumChildWindows(hWnd, (hwnd, _) =>
+            {
+                if (Win32UI.GetClassName(hwnd).Contains("BUTTON", StringComparison.Ordinal))
+                    Win32UI.DestroyWindow(hwnd);
+                return true;
+            }, IntPtr.Zero);
+        }
     }
 
     public sealed override void Reset()

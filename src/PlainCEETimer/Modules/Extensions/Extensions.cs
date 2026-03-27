@@ -76,9 +76,9 @@ public static class Extensions
     }
 
 #if DEBUG
-    public static string Dump<T>(this T obj)
+    public static void Dump<T>(this T obj)
     {
-        return JsonConvert.SerializeObject(obj, Formatting.Indented);
+        MessageBox.Show(JsonConvert.SerializeObject(obj, Formatting.Indented));
     }
 #endif
 }
