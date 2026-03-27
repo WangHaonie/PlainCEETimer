@@ -34,8 +34,7 @@ public class PlainTabControl : TabControl
             }
         }
 
-        Win32UI.SendMessage(Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
-
+        this.RemoveFocusDot();
         base.OnHandleCreated(e);
     }
 

@@ -27,7 +27,6 @@ public sealed class PlainListView : ListView
 
         protected override void WndProc(ref Message m)
         {
-
             switch (m.Msg)
             {
                 case WM.SETCURSOR:

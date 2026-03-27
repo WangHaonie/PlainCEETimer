@@ -140,4 +140,9 @@ public static class Extensions
 
         return IntPtr.Zero;
     }
+
+    public static void HideFocusIndicator(this Control control)
+    {
+        Win32UI.SendMessage(control.Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
+    }
 }

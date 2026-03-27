@@ -22,9 +22,24 @@ public struct RECT
     public int Right;
     public int Bottom;
 
+    /// <summary>
+    /// <code>LONG <see cref="left"/></code>
+    /// </summary>
     public const int left = 0;
+
+    /// <summary>
+    /// <code>LONG <see cref="top"/></code>
+    /// </summary>
     public const int top = 4;
+
+    /// <summary>
+    /// <code>LONG <see cref="right"/></code>
+    /// </summary>
     public const int right = 8;
+
+    /// <summary>
+    /// <code>LONG <see cref="bottom"/></code>
+    /// </summary>
     public const int bottom = 16;
 
     public static implicit operator Rectangle(RECT r)
