@@ -96,13 +96,15 @@ public class OptimizationHelper(bool isAuto)
         {
             complete = c =>
             {
-                if (c.MessageX.Info("是否重启倒计时?", MessageButtons.YesNo) == true)
+                var r = c.MessageX.Info("是否重启倒计时?", MessageButtons.YesNo);
+
+                if (r != null)
                 {
-                    App.Exit(true);
+                    App.Exit(r == true);
                 }
             };
         }
 
-        ConsoleWindow.Run(path, $"install \"{App.ExecutablePath}\" /verbose", complete, param);
+        ConsoleWindow.Run(path, new CliOption(ArgumentType.System).Add("install").Add(App.ExecutablePath).Add("/verbose").ToArgs(), complete, param);
     }
 }

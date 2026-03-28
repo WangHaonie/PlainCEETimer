@@ -13,34 +13,22 @@ public sealed class PlainProgressBar : ProgressBar
         get => base.Value;
         set
         {
-            if (init)
-            {
-                tbp.SetValue(value, 100);
-            }
-
+            m_value = value;
+            UpdateValue();
             base.Value = value;
         }
     }
 
     public new ProgressStyle Style
     {
-        get;
+        get => m_style;
         set
         {
-            if (init && field != value)
+            if (m_style != value)
             {
-                tbp.SetState(value);
+                m_style = value;
+                UpdateStyle();
             }
-
-            var pbs = value switch
-            {
-                ProgressStyle.Error => NativeConstants.PBST_ERROR,
-                ProgressStyle.Paused => NativeConstants.PBST_PAUSED,
-                _ => NativeConstants.PBST_NORMAL
-            };
-
-            Win32UI.SendMessage(Handle, NativeConstants.PBM_SETSTATE, pbs, 0);
-            field = value;
         }
     }
 
@@ -50,8 +38,10 @@ public sealed class PlainProgressBar : ProgressBar
         set => base.Style = value;
     }
 
-    private TaskbarProgress tbp;
     private bool init;
+    private int m_value;
+    private ProgressStyle m_style;
+    private TaskbarProgress tbp;
 
     protected override void OnHandleCreated(EventArgs e)
     {
@@ -66,6 +56,39 @@ public sealed class PlainProgressBar : ProgressBar
             init = true;
         }
 
+        UpdateStyle();
+        UpdateValue();
         base.OnHandleCreated(e);
+    }
+
+    protected override void OnHandleDestroyed(EventArgs e)
+    {
+        init = false;
+        base.OnHandleDestroyed(e);
+    }
+
+    private void UpdateStyle()
+    {
+        if (init)
+        {
+            tbp.SetState(m_style);
+
+            var pbs = m_style switch
+            {
+                ProgressStyle.Error => NativeConstants.PBST_ERROR,
+                ProgressStyle.Paused => NativeConstants.PBST_PAUSED,
+                _ => NativeConstants.PBST_NORMAL
+            };
+
+            Win32UI.SendMessage(Handle, NativeConstants.PBM_SETSTATE, pbs, 0);
+        }
+    }
+
+    private void UpdateValue()
+    {
+        if (init)
+        {
+            tbp.SetValue(m_value, 100);
+        }
     }
 }
