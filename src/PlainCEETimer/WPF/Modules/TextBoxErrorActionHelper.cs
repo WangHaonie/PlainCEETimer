@@ -38,11 +38,11 @@ public static class TextBoxErrorActionHelper
     {
         if (d is TextBox tb)
         {
-            ApplyErrorFeedback(tb, (bool)e.NewValue, GetErrorAction(tb));
+            ApplyErrorAction(tb, (bool)e.NewValue, GetErrorAction(tb));
         }
     }
 
-    private static void ApplyErrorFeedback(TextBox textBox, bool hasError, TextBoxErrorAction mode)
+    private static void ApplyErrorAction(TextBox textBox, bool hasError, TextBoxErrorAction mode)
     {
         switch (mode)
         {

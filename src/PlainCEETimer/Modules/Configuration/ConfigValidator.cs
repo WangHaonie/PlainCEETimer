@@ -239,7 +239,7 @@ internal static class ConfigValidator
 
         var colors = new ColorPair(f, b);
 
-        if (colors.Readable)
+        if (colors.Readable == true)
         {
             return colors;
         }

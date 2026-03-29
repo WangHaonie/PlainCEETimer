@@ -12,6 +12,7 @@ using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Internals;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
+using PlainCEETimer.WPF.Extensions;
 using NativeContextMenu = System.Windows.Forms.ContextMenu;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
@@ -78,7 +79,6 @@ public class AppWindow : Window, IAppWindow
     private IAppWindow _owner;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
-    private const double PtToDipRatio = 96.0 / 72.0;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
     private readonly bool NativeRoundCorner;
@@ -92,7 +92,7 @@ public class AppWindow : Window, IAppWindow
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         InitEvents();
         FontFamily = new("Segoe UI, Microsoft YaHei");
-        FontSize = Pt2Dip(9.0);
+        FontSize = 9D.Pt2Dip();
         ScreenService = new ScreenHelper(Special ? this : null);
 
         if (SetRoundCorner)
@@ -297,12 +297,6 @@ public class AppWindow : Window, IAppWindow
     internal protected int Dip2PxY(double dip)
     {
         return (int)(dip * DpiScaleY);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static double Pt2Dip(double pt)
-    {
-        return pt * PtToDipRatio;
     }
 
     protected WFRectagle GetCurrentScreenRect()

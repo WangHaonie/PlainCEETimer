@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace PlainCEETimer.Modules.JsonConverters;
 
 /// <summary>
-/// 在一个复杂类型与单个简单类型之间进行转换
+/// 在一个复杂类型与 .NET 基本数据类型之间进行转换
 /// </summary>
 public abstract class SimpleJsonConverter<TObject, TValue> : JsonConverter<TObject>
 {

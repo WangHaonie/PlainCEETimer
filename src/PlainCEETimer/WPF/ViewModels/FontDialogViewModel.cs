@@ -10,6 +10,7 @@ using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
+using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.Modules;
 
@@ -155,7 +156,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
 
         if (size > 0)
         {
-            PreviewFontSize = size * (96.0 / 72.0);
+            PreviewFontSize = size.Pt2Dip();
         }
     }
 

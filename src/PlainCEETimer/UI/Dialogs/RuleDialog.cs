@@ -208,7 +208,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
 
         var colors = new ColorPair(BlockFore.Color, BlockBack.Color);
 
-        if (!colors.Readable)
+        if (colors.Readable == false)
         {
             MessageX.Error("选择的颜色相似或对比度较低，将无法看清文字。\n\n请尝试更换其它背景颜色或文字颜色！");
             return false;

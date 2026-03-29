@@ -13,11 +13,11 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 
     public readonly Color Back => back;
 
-    public bool Readable
+    public bool? Readable
     {
         get
         {
-            if (!init)
+            if (field == null)
             {
                 //
                 // 对比度判断 参考:
@@ -35,14 +35,11 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
                 }
 
                 field = (L1 + 0.05) / (L2 + 0.05) >= 3;
-                init = true;
             }
 
             return field;
         }
     }
-
-    private bool init;
 
     public readonly bool Equals(ColorPair other)
     {

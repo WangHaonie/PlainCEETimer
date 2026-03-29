@@ -4,6 +4,7 @@ using System.Windows.Media;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.JsonConverters;
+using PlainCEETimer.WPF.Extensions;
 using Font = System.Drawing.Font;
 
 namespace PlainCEETimer.WPF.Models;
@@ -22,7 +23,7 @@ public class FontModel : IEquatable<FontModel>
         {
             if (field == default)
             {
-                field = Size / (96.0 / 72.0);
+                field = Size.Dip2Pt();
             }
 
             return field;
@@ -39,7 +40,7 @@ public class FontModel : IEquatable<FontModel>
         {
             FontFamily = new(font.FontFamily.Name),
             SizePt = font.SizeInPoints,
-            Size = font.SizeInPoints * (96.0 / 72.0),
+            Size = ((double)font.SizeInPoints).Pt2Dip(),
             Weight = font.Bold ? FontWeights.Bold : FontWeights.Normal
         };
     }

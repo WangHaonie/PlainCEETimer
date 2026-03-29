@@ -830,7 +830,7 @@ public sealed class SettingsForm : AppForm
         {
             var cp = new ColorPair(ColorBlocks[i].Color, ColorBlocks[i + length].Color);
 
-            if (!cp.Readable)
+            if (cp.Readable == false)
             {
                 index = i;
                 break;
