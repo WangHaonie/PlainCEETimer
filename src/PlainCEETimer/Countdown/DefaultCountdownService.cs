@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using PlainCEETimer.Modules.Extensions;
@@ -22,6 +23,7 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
+    private bool CanUpdateToken;
     private int Mode;
     private string DefaultText;
     private CountdownFormat Format;
@@ -34,14 +36,15 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     private Exam[] Exams;
     private CountdownStartInfo Info;
     private CountdownRule DefaultRule;
+    private PhParsedTokenCollection CurrentTokens;
     private CountdownRule[] CustomRules;
     private CountdownRule[] GlobalRules;
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
     private volatile bool IsDisposing;
-    private readonly string[] Phs = Ph.AllPhs;
-    private readonly string[] PhContent = new string[12];
+    private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
+    private readonly StringBuilder ContentBuilder = new(512);
     private readonly SynchronizationContext CurrentContext = context ?? SynchronizationContext.Current;
 
     public void Start(CountdownStartInfo startInfo)
@@ -152,48 +155,39 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
         };
 
         CanUpdateRules = true;
+        CanUpdateToken = true;
     }
 
     private void AutoSwitchCallback(object state)
     {
-        if (IsDisposing)
+        if (!IsDisposing)
         {
-            return;
-        }
+            do
+            {
+                ExamIndex = (ExamIndex + 1) % ExamsCount;
+                UpdateExams();
+            }
+            while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsCount - 1);
 
-        do
-        {
-            ExamIndex = (ExamIndex + 1) % ExamsCount;
-            UpdateExams();
+            TryStartMainTimer();
+            OnExamSwitched();
         }
-        while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsCount - 1);
-
-        TryStartMainTimer();
-        OnExamSwitched();
     }
 
     private void CountdownCallback(object state)
     {
-        if (IsDisposing)
+        if (!IsDisposing)
         {
-            return;
-        }
-
-        if (CanStart && TestExam(CurrentExam, out var phase, out var span))
-        {
-            SetPhase(phase);
-
-            for (int i = 0; i < Ph.Count; i++)
+            if (CanStart && TestExam(CurrentExam, out var phase, out var span))
             {
-                PhContent[i] = TranslatePh(i, span, phase);
+                SetPhase(phase);
+                ApplyCustomRule((int)phase, span);
             }
-
-            ApplyCustomRule((int)phase, span);
-        }
-        else
-        {
-            StopMainTimer();
-            OnCountdownUpdated("欢迎使用高考倒计时", DefaultColor);
+            else
+            {
+                StopMainTimer();
+                OnCountdownUpdated("欢迎使用高考倒计时", DefaultColor);
+            }
         }
     }
 
@@ -254,47 +248,58 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
                 {
                     if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
                     {
-                        OnCountdownUpdated(BuildContent(rule.Text), rule.Colors);
+                        OnCountdownUpdated(BuildContent(rule.Text, span, phase), rule.Colors);
                         return;
                     }
                 }
             }
 
-            OnCountdownUpdated(BuildContent(DefaultRule.Text), DefaultRule.Colors);
+            OnCountdownUpdated(BuildContent(DefaultRule.Text, span, phase), DefaultRule.Colors);
         }
         else
         {
-            OnCountdownUpdated(BuildContent(DefaultText), DefaultRules[phase].Colors);
+            OnCountdownUpdated(BuildContent(DefaultText, span, phase), DefaultRules[phase].Colors);
         }
     }
 
-    private string BuildContent(string format)
+    private string BuildContent(string format, TimeSpan span, int phase)
     {
-        var sb = new StringBuilder(format);
-
-        for (int i = 0; i < Ph.Count; i++)
+        lock (SyncObject)
         {
-            sb.Replace(Phs[i], PhContent[i]);
-        }
+            if (CanUpdateToken)
+            {
+                CurrentTokens = PhTokenParser.Parse(format);
+                CanUpdateToken = false;
+            }
 
-        return sb.ToString();
+            var length = CurrentTokens.Count;
+            ContentBuilder.Length = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                ContentBuilder.Append(TranslatePh(CurrentTokens[i], span, phase));
+            }
+
+            return ContentBuilder.ToString();
+        }
     }
 
-    private string TranslatePh(int i, TimeSpan span, CountdownPhase phase) => i switch
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private string TranslatePh(PhParsedToken format, TimeSpan span, int phase) => format.Token switch
     {
-        0 => CurrentExam.Name,
-        1 => span.Days.ToString(),
-        2 => Math.Ceiling(span.TotalDays).ToString(),
-        3 => span.TotalDays.ToString("0.0"),
-        4 => span.Hours.ToString("00"),
-        5 => Math.Truncate(span.TotalHours).ToString(),
-        6 => span.TotalHours.ToString("0.0"),
-        7 => span.Minutes.ToString("00"),
-        8 => span.TotalMinutes.ToString("0"),
-        9 => span.Seconds.ToString("00"),
-        10 => span.TotalSeconds.ToString("0"),
-        11 => CanUseCustomText ? string.Empty : PhHints[(int)phase],
-        _ => string.Empty
+        PhToken.ExamName => CurrentExam.Name,
+        PhToken.Days => span.Days.ToString(),
+        PhToken.DecimalDays => Math.Ceiling(span.TotalDays).ToString(),
+        PhToken.CeilingDays => span.TotalDays.ToString("0.0"),
+        PhToken.Hours => span.Hours.ToString("00"),
+        PhToken.TotalHours => Math.Truncate(span.TotalHours).ToString(),
+        PhToken.DecimalHours => span.TotalHours.ToString("0.0"),
+        PhToken.Minutes => span.Minutes.ToString("00"),
+        PhToken.TotalMinutes => span.TotalMinutes.ToString("0"),
+        PhToken.Seconds => span.Seconds.ToString("00"),
+        PhToken.TotalSeconds => span.TotalSeconds.ToString("0"),
+        PhToken.Hint => CanUseCustomText ? string.Empty : PhHints[phase],
+        _ => format.Value,
     };
 
     private void OnExamSwitched()

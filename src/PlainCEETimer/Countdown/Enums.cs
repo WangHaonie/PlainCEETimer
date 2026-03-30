@@ -13,6 +13,23 @@ public enum CountdownFormat
     Custom
 }
 
+public enum PhToken
+{
+    None,
+    ExamName,
+    Days,
+    DecimalDays,
+    CeilingDays,
+    Hours,
+    TotalHours,
+    DecimalHours,
+    Minutes,
+    TotalMinutes,
+    Seconds,
+    TotalSeconds,
+    Hint
+}
+
 public enum SwitchOption
 {
     ByIndex,

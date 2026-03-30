@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -78,7 +79,7 @@ public static class Extensions
 #if DEBUG
     public static T Dump<T>(this T obj)
     {
-        MessageBox.Show(JsonConvert.SerializeObject(obj, Formatting.Indented));
+        AppMessageBox.Instance.Info(JsonConvert.SerializeObject(obj, Formatting.Indented));
         return obj;
     }
 #endif

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
@@ -45,8 +44,6 @@ internal static class ConfigValidator
 
     [Constant]
     public const int MaxFontFamilyLength = 100;
-
-    private static readonly Regex CountdownRegex = new(@"\{(x|d|dd|cd|h|th|dh|m|tm|s|ts|ht)\}", RegexOptions.Compiled);
 
     public static bool ValidateNeeded
     {
@@ -157,23 +154,23 @@ internal static class ConfigValidator
             return false;
         }
 
-        var matches = CountdownRegex.Matches(custom);
-        var count = matches.Count;
-        var isValid = false;
+        var parsed = PhTokenParser.Parse(custom);
+        var length = parsed.Count;
 
-        if (matches.Count != 0)
+        if (length == 0)
         {
-            for (int j = 0; j < count; j++)
+            return false;
+        }
+
+        for (int i = 0; i < length; i++)
+        {
+            if (parsed[i].Token is not PhToken.None and not PhToken.Hint)
             {
-                if (GetPhIndex(matches[j].Value) >= 0)
-                {
-                    isValid = true;
-                    break;
-                }
+                return true;
             }
         }
 
-        return isValid;
+        return false;
     }
 
     public static bool IsValidExamLength(int length)
@@ -185,23 +182,6 @@ internal static class ConfigValidator
     {
         return length is 0 or > MaxCustomTextLength;
     }
-
-    public static int GetPhIndex(string ph) => ph switch
-    {
-        Ph.ExamName => 0,
-        Ph.Days => 1,
-        Ph.CeilingDays => 2,
-        Ph.DecimalDays => 3,
-        Ph.Hours => 4,
-        Ph.TotalHours => 5,
-        Ph.DecimalHours => 6,
-        Ph.Minutes => 7,
-        Ph.TotalMinutes => 8,
-        Ph.Seconds => 9,
-        Ph.TotalSeconds => 10,
-        "{ht}" => 11,
-        _ => -1
-    };
 
     public static string GetHokKeyDescription(int index) => index switch
     {

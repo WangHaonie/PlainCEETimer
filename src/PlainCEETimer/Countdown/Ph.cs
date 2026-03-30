@@ -45,16 +45,6 @@ public static class Ph
         Seconds, TotalSeconds
     ];
 
-    public static string[] AllPhs => field ??=
-    [
-        ExamName,
-        Days, DecimalDays, CeilingDays,
-        Hours, TotalHours, DecimalHours,
-        Minutes, TotalMinutes,
-        Seconds, TotalSeconds,
-        Hint
-    ];
-
     public static string[] ComboBoxFormatItems => field ??=
     [
         "默认",
