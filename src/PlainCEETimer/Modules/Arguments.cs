@@ -7,7 +7,7 @@ using PlainCEETimer.Modules.Linq;
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
-public class CliOption(ArgumentType type = ArgumentType.Internal)
+public class Arguments(ArgumentType type = ArgumentType.Internal)
 {
     public string FirstOption => m_first;
 
@@ -19,9 +19,9 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
     private const char Quote = '"';
     private const char Backslash = '\\';
 
-    public static CliOption Parse(string[] args)
+    public static Arguments Parse(string[] args)
     {
-        var cp = new CliOption();
+        var cp = new Arguments();
         cp.ParseInternal(args);
         return cp;
     }
@@ -46,7 +46,7 @@ public class CliOption(ArgumentType type = ArgumentType.Internal)
         return init && m_argsdic.ContainsKey(option);
     }
 
-    public CliOption Add(string arg)
+    public Arguments Add(string arg)
     {
         m_args ??= new();
         AppendArg(arg, m_args);

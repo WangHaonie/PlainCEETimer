@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace PlainCEETimer.Countdown;
 
@@ -70,6 +71,7 @@ public static class PhTokenParser
         return tokens;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PhToken GetToken(string key) => key switch
     {
         "x" => PhToken.ExamName,

@@ -141,7 +141,7 @@ public sealed class ConsoleWindow : AppDialog
             {
                 try
                 {
-                    WaitForExit(ProcessHelper.RunElevated(App.ExecutablePath, new CliOption()
+                    WaitForExit(ProcessHelper.RunElevated(App.ExecutablePath, new Arguments()
                         .Add("/run").Add(Key)
                         .Add("/exe").Add(ExePath)
                         .Add("/args").Add(ExeArgs)

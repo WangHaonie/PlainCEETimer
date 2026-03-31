@@ -273,7 +273,7 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
             }
 
             var length = CurrentTokens.Count;
-            ContentBuilder.Length = 0;
+            ContentBuilder.Clear();
 
             for (int i = 0; i < length; i++)
             {

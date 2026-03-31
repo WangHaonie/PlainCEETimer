@@ -43,6 +43,7 @@ internal static class App
     public const string Gdi32Dll = "gdi32.dll";
     public const string Kernel32Dll = "kernel32.dll";
     public const string DateTimeFormat = "yyyyMMddHHmmss";
+    public const string AppTitle = $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
     private const string UEFilePrefix = "UnhandledException_";
 
     private static bool IsMainProcess;
@@ -51,8 +52,9 @@ internal static class App
     private static Icon appIcon;
     private static Mutex MainMutex;
     private static readonly object _lock = new();
-    private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
+    private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
+    private static readonly string MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
     [STAThread]
@@ -64,7 +66,7 @@ internal static class App
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #endif
-        MainMutex = new(true, $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]", out IsMainProcess);
+        MainMutex = new(true, MutexName, out IsMainProcess);
         AllArgs = string.Join(" ", args);
 
         if (IsMainProcess)
@@ -72,9 +74,11 @@ internal static class App
             new Action(StartPipeServer).Start();
         }
 
-        var parsed = CliOption.Parse(args);
+        var parsed = Arguments.Parse(args);
         var hasArgs = !string.IsNullOrWhiteSpace(parsed.FirstOption);
         var argc = hasArgs ? args.Length : 0;
+
+        InternalInit();
 
         if (!StartProgram(argc, parsed))
         {
@@ -83,10 +87,8 @@ internal static class App
         }
     }
 
-    private static bool StartProgram(int argc, CliOption args)
+    private static bool StartProgram(int argc, Arguments args)
     {
-        InternalInit();
-
         if (IsMainProcess)
         {
             if (ExecutableName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase))
@@ -135,7 +137,7 @@ internal static class App
             {
                 MessageX.Error($"为了您的使用体验，请不要更改程序文件名! \n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}\n\n程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。", autoClose: true);
 
-                ProcessHelper.Run("cmd", new CliOption(ArgumentType.System)
+                ProcessHelper.Run("cmd", new Arguments(ArgumentType.System)
                     .Add("/c")
                     .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
                     .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
@@ -144,14 +146,12 @@ internal static class App
 
             return true;
         }
-        else if (!(args.FirstOption == "run" && StartPipeClient(args.GetFirst(), args.Get("exe"), args.Get("args"))))
+
+        if (argc != 0 && !TryRunRedirector(args))
         {
-            if (argc != 0)
-            {
-                ConsoleHelper.Instance
-                    .WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red)
-                    .Timeout(3);
-            }
+            ConsoleHelper.Instance
+                .WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red)
+                .Timeout(3);
         }
 
         return false;
@@ -172,7 +172,7 @@ internal static class App
         lock (_lock)
         {
             var now = DateTime.Now;
-            var content = $"—————————————————— {GetAppDescription()} - {now.Format()} ——————————————————\n{ex}";
+            var content = $"—————————————————— {AppTitle} - {now.Format()} ——————————————————\n{ex}";
             var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
             var exFilePath = $"{ExecutableDir}{exFileName}";
             File.AppendAllText(exFilePath, content);
@@ -183,7 +183,7 @@ internal static class App
     private static void PrintHelp()
     {
         ConsoleHelper.Instance
-            .WriteLine(GetAppDescription(), ConsoleColor.White)
+            .WriteLine(AppTitle, ConsoleColor.White)
             .WriteLine(AppName, ConsoleColor.White)
             .WriteLine()
             .WriteLine("用法:")
@@ -228,6 +228,22 @@ internal static class App
             }
         }
         catch { }
+    }
+
+    private static bool TryRunRedirector(Arguments args)
+    {
+        if (args.FirstOption == "run")
+        {
+            var exe = args.Get("exe");
+            var arg_ = args.Get("args");
+
+            if (exe != null && arg_ != null)
+            {
+                return StartPipeClient(args.GetFirst(), exe, arg_);
+            }
+        }
+
+        return false;
     }
 
     private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
@@ -297,10 +313,5 @@ internal static class App
         {
             PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
-    }
-
-    private static string GetAppDescription()
-    {
-        return $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
     }
 }

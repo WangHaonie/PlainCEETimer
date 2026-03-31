@@ -105,6 +105,6 @@ public class OptimizationHelper(bool isAuto)
             };
         }
 
-        ConsoleWindow.Run(path, new CliOption(ArgumentType.System).Add("install").Add(App.ExecutablePath).Add("/verbose").ToArgs(), complete, param);
+        ConsoleWindow.Run(path, new Arguments(ArgumentType.System).Add("install").Add(App.ExecutablePath).Add("/verbose").ToArgs(), complete, param);
     }
 }

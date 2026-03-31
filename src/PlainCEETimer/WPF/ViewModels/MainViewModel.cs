@@ -387,11 +387,12 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             ExamItems = new string[length];
             var max = General.Truncate;
             var no = General.No;
+            var sb = new StringBuilder(32);
 
             for (int i = 0; i < length; i++)
             {
-                var sb = new StringBuilder(32);
                 var e = Exams[i];
+                sb.Clear();
 
                 if (no)
                 {
