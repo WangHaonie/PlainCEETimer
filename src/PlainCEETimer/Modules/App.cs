@@ -57,6 +57,10 @@ internal static class App
     private static readonly string MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
     private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
 
+#if DEBUG
+    internal static readonly bool DebugShouldDumpToConsole = true;
+#endif
+
     [STAThread]
     private static void Main(string[] args)
     {

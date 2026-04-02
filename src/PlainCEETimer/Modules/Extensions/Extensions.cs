@@ -79,7 +79,19 @@ public static class Extensions
 #if DEBUG
     public static T Dump<T>(this T obj)
     {
-        AppMessageBox.Instance.Info(JsonConvert.SerializeObject(obj, Formatting.Indented));
+        var json = JsonConvert.SerializeObject(obj);
+
+        if (App.DebugShouldDumpToConsole)
+        {
+            ConsoleHelper.Instance
+                .Write("[").Write(DateTime.Now.Format()).Write("] ")
+                .WriteLine(json);
+        }
+        else
+        {
+            AppMessageBox.Instance.Info(json);
+        }
+
         return obj;
     }
 #endif

@@ -44,7 +44,7 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     private volatile bool IsDisposing;
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
-    private readonly StringBuilder ContentBuilder = new(512);
+    private readonly StringBuilder ContentBuilder = new(128);
     private readonly SynchronizationContext CurrentContext = context ?? SynchronizationContext.Current;
 
     public void Start(CountdownStartInfo startInfo)
@@ -289,11 +289,11 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     {
         PhToken.ExamName => CurrentExam.Name,
         PhToken.Days => span.Days.ToString(),
-        PhToken.DecimalDays => Math.Ceiling(span.TotalDays).ToString(),
-        PhToken.CeilingDays => span.TotalDays.ToString("0.0"),
+        PhToken.DecimalDays => span.TotalDays.Format(),
+        PhToken.CeilingDays => Math.Ceiling(span.TotalDays).ToString(),
         PhToken.Hours => span.Hours.ToString("00"),
         PhToken.TotalHours => Math.Truncate(span.TotalHours).ToString(),
-        PhToken.DecimalHours => span.TotalHours.ToString("0.0"),
+        PhToken.DecimalHours => span.TotalHours.Format(),
         PhToken.Minutes => span.Minutes.ToString("00"),
         PhToken.TotalMinutes => span.TotalMinutes.ToString("0"),
         PhToken.Seconds => span.Seconds.ToString("00"),
