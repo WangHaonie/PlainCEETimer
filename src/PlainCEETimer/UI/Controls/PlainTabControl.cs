@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -26,7 +27,7 @@ public class PlainTabControl : TabControl
 
             if (ThemeManager.NewThemeAvailable)
             {
-                ThemeManager.EnableDarkModeForControl(this, NativeStyle.DarkTheme);
+                ThemeManager.EnableDarkModeForControl(this, SystemStyle.DarkTheme);
             }
             else
             {
@@ -34,7 +35,7 @@ public class PlainTabControl : TabControl
             }
         }
 
-        this.RemoveFocusDot();
+        this.HideFocusIndicator();
         base.OnHandleCreated(e);
     }
 
@@ -43,7 +44,7 @@ public class PlainTabControl : TabControl
         if (UseDark && m.Msg == WM.PARENTNOTIFY
             && m.WParam.ToInt32().LoWord == WM.CREATE)
         {
-            ThemeManager.EnableDarkModeForControl(m.LParam, NativeStyle.ExplorerDark);
+            ThemeManager.EnableDarkModeForControl(m.LParam, SystemStyle.ExplorerDark);
         }
 
         base.WndProc(ref m);

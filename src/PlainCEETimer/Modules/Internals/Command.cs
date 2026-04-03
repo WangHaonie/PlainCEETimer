@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
-using System.Windows.Forms;
+﻿using System.Reflection;
 
-namespace PlainCEETimer.Modules.Internals;
+namespace System.Windows.Forms;
 
 internal static class Command
 {

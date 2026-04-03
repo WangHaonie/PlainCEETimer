@@ -9,7 +9,6 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
-using PlainCEETimer.Modules.Internals;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
