@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.WPF.Extensions;
@@ -17,12 +18,16 @@ public class WinFormsWindowDragService : IWindowDragService
     public event EventHandler<DragEndEventArgs> DragEnd;
 
     private bool drag;
+    private Point LastLocation;
+    private Point LastMouseLocation;
     private readonly AppForm form;
 
     public WinFormsWindowDragService(AppForm appForm)
     {
         form = appForm;
         form.MouseDown += Form_MouseDown;
+        form.MouseMove += Form_MouseMove;
+        form.MouseUp += Form_MouseUp;
     }
 
     private void Form_MouseDown(object sender, MouseEventArgs e)
@@ -34,15 +39,31 @@ public class WinFormsWindowDragService : IWindowDragService
 
             if (!cea.Cancel)
             {
-                var p = form.Location.ToDouble();
+                form.Cursor = Cursors.SizeAll;
+                LastLocation = form.Location;
+                LastMouseLocation = e.Location;
                 DragStart?.Invoke(this, EventArgs.Empty);
                 drag = true;
-                form.Cursor = Cursors.SizeAll;
-                form.DragMove();
-                form.Cursor = Cursors.Default;
-                drag = false;
-                DragEnd?.Invoke(this, new(p, form.Location.ToDouble()));
             }
+        }
+    }
+
+    private void Form_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (drag)
+        {
+            var mpos = Cursor.Position;
+            form.SetLocation(mpos.X - LastMouseLocation.X, mpos.Y - LastMouseLocation.Y);
+        }
+    }
+
+    private void Form_MouseUp(object sender, MouseEventArgs e)
+    {
+        if (drag)
+        {
+            form.Cursor = Cursors.Default;
+            drag = false;
+            DragEnd?.Invoke(this, new(LastLocation.ToDouble(), form.Location.ToDouble()));
         }
     }
 }

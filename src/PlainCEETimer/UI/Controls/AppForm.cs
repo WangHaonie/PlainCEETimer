@@ -118,15 +118,6 @@ public abstract class AppForm : Form, IAppWindow
         return new(x, y);
     }
 
-    internal protected void DragMove()
-    {
-        if (IsHandleCreated && WindowState == FormWindowState.Normal)
-        {
-            Capture = false;
-            Win32UI.SendMessage(Handle, WM.SYSCOMMAND, NativeConstants.SC_MOVE | NativeConstants.HTCAPTION, 0);
-        }
-    }
-
     internal protected void SetLocation(int x, int y)
     {
         SetBounds(x, y, 0, 0, BoundsSpecified.Location);
