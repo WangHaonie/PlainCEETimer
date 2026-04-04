@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -36,11 +37,11 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     private Exam[] Exams;
     private CountdownStartInfo Info;
     private CountdownRule DefaultRule;
-    private PhParsedTokenCollection CurrentTokens;
     private CountdownRule[] CustomRules;
     private CountdownRule[] GlobalRules;
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
+    private ReadOnlyCollection<PhParsedToken> CurrentTokens;
     private volatile bool IsDisposing;
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];

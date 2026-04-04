@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
 namespace PlainCEETimer.Countdown;
 
 public static class PhTokenParser
 {
-    private static readonly Dictionary<string, PhParsedTokenCollection> _cache = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, ReadOnlyCollection<PhParsedToken>> _cache = new(StringComparer.Ordinal);
 
-    public static PhParsedTokenCollection Parse(string format)
+    public static ReadOnlyCollection<PhParsedToken> Parse(string format)
     {
         if (string.IsNullOrEmpty(format))
         {
-            return [];
+            return new(Array.Empty<PhParsedToken>());
         }
 
         if (_cache.TryGetValue(format, out var parsed))
@@ -20,7 +21,7 @@ public static class PhTokenParser
             return parsed;
         }
 
-        var tokens = new PhParsedTokenCollection();
+        var tokens = new List<PhParsedToken>();
         var length = format.Length;
         var i = 0;
         var j = 0;
@@ -67,8 +68,9 @@ public static class PhTokenParser
             tokens.Add(new() { Value = format.Substring(j) });
         }
 
-        _cache[format] = tokens;
-        return tokens;
+        var col = tokens.AsReadOnly();
+        _cache[format] = col;
+        return col;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
