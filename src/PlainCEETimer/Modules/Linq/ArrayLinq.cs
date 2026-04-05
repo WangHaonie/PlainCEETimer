@@ -69,18 +69,13 @@ public static class ArrayLinq
 
     public static T[] ArrayOrder<T>(this T[] array)
     {
-        Array.Sort(array);
+        Array.Sort(array, ObjectComparer<T>.AscendingComparer);
         return array;
     }
 
-    public static T[] ArrayOrderDescending<T>(this T[] array, bool isSorted = false)
+    public static T[] ArrayOrderDescending<T>(this T[] array)
     {
-        if (!isSorted)
-        {
-            Array.Sort(array);
-        }
-
-        Array.Reverse(array);
+        Array.Sort(array, ObjectComparer<T>.DescendingComparer);
         return array;
     }
 

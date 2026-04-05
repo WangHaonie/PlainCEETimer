@@ -137,7 +137,6 @@ internal static class ConfigValidator
                 }
             }
 
-            value.ArrayOrder();
             field = value;
         }
     }

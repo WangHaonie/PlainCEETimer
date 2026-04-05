@@ -339,7 +339,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         ShowTrayIcon = General.TrayIcon;
         ShowTrayText = General.TrayText;
 
-        Exams = AppConfig.Exams.ArrayWhere(e => !e.Excluded);
+        Exams = AppConfig.Exams.ArrayWhere(e => !e.Excluded).ArrayOrder();
         ExamIndex = AppConfig.Exam;
 
         if (IsDraggable)

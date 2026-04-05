@@ -230,7 +230,7 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
         {
             CurrentRules = CustomRules
                 .ArrayWhere(r => r.Phase == phase)
-                .ArrayOrderDescending(true);
+                .ArrayOrderDescending();
 
             DefaultRule = GlobalRules[(int)phase];
             CanUseRules = CanUseCustomText && CurrentRules.Length != 0;
