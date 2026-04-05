@@ -2,7 +2,7 @@
 
 namespace PlainCEETimer.Modules;
 
-public class ObjectComparer<T>
+public static class ObjectComparer<T>
 {
     public static readonly ObjectAscendingComparer AscendingComparer = new();
     public static readonly ObjectDescendingComparer DescendingComparer = new();

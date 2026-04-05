@@ -10,7 +10,7 @@ internal static class Command
     {
         if (fnDispatchID == null)
         {
-            var type = typeof(Control).Assembly.GetType("System.Windows.Forms.Command");
+            var type = typeof(Control).Assembly.GetType(typeof(Command).FullName);
 
             if (type != null)
             {
