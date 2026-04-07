@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Media;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.JsonConverters;
@@ -12,7 +11,7 @@ namespace PlainCEETimer.WPF.Models;
 [JsonConverter(typeof(FontModelConverter))]
 public class FontModel : IEquatable<FontModel>
 {
-    public FontFamily FontFamily { get; init; }
+    public FontFamilyWrapper FontFamily { get; init; }
 
     public double Size { get; init; }
 
@@ -57,7 +56,7 @@ public class FontModel : IEquatable<FontModel>
             return true;
         }
 
-        return FontFamily.Source == other.FontFamily.Source
+        return FontFamily?.Value.Source == other.FontFamily?.Value.Source
             && Size == other.Size
             && Weight == other.Weight;
     }
@@ -69,13 +68,13 @@ public class FontModel : IEquatable<FontModel>
 
     public override string ToString()
     {
-        return FontFamily.Source;
+        return FontFamily.Value.Source;
     }
 
     public override int GetHashCode()
     {
         return new HashCode()
-            .Add(FontFamily?.Source)
+            .Add(FontFamily?.Value.Source)
             .Add(Size)
             .Add(Weight)
             .Combine();

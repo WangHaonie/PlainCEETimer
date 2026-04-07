@@ -29,7 +29,7 @@ public sealed class FontModelConverter : JsonConverter<FontModel>
     {
         if (value != null && value.FontFamily != null)
         {
-            var src = value.FontFamily?.Source;
+            var src = value.FontFamily?.Name;
 
             if (src != null)
             {

@@ -21,7 +21,7 @@
                 Margin="5,0,5,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Text="{Binding Content}"
                 Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}}"
-                FontFamily="{Binding Font.FontFamily}"
+                FontFamily="{Binding Font.FontFamily.Value}"
                 FontSize="{Binding Font.Size}"
                 FontWeight="{Binding Font.Weight}" />
         </Grid>

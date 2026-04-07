@@ -66,7 +66,7 @@
                 <TextBox AcceptsReturn="True" TextWrapping="Wrap" MaxLength="200"
                     VerticalScrollBarVisibility="Auto"
                     Text="{Binding PreviewText, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                    FontFamily="{Binding PreviewFontFamily}"
+                    FontFamily="{Binding PreviewFontFamily.Value}"
                     FontWeight="{Binding FontWeight.FontWeight}"
                     FontSize="{Binding PreviewFontSize}"
                     mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"

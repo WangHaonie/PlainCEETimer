@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlainCEETimer.Modules;
@@ -29,7 +28,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
     public partial FontWeightItem FontWeight { get; set; }
 
     [ObservableProperty]
-    public partial FontFamily PreviewFontFamily { get; set; }
+    public partial FontFamilyWrapper PreviewFontFamily { get; set; }
 
     [ObservableProperty]
     public partial double PreviewFontSize { get; set; }
@@ -98,7 +97,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         previewText = DefaultPreviewText;
 
         font ??= App.AppConfig.GetFont().Font1;
-        initFont = font.FontFamily.Source;
+        initFont = font.FontFamily.Name;
         initSize = font.SizePt;
         initWeight = font.Weight;
         MessageX = service;
@@ -143,9 +142,9 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         try
         {
             var ff = FontFamilyText.Truncate(ConfigValidator.MaxFontFamilyLength, false);
-            var font = new FontFamily(ff);
+            var font = new FontFamilyWrapper(ff);
+            IsFontValid = font.Value.BaseUri == null && !string.IsNullOrWhiteSpace(ff);
             PreviewFontFamily = font;
-            IsFontValid = font.BaseUri == null && !string.IsNullOrWhiteSpace(ff);
         }
         catch
         {
