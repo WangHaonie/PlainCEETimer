@@ -132,7 +132,7 @@ public static class Extensions
                     return (IntPtr)f.GetValue(component);
                 break;
             case MemberTypes.Property:
-                var prop = typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var prop = typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.NonPublic);
                 if (prop != null)
                     return (IntPtr)prop.GetValue(component);
                 break;

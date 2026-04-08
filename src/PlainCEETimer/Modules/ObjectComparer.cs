@@ -2,24 +2,24 @@
 
 namespace PlainCEETimer.Modules;
 
-public static class ObjectComparer<T>
+internal static class ObjectComparer<T>
 {
-    public static readonly ObjectAscendingComparer AscendingComparer = new();
-    public static readonly ObjectDescendingComparer DescendingComparer = new();
+    internal static readonly ObjectAscendingComparer AscendingComparer = new();
+    internal static readonly ObjectDescendingComparer DescendingComparer = new();
 
     private static readonly Comparer<T> comparer = Comparer<T>.Default;
 
-    public class ObjectAscendingComparer : IComparer<T>
+    internal class ObjectAscendingComparer : IComparer<T>
     {
-        public int Compare(T x, T y)
+        int IComparer<T>.Compare(T x, T y)
         {
             return comparer.Compare(x, y);
         }
     }
 
-    public class ObjectDescendingComparer : IComparer<T>
+    internal class ObjectDescendingComparer : IComparer<T>
     {
-        public int Compare(T x, T y)
+        int IComparer<T>.Compare(T x, T y)
         {
             return comparer.Compare(y, x);
         }

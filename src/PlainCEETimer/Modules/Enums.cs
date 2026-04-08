@@ -39,3 +39,12 @@ public enum ArgumentType
     Internal,
     System
 }
+
+public enum DurationUnit
+{
+    None,
+    Seconds,
+    Minutes,
+    Hours,
+    Days
+}

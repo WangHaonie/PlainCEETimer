@@ -12,8 +12,8 @@ public sealed class ExamTimeConverter : JsonConverter<DateTime>
     {
         try
         {
-            if (reader.TokenType == JsonToken.String &&
-            DateTime.TryParseExact(reader.Value.ToString(), App.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var value))
+            if (reader.TokenType == JsonToken.String
+                && DateTime.TryParseExact(reader.Value.ToString(), App.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var value))
             {
                 return value;
             }

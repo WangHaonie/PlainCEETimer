@@ -1,28 +1,14 @@
-﻿using System.Reflection;
+﻿using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Forms;
 
 internal static class Command
 {
-    private static FnDispatchID fnDispatchID;
+    private static Command_FnDispatchID fnDispatchID;
 
     public static bool DispatchID(int id)
     {
-        if (fnDispatchID == null)
-        {
-            var type = typeof(Control).Assembly.GetType(typeof(Command).FullName);
-
-            if (type != null)
-            {
-                var target = type.GetMethod(nameof(DispatchID), BindingFlags.Public | BindingFlags.Static);
-
-                if (target != null)
-                {
-                    fnDispatchID = (FnDispatchID)Delegate.CreateDelegate(typeof(FnDispatchID), target);
-                }
-            }
-        }
-
+        fnDispatchID ??= DelegateHelper.StaticCreateDelegate<Command_FnDispatchID>(typeof(Control), typeof(Command));
         return fnDispatchID(id);
     }
 }

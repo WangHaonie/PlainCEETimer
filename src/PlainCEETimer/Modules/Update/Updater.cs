@@ -44,7 +44,7 @@ internal class Updater : IDisposable
             var response = AppUpdate.FetchAsync(isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable, token).Result;
             var latest = response.Version;
             var date = response.ReleaseDate;
-            var dateDesc = $"发布于 {GetDescription(date)} ({date.Format()})";
+            var dateDesc = $"发布于 {date.FormatToTimeAgo()} ({date.Format()})";
             var content = response.Changelog;
             var sha = response.Commit;
 
@@ -108,18 +108,6 @@ internal class Updater : IDisposable
             cts.Destory();
             cts = null;
         }
-    }
-
-    private static string GetDescription(DateTime pub)
-    {
-        var span = DateTime.Now - pub;
-        var tm = (int)span.TotalMinutes;
-        var th = span.TotalHours;
-
-        if ((int)span.TotalSeconds < 60) return "刚刚";
-        if (tm < 60) return $"{tm} 分钟前";
-        if (th < 24D) return $"{th:0.0} 小时前";
-        return $"{span.TotalDays:0.0} 天前";
     }
 
     private static string GetMessage(bool hasUpdate, bool isPreview, Version latest, string sha, string date, string content)

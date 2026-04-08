@@ -191,30 +191,17 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         var start = DTPStart.Value;
         var end = DTPEnd.Value;
         var span = end - start;
-        var ts = (long)span.TotalSeconds;
 
-        if (end <= start || ts < 1)
+        if (end <= start || span.TotalSeconds < 1.0)
         {
             MessageX.Error("考试时长无效！请检查相应日期时间是否合理。");
             return false;
         }
 
-        string tmp = null;
+        var tmp = span.FormatToDurationWhen(span.TotalDays > 3.0 || span.TotalMinutes < 40.0);
 
-        if (span.TotalDays > 4)
-        {
-            tmp = span.TotalDays.ToString("0") + " 天";
-        }
-        else if (span.TotalMinutes < 40 && ts > 60)
-        {
-            tmp = span.TotalMinutes.ToString("0") + " 分钟";
-        }
-        else if (ts < 60)
-        {
-            tmp = ts.ToString("0") + " 秒";
-        }
-
-        if (tmp != null && MessageX.Warn($"检测到设置的考试时间太长或太短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", MessageButtons.YesNo) != true)
+        if (tmp != null
+            && MessageX.Warn($"检测到设置的考试时间太长或太短！当前考试时长: {tmp}。\n\n如果你确认当前设置的是正确的考试时间，请点击 是，否则请点击 否。", MessageButtons.YesNo) != true)
         {
             return false;
         }

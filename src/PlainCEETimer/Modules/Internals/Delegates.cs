@@ -1,3 +1,4 @@
-﻿namespace System.Windows.Forms;
-
-internal delegate bool FnDispatchID(int id);
+﻿namespace System.Windows.Forms
+{
+    internal delegate bool Command_FnDispatchID(int id);
+}
