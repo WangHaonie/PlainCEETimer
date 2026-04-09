@@ -68,9 +68,9 @@ public static class PhTokenParser
             tokens.Add(new() { Value = format.Substring(j) });
         }
 
-        var col = tokens.AsReadOnly();
-        _cache[format] = col;
-        return col;
+        parsed = tokens.AsReadOnly();
+        _cache[format] = parsed;
+        return parsed;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

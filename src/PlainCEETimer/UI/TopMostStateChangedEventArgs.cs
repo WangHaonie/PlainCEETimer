@@ -2,5 +2,5 @@
 
 public class TopMostStateChangedEventArgs(bool topmost)
 {
-    public bool IsTopMost { get; } = topmost;
+    public bool IsTopMost => topmost;
 }

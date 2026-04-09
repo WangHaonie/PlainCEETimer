@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules.Reflection;
 
