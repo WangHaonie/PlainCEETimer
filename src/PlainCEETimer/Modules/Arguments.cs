@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
@@ -7,14 +8,14 @@ using PlainCEETimer.Modules.Linq;
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
-public class Arguments(ArgumentType type = ArgumentType.Internal)
+public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<KeyValuePair<string, string>>
 {
     public string FirstOption => m_first;
 
     private bool init;
     private string m_first;
     private StringBuilder m_args;
-    private Dictionary<string, string> m_argsdic;
+    private readonly Dictionary<string, string> m_argsdic = [];
     private static readonly char[] m_idchars = ['/', '-'];
     private const char Quote = '"';
     private const char Backslash = '\\';
@@ -56,6 +57,11 @@ public class Arguments(ArgumentType type = ArgumentType.Internal)
     public string ToArgs()
     {
         return m_args?.ToString();
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return m_argsdic.GetEnumerator();
     }
 
     private void AppendArg(string arg, StringBuilder sb)
@@ -142,7 +148,6 @@ public class Arguments(ArgumentType type = ArgumentType.Internal)
     {
         if (!args.IsNullOrEmpty())
         {
-            m_argsdic = [];
             var length = args.Length;
 
             for (int i = 0; i < length; i++)
@@ -226,5 +231,10 @@ public class Arguments(ArgumentType type = ArgumentType.Internal)
         }
 
         return true;
+    }
+
+    IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+    {
+        return m_argsdic.GetEnumerator();
     }
 }

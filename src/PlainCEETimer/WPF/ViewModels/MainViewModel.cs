@@ -111,6 +111,26 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Initialize();
     }
 
+    public void Cleanup()
+    {
+        Countdown.Destory();
+    }
+
+    public bool CanClose()
+    {
+        return false;
+    }
+
+    internal void WndProc(ref Message m)
+    {
+        if (m.Msg == WM.DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
+        {
+            SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
+        }
+
+        DefWndProc(ref m);
+    }
+
     private void Initialize()
     {
         Initializer.Initialize += (_, _) =>
@@ -256,63 +276,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         };
     }
 
-    private void UpdateTrayText(string content)
-    {
-        if (ShowTrayText)
-        {
-            try
-            {
-                TrayIcon.Text = content.Truncate(60);
-            }
-            catch { }
-        }
-    }
-
-    private void UpdateBorderColor(WFColor fore, WFColor back)
-    {
-        var type = BorderColorObj.Type;
-
-        if (BorderColorObj.Enabled && type is 1 or 2)
-        {
-            SetBorderColor(true, type == 1 ? fore : back);
-        }
-    }
-
-    private void SaveLocation()
-    {
-        AppConfig.Location = Bounds.Location;
-        ConfigValidator.DemandConfig();
-    }
-
-    public void Cleanup()
-    {
-        Countdown.Destory();
-    }
-
-    public void VerifyLocation()
-    {
-        if (!DragService.IsDragging)
-        {
-            ApplyLocation();
-            var p = Bounds.Location;
-
-            if (Bounds.KeepOnScreen() != p)
-            {
-                SaveLocation();
-            }
-        }
-    }
-
-    internal void WndProc(ref Message m)
-    {
-        if (m.Msg == WM.DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
-        {
-            SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
-        }
-
-        DefWndProc(ref m);
-    }
-
     private void RefreshSettings()
     {
         LoadConfig();
@@ -373,7 +336,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
 
         MenuSwitchExams.Parent = ContextMenuMain.MenuItems[0];
-        MenuSwitchExams.DefaultText = "请先添加考试信息";
+        MenuSwitchExams.DefaultText = "请先添加考试";
         MenuSwitchExams.SelectedIndex = ExamIndex;
         MenuSwitchExams.CountPerPage = General.CountPerPage;
 
@@ -435,9 +398,9 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void ApplyStyle()
     {
         var topmost = General.TopMost;
-        BorderColorObj = General.BorderColor;
-        Styles.TopMost = false;
+        Styles.TopMost = !topmost;
         Styles.TopMost = topmost;
+        BorderColorObj = General.BorderColor;
         WindowManager.Current.OnTopMostChanged(General.UniTopMost);
         Styles.ShowInTaskbar = !topmost;
         Styles.Opacity = General.Opacity / 100D;
@@ -546,6 +509,26 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
     }
 
+    private void VerifyLocation()
+    {
+        if (!DragService.IsDragging)
+        {
+            ApplyLocation();
+            var p = Bounds.Location;
+
+            if (Bounds.KeepOnScreen() != p)
+            {
+                SaveLocation();
+            }
+        }
+    }
+
+    private void SaveLocation()
+    {
+        AppConfig.Location = Bounds.Location;
+        ConfigValidator.DemandConfig();
+    }
+
     private void SwitchToExam(int index, bool sw)
     {
         if (index >= 0 && index != ExamIndex)
@@ -561,7 +544,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
     }
 
-    private static int GetAutoSwitchInterval(int Index) => Index switch
+    private static int GetAutoSwitchInterval(int index) => index switch
     {
         1 => 15_000, // 15 s
         2 => 30_000, // 30 s
@@ -634,7 +617,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         ScreenRect = screens[ScreenIndex].WorkingArea;
     }
 
-    public void ChangeCountdownFont(UnifiedFont font)
+    private void ChangeCountdownFont(UnifiedFont font)
     {
         Font = font.Font1;
         CountdownModel.Font = font.Font2;
@@ -660,6 +643,28 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         MaximumWidth = Screen.WorkingArea.Width - 10;
     }
 
+    private void UpdateTrayText(string content)
+    {
+        if (ShowTrayText)
+        {
+            try
+            {
+                TrayIcon.Text = content.Truncate(60);
+            }
+            catch { }
+        }
+    }
+
+    private void UpdateBorderColor(WFColor fore, WFColor back)
+    {
+        var type = BorderColorObj.Type;
+
+        if (BorderColorObj.Enabled && type is 1 or 2)
+        {
+            SetBorderColor(true, type == 1 ? fore : back);
+        }
+    }
+
     private void SetBorderColor(bool enabled, WFColor color)
     {
         if (BorderColorService?.SetBorderColor(enabled, color) != true)
@@ -671,10 +676,5 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void NotifyModelChanged()
     {
         OnPropertyChanged(ModelPropName);
-    }
-
-    public bool CanClose()
-    {
-        return false;
     }
 }

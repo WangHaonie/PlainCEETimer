@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace PlainCEETimer.Modules;
 
@@ -28,6 +29,7 @@ public class HashCode
         return hash;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void CombineCore(int hashCode)
     {
         hash = unchecked((hash * 397) ^ hashCode);

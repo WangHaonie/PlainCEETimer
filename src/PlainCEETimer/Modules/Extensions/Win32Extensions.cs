@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -8,8 +9,8 @@ public static class Win32Extensions
         => ColorTranslator.ToWin32(color);
 
     public static int ToWin32(this bool b)
-        => b ? 1 : 0;
+        => Convert.ToInt32(b);
 
     public static bool ToBool(this int i)
-        => i != 0;
+        => Convert.ToBoolean(i);
 }
