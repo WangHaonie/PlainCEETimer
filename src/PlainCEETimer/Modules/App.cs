@@ -140,12 +140,7 @@ internal static class App
             else
             {
                 MessageX.Error($"为了您的使用体验，请不要更改程序文件名! \n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}\n\n程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。", autoClose: true);
-
-                ProcessHelper.Run("cmd", new Arguments(ArgumentType.System)
-                    .Add("/c")
-                    .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
-                    .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
-                    .ToArgs());
+                RenameAndRestart();
             }
 
             return true;
@@ -275,6 +270,7 @@ internal static class App
 
     private static void InternalInit()
     {
+        HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
         ThemeManager.Initialize();
         DefaultValues.InitEssentials(true);
@@ -309,6 +305,29 @@ internal static class App
         250.AsDelay(_ => Win32.ExitProcess(0));
         WindowManager.TryExitUI();
         Environment.Exit(0);
+    }
+
+    private static void HideDotNetAppConfig()
+    {
+        try
+        {
+            var file = $"{ExecutableDir}{AppNameEng}.exe.config";
+
+            if (File.Exists(file))
+            {
+                File.SetAttributes(file, File.GetAttributes(file) | FileAttributes.Hidden | FileAttributes.System);
+            }
+        }
+        catch { }
+    }
+
+    private static void RenameAndRestart()
+    {
+        ProcessHelper.Run("cmd", new Arguments(ArgumentType.System)
+            .Add("/c")
+            .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
+            .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
+            .ToArgs());
     }
 
     private static void HandleException(Exception ex)
