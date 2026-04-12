@@ -405,11 +405,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Styles.ShowInTaskbar = !topmost;
         Styles.Opacity = General.Opacity / 100D;
 
-        if (!BorderColorObj.Enabled)
-        {
-            SetBorderColor(false, default);
-        }
-        else
+        if (BorderColorObj.Enabled)
         {
             switch (BorderColorObj.Type)
             {
@@ -421,6 +417,10 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                     SetBorderColor(true, ThemeManager.GetAccentColor());
                     break;
             }
+        }
+        else
+        {
+            SetBorderColor(false, default);
         }
 
         var newIsWpf = Display.UseWPF;
@@ -659,7 +659,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     {
         var type = BorderColorObj.Type;
 
-        if (BorderColorObj.Enabled && type is 1 or 2)
+        if (type is 1 or 2)
         {
             SetBorderColor(true, type == 1 ? fore : back);
         }
@@ -669,7 +669,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     {
         if (BorderColorService?.SetBorderColor(enabled, color) != true)
         {
-            BorderColor = (enabled ? color : Colors.WindowBorder).ToColor();
+            BorderColor = (BorderColorObj.Enabled && enabled ? color : Colors.WindowBorder).ToColor();
         }
     }
 
