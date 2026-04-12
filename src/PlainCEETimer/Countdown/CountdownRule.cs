@@ -140,8 +140,12 @@ public class CountdownRule : IListViewData<CountdownRule>
             return order;
         }
 
-        order = other.Tick.CompareTo(Tick);
-        return Phase == CountdownPhase.P3 ? -order : order;
+        if (Phase == CountdownPhase.P3)
+        {
+            return Tick.CompareTo(other.Tick);
+        }
+
+        return other.Tick.CompareTo(Tick);
     }
 
     public bool Equals(CountdownRule other)
