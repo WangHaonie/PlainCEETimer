@@ -84,7 +84,7 @@ public sealed class PlainTextBox : TextBox
         private void ContentBox_TextChanged(object sender, EventArgs e)
         {
             m_Text = ContentBox.Text;
-            TextLength = ContentBox.Text.RemoveIllegalChars().Length;
+            TextLength = ContentBox.Text.Clean().Length;
             LabelCounter.Text = TextLength + "/" + ConfigValidator.MaxCustomTextLength;
             LabelCounter.ForeColor = !ConfigValidator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
         }
@@ -196,7 +196,7 @@ public sealed class PlainTextBox : TextBox
         {
             if (Clipboard.ContainsText())
             {
-                var text = Clipboard.GetText().RemoveIllegalChars();
+                var text = Clipboard.GetText().Clean();
                 Input(text.Length + Text.Length, text);
             }
 

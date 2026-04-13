@@ -35,7 +35,7 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
 
         var colors = ConfigValidator.ParseColorPairFromConfig(json.GetValue(nameof(ColorPair.Fore), 0), json.GetValue(nameof(ColorPair.Back), 0));
 
-        var text = json.GetValue(nameof(existingValue.Text), string.Empty).RemoveIllegalChars();
+        var text = json.GetValue(nameof(existingValue.Text), string.Empty).Clean();
         ConfigValidator.EnsureCustomText(text);
 
         return new()

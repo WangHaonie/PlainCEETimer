@@ -214,7 +214,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             return false;
         }
 
-        var text = TextBoxCustomText.Text.RemoveIllegalChars();
+        var text = TextBoxCustomText.Text.Clean();
 
         if (!ConfigValidator.VerifyCustomText(text))
         {

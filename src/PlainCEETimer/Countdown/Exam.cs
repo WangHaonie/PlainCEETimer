@@ -17,7 +17,7 @@ public class Exam : IListViewData<Exam>
         get;
         init
         {
-            value = value.RemoveIllegalChars();
+            value = value.Clean();
 
             if (ConfigValidator.ValidateNeeded && !ConfigValidator.IsValidExamLength(value.Length))
             {

@@ -56,7 +56,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
             TextBoxName = b.TextBox(223, false, (_, _) =>
             {
-                CurrentExamName = TextBoxName.Text.RemoveIllegalChars();
+                CurrentExamName = TextBoxName.Text.Clean();
                 int count = CurrentExamName.Length;
                 LabelCounter.Text = $"{count}/{ConfigValidator.MaxExamNameLength}";
                 LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;

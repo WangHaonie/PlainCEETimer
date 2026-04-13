@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Countdown;
 
@@ -11,7 +12,7 @@ public static class PhTokenParser
 
     public static ReadOnlyCollection<PhParsedToken> Parse(string format)
     {
-        if (string.IsNullOrEmpty(format))
+        if (format == null || (format = format.Clean()).Length == 0)
         {
             return new(Array.Empty<PhParsedToken>());
         }

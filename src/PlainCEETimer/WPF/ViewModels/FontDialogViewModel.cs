@@ -219,7 +219,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         {
             FontFamily = PreviewFontFamily,
             Size = PreviewFontSize,
-            Weight = FontWeight.FontWeight,
+            Weight = FontWeight.FontWeight
         });
 
         return true;
