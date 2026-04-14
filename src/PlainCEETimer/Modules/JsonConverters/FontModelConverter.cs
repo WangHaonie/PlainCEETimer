@@ -14,7 +14,7 @@ public sealed class FontModelConverter : JsonConverter<FontModel>
     {
         var json = reader.Load(serializer);
         var ffvalue = json.GetValue(nameof(FontModel.FontFamily), "#GLOBAL USER INTERFACE").Truncate(ConfigValidator.MaxFontFamilyLength, false);
-        var fsvalue = json.GetValue(nameof(FontModel.Size), default(double));
+        var fsvalue = json.GetValue(nameof(FontModel.Size), default(double)).Clamp(ConfigValidator.MinFontSize, ConfigValidator.MaxFontSize);
         var fwvalue = json.GetValue(nameof(FontModel.Weight), default(int)).Clamp(1, 999);
 
         return new()

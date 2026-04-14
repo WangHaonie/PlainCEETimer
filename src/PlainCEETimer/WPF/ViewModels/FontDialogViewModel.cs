@@ -218,7 +218,7 @@ public sealed partial class FontDialogViewModel : ObservableObject, IConfirmClos
         OnParseResult(new FontModel()
         {
             FontFamily = PreviewFontFamily,
-            Size = PreviewFontSize,
+            Size = PreviewFontSize.Clamp(ConfigValidator.MinFontSize, ConfigValidator.MaxFontSize),
             Weight = FontWeight.FontWeight
         });
 

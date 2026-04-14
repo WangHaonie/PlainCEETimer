@@ -111,7 +111,7 @@ public static class StringExtensions
 
         using var cache = new ArrayCache<char>(max);
         var buffer = cache.Value;
-        int count = ws - start;
+        var count = ws - start;
 
         for (int i = 0; i < count; i++)
         {
@@ -120,7 +120,7 @@ public static class StringExtensions
 
         for (int i = ws; i <= end; i++)
         {
-            char c = s[i];
+            var c = s[i];
 
             if (!char.IsWhiteSpace(c))
             {
