@@ -16,16 +16,14 @@ public class ListViewItemSet<TData>()
 
     private class ItemSetComparer : IEqualityComparer<Element>
     {
-        private readonly EqualityComparer<TData> Comparer = EqualityComparer<TData>.Default;
-
         bool IEqualityComparer<Element>.Equals(Element x, Element y)
         {
-            return Comparer.Equals(x.Data, y.Data);
+            return x.Data.Equals(y.Data);
         }
 
         int IEqualityComparer<Element>.GetHashCode(Element obj)
         {
-            return Comparer.GetHashCode(obj.Data);
+            return obj.Data.GetHashCode();
         }
     }
 

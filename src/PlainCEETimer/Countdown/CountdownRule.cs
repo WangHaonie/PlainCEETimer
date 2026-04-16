@@ -50,7 +50,7 @@ public class CountdownRule : IListViewData<CountdownRule>
                 .Add(obj.Phase)
                 .Add(obj.Tick)
                 .Add(obj.Colors)
-                .Add(obj.Text)
+                .Add(obj.TextHashCode)
                 .Combine();
         }
     }
@@ -119,12 +119,22 @@ public class CountdownRule : IListViewData<CountdownRule>
 
     public TimeSpan Tick { get; init; }
 
-    public string Text { get; init; }
+    public string Text
+    {
+        get;
+        init
+        {
+            TextHashCode = new(value);
+            field = value;
+        }
+    }
 
     public ColorPair Colors { get; init; }
 
     [JsonIgnore]
     public bool Default { get; init; }
+
+    private readonly StringHashCodeProvider TextHashCode;
 
     public int CompareTo(CountdownRule other)
     {

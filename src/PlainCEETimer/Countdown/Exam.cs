@@ -24,6 +24,7 @@ public class Exam : IListViewData<Exam>
                 throw ConfigValidator.InvalidTampering(ConfigField.ExamNameLength);
             }
 
+            NameHashCode = new(value);
             field = value;
         }
     } = "";
@@ -61,6 +62,8 @@ public class Exam : IListViewData<Exam>
     public ExamSettings Settings { get; init; }
 
     public bool Excluded { get; set; }
+
+    private readonly StringHashCodeProvider NameHashCode;
 
     public int CompareTo(Exam other)
     {
@@ -109,9 +112,9 @@ public class Exam : IListViewData<Exam>
     public override int GetHashCode()
     {
         return new HashCode()
-            .Add(Name)
             .Add(Start)
             .Add(End)
+            .Add(NameHashCode)
             .Combine();
     }
 
