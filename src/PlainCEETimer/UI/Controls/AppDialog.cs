@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -10,13 +9,6 @@ public abstract class AppDialog : AppForm
     protected PlainButton ButtonB { get; private set; }
 
     private bool IsUserChanged;
-    private bool IsModal;
-
-    public new bool? ShowDialog(IWin32Window owner)
-    {
-        IsModal = true;
-        return base.ShowDialog(owner).AsBoolean();
-    }
 
     protected override void OnInitializing()
     {
@@ -53,16 +45,6 @@ public abstract class AppDialog : AppForm
     protected override bool OnClosing(CloseReason closeReason)
     {
         return IsUserChanged && ShowUnsavedWarning("是否保存当前更改？", OnClickButtonA, ref IsUserChanged);
-    }
-
-    protected override void OnClosed()
-    {
-        base.OnClosed();
-
-        if (IsModal)
-        {
-            Dispose();
-        }
     }
 
     protected void UserChanged()

@@ -133,7 +133,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 {
                     var dialog = GetChildDialog();
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    if (dialog.ShowDialog() == true)
                     {
                         AddItemSafe(dialog.Data);
                     }
@@ -301,7 +301,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             {
                 var dialog = GetChildDialog((TData)first.Tag);
 
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() == true)
                 {
                     AddItemSafe(dialog.Data);
                 }
@@ -318,7 +318,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             var data = (TData)first.Tag;
             var dialog = GetChildDialog(data);
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
                 EditItemSafe(first, dialog.Data, data);
             }
@@ -390,7 +390,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
             var dialog = GetChildDialog(data);
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
                 AddItemSafe(dialog.Data);
             }
@@ -413,7 +413,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
                 var dialog = GetChildDialog(newData);
 
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() == true)
                 {
                     EditItemSafe(item, dialog.Data, oldData);
                 }

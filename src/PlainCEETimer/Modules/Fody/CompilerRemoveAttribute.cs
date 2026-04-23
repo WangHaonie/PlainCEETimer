@@ -6,4 +6,4 @@ namespace PlainCEETimer.Modules.Fody;
 /// 在编译时删除该对象的声明。
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public sealed class CompilerRemoveAttribute : Attribute;
+internal sealed class CompilerRemoveAttribute : Attribute;

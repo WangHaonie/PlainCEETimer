@@ -133,7 +133,7 @@ public sealed class SettingsForm : AppForm
                                 Data = EditedExamInfo
                             };
 
-                            if (dialog.ShowDialog() == DialogResult.OK)
+                            if (dialog.ShowDialog() == true)
                             {
                                 EditedExamInfo = dialog.Data;
                                 SettingsChanged();
@@ -243,7 +243,7 @@ public sealed class SettingsForm : AppForm
                                 FixedData = EditedGlobalRules,
                             };
 
-                            if (dialog.ShowDialog() == DialogResult.OK)
+                            if (dialog.ShowDialog() == true)
                             {
                                 EditedCustomRules = dialog.Data;
                                 EditedGlobalRules = dialog.FixedData;
@@ -582,7 +582,7 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
-        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, 1, 3);
+        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, -3, 3);
         RtlArrangeControlXT(ButtonApply, ButtonOK, -3);
         InitWindowSize(ButtonCancel, 5, 4);
     }

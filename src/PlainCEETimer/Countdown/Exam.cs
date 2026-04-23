@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
@@ -12,6 +13,82 @@ namespace PlainCEETimer.Countdown;
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class Exam : IListViewData<Exam>
 {
+    private static readonly ExamNormalEqualityComparer NormalComparer = new();
+    private static readonly ExamFullEqualityComparer FullComparer = new();
+
+    private class ExamNormalEqualityComparer : IEqualityComparer<Exam>
+    {
+        public bool Equals(Exam x, Exam y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            return x.Start == y.Start
+                && x.End == y.End
+                && x.Name == y.Name;
+        }
+
+        public int GetHashCode(Exam obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            return new HashCode()
+                .Add(obj.Start)
+                .Add(obj.End)
+                .Add(obj.NameHashCode)
+                .Combine();
+        }
+    }
+
+    private class ExamFullEqualityComparer : IEqualityComparer<Exam>
+    {
+        public bool Equals(Exam x, Exam y)
+        {
+            if (x.Equals(x))
+            {
+                return true;
+            }
+
+            var s1 = x.Settings;
+            var s2 = y.Settings;
+
+            if (s1 == null || s2 == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(s1, s2))
+            {
+                return true;
+            }
+
+            return s1.Equals(s2);
+        }
+
+        public int GetHashCode(Exam obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            return new HashCode()
+                .Add(obj)
+                .Add(obj.Settings)
+                .Combine();
+        }
+    }
+
     public string Name
     {
         get;
@@ -89,19 +166,7 @@ public class Exam : IListViewData<Exam>
 
     public bool Equals(Exam other)
     {
-        if (other == null)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Start == other.Start
-            && End == other.End
-            && Name == other.Name;
+        return NormalComparer.Equals(this, other);
     }
 
     public override bool Equals(object obj)
@@ -111,11 +176,7 @@ public class Exam : IListViewData<Exam>
 
     public override int GetHashCode()
     {
-        return new HashCode()
-            .Add(Start)
-            .Add(End)
-            .Add(NameHashCode)
-            .Combine();
+        return NormalComparer.GetHashCode(this);
     }
 
     public object Clone()
@@ -134,7 +195,7 @@ public class Exam : IListViewData<Exam>
 
     bool IListViewData<Exam>.InternalEquals(Exam other)
     {
-        return Equals(other) && Settings.Equals(other.Settings);
+        return FullComparer.Equals(this, other);
     }
 
     private string DebuggerDisplay => $"{Name}: {Start.Format()} ~ {End.Format()}";

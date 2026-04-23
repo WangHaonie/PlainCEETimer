@@ -43,7 +43,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)' != 'Release'">
+	<DisableFody>true</DisableFody>
+  </PropertyGroup>
   <ItemGroup>
-    <WeaverFiles Include="$(OutputPath)PlainCEETimer.Fody.dll" />
+	<WeaverFiles Include="$(OutputPath)PlainCEETimer.Fody.dll" />
   </ItemGroup>
 </Project>

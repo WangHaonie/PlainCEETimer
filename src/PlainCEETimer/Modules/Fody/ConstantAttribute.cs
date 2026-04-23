@@ -6,4 +6,4 @@ namespace PlainCEETimer.Modules.Fody;
 /// 用于排除将被 <see cref="NoConstantsAttribute"/> 移除的常量
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-public sealed class ConstantAttribute : Attribute;
+internal sealed class ConstantAttribute : Attribute;

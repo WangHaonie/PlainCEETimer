@@ -48,6 +48,21 @@ public abstract class AppForm : Form, IAppWindow
     private static readonly Font AppFont;
     private static readonly int CurrentFontHeight;
 
+    protected sealed override CreateParams CreateParams
+    {
+        get
+        {
+            var cp = base.CreateParams;
+
+            if (CheckParam(AppWindowStyle.CompositedStyle))
+            {
+                cp.ExStyle |= WS.EX_COMPOSITED;
+            }
+
+            return cp;
+        }
+    }
+
     protected AppForm()
     {
         ParamsInternal = Params;
@@ -100,6 +115,16 @@ public abstract class AppForm : Form, IAppWindow
     {
         AppFont = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
         CurrentFontHeight = AppFont.Height;
+    }
+
+    public new bool? ShowDialog()
+    {
+        return ShowDialog(null);
+    }
+
+    public new bool? ShowDialog(IWin32Window owner)
+    {
+        return base.ShowDialog(owner).AsBoolean();
     }
 
     public void ReActivate()
@@ -155,7 +180,7 @@ public abstract class AppForm : Form, IAppWindow
         base.OnShown(e);
     }
 
-    protected override void OnResizeBegin(EventArgs e)
+    protected sealed override void OnResizeBegin(EventArgs e)
     {
         if (IsSizable)
         {
@@ -165,7 +190,7 @@ public abstract class AppForm : Form, IAppWindow
         base.OnResizeBegin(e);
     }
 
-    protected override void OnResizeEnd(EventArgs e)
+    protected sealed override void OnResizeEnd(EventArgs e)
     {
         if (IsSizable)
         {
@@ -183,7 +208,7 @@ public abstract class AppForm : Form, IAppWindow
         base.OnResizeEnd(e);
     }
 
-    protected override void OnSizeChanged(EventArgs e)
+    protected sealed override void OnSizeChanged(EventArgs e)
     {
         if (SetRoundRegion && SetRoundCorner)
         {
@@ -191,16 +216,6 @@ public abstract class AppForm : Form, IAppWindow
         }
 
         base.OnSizeChanged(e);
-    }
-
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        if (OnEscClosing && e.KeyCode == Keys.Escape)
-        {
-            Close();
-        }
-
-        base.OnKeyDown(e);
     }
 
     protected sealed override void OnFormClosing(FormClosingEventArgs e)
@@ -213,13 +228,18 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnClosed(EventArgs e)
     {
-        OnClosed();
         SaveWindowParameters();
         ClearEvents();
         base.OnClosed(e);
+        OnClosed();
+
+        if (Modal)
+        {
+            Dispose();
+        }
     }
 
-    protected override void OnHandleDestroyed(EventArgs e)
+    protected sealed override void OnHandleDestroyed(EventArgs e)
     {
         if (CheckParam(AppWindowStyle.ModelessDialog) && !SuppressDialogEnd)
         {
@@ -229,22 +249,7 @@ public abstract class AppForm : Form, IAppWindow
         base.OnHandleDestroyed(e);
     }
 
-    protected sealed override CreateParams CreateParams
-    {
-        get
-        {
-            var cp = base.CreateParams;
-
-            if (CheckParam(AppWindowStyle.CompositedStyle))
-            {
-                cp.ExStyle |= WS.EX_COMPOSITED;
-            }
-
-            return cp;
-        }
-    }
-
-    protected override void OnHandleCreated(EventArgs e)
+    protected sealed override void OnHandleCreated(EventArgs e)
     {
         if (DpiRatio == 0F)
         {
@@ -295,6 +300,16 @@ public abstract class AppForm : Form, IAppWindow
         }
 
         base.OnHandleCreated(e);
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        if (OnEscClosing && e.KeyCode == Keys.Escape)
+        {
+            Close();
+        }
+
+        base.OnKeyDown(e);
     }
 
     /// <summary>
@@ -494,7 +509,12 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void InitWindowSize(Control xyLast, int xOffset = 0, int yOffset = 0)
     {
-        ClientSize = new(xyLast.Right + ScaleToDpi(xOffset), xyLast.Bottom + ScaleToDpi(yOffset));
+        InitWindowSize(xyLast, xyLast, xOffset, yOffset);
+    }
+
+    protected void InitWindowSize(Control xLast, Control yLast, int xOffset = 0, int yOffset = 0)
+    {
+        ClientSize = new(xLast.Right + ScaleToDpi(xOffset), yLast.Bottom + ScaleToDpi(yOffset));
         MinimumSize = Size;
     }
 

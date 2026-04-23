@@ -14,14 +14,12 @@ public class HashCode
 
     public HashCode Add<T>(T value)
     {
-        CombineCore(value?.GetHashCode() ?? 0);
-        return this;
+        return CombineCore(value?.GetHashCode() ?? 0);
     }
 
     public HashCode Add<T>(T[] value, IEqualityComparer<T> comparer)
     {
-        CombineCore(new ArrayEqualityComparer<T>(comparer).GetHashCode(value));
-        return this;
+        return CombineCore(new ArrayEqualityComparer<T>(comparer).GetHashCode(value));
     }
 
     public int Combine()
@@ -30,8 +28,9 @@ public class HashCode
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CombineCore(int hashCode)
+    private HashCode CombineCore(int hashCode)
     {
         hash = unchecked((hash * 397) ^ hashCode);
+        return this;
     }
 }
