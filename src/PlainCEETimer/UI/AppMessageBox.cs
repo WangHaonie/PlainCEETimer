@@ -28,7 +28,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
             }
         }
 
-        private DialogResult Result;
+        private bool? Result;
         private PlainLabel LabelMessage;
         private PictureBox ImageIcon;
 
@@ -91,18 +91,18 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
         protected override bool OnClickButtonA()
         {
-            Result = buttons == MessageButtons.YesNo ? DialogResult.Yes : DialogResult.None;
+            Result = buttons == MessageButtons.YesNo;
             Close();
             return true;
         }
 
         protected override void OnClickButtonB()
         {
-            Result = buttons == MessageButtons.YesNo ? DialogResult.No : DialogResult.OK;
+            Result = buttons != MessageButtons.YesNo;
             Close();
         }
 
-        public DialogResult ShowCore()
+        public bool? ShowCore()
         {
             ShowDialog(owner);
             return Result;
@@ -217,7 +217,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
             parent.ReActivate();
         }
 
-        return new MessageBox(parent, level, message, buttons, autoClose).ShowCore().AsBoolean();
+        return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();
     }
 
     private static int ToDialogResult(bool? result, MessageButtons buttons)

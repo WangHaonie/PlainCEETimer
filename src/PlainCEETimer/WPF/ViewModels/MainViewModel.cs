@@ -209,9 +209,9 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 {
                     FormSettings = new();
 
-                    FormSettings.DialogEnd += result =>
+                    FormSettings.DialogEnd += (_, e) =>
                     {
-                        if (result.AsBoolean() == true)
+                        if (e.Result == true)
                         {
                             RefreshSettings();
                         }
@@ -239,7 +239,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 {
                     DialogHotKey = new();
 
-                    if (DialogHotKey.ShowDialog(Owner).AsBoolean() == true)
+                    if (DialogHotKey.ShowDialog(Owner) == true)
                     {
                         RegisterHotKeys();
                     }

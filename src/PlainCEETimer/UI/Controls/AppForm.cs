@@ -25,7 +25,11 @@ public abstract class AppForm : Form, IAppWindow
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
-    public event Action<DialogResult> DialogEnd;
+    protected bool SuppressDialogEnd { get; set; }
+
+    protected bool? DialogEndResult { get; set; }
+
+    public event EventHandler<DialogEndEventArgs> DialogEnd;
 
     private bool IsLoading = true;
     private bool SetRoundRegion;
@@ -211,15 +215,18 @@ public abstract class AppForm : Form, IAppWindow
     {
         OnClosed();
         SaveWindowParameters();
-        base.OnClosed(e);
         ClearEvents();
-        Dispose(true);
+        base.OnClosed(e);
+    }
 
-        if (CheckParam(AppWindowStyle.ModelessDialog))
+    protected override void OnHandleDestroyed(EventArgs e)
+    {
+        if (CheckParam(AppWindowStyle.ModelessDialog) && !SuppressDialogEnd)
         {
-            DialogEnd?.Invoke(DialogResult);
-            DialogEnd = null;
+            OnDialogEnd();
         }
+
+        base.OnHandleDestroyed(e);
     }
 
     protected sealed override CreateParams CreateParams
@@ -401,6 +408,14 @@ public abstract class AppForm : Form, IAppWindow
     }
 
     /// <summary>
+    /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
+    /// </summary>
+    protected static void RtlArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    {
+        target.SetBounds(reference.Left - target.Width + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+    }
+
+    /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 左边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
     /// </summary>
     protected static void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
@@ -483,14 +498,9 @@ public abstract class AppForm : Form, IAppWindow
         MinimumSize = Size;
     }
 
-    protected void EndModelessDialog(bool success, bool close = true)
+    protected void OnDialogEnd()
     {
-        DialogResult = success ? DialogResult.OK : DialogResult.None;
-
-        if (close)
-        {
-            Close();
-        }
+        DialogEnd?.Invoke(this, new(DialogEndResult));
     }
 
     /// <summary>

@@ -42,7 +42,7 @@ public sealed class PlainTextBox : TextBox
             this.AddControls(b =>
             [
                 ContentBox = b.TextArea(0, 0, ContentBox_TextChanged),
-                ButtonClose = b.Button("×", 18, 20, (_, _) => EndModelessDialog(false)),
+                ButtonClose = b.Button("×", 18, 20, (_, _) => Close()),
                 ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
                 LabelCounter = b.Label("0/0")
             ]);
@@ -78,7 +78,8 @@ public sealed class PlainTextBox : TextBox
 
         private void ButtonApply_Click(object sender, EventArgs e)
         {
-            EndModelessDialog(true);
+            DialogEndResult = true;
+            Close();
         }
 
         private void ContentBox_TextChanged(object sender, EventArgs e)
@@ -129,9 +130,9 @@ public sealed class PlainTextBox : TextBox
                 {
                     Child = new(this);
 
-                    Child.DialogEnd += dr =>
+                    Child.DialogEnd += (_, e) =>
                     {
-                        if (dr == DialogResult.OK)
+                        if (e.Result == true)
                         {
                             Text = Child.Content;
                         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -77,7 +78,7 @@ public static class Extensions
     }
 
 #if DEBUG
-    public static T Dump<T>(this T obj)
+    public static T Dump<T>(this T obj, [CallerArgumentExpression(nameof(obj))] string name = null)
     {
         var json = JsonConvert.SerializeObject(obj);
 
@@ -85,11 +86,12 @@ public static class Extensions
         {
             ConsoleHelper.Instance
                 .Write("[").Write(DateTime.Now.Format()).Write("] ")
+                .Write(name).Write(": ")
                 .WriteLine(json);
         }
         else
         {
-            AppMessageBox.Instance.Info(json);
+            AppMessageBox.Instance.Info(name + ": " + json);
         }
 
         return obj;

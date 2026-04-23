@@ -21,6 +21,7 @@ public sealed class SettingsForm : AppForm
     private bool CanSaveChanges;
     private bool AllowExit;
     private bool ShowingDialog;
+    private bool IsApply;
     private int SelectedTheme;
     private AppConfig AppConfig;
     private GeneralObject General;
@@ -63,12 +64,13 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelTruncate;
     private NavigationView NavBar;
     private NavigationPage PageAppearance;
+    private PlainButton ButtonApply;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
     private PlainButton ButtonRestart;
     private PlainButton ButtonRulesMan;
     private PlainButton ButtonDefaultColor;
-    private PlainButton ButtonSave;
+    private PlainButton ButtonOK;
     private PlainButton ButtonSyncTime;
     private PlainCheckBox CheckBoxAutoSwitch;
     private PlainCheckBox CheckBoxMainFormUseWPF;
@@ -430,7 +432,8 @@ public sealed class SettingsForm : AppForm
                 ])
             ]),
 
-            ButtonSave = b.Button("保存(&S)", (_, _) => SaveChanges()).Disable(),
+            ButtonApply = b.Button("应用(&A)", (_, _) => ApplyChanged()).Disable(),
+            ButtonOK = b.Button("确定(&O)", (_, _) => SaveChanges()).Disable(),
             ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
         ]);
 
@@ -579,7 +582,8 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
-        ArrangeCommonButtonsR(ButtonSave, ButtonCancel, NavBar, 1, 3);
+        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, 1, 3);
+        RtlArrangeControlXT(ButtonApply, ButtonOK, -3);
         InitWindowSize(ButtonCancel, 5, 4);
     }
 
@@ -658,11 +662,7 @@ public sealed class SettingsForm : AppForm
 
     private void SettingsChanged(object sender, EventArgs e)
     {
-        EnsureLoaded(() =>
-        {
-            UserChanged = true;
-            ButtonSave.Enabled = true;
-        });
+        SetSettingsChanged(true);
     }
 
     private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
@@ -737,7 +737,7 @@ public sealed class SettingsForm : AppForm
                 ButtonSyncTime.Enabled = !isWorking;
                 ComboBoxNtpServers.Enabled = !isWorking;
                 ButtonRestart.Enabled = !isWorking;
-                ButtonSave.Enabled = !isWorking && UserChanged;
+                ButtonOK.Enabled = !isWorking && UserChanged;
                 ButtonCancel.Enabled = !isWorking;
                 break;
             case SettingsArea.Restart:
@@ -855,11 +855,32 @@ public sealed class SettingsForm : AppForm
         {
             CanSaveChanges = true;
             UserChanged = false;
-            Close();
+            SuppressDialogEnd = IsApply;
+
+            if (!IsApply)
+            {
+                Close();
+            }
+
             return true;
         }
 
         return false;
+    }
+
+    private void ApplyChanged()
+    {
+        IsApply = true;
+
+        if (SaveChanges())
+        {
+            DialogEndResult = true;
+            SaveSettings();
+            SetSettingsChanged(false);
+            OnDialogEnd();
+        }
+
+        IsApply = false;
     }
 
     private void SaveSettings()
@@ -896,6 +917,16 @@ public sealed class SettingsForm : AppForm
 
         ConfigValidator.DemandConfig();
         ConfigValidator.SaveConfig();
-        EndModelessDialog(true, false);
+        DialogEndResult = true;
+    }
+
+    private void SetSettingsChanged(bool value)
+    {
+        EnsureLoaded(() =>
+        {
+            UserChanged = value;
+            ButtonOK.Enabled = value;
+            ButtonApply.Enabled = value;
+        });
     }
 }
