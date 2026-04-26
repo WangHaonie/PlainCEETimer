@@ -74,7 +74,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private ContextMenu ContextMenuMain;
     private Exam[] Exams;
     private HotKeyService[] hksvc;
-    private EventHandler<HotKeyPressEventArgs>[] hkevents;
     private BorderColorObject BorderColorObj;
     private Rect ScreenRect;
     private CountdownPosition CountdownPos;
@@ -464,50 +463,42 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void RegisterHotKeys()
     {
-        var hks = AppConfig.HotKeys;
+        UnregisterHotKeys();
 
-        if (!hks.IsNullOrEmpty())
+        var hks = AppConfig.HotKeys;
+        hksvc = new HotKeyService[hks.Length];
+
+        for (int i = 0; i < hks.Length; i++)
         {
-            if (!hksvc.IsNullOrEmpty())
+            var svc = new HotKeyService(hks[i], GetHotKeyHandler(i));
+
+            if (!svc.Register())
             {
-                foreach (var svc in hksvc)
-                {
-                    svc.Unregister();
-                }
+                MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
             }
 
-            hksvc = new HotKeyService[ConfigValidator.HotKeyCount];
+            hksvc[i] = svc;
+        }
+    }
 
-            hkevents ??=
-            [
-                (_, _) =>
-                {
-                    IsHotKey1Activated = !IsHotKey1Activated;
-                    Styles.Opacity = IsHotKey1Activated ? 0D : 1D;
-
-                    if (IsHotKey1Activated)
-                    {
-                        Owner.ReActivate();
-                    }
-                },
-
-                (_, _) => Countdown.SwitchTo(SwitchOption.Previous),
-                (_, _) => Countdown.SwitchTo(SwitchOption.Next)
-            ];
-
-            for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, hks.Length); i++)
+    private void UnregisterHotKeys()
+    {
+        if (!hksvc.IsNullOrEmpty())
+        {
+            foreach (var svc in hksvc)
             {
-                var svc = new HotKeyService(hks[i], hkevents[i]);
-
-                if (!svc.Register())
-                {
-                    MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
-                }
-
-                hksvc[i] = svc;
+                svc?.Unregister();
             }
         }
     }
+
+    private EventHandler<HotKeyPressEventArgs> GetHotKeyHandler(int index) => index switch
+    {
+        0 => ToggleVisibilityHotKeyHandler,
+        1 => SwitchToPreviousExamHotKeyHandler,
+        2 => SwitchToNextExamHotKeyHandler,
+        _ => null
+    };
 
     private void VerifyLocation()
     {
@@ -671,6 +662,27 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         {
             BorderColor = (BorderColorObj.Enabled && enabled ? color : Colors.WindowBorder).ToColor();
         }
+    }
+
+    private void ToggleVisibilityHotKeyHandler(object sender, HotKeyPressEventArgs e)
+    {
+        IsHotKey1Activated = !IsHotKey1Activated;
+        Styles.Opacity = IsHotKey1Activated ? 0D : 1D;
+
+        if (IsHotKey1Activated)
+        {
+            Owner.ReActivate();
+        }
+    }
+
+    private void SwitchToPreviousExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
+    {
+        Countdown.SwitchTo(SwitchOption.Previous);
+    }
+
+    private void SwitchToNextExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
+    {
+        Countdown.SwitchTo(SwitchOption.Next);
     }
 
     private void NotifyModelChanged()

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
@@ -20,14 +18,12 @@ public sealed class HotKeyDialog : AppDialog
     private PlainHotkeyControl HotkeyCtrl2;
     private PlainHotkeyControl HotkeyCtrl3;
     private PlainHotkeyControl[] HotKeyCtrls;
-    private HotKey[] HotKeys;
     private readonly AppConfig AppConfig = App.AppConfig;
 
     protected override void OnInitializing()
     {
         Text = "快捷键绑定";
         OnUserChanged = (_, _) => UserChanged();
-        HotKeys = AppConfig.HotKeys;
 
         this.AddControls(b =>
         [
@@ -61,36 +57,38 @@ public sealed class HotKeyDialog : AppDialog
 
     protected override void OnLoad()
     {
-        if (!HotKeys.IsNullOrEmpty())
+        var hotKeys = AppConfig.HotKeys;
+
+        for (int i = 0; i < hotKeys.Length; i++)
         {
-            for (int i = 0; i < Math.Min(ConfigValidator.HotKeyCount, HotKeys.Length); i++)
-            {
-                HotKeyCtrls[i].Hotkey = new(HotKeys[i]);
-            }
+            HotKeyCtrls[i].Hotkey = new(hotKeys[i]);
         }
     }
 
     protected override bool OnClickButtonA()
     {
-        Dictionary<int, HotKey> hkdic = new(ConfigValidator.HotKeyCount);
+        var hks = ReadHotKeys();
 
-        for (int i = 0; i < ConfigValidator.HotKeyCount; i++)
+        if (!HotKeyManager.TryValidate(hks, out var failed))
         {
-            var hk = new HotKey(HotKeyCtrls[i].Hotkey);
-            var flag = hkdic.ContainsValue(hk);
-            hkdic[i] = hk;
-
-            if (HotKeyService.Test(hk) == HotKeyStatus.Failed || (hk.IsValid && flag))
-            {
-                MessageX.Error($"无法注册快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
-                return false;
-            }
+            MessageX.Error($"无法注册快捷键 \"{ConfigValidator.GetHokKeyDescription(failed)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
+            return false;
         }
 
-        var arr = new HotKey[ConfigValidator.HotKeyCount];
-        hkdic.Values.CopyTo(arr, 0);
-        AppConfig.HotKeys = arr;
+        AppConfig.HotKeys = hks;
         ConfigValidator.DemandConfig();
         return base.OnClickButtonA();
+    }
+
+    private HotKey[] ReadHotKeys()
+    {
+        var hotKeys = new HotKey[ConfigValidator.HotKeyCount];
+
+        for (int i = 0; i < hotKeys.Length; i++)
+        {
+            hotKeys[i] = new(HotKeyCtrls[i].Hotkey);
+        }
+
+        return hotKeys;
     }
 }
