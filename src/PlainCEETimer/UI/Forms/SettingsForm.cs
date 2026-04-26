@@ -118,7 +118,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 334, 225, RelativeToFont(1.6), RelativeToFont(0.4),
+            NavBar = b.NavBar(5, 1, 54, 312, 225, RelativeToFont(1.6), RelativeToFont(0.4),
             [
                 b.NavPage("基本",
                 [
@@ -146,7 +146,7 @@ public sealed class SettingsForm : AppForm
                             SettingsChanged();
                         }),
 
-                        ComboBoxAutoSwitchInterval = b.ComboBox(86, SettingsChanged,
+                        ComboBoxAutoSwitchInterval = b.ComboBox(80, SettingsChanged,
                             "10 秒",
                             "15 秒",
                             "30 秒",
@@ -226,10 +226,10 @@ public sealed class SettingsForm : AppForm
                     GBoxContent = b.GroupBox("倒计时",
                     [
                         LabelCountdownEnd = b.Label("当考试开始后, 显示"),
-                        ComboBoxCountdownEnd = b.ComboBox(190, SettingsChanged, Ph.ComboBoxEndItems),
+                        ComboBoxCountdownEnd = b.ComboBox(176, SettingsChanged, Ph.ComboBoxEndItems),
                         LabelCountdownFormat = b.Label("倒计时内容格式"),
 
-                        ComboBoxCountdownFormat = b.ComboBox(119, (_, _) =>
+                        ComboBoxCountdownFormat = b.ComboBox(105, (_, _) =>
                         {
                             ButtonRulesMan.Enabled = ComboBoxCountdownFormat.SelectedIndex == 8;
                             SettingsChanged();
@@ -258,7 +258,7 @@ public sealed class SettingsForm : AppForm
                         ComboBoxScreens = b.ComboBox(107, SettingsChanged, DisplayHelper.GetSystemDisplays()),
                         LabelPosition = b.Label("位置"),
 
-                        ComboBoxPosition = b.ComboBox(84, (_, _) => UpdateOptionsForPptsvc(),
+                        ComboBoxPosition = b.ComboBox(80, (_, _) => UpdateOptionsForPptsvc(),
                             "左上角",
                             "左侧居中",
                             "左下角",
@@ -282,7 +282,7 @@ public sealed class SettingsForm : AppForm
                     GBoxPptsvc = b.GroupBox("兼容希沃PPT小工具",
                     [
                         LabelPptsvc = b.Label("(仅个别机型) 用于避免希沃PPT小工具内置白板打开后底部工具栏消失的情况。"),
-                        CheckBoxPptSvc = b.CheckBox(null, SettingsChanged)
+                        CheckBoxPptSvc = b.CheckBox(" ", SettingsChanged)
                     ])
                 ]),
 
@@ -449,7 +449,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void RunLayout(bool isHighDpi)
     {
-        GroupBoxArrageControl(LabelExamInfo, 0, 2);
+        GroupBoxArrageControl(GBoxExamInfo, LabelExamInfo, 0, 2);
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
         ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
         CenterControlY(CheckBoxAutoSwitch, ButtonExamInfo, 1);
@@ -458,8 +458,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxExamInfo, ButtonExamInfo, 7);
 
         ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
-
-        GroupBoxArrageControl(CheckBoxStartup, 4, 2);
+        GroupBoxArrageControl(GBoxOthers, CheckBoxStartup, 4, 2);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
         ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
         ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
@@ -468,8 +467,8 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxOthers, CheckBoxTrayText, 4);
 
 
-        GroupBoxArrageControl(ComboBoxCountdownEnd);
-        GroupBoxArrageControl(LabelCountdownEnd);
+        GroupBoxArrageControl(GBoxContent, ComboBoxCountdownEnd);
+        GroupBoxArrageControl(GBoxContent, LabelCountdownEnd);
         CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
         CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
         ArrangeControlYL(LabelCountdownFormat, LabelCountdownEnd);
@@ -481,9 +480,8 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 6);
 
         ArrangeControlYL(GBoxDraggable, GBoxContent, 0, 2);
-
-        GroupBoxArrageControl(ComboBoxScreens, 0, 2);
-        GroupBoxArrageControl(LabelScreens);
+        GroupBoxArrageControl(GBoxDraggable, ComboBoxScreens, 0, 2);
+        GroupBoxArrageControl(GBoxDraggable, LabelScreens);
         CenterControlY(LabelScreens, ComboBoxScreens);
         CompactControlX(ComboBoxScreens, LabelScreens);
         ArrangeControlXRT(LabelPosition, ComboBoxScreens, LabelScreens);
@@ -493,15 +491,14 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxDraggable, CheckBoxDraggable, 3);
 
         ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
-
-        GroupBoxArrageControl(LabelPptsvc);
+        GroupBoxArrageControl(GBoxPptsvc, LabelPptsvc);
         SetLabelAutoWrap(LabelPptsvc, true);
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
-        GBoxPptsvc.Height = GBoxDraggable.Height + ScaleToDpi(isHighDpi ? 8 : 1);
+        GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, 2);
 
 
-        GroupBoxArrageControl(LabelColor);
+        GroupBoxArrageControl(GBoxColors, LabelColor);
         SetLabelAutoWrap(LabelColor, true);
         ArrangeControlYL(LabelColorP1, LabelColor, 0, 3);
         ArrangeControlYL(LabelColorP2, LabelColorP1, 0, 6);
@@ -525,7 +522,7 @@ public sealed class SettingsForm : AppForm
 
         if (AllowTheme)
         {
-            GroupBoxArrageControl(RadioButtonThemeSystem, 4, 4);
+            GroupBoxArrageControl(GBoxTheme, RadioButtonThemeSystem, 4, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
             ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
             GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 6);
@@ -537,27 +534,25 @@ public sealed class SettingsForm : AppForm
             GBoxTheme.Delete();
         }
 
-        GroupBoxArrageControl(LabelOpacity);
-        GroupBoxArrageControl(NudOpacity, 0, 2);
+        GroupBoxArrageControl(GBoxMainForm, LabelOpacity);
+        GroupBoxArrageControl(GBoxMainForm, NudOpacity, 0, 2);
         CenterControlY(LabelOpacity, NudOpacity);
         CompactControlX(NudOpacity, LabelOpacity, 5);
         ArrangeControlXT(CheckBoxMainFormUseWPF, NudOpacity, 15);
         CenterControlY(CheckBoxMainFormUseWPF, NudOpacity);
         ArrangeControlYL(NudMaxCpp, NudOpacity, 0, 3);
-
         ArrangeControlYL(CheckBoxBorderColor, LabelOpacity, 4);
         ArrangeControlXT(ComboBoxBorderColor, CheckBoxBorderColor);
         CompactControlY(ComboBoxBorderColor, NudOpacity, 4);
         CenterControlY(CheckBoxBorderColor, ComboBoxBorderColor, 1);
         ArrangeControlXT(BlockBorderColor, ComboBoxBorderColor, 5);
         CenterControlY(BlockBorderColor, ComboBoxBorderColor);
-
         GroupBoxAutoAdjustHeight(GBoxMainForm, ComboBoxBorderColor, 6);
 
 
         ArrangeControlYL(GBoxExamsMenu, GBoxMainForm);
-        GroupBoxArrageControl(NudMaxCpp, 0, 3);
-        GroupBoxArrageControl(LabelMaxCpp);
+        GroupBoxArrageControl(GBoxExamsMenu, NudMaxCpp, 0, 3);
+        GroupBoxArrageControl(GBoxExamsMenu, LabelMaxCpp);
         CenterControlY(LabelMaxCpp, NudMaxCpp);
         CompactControlX(NudMaxCpp, LabelMaxCpp);
         CompactControlX(NudMaxCpp, LabelMaxCpp, 5);
@@ -567,22 +562,24 @@ public sealed class SettingsForm : AppForm
         CompactControlX(NudTruncate, LabelTruncate, 5);
         ArrangeControlYL(CheckBoxShowNo, LabelTruncate, 4);
         CompactControlY(CheckBoxShowNo, NudTruncate, 3);
-        GroupBoxAutoAdjustHeight(GBoxExamsMenu, CheckBoxShowNo, 5);
+        GroupBoxAutoAdjustHeight(GBoxExamsMenu, CheckBoxShowNo, 2);
 
-        GroupBoxArrageControl(LabelSyncTime);
+
+        GroupBoxArrageControl(GBoxSyncTime, LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime, true);
         ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
         ArrangeControlXT(ButtonSyncTime, ComboBoxNtpServers, 5);
         GroupBoxAutoAdjustHeight(GBoxSyncTime, ComboBoxNtpServers, 6);
 
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
-        GroupBoxArrageControl(LabelRestart);
+        GroupBoxArrageControl(GBoxRestart, LabelRestart);
         UpdateSettingsArea(SettingsArea.Restart, false);
         SetLabelAutoWrap(LabelRestart, true);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
 
-        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, -3, 3);
+
+        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, -3, 4);
         RtlArrangeControlXT(ButtonApply, ButtonOK, -3);
         InitWindowSize(ButtonCancel, 5, 4);
     }
@@ -742,7 +739,7 @@ public sealed class SettingsForm : AppForm
                 break;
             case SettingsArea.Restart:
                 GBoxRestart.Text = isWorking ? "关闭倒计时" : "重启倒计时";
-                LabelRestart.Text = $"用于更改了屏幕缩放之后, 可以点击此按钮来重启程序以确保 UI 正常显示。{(isWorking ? "(●'◡'●)" : "")}";
+                LabelRestart.Text = $"用于更改了屏幕缩放之后，可以点击此按钮来重启程序以确保 UI 正常显示。{(isWorking ? "(●'◡'●)" : "")}";
                 ButtonRestart.Text = isWorking ? "点击关闭(&G)" : "点击重启(&R)";
                 break;
             case SettingsArea.PPTService:

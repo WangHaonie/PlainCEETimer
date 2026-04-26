@@ -219,10 +219,7 @@ public readonly struct SystemDisplay
 
     public readonly override string ToString()
     {
-        var sb = new StringBuilder(64)
-            .Append(Index + 1)
-            .Append(". ");
-
+        var sb = new StringBuilder(64);
         var appendComma = false;
 
         if (!string.IsNullOrWhiteSpace(Name))

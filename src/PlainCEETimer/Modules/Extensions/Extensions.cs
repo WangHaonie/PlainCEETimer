@@ -78,14 +78,20 @@ public static class Extensions
     }
 
 #if DEBUG
-    public static T Dump<T>(this T obj, [CallerArgumentExpression(nameof(obj))] string name = null)
+    public static T Dump<T, TMember>(this T obj, Func<T, TMember> selector, [CallerArgumentExpression(nameof(selector))] string name = "")
+    {
+        Dump(selector(obj), name);
+        return obj;
+    }
+
+    public static T Dump<T>(this T obj, [CallerArgumentExpression(nameof(obj))] string name = "")
     {
         var json = JsonConvert.SerializeObject(obj);
 
         if (App.DebugShouldDumpToConsole)
         {
             ConsoleHelper.Instance
-                .Write("[").Write(DateTime.Now.Format()).Write("] ")
+                .Write("[").Write(DateTime.Now.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff")).Write("] ")
                 .Write(name).Write(": ")
                 .WriteLine(json);
         }

@@ -124,7 +124,9 @@ public abstract class AppForm : Form, IAppWindow
 
     public new bool? ShowDialog(IWin32Window owner)
     {
-        return base.ShowDialog(owner).AsBoolean();
+        var result = base.ShowDialog(owner).AsBoolean();
+        Dispose();
+        return result;
     }
 
     public void ReActivate()
@@ -232,11 +234,6 @@ public abstract class AppForm : Form, IAppWindow
         ClearEvents();
         base.OnClosed(e);
         OnClosed();
-
-        if (Modal)
-        {
-            Dispose();
-        }
     }
 
     protected sealed override void OnHandleDestroyed(EventArgs e)
@@ -497,9 +494,10 @@ public abstract class AppForm : Form, IAppWindow
         target.Top = reference.Bottom + ScaleToDpi(yOffset);
     }
 
-    protected static void GroupBoxArrageControl(Control target, int xOffset = 0, int yOffset = 0)
+    protected static void GroupBoxArrageControl(PlainGroupBox groupBox, Control target, int xOffset = 0, int yOffset = 0)
     {
-        target.SetBounds(6 + ScaleToDpi(xOffset), CurrentFontHeight + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+        var drc = groupBox.DisplayRectangle;
+        target.SetBounds(drc.X + ScaleToDpi(xOffset), drc.Y + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
 
     protected static void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
