@@ -19,11 +19,10 @@ public class WindowManager
     public event EventHandler ActivateRequested;
 
     private bool _topmost = true;
-    private static bool _isWpf;
 
     internal static void RunMainUI(bool isWpf)
     {
-        if (_isWpf = isWpf)
+        if (isWpf)
         {
             new WPFApp().Run(new MainWindow());
         }
@@ -51,15 +50,9 @@ public class WindowManager
 
     internal static void TryExitUI()
     {
-        if (_isWpf)
-        {
-            System.Windows.Application.Current?.Shutdown();
-        }
-        else
-        {
-            150.AsDelay(_ => Application.ExitThread());
-            Application.Exit();
-        }
+        System.Windows.Application.Current?.Shutdown();
+        150.AsDelay(_ => Application.ExitThread());
+        Application.Exit();
     }
 
     ~WindowManager()
