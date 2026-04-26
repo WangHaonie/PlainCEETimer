@@ -285,6 +285,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         SetCountdownAutoWrap();
         ApplyStyle();
         RunCountdown();
+        UpdateCountdownEnabledState();
         RegisterHotKeys();
     }
 
@@ -667,9 +668,12 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void ToggleVisibilityHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
         IsHotKey1Activated = !IsHotKey1Activated;
-        Styles.Opacity = IsHotKey1Activated ? 0D : 1D;
 
-        if (IsHotKey1Activated)
+        var value = !IsHotKey1Activated;
+        Styles.Visible = value;
+        UpdateCountdownEnabledState();
+
+        if (value)
         {
             Owner.ReActivate();
         }
@@ -683,6 +687,11 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void SwitchToNextExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
         Countdown.SwitchTo(SwitchOption.Next);
+    }
+
+    private void UpdateCountdownEnabledState()
+    {
+        Countdown.Enabled = !IsHotKey1Activated || ShowTrayText;
     }
 
     private void NotifyModelChanged()

@@ -8,6 +8,8 @@ public interface ICountdownService : IDisposable
 
     event CountdownUpdatedEventHandler CountdownUpdated;
 
+    bool Enabled { get; set; }
+
     void Start(CountdownStartInfo startInfo);
 
     void SwitchTo(SwitchOption option, int index = 0);

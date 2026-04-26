@@ -14,6 +14,19 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     public event ExamSwitchedEventHandler ExamSwitched;
     public event CountdownUpdatedEventHandler CountdownUpdated;
 
+    public bool Enabled
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                IsDisposing = !value;
+                field = value;
+            }
+        }
+    }
+
     private int ExamIndex;
     private int LastExamIndex = -2;
     private int ExamsCount;
@@ -93,6 +106,7 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
 
     private void InternalStart()
     {
+        Enabled = true;
         UpdateExams();
         OnExamSwitched();
         TryStartMainTimer();

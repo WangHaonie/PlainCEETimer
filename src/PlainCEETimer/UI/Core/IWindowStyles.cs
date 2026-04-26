@@ -6,5 +6,7 @@ public interface IWindowStyles
 
     bool ShowInTaskbar { get; set; }
 
+    bool Visible { get; set; }
+
     double Opacity { get; set; }
 }
