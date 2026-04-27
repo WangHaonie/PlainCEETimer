@@ -99,13 +99,6 @@ jobs:
           tag: Preview
           deleteOnlyFromDrafts: false
 
-      - name: Update Tag
-        uses: richardsimko/update-tag@v1
-        with:
-          tag_name: Preview
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout PlainCEETimerStatic
         uses: actions/checkout@v6
         with:
@@ -147,7 +140,7 @@ jobs:
           git push
 
       - name: Upload to Pre-Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: Preview
           files: |
