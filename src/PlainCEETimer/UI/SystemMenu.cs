@@ -11,9 +11,9 @@ public class SystemMenu
     private sealed class ParentNativeWindow(IntPtr hWnd) : NativeWindow
     {
         private bool _assigned;
-        private readonly List<NativeMenuItem> items = [];
+        private readonly List<MENUITEM> items = [];
 
-        internal void Add(NativeMenuItem item)
+        internal void Add(MENUITEM item)
         {
             if (!_assigned)
             {
@@ -44,7 +44,7 @@ public class SystemMenu
         }
     }
 
-    private class NativeMenuItem(IntPtr id, EventHandler onClick)
+    private class MENUITEM(IntPtr id, EventHandler onClick)
     {
         internal bool WmSysCommand(ref Message m)
         {

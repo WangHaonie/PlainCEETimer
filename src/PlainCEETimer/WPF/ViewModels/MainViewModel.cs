@@ -465,20 +465,23 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void RegisterHotKeys()
     {
         UnregisterHotKeys();
-
         var hks = AppConfig.HotKeys;
-        hksvc = new HotKeyService[hks.Length];
-
-        for (int i = 0; i < hks.Length; i++)
+        
+        if (!hks.IsNullOrEmpty())
         {
-            var svc = new HotKeyService(hks[i], GetHotKeyHandler(i));
+            hksvc = new HotKeyService[hks.Length];
 
-            if (!svc.Register())
+            for (int i = 0; i < hks.Length; i++)
             {
-                MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
-            }
+                var svc = new HotKeyService(hks[i], GetHotKeyHandler(i));
 
-            hksvc[i] = svc;
+                if (!svc.Register())
+                {
+                    MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
+                }
+
+                hksvc[i] = svc;
+            }
         }
     }
 
