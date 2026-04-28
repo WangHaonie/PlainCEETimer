@@ -32,15 +32,21 @@ windownotfound:
 !macroend
  
 !macro SingleInstanceMutex
-!ifndef INSTALLERMUTEXNAME
-!error "Must define INSTALLERMUTEXNAME"
-!endif
 System::Call 'KERNEL32::CreateMutex(${SYSTYPE_PTR}0, i1, t"${INSTALLERMUTEXNAME}")?e'
 Pop $0
 IntCmpU $0 183 "" launch launch
 	!insertmacro ActivateOtherInstance
 	Abort
 launch:
+!macroend
+
+!macro CheckIsSkip
+StrCpy $SkipRequested ${SKIP_DISABLED}
+${GetParameters} $R0
+ClearErrors
+${GetOptions} '$R0' "/Skip" $R1
+IfErrors +2
+	StrCpy $SkipRequested ${SKIP_ENABLED}
 !macroend
 
 !include "MUI2.nsh"
@@ -57,10 +63,13 @@ launch:
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\classic-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\classic-uninstall.ico"
 !define MUI_LICENSEPAGE_CHECKBOX
+!define SKIP_DISABLED "0"
+!define SKIP_ENABLED "1"
 
 SetCompressor lzma
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE "AutoSkip"
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE "CheckPrevious"
 !insertmacro MUI_PAGE_DIRECTORY
 !define MUI_PAGE_CUSTOMFUNCTION_PRE "AutoSkip"
 !insertmacro MUI_PAGE_LICENSE ".\LicenseLink"
@@ -68,29 +77,37 @@ SetCompressor lzma
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "SimpChinese"
 
-Var /GLOBAL IsSkip
+Var /GLOBAL SkipRequested
+Var /GLOBAL PreviousInstallDir
+Var /GLOBAL NewConfigPath
+Var /GLOBAL ShouldUninstallPrevious
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "PlainCEETimer_${SETUP_FILENAME_NO_V}_x64_Setup.exe"
 InstallDir "$PROFILE\AppData\Local\CEETimerCSharpWinForms"
-InstallDirRegKey HKCU "${PRODUCT_UNINST_KEY}" "UninstallString"
+InstallDirRegKey HKCU "${PRODUCT_UNINST_KEY}" "InstallLocation"
 ShowInstDetails show
 ShowUnInstDetails show
-BrandingText "Copyright (C) 2023-2025 WangHaonie"
+BrandingText "Copyright (C) 2023-2026 WangHaonie"
 
 Section -POST
   SetOverwrite on
   SetOutPath "$INSTDIR"
   System::Call 'USER32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 0x0001|0x0002)'
+  StrCmp $ShouldUninstallPrevious "1" 0 +4
+  DetailPrint "正在卸载已安装版本..."
+  ExecWait '"$PreviousInstallDir\uninst.exe" /Skip'
+  DetailPrint "卸载完成!"
   nsExec::ExecToLog '"taskkill" /F /IM "CEETimerCSharpWinForms.exe"'
   nsExec::ExecToLog '"taskkill" /F /IM "PlainCEETimer.exe"'
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_TITLE}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\PlainCEETimer.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteIniStr "$INSTDIR\GitHub.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   File "..\.output\PlainCEETimer.com"
   File "..\.output\PlainCEETimer.exe"
@@ -105,6 +122,11 @@ Section -POST
   File "..\.output\System.Numerics.Vectors.dll"
   File "..\.output\System.Runtime.CompilerServices.Unsafe.dll"
   File "..\.output\System.Threading.Tasks.Extensions.dll"
+  IfFileExists "$NewConfigPath" 0 +5
+  DetailPrint "正在还原配置..."
+  CopyFiles /SILENT "$NewConfigPath" "$INSTDIR\PlainCEETimer.config"
+  Delete "$NewConfigPath"
+  DetailPrint "配置还原成功!"
   CreateDirectory "$SMPROGRAMS\高考倒计时 by WangHaonie"
   CreateShortCut "$SMPROGRAMS\高考倒计时 by WangHaonie\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
   CreateShortCut "$DESKTOP\高考倒计时.lnk" "$INSTDIR\PlainCEETimer.exe"
@@ -152,19 +174,10 @@ Section Uninstall
   SetAutoClose true
 SectionEnd
 
-Function AutoSkip
-  StrCmp $IsSkip "1" +2
-    Abort
-FunctionEnd
-
 Function .onInit
   !insertmacro SingleInstanceMutex
-  StrCpy $IsSkip "1"
-  ${GetParameters} $R0
-  ClearErrors
-  ${GetOptions} '$R0' "/Skip" $R1
-  IfErrors +2
-    StrCpy $IsSkip "0"
+  !insertmacro CheckIsSkip
+  StrCpy $ShouldUninstallPrevious "0"
 FunctionEnd
 
 Function .onInstSuccess
@@ -172,12 +185,37 @@ Function .onInstSuccess
 FunctionEnd
  
 Function un.onInit
+  !insertmacro CheckIsSkip
+  StrCmp $SkipRequested ${SKIP_ENABLED} EOF
   !insertmacro SingleInstanceMutex
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "确认卸载 ${PRODUCT_TITLE}？" IDYES +2
   Abort
+EOF:
 FunctionEnd
 
 Function un.onUninstSuccess
   HideWindow
+  StrCmp $SkipRequested ${SKIP_ENABLED} EOF
   MessageBox MB_ICONINFORMATION|MB_OK "${PRODUCT_TITLE} 已成功从您的计算机中移除。感谢您的使用！"
+EOF:
+FunctionEnd
+
+Function AutoSkip
+  StrCmp $SkipRequested ${SKIP_ENABLED} 0 EOF
+  Abort
+EOF:
+FunctionEnd
+
+Function CheckPrevious
+  ReadRegStr $PreviousInstallDir ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "InstallLocation"
+  StrCmp $PreviousInstallDir "" EOF
+  StrCmp $PreviousInstallDir $INSTDIR EOF
+  StrCpy $NewConfigPath "$PLUGINSDIR\PlainCEETimer.config"
+  IfFileExists "$PreviousInstallDir\PlainCEETimer.config" 0 +2
+  CopyFiles /SILENT "$PreviousInstallDir\PlainCEETimer.config" "$NewConfigPath"
+  IfFileExists "$PreviousInstallDir\uninst.exe" 0 EOF
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到安装目录变更！$\n$\n上一个版本安装在：$\n$PreviousInstallDir$\n$\n当前选择的安装目录为：$\n$INSTDIR$\n$\n是否在稍后卸载已安装版本？$\n(配置文件将被自动迁移至更新目录)" IDYES 0 IDNO EOF
+  StrCpy $ShouldUninstallPrevious "1"
+
+EOF:
 FunctionEnd
