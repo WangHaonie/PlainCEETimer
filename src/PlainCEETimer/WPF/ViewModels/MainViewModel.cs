@@ -466,7 +466,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     {
         UnregisterHotKeys();
         var hks = AppConfig.HotKeys;
-        
+
         if (!hks.IsNullOrEmpty())
         {
             hksvc = new HotKeyService[hks.Length];
@@ -477,7 +477,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
                 if (!svc.Register())
                 {
-                    MessageX.Warn($"快捷键 \"{ConfigValidator.GetHokKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
+                    MessageX.Warn($"快捷键 \"{HotKeyManager.GetHotKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
                 }
 
                 hksvc[i] = svc;

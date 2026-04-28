@@ -1,25 +1,28 @@
 using System;
 using System.Collections.Generic;
-using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.UI;
 
+[NoConstants]
 internal static class HotKeyManager
 {
+    public const int HotKeyCount = 3;
+
     public static HotKey[] CheckHotKeys(HotKey[] value)
     {
-        var arr = new HotKey[ConfigValidator.HotKeyCount];
+        var arr = new HotKey[HotKeyCount];
 
         if (value != null)
         {
             int length = value.Length;
 
-            if (length == ConfigValidator.HotKeyCount)
+            if (length == HotKeyCount)
             {
                 return value;
             }
 
-            length = Math.Min(ConfigValidator.HotKeyCount, length);
+            length = Math.Min(HotKeyCount, length);
 
             for (int i = 0; i < length; i++)
             {
@@ -32,7 +35,7 @@ internal static class HotKeyManager
 
     public static bool HasDuplicates(HotKey[] value)
     {
-        HashSet<HotKey> set = new(ConfigValidator.HotKeyCount);
+        HashSet<HotKey> set = new(HotKeyCount);
 
         foreach (var hotKey in value)
         {
@@ -47,7 +50,7 @@ internal static class HotKeyManager
 
     public static bool TryValidate(HotKey[] value, out int failed)
     {
-        HashSet<HotKey> set = new(ConfigValidator.HotKeyCount);
+        HashSet<HotKey> set = new(HotKeyCount);
         failed = -1;
 
         for (int i = 0; i < value.Length; i++)
@@ -68,4 +71,12 @@ internal static class HotKeyManager
 
         return true;
     }
+
+    public static string GetHotKeyDescription(int index) => index switch
+    {
+        0 => "隐藏主窗口",
+        1 => "上一个考试",
+        2 => "下一个考试",
+        _ => null
+    };
 }

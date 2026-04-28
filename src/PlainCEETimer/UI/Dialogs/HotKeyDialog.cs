@@ -27,9 +27,9 @@ public sealed class HotKeyDialog : AppDialog
 
         this.AddControls(b =>
         [
-            LabelHotKey1 = b.Label(ConfigValidator.GetHokKeyDescription(0)),
-            LabelHotKey2 = b.Label(ConfigValidator.GetHokKeyDescription(1)),
-            LabelHotKey3 = b.Label(ConfigValidator.GetHokKeyDescription(2)),
+            LabelHotKey1 = b.Label(HotKeyManager.GetHotKeyDescription(0)),
+            LabelHotKey2 = b.Label(HotKeyManager.GetHotKeyDescription(1)),
+            LabelHotKey3 = b.Label(HotKeyManager.GetHotKeyDescription(2)),
             HotkeyCtrl1 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl2 = b.HotkeyCtrl(185, OnUserChanged),
             HotkeyCtrl3 = b.HotkeyCtrl(185, OnUserChanged)
@@ -71,7 +71,7 @@ public sealed class HotKeyDialog : AppDialog
 
         if (!HotKeyManager.TryValidate(hks, out var failed))
         {
-            MessageX.Error($"无法注册快捷键 \"{ConfigValidator.GetHokKeyDescription(failed)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
+            MessageX.Error($"无法注册快捷键 \"{HotKeyManager.GetHotKeyDescription(failed)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
             return false;
         }
 
@@ -82,7 +82,7 @@ public sealed class HotKeyDialog : AppDialog
 
     private HotKey[] ReadHotKeys()
     {
-        var hotKeys = new HotKey[ConfigValidator.HotKeyCount];
+        var hotKeys = new HotKey[HotKeyManager.HotKeyCount];
 
         for (int i = 0; i < hotKeys.Length; i++)
         {

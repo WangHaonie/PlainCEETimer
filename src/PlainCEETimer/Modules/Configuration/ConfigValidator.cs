@@ -28,7 +28,6 @@ internal static class ConfigValidator
     public const int DefCpp = 30;
     public const int MaxCpp = 300;
     public const int MaxCustomTextLength = 800;
-    public const int HotKeyCount = 3;
     public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"
     public const long MaxTick = 56623103990000000L; // 65535d 23h 59m 59s
@@ -181,14 +180,6 @@ internal static class ConfigValidator
     {
         return length is 0 or > MaxCustomTextLength;
     }
-
-    public static string GetHokKeyDescription(int index) => index switch
-    {
-        0 => "隐藏主窗口",
-        1 => "上一个考试",
-        2 => "下一个考试",
-        _ => null
-    };
 
     public static void EnsureExamDate(DateTime time)
     {
