@@ -54,13 +54,18 @@ public class AppConfig
         get;
         set
         {
-            value = HotKeyManager.CheckHotKeys(value);
+            value = HotKeyManager.EnsureHotKeys(value);
 
             if (ConfigValidator.ValidateNeeded)
             {
-                if (HotKeyManager.HasDuplicates(value))
+                HashSet<HotKey> set = new(HotKeyManager.HotKeyCount);
+
+                foreach (var hotKey in value)
                 {
-                    throw ConfigValidator.InvalidTampering(ConfigField.HotKeysArray);
+                    if (hotKey.IsValid && !set.Add(hotKey))
+                    {
+                        throw ConfigValidator.InvalidTampering(ConfigField.HotKeysArray);
+                    }
                 }
             }
 

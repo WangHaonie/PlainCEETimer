@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
@@ -73,7 +73,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private MenuItemBuilder ItemBuilder;
     private ContextMenu ContextMenuMain;
     private Exam[] Exams;
-    private HotKeyService[] hksvc;
     private BorderColorObject BorderColorObj;
     private Rect ScreenRect;
     private CountdownPosition CountdownPos;
@@ -135,6 +134,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Initializer.Initialize += (_, _) =>
         {
             RefreshSettings();
+            RegisterHotKeys();
             ConfigValidator.ValidateNeeded = false;
 
             new Action(() =>
@@ -237,12 +237,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 if (DialogHotKey == null)
                 {
                     DialogHotKey = new();
-
-                    if (DialogHotKey.ShowDialog(Owner) == true)
-                    {
-                        RegisterHotKeys();
-                    }
-
+                    DialogHotKey.ShowDialog(Owner);
                     DialogHotKey = null;
                 }
                 else
@@ -286,7 +281,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         ApplyStyle();
         RunCountdown();
         UpdateCountdownEnabledState();
-        RegisterHotKeys();
     }
 
     private void LoadConfig()
@@ -464,45 +458,19 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void RegisterHotKeys()
     {
-        UnregisterHotKeys();
+        HotKeyManager.SetHandlers(
+            ToggleVisibilityHotKeyHandler,
+            SwitchToPreviousExamHotKeyHandler,
+            SwitchToNextExamHotKeyHandler
+        );
+
         var hks = AppConfig.HotKeys;
 
         if (!hks.IsNullOrEmpty())
         {
-            hksvc = new HotKeyService[hks.Length];
-
-            for (int i = 0; i < hks.Length; i++)
-            {
-                var svc = new HotKeyService(hks[i], GetHotKeyHandler(i));
-
-                if (!svc.Register())
-                {
-                    MessageX.Warn($"快捷键 \"{HotKeyManager.GetHotKeyDescription(i)}\" 注册失败，可能被其他应用程序占用！");
-                }
-
-                hksvc[i] = svc;
-            }
+            HotKeyManager.ValidateHotKeys(hks).PopupIfFailed(MessageX);
         }
     }
-
-    private void UnregisterHotKeys()
-    {
-        if (!hksvc.IsNullOrEmpty())
-        {
-            foreach (var svc in hksvc)
-            {
-                svc?.Unregister();
-            }
-        }
-    }
-
-    private EventHandler<HotKeyPressEventArgs> GetHotKeyHandler(int index) => index switch
-    {
-        0 => ToggleVisibilityHotKeyHandler,
-        1 => SwitchToPreviousExamHotKeyHandler,
-        2 => SwitchToNextExamHotKeyHandler,
-        _ => null
-    };
 
     private void VerifyLocation()
     {

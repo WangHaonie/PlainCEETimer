@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.UI.Controls;
@@ -69,9 +69,8 @@ public sealed class HotKeyDialog : AppDialog
     {
         var hks = ReadHotKeys();
 
-        if (!HotKeyManager.TryValidate(hks, out var failed))
+        if (HotKeyManager.ValidateHotKeys(hks).PopupIfFailed(MessageX))
         {
-            MessageX.Error($"无法注册快捷键 \"{HotKeyManager.GetHotKeyDescription(failed)}\"，请确保该快捷键未重复且未被其他应用程序注册！");
             return false;
         }
 
