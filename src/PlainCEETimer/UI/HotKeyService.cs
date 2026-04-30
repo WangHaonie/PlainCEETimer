@@ -9,85 +9,24 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.UI;
 
 [DebuggerDisplay("{hid}")]
-public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKeyPress)
+public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
 {
-    /*
-    
-    注册全局热键 参考：
-
-    .net - Set global hotkeys using C# - Stack Overflow
-    https://stackoverflow.com/a/27309185/21094697
-
-    WM.HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
-    https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey
-
-    */
-
-    private sealed class HotKeyMessageWindow : NativeWindow, IDisposable
-    {
-        public HotKeyMessageWindow()
-        {
-            CreateHandle(new() { Parent = new(NativeConstants.HWND_MESSAGE) });
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == WM.HOTKEY && hksvcs != null)
-            {
-                var count = hksvcs.Count;
-
-                for (int i = 0; i < count; i++)
-                {
-                    if (hksvcs[i].WmHotKey(ref m))
-                    {
-                        break;
-                    }
-                }
-            }
-
-            base.WndProc(ref m);
-        }
-
-        public void Dispose()
-        {
-            DestroyHandle();
-            GC.SuppressFinalize(this);
-        }
-
-        ~HotKeyMessageWindow()
-        {
-            Dispose();
-        }
-    }
-
     private int m_id;
     private bool registered;
     private IntPtr hid;
+
     private static IntPtr hhkmw;
     private static RandomUID hkids;
-    private static List<HotKeyService> hksvcs;
     private static Dictionary<int, HotKey> hks;
-    private static HotKeyMessageWindow hkmw;
+    private static HotKeyManager.MessageWindow hkmw;
 
     static HotKeyService()
     {
         App.AppExit += () =>
         {
-            if (hksvcs != null)
-            {
-                var length = hksvcs.Count;
-
-                for (int i = 0; i < length; i++)
-                {
-                    hksvcs[i].Unregister();
-                }
-
-                hksvcs.Clear();
-            }
-
             hkmw.Destory();
             hkmw = null;
-            hks?.Clear();
+            hks = null;
         };
     }
 
@@ -95,7 +34,7 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
     {
         if (onHotKeyPress == null || !hk.IsValid)
         {
-            return true;
+            return false;
         }
 
         hks ??= [];
@@ -112,10 +51,8 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
         if (TestCore(hk)
             && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), NativeConstants.MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
         {
-            hksvcs ??= [];
             hid = new(m_id);
             registered = true;
-            hksvcs.Add(this);
             return true;
         }
 
@@ -128,24 +65,6 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
         {
             hks.Remove(m_id);
             hkids.Remove(m_id);
-            return true;
-        }
-
-        return false;
-    }
-
-    private int GetId()
-    {
-        var id = hkids.Next();
-        hks[id] = hk;
-        return id;
-    }
-
-    private bool WmHotKey(ref Message m)
-    {
-        if (m.WParam == hid)
-        {
-            onHotKeyPress(this, new(m.WParam, m.LParam));
             return true;
         }
 
@@ -170,6 +89,24 @@ public class HotKeyService(HotKey hk, EventHandler<HotKeyPressEventArgs> onHotKe
         }
 
         return HotKeyStatus.Failed;
+    }
+
+    internal bool WmHotKey(ref Message m)
+    {
+        if (m.WParam == hid)
+        {
+            onHotKeyPress(this, new(m.WParam, m.LParam));
+            return true;
+        }
+
+        return false;
+    }
+
+    private int GetId()
+    {
+        var id = hkids.Next();
+        hks[id] = hk;
+        return id;
     }
 
     private static bool TestCore(HotKey hk)

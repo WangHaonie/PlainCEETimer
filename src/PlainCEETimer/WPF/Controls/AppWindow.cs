@@ -233,10 +233,9 @@ public class AppWindow : Window, IAppWindow
         DefWndProc(ref m);
     }
 
-    protected void Hide(bool hide)
+    protected virtual void DefWndProc(ref Message m)
     {
-        Opacity = hide ? 0D : 1D;
-        IsHitTestVisible = !hide;
+        window.DefWndProc(ref m);
     }
 
     protected void SetLocation(int x, int y)
@@ -333,11 +332,6 @@ public class AppWindow : Window, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
-    }
-
-    private void DefWndProc(ref Message m)
-    {
-        window.DefWndProc(ref m);
     }
 
     private void WmClose(ref Message m)

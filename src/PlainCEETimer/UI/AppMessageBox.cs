@@ -171,10 +171,10 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
     public int Popup(int uType, string message)
     {
-        return ParseFromNativeAndPopup(uType, message);
+        return ParseFromWin32AndPopup(uType, message);
     }
 
-    private int ParseFromNativeAndPopup(int uType, string message)
+    private int ParseFromWin32AndPopup(int uType, string message)
     {
         const int MB_TYPEMASK = 0x0000000F;
         const int MB_ICONMASK = 0x000000F0;
@@ -200,6 +200,8 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
     {
         if (parent != null)
         {
+            parent.ReActivate();
+
             if (parent.InvokeRequired)
             {
                 /*
@@ -213,8 +215,6 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
                 return (bool?)parent.Invoke(() => Popup(message, level, buttons, autoClose));
             }
-
-            parent.ReActivate();
         }
 
         return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();

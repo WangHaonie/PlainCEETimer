@@ -10,9 +10,9 @@ public interface IAppWindow : IHasContextMenu, IWin32Window
 
     IDialogService MessageX { get; }
 
+    void ReActivate();
+
     object Invoke(Delegate method);
 
     IAsyncResult BeginInvoke(Delegate method);
-
-    void ReActivate();
 }

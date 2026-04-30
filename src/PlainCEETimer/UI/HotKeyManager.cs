@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Windows.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.UI;
@@ -9,6 +12,55 @@ namespace PlainCEETimer.UI;
 [NoConstants]
 internal static class HotKeyManager
 {
+    /*
+    
+    注册全局热键 参考：
+
+    .net - Set global hotkeys using C# - Stack Overflow
+    https://stackoverflow.com/a/27309185/21094697
+
+    WM.HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
+    https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey
+
+    */
+
+    internal sealed class MessageWindow : NativeWindow, IDisposable
+    {
+        public MessageWindow()
+        {
+            CreateHandle(new() { Parent = new(NativeConstants.HWND_MESSAGE) });
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM.HOTKEY && hksvcs != null)
+            {
+                var count = hksvcs.Count;
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (hksvcs[i].WmHotKey(ref m))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            base.WndProc(ref m);
+        }
+
+        public void Dispose()
+        {
+            DestroyHandle();
+            GC.SuppressFinalize(this);
+        }
+
+        ~MessageWindow()
+        {
+            Dispose();
+        }
+    }
+
     internal readonly struct ValidationResult(List<int> failed)
     {
         public bool Failed => FailedCount > 0;
@@ -51,8 +103,13 @@ internal static class HotKeyManager
 
     public const int HotKeyCount = 3;
 
-    private static readonly EventHandler<HotKeyPressEventArgs>[] _handlers = new EventHandler<HotKeyPressEventArgs>[HotKeyCount];
-    private static readonly HotKeyService[] _services = new HotKeyService[HotKeyCount];
+    private static readonly List<HotKeyService> hksvcs = [];
+    private static readonly HotKeyPressEventHandler[] hkhandlers = new HotKeyPressEventHandler[HotKeyCount];
+
+    static HotKeyManager()
+    {
+        App.AppExit += UnregisterAll;
+    }
 
     public static HotKey[] EnsureHotKeys(HotKey[] value)
     {
@@ -86,13 +143,13 @@ internal static class HotKeyManager
         _ => null
     };
 
-    public static void SetHandlers(params EventHandler<HotKeyPressEventArgs>[] handlers)
+    public static void SetHandlers(params HotKeyPressEventHandler[] handlers)
     {
         var length = Math.Min(handlers.Length, HotKeyCount);
 
         for (int i = 0; i < length; i++)
         {
-            _handlers[i] = handlers[i];
+            hkhandlers[i] = handlers[i];
         }
     }
 
@@ -105,11 +162,7 @@ internal static class HotKeyManager
             return result;
         }
 
-        for (int i = 0; i < HotKeyCount; i++)
-        {
-            _services[i]?.Unregister();
-            _services[i] = null;
-        }
+        UnregisterAll();
 
         var failed = new List<int>();
 
@@ -122,18 +175,31 @@ internal static class HotKeyManager
                 continue;
             }
 
-            var handler = _handlers[i];
+            var handler = hkhandlers[i];
             var svc = new HotKeyService(hk, handler);
 
-            if (!svc.Register())
+            if (svc.Register())
+            {
+                hksvcs.Add(svc);
+            }
+            else
             {
                 failed.Add(i);
             }
-
-            _services[i] = svc;
         }
 
         return new(failed);
+    }
+
+    public static void UnregisterAll()
+    {
+        var length = hksvcs.Count;
+
+        for (int i = 0; i < length; i++)
+        {
+            hksvcs[i]?.Unregister();
+            hksvcs[i] = null;
+        }
     }
 
     private static ValidationResult Validate(HotKey[] hotKeys)
