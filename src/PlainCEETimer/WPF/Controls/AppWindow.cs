@@ -351,7 +351,7 @@ public class AppWindow : Window, IAppWindow
 
         if (cm != null)
         {
-            var pos = m.LParam.AsPoint();
+            var pos = m.LParam.AsMenuLocation();
             Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
             return;
         }

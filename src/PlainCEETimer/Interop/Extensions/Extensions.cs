@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace PlainCEETimer.Interop.Extensions;
+﻿namespace PlainCEETimer.Interop.Extensions;
 
 public static class Extensions
 {
@@ -25,17 +22,5 @@ public static class Extensions
         {
             return (ushort)low | ((ushort)high << 16);
         }
-    }
-
-    public static Point AsPoint(this IntPtr lParam)
-    {
-        var dw = lParam.ToInt32();
-
-        if (dw == -1)
-        {
-            dw = 0;
-        }
-
-        return new(dw);
     }
 }
