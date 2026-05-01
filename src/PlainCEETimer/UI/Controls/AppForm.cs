@@ -65,6 +65,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected AppForm()
     {
+        EnsureDpiContext();
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
@@ -634,5 +635,15 @@ public abstract class AppForm : Form, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
+    }
+
+    private static void EnsureDpiContext()
+    {
+        var suggest = DpiAwarenessContext.System;
+
+        if (DpiHelper.Current != suggest)
+        {
+            DpiHelper.SetDpiContext(suggest);
+        }
     }
 }

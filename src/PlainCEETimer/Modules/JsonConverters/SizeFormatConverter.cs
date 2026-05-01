@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 

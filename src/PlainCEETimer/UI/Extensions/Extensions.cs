@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Extensions;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace PlainCEETimer.Interop;
+namespace PlainCEETimer.Interop.Extensions;
 
 public static class Extensions
 {

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 

@@ -31,3 +31,17 @@ public enum TaskLogonType
     ServiceAccount,
     InteractiveTokenOrPassword = Password
 }
+
+public enum DpiAwarenessContext
+{
+    Unknown,
+    Unaware = -1,
+    System = -2,
+    PerMonitor = -3,
+    PerMonitorV2 = -4,
+
+    /// <summary>
+    /// After Windows 10 Build 1809
+    /// </summary>
+    GdiScaled = -5
+}

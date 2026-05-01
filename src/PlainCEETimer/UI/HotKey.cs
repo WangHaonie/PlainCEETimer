@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.UI;

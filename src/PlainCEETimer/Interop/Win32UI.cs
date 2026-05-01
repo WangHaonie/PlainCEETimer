@@ -165,6 +165,15 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#43")]
     public static extern void MoveWindowEx(IntPtr hWnd, int x, int y);
 
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetThreadDpiAwarenessContext();
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr SetThreadDpiAwarenessContext(DpiAwarenessContext dpiContext);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool AreDpiAwarenessContextsEqual(DpiAwarenessContext dpiContextA, IntPtr dpiContextB);
+
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);

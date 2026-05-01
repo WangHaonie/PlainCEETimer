@@ -8,6 +8,7 @@ public static class WindowsBuilds
 {
     public const int Windows7 = 7601;
     public const int Windows81 = 9600;
+    public const int Windows10_1607 = 14393;
     public const int Windows10_1703 = 15063;
     public const int Windows10_1809 = 17763;
     public const int Windows10_1903 = 18362;

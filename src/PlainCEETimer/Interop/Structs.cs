@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.JsonConverters;
