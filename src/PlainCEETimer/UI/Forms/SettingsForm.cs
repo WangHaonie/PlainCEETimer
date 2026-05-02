@@ -449,7 +449,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void RunLayout(bool isHighDpi)
     {
-        GroupBoxArrageControl(GBoxExamInfo, LabelExamInfo, 0, 2);
+        GroupBoxArrageControl(GBoxExamInfo, LabelExamInfo);
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
         ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
         CenterControlY(CheckBoxAutoSwitch, ButtonExamInfo, 1);
@@ -459,7 +459,7 @@ public sealed class SettingsForm : AppForm
         ComboBoxAutoSwitchInterval.BringToFront();
 
         ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
-        GroupBoxArrageControl(GBoxOthers, CheckBoxStartup, 4, 2);
+        GroupBoxArrageControl(GBoxOthers, CheckBoxStartup, 4);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
         ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
         ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
@@ -481,7 +481,7 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 6);
 
         ArrangeControlYL(GBoxDraggable, GBoxContent, 0, 2);
-        GroupBoxArrageControl(GBoxDraggable, ComboBoxScreens, 0, 2);
+        GroupBoxArrageControl(GBoxDraggable, ComboBoxScreens);
         GroupBoxArrageControl(GBoxDraggable, LabelScreens);
         CenterControlY(LabelScreens, ComboBoxScreens);
         CompactControlX(ComboBoxScreens, LabelScreens);
@@ -523,7 +523,7 @@ public sealed class SettingsForm : AppForm
 
         if (AllowTheme)
         {
-            GroupBoxArrageControl(GBoxTheme, RadioButtonThemeSystem, 4, 4);
+            GroupBoxArrageControl(GBoxTheme, RadioButtonThemeSystem, 4);
             ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
             ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
             GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 6);
@@ -536,7 +536,7 @@ public sealed class SettingsForm : AppForm
         }
 
         GroupBoxArrageControl(GBoxMainForm, LabelOpacity);
-        GroupBoxArrageControl(GBoxMainForm, NudOpacity, 0, 2);
+        GroupBoxArrageControl(GBoxMainForm, NudOpacity);
         CenterControlY(LabelOpacity, NudOpacity);
         CompactControlX(NudOpacity, LabelOpacity, 5);
         ArrangeControlXT(CheckBoxMainFormUseWPF, NudOpacity, 15);
@@ -552,7 +552,7 @@ public sealed class SettingsForm : AppForm
 
 
         ArrangeControlYL(GBoxExamsMenu, GBoxMainForm);
-        GroupBoxArrageControl(GBoxExamsMenu, NudMaxCpp, 0, 3);
+        GroupBoxArrageControl(GBoxExamsMenu, NudMaxCpp);
         GroupBoxArrageControl(GBoxExamsMenu, LabelMaxCpp);
         CenterControlY(LabelMaxCpp, NudMaxCpp);
         CompactControlX(NudMaxCpp, LabelMaxCpp);

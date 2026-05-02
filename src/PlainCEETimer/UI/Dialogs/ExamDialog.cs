@@ -123,8 +123,8 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         CompactControlY(CheckBoxEnableSettings, DTPEnd, 3);
         ArrangeControlYL(GBoxContent, LabelEnd, 3);
         CompactControlY(GBoxContent, DTPEnd, 5);
-        GroupBoxArrageControl(GBoxContent, ComboBoxCountdownEnd, 0, 3);
-        GroupBoxArrageControl(GBoxContent, LabelCountdownEnd, -3);
+        GroupBoxArrageControl(GBoxContent, ComboBoxCountdownEnd);
+        GroupBoxArrageControl(GBoxContent, LabelCountdownEnd);
         CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
         CompactControlX(ComboBoxCountdownEnd, LabelCountdownEnd);
         ArrangeControlYL(LabelCountdownFormat, LabelCountdownEnd);
