@@ -118,7 +118,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 312, 225, RelativeToFont(1.6), RelativeToFont(0.4),
+            NavBar = b.NavBar(5, 1, 54, 315, 230, RelativeToFont(1.6), RelativeToFont(0.4),
             [
                 b.NavPage("基本",
                 [
@@ -453,9 +453,10 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
         ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
         CenterControlY(CheckBoxAutoSwitch, ButtonExamInfo, 1);
-        ArrangeControlXT(ComboBoxAutoSwitchInterval, CheckBoxAutoSwitch);
+        ArrangeControlXT(ComboBoxAutoSwitchInterval, CheckBoxAutoSwitch, -8);
         CenterControlY(ComboBoxAutoSwitchInterval, ButtonExamInfo);
         GroupBoxAutoAdjustHeight(GBoxExamInfo, ButtonExamInfo, 7);
+        ComboBoxAutoSwitchInterval.BringToFront();
 
         ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
         GroupBoxArrageControl(GBoxOthers, CheckBoxStartup, 4, 2);

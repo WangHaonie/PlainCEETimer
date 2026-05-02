@@ -200,7 +200,7 @@ public class ControlBuilder
     public PlainGroupBox GroupBox(string text, Control[] controls)
     {
         var ctrl = new PlainGroupBox() { Text = text };
-        ctrl.SetBounds(6, 6, 302, 0);
+        ctrl.SetBounds(6, 6, 304, 0);
         ctrl.Controls.AddRange(controls);
         return ctrl;
     }
