@@ -1,8 +1,10 @@
 ﻿using System.Windows.Forms;
+using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Forms;
 
-namespace PlainCEETimer.Modules;
+namespace PlainCEETimer.UI;
 
 public class FileDialogHelper
 {
@@ -12,7 +14,7 @@ public class FileDialogHelper
         dialog = GetFileDialog<TFileDialog>(title, fileName, filters);
         var wrapper = new FileDialogWrapper(title);
         wrapper.Show();
-        var result = dialog.ShowDialog(wrapper).AsBoolean();
+        var result = ShowDialog(dialog, wrapper);
         wrapper.Close();
         return result;
     }
@@ -21,7 +23,7 @@ public class FileDialogHelper
         where TFileDialog : FileDialog, new()
     {
         dialog = GetFileDialog<TFileDialog>(title, fileName, filters);
-        return dialog.ShowDialog(parent).AsBoolean();
+        return ShowDialog(dialog, parent);
     }
 
     private static TFileDialog GetFileDialog<TFileDialog>(string title, string fileName, params FileFilter[] filters)
@@ -33,5 +35,14 @@ public class FileDialogHelper
             FileName = fileName,
             Filter = string.Join("|", filters)
         };
+    }
+
+    private static bool? ShowDialog<TFileDialog>(TFileDialog dialog, IWin32Window parent)
+        where TFileDialog : FileDialog
+    {
+        using (new DpiAwarenessContextScope(DpiAwarenessContext.PerMonitorV2))
+        {
+            return dialog.ShowDialog(parent).AsBoolean();
+        }
     }
 }
