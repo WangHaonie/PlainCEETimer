@@ -10,31 +10,31 @@ public class FontSizeItem(double value)
 
     public double SizePt => value;
 
-    public static IEnumerable<FontSizeItem> Yield(double minSize, double maxSize, double step)
+    public static IEnumerable<FontSizeItem> Yield(double min, double max, double step)
     {
-        if (minSize <= 0 || maxSize <= 0)
+        if (min <= 0 || max <= 0)
         {
             throw new InvalidOperationException();
         }
 
-        if (minSize > maxSize)
+        if (min > max)
         {
-            (minSize, maxSize) = (maxSize, minSize);
+            (min, max) = (max, min);
         }
 
-        var current = minSize;
+        var current = min;
 
         yield return new(current);
 
-        while (current + step < maxSize)
+        while (current + step < max)
         {
             current += step;
             yield return new(current);
         }
 
-        if (Math.Abs(current - maxSize) > 1e-9)
+        if (Math.Abs(current - max) > 1e-9)
         {
-            yield return new(maxSize);
+            yield return new(max);
         }
     }
 }
