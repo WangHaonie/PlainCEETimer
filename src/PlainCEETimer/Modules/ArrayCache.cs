@@ -5,15 +5,14 @@ namespace PlainCEETimer.Modules;
 
 public class ArrayCache<T> : IDisposable
 {
-    public T[] Value => m_array;
-
     private readonly T[] m_array;
     private readonly ArrayPool<T> m_pool;
 
-    public ArrayCache(int minimumLength)
+    public ArrayCache(int minimumLength, out T[] buffer)
     {
         m_pool = ArrayPool<T>.Shared;
         m_array = m_pool.Rent(minimumLength);
+        buffer = m_array;
     }
 
     public void Dispose()

@@ -119,8 +119,7 @@ public static class StringExtensions
             return s.Substring(start, max);
         }
 
-        using var cache = new ArrayCache<char>(max);
-        var buffer = cache.Value;
+        using var cache = new ArrayCache<char>(max, out var buffer);
         var count = ws - start;
 
         for (int i = 0; i < count; i++)
@@ -191,8 +190,7 @@ public static class StringExtensions
             return s.Substring(start, max);
         }
 
-        using var cache = new ArrayCache<char>(max);
-        var buffer = cache.Value;
+        using var cache = new ArrayCache<char>(max, out var buffer);
         var count = ws - start;
 
         for (int i = 0; i < count; i++)
