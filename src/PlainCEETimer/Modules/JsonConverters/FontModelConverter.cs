@@ -35,7 +35,7 @@ public sealed class FontModelConverter : JsonConverter<FontModel>
             {
                 new JObject()
                 {
-                    [nameof(FontModel.FontFamily)] = src.Trim(),
+                    [nameof(FontModel.FontFamily)] = src.Compact(),
                     [nameof(FontModel.Size)] = Math.Round(value.Size, 2),
                     [nameof(FontModel.Weight)] = value.Weight.ToOpenTypeWeight()
                 }.WriteTo(writer);

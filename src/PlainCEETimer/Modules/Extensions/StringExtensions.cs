@@ -14,6 +14,16 @@ public static class StringExtensions
         return CleanCore(s);
     }
 
+    public static string Compact(this string s)
+    {
+        if (string.IsNullOrEmpty(s))
+        {
+            return s;
+        }
+
+        return CompactCore(s);
+    }
+
     /*
 
     截断字符串 参考:
@@ -126,6 +136,92 @@ public static class StringExtensions
             {
                 buffer[count++] = c;
             }
+        }
+
+        return new string(buffer, 0, count);
+    }
+
+    private static string CompactCore(string s)
+    {
+        var length = s.Length;
+        var start = 0;
+
+        while (start < length && char.IsWhiteSpace(s[start]))
+        {
+            start++;
+        }
+
+        if (start == length)
+        {
+            return string.Empty;
+        }
+
+        var end = length - 1;
+
+        while (start <= end && char.IsWhiteSpace(s[end]))
+        {
+            end--;
+        }
+
+        var ws = -1;
+        var flws = false;
+
+        for (int i = start; i <= end; i++)
+        {
+            var fws = char.IsWhiteSpace(s[i]);
+
+            if (fws && flws)
+            {
+                ws = i;
+                break;
+            }
+
+            flws = fws;
+        }
+
+        var max = end - start + 1;
+
+        if (ws == -1)
+        {
+            if (start == 0 && max == length)
+            {
+                return s;
+            }
+
+            return s.Substring(start, max);
+        }
+
+        using var cache = new ArrayCache<char>(max);
+        var buffer = cache.Value;
+        var count = ws - start;
+
+        for (int i = 0; i < count; i++)
+        {
+            buffer[i] = s[start + i];
+        }
+
+        flws = true;
+
+        for (int i = ws; i <= end; i++)
+        {
+            var c = s[i];
+            var fws = char.IsWhiteSpace(c);
+
+            if (fws)
+            {
+                if (flws)
+                {
+                    continue;
+                }
+
+                flws = true;
+            }
+            else
+            {
+                flws = false;
+            }
+
+            buffer[count++] = c;
         }
 
         return new string(buffer, 0, count);

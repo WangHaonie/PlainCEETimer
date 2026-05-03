@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.WPF.Models;
 
@@ -8,5 +9,5 @@ public class FontFamilyWrapper(string name)
 
     public FontFamily Value => field ??= new(_name);
 
-    private readonly string _name = name.Trim();
+    private readonly string _name = name.Compact();
 }
