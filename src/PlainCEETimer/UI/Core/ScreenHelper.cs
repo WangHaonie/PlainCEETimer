@@ -11,7 +11,7 @@ public class ScreenHelper(IAppWindow window) : IScreenService
 
     public TaskbarPosition TaskbarPosition => GetTaskbarPosition(Screen);
 
-    public virtual Rectangle WorkingArea => Screen.WorkingArea;
+    public Rectangle WorkingArea => Screen.WorkingArea;
 
     private static TaskbarPosition GetTaskbarPosition(Screen screen)
     {

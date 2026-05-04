@@ -272,6 +272,7 @@ internal static class App
     {
         HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
+        InitDpiContext();
         ThemeManager.Initialize();
         DefaultValues.InitEssentials(true);
         ConfigValidator.Validate();
@@ -336,5 +337,11 @@ internal static class App
         {
             PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
+    }
+
+    private static void InitDpiContext()
+    {
+        var flag = AppConfig.Display.UseWPF;
+        DpiHelper.SetDpiContext(flag ? DpiAwarenessContext.PerMonitorV2 : DpiAwarenessContext.System);
     }
 }

@@ -2,31 +2,30 @@
 using PlainCEETimer.WPF.Models;
 using PlainCEETimer.WPF.ViewModels;
 
-namespace PlainCEETimer.WPF.Views
+namespace PlainCEETimer.WPF.Views;
+
+public sealed partial class FontDialog : AppWindow
 {
-    public partial class FontDialog : AppWindow
+    public FontModel Font { get; private set; }
+
+    private readonly FontDialogViewModel vm;
+
+    public FontDialog(FontModel font = null)
     {
-        public FontModel Font { get; private set; }
+        vm = new(font, MessageX);
 
-        private readonly FontDialogViewModel vm;
-
-        public FontDialog(FontModel font = null)
+        vm.ParseResult += fnt =>
         {
-            vm = new(font, MessageX);
+            Font = fnt;
+            DialogResult = fnt != null;
+        };
 
-            vm.ParseResult += fnt =>
-            {
-                Font = fnt;
-                DialogResult = fnt != null;
-            };
+        DataContext = vm;
+        InitializeComponent();
+    }
 
-            DataContext = vm;
-            InitializeComponent();
-        }
-
-        protected override bool OnClosing()
-        {
-            return !vm.CanClose();
-        }
+    protected override bool OnClosing()
+    {
+        return !vm.CanClose();
     }
 }

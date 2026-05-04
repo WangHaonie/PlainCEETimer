@@ -24,7 +24,6 @@ public class WindowManager
     {
         if (isWpf)
         {
-            DpiHelper.SetDpiContext(DpiAwarenessContext.PerMonitorV2);
             new WPFApp().Run(new MainWindow());
         }
         else

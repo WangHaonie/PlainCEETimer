@@ -8,7 +8,7 @@ using PlainCEETimer.WPF.ViewModels;
 
 namespace PlainCEETimer.WPF.Views;
 
-public partial class MainWindow : AppWindow
+public sealed partial class MainWindow : AppWindow
 {
     protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
 
