@@ -101,8 +101,8 @@ public class AppConfig
     {
         return new()
         {
-            Font1 = Display.Font ?? FontModel.FromGdiFont(Font),
-            Font2 = Font
+            DxFont = Display.Font ?? FontModel.FromGdiFont(Font),
+            GdiFont = Font
         };
     }
 
@@ -110,8 +110,8 @@ public class AppConfig
     {
         return new()
         {
-            Font1 = FontModel.FromGdiFont(DefaultValues.CountdownDefaultFont),
-            Font2 = DefaultValues.CountdownDefaultFont
+            DxFont = FontModel.FromGdiFont(DefaultValues.CountdownDefaultFont),
+            GdiFont = DefaultValues.CountdownDefaultFont
         };
     }
 

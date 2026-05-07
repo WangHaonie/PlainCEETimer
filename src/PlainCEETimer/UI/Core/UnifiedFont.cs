@@ -5,7 +5,7 @@ namespace PlainCEETimer.UI.Core;
 
 public class UnifiedFont
 {
-    public FontModel Font1 { get; set; }
+    public FontModel DxFont { get; set; }
 
-    public Font Font2 { get; set; }
+    public Font GdiFont { get; set; }
 }
