@@ -7,12 +7,12 @@ public class WinFormsFontService(AppForm form) : IUnifiedFontService
 {
     public bool? ShowFontDialog(UnifiedFont font)
     {
-        var dialog = new PlainFontDialog(form, font.Font2);
+        var dialog = new PlainFontDialog(form, font.GdiFont);
         var result = dialog.ShowDialog();
 
         if (result == true)
         {
-            font.Font2 = dialog.Font;
+            font.GdiFont = dialog.Font;
         }
 
         return result;
@@ -20,6 +20,6 @@ public class WinFormsFontService(AppForm form) : IUnifiedFontService
 
     public string GetFontDesc(UnifiedFont font)
     {
-        return font.Font2.Format().Truncate(35);
+        return font.GdiFont.Format().Truncate(35);
     }
 }

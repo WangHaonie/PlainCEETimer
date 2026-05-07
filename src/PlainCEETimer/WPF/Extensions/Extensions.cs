@@ -52,7 +52,7 @@ public static class Extensions
         return dip / PtToDipRatio;
     }
 
-    public static Collection<ResourceDictionary> AddResource(this Collection<ResourceDictionary> dict, string uri, bool condition = true)
+    public static Collection<ResourceDictionary> Add(this Collection<ResourceDictionary> dict, string uri, bool condition = true)
     {
         if (condition)
         {

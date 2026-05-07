@@ -8,12 +8,12 @@ public class WPFFontService(AppWindow window) : IUnifiedFontService
 {
     public bool? ShowFontDialog(UnifiedFont font)
     {
-        var dialog = new FontDialog(font.Font1);
+        var dialog = new FontDialog(font.DxFont);
         var result = dialog.ShowDialog(window);
 
         if (result == true)
         {
-            font.Font1 = dialog.Font;
+            font.DxFont = dialog.Font;
         }
 
         return result;
@@ -21,6 +21,6 @@ public class WPFFontService(AppWindow window) : IUnifiedFontService
 
     public string GetFontDesc(UnifiedFont font)
     {
-        return font.Font1.ToString().Truncate(35);
+        return font.DxFont.ToString().Truncate(35);
     }
 }

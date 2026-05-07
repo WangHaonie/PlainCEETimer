@@ -187,8 +187,8 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 {
                     var font = new UnifiedFont()
                     {
-                        Font1 = Font,
-                        Font2 = CountdownModel.Font
+                        DxFont = Font,
+                        GdiFont = CountdownModel.Font
                     };
 
                     if (FontService.ShowFontDialog(font) == true)
@@ -582,16 +582,16 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void ChangeCountdownFont(UnifiedFont font)
     {
-        Font = font.Font1;
-        CountdownModel.Font = font.Font2;
+        Font = font.DxFont;
+        CountdownModel.Font = font.GdiFont;
         NotifyModelChanged();
         UpdateFontNameItem(font);
 
         if (!ConfigValidator.ValidateNeeded)
         {
             Countdown.ForceRefresh();
-            Display.Font = font.Font1;
-            AppConfig.Font = font.Font2;
+            Display.Font = font.DxFont;
+            AppConfig.Font = font.GdiFont;
             ConfigValidator.DemandConfig();
         }
     }
