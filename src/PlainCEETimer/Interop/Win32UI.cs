@@ -174,6 +174,18 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool AreDpiAwarenessContextsEqual(DpiAwarenessContext dpiContextA, IntPtr dpiContextB);
 
+    [DllImport(App.ShcoreDll)]
+    public static extern int GetProcessDpiAwareness(IntPtr hProcess, out int value);
+
+    [DllImport(App.ShcoreDll)]
+    public static extern int SetProcessDpiAwareness(int value);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool IsProcessDPIAware();
+
+    [DllImport(App.User32Dll)]
+    public static extern bool SetProcessDPIAware();
+
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);

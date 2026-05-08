@@ -40,6 +40,7 @@ internal static class App
     public const string User32Dll = "user32.dll";
     public const string UxThemeDll = "uxtheme.dll";
     public const string Shell32Dll = "shell32.dll";
+    public const string ShcoreDll = "shcore.dll";
     public const string Gdi32Dll = "gdi32.dll";
     public const string Kernel32Dll = "kernel32.dll";
     public const string DateTimeFormat = "yyyyMMddHHmmss";

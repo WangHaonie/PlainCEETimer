@@ -9,6 +9,8 @@ public readonly struct SystemVersion
     public static readonly bool IsWindows11;
     public static readonly bool BeforeWinNT10;
     public static readonly SystemVersion Current;
+    public static readonly bool IsVistaOrLater;
+    public static readonly bool IsWindows81OrLater;
     public static readonly bool Is1607OrLater;
     public static readonly bool Is1809OrLater;
 
@@ -32,6 +34,8 @@ public readonly struct SystemVersion
         Current = new();
         IsWindows11 = Current.Major == 10 && Current.Minor == 0 && Current.Build >= WindowsBuilds.Windows11_21H2;
         BeforeWinNT10 = Current.Major < 10;
+        IsVistaOrLater = Current.Major >= 6;
+        IsWindows81OrLater = Current.Build >= WindowsBuilds.Windows81;
         Is1607OrLater = Current.Build >= WindowsBuilds.Windows10_1607;
         Is1809OrLater = Current.Build >= WindowsBuilds.Windows10_1809;
     }
