@@ -23,9 +23,10 @@ public static class DpiHelper
     private const int PROCESS_SYSTEM_DPI_AWARE = 1;
     private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
 
-    private static readonly bool flag = SystemVersion.Is1607OrLater;
-    private static readonly bool processDpiAwarenessSupported = SystemVersion.IsWindows81OrLater;
-    private static readonly bool processDpiAwareSupported = SystemVersion.IsVistaOrLater;
+    private static readonly bool flag = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1607));
+    private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(new(6, 0));
+    private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(new(6, 3, WindowsBuilds.Windows81));
+    private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1809));
 
     public static DpiAwarenessContext Current
     {
@@ -37,12 +38,12 @@ public static class DpiHelper
                     .AsDpiAwarenessContextHandle().Value;
             }
 
-            if (processDpiAwarenessSupported && TryGetProcessDpiAwareness(out var processContext))
+            if (isDpiAwarenessSupported && TryGetProcessDpiAwareness(out var processContext))
             {
                 return processContext;
             }
 
-            if (processDpiAwareSupported)
+            if (isDpiAwareSupported)
             {
                 return Win32UI.IsProcessDPIAware()
                     ? DpiAwarenessContext.System
@@ -57,7 +58,7 @@ public static class DpiHelper
     {
         if (flag)
         {
-            if (dpiContext == DpiAwarenessContext.GdiScaled && !SystemVersion.Is1809OrLater)
+            if (dpiContext == DpiAwarenessContext.GdiScaled && !isGdiScaledSupported)
             {
                 return DpiAwarenessContext.Unknown;
             }
@@ -73,7 +74,7 @@ public static class DpiHelper
             return oldContext;
         }
 
-        if (processDpiAwarenessSupported)
+        if (isDpiAwarenessSupported)
         {
             return TryConvertToProcessDpiAwareness(dpiContext, out var value)
                 && TrySetProcessDpiAwareness(value)
@@ -81,7 +82,7 @@ public static class DpiHelper
                     : DpiAwarenessContext.Unknown;
         }
 
-        if (processDpiAwareSupported && dpiContext == DpiAwarenessContext.System)
+        if (isDpiAwareSupported && dpiContext == DpiAwarenessContext.System)
         {
             return Win32UI.SetProcessDPIAware()
                 ? oldContext

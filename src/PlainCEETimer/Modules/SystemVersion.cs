@@ -1,48 +1,57 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+using System;
 using Microsoft.Win32;
+using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.Modules;
 
-public readonly struct SystemVersion
+[NoConstants]
+public class SystemVersion
 {
-    public static readonly bool IsWindows11;
-    public static readonly bool BeforeWinNT10;
-    public static readonly SystemVersion Current;
-    public static readonly bool IsVistaOrLater;
-    public static readonly bool IsWindows81OrLater;
-    public static readonly bool Is1607OrLater;
-    public static readonly bool Is1809OrLater;
+    public static bool BeforeNT10 => isBeforeNT10 ??= !Current.AtLeast(new(10, 0));
 
-    public readonly int Major;
-    public readonly int Minor;
-    public readonly int Build;
-    public readonly int UBR;
+    public static bool IsWindows11 => isWindows11 ??= Current.AtLeast(new(10, 0, WindowsBuilds.Windows11_21H2));
 
-    public SystemVersion()
+    public static readonly SystemVersion Current = new();
+
+    private readonly Version m_version;
+
+    private static bool? isBeforeNT10;
+    private static bool? isWindows11;
+    private const string CurrentVersionRegistryPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
+
+    private SystemVersion()
     {
-        var ver = Environment.OSVersion.Version;
-        Major = ver.Major;
-        Minor = ver.Minor;
-        Build = ver.Build;
-        using var reg = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", rootKey: RegistryHive.LocalMachine);
-        UBR = reg.Get(nameof(UBR), 0);
+        var v = Environment.OSVersion.Version;
+        m_version = new(v.Major, v.Minor, v.Build, UBR());
     }
 
-    static SystemVersion()
+    public bool AtLeast(Version version)
     {
-        Current = new();
-        IsWindows11 = Current.Major == 10 && Current.Minor == 0 && Current.Build >= WindowsBuilds.Windows11_21H2;
-        BeforeWinNT10 = Current.Major < 10;
-        IsVistaOrLater = Current.Major >= 6;
-        IsWindows81OrLater = Current.Build >= WindowsBuilds.Windows81;
-        Is1607OrLater = Current.Build >= WindowsBuilds.Windows10_1607;
-        Is1809OrLater = Current.Build >= WindowsBuilds.Windows10_1809;
+        var v1 = m_version;
+        var v2 = version;
+
+        if (v1.Major.AtLeast(v2.Major))
+        {
+            return true;
+        }
+
+        if (v1.Minor.AtLeast(v2.Minor))
+        {
+            return true;
+        }
+
+        if (v1.Build.AtLeast(v2.Build))
+        {
+            return true;
+        }
+
+        return v1.Revision.AtLeast(v2.Revision);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator int(SystemVersion sv)
+    private static int UBR()
     {
-        return sv.Build;
+        using var reg = RegistryHelper.Open(CurrentVersionRegistryPath, rootKey: RegistryHive.LocalMachine);
+        return reg.Get(nameof(UBR), 0);
     }
 }

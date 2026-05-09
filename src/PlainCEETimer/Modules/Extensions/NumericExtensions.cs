@@ -1,7 +1,15 @@
-﻿namespace PlainCEETimer.Modules.Extensions;
+﻿using System.Runtime.CompilerServices;
+
+namespace PlainCEETimer.Modules.Extensions;
 
 public static class NumericExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool AtLeast(this int i, int value)
+    {
+        return i >= value;
+    }
+
     public static int Clamp(this int value, int min, int max)
     {
         if (min > max)

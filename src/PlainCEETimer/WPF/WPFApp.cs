@@ -22,7 +22,7 @@ public sealed class WPFApp : Application
 
     private void InitializeComponent()
     {
-        var a = !SystemVersion.BeforeWinNT10;
+        var a = !SystemVersion.BeforeNT10;
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         Resources.MergedDictionaries

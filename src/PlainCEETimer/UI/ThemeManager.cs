@@ -20,7 +20,7 @@ public static class ThemeManager
 
     public static void Initialize()
     {
-        if (SystemVersion.Current >= WindowsBuilds.Windows10_1903 && !SystemInformation.HighContrast)
+        if (SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1903)) && !SystemInformation.HighContrast)
         {
             var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
             Theme = tmp ? SystemTheme.Dark : SystemTheme.Light;
@@ -29,13 +29,12 @@ public static class ThemeManager
             if ((option == 0 && tmp) || option == 2)
             {
                 Win32UI.EnableDarkModeForApp();
-                _canUseNewTheme = SystemVersion.IsWindows11
-                    && SystemVersion.Current is var v && v >= WindowsBuilds.Windows11_24H2_WIP && v.UBR >= 6682;
+                _canUseNewTheme = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows11_24H2_WIP, 6682));
                 _shouldUseDarkMode = true;
             }
 
             _isDarkModeSupported = true;
-            isNewDwma = SystemVersion.Current >= WindowsBuilds.Windows10_20H1;
+            isNewDwma = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_20H1));
         }
     }
 

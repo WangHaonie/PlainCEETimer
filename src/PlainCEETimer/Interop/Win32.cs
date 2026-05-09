@@ -10,7 +10,7 @@ public static class Win32
 {
     public static IntPtr AllocConsole()
     {
-        var hwnd = AllocConsoleForApp(SystemVersion.BeforeWinNT10, out var phStdIn, out var phStdOut, out var phStdErr);
+        var hwnd = AllocConsoleForApp(SystemVersion.BeforeNT10, out var phStdIn, out var phStdOut, out var phStdErr);
         Console.SetIn(new StreamReader(new FileStream(new SafeFileHandle(phStdIn, false), FileAccess.Read), Console.InputEncoding));
         Console.SetOut(new StreamWriter(new FileStream(new SafeFileHandle(phStdOut, false), FileAccess.Write), Console.OutputEncoding) { AutoFlush = true });
         Console.SetError(new StreamWriter(new FileStream(new SafeFileHandle(phStdErr, false), FileAccess.Write), Console.OutputEncoding) { AutoFlush = true });
