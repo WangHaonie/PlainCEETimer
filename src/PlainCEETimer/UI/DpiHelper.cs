@@ -23,7 +23,7 @@ public static class DpiHelper
     private const int PROCESS_SYSTEM_DPI_AWARE = 1;
     private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
 
-    private static readonly bool flag = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1607));
+    private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1607));
     private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(new(6, 0));
     private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(new(6, 3, WindowsBuilds.Windows81));
     private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1809));
@@ -32,7 +32,7 @@ public static class DpiHelper
     {
         get
         {
-            if (flag)
+            if (isApiSupported)
             {
                 return Win32UI.GetThreadDpiAwarenessContext()
                     .AsDpiAwarenessContextHandle().Value;
@@ -56,7 +56,7 @@ public static class DpiHelper
 
     public static DpiAwarenessContext SetDpiContext(DpiAwarenessContext dpiContext)
     {
-        if (flag)
+        if (isApiSupported)
         {
             if (dpiContext == DpiAwarenessContext.GdiScaled && !isGdiScaledSupported)
             {
@@ -76,10 +76,9 @@ public static class DpiHelper
 
         if (isDpiAwarenessSupported)
         {
-            return TryConvertToProcessDpiAwareness(dpiContext, out var value)
-                && TrySetProcessDpiAwareness(value)
-                    ? oldContext
-                    : DpiAwarenessContext.Unknown;
+            return TrySetProcessDpiAwareness(ConvertToLegacy(dpiContext))
+                ? oldContext
+                : DpiAwarenessContext.Unknown;
         }
 
         if (isDpiAwareSupported && dpiContext == DpiAwarenessContext.System)
@@ -96,7 +95,7 @@ public static class DpiHelper
     {
         if (Win32UI.GetProcessDpiAwareness(IntPtr.Zero, out var value) == S_OK)
         {
-            dpiContext = ConvertFromProcessDpiAwareness(value);
+            dpiContext = ConvertFromLegacy(value);
             return true;
         }
 
@@ -109,37 +108,19 @@ public static class DpiHelper
         return Win32UI.SetProcessDpiAwareness(value) == S_OK;
     }
 
-    private static bool TryConvertToProcessDpiAwareness(DpiAwarenessContext dpiContext, out int value)
+    private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch
     {
-        switch (dpiContext)
-        {
-            case DpiAwarenessContext.Unaware:
-                value = PROCESS_DPI_UNAWARE;
-                return true;
-            case DpiAwarenessContext.System:
-                value = PROCESS_SYSTEM_DPI_AWARE;
-                return true;
-            case DpiAwarenessContext.PerMonitor:
-                value = PROCESS_PER_MONITOR_DPI_AWARE;
-                return true;
-            default:
-                value = default;
-                return false;
-        }
-    }
+        DpiAwarenessContext.Unaware => PROCESS_DPI_UNAWARE,
+        DpiAwarenessContext.PerMonitor => PROCESS_PER_MONITOR_DPI_AWARE,
+        DpiAwarenessContext.System => PROCESS_SYSTEM_DPI_AWARE,
+        _ => PROCESS_DPI_UNAWARE
+    };
 
-    private static DpiAwarenessContext ConvertFromProcessDpiAwareness(int value)
+    private static DpiAwarenessContext ConvertFromLegacy(int value) => value switch
     {
-        switch (value)
-        {
-            case PROCESS_DPI_UNAWARE:
-                return DpiAwarenessContext.Unaware;
-            case PROCESS_SYSTEM_DPI_AWARE:
-                return DpiAwarenessContext.System;
-            case PROCESS_PER_MONITOR_DPI_AWARE:
-                return DpiAwarenessContext.PerMonitor;
-            default:
-                return DpiAwarenessContext.Unknown;
-        }
-    }
+        PROCESS_DPI_UNAWARE => DpiAwarenessContext.Unaware,
+        PROCESS_SYSTEM_DPI_AWARE => DpiAwarenessContext.System,
+        PROCESS_PER_MONITOR_DPI_AWARE => DpiAwarenessContext.PerMonitor,
+        _ => DpiAwarenessContext.Unknown,
+    };
 }
