@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Fody;
 using Mono.Cecil;
@@ -8,27 +9,32 @@ namespace PlainCEETimer.Fody;
 
 public class ModuleWeaver : BaseModuleWeaver
 {
-    private class TypeAndAttribute(TypeDefinition type, CustomAttribute attribute)
+    private sealed class TypeAndAttribute(TypeDefinition type, CustomAttribute attribute)
     {
         public TypeDefinition Type => type;
 
         public CustomAttribute Attribute => attribute;
     }
 
-    private class TypeBasicInfo(string name, string fullName)
+    private sealed class AttributeInfo(string ns, string name)
     {
         public string Name => name;
 
-        public string FullName => fullName;
+        public string Namespace => ns;
     }
+
+    private const string BaseNamespace = "PlainCEETimer.Modules.Fody";
+
+    private static readonly AttributeInfo NoConstantsAttribute = new(BaseNamespace, nameof(NoConstantsAttribute));
+    private static readonly AttributeInfo ConstantAttribute = new(BaseNamespace, nameof(ConstantAttribute));
+    private static readonly AttributeInfo CompilerRemoveAttribute = new(BaseNamespace, nameof(CompilerRemoveAttribute));
 
     public override bool ShouldCleanReference => true;
 
     public override void Execute()
     {
-        Handle_NoConstantsAttribute(new("NoConstantsAttribute", "PlainCEETimer.Modules.Fody.NoConstantsAttribute"),
-            new("ConstantAttribute", "PlainCEETimer.Modules.Fody.ConstantAttribute"));
-        Handle_CompilerRemoveAttribute(new("CompilerRemoveAttribute", "PlainCEETimer.Modules.Fody.CompilerRemoveAttribute"));
+        HandleNoConstantsAttribute();
+        HandleCompilerRemoveAttribute();
     }
 
     public override IEnumerable<string> GetAssembliesForScanning()
@@ -36,124 +42,85 @@ public class ModuleWeaver : BaseModuleWeaver
         yield return "mscorlib";
     }
 
-    private void Handle_NoConstantsAttribute(TypeBasicInfo mainInfo, TypeBasicInfo excludeFlag)
+    private void HandleNoConstantsAttribute()
     {
-        var types = GetTypeFromAttribute(mainInfo, t => t.IsClass || t.IsStruct, out var length);
+        var types = GetTypesWithAttribute(NoConstantsAttribute, t => t.IsClass || t.IsStruct);
 
-        for (int i = 0; i < length; i++)
+        foreach (var type in types)
         {
-            var current = types[i];
-            var fields = current.Type.Fields;
+            RemoveUnmarkedConstants(type.Type);
+            type.Type.CustomAttributes.Remove(type.Attribute);
+        }
 
-            var consts = fields.Where(f =>
+        TryRemoveType(NoConstantsAttribute);
+        TryRemoveType(ConstantAttribute);
+    }
+
+    private void HandleCompilerRemoveAttribute()
+    {
+        var types = GetTypesWithAttribute(CompilerRemoveAttribute, t => t.IsClass);
+
+        foreach (var type in types)
+        {
+            TryRemoveType(type.Type);
+        }
+
+        TryRemoveType(CompilerRemoveAttribute);
+    }
+
+    private ReadOnlyCollection<TypeAndAttribute> GetTypesWithAttribute(AttributeInfo info, Predicate<TypeDefinition> isAttributeTarget)
+    {
+        return ModuleDefinition.GetTypes()
+            .Where(t => isAttributeTarget(t))
+            .Select(t => new TypeAndAttribute(t, FindAttribute(t, info)))
+            .Where(x => x.Attribute != null).ToList().AsReadOnly();
+    }
+
+    private void RemoveUnmarkedConstants(TypeDefinition type)
+    {
+        foreach (var field in type.Fields.Where(x => x.IsLiteral).ToList())
+        {
+            var a = FindAttribute(field, ConstantAttribute);
+
+            if (a != null)
             {
-                if (f.IsLiteral)
-                {
-                    if (f.HasCustomAttributes)
-                    {
-                        if (f.CustomAttributes.Any(a =>
-                        {
-                            var at = a.AttributeType;
-
-                            if (at.Name == excludeFlag.Name && at.FullName == excludeFlag.FullName)
-                            {
-                                f.CustomAttributes.Remove(a);
-                                return true;
-                            }
-
-                            return false;
-                        }))
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-                return false;
-            }).ToList();
-
-            var count = consts.Count;
-
-            for (int j = 0; j < count; j++)
-            {
-                fields.Remove(consts[j]);
+                field.CustomAttributes.Remove(a);
+                continue;
             }
 
-            RemoveAttribute(current);
+            type.Fields.Remove(field);
         }
-
-        TryDeleteType(mainInfo);
-        TryDeleteType(excludeFlag);
     }
 
-    private void Handle_CompilerRemoveAttribute(TypeBasicInfo info)
+    private bool TryRemoveType(AttributeInfo info)
     {
-        var types = GetTypeFromAttribute(info, t => t.IsClass, out var count);
+        return TryRemoveType(ModuleDefinition.GetTypes()
+            .FirstOrDefault(t => t.Name == info.Name && t.Namespace == info.Namespace));
+    }
 
-        for (int i = 0; i < count; i++)
+    private static CustomAttribute FindAttribute(ICustomAttributeProvider provider, AttributeInfo info)
+    {
+        if (!provider.HasCustomAttributes)
         {
-            TryDeleteType(types[i].Type);
+            return null;
         }
 
-        TryDeleteType(info);
+        return provider.CustomAttributes
+            .FirstOrDefault(x => x.AttributeType.Name == info.Name && x.AttributeType.Namespace == info.Namespace);
     }
 
-    private List<TypeAndAttribute> GetTypeFromAttribute(TypeBasicInfo info, Predicate<TypeDefinition> IsAttributeTarget, out int count)
+    private static bool TryRemoveType(TypeDefinition type)
     {
-        List<TypeAndAttribute> result = null;
-
-        try
-        {
-            result = [.. ModuleDefinition.GetTypes()
-                .Where(t => IsAttributeTarget(t) && t.HasCustomAttributes
-                    && t.CustomAttributes.Any(a => a.AttributeType.Name == info.Name))
-                .Select(x => new TypeAndAttribute(x, x.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == info.FullName)))
-                .Where(o => o.Attribute != null)];
-        }
-        catch (Exception ex)
-        {
-            if (ex is not NullReferenceException and not ArgumentNullException)
-            {
-                throw;
-            }
-        }
-
-        count = result?.Count ?? 0;
-        return result;
-    }
-
-    private void RemoveAttribute(TypeAndAttribute typeAndAttribute)
-    {
-        typeAndAttribute.Type.CustomAttributes.Remove(typeAndAttribute.Attribute);
-    }
-
-    private bool TryDeleteType(TypeBasicInfo info)
-    {
-        return TryDeleteType(ModuleDefinition.Types.FirstOrDefault(x => x.Name == info.Name && x.FullName == info.FullName));
-    }
-
-    private bool TryDeleteType(TypeDefinition type)
-    {
-        try
-        {
-            if (type != null)
-            {
-                if (type.IsNested)
-                {
-                    type.DeclaringType.NestedTypes.Remove(type);
-                }
-
-                ModuleDefinition.Types.Remove(type);
-                return true;
-            }
-
-            return false;
-        }
-        catch
+        if (type == null)
         {
             return false;
         }
+
+        if (type.IsNested)
+        {
+            return type.DeclaringType.NestedTypes.Remove(type);
+        }
+
+        return type.Module.Types.Remove(type);
     }
 }
