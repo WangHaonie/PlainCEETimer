@@ -1,7 +1,8 @@
 ﻿using System.Windows;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
-using PlainCEETimer.WPF.Extensions;
+using PlainCEETimer.WPF.Modules;
 
 namespace PlainCEETimer.WPF;
 
@@ -26,9 +27,9 @@ public sealed class WPFApp : Application
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         Resources.MergedDictionaries
-            .Add("WPF/Appearance/RoundCorner.xaml")
-            .Add("WPF/Appearance/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml"), a)
-            .Add("WPF/Appearance/Default.xaml", a)
-            .Add("WPF/Appearance/Default.Windows11.xaml", SystemVersion.IsWindows11);
+            .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
+            .AddEx(Resource.Create("WPF/Appearance/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml")), a)
+            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), a)
+            .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11);
     }
 }

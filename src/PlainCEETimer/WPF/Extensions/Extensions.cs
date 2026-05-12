@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using PlainCEETimer.Modules.Fody;
@@ -50,15 +48,5 @@ public static class Extensions
     public static double Dip2Pt(this double dip)
     {
         return dip / PtToDipRatio;
-    }
-
-    public static Collection<ResourceDictionary> Add(this Collection<ResourceDictionary> dict, string uri, bool condition = true)
-    {
-        if (condition)
-        {
-            dict.Add(new() { Source = new(uri, UriKind.Relative) });
-        }
-
-        return dict;
     }
 }

@@ -65,12 +65,6 @@ internal static class App
     [STAThread]
     private static void Main(string[] args)
     {
-        Application.SetCompatibleTextRenderingDefault(false);
-#if !DEBUG
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-        Application.ThreadException += (_, e) => HandleException(e.Exception);
-        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-#endif
         MainMutex = new(true, MutexName, out IsMainProcess);
         AllArgs = string.Join(" ", args);
 
@@ -273,12 +267,17 @@ internal static class App
     {
         HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
-        InitDpiContext();
+        InitDpiAware();
         ThemeManager.Initialize();
         DefaultValues.InitEssentials(true);
         ConfigValidator.Validate();
-        ConfigurationManager.AppSettings.Set("EnableWindowsFormsHighDpiAutoResizing", "true");
         Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+#if !DEBUG
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.ThreadException += (_, e) => HandleException(e.Exception);
+        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
+#endif
     }
 
     public static void Exit(bool restart = false, bool useArgs = false)
@@ -340,9 +339,12 @@ internal static class App
         }
     }
 
-    private static void InitDpiContext()
+    private static void InitDpiAware()
     {
         var flag = AppConfig.Display.UseWPF;
+        ConfigurationManager.AppSettings
+            .SetEx("DpiAwareness", "PerMonitorV2")
+            .SetEx("EnableWindowsFormsHighDpiAutoResizing", "true");
         DpiHelper.SetDpiContext(flag ? DpiAwarenessContext.PerMonitorV2 : DpiAwarenessContext.System);
     }
 }
