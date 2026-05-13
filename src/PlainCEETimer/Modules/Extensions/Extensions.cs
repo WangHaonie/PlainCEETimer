@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -24,7 +26,7 @@ public static class Extensions
         => ColorTranslator.FromOle(value);
 
     public static string Format(this Font font)
-        => $"{font.Name}, {font.Size}pt, {font.Style}";
+        => $"{font.Name}, {font.SizeInPoints}pt, {font.Style}";
 
     public static void Destory(this IDisposable obj)
         => obj?.Dispose();

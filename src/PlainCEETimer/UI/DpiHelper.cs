@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
@@ -16,6 +17,15 @@ public static class DpiHelper
     Mixed-Mode DPI Scaling and DPI-aware APIs - Win32 apps | Microsoft Learn
     https://learn.microsoft.com/en-us/windows/win32/hidpi/high-dpi-improvements-for-desktop-applications
 
+    DPI_AWARENESS_CONTEXT handle (windef.h) - Win32 apps | Microsoft Learn
+    https://learn.microsoft.com/en-us/windows/win32/hidpi/dpi-awareness-context
+
+    SetThreadDpiAwarenessContext function (winuser.h) - Win32 apps | Microsoft Learn
+    https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddpiawarenesscontext
+
+    SetProcessDpiAwareness function (shellscalingapi.h) - Win32 apps | Microsoft Learn
+    https://learn.microsoft.com/en-us/windows/win32/api/shellscalingapi/nf-shellscalingapi-setprocessdpiawareness
+
     */
 
     private const int S_OK = 0;
@@ -23,10 +33,11 @@ public static class DpiHelper
     private const int PROCESS_SYSTEM_DPI_AWARE = 1;
     private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
 
-    private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1607));
-    private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(new(6, 0));
-    private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(new(6, 3, WindowsBuilds.Windows81));
-    private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(new(10, 0, WindowsBuilds.Windows10_1809));
+    private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(WindowsVersions.NT6);
+    private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows81);
+    private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1607);
+    private static readonly bool isPMv2Supported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1703);
+    private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1809);
 
     public static DpiAwarenessContext Current
     {
@@ -54,41 +65,34 @@ public static class DpiHelper
         }
     }
 
+    public static int GetDpiForWindow(IAppWindow window)
+    {
+        var hwnd = window.Handle;
+
+        if (isApiSupported)
+        {
+            return (int)Win32UI.GetDpiForWindow(hwnd);
+        }
+        else
+        {
+            using var g = Graphics.FromHwnd(hwnd);
+            return (int)g.DpiX;
+        }
+    }
+
+    public static int GetFriendlyScale(int dpi)
+    {
+        return (int)Math.Round(dpi / 96D * 100D);
+    }
+
     public static DpiAwarenessContext SetDpiContext(DpiAwarenessContext dpiContext)
     {
         if (isApiSupported)
         {
-            if (dpiContext == DpiAwarenessContext.GdiScaled && !isGdiScaledSupported)
-            {
-                return DpiAwarenessContext.Unknown;
-            }
-
-            return Win32UI.SetThreadDpiAwarenessContext(dpiContext)
-                .AsDpiAwarenessContextHandle().Value;
+            return SetDpiContextCore(dpiContext);
         }
 
-        var oldContext = Current;
-
-        if (oldContext == dpiContext)
-        {
-            return oldContext;
-        }
-
-        if (isDpiAwarenessSupported)
-        {
-            return TrySetProcessDpiAwareness(ConvertToLegacy(dpiContext))
-                ? oldContext
-                : DpiAwarenessContext.Unknown;
-        }
-
-        if (isDpiAwareSupported && dpiContext == DpiAwarenessContext.System)
-        {
-            return Win32UI.SetProcessDPIAware()
-                ? oldContext
-                : DpiAwarenessContext.Unknown;
-        }
-
-        return DpiAwarenessContext.Unknown;
+        return LegacySetDpiContext(dpiContext);
     }
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)
@@ -103,15 +107,53 @@ public static class DpiHelper
         return false;
     }
 
-    private static bool TrySetProcessDpiAwareness(int value)
+    private static DpiAwarenessContext SetDpiContextCore(DpiAwarenessContext dpiContext)
     {
-        return Win32UI.SetProcessDpiAwareness(value) == S_OK;
+        if (!isGdiScaledSupported && dpiContext == DpiAwarenessContext.GdiScaled)
+        {
+            return DpiAwarenessContext.Unknown;
+        }
+
+        if (!isPMv2Supported && dpiContext == DpiAwarenessContext.PerMonitorV2)
+        {
+            dpiContext = DpiAwarenessContext.PerMonitor;
+        }
+
+        return Win32UI.SetThreadDpiAwarenessContext(dpiContext)
+            .AsDpiAwarenessContextHandle().Value;
+    }
+
+    private static DpiAwarenessContext LegacySetDpiContext(DpiAwarenessContext dpiContext)
+    {
+        var oldContext = Current;
+
+        if (oldContext == dpiContext)
+        {
+            return oldContext;
+        }
+
+        if (isDpiAwarenessSupported)
+        {
+            return Win32UI.SetProcessDpiAwareness(ConvertToLegacy(dpiContext)) == S_OK
+                ? oldContext
+                : DpiAwarenessContext.Unknown;
+        }
+
+        if (isDpiAwareSupported && dpiContext == DpiAwarenessContext.System)
+        {
+            return Win32UI.SetProcessDPIAware()
+                ? oldContext
+                : DpiAwarenessContext.Unknown;
+        }
+
+        return DpiAwarenessContext.Unknown;
     }
 
     private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch
     {
         DpiAwarenessContext.Unaware => PROCESS_DPI_UNAWARE,
         DpiAwarenessContext.PerMonitor => PROCESS_PER_MONITOR_DPI_AWARE,
+        DpiAwarenessContext.PerMonitorV2 => PROCESS_PER_MONITOR_DPI_AWARE,
         DpiAwarenessContext.System => PROCESS_SYSTEM_DPI_AWARE,
         _ => PROCESS_DPI_UNAWARE
     };

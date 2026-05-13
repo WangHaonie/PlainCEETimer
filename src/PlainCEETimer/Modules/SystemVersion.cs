@@ -8,9 +8,9 @@ namespace PlainCEETimer.Modules;
 [NoConstants]
 public class SystemVersion
 {
-    public static bool BeforeNT10 => isBeforeNT10 ??= !Current.AtLeast(new(10, 0));
+    public static bool BeforeNT10 => isBeforeNT10 ??= !Current.AtLeast(WindowsVersions.NT10);
 
-    public static bool IsWindows11 => isWindows11 ??= Current.AtLeast(new(10, 0, WindowsBuilds.Windows11_21H2));
+    public static bool IsWindows11 => isWindows11 ??= Current.AtLeast(WindowsVersions.Windows11_21H2);
 
     public static readonly SystemVersion Current = new();
 

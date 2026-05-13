@@ -99,6 +99,9 @@ public static class Win32UI
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool InsertMenu(IntPtr hMenu, int uPosition, int uFlags, long uIDNewItem, string lpNewItem);
 
+    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+    public static extern uint GetDpiForWindow(IntPtr hwnd);
+
     [DllImport(App.NativesDll, EntryPoint = "#21")]
     public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
 
