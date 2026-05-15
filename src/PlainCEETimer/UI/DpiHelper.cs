@@ -152,8 +152,7 @@ public static class DpiHelper
     private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch
     {
         DpiAwarenessContext.Unaware => PROCESS_DPI_UNAWARE,
-        DpiAwarenessContext.PerMonitor => PROCESS_PER_MONITOR_DPI_AWARE,
-        DpiAwarenessContext.PerMonitorV2 => PROCESS_PER_MONITOR_DPI_AWARE,
+        DpiAwarenessContext.PerMonitor or DpiAwarenessContext.PerMonitorV2 => PROCESS_PER_MONITOR_DPI_AWARE,
         DpiAwarenessContext.System => PROCESS_SYSTEM_DPI_AWARE,
         _ => PROCESS_DPI_UNAWARE
     };

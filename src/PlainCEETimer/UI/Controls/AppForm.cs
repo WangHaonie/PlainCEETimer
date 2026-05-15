@@ -21,6 +21,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
+    protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.System;
+
     protected IScreenService ScreenService { get; }
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
@@ -637,13 +639,13 @@ public abstract class AppForm : Form, IAppWindow
         KeepOnScreen();
     }
 
-    private static void EnsureDpiContext()
+    private void EnsureDpiContext()
     {
-        var suggest = DpiAwarenessContext.System;
+        var context = DefaultDpiAwarenessContext;
 
-        if (DpiHelper.Current != suggest)
+        if (DpiHelper.Current != context)
         {
-            DpiHelper.SetDpiContext(suggest);
+            DpiHelper.SetDpiContext(context);
         }
     }
 }
