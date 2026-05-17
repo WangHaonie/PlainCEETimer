@@ -247,7 +247,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnHandleCreated(EventArgs e)
     {
-        UpdateDpiScale(DpiManager.GetDpiForWindow(this), 96F);
+        UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
 
         if (ThemeManager.ShouldUseDarkMode)
@@ -304,7 +304,7 @@ public abstract class AppForm : Form, IAppWindow
             MinimumSize = e.SuggestedRectangle.Size;
         }
 
-        DpiManager.GlobalRefreshDeviceDpi();
+        DpiHelperEx.GlobalUpdateDeviceDpi();
         base.OnDpiChanged(e);
         UpdateDpiScale(newDpi, e.DeviceDpiOld);
         ApplyAppFont();
@@ -572,6 +572,20 @@ public abstract class AppForm : Form, IAppWindow
         return new(w, h);
     }
 
+    protected Font ScaleFont(DipFont dipFont)
+    {
+        var font = dipFont.Value;
+
+        if (IsDpiChanged)
+        {
+            return new(font.FontFamily, dipFont.Size * DpiRatioRel,
+                font.Style, font.Unit,
+                font.GdiCharSet, font.GdiVerticalFont);
+        }
+
+        return font;
+    }
+
     private void InitToUserSize()
     {
         if (IsSizable)
@@ -660,9 +674,9 @@ public abstract class AppForm : Form, IAppWindow
     {
         var suggest = DefaultDpiAwarenessContext;
 
-        if (DpiManager.Current != suggest)
+        if (DpiHelperEx.Current != suggest)
         {
-            DpiManager.SetDpiContext(suggest);
+            DpiHelperEx.SetDpiContext(suggest);
         }
     }
 
@@ -686,20 +700,6 @@ public abstract class AppForm : Form, IAppWindow
 
         AppFont = new(AppFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel, 0);
         Font = AppFont;
-    }
-
-    protected Font ScaleFont(DipFont dipFont)
-    {
-        var font = dipFont.Value;
-
-        if (IsDpiChanged)
-        {
-            return new(font.FontFamily, dipFont.Size * DpiRatioRel,
-                font.Style, font.Unit,
-                font.GdiCharSet, font.GdiVerticalFont);
-        }
-
-        return font;
     }
 
     private void EnsureAutoScaleDpi()

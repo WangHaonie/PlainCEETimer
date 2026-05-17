@@ -171,17 +171,6 @@ public sealed class PlainListView : ListView
         base.OnHandleCreated(e);
     }
 
-    protected override void OnFontChanged(EventArgs e)
-    {
-        base.OnFontChanged(e);
-
-        if (IsHandleCreated)
-        {
-            UpdateRowHeight();
-            AutoAdjustWidth();
-        }
-    }
-
     protected override void OnDpiChangedAfterParent(EventArgs e)
     {
         base.OnDpiChangedAfterParent(e);

@@ -44,24 +44,18 @@ public sealed class PlainComboBox : ComboBox
         if (!Calculated)
         {
             var w = 0;
-            var sbw = DpiManager.GetSystemMetricsForDpi(NativeConstants.SM_CXVSCROLL, DeviceDpi, SystemInformation.VerticalScrollBarWidth);
+            var vsbw = DpiHelperEx.GetSystemMetricsForDpi(SystemMetric.CXVSCROLL, DeviceDpi);
 
-            foreach (var Item in Items)
+            foreach (var item in Items)
             {
-                w = Math.Max(w, TextRenderer.MeasureText(GetItemText(Item), Font).Width);
+                w = Math.Max(w, TextRenderer.MeasureText(GetItemText(item), Font).Width);
             }
 
-            DropDownWidth = w + sbw;
+            DropDownWidth = w + vsbw;
             Calculated = true;
         }
 
         base.OnDropDown(e);
-    }
-
-    protected override void OnFontChanged(EventArgs e)
-    {
-        Calculated = false;
-        base.OnFontChanged(e);
     }
 
     protected override void OnDpiChangedAfterParent(EventArgs e)

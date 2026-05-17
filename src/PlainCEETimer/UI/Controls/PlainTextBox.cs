@@ -189,12 +189,6 @@ public sealed class PlainTextBox : TextBox
         UpdateExpandButtonMargin();
     }
 
-    protected override void OnFontChanged(EventArgs e)
-    {
-        base.OnFontChanged(e);
-        UpdateExpandButtonMargin();
-    }
-
     protected override void WndProc(ref Message m)
     {
         if (m.Msg == WM.PASTE)

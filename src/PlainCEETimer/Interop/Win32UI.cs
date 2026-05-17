@@ -111,6 +111,9 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
 
+    [DllImport(App.User32Dll)]
+    public static extern int GetSystemMetrics(int nIndex);
+
     [DllImport(App.NativesDll, EntryPoint = "#21")]
     public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
 

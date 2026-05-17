@@ -11,7 +11,7 @@ using PlainCEETimer.UI.Extensions;
 namespace PlainCEETimer.UI;
 
 [NoConstants]
-public static class DpiManager
+public static class DpiHelperEx
 {
     /*
     
@@ -98,19 +98,19 @@ public static class DpiManager
         }
     }
 
-    public static int GetSystemMetricsForDpi(int nIndex, int dpi, int fallback)
+    public static int GetSystemMetricsForDpi(int nIndex, int dpi)
     {
         if (isApiSupported)
         {
             return Win32UI.GetSystemMetricsForDpi(nIndex, (uint)dpi);
         }
 
-        return fallback;
+        return Win32UI.GetSystemMetrics(nIndex);
     }
 
-    public static void GlobalRefreshDeviceDpi()
+    public static void GlobalUpdateDeviceDpi()
     {
-        var dpi = GetDeviceDpiCore();
+        var dpi = GetDeviceDpi();
         DpiHelper.deviceDpi = dpi;
         DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
     }
@@ -169,7 +169,7 @@ public static class DpiManager
         return DpiAwarenessContext.Unknown;
     }
 
-    private static double GetDeviceDpiCore()
+    private static double GetDeviceDpi()
     {
         if (isDpiAwarenessSupported
             && Win32UI.GetDpiForMonitor(Screen.PrimaryScreen.GetHandle(MemberTypes.Field, "hmonitor"),
