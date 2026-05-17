@@ -36,14 +36,17 @@ public abstract class AppForm : Form, IAppWindow
     public event EventHandler<DialogEndEventArgs> DialogEnd;
 
     private bool IsLoading = true;
+    private bool IsDpiChanged;
     private bool IsHighDpi;
     private bool SetRoundRegion;
     private float DpiRatio = 1F;
+    private float DpiRatioRel = 1F;
     private Size lastSize;
     private FormWindowState lastState;
     private Font AppFont;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
+    private readonly float InitDpi;
     private readonly bool IsSizable;
     private readonly bool SetRoundCorner;
     private readonly bool SmallRoundCorner;
@@ -69,6 +72,7 @@ public abstract class AppForm : Form, IAppWindow
     protected AppForm()
     {
         EnsureDpiContext();
+        InitDpi = DeviceDpi;
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
@@ -159,9 +163,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnLoad(EventArgs e)
     {
-        UpdateDpiScale();
         EnsureAutoScaleDpi();
-        ApplyAppFont();
         SuspendLayout();
         RunLayout(IsHighDpi);
         InitToUserSize();
@@ -245,7 +247,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnHandleCreated(EventArgs e)
     {
-        UpdateDpiScale();
+        UpdateDpiScale(DpiHelper.GetDpiForWindow(this), 96F);
         ApplyAppFont();
 
         if (ThemeManager.ShouldUseDarkMode)
@@ -294,9 +296,17 @@ public abstract class AppForm : Form, IAppWindow
 
     protected override void OnDpiChanged(DpiChangedEventArgs e)
     {
+        var newDpi = e.DeviceDpiNew;
+        IsDpiChanged = newDpi != InitDpi;
+
+        if (newDpi < InitDpi)
+        {
+            MinimumSize = e.SuggestedRectangle.Size;
+        }
+
         DpiHelper.GlobalRefreshDeviceDpi();
         base.OnDpiChanged(e);
-        UpdateDpiScale();
+        UpdateDpiScale(newDpi, e.DeviceDpiOld);
         ApplyAppFont();
         LegacySetRoundCorner();
     }
@@ -369,21 +379,27 @@ public abstract class AppForm : Form, IAppWindow
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int ScaleToDpi(int px)
+    protected int ScaleToDpi(int value)
     {
-        return (int)(px * DpiRatio);
+        return (int)(value * DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int UnscaleToDpi(int px)
+    protected float ScaleToDpi(float value)
     {
-        return (int)(px / DpiRatio);
+        return value * DpiRatio;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Size ScaleToDpi(Size sz)
     {
         return new(ScaleToDpi(sz.Width), ScaleToDpi(sz.Height));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int UnscaleToDpi(int value)
+    {
+        return (int)(value / DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -650,22 +666,16 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void UpdateDpiScale()
+    private void UpdateDpiScale(float newDpi, float oldDpi)
     {
-        var dpi = DeviceDpi;
-
-        if (IsHandleCreated)
-        {
-            dpi = DpiHelper.GetDpiForWindow(this);
-        }
-
-        DpiRatio = dpi / 96F;
+        DpiRatio = newDpi / 96F;
+        DpiRatioRel = newDpi / oldDpi;
         IsHighDpi = DpiRatio > 1F;
     }
 
     private void ApplyAppFont()
     {
-        var size = 12 * DpiRatio;
+        var size = ScaleToDpi(12F);
 
         if (AppFont != null
             && AppFont.Unit == GraphicsUnit.Pixel
@@ -676,6 +686,20 @@ public abstract class AppForm : Form, IAppWindow
 
         AppFont = new(AppFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel, 0);
         Font = AppFont;
+    }
+
+    protected Font ScaleFont(DipFont dipFont)
+    {
+        var font = dipFont.Value;
+
+        if (IsDpiChanged)
+        {
+            return new(font.FontFamily, dipFont.Size * DpiRatioRel,
+                font.Style, font.Unit,
+                font.GdiCharSet, font.GdiVerticalFont);
+        }
+
+        return font;
     }
 
     private void EnsureAutoScaleDpi()

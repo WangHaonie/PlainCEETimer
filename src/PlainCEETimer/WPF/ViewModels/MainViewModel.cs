@@ -49,7 +49,13 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     [ObservableProperty]
     public partial double MaximumWidth { get; set; }
 
-    public CountdownModel CountdownModel { get; private set; } = new();
+    #region For MainForm
+    [ObservableProperty]
+    public partial CountdownBasicInfo Info { get; private set; }
+
+    [ObservableProperty]
+    public partial DipFont GdiFont { get; private set; }
+    #endregion
 
     private int CurrentTheme;
     private int ScreenIndex;
@@ -90,7 +96,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private readonly WndProcCallback DefWndProc;
 
     private const int PptsvcThreshold = 1;
-    internal const string ModelPropName = "__<>";
 
     public MainViewModel(MainServiceHub services)
     {
@@ -188,7 +193,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                     var font = new UnifiedFont()
                     {
                         DxFont = Font,
-                        GdiFont = CountdownModel.Font
+                        GdiFont = GdiFont.Value
                     };
 
                     if (FontService.ShowFontDialog(font) == true)
@@ -260,11 +265,10 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             var fore = e.ForeColor;
             var back = e.BackColor;
             var content = e.Content;
-            CountdownModel.BasicInfo = e;
+            Info = e;
             Content = content;
             Foreground = fore.ToColor();
             Background = back.ToColor();
-            NotifyModelChanged();
             UpdateTrayText(content);
             UpdateBorderColor(fore, back);
         };
@@ -583,8 +587,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void ChangeCountdownFont(UnifiedFont font)
     {
         Font = font.DxFont;
-        CountdownModel.Font = font.GdiFont;
-        NotifyModelChanged();
+        GdiFont = new(font.GdiFont);
         UpdateFontNameItem(font);
 
         if (!ConfigValidator.ValidateNeeded)
@@ -663,10 +666,5 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void UpdateCountdownEnabledState()
     {
         Countdown.Enabled = !IsHotKey1Activated || ShowTrayText;
-    }
-
-    private void NotifyModelChanged()
-    {
-        OnPropertyChanged(ModelPropName);
     }
 }

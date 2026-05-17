@@ -1,9 +1,8 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace PlainCEETimer.Countdown;
 
-public class CountdownUpdatedEventArgs(string content, Color fore, Color back) : EventArgs
+public class CountdownBasicInfo(string content, Color fore, Color back)
 {
     public string Content => content;
 

@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
-using PlainCEETimer.Interop;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.ViewModels;
@@ -13,8 +12,6 @@ namespace PlainCEETimer.UI.Forms;
 public sealed class MainForm : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
-
-    protected override DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.System;
 
     private MainViewModel vm;
     private Font CountdownFont;
@@ -51,6 +48,12 @@ public sealed class MainForm : AppForm
         TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
     }
 
+    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    {
+        base.OnDpiChanged(e);
+        ApplyCountdownFont();
+    }
+
     protected override bool OnClosing(CloseReason closeReason)
     {
         return !vm.CanClose();
@@ -73,21 +76,25 @@ public sealed class MainForm : AppForm
         switch (prop.Length)
         {
             case 4:
-                if (prop == MainViewModel.ModelPropName)
+                if (prop == nameof(vm.Info))
                 {
-                    var m = vm.CountdownModel;
-                    var mi = m.BasicInfo;
+                    var i = vm.Info;
 
-                    if (mi != null)
+                    if (i != null)
                     {
-                        CountdownForeColor = mi.ForeColor;
-                        BackColor = mi.BackColor;
-                        CountdownContent = mi.Content;
+                        CountdownForeColor = i.ForeColor;
+                        BackColor = i.BackColor;
+                        CountdownContent = i.Content;
                         Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak);
                         Invalidate();
                     }
+                }
+                break;
 
-                    CountdownFont = m.Font;
+            case 7:
+                if (prop == nameof(vm.GdiFont))
+                {
+                    ApplyCountdownFont();
                 }
                 break;
 
@@ -98,5 +105,10 @@ public sealed class MainForm : AppForm
                 }
                 break;
         }
+    }
+
+    private void ApplyCountdownFont()
+    {
+        CountdownFont = ScaleFont(vm.GdiFont);
     }
 }
