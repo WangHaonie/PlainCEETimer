@@ -101,7 +101,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         var desc = itemDesc ?? "项";
         ListViewMain.Headers = headers;
-        ListViewMain.Size = new Size(LogicalToDeviceUnits(listViewWidth), LogicalToDeviceUnits(218));
+        ListViewMain.Size = DpiHelper.LogicalToDeviceUnits(new Size(listViewWidth, 218));
 
         if (groups != null && groups.Length != 0)
         {

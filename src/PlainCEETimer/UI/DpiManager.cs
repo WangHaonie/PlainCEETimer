@@ -1,14 +1,17 @@
 using System;
 using System.Drawing;
+using System.Reflection;
+using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI;
 
 [NoConstants]
-public static class DpiHelper
+public static class DpiManager
 {
     /*
     
@@ -107,15 +110,9 @@ public static class DpiHelper
 
     public static void GlobalRefreshDeviceDpi()
     {
-        var dc = Win32UI.GetDC(IntPtr.Zero);
-
-        if (dc != IntPtr.Zero)
-        {
-            double dpi = Win32UI.GetDeviceCaps(dc, WinGdi.LOGPIXELSX);
-            System.Windows.Forms.DpiHelper.deviceDpi = dpi;
-            System.Windows.Forms.DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
-            Win32UI.ReleaseDC(IntPtr.Zero, dc);
-        }
+        var dpi = GetDeviceDpiCore();
+        DpiHelper.deviceDpi = dpi;
+        DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
     }
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)
@@ -170,6 +167,27 @@ public static class DpiHelper
         }
 
         return DpiAwarenessContext.Unknown;
+    }
+
+    private static double GetDeviceDpiCore()
+    {
+        if (isDpiAwarenessSupported
+            && Win32UI.GetDpiForMonitor(Screen.PrimaryScreen.GetHandle(MemberTypes.Field, "hmonitor"),
+                MONITOR_DPI_TYPE.EFFECTIVE, out var dpix, out _) >= 0)
+        {
+            return dpix;
+        }
+
+        var dc = Win32UI.GetDC(IntPtr.Zero);
+        var dpi = 0;
+
+        if (dc != IntPtr.Zero)
+        {
+            dpi = Win32UI.GetDeviceCaps(dc, WinGdi.LOGPIXELSX);
+            Win32UI.ReleaseDC(IntPtr.Zero, dc);
+        }
+
+        return dpi;
     }
 
     private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch

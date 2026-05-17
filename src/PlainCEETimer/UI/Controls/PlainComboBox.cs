@@ -44,7 +44,7 @@ public sealed class PlainComboBox : ComboBox
         if (!Calculated)
         {
             var w = 0;
-            var sbw = DpiHelper.GetSystemMetricsForDpi(NativeConstants.SM_CXVSCROLL, DeviceDpi, SystemInformation.VerticalScrollBarWidth);
+            var sbw = DpiManager.GetSystemMetricsForDpi(NativeConstants.SM_CXVSCROLL, DeviceDpi, SystemInformation.VerticalScrollBarWidth);
 
             foreach (var Item in Items)
             {

@@ -217,7 +217,7 @@ public sealed class NavigationView : Control
 
     private void UpdateNavBar()
     {
-        navBar.Indent = LogicalToDeviceUnits(m_hindent);
-        navBar.ItemHeight = LogicalToDeviceUnits(m_hheight);
+        navBar.Indent = DpiHelper.LogicalToDeviceUnits(m_hindent);
+        navBar.ItemHeight = DpiHelper.LogicalToDeviceUnits(m_hheight);
     }
 }

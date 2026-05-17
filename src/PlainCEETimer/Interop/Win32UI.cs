@@ -105,6 +105,9 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern uint GetDpiForWindow(IntPtr hWnd);
 
+    [DllImport(App.ShcoreDll)]
+    public static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+
     [DllImport(App.User32Dll)]
     public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
 

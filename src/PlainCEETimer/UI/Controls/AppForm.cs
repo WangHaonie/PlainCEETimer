@@ -247,7 +247,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnHandleCreated(EventArgs e)
     {
-        UpdateDpiScale(DpiHelper.GetDpiForWindow(this), 96F);
+        UpdateDpiScale(DpiManager.GetDpiForWindow(this), 96F);
         ApplyAppFont();
 
         if (ThemeManager.ShouldUseDarkMode)
@@ -304,7 +304,7 @@ public abstract class AppForm : Form, IAppWindow
             MinimumSize = e.SuggestedRectangle.Size;
         }
 
-        DpiHelper.GlobalRefreshDeviceDpi();
+        DpiManager.GlobalRefreshDeviceDpi();
         base.OnDpiChanged(e);
         UpdateDpiScale(newDpi, e.DeviceDpiOld);
         ApplyAppFont();
@@ -660,9 +660,9 @@ public abstract class AppForm : Form, IAppWindow
     {
         var suggest = DefaultDpiAwarenessContext;
 
-        if (DpiHelper.Current != suggest)
+        if (DpiManager.Current != suggest)
         {
-            DpiHelper.SetDpiContext(suggest);
+            DpiManager.SetDpiContext(suggest);
         }
     }
 

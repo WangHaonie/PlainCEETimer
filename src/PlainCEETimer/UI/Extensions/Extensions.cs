@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -118,7 +117,6 @@ public static class Extensions
     }
 
     public static IntPtr GetHandle<T>(this T component, MemberTypes type = MemberTypes.Property, string name = nameof(IWin32Window.Handle))
-        where T : Component
     {
         if (component is IWin32Window w)
         {

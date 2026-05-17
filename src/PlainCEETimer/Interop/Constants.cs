@@ -71,6 +71,16 @@ public static class WinGdi
 
 [NoConstants]
 [CompilerRemove]
+public static class MONITOR_DPI_TYPE
+{
+    public const int EFFECTIVE = 0;
+    public const int ANGULAR = 1;
+    public const int RAW = 2;
+    public const int DEFAULT = 0;
+}
+
+[NoConstants]
+[CompilerRemove]
 public static class WM
 {
     public const int FIRST = (int)(0U - 0U);

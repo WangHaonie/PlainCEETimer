@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Reflection;
+using WFSize = System.Drawing.Size;
 
 namespace System.Windows.Forms;
 
@@ -87,12 +89,30 @@ internal static class DpiHelper
     private static FieldInfo m_fiEnableHighDpi;
     private static FieldInfo m_fiEnableDpiChangedMessageHandling;
     private static FieldInfo m_filogicalToDeviceUnitsScalingFactor;
+    private static DpiHelper_LogicalToDeviceUnits1 m_fnLogicalToDeviceUnits1;
+    private static DpiHelper_LogicalToDeviceUnits2 m_fnLogicalToDeviceUnits2;
+    private static readonly Type m_ref;
+    private static readonly Type m_current;
     private static readonly Type m_type;
     private static readonly BindingFlags m_bfAttr = BindingFlags.Static | BindingFlags.NonPublic;
 
     static DpiHelper()
     {
-        m_type = typeof(Control).Assembly.GetType(typeof(DpiHelper).FullName);
+        m_ref = typeof(Control);
+        m_current = typeof(DpiHelper);
+        m_type = m_ref.Assembly.GetType(m_current.FullName);
+    }
+
+    public static int LogicalToDeviceUnits(int value, int devicePixels = 0)
+    {
+        m_fnLogicalToDeviceUnits1 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits1>(m_ref, m_current, typeof(int));
+        return m_fnLogicalToDeviceUnits1(value, devicePixels);
+    }
+
+    public static WFSize LogicalToDeviceUnits(WFSize logicalSize, int deviceDpi = 0)
+    {
+        m_fnLogicalToDeviceUnits2 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits2>(m_ref, m_current, typeof(WFSize));
+        return m_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
     }
 
     private static void EnsureAccess(int id)

@@ -343,7 +343,7 @@ internal static class App
     {
         DpiHelper.enableHighDpi = true;
         DpiHelper.enableDpiChangedMessageHandling = true;
-        UI.DpiHelper.GlobalRefreshDeviceDpi();
+        DpiManager.GlobalRefreshDeviceDpi();
         DpiHelper.isInitialized = true;
     }
 }
