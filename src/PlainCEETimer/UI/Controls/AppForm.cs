@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -6,10 +6,12 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI.Core;
 
 namespace PlainCEETimer.UI.Controls;
 
+[NoConstants]
 public abstract class AppForm : Form, IAppWindow
 {
     /// <summary>
@@ -21,7 +23,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
-    protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.System;
+    protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.PerMonitorV2;
 
     protected IScreenService ScreenService { get; }
 
@@ -34,9 +36,12 @@ public abstract class AppForm : Form, IAppWindow
     public event EventHandler<DialogEndEventArgs> DialogEnd;
 
     private bool IsLoading = true;
+    private bool IsHighDpi;
     private bool SetRoundRegion;
-    private FormWindowState lastState;
+    private float DpiRatio = 1F;
     private Size lastSize;
+    private FormWindowState lastState;
+    private Font AppFont;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly bool IsSizable;
@@ -44,11 +49,7 @@ public abstract class AppForm : Form, IAppWindow
     private readonly bool SmallRoundCorner;
     private readonly bool Special;
     private readonly bool OnEscClosing;
-
-    private static double DpiRatio;
-    private static bool IsHighDpi;
-    private static readonly Font AppFont;
-    private static readonly int CurrentFontHeight;
+    private const string AppFontFamily = "Segoe UI";
 
     protected sealed override CreateParams CreateParams
     {
@@ -82,7 +83,7 @@ public abstract class AppForm : Form, IAppWindow
         SuspendLayout();
         AutoScaleDimensions = new(96F, 96F);
         AutoScaleMode = AutoScaleMode.Dpi;
-        Font = AppFont;
+        ApplyAppFont();
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         StartPosition = FormStartPosition.Manual;
@@ -112,12 +113,6 @@ public abstract class AppForm : Form, IAppWindow
 
         OnInitializing();
         ResumeLayout(true);
-    }
-
-    static AppForm()
-    {
-        AppFont = new("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-        CurrentFontHeight = AppFont.Height;
     }
 
     public new bool? ShowDialog()
@@ -164,6 +159,9 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnLoad(EventArgs e)
     {
+        UpdateDpiScale();
+        EnsureAutoScaleDpi();
+        ApplyAppFont();
         SuspendLayout();
         RunLayout(IsHighDpi);
         InitToUserSize();
@@ -215,11 +213,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnSizeChanged(EventArgs e)
     {
-        if (SetRoundRegion && SetRoundCorner)
-        {
-            Win32UI.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
-        }
-
+        LegacySetRoundCorner();
         base.OnSizeChanged(e);
     }
 
@@ -251,12 +245,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnHandleCreated(EventArgs e)
     {
-        if (DpiRatio == 0F)
-        {
-            using var g = CreateGraphics();
-            DpiRatio = g.DpiX / 96F;
-            IsHighDpi = DpiRatio > 1F;
-        }
+        UpdateDpiScale();
+        ApplyAppFont();
 
         if (ThemeManager.ShouldUseDarkMode)
         {
@@ -300,6 +290,15 @@ public abstract class AppForm : Form, IAppWindow
         }
 
         base.OnHandleCreated(e);
+    }
+
+    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    {
+        DpiHelper.GlobalRefreshDeviceDpi();
+        base.OnDpiChanged(e);
+        UpdateDpiScale();
+        ApplyAppFont();
+        LegacySetRoundCorner();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -370,31 +369,25 @@ public abstract class AppForm : Form, IAppWindow
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static int RelativeToFont(double ratio)
-    {
-        return (int)(ratio * CurrentFontHeight);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static int ScaleToDpi(int px)
+    protected int ScaleToDpi(int px)
     {
         return (int)(px * DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static int UnscaleToDpi(int px)
+    protected int UnscaleToDpi(int px)
     {
         return (int)(px / DpiRatio);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static Size ScaleToDpi(Size sz)
+    protected Size ScaleToDpi(Size sz)
     {
         return new(ScaleToDpi(sz.Width), ScaleToDpi(sz.Height));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static Size UnscaleToDpi(Size sz)
+    protected Size UnscaleToDpi(Size sz)
     {
         return new(UnscaleToDpi(sz.Width), UnscaleToDpi(sz.Height));
     }
@@ -417,7 +410,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
     /// </summary>
-    protected static void ArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    protected void ArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference.Right + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -425,7 +418,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// (从右向左) 参考指定控件，在 X 方向上水平排列目标控件，并在 Y 方向上与指定控件的上边缘对齐
     /// </summary>
-    protected static void RtlArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    protected void RtlArrangeControlXT(Control target, Control reference, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference.Left - target.Width + ScaleToDpi(xOffset), reference.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -433,7 +426,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 左边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
     /// </summary>
-    protected static void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+    protected void ArrangeControlXLT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference1.Left + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -441,7 +434,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 X 方向上水平排列目标控件，与 <paramref name="reference1"/> 右边缘对齐，并在 Y 方向上与 <paramref name="reference2"/> 上边缘对齐。
     /// </summary>
-    protected static void ArrangeControlXRT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
+    protected void ArrangeControlXRT(Control target, Control reference1, Control reference2, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference1.Right + ScaleToDpi(xOffset), reference2.Top + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
@@ -449,12 +442,12 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 参考指定控件，在 Y 方向上竖直排列目标控件，并在 X 方向上与指定控件的左边缘对齐
     /// </summary>
-    protected static void ArrangeControlYL(Control target, Control reference, int xOffset = 0, int yOffset = 0)
+    protected void ArrangeControlYL(Control target, Control reference, int xOffset = 0, int yOffset = 0)
     {
         target.SetBounds(reference.Left + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
 
-    protected static void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
+    protected void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
     {
         button2.SetBounds(reference.Right - button2.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         button1?.SetBounds(button2.Left - button1.Width - ScaleToDpi(3), button2.Top, 0, 0, BoundsSpecified.Location);
@@ -463,12 +456,12 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件的左边缘在 X 方向上与参考控件的左边缘对齐
     /// </summary>
-    protected static void AlignControlXL(Control target, Control reference, int xOffset = 0)
+    protected void AlignControlXL(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Left + ScaleToDpi(xOffset);
     }
 
-    protected static void AlignControlXR(Control target, Control reference, int xOffset = 0)
+    protected void AlignControlXR(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Right - target.Width + ScaleToDpi(xOffset);
     }
@@ -476,7 +469,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 Y 方向上与参考控件居中
     /// </summary>
-    protected static void CenterControlY(Control target, Control reference, int yOffset = 0)
+    protected void CenterControlY(Control target, Control reference, int yOffset = 0)
     {
         target.Top = reference.Top + (reference.Height - target.Height) / 2 + ScaleToDpi(yOffset);
     }
@@ -484,7 +477,7 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 X 方向上与参考控件保持紧凑
     /// </summary>
-    protected static void CompactControlX(Control target, Control reference, int xOffset = 0)
+    protected void CompactControlX(Control target, Control reference, int xOffset = 0)
     {
         target.Left = reference.Right + ScaleToDpi(xOffset);
     }
@@ -492,18 +485,18 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 将目标控件在 Y 方向上与参考控件保持紧凑
     /// </summary>
-    protected static void CompactControlY(Control target, Control reference, int yOffset = 0)
+    protected void CompactControlY(Control target, Control reference, int yOffset = 0)
     {
         target.Top = reference.Bottom + ScaleToDpi(yOffset);
     }
 
-    protected static void GroupBoxArrageControl(PlainGroupBox groupBox, Control target, int xOffset = 0, int yOffset = 0)
+    protected void GroupBoxArrageControl(PlainGroupBox groupBox, Control target, int xOffset = 0, int yOffset = 0)
     {
         var drc = groupBox.DisplayRectangle;
         target.SetBounds(drc.X + ScaleToDpi(xOffset), drc.Y + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
     }
 
-    protected static void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
+    protected void GroupBoxAutoAdjustHeight(PlainGroupBox groupBox, Control yLast, int yOffset = 0)
     {
         groupBox.Height = yLast.Bottom + ScaleToDpi(yOffset);
     }
@@ -639,13 +632,69 @@ public abstract class AppForm : Form, IAppWindow
         KeepOnScreen();
     }
 
+    private void LegacySetRoundCorner()
+    {
+        if (SetRoundRegion && SetRoundCorner)
+        {
+            Win32UI.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
+        }
+    }
+
     private void EnsureDpiContext()
     {
-        var context = DefaultDpiAwarenessContext;
+        var suggest = DefaultDpiAwarenessContext;
 
-        if (DpiHelper.Current != context)
+        if (DpiHelper.Current != suggest)
         {
-            DpiHelper.SetDpiContext(context);
+            DpiHelper.SetDpiContext(suggest);
         }
+    }
+
+    private void UpdateDpiScale()
+    {
+        var dpi = DeviceDpi;
+
+        if (IsHandleCreated)
+        {
+            dpi = DpiHelper.GetDpiForWindow(this);
+        }
+
+        DpiRatio = dpi / 96F;
+        IsHighDpi = DpiRatio > 1F;
+    }
+
+    private void ApplyAppFont()
+    {
+        var size = 12 * DpiRatio;
+
+        if (AppFont != null
+            && AppFont.Unit == GraphicsUnit.Pixel
+            && Math.Abs(AppFont.Size - size) < 0.1F)
+        {
+            return;
+        }
+
+        AppFont = new(AppFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel, 0);
+        Font = AppFont;
+    }
+
+    private void EnsureAutoScaleDpi()
+    {
+        if (AutoScaleMode != AutoScaleMode.Dpi)
+        {
+            return;
+        }
+
+        var newDpi = DpiRatio * 96F;
+        var oldDpi = AutoScaleDimensions.Width;
+
+        if (newDpi <= 0F || oldDpi <= 0F || Math.Abs(newDpi - oldDpi) < 0.5F)
+        {
+            return;
+        }
+
+        var ratio = newDpi / oldDpi;
+        Scale(new SizeF(ratio, ratio));
+        AutoScaleDimensions = new(newDpi, newDpi);
     }
 }

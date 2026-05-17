@@ -65,6 +65,21 @@ public static class DpiHelper
         }
     }
 
+    public static int GetFriendlyScale(int dpi)
+    {
+        return (int)Math.Round(dpi / 96D * 100D);
+    }
+
+    public static DpiAwarenessContext SetDpiContext(DpiAwarenessContext dpiContext)
+    {
+        if (isApiSupported)
+        {
+            return SetDpiContextCore(dpiContext);
+        }
+
+        return LegacySetDpiContext(dpiContext);
+    }
+
     public static int GetDpiForWindow(IAppWindow window)
     {
         var hwnd = window.Handle;
@@ -80,19 +95,27 @@ public static class DpiHelper
         }
     }
 
-    public static int GetFriendlyScale(int dpi)
-    {
-        return (int)Math.Round(dpi / 96D * 100D);
-    }
-
-    public static DpiAwarenessContext SetDpiContext(DpiAwarenessContext dpiContext)
+    public static int GetSystemMetricsForDpi(int nIndex, int dpi, int fallback)
     {
         if (isApiSupported)
         {
-            return SetDpiContextCore(dpiContext);
+            return Win32UI.GetSystemMetricsForDpi(nIndex, (uint)dpi);
         }
 
-        return LegacySetDpiContext(dpiContext);
+        return fallback;
+    }
+
+    public static void GlobalRefreshDeviceDpi()
+    {
+        var dc = Win32UI.GetDC(IntPtr.Zero);
+
+        if (dc != IntPtr.Zero)
+        {
+            double dpi = Win32UI.GetDeviceCaps(dc, WinGdi.LOGPIXELSX);
+            System.Windows.Forms.DpiHelper.deviceDpi = dpi;
+            System.Windows.Forms.DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
+            Win32UI.ReleaseDC(IntPtr.Zero, dc);
+        }
     }
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)

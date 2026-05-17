@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -176,20 +176,23 @@ public sealed class PlainTextBox : TextBox
 
         if (Expandable)
         {
-            /*
-
-            TextBox 留白参考：
-
-            c# - TextBox String/Text's Padding For Custom Control - Stack Overflow
-            https://stackoverflow.com/a/38450341
-
-            */
-
-            Win32UI.SendMessage(Handle, NativeConstants.EM_SETMARGINS, NativeConstants.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
+            UpdateExpandButtonMargin();
         }
 
         OnTextChanged(EventArgs.Empty);
         ParentForm = this.FindParentForm();
+    }
+
+    protected override void OnDpiChangedAfterParent(EventArgs e)
+    {
+        base.OnDpiChangedAfterParent(e);
+        UpdateExpandButtonMargin();
+    }
+
+    protected override void OnFontChanged(EventArgs e)
+    {
+        base.OnFontChanged(e);
+        UpdateExpandButtonMargin();
     }
 
     protected override void WndProc(ref Message m)
@@ -217,6 +220,23 @@ public sealed class PlainTextBox : TextBox
     private void OnParentLocationChanged(object sender, EventArgs e)
     {
         Child.Location = this.LocationToScreen(-4, -4);
+    }
+
+    private void UpdateExpandButtonMargin()
+    {
+        if (Expandable)
+        {
+            /*
+
+            TextBox 留白参考：
+
+            c# - TextBox String/Text's Padding For Custom Control - Stack Overflow
+            https://stackoverflow.com/a/38450341
+
+            */
+
+            Win32UI.SendMessage(Handle, NativeConstants.EM_SETMARGINS, NativeConstants.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
+        }
     }
 
     private void OnExpandableVisibleChanged(bool visible)

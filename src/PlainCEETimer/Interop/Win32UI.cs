@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -47,6 +47,9 @@ public static class Win32UI
 
     [DllImport(App.Gdi32Dll)]
     public static extern IntPtr CreateSolidBrush(COLORREF color);
+
+    [DllImport(App.Gdi32Dll)]
+    public static extern int GetDeviceCaps(IntPtr hdc, int index);
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
@@ -99,8 +102,11 @@ public static class Win32UI
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool InsertMenu(IntPtr hMenu, int uPosition, int uFlags, long uIDNewItem, string lpNewItem);
 
-    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    public static extern uint GetDpiForWindow(IntPtr hwnd);
+    [DllImport(App.User32Dll)]
+    public static extern uint GetDpiForWindow(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
+    public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
 
     [DllImport(App.NativesDll, EntryPoint = "#21")]
     public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
@@ -176,6 +182,12 @@ public static class Win32UI
 
     [DllImport(App.User32Dll)]
     public static extern bool AreDpiAwarenessContextsEqual(DpiAwarenessContext dpiContextA, IntPtr dpiContextB);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetDC(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
+    public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
     [DllImport(App.ShcoreDll)]
     public static extern int GetProcessDpiAwareness(IntPtr hProcess, out int value);

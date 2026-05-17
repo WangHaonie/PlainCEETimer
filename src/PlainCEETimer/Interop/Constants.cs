@@ -7,6 +7,7 @@ namespace PlainCEETimer.Interop;
 public static class NativeConstants
 {
     public const int HWND_MESSAGE = -3;
+    public const int SM_CXVSCROLL = 2;
 
     public const int UIS_SET = 1;
     public const int UISF_HIDEFOCUS = 0x1;
@@ -59,6 +60,13 @@ public static class NativeConstants
     public const int HKCOMB_S = 0x0002;
 
     public const ushort MOD_NOREPEAT = 0x4000;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class WinGdi
+{
+    public const int LOGPIXELSX = 88;
 }
 
 [NoConstants]

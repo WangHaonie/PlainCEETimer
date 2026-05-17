@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
@@ -11,6 +10,7 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
+using DpiHelper = System.Windows.Forms.DpiHelper;
 
 namespace PlainCEETimer.Modules;
 
@@ -341,10 +341,9 @@ internal static class App
 
     private static void InitDpiAware()
     {
-        var flag = AppConfig.Display.UseWPF;
-        ConfigurationManager.AppSettings
-            .SetEx("DpiAwareness", "PerMonitorV2")
-            .SetEx("EnableWindowsFormsHighDpiAutoResizing", "true");
-        DpiHelper.SetDpiContext(flag ? DpiAwarenessContext.PerMonitorV2 : DpiAwarenessContext.System);
+        DpiHelper.enableHighDpi = true;
+        DpiHelper.enableDpiChangedMessageHandling = true;
+        UI.DpiHelper.GlobalRefreshDeviceDpi();
+        DpiHelper.isInitialized = true;
     }
 }

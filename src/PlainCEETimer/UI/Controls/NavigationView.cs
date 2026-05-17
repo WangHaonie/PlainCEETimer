@@ -140,10 +140,31 @@ public sealed class NavigationView : Control
         navBar.Focus();
     }
 
+    protected override void OnDpiChangedAfterParent(EventArgs e)
+    {
+        UpdateNavBar();
+        base.OnDpiChangedAfterParent(e);
+    }
+
+    protected override void OnGotFocus(EventArgs e)
+    {
+        base.OnGotFocus(e);
+        navBar.Focus();
+    }
+
+    private void OnAfterSelect(object sender, TreeViewEventArgs e)
+    {
+        if (!isSwitching)
+        {
+            var index = e.Node.Index;
+            var page = m_pages[index];
+            SwitchToPageCore(page, index);
+        }
+    }
+
     private void UpdateView()
     {
-        navBar.Indent = m_hindent;
-        navBar.ItemHeight = m_hheight;
+        UpdateNavBar();
         panelNavBar.Height = m_height;
         panelNavBar.Width = m_barw;
         panelNavPages.Left = m_barw;
@@ -173,22 +194,6 @@ public sealed class NavigationView : Control
         isSwitching = false;
     }
 
-    protected override void OnGotFocus(EventArgs e)
-    {
-        navBar.Focus();
-        base.OnGotFocus(e);
-    }
-
-    private void OnAfterSelect(object sender, TreeViewEventArgs e)
-    {
-        if (!isSwitching)
-        {
-            var index = e.Node.Index;
-            var page = m_pages[index];
-            SwitchToPageCore(page, index);
-        }
-    }
-
     private void OnSelectedPageChanged(int index, NavigationPage page)
     {
         SelectedPageChanged?.Invoke(this, new(index, page));
@@ -208,5 +213,11 @@ public sealed class NavigationView : Control
         UpdateView();
         Controls.AddRange([panelNavBar, panelNavPages]);
         SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+    }
+
+    private void UpdateNavBar()
+    {
+        navBar.Indent = LogicalToDeviceUnits(m_hindent);
+        navBar.ItemHeight = LogicalToDeviceUnits(m_hheight);
     }
 }

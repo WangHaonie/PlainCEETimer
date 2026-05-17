@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
@@ -7,7 +8,6 @@ namespace PlainCEETimer.UI.Controls;
 public sealed class PlainComboBox : ComboBox
 {
     private bool Calculated;
-    private static readonly int VScrollBarWidth = SystemInformation.VerticalScrollBarWidth;
 
     public PlainComboBox()
     {
@@ -43,17 +43,30 @@ public sealed class PlainComboBox : ComboBox
 
         if (!Calculated)
         {
-            int w = 0;
+            var w = 0;
+            var sbw = DpiHelper.GetSystemMetricsForDpi(NativeConstants.SM_CXVSCROLL, DeviceDpi, SystemInformation.VerticalScrollBarWidth);
 
             foreach (var Item in Items)
             {
                 w = Math.Max(w, TextRenderer.MeasureText(GetItemText(Item), Font).Width);
             }
 
-            DropDownWidth = w + VScrollBarWidth;
+            DropDownWidth = w + sbw;
             Calculated = true;
         }
 
         base.OnDropDown(e);
+    }
+
+    protected override void OnFontChanged(EventArgs e)
+    {
+        Calculated = false;
+        base.OnFontChanged(e);
+    }
+
+    protected override void OnDpiChangedAfterParent(EventArgs e)
+    {
+        Calculated = false;
+        base.OnDpiChangedAfterParent(e);
     }
 }

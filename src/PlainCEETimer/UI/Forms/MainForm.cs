@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Interop;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.ViewModels;
@@ -12,6 +13,8 @@ namespace PlainCEETimer.UI.Forms;
 public sealed class MainForm : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
+
+    protected override DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.System;
 
     private MainViewModel vm;
     private Font CountdownFont;

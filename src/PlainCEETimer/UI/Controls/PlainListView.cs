@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.UI.Controls;
@@ -142,7 +143,6 @@ public sealed class PlainListView : ListView
 
     protected override void OnHandleCreated(EventArgs e)
     {
-
         IntPtr hListView = Handle;
         IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
         IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
@@ -167,16 +167,26 @@ public sealed class PlainListView : ListView
             Win32UI.SetRoundCornerEx(hToolTips, true);
         }
 
-        var fh = FontHeight;
-        fh += (int)(fh * 0.38F);
-
-        SmallImageList = new ImageList()
-        {
-            ColorDepth = ColorDepth.Depth32Bit,
-            ImageSize = new(1, fh)
-        };
-
+        UpdateRowHeight();
         base.OnHandleCreated(e);
+    }
+
+    protected override void OnFontChanged(EventArgs e)
+    {
+        base.OnFontChanged(e);
+
+        if (IsHandleCreated)
+        {
+            UpdateRowHeight();
+            AutoAdjustWidth();
+        }
+    }
+
+    protected override void OnDpiChangedAfterParent(EventArgs e)
+    {
+        base.OnDpiChangedAfterParent(e);
+        UpdateRowHeight();
+        AutoAdjustWidth();
     }
 
     protected override void OnColumnWidthChanging(ColumnWidthChangingEventArgs e)
@@ -229,5 +239,27 @@ public sealed class PlainListView : ListView
         }
 
         base.WndProc(ref m);
+    }
+
+    private void UpdateRowHeight()
+    {
+        var fh = FontHeight;
+        fh += (int)(fh * 0.38F);
+        var old = SmallImageList;
+
+        SmallImageList = new()
+        {
+            ColorDepth = ColorDepth.Depth32Bit,
+            ImageSize = new(1, fh)
+        };
+
+        old.Destory();
+    }
+
+    private void AutoAdjustWidth()
+    {
+        BeginUpdate();
+        AutoAdjustColumnWidth();
+        EndUpdate();
     }
 }
