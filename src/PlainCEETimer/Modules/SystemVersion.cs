@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Win32;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.Modules;
@@ -28,25 +27,7 @@ public class SystemVersion
 
     public bool AtLeast(Version version)
     {
-        var v1 = m_version;
-        var v2 = version;
-
-        if (v1.Major.AtLeast(v2.Major))
-        {
-            return true;
-        }
-
-        if (v1.Minor.AtLeast(v2.Minor))
-        {
-            return true;
-        }
-
-        if (v1.Build.AtLeast(v2.Build))
-        {
-            return true;
-        }
-
-        return v1.Revision.AtLeast(v2.Revision);
+        return m_version.CompareTo(version) >= 0;
     }
 
     private static int UBR()
