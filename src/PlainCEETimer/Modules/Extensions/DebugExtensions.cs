@@ -8,14 +8,12 @@ namespace PlainCEETimer.Modules.Extensions;
 
 internal static class DebugExtensions
 {
-    [Obsolete]
     public static T Out<T, TMember>(this T obj, Func<T, TMember> selector, out TMember value)
     {
         Out(selector(obj), out value);
         return obj;
     }
 
-    [Obsolete]
     public static T Out<T>(this T obj, out T value)
     {
         value = obj;

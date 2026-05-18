@@ -268,11 +268,12 @@ internal static class App
         HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
         InitDpiAware();
+        Application.SetCompatibleTextRenderingDefault(false);
+        AppMessageFilter.AddMessageFilter(null);
         ThemeManager.Initialize();
+        Application.EnableVisualStyles();
         DefaultValues.InitEssentials(true);
         ConfigValidator.Validate();
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
 #if !DEBUG
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);

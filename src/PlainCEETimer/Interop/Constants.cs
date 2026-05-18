@@ -96,8 +96,11 @@ public static class WM
     public const int CONTEXTMENU = 0x007B;
     public const int COMMAND = 0x0111;
     public const int PASTE = 0x0302;
+    public const int REFLECT = 0x2000;
     public const int PARENTNOTIFY = 0x0210;
     public const int SYSCOMMAND = 0x0112;
+    public const int SETTINGCHANGE = 0x001A;
+    public const int SYSCOLORCHANGE = 0x0015;
     public const int CHANGEUISTATE = 0x0127;
     public const int DWMCOLORIZATIONCOLORCHANGED = 0x0320;
     public const int SETCURSOR = 0x0020;

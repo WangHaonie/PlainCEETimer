@@ -249,17 +249,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
-
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            if (!Special)
-            {
-                ForeColor = Colors.DarkForeText;
-                BackColor = Colors.DarkBackText;
-            }
-
-            ThemeManager.EnableDarkModeForWindow(Handle);
-        }
+        ApplyTheme();
 
         if (SetRoundCorner)
         {
@@ -586,6 +576,18 @@ public abstract class AppForm : Form, IAppWindow
         return font;
     }
 
+    private void ApplyTheme()
+    {
+        var flag = ThemeManager.ShouldUseDarkMode;
+        ThemeManager.EnableDarkModeForWindow(Handle, flag);
+
+        if (!Special)
+        {
+            ForeColor = flag ? Colors.DarkForeText : DefaultForeColor;
+            BackColor = flag ? Colors.DarkBackText : DefaultBackColor;
+        }
+    }
+
     private void InitToUserSize()
     {
         if (IsSizable)
@@ -633,6 +635,7 @@ public abstract class AppForm : Form, IAppWindow
     private void InitEvents()
     {
         WindowManager.ActivateRequested += WindowManager_ActivateRequested;
+        ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -644,6 +647,7 @@ public abstract class AppForm : Form, IAppWindow
     private void ClearEvents()
     {
         WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
+        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -660,6 +664,11 @@ public abstract class AppForm : Form, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
+    }
+
+    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
+    {
+        ApplyTheme();
     }
 
     private void LegacySetRoundCorner()

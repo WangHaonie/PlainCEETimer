@@ -137,7 +137,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         if (UseDark)
         {
-            ThemeManager.EnableDarkModeForWindow(Handle);
+            ThemeManager.EnableDarkModeForWindow(Handle, true);
 
             Win32UI.EnumChildWindows(hWnd, (child, _) =>
             {

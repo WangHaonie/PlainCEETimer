@@ -17,9 +17,12 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
 using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
+using fnFlushMenuThemes = void (WINAPI*)();
 using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
+
 static fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
 static fnOpenNcThemeData g_OpenNcThemeData = nullptr;
+static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
@@ -68,7 +71,7 @@ static DWORD WINAPI GetSysColorNew(int nIndex)
     return g_GetSysColor(nIndex);
 }
 
-void EnableDarkModeForApp()
+void EnableDarkModeForApp(BOOL enabled)
 {
     if (!g_SetPreferredAppMode)
     {
@@ -81,7 +84,6 @@ void EnableDarkModeForApp()
             if (addr)
             {
                 g_SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
-                g_SetPreferredAppMode(2);
             }
 
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
@@ -89,8 +91,16 @@ void EnableDarkModeForApp()
                 g_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
                 ReplaceFunction<fnOpenNcThemeData>(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
             }
+
+            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)))
+            {
+                g_FlushMenuThemes = reinterpret_cast<fnFlushMenuThemes>(addr);
+            }
         }
     }
+
+    if (g_SetPreferredAppMode) g_SetPreferredAppMode(enabled ? 2 : 0);
+    if (g_FlushMenuThemes) g_FlushMenuThemes();
 }
 
 void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
@@ -124,11 +134,10 @@ https://stackoverflow.com/a/62811758
 
 */
 
-void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1)
+void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
 {
     if (hWnd)
     {
-        int enabled = 1;
         DwmSetWindowAttribute(hWnd, after20h1 ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, &enabled, sizeof(enabled));
     }
 }

@@ -28,4 +28,15 @@ public static class CollectionExtensions
 
         return collection;
     }
+
+    public static TCollection RemoveEx<TCollection, TValue>(this TCollection collection, TValue value, bool condition)
+        where TCollection : ICollection<TValue>
+    {
+        if (condition)
+        {
+            collection.Remove(value);
+        }
+
+        return collection;
+    }
 }

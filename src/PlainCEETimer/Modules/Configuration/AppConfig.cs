@@ -84,11 +84,7 @@ public class AppConfig
         set => ConfigValidator.SetValue(ref field, value, 3, 0);
     }
 
-    public int Dark
-    {
-        get;
-        set => ConfigValidator.SetValue(ref field, value, 2, 0);
-    }
+    public SystemTheme Theme { get; set; }
 
     [JsonConverter(typeof(PointFormatConverter))]
     public Point Location { get; set; }

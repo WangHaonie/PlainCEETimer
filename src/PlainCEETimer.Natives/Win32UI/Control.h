@@ -20,3 +20,5 @@ cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessa
 cexport(void) ComdlgUnhookMessageBox();
 cexport(BOOL) IsDialog(LPCREATESTRUCT lpCreateStruct);
 cexport(void) RemoveWindowIcon(HWND hWnd);
+cexport(void) HookGetMessage(HOOKPROC lpfnGetMsgProc);
+cexport(void) UnhookGetMessage();

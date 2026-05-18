@@ -57,7 +57,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     public partial DipFont GdiFont { get; private set; }
     #endregion
 
-    private int CurrentTheme;
     private int ScreenIndex;
     private int ExamIndex;
     private bool IsDraggable;
@@ -81,6 +80,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private Exam[] Exams;
     private BorderColorObject BorderColorObj;
     private Rect ScreenRect;
+    private SystemTheme CurrentTheme;
     private CountdownPosition CountdownPos;
     private readonly ICountdownService Countdown;
     private readonly IDialogService MessageX;
@@ -431,13 +431,12 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
 
         IsWpf = newIsWpf;
-        var newTheme = AppConfig.Dark;
+        var newTheme = AppConfig.Theme;
+        ThemeManager.UpdateThemeForUserChoice();
 
         if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
         {
-            MessageX.Warn("需要重启程序以更改应用主题！");
-            App.Exit(true);
-            return;
+            ThemeManager.OnThemeChanged(newTheme);
         }
 
         CurrentTheme = newTheme;

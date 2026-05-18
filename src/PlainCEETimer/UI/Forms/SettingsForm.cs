@@ -691,11 +691,11 @@ public sealed class SettingsForm : AppForm
         EditedGlobalRules = AppConfig.GlobalRules;
         SelectedColors = AppConfig.DefaultColors;
         ComboBoxNtpServers.SelectedIndex = AppConfig.NtpServer;
-        var dark = AppConfig.Dark;
-        RadioButtonThemeSystem.Checked = dark == 0;
-        RadioButtonThemeLight.Checked = dark == 1;
-        RadioButtonThemeDark.Checked = dark == 2 && ThemeManager.IsDarkModeSupported;
-        SelectedTheme = dark;
+        var dark = AppConfig.Theme;
+        RadioButtonThemeSystem.Checked = dark == SystemTheme.Auto;
+        RadioButtonThemeLight.Checked = dark == SystemTheme.Light;
+        RadioButtonThemeDark.Checked = dark == SystemTheme.Dark && ThemeManager.IsDarkModeSupported;
+        SelectedTheme = (int)dark;
 
         CheckBoxAutoSwitch.Checked = General.AutoSwitch;
         ComboBoxAutoSwitchInterval.SelectedIndex = General.Interval;
@@ -890,7 +890,7 @@ public sealed class SettingsForm : AppForm
         AppConfig.GlobalRules = EditedGlobalRules;
         AppConfig.DefaultColors = SelectedColors;
         AppConfig.NtpServer = ComboBoxNtpServers.SelectedIndex;
-        AppConfig.Dark = SelectedTheme;
+        AppConfig.Theme = (SystemTheme)SelectedTheme;
 
         General.AutoSwitch = CheckBoxAutoSwitch.Checked;
         General.Interval = ComboBoxAutoSwitchInterval.SelectedIndex;

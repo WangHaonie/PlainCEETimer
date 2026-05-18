@@ -7,8 +7,8 @@
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
 
-cexport(void) EnableDarkModeForApp();
-cexport(void) EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1);
+cexport(void) EnableDarkModeForApp(BOOL enabled);
+cexport(void) EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled);
 cexport(void) SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
 cexport(DWORD) GetSystemAccentColor();
 cexport(void) ComctlHookSysColor(COLORREF crFore, COLORREF crBack);

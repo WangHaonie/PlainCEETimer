@@ -8,6 +8,8 @@
 static fnMessageBoxW g_MessageBoxW = nullptr;
 static fnMessageBoxW g_UserMessageBoxW = nullptr;
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
+static HOOKPROC g_GetMsgProc = nullptr;
+static HHOOK g_hGetMsgProc = nullptr;
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -19,6 +21,16 @@ static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM l
         {
             return hr;
         }
+    }
+
+    return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    if (g_GetMsgProc)
+    {
+        g_GetMsgProc(nCode, wParam, lParam);
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
@@ -174,5 +186,22 @@ void RemoveWindowIcon(HWND hWnd)
         SendMessage(hWnd, WM_SETICON, ICON_SMALL, 0);
         SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_DLGMODALFRAME);
         SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+}
+
+void HookGetMessage(HOOKPROC lpfnGetMsgProc)
+{
+    if (lpfnGetMsgProc && !g_GetMsgProc)
+    {
+        g_hGetMsgProc = SetWindowsHookEx(WH_GETMESSAGE, GetMsgHookProc, nullptr, GetCurrentThreadId());
+        g_GetMsgProc = lpfnGetMsgProc;
+    }
+}
+
+void UnhookGetMessage()
+{
+    if (g_hGetMsgProc)
+    {
+        UnhookWindowsHookEx(g_hGetMsgProc);
     }
 }

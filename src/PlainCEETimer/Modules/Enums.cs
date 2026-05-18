@@ -12,7 +12,7 @@ public enum SystemStyle
 
 public enum SystemTheme
 {
-    None,
+    Auto,
     Light,
     Dark
 }

@@ -184,7 +184,7 @@ public class AppWindow : Window, IAppWindow
 
         if (ThemeManager.ShouldUseDarkMode)
         {
-            ThemeManager.EnableDarkModeForWindow(hwnd);
+            ThemeManager.EnableDarkModeForWindow(hwnd, true);
         }
 
         base.OnSourceInitialized(e);
@@ -306,6 +306,7 @@ public class AppWindow : Window, IAppWindow
     private void InitEvents()
     {
         WindowManager.ActivateRequested += WindowManager_ActivateRequested;
+        ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -317,6 +318,7 @@ public class AppWindow : Window, IAppWindow
     private void ClearEvents()
     {
         WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
+        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -333,6 +335,11 @@ public class AppWindow : Window, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
+    }
+
+    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
+    {
+        ApplyTheme();
     }
 
     private void WmClose(ref Message m)
@@ -403,6 +410,11 @@ public class AppWindow : Window, IAppWindow
     {
         wih ??= new(this);
         return wih;
+    }
+
+    private void ApplyTheme()
+    {
+        ThemeManager.EnableDarkModeForWindow(Handle, ThemeManager.ShouldUseDarkMode);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

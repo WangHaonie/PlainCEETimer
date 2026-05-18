@@ -127,10 +127,10 @@ public static class Win32UI
     public static extern void SetRoundCornerEx(IntPtr hWnd, bool smallCorner);
 
     [DllImport(App.NativesDll, EntryPoint = "#25")]
-    public static extern void EnableDarkModeForApp();
+    public static extern void EnableDarkModeForApp(bool enabled);
 
     [DllImport(App.NativesDll, EntryPoint = "#26")]
-    public static extern void EnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1);
+    public static extern void EnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1, bool enabled);
 
     [DllImport(App.NativesDll, EntryPoint = "#27")]
     public static extern void SetBorderColor(IntPtr hWnd, COLORREF color, bool enabled);
@@ -177,8 +177,11 @@ public static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#43")]
     public static extern void RemoveWindowIcon(IntPtr hWnd);
 
-    [DllImport(App.NativesDll, EntryPoint = "#43")]
-    public static extern void MoveWindowEx(IntPtr hWnd, int x, int y);
+    [DllImport(App.NativesDll, EntryPoint = "#44")]
+    public static extern void HookGetMessage(HOOKPROC lpfnGetMsgProc);
+
+    [DllImport(App.NativesDll, EntryPoint = "#45")]
+    public static extern void UnhookGetMessage();
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetThreadDpiAwarenessContext();

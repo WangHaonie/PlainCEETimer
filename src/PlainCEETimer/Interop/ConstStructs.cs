@@ -183,3 +183,38 @@ public static class CREATESTRUCT
     /// </summary>
     public const int dwExStyle = 72;
 }
+
+[NoConstants]
+[CompilerRemove]
+public static class MSG
+{
+    /// <summary>
+    /// <code>HWND <see cref="hwnd"/></code>
+    /// </summary>
+    public const int hwnd = 0;
+
+    /// <summary>
+    /// <code>UINT <see cref="message"/></code>
+    /// </summary>
+    public const int message = 8;
+
+    /// <summary>
+    /// <code>WPARAM <see cref="wParam"/></code>
+    /// </summary>
+    public const int wParam = 16;
+
+    /// <summary>
+    /// <code>LPARAM <see cref="lParam"/></code>
+    /// </summary>
+    public const int lParam = 24;
+
+    /// <summary>
+    /// <code>DWORD <see cref="time"/></code>
+    /// </summary>
+    public const int time = 32;
+
+    /// <summary>
+    /// <code>POINT <see cref="pt"/></code>
+    /// </summary>
+    public const int pt = 36;
+}
