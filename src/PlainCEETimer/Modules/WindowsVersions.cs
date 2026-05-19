@@ -12,6 +12,8 @@ public static class WindowsVersions
 
     public static Version Windows10_1607 => field ??= new(10, 0, 14393);
 
+    public static Version Windows10_RS2 => field ??= new(10, 0, 14933);
+
     public static Version Windows10_1809 => field ??= new(10, 0, 17763);
 
     public static Version Windows10_1703 => field ??= new(10, 0, 15063);

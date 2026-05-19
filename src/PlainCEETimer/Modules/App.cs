@@ -10,7 +10,6 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
-using DpiHelper = System.Windows.Forms.DpiHelper;
 
 namespace PlainCEETimer.Modules;
 
@@ -342,9 +341,7 @@ internal static class App
 
     private static void InitDpiAware()
     {
-        DpiHelper.enableHighDpi = true;
-        DpiHelper.enableDpiChangedMessageHandling = true;
         DpiHelperEx.GlobalUpdateDeviceDpi();
-        DpiHelper.isInitialized = true;
+        DpiHelperEx.Initialize();
     }
 }

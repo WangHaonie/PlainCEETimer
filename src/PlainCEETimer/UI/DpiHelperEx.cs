@@ -107,7 +107,14 @@ public static class DpiHelperEx
         return Win32UI.GetSystemMetrics(nIndex);
     }
 
-    public static void GlobalUpdateDeviceDpi()
+    internal static void Initialize()
+    {
+        DpiHelper.enableHighDpi = true;
+        DpiHelper.enableDpiChangedMessageHandling = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_RS2);
+        DpiHelper.isInitialized = true;
+    }
+
+    internal static void GlobalUpdateDeviceDpi()
     {
         var dpi = GetDeviceDpi();
         DpiHelper.deviceDpi = dpi;
