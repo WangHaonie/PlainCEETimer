@@ -13,14 +13,9 @@ static HHOOK g_hGetMsgProc = nullptr;
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (g_MsgBoxCbtProc)
+    if (g_MsgBoxCbtProc && nCode >= 0)
     {
-        LRESULT hr = g_MsgBoxCbtProc(nCode, wParam, lParam);
-
-        if (SUCCEEDED(hr))
-        {
-            return hr;
-        }
+        g_MsgBoxCbtProc(nCode, wParam, lParam);
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
@@ -28,7 +23,7 @@ static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM l
 
 static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (g_GetMsgProc)
+    if (g_GetMsgProc && nCode >= 0)
     {
         g_GetMsgProc(nCode, wParam, lParam);
     }
@@ -203,5 +198,7 @@ void UnhookGetMessage()
     if (g_hGetMsgProc)
     {
         UnhookWindowsHookEx(g_hGetMsgProc);
+        g_GetMsgProc = nullptr;
+        g_hGetMsgProc = nullptr;
     }
 }

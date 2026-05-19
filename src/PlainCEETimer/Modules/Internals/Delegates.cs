@@ -2,7 +2,7 @@
 
 namespace System.Windows.Forms
 {
-    internal delegate bool Command_FnDispatchID(int id);
+    internal delegate bool Command_DispatchID(int id);
 
     internal delegate int DpiHelper_LogicalToDeviceUnits1(int value, int devicePixels = 0);
 

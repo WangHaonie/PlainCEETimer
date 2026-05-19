@@ -2,9 +2,9 @@
 
 namespace PlainCEETimer.Interop;
 
-public class DpiAwarenessContextHandle(IntPtr ptr)
+public struct DpiAwarenessContextHandle(IntPtr ptr)
 {
-    public DpiAwarenessContext Value
+    public readonly DpiAwarenessContext Value
     {
         get
         {

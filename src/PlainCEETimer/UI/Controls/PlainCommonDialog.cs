@@ -8,16 +8,11 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainCommonDialog : CommonDialog, IThemeAware
+public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog, IThemeAware
 {
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
         private bool Handled;
-
-        public GroupBoxNativeWindow(IntPtr hGroupBox)
-        {
-            AssignHandle(hGroupBox);
-        }
 
         public new void ReleaseHandle()
         {
@@ -89,18 +84,10 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private HOOKPROC CBTHookProc;
     private GroupBoxNativeWindow gpnw;
     private static FnMessageBoxW fnMessageBox;
-    private readonly string dialogTitle;
-    private readonly AppForm owner;
     private ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
-
-    protected PlainCommonDialog(AppForm parent, string title)
-    {
-        owner = parent;
-        dialogTitle = title;
-    }
 
     public new bool? ShowDialog()
     {
@@ -245,7 +232,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 break;
         }
 
-        return new(-1);
+        return IntPtr.Zero;
     }
 
     private static int MessageBoxW(IntPtr hWnd, string lpText, string lpCaption, int uType)
@@ -301,7 +288,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     }
                     else
                     {
-                        gpnw ??= new(hCtrl);
+                        gpnw?.ReleaseHandle();
+                        gpnw ??= new();
+                        gpnw.AssignHandle(hCtrl);
                     }
                 }
                 else

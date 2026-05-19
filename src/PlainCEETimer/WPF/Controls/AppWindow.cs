@@ -191,6 +191,7 @@ public class AppWindow : Window, IAppWindow
     {
         UpdateDpiScale(newDpi);
         base.OnDpiChanged(oldDpi, newDpi);
+        DpiHelperEx.GlobalUpdateDeviceDpi();
     }
 
     protected sealed override void OnClosed(EventArgs e)

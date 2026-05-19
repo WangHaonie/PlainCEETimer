@@ -31,7 +31,6 @@ public static class DpiHelperEx
 
     */
 
-    private const int S_OK = 0;
     private const int PROCESS_DPI_UNAWARE = 0;
     private const int PROCESS_SYSTEM_DPI_AWARE = 1;
     private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
@@ -117,7 +116,7 @@ public static class DpiHelperEx
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)
     {
-        if (Win32UI.GetProcessDpiAwareness(IntPtr.Zero, out var value) == S_OK)
+        if (Win32UI.GetProcessDpiAwareness(IntPtr.Zero, out var value).Succeeded)
         {
             dpiContext = ConvertFromLegacy(value);
             return true;
@@ -154,7 +153,7 @@ public static class DpiHelperEx
 
         if (isDpiAwarenessSupported)
         {
-            return Win32UI.SetProcessDpiAwareness(ConvertToLegacy(dpiContext)) == S_OK
+            return Win32UI.SetProcessDpiAwareness(ConvertToLegacy(dpiContext)).Succeeded
                 ? oldContext
                 : DpiAwarenessContext.Unknown;
         }
@@ -173,7 +172,7 @@ public static class DpiHelperEx
     {
         if (isDpiAwarenessSupported
             && Win32UI.GetDpiForMonitor(Screen.PrimaryScreen.GetHandle(MemberTypes.Field, "hmonitor"),
-                MONITOR_DPI_TYPE.EFFECTIVE, out var dpix, out _) >= 0)
+                MONITOR_DPI_TYPE.EFFECTIVE, out var dpix, out _).Succeeded)
         {
             return dpix;
         }

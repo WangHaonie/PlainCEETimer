@@ -109,7 +109,7 @@ public static class Win32UI
     public static extern uint GetDpiForWindow(IntPtr hWnd);
 
     [DllImport(App.ShcoreDll)]
-    public static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+    public static extern HRESULT GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 
     [DllImport(App.User32Dll)]
     public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
@@ -202,10 +202,10 @@ public static class Win32UI
     public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
     [DllImport(App.ShcoreDll)]
-    public static extern int GetProcessDpiAwareness(IntPtr hProcess, out int value);
+    public static extern HRESULT GetProcessDpiAwareness(IntPtr hProcess, out int value);
 
     [DllImport(App.ShcoreDll)]
-    public static extern int SetProcessDpiAwareness(int value);
+    public static extern HRESULT SetProcessDpiAwareness(int value);
 
     [DllImport(App.User32Dll)]
     public static extern bool IsProcessDPIAware();

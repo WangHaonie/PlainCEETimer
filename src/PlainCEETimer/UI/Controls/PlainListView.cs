@@ -22,11 +22,6 @@ public sealed class PlainListView : ListView, IThemeAware
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
-        public SysHeader32NativeWindow(IntPtr hHeader)
-        {
-            AssignHandle(hHeader);
-        }
-
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
@@ -80,6 +75,7 @@ public sealed class PlainListView : ListView, IThemeAware
     private bool UseDark;
     private bool invalidate;
     private ThemeHelper themeHelper;
+    private SysHeader32NativeWindow hnw;
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
 
     public PlainListView()
@@ -249,7 +245,9 @@ public sealed class PlainListView : ListView, IThemeAware
         if (!invalidate)
         {
             Win32UI.SetTopMostWindow(hToolTips);
-            _ = new SysHeader32NativeWindow(hHeader);
+            hnw?.ReleaseHandle();
+            hnw = new SysHeader32NativeWindow();
+            hnw.AssignHandle(hHeader);
 
             if (SystemVersion.IsWindows11)
             {

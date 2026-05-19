@@ -16,6 +16,9 @@ public sealed class WPFApp : Application
     public WPFApp()
     {
         ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+#if !DEBUG
+        DispatcherUnhandledException += (_, e) => App.HandleException(e.Exception.PassIf(!e.Handled));
+#endif
         InitializeComponent();
     }
 

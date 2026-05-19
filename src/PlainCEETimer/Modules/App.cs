@@ -174,6 +174,42 @@ internal static class App
         }
     }
 
+    public static void Exit(bool restart = false, bool useArgs = false)
+    {
+        IsClosing = true;
+        appIcon.Destroy();
+        AppExit?.Invoke();
+        AppExit = null;
+
+        if (MainMutex != null)
+        {
+            if (IsMainProcess)
+            {
+                MainMutex.ReleaseMutex();
+            }
+
+            MainMutex.Dispose();
+            MainMutex = null;
+        }
+
+        if (restart)
+        {
+            ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+        }
+
+        250.AsDelay(_ => Win32.ExitProcess(0));
+        WindowManager.TryExitUI();
+        Environment.Exit(0);
+    }
+
+    internal static void HandleException(Exception ex)
+    {
+        if (!IsClosing && ex != null)
+        {
+            PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
+        }
+    }
+
     private static void PrintHelp()
     {
         ConsoleHelper.Instance
@@ -281,34 +317,6 @@ internal static class App
 #endif
     }
 
-    public static void Exit(bool restart = false, bool useArgs = false)
-    {
-        IsClosing = true;
-        appIcon.Destroy();
-        AppExit?.Invoke();
-        AppExit = null;
-
-        if (MainMutex != null)
-        {
-            if (IsMainProcess)
-            {
-                MainMutex.ReleaseMutex();
-            }
-
-            MainMutex.Dispose();
-            MainMutex = null;
-        }
-
-        if (restart)
-        {
-            ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
-        }
-
-        250.AsDelay(_ => Win32.ExitProcess(0));
-        WindowManager.TryExitUI();
-        Environment.Exit(0);
-    }
-
     private static void HideDotNetAppConfig()
     {
         try
@@ -330,14 +338,6 @@ internal static class App
             .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
             .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
             .ToArgs());
-    }
-
-    private static void HandleException(Exception ex)
-    {
-        if (!IsClosing)
-        {
-            PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
-        }
     }
 
     private static void InitDpiAware()

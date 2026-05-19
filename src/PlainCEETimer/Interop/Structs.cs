@@ -324,3 +324,13 @@ public struct LOGFONT
         return (LOGFONT)lfobj;
     }
 }
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly struct HRESULT
+{
+    public readonly bool Succeeded => m_value >= 0;
+
+    public readonly bool Failed => m_value < 0;
+
+    private readonly int m_value;
+}
