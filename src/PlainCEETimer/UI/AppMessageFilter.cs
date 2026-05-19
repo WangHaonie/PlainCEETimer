@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI;
 
@@ -25,7 +27,10 @@ public class AppMessageFilter : IDisposable
         {
             for (int i = 0; i < filtersCount; i++)
             {
-                filters[i].OnMessage(lParam);
+                if (filters[i].OnMessage(lParam))
+                {
+                    Marshal.WriteInt32(lParam, MSG.message, WM.NULL);
+                }
             }
         }
 
@@ -37,6 +42,7 @@ public class AppMessageFilter : IDisposable
         if (!isRunning)
         {
             Win32UI.HookGetMessage(GetMsgHook, m_tid);
+            App.AppExit += Dispose;
             isRunning = true;
         }
     }

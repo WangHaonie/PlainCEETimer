@@ -84,8 +84,9 @@ public class PlainHotkeyControl : Control, IThemeAware
 
     protected override Size DefaultMinimumSize => new(100, 21);
 
-    private Hotkey hotkey;
     private bool UseDark;
+    private Hotkey hotkey;
+    private ParentNativeWindow pnw;
     private readonly ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
@@ -101,7 +102,8 @@ public class PlainHotkeyControl : Control, IThemeAware
         Win32UI.RemoveWindowExStyle(Handle, WS.EX_CLIENTEDGE);
         Win32UI.SendMessage(Handle, NativeConstants.HKM_SETRULES, NativeConstants.HKCOMB_NONE | NativeConstants.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
         SetHotKey(hotkey);
-        _ = new ParentNativeWindow(this);
+        pnw?.ReleaseHandle();
+        pnw = new ParentNativeWindow(this);
     }
 
     protected override void Dispose(bool disposing)

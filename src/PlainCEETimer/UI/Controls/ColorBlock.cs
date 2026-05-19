@@ -111,13 +111,16 @@ public sealed partial class ColorBlock : PlainLabel
 
     private class CancellationMessageFilter(ColorBlock ctrl) : IAppMessageFilter
     {
-        public void OnMessage(IntPtr lpMsg)
+        public bool OnMessage(IntPtr lpMsg)
         {
             if (Marshal.ReadInt32(lpMsg, MSG.message) == WM.KEYDOWN
                 && Marshal.ReadInt16(lpMsg, MSG.wParam) == NativeConstants.VK_ESCAPE)
             {
                 ctrl.CancelScreenColorPicker();
+                return true;
             }
+
+            return false;
         }
     }
 

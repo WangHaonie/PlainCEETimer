@@ -49,6 +49,7 @@ public sealed class PlainButton : Button, IThemeAware
         }
     }
 
+    private ParentNativeWindow pnw;
     private ThemeHelper themeHelper;
 
     public PlainButton()
@@ -63,7 +64,8 @@ public sealed class PlainButton : Button, IThemeAware
 
         if (ContextMenu != null)
         {
-            _ = new ParentNativeWindow(this);
+            pnw?.ReleaseHandle();
+            pnw = new ParentNativeWindow(this);
         }
 
         base.OnHandleCreated(e);

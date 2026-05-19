@@ -24,6 +24,9 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
+    [DllImport(App.User32Dll)]
+    public static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
 

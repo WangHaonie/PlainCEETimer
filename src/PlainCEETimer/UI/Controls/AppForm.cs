@@ -39,6 +39,7 @@ public abstract class AppForm : Form, IAppWindow
     private bool IsDpiChanged;
     private bool IsHighDpi;
     private bool SetRoundRegion;
+    private bool setSysMenu;
     private float DpiRatio = 1F;
     private float DpiRatioRel = 1F;
     private Size lastSize;
@@ -264,22 +265,18 @@ public abstract class AppForm : Form, IAppWindow
             }
         }
 
-        if (IsSizable)
+        if (IsSizable && !setSysMenu)
         {
             SystemMenu.From(this)
                 .InsertItem(-2, "默认大小(&D)", (_, _) =>
                 {
                     var def = MinimumSize;
-
-                    if (def != Size)
-                    {
-                        Size = def;
-                    }
-
+                    if (def != Size) Size = def;
                     WindowState = FormWindowState.Normal;
                 })
-
                 .InsertSeparator(-2);
+
+            setSysMenu = true;
         }
 
         base.OnHandleCreated(e);

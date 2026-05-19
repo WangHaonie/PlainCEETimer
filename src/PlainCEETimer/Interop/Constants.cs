@@ -91,6 +91,7 @@ public static class MONITOR_DPI_TYPE
 [CompilerRemove]
 public static class WM
 {
+    public const int NULL = 0;
     public const int FIRST = (int)(0U - 0U);
     public const int CREATE = 0x0001;
     public const int HOTKEY = 0x0312;
@@ -183,4 +184,24 @@ public static class ShowWindowCommand
     public const int Normal = 1;
     public const int Maximize = 3;
     public const int Minimize = 7;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class RDW
+{
+    public const uint Common = Invalidate | Erase | UpdateNow;
+
+    public const uint Invalidate = 0x0001;
+    public const uint InternalPaint = 0x0002;
+    public const uint Erase = 0x0004;
+    public const uint Validate = 0x0008;
+    public const uint NoInternalPaint = 0x0010;
+    public const uint NoErase = 0x0020;
+    public const uint NoChildren = 0x0040;
+    public const uint AllChildren = 0x0080;
+    public const uint UpdateNow = 0x0100;
+    public const uint EraseNow = 0x0200;
+    public const uint Frame = 0x0400;
+    public const uint NoFrame = 0x0800;
 }

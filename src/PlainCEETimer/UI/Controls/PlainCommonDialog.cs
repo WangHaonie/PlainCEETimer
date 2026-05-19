@@ -19,6 +19,12 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             AssignHandle(hGroupBox);
         }
 
+        public new void ReleaseHandle()
+        {
+            Handled = false;
+            base.ReleaseHandle();
+        }
+
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == WM.PAINT)
@@ -85,7 +91,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private static FnMessageBoxW fnMessageBox;
     private readonly string dialogTitle;
     private readonly AppForm owner;
-    private readonly ThemeHelper themeHelper;
+    private ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
@@ -94,7 +100,6 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     {
         owner = parent;
         dialogTitle = title;
-        themeHelper = new(this);
     }
 
     public new bool? ShowDialog()
@@ -138,54 +143,6 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         };
     }
 
-    [Obsolete]
-    private void UpdateTheme()
-    {
-        var hWnd = Handle;
-        ThemeManager.EnableDarkModeForWindow(hWnd, UseDark);
-
-        Win32UI.EnumChildWindows(hWnd, (child, _) =>
-        {
-            ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
-            return true;
-        }, IntPtr.Zero);
-
-        if (this is PlainFontDialog)
-        {
-            IntPtr hCtrl;
-
-            if ((hCtrl = Win32UI.GetDlgItem(hWnd, NativeConstants.grp2)) != IntPtr.Zero)
-            {
-                if (UseDark)
-                {
-                    if (ThemeManager.NewThemeAvailable)
-                    {
-                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
-                    }
-                    else
-                    {
-                        gpnw ??= new(hCtrl);
-                    }
-                }
-                else
-                {
-                    if (ThemeManager.NewThemeAvailable)
-                    {
-                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.Explorer);
-                    }
-                    else
-                    {
-                        if (gpnw != null)
-                        {
-                            gpnw.ReleaseHandle();
-                            // to do: redraw window;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private IntPtr WmInitDialog(IntPtr hWnd)
     {
         Handle = hWnd;
@@ -201,8 +158,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             Win32UI.SetWindowText(hWnd, dialogTitle);
         }
 
-        UpdateTheme();
-
+        themeHelper ??= new(this);
         Win32UI.GetWindowRect(hWnd, out var rect);
         Win32UI.MakeCenter(rect, owner.Bounds, out var r);
         Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
@@ -322,10 +278,53 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
         UseDark = useDark;
+        var hWnd = Handle;
+        ThemeManager.EnableDarkModeForWindow(hWnd, useDark);
 
-        if (Handle != null)
+        Win32UI.EnumChildWindows(hWnd, (child, _) =>
         {
-            UpdateTheme();
+            ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
+            return true;
+        }, IntPtr.Zero);
+
+        if (this is PlainFontDialog)
+        {
+            IntPtr hCtrl;
+
+            if ((hCtrl = Win32UI.GetDlgItem(hWnd, NativeConstants.grp2)) != IntPtr.Zero)
+            {
+                if (useDark)
+                {
+                    if (ThemeManager.NewThemeAvailable)
+                    {
+                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
+                    }
+                    else
+                    {
+                        gpnw ??= new(hCtrl);
+                    }
+                }
+                else
+                {
+                    if (ThemeManager.NewThemeAvailable)
+                    {
+                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.Explorer);
+                    }
+                    else
+                    {
+                        if (gpnw != null)
+                        {
+                            gpnw.ReleaseHandle();
+                            Win32UI.RedrawWindow(hCtrl, IntPtr.Zero, IntPtr.Zero, RDW.Common);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!init)
+        {
+            Win32UI.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, RDW.Common);
         }
     }
 }

@@ -339,7 +339,7 @@ public sealed class SettingsForm : AppForm
                 [
                     GBoxTheme = b.GroupBox("应用主题样式",
                     [
-                        RadioButtonThemeSystem = b.RadioButton("系统默认", RadioButtonTheme_CheckedChanged).Tag(0),
+                        RadioButtonThemeSystem = b.RadioButton("跟随系统", RadioButtonTheme_CheckedChanged).Tag(0),
                         RadioButtonThemeLight = b.RadioButton("浅色", RadioButtonTheme_CheckedChanged).Tag(1),
                         RadioButtonThemeDark = b.RadioButton("深色", RadioButtonTheme_CheckedChanged).Tag(2),
                     ]),

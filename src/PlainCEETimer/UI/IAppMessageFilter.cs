@@ -4,5 +4,5 @@ namespace PlainCEETimer.UI;
 
 public interface IAppMessageFilter
 {
-    void OnMessage(IntPtr lpMsg);
+    bool OnMessage(IntPtr lpMsg);
 }

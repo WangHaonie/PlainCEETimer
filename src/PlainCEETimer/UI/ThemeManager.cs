@@ -14,12 +14,15 @@ public static class ThemeManager
     {
         private readonly Throttler thr = new(TryFireOnThemeChanged);
 
-        public void OnMessage(IntPtr lpMsg)
+        public bool OnMessage(IntPtr lpMsg)
         {
             if (IsThemeChanged(lpMsg))
             {
                 thr.Throttle();
+                return true;
             }
+
+            return false;
         }
 
         private static bool IsThemeChanged(IntPtr lpMsg)
@@ -104,6 +107,28 @@ public static class ThemeManager
         return Color.FromArgb(wParam != default ? (int)(uint)(void*)wParam : Win32UI.GetSystemAccentColor());
     }
 
+    internal static SystemTheme UpdateThemeForUserChoice()
+    {
+        var option = App.AppConfig.Theme;
+        canFireThemeChanged = option == SystemTheme.Auto;
+
+        if (!canFireThemeChanged)
+        {
+            StopDetectingThemeChanges();
+        }
+        else
+        {
+            theme = GetCurrentSystemTheme();
+
+            if (!isDetecting)
+            {
+                StartDetectingThemeChanges();
+            }
+        }
+
+        return option;
+    }
+
     internal static void OnThemeChanged(SystemTheme theme)
     {
         theme = GetTheme(theme);
@@ -115,23 +140,6 @@ public static class ThemeManager
     private static void UpdateAppTheme()
     {
         Win32UI.EnableDarkModeForApp(shouldUseDarkMode);
-    }
-
-    internal static SystemTheme UpdateThemeForUserChoice()
-    {
-        var option = App.AppConfig.Theme;
-        canFireThemeChanged = option == SystemTheme.Auto;
-
-        if (!canFireThemeChanged)
-        {
-            StopDetectingThemeChanges();
-        }
-        else if (!isDetecting)
-        {
-            StartDetectingThemeChanges();
-        }
-
-        return option;
     }
 
     private static void TryFireOnThemeChanged()
