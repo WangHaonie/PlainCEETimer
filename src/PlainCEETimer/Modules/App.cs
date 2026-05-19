@@ -308,7 +308,7 @@ internal static class App
         Application.SetCompatibleTextRenderingDefault(false);
         ThemeManager.Initialize();
         Application.EnableVisualStyles();
-        DefaultValues.InitEssentials(true);
+        DefaultValues.InitEssentials();
         ConfigValidator.Validate();
 #if !DEBUG
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

@@ -3,67 +3,26 @@ using System.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules.Configuration;
 
+[NoConstants]
 public static class DefaultValues
 {
+    private const int DefaultColorsCount = 4;
+
     public static COLORREF[] ColorDialogColors => field ??= [.. Enumerable.Repeat((COLORREF)COLORREF.EmptyValue, COLORREF.LPCUSTCOLORS_Length)];
 
-    public static ColorPair GlobalDefaultColor
-    {
-        get
-        {
-            if (true)
-            {
-                field = _defaultColors[3];
-            }
+    public static ColorPair GlobalDefaultColor => globalDefaultColor;
 
-            return field;
-        }
-    }
+    public static ColorPair[] LightColors => lightColors;
 
-    public static ColorPair[] LightColors => _lightColors;
+    public static ColorPair[] DarkColors => darkColors;
 
-    public static ColorPair[] DarkColors => _darkColors;
-
-    public static CountdownRule[] GlobalDefaultRules
-    {
-        get
-        {
-            if (canUpdate)
-            {
-                field =
-                [
-                    new()
-                    {
-                        Default = true,
-                        Phase = CountdownPhase.P1,
-                        Colors = _defaultColors[0],
-                        Text = Ph.P1
-                    },
-                    new()
-                    {
-                        Default = true,
-                        Phase = CountdownPhase.P2,
-                        Colors = _defaultColors[1],
-                        Text = Ph.P2
-                    },
-                    new()
-                    {
-                        Default = true,
-                        Phase = CountdownPhase.P3,
-                        Colors = _defaultColors[2],
-                        Text = Ph.P3
-                    }
-                ];
-            }
-
-            return field;
-        }
-    }
+    public static CountdownRule[] GlobalDefaultRules => globalDefaultRules;
 
     public static Font CountdownDefaultFont
     {
@@ -91,50 +50,78 @@ public static class DefaultValues
         }
     }
 
-    private static bool canUpdate;
-    private static ColorPair[] _defaultColors;
-    private static ColorPair[] _lightColors;
-    private static ColorPair[] _darkColors;
+    private static ColorPair globalDefaultColor;
+    private static CountdownRule[] globalDefaultRules;
 
-    public static void InitEssentials(bool isAppInit)
+    private static readonly ColorPair[] lightColors =
+    [
+        new(Color.Red, Color.White),
+        new(Color.Green, Color.White),
+        new(Color.Blue, Color.White),
+        new(Color.Black, Color.White)
+    ];
+
+    private static readonly ColorPair[] darkColors =
+    [
+        new(Color.Red, Color.Black),
+        new(Color.Lime, Color.Black),
+        new(Color.Aqua, Color.Black),
+        new(Color.White, Color.Black)
+    ];
+
+    public static void InitEssentials()
     {
-        var a = App.AppConfig;
+        var config = App.AppConfig;
 
-        if (a != null)
+        if (config == null)
         {
-            var arr = a.DefaultColors;
-
-            if (isAppInit)
-            {
-                _lightColors =
-                [
-                    new(Color.Red, Color.White),
-                    new(Color.Green, Color.White),
-                    new(Color.Blue, Color.White),
-                    new(Color.Black, Color.White)
-                ];
-
-                _darkColors =
-                [
-                    new(Color.Red, Color.Black),
-                    new(Color.Lime, Color.Black),
-                    new(Color.Aqua, Color.Black),
-                    new(Color.White, Color.Black)
-                ];
-
-                var dark = ThemeManager.ShouldUseDarkMode;
-                var canInitAutoColors = arr == null || arr.Length < 4;
-
-                if (canInitAutoColors)
-                {
-                    _defaultColors = dark ? _darkColors : _lightColors;
-                    a.DefaultColors = _defaultColors.Copy().PopulateWith(arr);
-                    return;
-                }
-            }
-
-            _defaultColors = arr;
-            canUpdate = true;
+            return;
         }
+
+        var colors = config.DefaultColors;
+
+        if (colors == null || colors.Length < DefaultColorsCount)
+        {
+            config.DefaultColors = CreateDefaultColors(colors);
+            return;
+        }
+
+        ApplyDefaultColors(colors);
+    }
+
+    private static ColorPair[] CreateDefaultColors(ColorPair[] colors)
+    {
+        var defaults = ThemeManager.ShouldUseDarkMode ? darkColors : lightColors;
+        return defaults.Copy().PopulateWith(colors);
+    }
+
+    private static void ApplyDefaultColors(ColorPair[] colors)
+    {
+        globalDefaultColor = colors[DefaultColorsCount - 1];
+
+        globalDefaultRules =
+        [
+            new()
+            {
+                Default = true,
+                Phase = CountdownPhase.P1,
+                Colors = colors[0],
+                Text = Ph.P1
+            },
+            new()
+            {
+                Default = true,
+                Phase = CountdownPhase.P2,
+                Colors = colors[1],
+                Text = Ph.P2
+            },
+            new()
+            {
+                Default = true,
+                Phase = CountdownPhase.P3,
+                Colors = colors[2],
+                Text = Ph.P3
+            }
+        ];
     }
 }

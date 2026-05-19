@@ -45,7 +45,7 @@ public class AppConfig
         set
         {
             field = value;
-            DefaultValues.InitEssentials(false);
+            DefaultValues.InitEssentials();
         }
     }
 
