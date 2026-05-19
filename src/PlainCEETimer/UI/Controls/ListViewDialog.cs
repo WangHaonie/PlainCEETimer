@@ -85,7 +85,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private readonly string MsgDelete;
     private readonly string MsgAddDup;
     private readonly string MsgEditDup;
-    private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+    private bool UseDark;
     private readonly ListViewItemSet<TData> ItemSet = new();
     private readonly ListView.ListViewItemCollection Items;
     private readonly ListViewGroupCollection Groups;
@@ -193,6 +193,12 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ButtonA.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
         ButtonB.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
         ButtonOperation.Pin(AnchorStyles.Left | AnchorStyles.Bottom);
+    }
+
+    protected override void UpdateTheme(bool useDark, bool init)
+    {
+        base.UpdateTheme(useDark, init);
+        UseDark = useDark;
     }
 
     protected sealed override void OnLoad()

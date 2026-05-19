@@ -1,29 +1,18 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class PlainLinkLabel : LinkLabel
+public class PlainLinkLabel : LinkLabel, IThemeAware
 {
+    private readonly ThemeHelper themeHelper;
+
     public PlainLinkLabel()
     {
         AutoSize = true;
         LinkBehavior = LinkBehavior.HoverUnderline;
-
-        var normal = Colors.LightForeLinkNormal;
-        var click = Colors.LightForeLinkOnClick;
-        var disabled = Colors.LightForeLinkDisabled;
-
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            normal = Colors.DarkForeLinkNormal;
-            click = Colors.DarkForeLinkOnClick;
-            disabled = Colors.DarkForeLinkDisabled;
-        }
-
-        LinkColor = normal;
-        ActiveLinkColor = click;
-        DisabledLinkColor = disabled;
+        themeHelper = new(this);
     }
 
     protected override void OnLinkClicked(LinkLabelLinkClickedEventArgs e)
@@ -37,5 +26,18 @@ public class PlainLinkLabel : LinkLabel
 
             base.OnLinkClicked(e);
         }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        LinkColor = useDark ? Colors.DarkForeLinkNormal : Colors.LightForeLinkNormal;
+        ActiveLinkColor = useDark ? Colors.DarkForeLinkOnClick : Colors.LightForeLinkOnClick;
+        DisabledLinkColor = useDark ? Colors.DarkForeLinkDisabled : Colors.LightForeLinkDisabled;
     }
 }

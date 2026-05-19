@@ -45,7 +45,7 @@ public class MemoryCleaner : IDisposable
 
     public void Dispose()
     {
-        MainTimer.Destory();
+        MainTimer.Destroy();
         MainTimer = null;
         GC.SuppressFinalize(this);
     }

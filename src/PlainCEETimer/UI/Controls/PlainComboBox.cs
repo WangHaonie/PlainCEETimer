@@ -1,13 +1,16 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainComboBox : ComboBox
+public sealed class PlainComboBox : ComboBox, IThemeAware
 {
     private bool Calculated;
+    private ThemeHelper themeHelper;
 
     public PlainComboBox()
     {
@@ -17,13 +20,7 @@ public sealed class PlainComboBox : ComboBox
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ForeColor = Colors.DarkForeText;
-            BackColor = Colors.DarkBackText;
-            ThemeManager.EnableDarkModeForControl(this, SystemStyle.CfdDark);
-        }
-
+        themeHelper ??= new(this);
         base.OnHandleCreated(e);
     }
 
@@ -62,5 +59,18 @@ public sealed class PlainComboBox : ComboBox
     {
         Calculated = false;
         base.OnDpiChangedAfterParent(e);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
+        BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd);
     }
 }

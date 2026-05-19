@@ -6,15 +6,17 @@ namespace PlainCEETimer.UI;
 
 public class AppMessageFilter : IDisposable
 {
+    private bool isRunning;
     private int filtersCount;
     private List<IAppMessageFilter> filters;
+    private readonly int m_tid;
     private readonly HOOKPROC GetMsgHook;
     private static AppMessageFilter instance;
 
     private AppMessageFilter()
     {
         GetMsgHook = GetMsgHookProc;
-        Win32UI.HookGetMessage(GetMsgHook);
+        m_tid = Win32.GetCurrentThreadId();
     }
 
     private IntPtr GetMsgHookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -30,6 +32,15 @@ public class AppMessageFilter : IDisposable
         return IntPtr.Zero;
     }
 
+    private void TryRun()
+    {
+        if (!isRunning)
+        {
+            Win32UI.HookGetMessage(GetMsgHook, m_tid);
+            isRunning = true;
+        }
+    }
+
     private void Add(IAppMessageFilter filter)
     {
         if (filter == null)
@@ -37,6 +48,7 @@ public class AppMessageFilter : IDisposable
             return;
         }
 
+        TryRun();
         filters ??= [];
         filters.Add(filter);
         filtersCount = filters.Count;
@@ -44,7 +56,7 @@ public class AppMessageFilter : IDisposable
 
     private void Remove(IAppMessageFilter filter)
     {
-        if (filters != null && filter != null)
+        if (isRunning)
         {
             filters.Remove(filter);
             filtersCount = filters.Count;
@@ -57,15 +69,18 @@ public class AppMessageFilter : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public static void AddMessageFilter(IAppMessageFilter filter)
+    public static void Initialize()
     {
         instance ??= new();
+    }
+
+    public static void AddMessageFilter(IAppMessageFilter filter)
+    {
         instance.Add(filter);
     }
 
     public static void RemoveMessageFilter(IAppMessageFilter filter)
     {
-        instance ??= new();
         instance.Remove(filter);
     }
 

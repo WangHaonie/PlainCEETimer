@@ -4,7 +4,7 @@ using PlainCEETimer.UI.Core;
 
 namespace PlainCEETimer.UI;
 
-public interface IAppWindow : IHasContextMenu, IWin32Window
+public interface IAppWindow : IHasContextMenu, IWin32Window, IThemeAware
 {
     bool InvokeRequired { get; }
 

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 public sealed class NavigationView : Control
 {
-    private sealed class NavigationBar : TreeView
+    private sealed class NavigationBar : TreeView, IThemeAware
     {
+        private ThemeHelper themeHelper;
+
         internal NavigationBar()
         {
             BorderStyle = BorderStyle.None;
@@ -22,18 +26,21 @@ public sealed class NavigationView : Control
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            if (ThemeManager.ShouldUseDarkMode)
-            {
-                ForeColor = Colors.DarkForeText;
-                BackColor = Colors.DarkBackText;
-                ThemeManager.EnableDarkModeForControl(this, SystemStyle.ExplorerDark);
-            }
-            else
-            {
-                ThemeManager.EnableDarkModeForControl(this, SystemStyle.Explorer);
-            }
-
+            themeHelper ??= new(this);
             base.OnHandleCreated(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            themeHelper.Destroy();
+            base.Dispose(disposing);
+        }
+
+        void IThemeAware.UpdateTheme(bool useDark, bool init)
+        {
+            ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
+            BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+            ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
         }
     }
 

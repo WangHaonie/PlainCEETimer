@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -23,7 +24,7 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 */
 
 [DebuggerDisplay("{HotKey}")]
-public class PlainHotkeyControl : Control
+public class PlainHotkeyControl : Control, IThemeAware
 {
     private sealed class ParentNativeWindow : NativeWindow
     {
@@ -84,32 +85,35 @@ public class PlainHotkeyControl : Control
     protected override Size DefaultMinimumSize => new(100, 21);
 
     private Hotkey hotkey;
-    private readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+    private bool UseDark;
+    private readonly ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
     public PlainHotkeyControl()
     {
         SetStyle(ControlStyles.UserPaint, false);
+        themeHelper = new(this);
     }
 
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-
         Win32UI.RemoveWindowExStyle(Handle, WS.EX_CLIENTEDGE);
-
         Win32UI.SendMessage(Handle, NativeConstants.HKM_SETRULES, NativeConstants.HKCOMB_NONE | NativeConstants.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
-
         SetHotKey(hotkey);
-
         _ = new ParentNativeWindow(this);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
     }
 
     protected override void WndProc(ref Message m)
     {
         if (UseDark)
         {
-
             switch (m.Msg)
             {
                 case WM.ERASEBKGND:
@@ -139,5 +143,15 @@ public class PlainHotkeyControl : Control
     private void OnHotKeyChanged()
     {
         HotKeyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+
+        if (!init)
+        {
+            Invalidate();
+        }
     }
 }

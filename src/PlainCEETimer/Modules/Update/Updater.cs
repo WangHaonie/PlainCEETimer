@@ -105,7 +105,7 @@ internal class Updater : IDisposable
         if (cts != null)
         {
             cts.Cancel();
-            cts.Destory();
+            cts.Destroy();
             cts = null;
         }
     }

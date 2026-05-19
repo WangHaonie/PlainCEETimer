@@ -26,17 +26,15 @@ public static class ThemeManager
         {
             var msg = Marshal.ReadInt32(lpMsg, MSG.message);
 
-            if (msg == WM.SYSCOLORCHANGE)
+            return msg switch
             {
-                return true;
-            }
-
-            if (msg == WM.SETTINGCHANGE || msg == WM.SETTINGCHANGE + WM.REFLECT)
-            {
-                return Marshal.PtrToStringUni(Marshal.ReadIntPtr(lpMsg, MSG.lParam)) == "ImmersiveColorSet";
-            }
-
-            return false;
+                WM.SYSCOLORCHANGE
+                    => true,
+                WM.SETTINGCHANGE or WM.SETTINGCHANGE + WM.REFLECT
+                    => Marshal.PtrToStringUni(Marshal.ReadIntPtr(lpMsg, MSG.lParam)) == "ImmersiveColorSet",
+                _
+                    => false,
+            };
         }
     }
 
@@ -108,7 +106,8 @@ public static class ThemeManager
 
     internal static void OnThemeChanged(SystemTheme theme)
     {
-        shouldUseDarkMode = GetTheme(theme) == SystemTheme.Dark;
+        theme = GetTheme(theme);
+        shouldUseDarkMode = theme == SystemTheme.Dark;
         UpdateAppTheme();
         ThemeChanged?.Invoke(null, new(theme));
     }
@@ -191,9 +190,11 @@ public static class ThemeManager
         {
             SystemStyle.ExplorerDark => "DarkMode_Explorer",
             SystemStyle.CfdDark => "DarkMode_CFD",
+            SystemStyle.Cfd => "CFD",
             SystemStyle.ItemsViewDark => "DarkMode_ItemsView",
             SystemStyle.ItemsView => "ItemsView",
             SystemStyle.DarkTheme => "DarkMode_DarkTheme",
+            SystemStyle.Progress => nameof(SystemStyle.Progress),
             _ => "Explorer",
         };
     }

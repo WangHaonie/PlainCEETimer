@@ -49,12 +49,6 @@ public sealed class ConsoleWindow : AppDialog
                 x.ReadOnly = true;
                 x.BorderStyle = BorderStyle.None;
                 x.Font = new("Consolas", 9F);
-
-                if (ThemeManager.ShouldUseDarkMode)
-                {
-                    x.ForeColor = Colors.DarkForeConsole;
-                    x.BackColor = Colors.DarkBackConsole;
-                }
             }),
 
             LabelMessage = b.Label("请稍候...")
@@ -285,5 +279,12 @@ public sealed class ConsoleWindow : AppDialog
                 }
             });
         }
+    }
+
+    protected override void UpdateTheme(bool useDark, bool init)
+    {
+        base.UpdateTheme(useDark, init);
+        ConsoleBox.ForeColor = useDark ? Colors.DarkForeConsole : SystemColors.WindowText;
+        ConsoleBox.BackColor = useDark ? Colors.DarkBackConsole : SystemColors.Window;
     }
 }

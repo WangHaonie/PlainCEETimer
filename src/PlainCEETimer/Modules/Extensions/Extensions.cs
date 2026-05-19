@@ -26,7 +26,7 @@ public static class Extensions
     public static string Format(this Font font)
         => $"{font.Name}, {font.SizeInPoints}pt, {font.Style}";
 
-    public static void Destory(this IDisposable obj)
+    public static void Destroy(this IDisposable obj)
         => obj?.Dispose();
 
     public static T Copy<T>(this T obj) where T : ICloneable

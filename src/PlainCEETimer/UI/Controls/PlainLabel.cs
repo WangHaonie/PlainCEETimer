@@ -1,15 +1,18 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class PlainLabel : Label
+public class PlainLabel : Label, IThemeAware
 {
-    private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+    private bool UseDark;
+    private readonly ThemeHelper themeHelper;
 
     public PlainLabel()
     {
         AutoSize = true;
+        themeHelper = new(this);
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -22,6 +25,12 @@ public class PlainLabel : Label
         {
             base.OnPaint(e);
         }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
     }
 
     private static TextFormatFlags CA2TFF(ContentAlignment alignment) => alignment switch
@@ -37,4 +46,14 @@ public class PlainLabel : Label
         ContentAlignment.BottomRight => TextFormatFlags.Bottom | TextFormatFlags.Right,
         _ => TextFormatFlags.Default
     };
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+
+        if (!init)
+        {
+            Invalidate();
+        }
+    }
 }

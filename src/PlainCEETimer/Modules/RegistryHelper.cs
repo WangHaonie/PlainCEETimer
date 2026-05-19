@@ -48,8 +48,8 @@ public class RegistryHelper : IDisposable
 
     public void Dispose()
     {
-        OpenedKey.Destory();
-        BaseKey.Destory();
+        OpenedKey.Destroy();
+        BaseKey.Destroy();
         GC.SuppressFinalize(this);
     }
 

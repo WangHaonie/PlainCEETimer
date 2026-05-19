@@ -48,7 +48,7 @@ public class AppTrayIconLoader : ITrayIconLoader
 
     public void Dispose()
     {
-        trayIcon.Destory();
+        trayIcon.Destroy();
         trayIcon = null;
         GC.SuppressFinalize(this);
     }

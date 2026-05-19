@@ -8,7 +8,7 @@
 
 /*
 
-SetPreferredAppMode 参考：
+Win32 深色模式 API 相关 参考：
 
 win32-darkmode/win32-darkmode/DarkMode.h at master · ysc3839/win32-darkmode
 https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
@@ -26,6 +26,7 @@ static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
+static BOOL g_fUseDark = FALSE;
 
 /*
 
@@ -44,7 +45,7 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 {
-    if (WString_Equals(pszClassList, WC_SCROLLBAR, false))
+    if (g_fUseDark && WString_Equals(pszClassList, WC_SCROLLBAR, false))
     {
         hWnd = nullptr;
         pszClassList = L"DarkMode_Explorer::ScrollBar";
@@ -55,16 +56,19 @@ static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 
 static DWORD WINAPI GetSysColorNew(int nIndex)
 {
-    switch (nIndex)
+    if (g_fUseDark)
     {
-        case COLOR_WINDOW:
+        switch (nIndex)
         {
-            return g_crBack;
-        }
+            case COLOR_WINDOW:
+            {
+                return g_crBack;
+            }
 
-        case COLOR_WINDOWTEXT:
-        {
-            return g_crFore;
+            case COLOR_WINDOWTEXT:
+            {
+                return g_crFore;
+            }
         }
     }
 
@@ -73,6 +77,8 @@ static DWORD WINAPI GetSysColorNew(int nIndex)
 
 void EnableDarkModeForApp(BOOL enabled)
 {
+    g_fUseDark = enabled;
+
     if (!g_SetPreferredAppMode)
     {
         HMODULE hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);

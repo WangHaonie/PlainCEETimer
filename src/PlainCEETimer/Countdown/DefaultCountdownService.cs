@@ -333,12 +333,12 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
 
     private void StopAutoSwitchTimer()
     {
-        AutoSwitchTimer.Destory();
+        AutoSwitchTimer.Destroy();
     }
 
     private void StopMainTimer()
     {
-        MainTimer.Destory();
+        MainTimer.Destroy();
         IsRunning = false;
     }
 

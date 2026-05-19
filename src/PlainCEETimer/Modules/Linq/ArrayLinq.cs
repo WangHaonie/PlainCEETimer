@@ -7,7 +7,7 @@ namespace PlainCEETimer.Modules.Linq;
 
 /*
 
-此类包含的扩展方法旨在尽可能不使用 System.Linq 而使用 System.Array 的情况下来对数组进行简单 LINQ。
+此类包含的扩展方法旨在尽可能不使用 System.Linq 的情况下使用 System.Array 提供的方法来对数组进行简单 LINQ。
 
     * 优点：
         · 更接近原生，跟 System.Linq 相比略快;

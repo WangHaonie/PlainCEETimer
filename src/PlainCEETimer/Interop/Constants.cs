@@ -59,6 +59,8 @@ public static class NativeConstants
     public const int HKCOMB_S = 0x0002;
 
     public const ushort MOD_NOREPEAT = 0x4000;
+
+    public const short VK_ESCAPE = 0x1B;
 }
 
 [NoConstants]

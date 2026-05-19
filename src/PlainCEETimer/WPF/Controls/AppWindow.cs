@@ -77,6 +77,7 @@ public class AppWindow : Window, IAppWindow
     private double DpiScaleX;
     private double DpiScaleY;
     private IAppWindow _owner;
+    private ThemeHelper themeHelper;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
     private readonly bool SetRoundCorner;
@@ -182,11 +183,7 @@ public class AppWindow : Window, IAppWindow
             Win32UI.RemoveWindowIcon(hwnd);
         }
 
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ThemeManager.EnableDarkModeForWindow(hwnd, true);
-        }
-
+        themeHelper ??= new(this);
         base.OnSourceInitialized(e);
     }
 
@@ -306,7 +303,6 @@ public class AppWindow : Window, IAppWindow
     private void InitEvents()
     {
         WindowManager.ActivateRequested += WindowManager_ActivateRequested;
-        ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -318,12 +314,13 @@ public class AppWindow : Window, IAppWindow
     private void ClearEvents()
     {
         WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
-        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 
         if (!Special)
         {
             WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
         }
+
+        themeHelper.Destroy();
     }
 
     private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
@@ -335,11 +332,6 @@ public class AppWindow : Window, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
-    }
-
-    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
-    {
-        ApplyTheme();
     }
 
     private void WmClose(ref Message m)
@@ -412,11 +404,6 @@ public class AppWindow : Window, IAppWindow
         return wih;
     }
 
-    private void ApplyTheme()
-    {
-        ThemeManager.EnableDarkModeForWindow(Handle, ThemeManager.ShouldUseDarkMode);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool CheckParam(AppWindowStyle param)
     {
@@ -427,6 +414,11 @@ public class AppWindow : Window, IAppWindow
     {
         DpiScaleX = dpiScale.DpiScaleX;
         DpiScaleY = dpiScale.DpiScaleY;
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        ThemeManager.EnableDarkModeForWindow(Handle, useDark);
     }
 
     NativeContextMenu IHasContextMenu.ContextMenu

@@ -178,7 +178,7 @@ public static class Win32UI
     public static extern void RemoveWindowIcon(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#44")]
-    public static extern void HookGetMessage(HOOKPROC lpfnGetMsgProc);
+    public static extern void HookGetMessage(HOOKPROC lpfnGetMsgProc, int dwThreadId);
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
     public static extern void UnhookGetMessage();

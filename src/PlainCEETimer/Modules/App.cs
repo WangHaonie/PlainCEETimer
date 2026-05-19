@@ -265,11 +265,11 @@ internal static class App
 
     private static void InternalInit()
     {
+        AppMessageFilter.Initialize();
         HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
         InitDpiAware();
         Application.SetCompatibleTextRenderingDefault(false);
-        AppMessageFilter.AddMessageFilter(null);
         ThemeManager.Initialize();
         Application.EnableVisualStyles();
         DefaultValues.InitEssentials(true);
@@ -284,7 +284,7 @@ internal static class App
     public static void Exit(bool restart = false, bool useArgs = false)
     {
         IsClosing = true;
-        appIcon.Destory();
+        appIcon.Destroy();
         AppExit?.Invoke();
         AppExit = null;
 

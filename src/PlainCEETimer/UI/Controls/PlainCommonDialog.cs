@@ -8,7 +8,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog
+public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 {
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
@@ -56,11 +56,13 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         public IAsyncResult BeginInvoke(Delegate method)
         {
+            method.DynamicInvoke();
             return default;
         }
 
         public object Invoke(Delegate method)
         {
+            method.DynamicInvoke();
             return 0;
         }
 
@@ -68,16 +70,32 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         {
             return;
         }
+
+        void IThemeAware.UpdateTheme(bool useDark, bool init)
+        {
+            return;
+        }
     }
 
+    private bool UseDark;
     private IntPtr Handle;
     private IntPtr MsgBoxHandle;
     private HOOKPROC CBTHookProc;
+    private GroupBoxNativeWindow gpnw;
     private static FnMessageBoxW fnMessageBox;
+    private readonly string dialogTitle;
+    private readonly AppForm owner;
+    private readonly ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
-    private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
+
+    protected PlainCommonDialog(AppForm parent, string title)
+    {
+        owner = parent;
+        dialogTitle = title;
+        themeHelper = new(this);
+    }
 
     public new bool? ShowDialog()
     {
@@ -120,6 +138,54 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         };
     }
 
+    [Obsolete]
+    private void UpdateTheme()
+    {
+        var hWnd = Handle;
+        ThemeManager.EnableDarkModeForWindow(hWnd, UseDark);
+
+        Win32UI.EnumChildWindows(hWnd, (child, _) =>
+        {
+            ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
+            return true;
+        }, IntPtr.Zero);
+
+        if (this is PlainFontDialog)
+        {
+            IntPtr hCtrl;
+
+            if ((hCtrl = Win32UI.GetDlgItem(hWnd, NativeConstants.grp2)) != IntPtr.Zero)
+            {
+                if (UseDark)
+                {
+                    if (ThemeManager.NewThemeAvailable)
+                    {
+                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
+                    }
+                    else
+                    {
+                        gpnw ??= new(hCtrl);
+                    }
+                }
+                else
+                {
+                    if (ThemeManager.NewThemeAvailable)
+                    {
+                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.Explorer);
+                    }
+                    else
+                    {
+                        if (gpnw != null)
+                        {
+                            gpnw.ReleaseHandle();
+                            // to do: redraw window;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private IntPtr WmInitDialog(IntPtr hWnd)
     {
         Handle = hWnd;
@@ -135,33 +201,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             Win32UI.SetWindowText(hWnd, dialogTitle);
         }
 
-        if (UseDark)
-        {
-            ThemeManager.EnableDarkModeForWindow(Handle, true);
-
-            Win32UI.EnumChildWindows(hWnd, (child, _) =>
-            {
-                ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
-                return true;
-            }, IntPtr.Zero);
-        }
-
-        if (this is PlainFontDialog)
-        {
-            IntPtr hCtrl;
-
-            if (UseDark && ((hCtrl = Win32UI.GetDlgItem(hWnd, NativeConstants.grp2)) != IntPtr.Zero))
-            {
-                if (ThemeManager.NewThemeAvailable)
-                {
-                    ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
-                }
-                else
-                {
-                    _ = new GroupBoxNativeWindow(hCtrl);
-                }
-            }
-        }
+        UpdateTheme();
 
         Win32UI.GetWindowRect(hWnd, out var rect);
         Win32UI.MakeCenter(rect, owner.Bounds, out var r);
@@ -187,27 +227,28 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         Win32UI.ComdlgUnhookMessageBox();
         Win32UI.DeleteObject(hBrush);
         Win32UI.UnregisterUnmanagedWindow(Handle);
+        themeHelper.Destroy();
         return IntPtr.Zero;
     }
 
-    private static SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
+    private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
         var cn = Win32UI.GetClassName(hWnd);
 
         if (cn == "ComboBox")
         {
             up = false;
-            return SystemStyle.CfdDark;
+            return UseDark ? SystemStyle.CfdDark : SystemStyle.Cfd;
         }
 
         if (cn == "Edit")
         {
             up = true;
-            return SystemStyle.CfdDark;
+            return UseDark ? SystemStyle.CfdDark : SystemStyle.Explorer;
         }
 
         up = true;
-        return SystemStyle.ExplorerDark;
+        return UseDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer;
     }
 
     private IntPtr CbtHookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -275,6 +316,16 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     public sealed override void Reset()
     {
+        return;
+    }
 
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+
+        if (Handle != null)
+        {
+            UpdateTheme();
+        }
     }
 }

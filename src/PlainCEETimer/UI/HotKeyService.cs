@@ -24,7 +24,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
     {
         App.AppExit += () =>
         {
-            hkmw.Destory();
+            hkmw.Destroy();
             hkmw = null;
             hks = null;
         };

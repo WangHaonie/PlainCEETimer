@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Fody;
@@ -108,18 +109,15 @@ public sealed partial class ColorBlock : PlainLabel
         }
     }
 
-    private class CancellationMessageFilter(ColorBlock ctrl) : IMessageFilter
+    private class CancellationMessageFilter(ColorBlock ctrl) : IAppMessageFilter
     {
-        private static readonly IntPtr EscKey = new((int)Keys.Escape);
-
-        public bool PreFilterMessage(ref Message m)
+        public void OnMessage(IntPtr lpMsg)
         {
-            if (m.Msg == WM.KEYDOWN && m.WParam == EscKey)
+            if (Marshal.ReadInt32(lpMsg, MSG.message) == WM.KEYDOWN
+                && Marshal.ReadInt16(lpMsg, MSG.wParam) == NativeConstants.VK_ESCAPE)
             {
                 ctrl.CancelScreenColorPicker();
             }
-
-            return false;
         }
     }
 
@@ -222,7 +220,7 @@ public sealed partial class ColorBlock : PlainLabel
             {
                 IsPicking = true;
                 MsgFilter ??= new(this);
-                Application.AddMessageFilter(MsgFilter);
+                AppMessageFilter.AddMessageFilter(MsgFilter);
                 ColorPicker = new();
                 HideParentForm();
                 ColorPicker.Show();
@@ -274,7 +272,7 @@ public sealed partial class ColorBlock : PlainLabel
                     Color = ColorPicker.CurrentPixelColor;
                 }
 
-                Application.RemoveMessageFilter(MsgFilter);
+                AppMessageFilter.RemoveMessageFilter(MsgFilter);
                 HideParentForm(false);
                 ColorPicker.Close();
                 IsPicking = false;

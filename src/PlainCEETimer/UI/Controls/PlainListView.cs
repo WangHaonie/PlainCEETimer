@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -17,7 +18,7 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUti
 
 */
 
-public sealed class PlainListView : ListView
+public sealed class PlainListView : ListView, IThemeAware
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
@@ -76,8 +77,10 @@ public sealed class PlainListView : ListView
     }
 
     private int columnMaxWidth;
+    private bool UseDark;
+    private bool invalidate;
+    private ThemeHelper themeHelper;
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
-    private static readonly bool UseDark = ThemeManager.ShouldUseDarkMode;
 
     public PlainListView()
     {
@@ -86,12 +89,6 @@ public sealed class PlainListView : ListView
         HeaderStyle = ColumnHeaderStyle.Nonclickable;
         HideSelection = false;
         ShowItemToolTips = true;
-
-        if (UseDark)
-        {
-            ForeColor = Colors.DarkForeText;
-            BackColor = Colors.DarkBackText;
-        }
 
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
@@ -143,30 +140,7 @@ public sealed class PlainListView : ListView
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        IntPtr hListView = Handle;
-        IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
-        IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
-        _ = new SysHeader32NativeWindow(hHeader);
-
-        var LVstyle = SystemStyle.ItemsView;
-        var TTstyle = SystemStyle.Explorer;
-
-        if (UseDark)
-        {
-            LVstyle = SystemStyle.ItemsViewDark;
-            TTstyle = SystemStyle.ExplorerDark;
-        }
-
-        ThemeManager.EnableDarkModeForControl(hListView, LVstyle);
-        ThemeManager.EnableDarkModeForControl(hHeader, LVstyle);
-        ThemeManager.EnableDarkModeForControl(hToolTips, TTstyle);
-        Win32UI.SetTopMostWindow(hToolTips);
-
-        if (SystemVersion.IsWindows11)
-        {
-            Win32UI.SetRoundCornerEx(hToolTips, true);
-        }
-
+        themeHelper ??= new(this);
         UpdateRowHeight();
         base.OnHandleCreated(e);
     }
@@ -183,6 +157,12 @@ public sealed class PlainListView : ListView
         e.NewWidth = Columns[e.ColumnIndex].Width;
         e.Cancel = true;
         base.OnColumnWidthChanging(e);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
     }
 
     protected override void WndProc(ref Message m)
@@ -242,7 +222,7 @@ public sealed class PlainListView : ListView
             ImageSize = new(1, fh)
         };
 
-        old.Destory();
+        old.Destroy();
     }
 
     private void AutoAdjustWidth()
@@ -250,5 +230,33 @@ public sealed class PlainListView : ListView
         BeginUpdate();
         AutoAdjustColumnWidth();
         EndUpdate();
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+        ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
+        BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+
+        IntPtr hListView = Handle;
+        IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
+        IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
+
+        ThemeManager.EnableDarkModeForControl(hListView, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
+        ThemeManager.EnableDarkModeForControl(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
+        ThemeManager.EnableDarkModeForControl(hToolTips, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+
+        if (!invalidate)
+        {
+            Win32UI.SetTopMostWindow(hToolTips);
+            _ = new SysHeader32NativeWindow(hHeader);
+
+            if (SystemVersion.IsWindows11)
+            {
+                Win32UI.SetRoundCornerEx(hToolTips, true);
+            }
+
+            invalidate = true;
+        }
     }
 }

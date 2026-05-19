@@ -116,7 +116,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     public void Cleanup()
     {
-        Countdown.Destory();
+        Countdown.Destroy();
     }
 
     public bool CanClose()

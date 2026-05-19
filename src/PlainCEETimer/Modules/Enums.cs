@@ -4,9 +4,11 @@ public enum SystemStyle
 {
     Explorer,
     ExplorerDark,
+    Cfd,
     CfdDark,
     ItemsView,
     ItemsViewDark,
+    Progress,
     DarkTheme // ≥ 26120.6682 ?
 }
 

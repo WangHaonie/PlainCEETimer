@@ -189,11 +189,11 @@ void RemoveWindowIcon(HWND hWnd)
     }
 }
 
-void HookGetMessage(HOOKPROC lpfnGetMsgProc)
+void HookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId)
 {
     if (lpfnGetMsgProc && !g_GetMsgProc)
     {
-        g_hGetMsgProc = SetWindowsHookEx(WH_GETMESSAGE, GetMsgHookProc, nullptr, GetCurrentThreadId());
+        g_hGetMsgProc = SetWindowsHookEx(WH_GETMESSAGE, GetMsgHookProc, nullptr, dwThreadId);
         g_GetMsgProc = lpfnGetMsgProc;
     }
 }

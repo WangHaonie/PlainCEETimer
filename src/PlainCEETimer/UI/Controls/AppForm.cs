@@ -44,6 +44,7 @@ public abstract class AppForm : Form, IAppWindow
     private Size lastSize;
     private FormWindowState lastState;
     private Font AppFont;
+    private ThemeHelper themeHelper;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
@@ -249,7 +250,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
-        ApplyTheme();
+        themeHelper ??= new(this);
 
         if (SetRoundCorner)
         {
@@ -322,6 +323,22 @@ public abstract class AppForm : Form, IAppWindow
     /// 该方法没有默认实现，可不调用 base.RunLayout(bool);
     /// </summary>
     protected virtual void RunLayout(bool isHighDpi) { }
+
+    /// <summary>
+    /// 更新当前窗口的样式主题。该方法将在 <see cref="OnHandleCreated(EventArgs)"/> 中被首次调用。
+    /// </summary>
+    /// <param name="useDark">是否使用深色主题</param>
+    /// <param name="init">是否为第一次调用</param>
+    protected virtual void UpdateTheme(bool useDark, bool init)
+    {
+        ThemeManager.EnableDarkModeForWindow(Handle, useDark);
+
+        if (!Special)
+        {
+            ForeColor = useDark ? Colors.DarkForeText : DefaultForeColor;
+            BackColor = useDark ? Colors.DarkBackText : DefaultBackColor;
+        }
+    }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> 加载时触发。该方法没有默认实现，直接派生自 <see cref="AppForm"/> 的类可不调用 base.OnLoad();
@@ -576,18 +593,6 @@ public abstract class AppForm : Form, IAppWindow
         return font;
     }
 
-    private void ApplyTheme()
-    {
-        var flag = ThemeManager.ShouldUseDarkMode;
-        ThemeManager.EnableDarkModeForWindow(Handle, flag);
-
-        if (!Special)
-        {
-            ForeColor = flag ? Colors.DarkForeText : DefaultForeColor;
-            BackColor = flag ? Colors.DarkBackText : DefaultBackColor;
-        }
-    }
-
     private void InitToUserSize()
     {
         if (IsSizable)
@@ -635,7 +640,6 @@ public abstract class AppForm : Form, IAppWindow
     private void InitEvents()
     {
         WindowManager.ActivateRequested += WindowManager_ActivateRequested;
-        ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
         if (!Special)
         {
@@ -647,12 +651,13 @@ public abstract class AppForm : Form, IAppWindow
     private void ClearEvents()
     {
         WindowManager.ActivateRequested -= WindowManager_ActivateRequested;
-        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 
         if (!Special)
         {
             WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
         }
+
+        themeHelper.Destroy();
     }
 
     private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
@@ -664,11 +669,6 @@ public abstract class AppForm : Form, IAppWindow
     {
         ReActivate();
         KeepOnScreen();
-    }
-
-    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
-    {
-        ApplyTheme();
     }
 
     private void LegacySetRoundCorner()
@@ -729,5 +729,10 @@ public abstract class AppForm : Form, IAppWindow
         var ratio = newDpi / oldDpi;
         Scale(new SizeF(ratio, ratio));
         AutoScaleDimensions = new(newDpi, newDpi);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UpdateTheme(useDark, init);
     }
 }

@@ -2,37 +2,32 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainGroupBox : GroupBox
+public sealed class PlainGroupBox : GroupBox, IThemeAware
 {
+    private bool UseDark;
+    private ThemeHelper themeHelper;
+
     public PlainGroupBox()
     {
-        if (ThemeManager.ShouldUseDarkMode)
+        if (ThemeManager.NewThemeAvailable)
         {
-            ForeColor = Colors.DarkForeText;
-
-            if (ThemeManager.NewThemeAvailable)
-            {
-                FlatStyle = FlatStyle.System;
-            }
+            FlatStyle = FlatStyle.System;
         }
     }
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        if (ThemeManager.NewThemeAvailable)
-        {
-            ThemeManager.EnableDarkModeForControl(this, SystemStyle.DarkTheme);
-        }
-
+        themeHelper ??= new(this);
         base.OnHandleCreated(e);
     }
 
     protected override void OnPaint(PaintEventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode && !ThemeManager.NewThemeAvailable)
+        if (UseDark && !ThemeManager.NewThemeAvailable)
         {
             //
             // 深色模式下 GroupBox 应使用灰色边框 参考:
@@ -55,6 +50,30 @@ public sealed class PlainGroupBox : GroupBox
         else
         {
             base.OnPaint(e);
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+        ForeColor = useDark ? Colors.DarkForeText : DefaultForeColor;
+
+        if (ThemeManager.NewThemeAvailable)
+        {
+            ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
+        }
+        else
+        {
+            if (!init)
+            {
+                Invalidate();
+            }
         }
     }
 }

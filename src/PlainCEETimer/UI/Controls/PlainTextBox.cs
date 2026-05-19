@@ -10,9 +10,9 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainTextBox : TextBox
+public sealed class PlainTextBox : TextBox, IThemeAware
 {
-    private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm
+    private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm, IThemeAware
     {
         public string Content
         {
@@ -28,7 +28,8 @@ public sealed class PlainTextBox : TextBox
         private PlainLabel LabelCounter;
         private int TextLength;
         private string m_Text;
-        private static readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
+        private bool IsDark;
+        private ThemeHelper themeHelper;
 
         public void Input(string text)
         {
@@ -47,6 +48,8 @@ public sealed class PlainTextBox : TextBox
                 ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
                 LabelCounter = b.Label("0/0")
             ]);
+
+            themeHelper = new(this);
         }
 
         protected override void RunLayout(bool isHighDpi)
@@ -71,6 +74,12 @@ public sealed class PlainTextBox : TextBox
             base.OnKeyDown(e);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            themeHelper.Destroy();
+            base.Dispose(disposing);
+        }
+
         protected override void OnClosed()
         {
             parent.OnExpandableVisibleChanged(false);
@@ -88,7 +97,20 @@ public sealed class PlainTextBox : TextBox
             m_Text = ContentBox.Text;
             TextLength = ContentBox.Text.Clean().Length;
             LabelCounter.Text = TextLength + "/" + ConfigValidator.MaxCustomTextLength;
-            LabelCounter.ForeColor = !ConfigValidator.IsInvalidCustomLength(TextLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+            UpdateCounterColor();
+        }
+
+        private void UpdateCounterColor()
+        {
+            LabelCounter.ForeColor = !ConfigValidator.IsInvalidCustomLength(TextLength)
+                ? (IsDark ? Colors.DarkForeText : Color.Black)
+                : Color.Red;
+        }
+
+        void IThemeAware.UpdateTheme(bool useDark, bool init)
+        {
+            IsDark = useDark;
+            UpdateCounterColor();
         }
     }
 
@@ -115,12 +137,6 @@ public sealed class PlainTextBox : TextBox
 
     public PlainTextBox(bool expandable)
     {
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ForeColor = Colors.DarkForeText;
-            BackColor = Colors.DarkBackText;
-        }
-
         MaxLength = ConfigValidator.MaxCustomTextLength;
 
         if (Expandable = expandable)
@@ -167,11 +183,6 @@ public sealed class PlainTextBox : TextBox
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ThemeManager.EnableDarkModeForControl(this, SystemStyle.CfdDark, true);
-        }
-
         base.OnHandleCreated(e);
 
         if (Expandable)
@@ -236,5 +247,12 @@ public sealed class PlainTextBox : TextBox
     private void OnExpandableVisibleChanged(bool visible)
     {
         ExpandableVisibleChanged?.Invoke(this, visible);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
+        BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd, true);
     }
 }

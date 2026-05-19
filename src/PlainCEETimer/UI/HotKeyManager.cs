@@ -19,7 +19,7 @@ internal static class HotKeyManager
     .net - Set global hotkeys using C# - Stack Overflow
     https://stackoverflow.com/a/27309185/21094697
 
-    WM.HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
+    WM_HOTKEY message (Winuser.h) - Win32 apps | Microsoft Learn
     https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey
 
     */

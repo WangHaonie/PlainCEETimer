@@ -2,11 +2,12 @@
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainProgressBar : ProgressBar
+public sealed class PlainProgressBar : ProgressBar, IThemeAware
 {
     public new int Value
     {
@@ -42,13 +43,11 @@ public sealed class PlainProgressBar : ProgressBar
     private int m_value;
     private ProgressStyle m_style;
     private TaskbarProgress tbp;
+    private ThemeHelper themeHelper;
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ThemeManager.EnableDarkModeForControl(Handle, SystemStyle.DarkTheme);
-        }
+        themeHelper ??= new(this);
 
         if (!init)
         {
@@ -59,6 +58,12 @@ public sealed class PlainProgressBar : ProgressBar
         UpdateStyle();
         UpdateValue();
         base.OnHandleCreated(e);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
     }
 
     protected override void OnHandleDestroyed(EventArgs e)
@@ -89,6 +94,14 @@ public sealed class PlainProgressBar : ProgressBar
         if (init)
         {
             tbp.SetValue(m_value, 100);
+        }
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        if (ThemeManager.NewThemeAvailable)
+        {
+            ThemeManager.EnableDarkModeForControl(Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Progress);
         }
     }
 }

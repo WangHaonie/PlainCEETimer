@@ -39,8 +39,9 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     private CountdownRule[] DefaultRules;
     private CountdownRule[] GlobalRules;
 
+    private int m_examLength;
     private string CurrentExamName;
-    private readonly bool IsDark = ThemeManager.ShouldUseDarkMode;
+    private bool IsDark;
 
     protected override void OnInitializing()
     {
@@ -57,9 +58,9 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             TextBoxName = b.TextBox(223, false, (_, _) =>
             {
                 CurrentExamName = TextBoxName.Text.Clean();
-                int count = CurrentExamName.Length;
-                LabelCounter.Text = $"{count}/{ConfigValidator.MaxExamNameLength}";
-                LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(count) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+                m_examLength = CurrentExamName.Length;
+                LabelCounter.Text = $"{m_examLength}/{ConfigValidator.MaxExamNameLength}";
+                UpdateCounterColor();
                 UserChanged();
             }).With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
 
@@ -106,6 +107,11 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         base.OnInitializing();
     }
 
+    private void UpdateCounterColor()
+    {
+        LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(m_examLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
+    }
+
     protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelName, 3, 6);
@@ -137,6 +143,13 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
         ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 1, 3);
         InitWindowSize(ButtonB, 4, 4);
+    }
+
+    protected override void UpdateTheme(bool useDark, bool init)
+    {
+        base.UpdateTheme(useDark, init);
+        IsDark = useDark;
+        UpdateCounterColor();
     }
 
     protected override void OnLoad()

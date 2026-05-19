@@ -3,10 +3,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainButton : Button
+public sealed class PlainButton : Button, IThemeAware
 {
     private sealed class ParentNativeWindow : NativeWindow
     {
@@ -48,6 +49,8 @@ public sealed class PlainButton : Button
         }
     }
 
+    private ThemeHelper themeHelper;
+
     public PlainButton()
     {
         FlatStyle = FlatStyle.System;
@@ -56,10 +59,7 @@ public sealed class PlainButton : Button
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        if (ThemeManager.ShouldUseDarkMode)
-        {
-            ThemeManager.EnableDarkModeForControl(this, SystemStyle.ExplorerDark);
-        }
+        themeHelper ??= new(this);
 
         if (ContextMenu != null)
         {
@@ -67,5 +67,16 @@ public sealed class PlainButton : Button
         }
 
         base.OnHandleCreated(e);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Destroy();
+        base.Dispose(disposing);
+    }
+
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
+    {
+        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
     }
 }
