@@ -16,15 +16,20 @@ public class ThemeHelper : IDisposable
         }
     }
 
-    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
+    public void Update()
     {
-        m_obj.UpdateTheme(e.UseDark, false);
+        m_obj.UpdateTheme(ThemeManager.ShouldUseDarkMode, false);
     }
 
     public void Dispose()
     {
         ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
         GC.SuppressFinalize(this);
+    }
+
+    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
+    {
+        m_obj.UpdateTheme(e.UseDark, false);
     }
 
     ~ThemeHelper()

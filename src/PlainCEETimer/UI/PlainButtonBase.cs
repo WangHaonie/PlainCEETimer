@@ -44,11 +44,11 @@ public class PlainButtonBase : IThemeAware
         {
             if (ThemeManager.NewThemeAvailable)
             {
-                Target.HandleCreated += (_, _) => ((IThemeAware)this).UpdateTheme(useDark, !init);
+                Target.HandleCreated += (_, _) => themeHelper.Update();
             }
             else
             {
-                Target.EnabledChanged += (_, _) => ((IThemeAware)this).UpdateTheme(useDark, !init);
+                Target.EnabledChanged += (_, _) => themeHelper.Update();
                 UpdateStyle();
             }
 
