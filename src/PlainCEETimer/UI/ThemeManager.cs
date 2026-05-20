@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI;
@@ -32,7 +32,7 @@ public static class ThemeManager
                 WM.SYSCOLORCHANGE
                     => true,
                 WM.SETTINGCHANGE or WM.SETTINGCHANGE + WM.REFLECT
-                    => Marshal.PtrToStringUni(lpMsg->lParam) == "ImmersiveColorSet",
+                    => lpMsg->lParam.AsNativeStringUni() == "ImmersiveColorSet",
                 _
                     => false,
             };
