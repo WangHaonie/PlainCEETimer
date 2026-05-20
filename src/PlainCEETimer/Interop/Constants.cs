@@ -60,7 +60,8 @@ public static class NativeConstants
 
     public const ushort MOD_NOREPEAT = 0x4000;
 
-    public const short VK_ESCAPE = 0x1B;
+    public const int VK_ESCAPE = 0x1B;
+    public const int PM_REMOVE = 1;
 }
 
 [NoConstants]

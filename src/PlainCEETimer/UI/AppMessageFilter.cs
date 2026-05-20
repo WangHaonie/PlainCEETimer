@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 
@@ -12,24 +11,24 @@ public class AppMessageFilter : IDisposable
     private int filtersCount;
     private List<IAppMessageFilter> filters;
     private readonly int m_tid;
-    private readonly HOOKPROC GetMsgHook;
+    private readonly WHGETMESSAGE GetMsgHook;
     private static AppMessageFilter instance;
 
-    private AppMessageFilter()
+    private unsafe AppMessageFilter()
     {
         GetMsgHook = GetMsgHookProc;
         m_tid = Win32.GetCurrentThreadId();
     }
 
-    private IntPtr GetMsgHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+    private unsafe IntPtr GetMsgHookProc(int nCode, IntPtr wParam, MSG* lParam)
     {
-        if (nCode >= 0)
+        if (nCode >= 0 && (int)wParam == NativeConstants.PM_REMOVE)
         {
             for (int i = 0; i < filtersCount; i++)
             {
                 if (filters[i].OnMessage(lParam))
                 {
-                    Marshal.WriteInt32(lParam, MSG.message, WM.NULL);
+                    lParam->message = WM.NULL;
                 }
             }
         }

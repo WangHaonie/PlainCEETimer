@@ -14,7 +14,7 @@ public static class ThemeManager
     {
         private readonly Throttler thr = new(TryFireOnThemeChanged);
 
-        public bool OnMessage(IntPtr lpMsg)
+        public unsafe bool OnMessage(MSG* lpMsg)
         {
             if (IsThemeChanged(lpMsg))
             {
@@ -25,16 +25,14 @@ public static class ThemeManager
             return false;
         }
 
-        private static bool IsThemeChanged(IntPtr lpMsg)
+        private unsafe static bool IsThemeChanged(MSG* lpMsg)
         {
-            var msg = Marshal.ReadInt32(lpMsg, MSG.message);
-
-            return msg switch
+            return lpMsg->message switch
             {
                 WM.SYSCOLORCHANGE
                     => true,
                 WM.SETTINGCHANGE or WM.SETTINGCHANGE + WM.REFLECT
-                    => Marshal.PtrToStringUni(Marshal.ReadIntPtr(lpMsg, MSG.lParam)) == "ImmersiveColorSet",
+                    => Marshal.PtrToStringUni(lpMsg->lParam) == "ImmersiveColorSet",
                 _
                     => false,
             };

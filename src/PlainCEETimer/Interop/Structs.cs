@@ -334,3 +334,15 @@ public readonly struct HRESULT
 
     private readonly int m_value;
 }
+
+[StructLayout(LayoutKind.Sequential)]
+public struct MSG
+{
+    public IntPtr hwnd;
+    public int message;
+    public IntPtr wParam;
+    public IntPtr lParam;
+    public int time;
+    public int x;
+    public int y;
+}

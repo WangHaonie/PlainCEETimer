@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.UI;
 
 public interface IAppMessageFilter
 {
-    bool OnMessage(IntPtr lpMsg);
+    unsafe bool OnMessage(MSG* lpMsg);
 }

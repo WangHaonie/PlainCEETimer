@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Fody;
@@ -111,10 +110,10 @@ public sealed partial class ColorBlock : PlainLabel
 
     private class CancellationMessageFilter(ColorBlock ctrl) : IAppMessageFilter
     {
-        public bool OnMessage(IntPtr lpMsg)
+        public unsafe bool OnMessage(MSG* lpMsg)
         {
-            if (Marshal.ReadInt32(lpMsg, MSG.message) == WM.KEYDOWN
-                && Marshal.ReadInt16(lpMsg, MSG.wParam) == NativeConstants.VK_ESCAPE)
+            if (lpMsg->message == WM.KEYDOWN
+                && (int)lpMsg->wParam == NativeConstants.VK_ESCAPE)
             {
                 ctrl.CancelScreenColorPicker();
                 return true;
