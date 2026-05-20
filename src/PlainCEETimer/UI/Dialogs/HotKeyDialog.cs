@@ -1,6 +1,7 @@
 using System;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
@@ -59,9 +60,14 @@ public sealed class HotKeyDialog : AppDialog
     {
         var hotKeys = AppConfig.HotKeys;
 
-        for (int i = 0; i < hotKeys.Length; i++)
+        if (!hotKeys.IsNullOrEmpty())
         {
-            HotKeyCtrls[i].Hotkey = new(hotKeys[i]);
+            var length = Math.Min(hotKeys.Length, HotKeyManager.HotKeyCount);
+
+            for (int i = 0; i < length; i++)
+            {
+                HotKeyCtrls[i].Hotkey = new(hotKeys[i]);
+            }
         }
     }
 
