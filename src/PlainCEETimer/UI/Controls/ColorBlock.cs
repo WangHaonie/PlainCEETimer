@@ -9,7 +9,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed partial class ColorBlock : PlainLabel
+public sealed class ColorBlock : PlainLabel
 {
     [NoConstants]
     private sealed class ScreenColorPicker : AppForm
@@ -164,7 +164,7 @@ public sealed partial class ColorBlock : PlainLabel
     private readonly bool IsPreview;
     private readonly bool IsFore;
     private readonly ColorBlock PreviewBlock;
-    private static CancellationMessageFilter MsgFilter;
+    private readonly CancellationMessageFilter MsgFilter;
 
     public ColorBlock(bool isPreview, bool isFore, ColorBlock preview)
     {
@@ -173,6 +173,7 @@ public sealed partial class ColorBlock : PlainLabel
         IsPreview = isPreview;
         IsFore = isFore;
         PreviewBlock = preview;
+        MsgFilter = new(this);
     }
 
     protected override void OnClick(EventArgs e)
@@ -221,11 +222,11 @@ public sealed partial class ColorBlock : PlainLabel
             if (!IsPicking && !ParentBounds.Contains(MouseLocation))
             {
                 IsPicking = true;
-                MsgFilter ??= new(this);
                 AppMessageFilter.AddMessageFilter(MsgFilter);
                 ColorPicker = new();
                 HideParentForm();
                 ColorPicker.Show();
+                ColorPicker.Activate();
             }
 
             if (IsPicking)
