@@ -6,7 +6,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
-public static class Win32
+internal static class Win32
 {
     public static IntPtr AllocConsole()
     {

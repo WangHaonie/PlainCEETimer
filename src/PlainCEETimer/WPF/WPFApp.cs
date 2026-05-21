@@ -6,16 +6,16 @@ using PlainCEETimer.WPF.Modules;
 
 namespace PlainCEETimer.WPF;
 
-public sealed class WPFApp : Application
+public sealed class WPFApp : Application, IThemeAware
 {
     public static bool IsSystemClosing { get; private set; }
 
-    private readonly bool nt10 = !SystemVersion.BeforeNT10;
     private ResourceDictionary themeDict;
+    private ThemeHelper themeHelper;
+    private readonly bool nt10 = !SystemVersion.BeforeNT10;
 
     public WPFApp()
     {
-        ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 #if !DEBUG
         DispatcherUnhandledException += (_, e) => App.HandleException(e.Exception.PassIf(!e.Handled));
 #endif
@@ -30,7 +30,7 @@ public sealed class WPFApp : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+        themeHelper.Destroy();
         base.OnExit(e);
     }
 
@@ -41,18 +41,13 @@ public sealed class WPFApp : Application
             .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
             .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10)
             .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11);
-        ApplyTheme();
+        themeHelper ??= new(this);
     }
 
-    private void ApplyTheme()
+    void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
         Resources.MergedDictionaries
             .RemoveEx(themeDict, themeDict != null)
             .AddEx(themeDict = Resource.Create("WPF/Appearance/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml")), nt10);
-    }
-
-    private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
-    {
-        ApplyTheme();
     }
 }

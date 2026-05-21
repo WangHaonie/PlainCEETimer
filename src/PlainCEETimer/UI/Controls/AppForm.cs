@@ -233,8 +233,8 @@ public abstract class AppForm : Form, IAppWindow
     {
         SaveWindowParameters();
         ClearEvents();
-        base.OnClosed(e);
         OnClosed();
+        base.OnClosed(e);
     }
 
     protected sealed override void OnHandleDestroyed(EventArgs e)

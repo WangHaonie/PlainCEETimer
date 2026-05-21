@@ -36,6 +36,7 @@ internal static class App
     public const string CopyrightInfo = "Copyright © 2023-2026 WangHaonie";
     public const string OriginalFileName = $"{AppNameEng}.exe";
     public const string NativesDll = "PlainCEETimer.Natives.dll";
+    public const string CrtDll = "ucrtbase.dll";
     public const string User32Dll = "user32.dll";
     public const string UxThemeDll = "uxtheme.dll";
     public const string Shell32Dll = "shell32.dll";

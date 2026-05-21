@@ -6,7 +6,7 @@ namespace PlainCEETimer.Interop;
 /// <summary>
 /// 为 Windows 任务计划程序 (<a href="https://learn.microsoft.com/zh-cn/windows/win32/api/taskschd/nn-taskschd-itaskservice">ITaskService</a>) 提供低级封装。
 /// </summary>
-public static class Win32TaskScheduler
+internal static class Win32TaskScheduler
 {
     [DllImport(App.NativesDll, EntryPoint = "#14")]
     public static extern void Initialize();

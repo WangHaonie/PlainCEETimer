@@ -4,17 +4,16 @@ namespace PlainCEETimer.Interop;
 
 public unsafe readonly ref struct NativeStringUni
 {
-    private readonly bool m_isValid;
     private readonly ReadOnlySpan<char> m_value;
 
     public NativeStringUni(char* ptr)
     {
-        m_isValid = TryGetString(ptr, out m_value);
+        TryGetString(ptr, out m_value);
     }
 
     public bool Equals(string str)
     {
-        if (str == null || !m_isValid)
+        if (str == null || m_value.IsEmpty)
         {
             return false;
         }
@@ -24,7 +23,7 @@ public unsafe readonly ref struct NativeStringUni
 
     public bool Equals(NativeStringUni str)
     {
-        if (!m_isValid || !str.m_isValid)
+        if (m_value.IsEmpty || str.m_value.IsEmpty)
         {
             return false;
         }
@@ -35,6 +34,16 @@ public unsafe readonly ref struct NativeStringUni
         }
 
         return m_value.SequenceEqual(str.m_value);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as string);
+    }
+
+    public override int GetHashCode()
+    {
+        return m_value.GetHashCode();
     }
 
     public static bool operator ==(NativeStringUni a, string b)
@@ -57,13 +66,13 @@ public unsafe readonly ref struct NativeStringUni
         return !(a == b);
     }
 
-    private static bool TryGetString(char* ptr, out ReadOnlySpan<char> value)
+    private static void TryGetString(char* ptr, out ReadOnlySpan<char> value)
     {
         value = default;
 
         if (ptr == null || (nuint)ptr < 0x10000)
         {
-            return false;
+            return;
         }
 
         try
@@ -76,21 +85,11 @@ public unsafe readonly ref struct NativeStringUni
             }
 
             value = new ReadOnlySpan<char>(ptr, len);
-            return true;
+            return;
         }
         catch
         {
-            return false;
+            return;
         }
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as string);
-    }
-
-    public override int GetHashCode()
-    {
-        return m_value.GetHashCode();
     }
 }

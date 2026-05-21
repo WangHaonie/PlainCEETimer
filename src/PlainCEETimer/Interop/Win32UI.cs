@@ -8,18 +8,30 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
-public static class Win32UI
+internal static class Win32UI
 {
     private static List<IntPtr> UnmanagedWindows;
-
-    [DllImport(App.User32Dll)]
-    public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
     [DllImport(App.Gdi32Dll)]
     public static extern int SetBkMode(IntPtr hdc, int mode);
 
     [DllImport(App.Gdi32Dll)]
     public static extern bool DeleteObject(IntPtr hObject);
+
+    [DllImport(App.Gdi32Dll)]
+    public static extern COLORREF SetBkColor(IntPtr hdc, COLORREF color);
+
+    [DllImport(App.Gdi32Dll)]
+    public static extern COLORREF SetTextColor(IntPtr hdc, COLORREF color);
+
+    [DllImport(App.Gdi32Dll)]
+    public static extern IntPtr CreateSolidBrush(COLORREF color);
+
+    [DllImport(App.Gdi32Dll)]
+    public static extern int GetDeviceCaps(IntPtr hdc, int index);
+
+    [DllImport(App.User32Dll)]
+    public static extern void MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
     [DllImport(App.User32Dll)]
     public static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
@@ -42,41 +54,14 @@ public static class Win32UI
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool SetWindowText(IntPtr hWnd, string lpString);
 
-    [DllImport(App.Gdi32Dll)]
-    public static extern COLORREF SetBkColor(IntPtr hdc, COLORREF color);
-
-    [DllImport(App.Gdi32Dll)]
-    public static extern COLORREF SetTextColor(IntPtr hdc, COLORREF color);
-
-    [DllImport(App.Gdi32Dll)]
-    public static extern IntPtr CreateSolidBrush(COLORREF color);
-
-    [DllImport(App.Gdi32Dll)]
-    public static extern int GetDeviceCaps(IntPtr hdc, int index);
-
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
-    /*
-
-    提取 DLL 里的图标参考:
-
-    How can I use the images within shell32.dll in my C# project? - Stack Overflow
-    https://stackoverflow.com/a/6873026/21094697
-
-    */
-
-    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
-    public unsafe static extern int ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
-
     [DllImport(App.User32Dll)]
     public static extern bool DestroyIcon(HICON hIcon);
-
-    [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
-    public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
     [DllImport(App.User32Dll)]
     public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, Keys vk);
@@ -108,14 +93,56 @@ public static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern uint GetDpiForWindow(IntPtr hWnd);
 
-    [DllImport(App.ShcoreDll)]
-    public static extern HRESULT GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
-
     [DllImport(App.User32Dll)]
     public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
 
     [DllImport(App.User32Dll)]
     public static extern int GetSystemMetrics(int nIndex);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetThreadDpiAwarenessContext();
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr SetThreadDpiAwarenessContext(DpiAwarenessContext dpiContext);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool AreDpiAwarenessContextsEqual(DpiAwarenessContext dpiContextA, IntPtr dpiContextB);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetDC(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
+    public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool IsProcessDPIAware();
+
+    [DllImport(App.User32Dll)]
+    public static extern bool SetProcessDPIAware();
+
+    [DllImport(App.ShcoreDll)]
+    public static extern HRESULT GetProcessDpiAwareness(IntPtr hProcess, out int value);
+
+    [DllImport(App.ShcoreDll)]
+    public static extern HRESULT SetProcessDpiAwareness(int value);
+
+    [DllImport(App.ShcoreDll)]
+    public static extern HRESULT GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+
+    [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
+    public static extern HRESULT SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+
+    /*
+
+    提取 DLL 里的图标参考:
+
+    How can I use the images within shell32.dll in my C# project? - Stack Overflow
+    https://stackoverflow.com/a/6873026/21094697
+
+    */
+
+    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
+    public unsafe static extern uint ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
 
     [DllImport(App.NativesDll, EntryPoint = "#21")]
     public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
@@ -185,33 +212,6 @@ public static class Win32UI
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
     public static extern void UnhookGetMessage();
-
-    [DllImport(App.User32Dll)]
-    public static extern IntPtr GetThreadDpiAwarenessContext();
-
-    [DllImport(App.User32Dll)]
-    public static extern IntPtr SetThreadDpiAwarenessContext(DpiAwarenessContext dpiContext);
-
-    [DllImport(App.User32Dll)]
-    public static extern bool AreDpiAwarenessContextsEqual(DpiAwarenessContext dpiContextA, IntPtr dpiContextB);
-
-    [DllImport(App.User32Dll)]
-    public static extern IntPtr GetDC(IntPtr hWnd);
-
-    [DllImport(App.User32Dll)]
-    public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-    [DllImport(App.ShcoreDll)]
-    public static extern HRESULT GetProcessDpiAwareness(IntPtr hProcess, out int value);
-
-    [DllImport(App.ShcoreDll)]
-    public static extern HRESULT SetProcessDpiAwareness(int value);
-
-    [DllImport(App.User32Dll)]
-    public static extern bool IsProcessDPIAware();
-
-    [DllImport(App.User32Dll)]
-    public static extern bool SetProcessDPIAware();
 
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {

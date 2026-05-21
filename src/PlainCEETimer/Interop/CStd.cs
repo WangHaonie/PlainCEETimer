@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
-public static class CStd
+internal static class CStd
 {
-    [DllImport("ucrtbase.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(App.CrtDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern int system(string _Command);
 }

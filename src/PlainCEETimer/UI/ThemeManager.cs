@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
@@ -50,7 +49,6 @@ public static class ThemeManager
     private static bool shouldUseDarkMode;
     private static bool canUseNewTheme;
     private static bool isNewDwma;
-    private static bool isDetecting;
     private static SystemTheme theme;
     private static ThemeChangedMessageFilter msgfilter;
 
@@ -117,11 +115,7 @@ public static class ThemeManager
         else
         {
             theme = GetCurrentSystemTheme();
-
-            if (!isDetecting)
-            {
-                StartDetectingThemeChanges();
-            }
+            StartDetectingThemeChanges();
         }
 
         return option;
@@ -153,26 +147,28 @@ public static class ThemeManager
 
     private static void StartDetectingThemeChanges()
     {
-        AppMessageFilter.AddMessageFilter(msgfilter ??= new());
-        App.AppExit += StopDetectingThemeChanges;
-        isDetecting = true;
+        if (msgfilter == null)
+        {
+            msgfilter = new();
+            AppMessageFilter.AddMessageFilter(msgfilter);
+            App.AppExit += StopDetectingThemeChanges;
+        }
     }
 
     private static void StopDetectingThemeChanges()
     {
-        AppMessageFilter.RemoveMessageFilter(msgfilter);
-        isDetecting = false;
+        if (msgfilter != null)
+        {
+            AppMessageFilter.RemoveMessageFilter(msgfilter);
+            msgfilter = null;
+            App.AppExit -= StopDetectingThemeChanges;
+        }
     }
 
     private static SystemTheme GetCurrentSystemTheme()
     {
         var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
         return tmp ? SystemTheme.Dark : SystemTheme.Light;
-    }
-
-    private static void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-    {
-        throw new NotImplementedException();
     }
 
     /*

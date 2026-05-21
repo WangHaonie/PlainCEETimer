@@ -100,11 +100,12 @@ public sealed class ColorBlock : PlainLabel
             g.DrawLine(CrossPen, XY, PosOffset, XY, HeightWidth - PosOffset);
         }
 
-        protected override void OnClosed()
+        protected override void Dispose(bool disposing)
         {
             ScreenCut.Dispose();
             CrossPen.Dispose();
             ScreenCut = null;
+            base.Dispose(disposing);
         }
     }
 

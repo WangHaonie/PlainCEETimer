@@ -5,7 +5,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
-public static class Win32User
+internal static class Win32User
 {
     /*
 
