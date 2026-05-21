@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -16,7 +16,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     {
         public string Content
         {
-            get => m_Text;
+            get => ContentBox.Text;
             set => ContentBox.Text = value;
         }
 
@@ -25,15 +25,11 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         private PlainTextBox ContentBox;
         private PlainButton ButtonClose;
         private PlainButton ButtonApply;
-        private PlainLabel LabelCounter;
-        private int TextLength;
-        private string m_Text;
-        private bool IsDark;
-        private ThemeHelper themeHelper;
+        private PlainTextCounter LabelCounter;
 
         public void Input(string text)
         {
-            ContentBox?.Input(TextLength + text.Length, text);
+            ContentBox.Input(ContentBox.Text.Clean().Length + text.Length, text);
         }
 
         protected override void OnInitializing()
@@ -43,13 +39,11 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
             this.AddControls(b =>
             [
-                ContentBox = b.TextArea(0, 0, ContentBox_TextChanged),
+                ContentBox = b.TextArea(0, 0, null),
                 ButtonClose = b.Button("×", 18, 20, (_, _) => Close()),
                 ButtonApply = b.Button("√", 18, 20, ButtonApply_Click),
-                LabelCounter = b.Label("0/0")
+                LabelCounter = b.Counter(ContentBox, ConfigValidator.IsValidCustomLength)
             ]);
-
-            themeHelper = new(this);
         }
 
         protected override void RunLayout(bool isHighDpi)
@@ -64,17 +58,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             InitWindowSize(ButtonClose, 3, 3);
         }
 
-        protected override void UpdateTheme(bool useDark, bool init)
-        {
-            IsDark = useDark;
-            base.UpdateTheme(useDark, init);
-
-            if (!init)
-            {
-                UpdateCounterColor();
-            }
-        }
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -83,12 +66,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             }
 
             base.OnKeyDown(e);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            themeHelper.Destroy();
-            base.Dispose(disposing);
         }
 
         protected override void OnClosed()
@@ -101,21 +78,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         {
             DialogEndResult = true;
             Close();
-        }
-
-        private void ContentBox_TextChanged(object sender, EventArgs e)
-        {
-            m_Text = ContentBox.Text;
-            TextLength = ContentBox.Text.Clean().Length;
-            LabelCounter.Text = TextLength + "/" + ConfigValidator.MaxCustomTextLength;
-            UpdateCounterColor();
-        }
-
-        private void UpdateCounterColor()
-        {
-            LabelCounter.ForeColor = !ConfigValidator.IsInvalidCustomLength(TextLength)
-                ? (IsDark ? Colors.DarkForeText : Color.Black)
-                : Color.Red;
         }
     }
 

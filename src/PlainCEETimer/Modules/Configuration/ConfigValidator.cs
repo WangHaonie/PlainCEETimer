@@ -177,9 +177,9 @@ internal static class ConfigValidator
         return length is >= MinExamNameLength and <= MaxExamNameLength;
     }
 
-    public static bool IsInvalidCustomLength(int length)
+    public static bool IsValidCustomLength(int length)
     {
-        return length is 0 or > MaxCustomTextLength;
+        return length > 0 && length <= MaxCustomTextLength;
     }
 
     public static void EnsureExamDate(DateTime time)
@@ -192,7 +192,7 @@ internal static class ConfigValidator
 
     public static void EnsureCustomText(string custom)
     {
-        if (IsInvalidCustomLength(custom.Length))
+        if (!IsValidCustomLength(custom.Length))
         {
             throw InvalidTampering(ConfigField.CustomTextLength);
         }

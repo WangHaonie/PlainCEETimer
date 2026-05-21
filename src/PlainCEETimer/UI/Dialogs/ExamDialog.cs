@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules;
@@ -20,7 +19,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     private bool IsEnabled;
     private CountdownFormat Format;
     private PlainLabel LabelName;
-    private PlainLabel LabelCounter;
+    private PlainTextCounter LabelCounter;
     private PlainLabel LabelStart;
     private PlainLabel LabelEnd;
     private PlainTextBox TextBoxName;
@@ -39,10 +38,6 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     private CountdownRule[] DefaultRules;
     private CountdownRule[] GlobalRules;
 
-    private int m_examLength;
-    private string CurrentExamName;
-    private bool IsDark;
-
     protected override void OnInitializing()
     {
         Text = "考试信息 - 高考倒计时";
@@ -53,17 +48,9 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             LabelName = b.Label("考试名称"),
             LabelStart = b.Label("考试开始"),
             LabelEnd = b.Label("考试结束"),
-            LabelCounter = b.Label("00/00"),
-
-            TextBoxName = b.TextBox(223, false, (_, _) =>
-            {
-                CurrentExamName = TextBoxName.Text.Clean();
-                m_examLength = CurrentExamName.Length;
-                LabelCounter.Text = $"{m_examLength}/{ConfigValidator.MaxExamNameLength}";
-                UpdateCounterColor();
-                UserChanged();
-            }).With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
-
+            TextBoxName = b.TextBox(223, false, OnUserChanged)
+                .With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
+            LabelCounter = b.Counter(TextBoxName, ConfigValidator.IsValidExamLength),
             DTPStart = b.DateTimePicker(254, OnUserChanged),
             DTPEnd = b.DateTimePicker(254, OnUserChanged),
 
@@ -107,11 +94,6 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         base.OnInitializing();
     }
 
-    private void UpdateCounterColor()
-    {
-        LabelCounter.ForeColor = ConfigValidator.IsValidExamLength(m_examLength) ? (IsDark ? Colors.DarkForeText : Color.Black) : Color.Red;
-    }
-
     protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelName, 3, 6);
@@ -143,13 +125,6 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
         ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 1, 3);
         InitWindowSize(ButtonB, 4, 4);
-    }
-
-    protected override void UpdateTheme(bool useDark, bool init)
-    {
-        base.UpdateTheme(useDark, init);
-        IsDark = useDark;
-        UpdateCounterColor();
     }
 
     protected override void OnLoad()
@@ -195,7 +170,9 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
     protected override bool OnClickButtonA()
     {
-        if (string.IsNullOrWhiteSpace(CurrentExamName) || !ConfigValidator.IsValidExamLength(CurrentExamName.Length))
+        var examName = TextBoxName.Text.Clean();
+
+        if (string.IsNullOrWhiteSpace(examName) || !ConfigValidator.IsValidExamLength(examName.Length))
         {
             MessageX.Error("输入的考试名称有误！\n\n请检查输入的考试名称是否太长或太短！");
             return false;
@@ -221,7 +198,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
         data = new()
         {
-            Name = CurrentExamName,
+            Name = examName,
             Start = start,
             End = end,
 

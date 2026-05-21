@@ -127,6 +127,13 @@ public class ControlBuilder
         return ctrl;
     }
 
+    public PlainTextCounter Counter(PlainTextBox owner, Predicate<int> IsValidLength)
+    {
+        var ctrl = new PlainTextCounter();
+        ctrl.AttachTo(owner, IsValidLength);
+        return ctrl;
+    }
+
     public PictureBox Image(Image img)
     {
         var ctrl = new PictureBox() { Image = img };

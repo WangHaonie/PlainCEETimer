@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
 
@@ -7,12 +8,17 @@ namespace PlainCEETimer.UI.Controls;
 public class PlainLabel : Label, IThemeAware
 {
     private bool UseDark;
-    private readonly ThemeHelper themeHelper;
+    private ThemeHelper themeHelper;
 
     public PlainLabel()
     {
         AutoSize = true;
-        themeHelper = new(this);
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        themeHelper ??= new(this);
+        base.OnHandleCreated(e);
     }
 
     protected override void OnPaint(PaintEventArgs e)
