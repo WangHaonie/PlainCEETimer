@@ -188,7 +188,7 @@ internal static class App
                 MainMutex.ReleaseMutex();
             }
 
-            MainMutex.Dispose();
+            MainMutex.Destroy();
             MainMutex = null;
         }
 

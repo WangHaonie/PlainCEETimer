@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
@@ -26,7 +27,7 @@ internal static class Startup
         {
             EnableTask();
             Win32TaskScheduler.Release();
-            Registry.Dispose();
+            Registry.Destroy();
         };
     }
 

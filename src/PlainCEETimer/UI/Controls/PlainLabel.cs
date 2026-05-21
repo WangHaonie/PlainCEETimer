@@ -33,6 +33,16 @@ public class PlainLabel : Label, IThemeAware
         base.Dispose(disposing);
     }
 
+    protected virtual void UpdateTheme(bool useDark, bool init)
+    {
+        UseDark = useDark;
+
+        if (!init && UseDark && !Enabled)
+        {
+            Invalidate();
+        }
+    }
+
     private static TextFormatFlags CA2TFF(ContentAlignment alignment) => alignment switch
     {
         ContentAlignment.TopLeft => TextFormatFlags.Top | TextFormatFlags.Left,
@@ -49,11 +59,6 @@ public class PlainLabel : Label, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        UseDark = useDark;
-
-        if (!init)
-        {
-            Invalidate();
-        }
+        UpdateTheme(useDark, init);
     }
 }

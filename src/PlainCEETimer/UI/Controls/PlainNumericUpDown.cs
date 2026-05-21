@@ -8,11 +8,14 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 {
+    private bool initCall = true;
     private ThemeHelper themeHelper;
+    private readonly Debouncer<EventArgs> debouncer;
 
     public PlainNumericUpDown()
     {
         TextAlign = HorizontalAlignment.Right;
+        debouncer = new(base.OnValueChanged);
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -21,9 +24,22 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
         base.OnHandleCreated(e);
     }
 
+    protected override void OnValueChanged(EventArgs e)
+    {
+        if (initCall)
+        {
+            base.OnValueChanged(e);
+            initCall = false;
+            return;
+        }
+
+        debouncer.Debounce(e);
+    }
+
     protected override void Dispose(bool disposing)
     {
         themeHelper.Destroy();
+        debouncer.Destroy();
         base.Dispose(disposing);
     }
 

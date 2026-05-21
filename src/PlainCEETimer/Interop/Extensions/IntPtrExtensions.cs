@@ -22,8 +22,8 @@ public static class IntPtrExtensions
         return new(ptr);
     }
 
-    public unsafe static NativeStringUni AsNativeStringUni(this IntPtr ptr)
+    public unsafe static NativeStringUni AsNativeStringUni(this IntPtr ptr, int length = -1)
     {
-        return new((char*)ptr);
+        return new((char*)ptr, length);
     }
 }

@@ -126,7 +126,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         {
             base.Text = value;
 
-            if (Expandable && Child != null && !Child.IsDisposed)
+            if (expandable && Child != null && !Child.IsDisposed)
             {
                 Child.Content = value;
             }
@@ -135,17 +135,19 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     public event EventHandler<bool> ExpandableVisibleChanged;
 
+    private bool initCall = true;
     private AppForm ParentForm;
     private PlainButton ButtonExpand;
     private TextBoxFlyout Child;
     private ThemeHelper themeHelper;
-    private readonly bool Expandable;
+    private readonly bool expandable;
+    private readonly Debouncer<EventArgs> debouncer;
 
-    public PlainTextBox(bool expandable)
+    public PlainTextBox(bool isExpandable)
     {
         MaxLength = ConfigValidator.MaxCustomTextLength;
 
-        if (Expandable = expandable)
+        if (expandable = isExpandable)
         {
             this.AddControls(b =>
             [
@@ -172,6 +174,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
                 })
             ]);
         }
+
+        debouncer = new(base.OnTextChanged);
     }
 
     public void Input(int totalLength, string text)
@@ -191,13 +195,12 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     {
         base.OnHandleCreated(e);
 
-        if (Expandable)
+        if (expandable)
         {
             UpdateExpandButtonMargin();
         }
 
         themeHelper ??= new(this);
-        OnTextChanged(EventArgs.Empty);
         ParentForm = this.FindParentForm();
     }
 
@@ -205,6 +208,24 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     {
         base.OnDpiChangedAfterParent(e);
         UpdateExpandButtonMargin();
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
+        base.OnKeyDown(e);
+    }
+
+    protected override void OnTextChanged(EventArgs e)
+    {
+        if (initCall)
+        {
+            base.OnTextChanged(e);
+            initCall = false;
+            return;
+        }
+
+        debouncer.Debounce(e);
     }
 
     protected override void WndProc(ref Message m)
@@ -223,15 +244,10 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         base.WndProc(ref m);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
-        base.OnKeyDown(e);
-    }
-
     protected override void Dispose(bool disposing)
     {
-        themeHelper.Dispose();
+        themeHelper.Destroy();
+        debouncer.Destroy();
         base.Dispose(disposing);
     }
 
@@ -242,7 +258,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     private void UpdateExpandButtonMargin()
     {
-        if (Expandable)
+        if (expandable)
         {
             /*
 

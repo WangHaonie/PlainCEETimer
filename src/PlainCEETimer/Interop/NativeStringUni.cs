@@ -6,9 +6,9 @@ public unsafe readonly ref struct NativeStringUni
 {
     private readonly ReadOnlySpan<char> m_value;
 
-    public NativeStringUni(char* ptr)
+    public NativeStringUni(char* ptr, int length = -1)
     {
-        TryGetString(ptr, out m_value);
+        TryGetString(ptr, length, out m_value);
     }
 
     public bool Equals(string str)
@@ -66,7 +66,7 @@ public unsafe readonly ref struct NativeStringUni
         return !(a == b);
     }
 
-    private static void TryGetString(char* ptr, out ReadOnlySpan<char> value)
+    private static void TryGetString(char* ptr, int len, out ReadOnlySpan<char> value)
     {
         value = default;
 
@@ -77,11 +77,14 @@ public unsafe readonly ref struct NativeStringUni
 
         try
         {
-            var len = 0;
-
-            while (ptr[len] != '\0')
+            if (len < 0)
             {
-                len++;
+                len = 0;
+
+                while (ptr[len] != char.MinValue)
+                {
+                    len++;
+                }
             }
 
             value = new ReadOnlySpan<char>(ptr, len);

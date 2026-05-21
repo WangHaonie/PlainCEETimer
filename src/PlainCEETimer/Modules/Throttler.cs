@@ -5,6 +5,7 @@ namespace PlainCEETimer.Modules;
 
 public class Throttler(Action action, int interval = 500)
 {
+    private readonly Action m_action = action ?? throw new ArgumentNullException(nameof(action));
     private readonly Stopwatch sw = new();
     private readonly object syncLock = new();
 
@@ -15,14 +16,14 @@ public class Throttler(Action action, int interval = 500)
             if (!sw.IsRunning)
             {
                 sw.Start();
-                action();
+                m_action();
                 return;
             }
 
             if (sw.ElapsedMilliseconds >= interval)
             {
                 sw.Restart();
-                action();
+                m_action();
             }
         }
     }

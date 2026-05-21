@@ -32,7 +32,7 @@ internal static class DebugExtensions
     [Obsolete]
     public static T Dump<T>(this T obj, [CallerArgumentExpression(nameof(obj))] string name = "")
     {
-        var json = JsonConvert.SerializeObject(obj);
+        var json = obj is string s ? s : JsonConvert.SerializeObject(obj);
 
         if (App.DebugShouldDumpToConsole)
         {
