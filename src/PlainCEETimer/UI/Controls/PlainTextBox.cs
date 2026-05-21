@@ -12,7 +12,7 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainTextBox : TextBox, IThemeAware
 {
-    private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm, IThemeAware
+    private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm
     {
         public string Content
         {
@@ -64,6 +64,17 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             InitWindowSize(ButtonClose, 3, 3);
         }
 
+        protected override void UpdateTheme(bool useDark, bool init)
+        {
+            IsDark = useDark;
+            base.UpdateTheme(useDark, init);
+
+            if (!init)
+            {
+                UpdateCounterColor();
+            }
+        }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -106,12 +117,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
                 ? (IsDark ? Colors.DarkForeText : Color.Black)
                 : Color.Red;
         }
-
-        void IThemeAware.UpdateTheme(bool useDark, bool init)
-        {
-            IsDark = useDark;
-            UpdateCounterColor();
-        }
     }
 
     public new string Text
@@ -133,6 +138,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     private AppForm ParentForm;
     private PlainButton ButtonExpand;
     private TextBoxFlyout Child;
+    private ThemeHelper themeHelper;
     private readonly bool Expandable;
 
     public PlainTextBox(bool expandable)
@@ -190,6 +196,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             UpdateExpandButtonMargin();
         }
 
+        themeHelper ??= new(this);
         OnTextChanged(EventArgs.Empty);
         ParentForm = this.FindParentForm();
     }
@@ -220,6 +227,12 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     {
         e.SuppressKeyPress = e.KeyCode is Keys.Enter or Keys.Space;
         base.OnKeyDown(e);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        themeHelper.Dispose();
+        base.Dispose(disposing);
     }
 
     private void OnParentLocationChanged(object sender, EventArgs e)
