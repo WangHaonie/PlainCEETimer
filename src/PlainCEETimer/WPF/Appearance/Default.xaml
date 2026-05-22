@@ -55,7 +55,7 @@
                             <Setter Property="BorderBrush" Value="{DynamicResource BorderButtonHot}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{StaticResource BackButtonClick}"/>
+                            <Setter Property="Background" Value="{DynamicResource BackButtonClick}"/>
                             <Setter Property="BorderBrush" Value="{DynamicResource BorderButtonClick}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">

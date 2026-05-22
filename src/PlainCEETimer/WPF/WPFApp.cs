@@ -39,15 +39,28 @@ public sealed class WPFApp : Application, IThemeAware
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         Resources.MergedDictionaries
             .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
-            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10)
-            .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11);
+            .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11)
+            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10);
         themeHelper ??= new(this);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        Resources.MergedDictionaries
-            .RemoveEx(themeDict, themeDict != null)
-            .AddEx(themeDict = Resource.Create("WPF/Appearance/Default." + (ThemeManager.ShouldUseDarkMode ? "Dark.xaml" : "Light.xaml")), nt10);
+        if (nt10)
+        {
+            var dict = Resources.MergedDictionaries;
+            var old = themeDict;
+            themeDict = Resource.Create("WPF/Appearance/Default." + (useDark ? "Dark.xaml" : "Light.xaml"));
+
+            if (old == null)
+            {
+                dict.Insert(1, themeDict);
+            }
+            else
+            {
+                var index = dict.IndexOf(old);
+                dict[index != -1 ? index : 1] = themeDict;
+            }
+        }
     }
 }
