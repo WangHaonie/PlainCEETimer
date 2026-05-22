@@ -13,7 +13,7 @@ public sealed class NavigationView : Control
     private sealed class NavigationBar : TreeView, IThemeAware
     {
         private ThemeHelper themeHelper;
-        private readonly bool IsWin10;
+        private readonly bool canHandleStyle;
         private readonly Debouncer debouncer;
 
         internal NavigationBar()
@@ -25,7 +25,7 @@ public sealed class NavigationView : Control
             HotTracking = true;
             ShowLines = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-            IsWin10 = !SystemVersion.IsWindows11 && DpiHelper.enableDpiChangedMessageHandling;
+            canHandleStyle = DpiHelper.enableDpiChangedMessageHandling;
             debouncer = new(() => themeHelper?.Update(), 300);
         }
 
@@ -45,7 +45,7 @@ public sealed class NavigationView : Control
         {
             base.WndProc(ref m);
 
-            if (IsWin10 && m.Msg == WM.WINDOWPOSCHANGED)
+            if (canHandleStyle && m.Msg == WM.WINDOWPOSCHANGED)
             {
                 debouncer.Debounce();
             }
