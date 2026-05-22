@@ -10,7 +10,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 {
     private bool initCall = true;
     private ThemeHelper themeHelper;
-    private readonly Debouncer<EventArgs> debouncer;
+    private readonly Debouncer debouncer;
 
     public PlainNumericUpDown()
     {

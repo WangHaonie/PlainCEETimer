@@ -121,6 +121,7 @@ public static class WM
     public const int CTLCOLORLISTBOX = 0x0134;
     public const int CTLCOLORBTN = 0x0135;
     public const int GETFONT = 0x0031;
+    public const int WINDOWPOSCHANGED = 0x0047;
 }
 
 [NoConstants]

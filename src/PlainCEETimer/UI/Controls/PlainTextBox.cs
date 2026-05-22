@@ -103,7 +103,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     private TextBoxFlyout Child;
     private ThemeHelper themeHelper;
     private readonly bool expandable;
-    private readonly Debouncer<EventArgs> debouncer;
+    private readonly Debouncer debouncer;
 
     public PlainTextBox(bool isExpandable)
     {

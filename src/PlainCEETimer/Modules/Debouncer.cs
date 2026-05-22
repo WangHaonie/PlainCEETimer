@@ -4,29 +4,29 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
-public class Debouncer<T> : IDisposable
+public class Debouncer : IDisposable
 {
-    private T m_value;
+    private object[] m_args;
     private readonly int m_delay;
-    private readonly Action<T> m_action;
+    private readonly Delegate m_method;
     private readonly Timer m_timer;
     private readonly SynchronizationContext m_context;
     private readonly object syncLock;
 
-    public Debouncer(Action<T> action, int delay = 500)
+    public Debouncer(Delegate method, int delay = 500)
     {
-        m_action = action ?? throw new ArgumentNullException(nameof(action));
+        m_method = method ?? throw new ArgumentNullException(nameof(method));
         m_delay = delay;
         m_context = SynchronizationContext.Current;
         m_timer = new(DoAction, null, Timeout.Infinite, Timeout.Infinite);
         syncLock = new();
     }
 
-    public void Debounce(T value)
+    public void Debounce(params object[] args)
     {
         lock (syncLock)
         {
-            m_value = value;
+            m_args = args;
             m_timer.Change(m_delay, Timeout.Infinite);
         }
     }
@@ -39,20 +39,20 @@ public class Debouncer<T> : IDisposable
 
     private void DoAction(object state)
     {
-        T value;
+        object[] args;
 
         lock (syncLock)
         {
-            value = m_value;
+            args = m_args;
         }
 
         if (m_context == null)
         {
-            m_action(value);
+            m_method.DynamicInvoke(args);
         }
         else
         {
-            m_context.Post(_ => m_action(value), null);
+            m_context.Post(_ => m_method.DynamicInvoke(args), null);
         }
     }
 

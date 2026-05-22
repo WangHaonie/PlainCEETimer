@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
@@ -12,6 +13,8 @@ public sealed class NavigationView : Control
     private sealed class NavigationBar : TreeView, IThemeAware
     {
         private ThemeHelper themeHelper;
+        private readonly bool IsWin10;
+        private readonly Debouncer debouncer;
 
         internal NavigationBar()
         {
@@ -22,18 +25,30 @@ public sealed class NavigationView : Control
             HotTracking = true;
             ShowLines = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+            IsWin10 = !SystemVersion.IsWindows11 && DpiHelper.enableDpiChangedMessageHandling;
+            debouncer = new(() => themeHelper?.Update(), 300);
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            themeHelper ??= new(this);
             base.OnHandleCreated(e);
+            themeHelper ??= new(this);
         }
 
         protected override void Dispose(bool disposing)
         {
             themeHelper.Destroy();
             base.Dispose(disposing);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            if (IsWin10 && m.Msg == WM.WINDOWPOSCHANGED)
+            {
+                debouncer.Debounce();
+            }
         }
 
         void IThemeAware.UpdateTheme(bool useDark, bool init)
