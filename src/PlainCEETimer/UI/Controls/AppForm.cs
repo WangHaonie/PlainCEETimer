@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -20,6 +20,8 @@ public abstract class AppForm : Form, IAppWindow
     public IDialogService MessageX { get; }
 
     public Control FocusControl { get; set; }
+
+    internal bool IsLoaded => !IsLoading;
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 

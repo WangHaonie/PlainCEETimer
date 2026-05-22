@@ -97,17 +97,18 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     public event EventHandler<bool> ExpandableVisibleChanged;
 
-    private bool initCall = true;
     private AppForm ParentForm;
     private PlainButton ButtonExpand;
     private TextBoxFlyout Child;
     private ThemeHelper themeHelper;
     private readonly bool expandable;
     private readonly Debouncer debouncer;
+    private readonly ControlDebounceHelper debounceHelper;
 
     public PlainTextBox(bool isExpandable)
     {
         MaxLength = ConfigValidator.MaxCustomTextLength;
+        debounceHelper = new(this);
 
         if (expandable = isExpandable)
         {
@@ -180,10 +181,9 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     protected override void OnTextChanged(EventArgs e)
     {
-        if (initCall)
+        if (!debounceHelper.ShouldDebounce)
         {
             base.OnTextChanged(e);
-            initCall = false;
             return;
         }
 

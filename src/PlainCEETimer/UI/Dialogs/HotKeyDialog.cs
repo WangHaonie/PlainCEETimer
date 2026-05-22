@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Linq;
