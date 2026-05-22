@@ -63,6 +63,11 @@ public class AppMessageFilter : IDisposable
     {
         if (isRunning)
         {
+            if (filter == null)
+            {
+                return;
+            }
+
             filters.Remove(filter);
             filtersCount = filters.Count;
         }
