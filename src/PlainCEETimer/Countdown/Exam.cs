@@ -54,9 +54,9 @@ public class Exam : IListViewData<Exam>
     {
         public bool Equals(Exam x, Exam y)
         {
-            if (x.Equals(x))
+            if (!x.Equals(x))
             {
-                return true;
+                return false;
             }
 
             var s1 = x.Settings;
