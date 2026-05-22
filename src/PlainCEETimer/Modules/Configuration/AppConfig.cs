@@ -58,7 +58,7 @@ public class AppConfig
 
             if (ConfigValidator.ValidateNeeded)
             {
-                HashSet<HotKey> set = new(HotKeyManager.HotKeyCount);
+                HashSet<HotKey> set = [with(HotKeyManager.HotKeyCount)];
 
                 foreach (var hotKey in value)
                 {

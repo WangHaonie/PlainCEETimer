@@ -8,7 +8,7 @@ namespace PlainCEETimer.Countdown;
 
 public static class PhTokenParser
 {
-    private static readonly Dictionary<string, ReadOnlyCollection<PhParsedToken>> _cache = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, ReadOnlyCollection<PhParsedToken>> _cache = [with(StringComparer.Ordinal)];
 
     public static ReadOnlyCollection<PhParsedToken> Parse(string format)
     {
