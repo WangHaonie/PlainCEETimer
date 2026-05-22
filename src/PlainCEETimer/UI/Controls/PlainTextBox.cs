@@ -95,6 +95,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         }
     }
 
+    public PreferredColors PreferredColors { get; set; }
+
     public event EventHandler<bool> ExpandableVisibleChanged;
 
     private AppForm ParentForm;
@@ -242,8 +244,20 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
-        BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+        var pcs = PreferredColors;
+
+        if (pcs != null)
+        {
+            var cp = useDark ? pcs.Dark : pcs.Light;
+            ForeColor = cp.Fore;
+            BackColor = cp.Back;
+        }
+        else
+        {
+            ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
+            BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+        }
+
         ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd, true);
     }
 }

@@ -48,11 +48,11 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
             LabelName = b.Label("考试名称"),
             LabelStart = b.Label("考试开始"),
             LabelEnd = b.Label("考试结束"),
-            TextBoxName = b.TextBox(223, false, OnUserChanged)
+            TextBoxName = b.TextBox(221, false, OnUserChanged)
                 .With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
             LabelCounter = b.Counter(TextBoxName, ConfigValidator.IsValidExamLength),
-            DTPStart = b.DateTimePicker(254, OnUserChanged),
-            DTPEnd = b.DateTimePicker(254, OnUserChanged),
+            DTPStart = b.DateTimePicker(256, OnUserChanged),
+            DTPEnd = b.DateTimePicker(256, OnUserChanged),
 
             GBoxContent = b.GroupBox(null,
             [
