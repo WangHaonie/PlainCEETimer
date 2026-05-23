@@ -103,3 +103,9 @@ public enum TaskbarPosition
     Right,
     Bottom,
 }
+
+public enum FullScreenTrackingMode
+{
+    Strict,
+    TreatFocusLossAsExit
+}

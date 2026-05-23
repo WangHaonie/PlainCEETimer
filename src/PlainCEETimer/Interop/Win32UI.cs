@@ -82,6 +82,18 @@ internal static class Win32UI
     public static extern IntPtr GetForegroundWindow();
 
     [DllImport(App.User32Dll)]
+    public static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetAncestor(IntPtr hWnd, uint gaFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr GetShellWindow();
+
+    [DllImport(App.User32Dll)]
     public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
     [DllImport(App.User32Dll)]

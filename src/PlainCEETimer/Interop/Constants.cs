@@ -135,9 +135,25 @@ public static class ERROR
 [CompilerRemove]
 public static class WS
 {
+    public const int CHILD = 0x40000000;
+    public const int MINIMIZE = 0x20000000;
     public const int EX_COMPOSITED = 0x02000000;
     public const int EX_CLIENTEDGE = 0x00000200;
     public const int BORDER = 0x00800000;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class GWL
+{
+    public const int STYLE = -16;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class GA
+{
+    public const uint ROOT = 2;
 }
 
 [NoConstants]
