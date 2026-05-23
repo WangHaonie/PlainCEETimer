@@ -79,6 +79,9 @@ internal static class Win32UI
     public static extern bool TrackPopupMenuEx(IntPtr hMenu, int uFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
     [DllImport(App.User32Dll)]
+    public static extern IntPtr GetForegroundWindow();
+
+    [DllImport(App.User32Dll)]
     public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
     [DllImport(App.User32Dll)]

@@ -31,4 +31,10 @@ internal static class Win32
 
     [DllImport(App.Kernel32Dll)]
     public static extern int GetCurrentThreadId();
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr SetWinEventHook(int eventMin, int eventMax, IntPtr hmodWinEventProc, WINEVENTPROC pfnWinEventProc, int idProcess, int idThread, int dwFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 }

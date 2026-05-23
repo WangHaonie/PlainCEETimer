@@ -207,3 +207,14 @@ public static class RDW
     public const uint Frame = 0x0400;
     public const uint NoFrame = 0x0800;
 }
+
+[NoConstants]
+[CompilerRemove]
+public static class WEH
+{
+    public const int EVENT_SYSTEM_FOREGROUND = 0x0003;
+    public const int EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+    public const int WINEVENT_OUTOFCONTEXT = 0x0000;
+    public const int OBJID_WINDOW = 0;
+    public const int CHILDID_SELF = 0;
+}

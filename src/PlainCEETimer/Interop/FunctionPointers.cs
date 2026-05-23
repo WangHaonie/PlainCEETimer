@@ -19,3 +19,5 @@ public unsafe delegate IntPtr WHGETMESSAGE(int nCode, IntPtr wParam, MSG* lParam
 
 [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
 public delegate int FnMessageBoxW(IntPtr hWnd, string lpText, string lpCaption, int uType);
+
+public delegate void WINEVENTPROC(IntPtr hWinEventHook, int dwEvent, IntPtr hwnd, int idObject, int idChild, int idEventThread, int dwmsEventTime);
