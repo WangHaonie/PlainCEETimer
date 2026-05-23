@@ -93,7 +93,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private readonly IScreenService Screen;
     private readonly IUnifiedFontService FontService;
     private readonly IBorderColorService BorderColorService;
-    private readonly WndProcCallback DefWndProc;
 
     private const int PptsvcThreshold = 1;
 
@@ -108,7 +107,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         TrayIcon = services.TrayIconLoader;
         Styles = services.WindowStyles;
         Screen = services.ScreenService;
-        DefWndProc = services.WindowMessageService.DefWndProc;
         FontService = services.UnifiedFontService;
         BorderColorService = services.BorderColorService;
         Initialize();
@@ -130,8 +128,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         {
             SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
         }
-
-        DefWndProc(ref m);
     }
 
     private void Initialize()
@@ -421,6 +417,16 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             SetBorderColor(false, default);
         }
 
+        var newTheme = AppConfig.Theme;
+        ThemeManager.UpdateThemeForUserChoice();
+
+        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+        {
+            ThemeManager.OnThemeChanged(newTheme);
+        }
+
+        CurrentTheme = newTheme;
+
         var newIsWpf = Display.UseWPF;
 
         if (!ConfigValidator.ValidateNeeded && IsWpf != newIsWpf)
@@ -431,15 +437,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
 
         IsWpf = newIsWpf;
-        var newTheme = AppConfig.Theme;
-        ThemeManager.UpdateThemeForUserChoice();
-
-        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
-        {
-            ThemeManager.OnThemeChanged(newTheme);
-        }
-
-        CurrentTheme = newTheme;
     }
 
     private void RunCountdown()

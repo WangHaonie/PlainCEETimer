@@ -31,7 +31,6 @@ public sealed class MainForm : AppForm
             WindowInitializer = new WinFormsWindowInitializer(this),
             WindowDragService = new WinFormsWindowDragService(this),
             WindowBounds = new WinFormsWindowBounds(this),
-            WindowMessageService = new WindowMessageService(base.WndProc),
             WindowStyles = new WinFormsWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),
             ScreenService = ScreenService,
@@ -67,6 +66,7 @@ public sealed class MainForm : AppForm
     protected override void WndProc(ref Message m)
     {
         vm.WndProc(ref m);
+        base.WndProc(ref m);
     }
 
     private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

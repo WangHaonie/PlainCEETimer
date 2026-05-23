@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -76,5 +77,16 @@ public static class Extensions
     public static JsonReadHelper Load(this JsonReader reader, JsonSerializer serializer)
     {
         return new(JObject.Load(reader), serializer);
+    }
+
+    public static void SafeExecute(this SynchronizationContext context, SendOrPostCallback callback, object state = null)
+    {
+        if (context == null)
+        {
+            callback(state);
+            return;
+        }
+
+        context.Post(callback, state);
     }
 }

@@ -24,7 +24,6 @@ public sealed partial class MainWindow : AppWindow
             WindowInitializer = new WPFWindowInitializer(this),
             WindowDragService = new WPFWindowDragService(this),
             WindowBounds = new WPFWindowBounds(this),
-            WindowMessageService = new WindowMessageService(base.WndProc),
             WindowStyles = new WPFWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),
             ScreenService = ScreenService,
@@ -48,5 +47,6 @@ public sealed partial class MainWindow : AppWindow
     protected override void WndProc(ref Message m)
     {
         vm.WndProc(ref m);
+        base.WndProc(ref m);
     }
 }

@@ -14,8 +14,6 @@ public class MainServiceHub
 
     public required IWindowBounds WindowBounds { get; init; }
 
-    public required IWindowMessageService WindowMessageService { get; init; }
-
     public required IWindowStyles WindowStyles { get; init; }
 
     public required ITrayIconLoader TrayIconLoader { get; init; }

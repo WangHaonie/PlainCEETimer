@@ -46,14 +46,7 @@ public class Debouncer : IDisposable
             args = m_args;
         }
 
-        if (m_context == null)
-        {
-            m_method.DynamicInvoke(args);
-        }
-        else
-        {
-            m_context.Post(_ => m_method.DynamicInvoke(args), null);
-        }
+        m_context.SafeExecute(_ => m_method.DynamicInvoke(args));
     }
 
     ~Debouncer()
