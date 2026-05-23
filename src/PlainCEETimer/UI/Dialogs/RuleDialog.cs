@@ -40,7 +40,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     private EventHandler OnUserChanged;
     private CountdownRule data = existing;
     private readonly CountdownRule[] Presets = presets ?? DefaultValues.GlobalDefaultRules;
-    private readonly Dictionary<int, CountdownBasicInfo> TemporaryChanges = [with(3)];
+    private readonly Dictionary<int, CountdownBasicInfo> TemporaryChanges = new(3);
 
     protected override void OnInitializing()
     {

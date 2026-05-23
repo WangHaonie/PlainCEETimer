@@ -60,7 +60,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             if (FixedDataItemSet == null && (hasFixedData = !value.IsNullOrEmpty()))
             {
-                FixedDataItemSet = [with(value.Length)];
+                FixedDataItemSet = new(value.Length);
                 fixedData = value;
             }
         }

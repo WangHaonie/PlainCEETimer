@@ -27,7 +27,7 @@ public class ListViewItemSet<TData>()
         }
     }
 
-    private readonly HashSet<Element> ItemsSet = [with(new ItemSetComparer())];
+    private readonly HashSet<Element> ItemsSet = new(new ItemSetComparer());
 
     public bool CanAdd(TData data)
     {
