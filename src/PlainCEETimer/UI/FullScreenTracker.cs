@@ -1,7 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Linq;
+using Timer = System.Threading.Timer;
 
 namespace PlainCEETimer.UI;
 
@@ -15,7 +19,11 @@ public static class FullScreenTracker
             if (m_mode != value)
             {
                 m_mode = value;
-                UpdateTrackedWindow(m_hwndTracked);
+
+                if (hasStarted)
+                {
+                    UpdateTrackedWindow(m_hwndTracked);
+                }
             }
         }
     }
@@ -24,23 +32,34 @@ public static class FullScreenTracker
     public static event EventHandler<FullScreenWindowEventArgs> FullScreenExited;
 
     private static bool hasStarted;
+    private static bool hasPendingEvent;
     private static IntPtr m_hForegroundHook;
     private static IntPtr m_hLocationChangeHook;
+    private static IntPtr m_hwndPending;
     private static IntPtr m_hwndTracked;
     private static IntPtr m_hwndActive;
-    private static FullScreenTrackingMode m_mode;
+    private static FullScreenTrackingMode m_mode = FullScreenTrackingMode.TreatFocusLossAsExit;
     private static Screen m_screen;
+    private static Timer m_timer;
     private static WINEVENTPROC m_proc;
+    private static readonly object syncLock = new();
+    private static readonly Throttler throttler = new(ProcessPendingWindow, ThrottleInterval);
 
-    private static readonly HashSet<string> IgnoredWindowClasses = new(StringComparer.Ordinal)
-    {
+    private const int ThrottleInterval = 300;
+
+    private static readonly string[] m_banlist =
+    [
         "XamlExplorerHostIslandWindow"
-    };
+    ];
 
     public static void SetScreen(Screen screen)
     {
         m_screen = screen;
-        SyncCurrentState();
+
+        if (hasStarted)
+        {
+            SyncCurrentState();
+        }
     }
 
     public static void Start()
@@ -52,6 +71,7 @@ public static class FullScreenTracker
             m_hLocationChangeHook = Win32.SetWinEventHook(WEH.EVENT_OBJECT_LOCATIONCHANGE, WEH.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, m_proc, 0, 0, WEH.WINEVENT_OUTOFCONTEXT);
             hasStarted = m_hForegroundHook != IntPtr.Zero && m_hLocationChangeHook != IntPtr.Zero;
             m_screen ??= Screen.PrimaryScreen;
+            m_timer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
 
             if (!hasStarted)
             {
@@ -74,9 +94,12 @@ public static class FullScreenTracker
 
         m_hForegroundHook = IntPtr.Zero;
         m_hLocationChangeHook = IntPtr.Zero;
+        m_hwndPending = IntPtr.Zero;
         m_hwndTracked = IntPtr.Zero;
         m_hwndActive = IntPtr.Zero;
         m_screen = null;
+        hasPendingEvent = false;
+        m_timer.Destroy();
         hasStarted = false;
     }
 
@@ -87,7 +110,14 @@ public static class FullScreenTracker
             return;
         }
 
-        UpdateTrackedWindow(FindTrackedWindow(GetRootWindow(hwnd)));
+        lock (syncLock)
+        {
+            hasPendingEvent = true;
+            m_hwndPending = GetRootWindow(hwnd);
+            m_timer.Change(ThrottleInterval, Timeout.Infinite);
+        }
+
+        throttler.Throttle();
     }
 
     private static void SyncCurrentState()
@@ -134,7 +164,7 @@ public static class FullScreenTracker
 
     private static bool ShouldIgnoreWindow(IntPtr hWnd)
     {
-        return IgnoredWindowClasses.Contains(Win32UI.GetClassName(hWnd));
+        return m_banlist.ArrayContains(Win32UI.GetClassName(hWnd));
     }
 
     private static bool IsOnTargetScreen(IntPtr hWnd)
@@ -205,6 +235,29 @@ public static class FullScreenTracker
         {
             OnFullScreenEntered(hwndNextActive);
         }
+    }
+
+    private static void ProcessPendingWindow()
+    {
+        IntPtr hwnd;
+
+        lock (syncLock)
+        {
+            if (!hasPendingEvent)
+            {
+                return;
+            }
+
+            hwnd = m_hwndPending;
+            hasPendingEvent = false;
+        }
+
+        UpdateTrackedWindow(FindTrackedWindow(hwnd));
+    }
+
+    private static void TimerCallback(object state)
+    {
+        ProcessPendingWindow();
     }
 
     private static void OnFullScreenEntered(IntPtr hWnd)

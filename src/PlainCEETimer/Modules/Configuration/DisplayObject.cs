@@ -25,6 +25,12 @@ public class DisplayObject
 
     public int Screen { get; set; }
 
+    public int Hide
+    {
+        get;
+        set => ConfigValidator.SetValue(ref field, value, 2, 0);
+    }
+
     public bool UseWPF { get; set; }
 
     public FontModel Font { get; set; }
