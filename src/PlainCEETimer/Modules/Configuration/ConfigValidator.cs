@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Modules.Extensions;
@@ -72,7 +71,6 @@ internal static class ConfigValidator
     static ConfigValidator()
     {
         App.AppExit += SaveConfig;
-        SystemEvents.SessionEnding += (_, _) => SaveConfig();
     }
 
     public static void Validate()

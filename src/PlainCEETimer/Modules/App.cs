@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
@@ -52,7 +53,8 @@ internal static class App
     private static string AllArgs;
     private static Icon appIcon;
     private static Mutex MainMutex;
-    private static readonly object _lock = new();
+    private static readonly object syncLock1 = new();
+    private static readonly object syncLock2 = new();
     private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
     private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
     private static readonly string MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
@@ -163,7 +165,7 @@ internal static class App
 
     public static string WriteException(Exception ex)
     {
-        lock (_lock)
+        lock (syncLock1)
         {
             var now = DateTime.Now;
             var content = $"—————————————————— {AppTitle} - {now.Format()} ——————————————————\n{ex}";
@@ -176,30 +178,38 @@ internal static class App
 
     public static void Exit(bool restart = false, bool useArgs = false)
     {
-        IsClosing = true;
-        appIcon.Destroy();
-        AppExit?.Invoke();
-        AppExit = null;
-
-        if (MainMutex != null)
+        lock (syncLock2)
         {
-            if (IsMainProcess)
+            if (IsClosing)
             {
-                MainMutex.ReleaseMutex();
+                return;
             }
 
-            MainMutex.Destroy();
-            MainMutex = null;
-        }
+            IsClosing = true;
+            appIcon.Destroy();
+            AppExit?.Invoke();
+            AppExit = null;
 
-        if (restart)
-        {
-            ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
-        }
+            if (MainMutex != null)
+            {
+                if (IsMainProcess)
+                {
+                    MainMutex.ReleaseMutex();
+                }
 
-        250.AsDelay(_ => Win32.ExitProcess(0));
-        WindowManager.TryExitUI();
-        Environment.Exit(0);
+                MainMutex.Destroy();
+                MainMutex = null;
+            }
+
+            if (restart)
+            {
+                ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+            }
+
+            250.AsDelay(_ => Win32.ExitProcess(0));
+            WindowManager.TryExitUI();
+            Environment.Exit(0);
+        }
     }
 
     internal static void HandleException(Exception ex)
@@ -310,6 +320,7 @@ internal static class App
         Application.EnableVisualStyles();
         DefaultValues.InitEssentials();
         ConfigValidator.Validate();
+        SystemEvents.SessionEnding += (_, _) => Exit();
 #if !DEBUG
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
