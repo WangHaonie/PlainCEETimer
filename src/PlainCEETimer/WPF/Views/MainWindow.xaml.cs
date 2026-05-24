@@ -23,6 +23,7 @@ public sealed partial class MainWindow : AppWindow
             BorderColorService = new SystemBorderColorService(this),
             WindowInitializer = new WPFWindowInitializer(this),
             WindowDragService = new WPFWindowDragService(this),
+            WindowScreenChangeService = new WPFWindowScreenChangeService(this),
             WindowBounds = new WPFWindowBounds(this),
             WindowStyles = new WPFWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),

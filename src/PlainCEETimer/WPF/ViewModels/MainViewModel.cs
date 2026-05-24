@@ -87,6 +87,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private readonly IAppWindow Owner;
     private readonly IWindowInitializer Initializer;
     private readonly IWindowDragService DragService;
+    private readonly IWindowScreenChangeService ScreenChangeService;
     private readonly IWindowBounds Bounds;
     private readonly ITrayIconLoader TrayIcon;
     private readonly IWindowStyles Styles;
@@ -103,6 +104,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Owner = MessageX.Owner;
         Initializer = services.WindowInitializer;
         DragService = services.WindowDragService;
+        ScreenChangeService = services.WindowScreenChangeService;
         Bounds = services.WindowBounds;
         TrayIcon = services.TrayIconLoader;
         Styles = services.WindowStyles;
@@ -115,6 +117,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     public void Cleanup()
     {
         Countdown.Destroy();
+        ScreenChangeService.Destroy();
     }
 
     public bool CanClose()

@@ -4,11 +4,13 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using Timer = System.Threading.Timer;
 
 namespace PlainCEETimer.UI;
 
+[NoConstants]
 public static class FullScreenTracker
 {
     public static FullScreenTrackingMode TrackingMode

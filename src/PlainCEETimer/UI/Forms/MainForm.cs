@@ -30,6 +30,7 @@ public sealed class MainForm : AppForm
             BorderColorService = new SystemBorderColorService(this),
             WindowInitializer = new WinFormsWindowInitializer(this),
             WindowDragService = new WinFormsWindowDragService(this),
+            WindowScreenChangeService = new WinFormsWindowScreenChangeService(this),
             WindowBounds = new WinFormsWindowBounds(this),
             WindowStyles = new WinFormsWindowStyles(this),
             TrayIconLoader = new AppTrayIconLoader(),

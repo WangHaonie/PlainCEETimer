@@ -12,6 +12,8 @@ public class MainServiceHub
 
     public required IWindowDragService WindowDragService { get; init; }
 
+    public required IWindowScreenChangeService WindowScreenChangeService { get; init; }
+
     public required IWindowBounds WindowBounds { get; init; }
 
     public required IWindowStyles WindowStyles { get; init; }
