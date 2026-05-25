@@ -74,10 +74,10 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainRadioButton RadioButton(string text, EventHandler onClick)
+    public PlainRadioButton RadioButton(string text, EventHandler onCheckedChanged)
     {
         var ctrl = new PlainRadioButton { Text = text, AutoSize = true };
-        ctrl.Click += onClick;
+        ctrl.CheckedChanged += onCheckedChanged;
         return ctrl;
     }
 

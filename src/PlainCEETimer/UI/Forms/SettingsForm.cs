@@ -665,7 +665,7 @@ public sealed class SettingsForm : AppForm
 
     private void RadioButtonTheme_CheckedChanged(object sender, EventArgs e)
     {
-        SelectedTheme = (int)((RadioButton)sender).Tag;
+        SelectedTheme = (int)((PlainRadioButton)sender).Tag;
         SettingsChanged();
     }
 
