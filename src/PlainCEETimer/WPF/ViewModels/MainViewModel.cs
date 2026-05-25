@@ -59,6 +59,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private int ScreenIndex;
     private int ExamIndex;
+    private bool IsTracking;
     private bool IsDraggable;
     private bool IsPPTService;
     private bool ShowTrayIcon;
@@ -282,8 +283,9 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         LoadTrayIcon();
         SetCountdownAutoWrap();
         ApplyStyle();
+        RunFullScreenTracker();
         RunCountdown();
-        UpdateCountdownEnabledState();
+        SetCountdownVisible();
     }
 
     private void LoadConfig()
@@ -475,6 +477,32 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
     }
 
+    private void RunFullScreenTracker()
+    {
+        var mode = Display.FSTMode;
+        FullScreenTracker.TrackingMode = mode;
+
+        if (!IsTracking)
+        {
+            ScreenChangeService.ScreenChanged += ScreenChangeService_ScreenChanged;
+            FullScreenTracker.FullScreenEntered += FullScreenTracker_FullScreenEntered;
+            FullScreenTracker.FullScreenExited += FullScreenTracker_FullScreenExited;
+            FullScreenTracker.SetScreen(ScreenChangeService.Current);
+            FullScreenTracker.Start();
+            IsTracking = true;
+        }
+        else
+        {
+            if (mode == FullScreenTrackingMode.None)
+            {
+                ScreenChangeService.ScreenChanged -= ScreenChangeService_ScreenChanged;
+                FullScreenTracker.FullScreenEntered -= FullScreenTracker_FullScreenEntered;
+                FullScreenTracker.FullScreenExited -= FullScreenTracker_FullScreenExited;
+                IsTracking = false;
+            }
+        }
+    }
+
     private void VerifyLocation()
     {
         if (!DragService.IsDragging)
@@ -638,18 +666,25 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
     }
 
+    private void ScreenChangeService_ScreenChanged(object sender, ScreenChangedEventArgs e)
+    {
+        FullScreenTracker.SetScreen(e.ScreenNew);
+    }
+
+    private void FullScreenTracker_FullScreenEntered(object sender, FullScreenWindowEventArgs e)
+    {
+        SetWindowVisible(false);
+    }
+
+    private void FullScreenTracker_FullScreenExited(object sender, FullScreenWindowEventArgs e)
+    {
+        SetWindowVisible(true);
+    }
+
     private void ToggleVisibilityHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
         IsHotKey1Activated = !IsHotKey1Activated;
-
-        var value = !IsHotKey1Activated;
-        Styles.Visible = value;
-        UpdateCountdownEnabledState();
-
-        if (value)
-        {
-            Owner.ReActivate();
-        }
+        SetWindowVisible(!IsHotKey1Activated);
     }
 
     private void SwitchToPreviousExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
@@ -662,8 +697,15 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Countdown.SwitchTo(SwitchOption.Next);
     }
 
-    private void UpdateCountdownEnabledState()
+    private void SetCountdownVisible()
     {
-        Countdown.Enabled = !IsHotKey1Activated || ShowTrayText;
+        Countdown.Enabled = Styles.Visible || ShowTrayText;
+    }
+
+    private void SetWindowVisible(bool visible)
+    {
+        Styles.Visible = visible;
+        IsHotKey1Activated = !visible;
+        SetCountdownVisible();
     }
 }

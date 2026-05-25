@@ -25,11 +25,7 @@ public class DisplayObject
 
     public int Screen { get; set; }
 
-    public int Hide
-    {
-        get;
-        set => ConfigValidator.SetValue(ref field, value, 2, 0);
-    }
+    public FullScreenTrackingMode FSTMode { get; set; }
 
     public bool UseWPF { get; set; }
 

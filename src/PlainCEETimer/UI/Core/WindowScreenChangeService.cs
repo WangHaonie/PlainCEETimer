@@ -7,6 +7,8 @@ namespace PlainCEETimer.UI.Core;
 
 public abstract class WindowScreenChangeService : IWindowScreenChangeService
 {
+    public Screen Current => GetScreen();
+
     public event EventHandler<ScreenChangedEventArgs> ScreenChanged;
 
     private Screen lastScreen;

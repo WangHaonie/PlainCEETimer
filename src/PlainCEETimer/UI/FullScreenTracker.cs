@@ -24,6 +24,12 @@ public static class FullScreenTracker
 
                 if (hasStarted)
                 {
+                    if (value == FullScreenTrackingMode.None)
+                    {
+                        Stop();
+                        return;
+                    }
+
                     UpdateTrackedWindow(m_hwndTracked);
                 }
             }
@@ -40,7 +46,7 @@ public static class FullScreenTracker
     private static IntPtr m_hwndPending;
     private static IntPtr m_hwndTracked;
     private static IntPtr m_hwndActive;
-    private static FullScreenTrackingMode m_mode = FullScreenTrackingMode.TreatFocusLossAsExit;
+    private static FullScreenTrackingMode m_mode;
     private static Screen m_screen;
     private static Timer m_timer;
     private static WINEVENTPROC m_proc;
@@ -66,7 +72,7 @@ public static class FullScreenTracker
 
     public static void Start()
     {
-        if (!hasStarted)
+        if (!hasStarted && m_mode != FullScreenTrackingMode.None)
         {
             m_proc = WinEventProc;
             m_hForegroundHook = Win32.SetWinEventHook(WEH.EVENT_SYSTEM_FOREGROUND, WEH.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, m_proc, 0, 0, WEH.WINEVENT_OUTOFCONTEXT);
@@ -202,7 +208,7 @@ public static class FullScreenTracker
             return IntPtr.Zero;
         }
 
-        if (TrackingMode == FullScreenTrackingMode.TreatFocusLossAsExit)
+        if (m_mode == FullScreenTrackingMode.FocusLoss)
         {
             var fore = GetRootWindow(Win32UI.GetForegroundWindow());
 
