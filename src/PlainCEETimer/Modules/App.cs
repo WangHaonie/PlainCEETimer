@@ -321,11 +321,9 @@ internal static class App
         DefaultValues.InitEssentials();
         ConfigValidator.Validate();
         SystemEvents.SessionEnding += (_, _) => Exit();
-#if !DEBUG
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-#endif
     }
 
     private static void HideDotNetAppConfig()

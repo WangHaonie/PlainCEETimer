@@ -167,7 +167,6 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnLoad(EventArgs e)
     {
-        EnsureAutoScaleDpi();
         SuspendLayout();
         RunLayout(IsHighDpi);
         InitToUserSize();
@@ -708,26 +707,6 @@ public abstract class AppForm : Form, IAppWindow
 
         AppFont = new(AppFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel, 0);
         Font = AppFont;
-    }
-
-    private void EnsureAutoScaleDpi()
-    {
-        if (AutoScaleMode != AutoScaleMode.Dpi)
-        {
-            return;
-        }
-
-        var newDpi = DpiRatio * 96F;
-        var oldDpi = AutoScaleDimensions.Width;
-
-        if (newDpi <= 0F || oldDpi <= 0F || Math.Abs(newDpi - oldDpi) < 0.5F)
-        {
-            return;
-        }
-
-        var ratio = newDpi / oldDpi;
-        Scale(new SizeF(ratio, ratio));
-        AutoScaleDimensions = new(newDpi, newDpi);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

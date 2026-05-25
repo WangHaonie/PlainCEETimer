@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using PlainCEETimer.WPF.Controls;
 
 namespace PlainCEETimer.UI.Core;
@@ -21,6 +22,6 @@ public sealed class WPFWindowScreenChangeService : WindowScreenChangeService
 
     protected override Screen GetScreen()
     {
-        return Screen.FromHandle(window.Handle);
+        return Screen.FromHandle((IntPtr)window.Invoke(() => window.Handle));
     }
 }

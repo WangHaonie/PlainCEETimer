@@ -1,4 +1,4 @@
-#define EXE L"PlainCEETimer.exe"
+﻿#define EXE L"PlainCEETimer.exe"
 
 #include <Windows.h>
 #include <Shlwapi.h>

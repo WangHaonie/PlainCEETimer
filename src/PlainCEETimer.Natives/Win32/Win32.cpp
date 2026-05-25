@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Win32.h"
 #include <TlHelp32.h>
 #include <Windows.h>

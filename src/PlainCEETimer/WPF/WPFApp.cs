@@ -16,9 +16,6 @@ public sealed class WPFApp : Application, IThemeAware
 
     public WPFApp()
     {
-#if !DEBUG
-        DispatcherUnhandledException += (_, e) => App.HandleException(e.Exception.PassIf(!e.Handled));
-#endif
         InitializeComponent();
     }
 
@@ -36,7 +33,17 @@ public sealed class WPFApp : Application, IThemeAware
 
     private void InitializeComponent()
     {
+        DispatcherUnhandledException += (_, e) =>
+        {
+            if (!e.Handled)
+            {
+                App.HandleException(e.Exception);
+                e.Handled = true;
+            }
+        };
+
         ShutdownMode = ShutdownMode.OnMainWindowClose;
+
         Resources.MergedDictionaries
             .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
             .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11)
