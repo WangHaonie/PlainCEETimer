@@ -36,10 +36,15 @@ internal static class DebugExtensions
 
         if (App.DebugShouldDumpToConsole)
         {
-            ConsoleHelper.Instance
-                .Write("[").Write(DateTime.Now.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff")).Write("] ")
-                .Write(name).Write(": ")
-                .WriteLine(json);
+            var tmp = ConsoleHelper.Instance
+                .Write("[").Write(DateTime.Now.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff")).Write("] ");
+
+            if (App.DebugShouldDumpExpression)
+            {
+                tmp.Write(name).Write(": ");
+            }
+
+            tmp.WriteLine(json);
         }
         else
         {

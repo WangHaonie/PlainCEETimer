@@ -482,7 +482,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         var mode = Display.FSTMode;
         FullScreenTracker.TrackingMode = mode;
 
-        if (!IsTracking)
+        if (!IsTracking && General.TopMost)
         {
             ScreenChangeService.ScreenChanged += ScreenChangeService_ScreenChanged;
             FullScreenTracker.FullScreenEntered += FullScreenTracker_FullScreenEntered;
@@ -493,7 +493,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         }
         else
         {
-            if (mode == FullScreenTrackingMode.None)
+            if (mode == FullScreenTrackingMode.None || !General.TopMost)
             {
                 ScreenChangeService.ScreenChanged -= ScreenChangeService_ScreenChanged;
                 FullScreenTracker.FullScreenEntered -= FullScreenTracker_FullScreenEntered;

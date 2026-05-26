@@ -46,6 +46,7 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxNtpServers;
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
+    private PlainComboBox ComboBoxFullScreen;
     private PlainLabel LabelCountdownEnd;
     private PlainLabel LabelCountdownFormat;
     private PlainLabel LabelExamInfo;
@@ -62,6 +63,7 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelSyncTime;
     private PlainLabel LabelMaxCpp;
     private PlainLabel LabelTruncate;
+    private PlainLabel LabelFullScreen;
     private NavigationView NavBar;
     private NavigationPage PageAppearance;
     private PlainButton ButtonApply;
@@ -89,10 +91,11 @@ public sealed class SettingsForm : AppForm
     private PlainNumericUpDown NudTruncate;
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
+    private PlainGroupBox GBoxFullScreen;
     private PlainGroupBox GBoxExamInfo;
     private PlainGroupBox GBoxMainForm;
     private PlainGroupBox GBoxExamsMenu;
-    private PlainGroupBox GBoxOthers;
+    private PlainGroupBox GBoxCommon;
     private PlainGroupBox GBoxPptsvc;
     private PlainGroupBox GBoxColors;
     private PlainGroupBox GBoxRestart;
@@ -118,7 +121,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 315, 230, 26, 7,
+            NavBar = b.NavBar(5, 1, 54, 315, 220, 26, 7,
             [
                 b.NavPage("基本",
                 [
@@ -163,7 +166,7 @@ public sealed class SettingsForm : AppForm
                         ).Disable()
                     ]),
 
-                    GBoxOthers = b.GroupBox("其他",
+                    GBoxCommon = b.GroupBox("常规选项",
                     [
                         CheckBoxStartup = b.CheckBox(null, (_, _) =>
                         {
@@ -196,14 +199,16 @@ public sealed class SettingsForm : AppForm
 
                         CheckBoxTopMost = b.CheckBox("顶置倒计时窗口(&T)", (_, _) =>
                         {
-                            CheckBoxUniTopMost.Enabled = CheckBoxTopMost.Checked;
+                            var value = CheckBoxTopMost.Checked;
+                            CheckBoxUniTopMost.Enabled = value;
 
-                            if (CheckBoxUniTopMost.Checked && !CheckBoxTopMost.Checked)
+                            if (CheckBoxUniTopMost.Checked && !value)
                             {
                                 CheckBoxUniTopMost.Checked = false;
                                 CheckBoxUniTopMost.Enabled = false;
                             }
 
+                            ComboBoxFullScreen.Enabled = value;
                             UpdateOptionsForPptsvc();
                         }),
 
@@ -279,10 +284,13 @@ public sealed class SettingsForm : AppForm
                         })
                     ]),
 
-                    GBoxPptsvc = b.GroupBox("兼容希沃PPT小工具",
+                    GBoxFullScreen = b.GroupBox("全屏检测",
                     [
-                        LabelPptsvc = b.Label("(仅个别机型) 用于避免希沃PPT小工具内置白板打开后底部工具栏消失的情况。"),
-                        CheckBoxPptSvc = b.CheckBox(" ", SettingsChanged)
+                        LabelFullScreen = b.Label("当有应用窗口全屏时，主窗口应采取的操作："),
+                        ComboBoxFullScreen = b.ComboBox(180, SettingsChanged,
+                            "不执行任何操作",
+                            "隐藏直到其退出全屏",
+                            "隐藏直到其失焦或退出全屏")
                     ])
                 ]),
 
@@ -387,6 +395,15 @@ public sealed class SettingsForm : AppForm
                     ])
                 ]),
 
+                b.NavPage("其它",
+                [
+                    GBoxPptsvc = b.GroupBox("兼容希沃PPT小工具",
+                    [
+                        LabelPptsvc = b.Label("(仅个别机型) 用于避免希沃PPT小工具内置白板打开后底部工具栏消失的情况。"),
+                        CheckBoxPptSvc = b.CheckBox(" ", SettingsChanged)
+                    ])
+                ]),
+
                 b.NavPage("高级",
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
@@ -449,6 +466,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void RunLayout(bool isHighDpi)
     {
+        #region NavPage_General
         GroupBoxArrageControl(GBoxExamInfo, LabelExamInfo);
         ArrangeControlYL(ButtonExamInfo, LabelExamInfo, isHighDpi ? 3 : 2, 3);
         ArrangeControlXT(CheckBoxAutoSwitch, ButtonExamInfo, 30);
@@ -458,16 +476,17 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxExamInfo, ButtonExamInfo, 7);
         ComboBoxAutoSwitchInterval.BringToFront();
 
-        ArrangeControlYL(GBoxOthers, GBoxExamInfo, 0, 2);
-        GroupBoxArrageControl(GBoxOthers, CheckBoxStartup, 4);
+        ArrangeControlYL(GBoxCommon, GBoxExamInfo, 0, 2);
+        GroupBoxArrageControl(GBoxCommon, CheckBoxStartup, 4);
         ArrangeControlYL(CheckBoxMemClean, CheckBoxStartup, 0, 4);
         ArrangeControlYL(CheckBoxTopMost, CheckBoxMemClean, 0, 4);
         ArrangeControlXT(CheckBoxUniTopMost, CheckBoxTopMost, 30);
         ArrangeControlYL(CheckBoxTrayIcon, CheckBoxTopMost, 0, 4);
         ArrangeControlYL(CheckBoxTrayText, CheckBoxTrayIcon, 0, 4);
-        GroupBoxAutoAdjustHeight(GBoxOthers, CheckBoxTrayText, 4);
+        GroupBoxAutoAdjustHeight(GBoxCommon, CheckBoxTrayText, 4);
+        #endregion
 
-
+        #region NavPage_Display
         GroupBoxArrageControl(GBoxContent, ComboBoxCountdownEnd);
         GroupBoxArrageControl(GBoxContent, LabelCountdownEnd);
         CenterControlY(LabelCountdownEnd, ComboBoxCountdownEnd);
@@ -491,14 +510,14 @@ public sealed class SettingsForm : AppForm
         AlignControlXL(CheckBoxDraggable, LabelScreens, 4);
         GroupBoxAutoAdjustHeight(GBoxDraggable, CheckBoxDraggable, 3);
 
-        ArrangeControlYL(GBoxPptsvc, GBoxDraggable, 0, 2);
-        GroupBoxArrageControl(GBoxPptsvc, LabelPptsvc);
-        SetLabelAutoWrap(LabelPptsvc, true);
-        CompactControlY(CheckBoxPptSvc, LabelPptsvc);
-        AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
-        GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, 2);
+        ArrangeControlYL(GBoxFullScreen, GBoxDraggable, 0, 2);
+        GroupBoxArrageControl(GBoxFullScreen, LabelFullScreen);
+        SetLabelAutoWrap(LabelFullScreen, true);
+        ArrangeControlYL(ComboBoxFullScreen, LabelFullScreen, 4, 2);
+        GroupBoxAutoAdjustHeight(GBoxFullScreen, ComboBoxFullScreen, 6);
+        #endregion
 
-
+        #region NavPage_Appearance
         GroupBoxArrageControl(GBoxColors, LabelColor);
         SetLabelAutoWrap(LabelColor, true);
         ArrangeControlYL(LabelColorP1, LabelColor, 0, 3);
@@ -519,8 +538,9 @@ public sealed class SettingsForm : AppForm
         ArrangeControlXLT(BlockPreviewColor2, BlockPreviewColor3, BlockColor22);
         ArrangeControlXLT(BlockPreviewColor1, BlockPreviewColor2, BlockColor12);
         GroupBoxAutoAdjustHeight(GBoxColors, ButtonDefaultColor, 5);
+        #endregion
 
-
+        #region NavPage_Styles
         if (AllowTheme)
         {
             GroupBoxArrageControl(GBoxTheme, RadioButtonThemeSystem, 4);
@@ -550,7 +570,6 @@ public sealed class SettingsForm : AppForm
         CenterControlY(BlockBorderColor, ComboBoxBorderColor);
         GroupBoxAutoAdjustHeight(GBoxMainForm, ComboBoxBorderColor, 6);
 
-
         ArrangeControlYL(GBoxExamsMenu, GBoxMainForm);
         GroupBoxArrageControl(GBoxExamsMenu, NudMaxCpp);
         GroupBoxArrageControl(GBoxExamsMenu, LabelMaxCpp);
@@ -564,8 +583,17 @@ public sealed class SettingsForm : AppForm
         ArrangeControlYL(CheckBoxShowNo, LabelTruncate, 4);
         CompactControlY(CheckBoxShowNo, NudTruncate, 3);
         GroupBoxAutoAdjustHeight(GBoxExamsMenu, CheckBoxShowNo, 2);
+        #endregion
 
+        #region NavPage_Others
+        GroupBoxArrageControl(GBoxPptsvc, LabelPptsvc);
+        SetLabelAutoWrap(LabelPptsvc, true);
+        CompactControlY(CheckBoxPptSvc, LabelPptsvc);
+        AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
+        GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, 2);
+        #endregion
 
+        #region NavPage_Advanced
         GroupBoxArrageControl(GBoxSyncTime, LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime, true);
         ArrangeControlYL(ComboBoxNtpServers, LabelSyncTime, 4, 3);
@@ -578,11 +606,13 @@ public sealed class SettingsForm : AppForm
         SetLabelAutoWrap(LabelRestart, true);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
+        #endregion
 
-
+        #region Footer
         ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, -3, 4);
         RtlArrangeControlXT(ButtonApply, ButtonOK, -3);
         InitWindowSize(ButtonCancel, 5, 4);
+        #endregion
     }
 
     protected override void OnLoad()
@@ -717,6 +747,7 @@ public sealed class SettingsForm : AppForm
         CheckBoxDraggable.Checked = Display.Drag;
         CheckBoxMainFormUseWPF.Checked = Display.UseWPF;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
+        ComboBoxFullScreen.SelectedIndex = (int)Display.FSTMode;
         UpdateOptionsForPptsvc();
 
         ApplyColorBlocks(SelectedColors);
@@ -911,6 +942,7 @@ public sealed class SettingsForm : AppForm
         Display.Position = (CountdownPosition)ComboBoxPosition.SelectedIndex;
         Display.Drag = CheckBoxDraggable.Checked;
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
+        Display.FSTMode = (FullScreenTrackingMode)ComboBoxFullScreen.SelectedIndex;
         Display.UseWPF = CheckBoxMainFormUseWPF.Checked;
 
         ConfigValidator.DemandConfig();

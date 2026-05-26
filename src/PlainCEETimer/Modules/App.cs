@@ -62,6 +62,7 @@ internal static class App
 
 #if DEBUG
     internal static readonly bool DebugShouldDumpToConsole = true;
+    internal static readonly bool DebugShouldDumpExpression = false;
 #endif
 
     [STAThread]
