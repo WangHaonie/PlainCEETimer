@@ -1,5 +1,6 @@
 ﻿#if DEBUG
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using PlainCEETimer.UI;
@@ -20,6 +21,12 @@ internal static class DebugExtensions
     {
         value = obj;
         return obj;
+    }
+
+    [Obsolete]
+    public static T CastTo<T>(this object obj)
+    {
+        return (T)obj;
     }
 
     [Obsolete]
@@ -52,6 +59,40 @@ internal static class DebugExtensions
         }
 
         return obj;
+    }
+
+    [Obsolete]
+    public static void ForEachAll<TObject, TCollection>(this TObject obj, Func<TObject, TCollection> selector, Predicate<TObject> move, Action<TObject> action)
+        where TCollection : System.Collections.IEnumerable
+    {
+        action(obj);
+
+        if (move(obj))
+        {
+            var collection = selector(obj);
+
+            foreach (TObject item in collection)
+            {
+                ForEachAll(item, selector, move, action);
+            }
+        }
+    }
+
+    [Obsolete]
+    public static void ForEachAllEx<TObject, TCollection>(this TObject obj, Func<TObject, TCollection> selector, Predicate<TObject> move, Action<TObject> action)
+        where TCollection : IEnumerable<TObject>
+    {
+        action(obj);
+
+        if (move(obj))
+        {
+            var collection = selector(obj);
+
+            foreach (var item in collection)
+            {
+                ForEachAllEx(item, selector, move, action);
+            }
+        }
     }
 }
 #endif

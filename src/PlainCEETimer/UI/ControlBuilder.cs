@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI;
@@ -81,18 +82,22 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, params string[] items)
+    public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, string[] items)
     {
-        var data = new ComboData[items.Length];
+        return ComboBox(w, onSelectedIndexChanged, items.ArraySelect(x => (ComboData)x));
+    }
+
+    public PlainComboBox ComboBox(int w, EventHandler onSelectedIndexChanged, params ComboData[] items)
+    {
         var ctrl = new PlainComboBox();
         ctrl.SetBounds(0, 0, w, 23);
 
         for (int i = 0; i < items.Length; i++)
         {
-            data[i] = new(items[i], i);
+            items[i].SetValue(i);
         }
 
-        ctrl.DataSource = data;
+        ctrl.DataSource = items;
         ctrl.DisplayMember = nameof(ComboData.Display);
         ctrl.ValueMember = nameof(ComboData.Value);
         ctrl.SelectedIndexChanged += onSelectedIndexChanged;
