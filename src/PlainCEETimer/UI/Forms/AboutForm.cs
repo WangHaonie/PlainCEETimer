@@ -10,7 +10,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class AboutForm : AppForm
 {
-    protected override AppWindowStyle Params => AppWindowStyle.CenterScreen | AppWindowStyle.OnEscClosing;
+    protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing;
 
     private bool IsCheckingUpdate;
     private PlainButton ButtonOK;

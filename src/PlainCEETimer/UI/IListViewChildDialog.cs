@@ -1,9 +1,11 @@
-﻿namespace PlainCEETimer.UI;
+﻿using System.Windows.Forms;
+
+namespace PlainCEETimer.UI;
 
 public interface IListViewChildDialog<out T>
     where T : IListViewData<T>
 {
     T Data { get; }
 
-    bool? ShowDialog();
+    bool? ShowDialog(IWin32Window owner);
 }

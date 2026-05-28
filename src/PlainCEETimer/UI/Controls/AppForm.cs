@@ -35,8 +35,6 @@ public abstract class AppForm : Form, IAppWindow
 
     protected bool? DialogEndResult { get; set; }
 
-    public event EventHandler<DialogEndEventArgs> DialogEnd;
-
     private bool IsLoading = true;
     private bool IsDpiChanged;
     private bool IsHighDpi;
@@ -48,6 +46,7 @@ public abstract class AppForm : Form, IAppWindow
     private FormWindowState lastState;
     private Font AppFont;
     private ThemeHelper themeHelper;
+    private Action<DialogEndEventArgs> ehOnDialogEnd;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
@@ -94,7 +93,6 @@ public abstract class AppForm : Form, IAppWindow
         ApplyAppFont();
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
-        StartPosition = FormStartPosition.Manual;
         ShowIcon = false;
 
         if (IsSizable)
@@ -130,9 +128,33 @@ public abstract class AppForm : Form, IAppWindow
 
     public new bool? ShowDialog(IWin32Window owner)
     {
+        SetParent(owner);
         var result = base.ShowDialog(owner).AsBoolean();
         Dispose();
         return result;
+    }
+
+    public new void Show()
+    {
+        Show(null);
+    }
+
+    public new void Show(IWin32Window owner)
+    {
+        SetParent(owner);
+
+        if (owner == null)
+        {
+            base.Show();
+            return;
+        }
+
+        base.Show(owner);
+    }
+
+    public void WhenEnd(Action<DialogEndEventArgs> onDialogEnd)
+    {
+        ehOnDialogEnd = onDialogEnd;
     }
 
     public void ReActivate()
@@ -173,11 +195,6 @@ public abstract class AppForm : Form, IAppWindow
         ResumeLayout(true);
         OnLoad();
         base.OnLoad(e);
-
-        if (CheckParam(AppWindowStyle.CenterScreen))
-        {
-            CenterToScreen();
-        }
     }
 
     protected sealed override void OnShown(EventArgs e)
@@ -535,7 +552,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void OnDialogEnd()
     {
-        DialogEnd?.Invoke(this, new(DialogEndResult));
+        ehOnDialogEnd?.Invoke(new(DialogEndResult));
     }
 
     /// <summary>
@@ -707,6 +724,11 @@ public abstract class AppForm : Form, IAppWindow
 
         AppFont = new(AppFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel, 0);
         Font = AppFont;
+    }
+
+    private void SetParent(IWin32Window owner)
+    {
+        StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

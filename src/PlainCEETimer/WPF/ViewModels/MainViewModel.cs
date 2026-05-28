@@ -213,13 +213,13 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 {
                     FormSettings = new();
 
-                    FormSettings.DialogEnd += (_, e) =>
+                    FormSettings.WhenEnd(e =>
                     {
                         if (e.Result == true)
                         {
                             RefreshSettings();
                         }
-                    };
+                    });
                 }
 
                 FormSettings.ReActivate();

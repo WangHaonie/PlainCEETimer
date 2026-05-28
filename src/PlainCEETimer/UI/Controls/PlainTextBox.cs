@@ -119,8 +119,9 @@ public sealed class PlainTextBox : TextBox, IThemeAware
                 ButtonExpand = b.Button("..", 18, 20, (_, _) =>
                 {
                     Child = new(this);
+                    ParentForm.LocationChanged += OnParentLocationChanged;
 
-                    Child.DialogEnd += (_, e) =>
+                    Child.WhenEnd(e =>
                     {
                         if (e.Result == true)
                         {
@@ -128,9 +129,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
                         }
 
                         ParentForm.LocationChanged -= OnParentLocationChanged;
-                    };
+                    });
 
-                    ParentForm.LocationChanged += OnParentLocationChanged;
                     Child.Show(ParentForm);
                 }).With(x =>
                 {

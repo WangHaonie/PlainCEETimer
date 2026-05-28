@@ -12,7 +12,6 @@ public abstract class AppDialog : AppForm
 
     protected override void OnInitializing()
     {
-        StartPosition = FormStartPosition.CenterParent;
         MinimizeBox = false;
 
         this.AddControls(b =>

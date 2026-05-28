@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class SettingsForm : AppForm
 {
-    protected override AppWindowStyle Params => AppWindowStyle.CenterScreen | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
+    protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
 
     private bool AllowTheme;
     private bool IsSyncingTime;
@@ -136,7 +136,7 @@ public sealed class SettingsForm : AppForm
                                 Data = EditedExamInfo
                             };
 
-                            if (dialog.ShowDialog() == true)
+                            if (dialog.ShowDialog(this) == true)
                             {
                                 EditedExamInfo = dialog.Data;
                                 SettingsChanged();
@@ -248,7 +248,7 @@ public sealed class SettingsForm : AppForm
                                 FixedData = EditedGlobalRules,
                             };
 
-                            if (dialog.ShowDialog() == true)
+                            if (dialog.ShowDialog(this) == true)
                             {
                                 EditedCustomRules = dialog.Data;
                                 EditedGlobalRules = dialog.FixedData;

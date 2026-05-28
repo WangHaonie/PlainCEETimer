@@ -13,7 +13,7 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class DownloaderForm(string url, long size) : AppForm
 {
-    protected override AppWindowStyle Params => AppWindowStyle.CenterScreen | AppWindowStyle.OnEscClosing;
+    protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing;
 
     private bool IsCancelled;
     private string DownloadPath;

@@ -13,20 +13,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 {
     private sealed class MessageBox(IAppWindow owner, MessageLevel level, string message, MessageButtons buttons, bool autoClose) : AppDialog
     {
-        protected override AppWindowStyle Params
-        {
-            get
-            {
-                var param = AppWindowStyle.KeyPreview | AppWindowStyle.OnEscClosing;
-
-                if (owner == null)
-                {
-                    param |= AppWindowStyle.CenterScreen;
-                }
-
-                return param;
-            }
-        }
+        protected override AppWindowStyle Params => AppWindowStyle.KeyPreview | AppWindowStyle.OnEscClosing;
 
         private bool? Result;
         private PlainLabel LabelMessage;

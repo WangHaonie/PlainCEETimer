@@ -75,7 +75,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
                         Name = "LVDERM"
                     };
 
-                    if (dialog.ShowDialog() == true)
+                    if (dialog.ShowDialog(this) == true)
                     {
                         Rules = dialog.Data;
                         DefaultRules = dialog.FixedData;
