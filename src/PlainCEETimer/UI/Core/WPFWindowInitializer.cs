@@ -9,6 +9,6 @@ public class WPFWindowInitializer : IWindowInitializer
 
     public WPFWindowInitializer(AppWindow appWindow)
     {
-        appWindow.Initialized += (_, e) => Initialize?.Invoke(this, e);
+        appWindow.Loaded += (_, e) => Initialize?.Invoke(this, e);
     }
 }
