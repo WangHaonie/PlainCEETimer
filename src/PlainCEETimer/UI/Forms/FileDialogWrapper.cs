@@ -6,6 +6,8 @@ namespace PlainCEETimer.UI.Forms;
 
 internal sealed class FileDialogWrapper(string title) : AppForm
 {
+    protected override bool SuppressAutoPosition => true;
+
     private PlainLabel LabelMessage;
 
     protected override void OnInitializing()

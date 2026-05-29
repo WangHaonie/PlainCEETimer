@@ -27,6 +27,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.PerMonitorV2;
 
+    protected virtual bool SuppressAutoPosition { get; }
+
     protected IScreenService ScreenService { get; }
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
@@ -128,7 +130,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public new bool? ShowDialog(IWin32Window owner)
     {
-        SetParent(owner);
+        SetStartPosition(owner);
         var result = base.ShowDialog(owner).AsBoolean();
         Dispose();
         return result;
@@ -141,7 +143,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public new void Show(IWin32Window owner)
     {
-        SetParent(owner);
+        SetStartPosition(owner);
 
         if (owner == null)
         {
@@ -194,6 +196,7 @@ public abstract class AppForm : Form, IAppWindow
         InitToUserSize();
         ResumeLayout(true);
         OnLoad();
+        ApplyStartPositionNonModal();
         base.OnLoad(e);
     }
 
@@ -726,9 +729,34 @@ public abstract class AppForm : Form, IAppWindow
         Font = AppFont;
     }
 
-    private void SetParent(IWin32Window owner)
+    private void SetStartPosition(IWin32Window owner)
     {
+        if (SuppressAutoPosition)
+        {
+            return;
+        }
+
         StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
+    }
+
+    private void ApplyStartPositionNonModal()
+    {
+        if (!Modal)
+        {
+            var fsp = StartPosition;
+
+            if (fsp == FormStartPosition.CenterParent)
+            {
+                CenterToParent();
+                return;
+            }
+
+            if (fsp == FormStartPosition.CenterScreen)
+            {
+                CenterToScreen();
+                return;
+            }
+        }
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
