@@ -49,7 +49,7 @@ internal static class App
     private const string UEFilePrefix = "UnhandledException_";
 
     private static bool IsMainProcess;
-    private static bool IsClosing;
+    private static bool IsExiting;
     private static string AllArgs;
     private static Icon appIcon;
     private static Mutex MainMutex;
@@ -181,12 +181,12 @@ internal static class App
     {
         lock (syncLock2)
         {
-            if (IsClosing)
+            if (IsExiting)
             {
                 return;
             }
 
-            IsClosing = true;
+            IsExiting = true;
             appIcon.Destroy();
             AppExit?.Invoke();
             AppExit = null;
@@ -215,7 +215,7 @@ internal static class App
 
     internal static void HandleException(Exception ex)
     {
-        if (!IsClosing && ex != null)
+        if (!IsExiting && ex != null)
         {
             PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
         }
@@ -322,6 +322,7 @@ internal static class App
         DefaultValues.InitEssentials();
         ConfigValidator.Validate();
         SystemEvents.SessionEnding += (_, _) => Exit();
+        Application.ApplicationExit += (_, _) => Exit();
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
