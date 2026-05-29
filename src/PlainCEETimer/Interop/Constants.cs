@@ -68,7 +68,8 @@ public static class NativeConstants
 [CompilerRemove]
 public static class SystemMetric
 {
-    public const int CXVSCROLL = 2;
+    public const int CXEDGE = 45;
+    public const int CYEDGE = 46;
 }
 
 [NoConstants]

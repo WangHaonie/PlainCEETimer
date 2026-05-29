@@ -121,7 +121,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 315, 220, 26, 7,
+            NavBar = b.NavBar(5, 1, 54, 315, 222, 26, 7,
             [
                 b.NavPage("基本",
                 [

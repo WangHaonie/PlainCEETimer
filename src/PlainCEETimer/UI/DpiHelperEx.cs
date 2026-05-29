@@ -97,10 +97,11 @@ public static class DpiHelperEx
         }
     }
 
-    public static int GetSystemMetricsForDpi(int nIndex, int dpi)
+    public static int GetSystemMetricsForDpi(int nIndex, int? dpi)
     {
         if (isApiSupported)
         {
+            dpi ??= (int)DpiHelper.deviceDpi;
             return Win32UI.GetSystemMetricsForDpi(nIndex, (uint)dpi);
         }
 

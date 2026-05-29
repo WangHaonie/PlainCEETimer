@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
@@ -45,7 +44,7 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
         if (!Calculated)
         {
             var w = 0;
-            var vsbw = DpiHelperEx.GetSystemMetricsForDpi(SystemMetric.CXVSCROLL, DeviceDpi);
+            var vsbw = SystemInformation.GetVerticalScrollBarWidthForDpi(DeviceDpi);
 
             foreach (var item in Items)
             {

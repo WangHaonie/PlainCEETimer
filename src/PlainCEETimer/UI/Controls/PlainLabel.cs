@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 
@@ -188,24 +189,22 @@ public class PlainLabel : Label, IThemeAware
 
     private RectangleF GetTextRectangle()
     {
-        var rc = DeflateBorder(ClientRectangle);
-        return new RectangleF(
-            rc.X + Padding.Left,
-            rc.Y + Padding.Top,
-            Math.Max(0, rc.Width - Padding.Horizontal),
-            Math.Max(0, rc.Height - Padding.Vertical)
-        );
-    }
-
-    private Rectangle DeflateBorder(Rectangle rc)
-    {
+        var rc = ClientRectangle;
+        var p = Padding;
         var bp = GetBorderPadding();
-        return new Rectangle(
-            rc.X + bp.Width,
-            rc.Y + bp.Height,
-            Math.Max(0, rc.Width - bp.Width * 2),
-            Math.Max(0, rc.Height - bp.Height * 2)
-        );
+
+        float x = rc.X + bp.Width + p.Left;
+        float y = rc.Y + bp.Height + p.Top;
+        float cx = Math.Max(0, rc.Width - bp.Width * 2 - p.Horizontal);
+        float cy = Math.Max(0, rc.Height - bp.Height * 2 - p.Vertical);
+
+        if (BorderStyle == BorderStyle.None)
+        {
+            x += DeviceDpi / 96F > 1F ? 3F : 1F;
+            y += 1F;
+        }
+
+        return new(x, y, cx, cy);
     }
 
     private Size GetBorderSize()
@@ -218,8 +217,8 @@ public class PlainLabel : Label, IThemeAware
     {
         return BorderStyle switch
         {
-            BorderStyle.FixedSingle => new Size(1, 1),
-            BorderStyle.Fixed3D => SystemInformation.Border3DSize,
+            BorderStyle.FixedSingle => SystemInformation.GetBorderSizeForDpi(DeviceDpi),
+            BorderStyle.Fixed3D => SystemInformationEx.GetBorder3DSizeForDpi(DeviceDpi),
             _ => Size.Empty,
         };
     }
