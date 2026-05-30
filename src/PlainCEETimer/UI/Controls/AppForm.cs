@@ -124,6 +124,11 @@ public abstract class AppForm : Form, IAppWindow
         ResumeLayout(true);
     }
 
+    static AppForm()
+    {
+        SafeExecutionContext.SetContext(new WindowsFormsSynchronizationContext());
+    }
+
     public new bool? ShowDialog()
     {
         return ShowDialog(null);

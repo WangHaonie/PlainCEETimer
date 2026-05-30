@@ -3,13 +3,14 @@ using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
 
-public class DefaultCountdownService(SynchronizationContext context = null) : ICountdownService
+public class DefaultCountdownService : ICountdownService
 {
     public event ExamSwitchedEventHandler ExamSwitched;
     public event CountdownUpdatedEventHandler CountdownUpdated;
@@ -59,7 +60,6 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
     private readonly StringBuilder ContentBuilder = new(128);
-    private readonly SynchronizationContext CurrentContext = context;
 
     public void Start(CountdownStartInfo startInfo)
     {
@@ -321,14 +321,14 @@ public class DefaultCountdownService(SynchronizationContext context = null) : IC
     {
         if (ExamIndex != LastExamIndex)
         {
-            CurrentContext.SafeExecute(_ => ExamSwitched?.Invoke(this, new(ExamIndex)));
+            SafeExecutionContext.Execute(_ => ExamSwitched?.Invoke(this, new(ExamIndex)));
             LastExamIndex = ExamIndex;
         }
     }
 
     private void OnCountdownUpdated(string content, ColorPair colors)
     {
-        CurrentContext.SafeExecute(_ => CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back)));
+        SafeExecutionContext.Execute(_ => CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back)));
     }
 
     private void StopAutoSwitchTimer()

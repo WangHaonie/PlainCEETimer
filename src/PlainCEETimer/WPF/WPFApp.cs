@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Threading;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
@@ -49,7 +50,9 @@ public sealed class WPFApp : Application, IThemeAware
             .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
             .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11)
             .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10);
+
         themeHelper ??= new(this);
+        SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

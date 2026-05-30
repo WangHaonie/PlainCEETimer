@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using System.Windows.Threading;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
@@ -18,7 +17,7 @@ public sealed partial class MainWindow : AppWindow
     {
         vm = new(new()
         {
-            CountdownService = new DefaultCountdownService(new DispatcherSynchronizationContext()),
+            CountdownService = new DefaultCountdownService(),
             DialogService = MessageX,
             BorderColorService = new SystemBorderColorService(this),
             WindowInitializer = new WPFWindowInitializer(this),

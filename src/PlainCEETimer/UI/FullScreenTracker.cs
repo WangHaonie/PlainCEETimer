@@ -270,11 +270,11 @@ public static class FullScreenTracker
 
     private static void OnFullScreenEntered(IntPtr hWnd)
     {
-        FullScreenEntered?.Invoke(null, new(hWnd));
+        SafeExecutionContext.Execute(_ => FullScreenEntered?.Invoke(null, new(hWnd)));
     }
 
     private static void OnFullScreenExited(IntPtr hWnd)
     {
-        FullScreenExited?.Invoke(null, new(hWnd));
+        SafeExecutionContext.Execute(_ => FullScreenExited?.Invoke(null, new(hWnd)));
     }
 }

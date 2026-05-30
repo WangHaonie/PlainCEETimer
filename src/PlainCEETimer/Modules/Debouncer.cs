@@ -10,15 +10,13 @@ public class Debouncer : IDisposable
     private readonly int m_delay;
     private readonly Delegate m_method;
     private readonly Timer m_timer;
-    private readonly SynchronizationContext m_context;
     private readonly object syncLock;
 
     public Debouncer(Delegate method, int delay = 500)
     {
         m_method = method ?? throw new ArgumentNullException(nameof(method));
         m_delay = delay;
-        m_context = SynchronizationContext.Current;
-        m_timer = new(DoAction, null, Timeout.Infinite, Timeout.Infinite);
+        m_timer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
         syncLock = new();
     }
 
@@ -37,7 +35,7 @@ public class Debouncer : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private void DoAction(object state)
+    private void TimerCallback(object state)
     {
         object[] args;
 
@@ -46,7 +44,7 @@ public class Debouncer : IDisposable
             args = m_args;
         }
 
-        m_context.SafeExecute(_ => m_method.DynamicInvoke(args));
+        SafeExecutionContext.Execute(_ => m_method.DynamicInvoke(args));
     }
 
     ~Debouncer()
