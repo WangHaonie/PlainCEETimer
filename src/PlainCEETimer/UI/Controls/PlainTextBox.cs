@@ -22,6 +22,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
         protected override AppWindowStyle Params => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog;
 
+        protected override bool SuppressAutoPosition => true;
+
         private PlainTextBox ContentBox;
         private PlainButton ButtonClose;
         private PlainButton ButtonApply;

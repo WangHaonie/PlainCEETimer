@@ -29,6 +29,7 @@ public sealed class WPFApp : Application, IThemeAware
     {
         themeHelper.Destroy();
         base.OnExit(e);
+        App.Exit();
     }
 
     private void InitializeComponent()
@@ -42,7 +43,6 @@ public sealed class WPFApp : Application, IThemeAware
             }
         };
 
-        Exit += (_, _) => App.Exit();
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         Resources.MergedDictionaries

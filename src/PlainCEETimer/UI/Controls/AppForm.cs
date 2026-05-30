@@ -96,6 +96,7 @@ public abstract class AppForm : Form, IAppWindow
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         ShowIcon = false;
+        StartPosition = FormStartPosition.Manual;
 
         if (IsSizable)
         {
@@ -130,28 +131,10 @@ public abstract class AppForm : Form, IAppWindow
 
     public new bool? ShowDialog(IWin32Window owner)
     {
-        SetStartPosition(owner);
+        StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
         var result = base.ShowDialog(owner).AsBoolean();
         Dispose();
         return result;
-    }
-
-    public new void Show()
-    {
-        Show(null);
-    }
-
-    public new void Show(IWin32Window owner)
-    {
-        SetStartPosition(owner);
-
-        if (owner == null)
-        {
-            base.Show();
-            return;
-        }
-
-        base.Show(owner);
     }
 
     public void WhenEnd(Action<DialogEndEventArgs> onDialogEnd)
@@ -729,32 +712,17 @@ public abstract class AppForm : Form, IAppWindow
         Font = AppFont;
     }
 
-    private void SetStartPosition(IWin32Window owner)
-    {
-        if (SuppressAutoPosition)
-        {
-            return;
-        }
-
-        StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
-    }
-
     private void ApplyStartPositionNonModal()
     {
-        if (!Modal)
+        if (!Modal && !SuppressAutoPosition)
         {
-            var fsp = StartPosition;
-
-            if (fsp == FormStartPosition.CenterParent)
-            {
-                CenterToParent();
-                return;
-            }
-
-            if (fsp == FormStartPosition.CenterScreen)
+            if (Owner == null)
             {
                 CenterToScreen();
-                return;
+            }
+            else
+            {
+                CenterToParent();
             }
         }
     }
