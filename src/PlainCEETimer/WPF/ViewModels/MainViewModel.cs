@@ -505,7 +505,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void VerifyLocation()
     {
-        if (!DragService.IsDragging)
+        if (!ConfigValidator.ValidateNeeded && !DragService.IsDragging)
         {
             ApplyLocation();
             var p = Bounds.Location;
