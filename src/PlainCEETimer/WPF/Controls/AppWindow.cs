@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -67,6 +68,15 @@ public class AppWindow : Window, IAppWindow
 
     public IDialogService MessageX { get; }
 
+    public bool Modal
+    {
+        get
+        {
+            m_fiShowingAsDialog ??= typeof(Window).GetField("_showingAsDialog", BindingFlags.Instance | BindingFlags.NonPublic);
+            return (bool)m_fiShowingAsDialog.GetValue(this);
+        }
+    }
+
     protected IScreenService ScreenService { get; }
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
@@ -80,6 +90,7 @@ public class AppWindow : Window, IAppWindow
     private ThemeHelper themeHelper;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
+    private FieldInfo m_fiShowingAsDialog;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
     private readonly bool NativeRoundCorner;
@@ -182,6 +193,15 @@ public class AppWindow : Window, IAppWindow
         {
             Win32UI.RemoveWindowIcon(hwnd);
         }
+
+        var canResize = ResizeMode is ResizeMode.CanResize or ResizeMode.CanResizeWithGrip;
+        var canMinimize = ResizeMode != ResizeMode.NoResize;
+
+        SystemMenu.FromHwnd(hwnd)
+            .SetEnabled(NativeConstants.SC_RESTORE, !Modal)
+            .SetEnabled(NativeConstants.SC_SIZE, canResize)
+            .SetEnabled(NativeConstants.SC_MINIMIZE, canMinimize)
+            .SetEnabled(NativeConstants.SC_MAXIMIZE, canResize);
 
         themeHelper ??= new(this);
         base.OnSourceInitialized(e);

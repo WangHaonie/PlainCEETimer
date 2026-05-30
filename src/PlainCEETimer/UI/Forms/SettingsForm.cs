@@ -617,7 +617,7 @@ public sealed class SettingsForm : AppForm
 
     protected override void OnLoad()
     {
-        SystemMenu.From(this)
+        SystemMenu.FromWindow(this)
             .InsertItem(-2, "导入配置(&I)", (_, _) =>
             {
                 if (!ShowingDialog)

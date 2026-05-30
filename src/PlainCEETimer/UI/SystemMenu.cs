@@ -11,9 +11,9 @@ public class SystemMenu
     private sealed class ParentNativeWindow(IntPtr hWnd) : NativeWindow
     {
         private bool _assigned;
-        private readonly List<MENUITEM> items = [];
+        private readonly List<SysMenuItem> items = [];
 
-        internal void Add(MENUITEM item)
+        internal void Add(SysMenuItem item)
         {
             if (!_assigned)
             {
@@ -44,7 +44,7 @@ public class SystemMenu
         }
     }
 
-    private class MENUITEM(IntPtr id, EventHandler onClick)
+    private class SysMenuItem(IntPtr id, EventHandler onClick)
     {
         internal bool WmSysCommand(ref Message m)
         {
@@ -63,7 +63,7 @@ public class SystemMenu
     private readonly IntPtr m_owner;
     private readonly RandomUID uids;
 
-    public SystemMenu(IntPtr hMenu, IntPtr hOwner)
+    private SystemMenu(IntPtr hMenu, IntPtr hOwner)
     {
         if (hMenu != IntPtr.Zero && Win32UI.IsMenu(hMenu))
         {
@@ -74,6 +74,13 @@ public class SystemMenu
         }
 
         throw new InvalidOperationException();
+    }
+
+    public SystemMenu SetEnabled(int item, bool enabled, bool byCmd = true)
+    {
+        var state = enabled ? MenuFlag.Enabled : MenuFlag.Grayed | MenuFlag.Disabled;
+        Win32UI.EnableMenuItem(m_hmenu, item, (byCmd ? MenuFlag.ByCommand : MenuFlag.ByPosition) | state);
+        return this;
     }
 
     public SystemMenu InsertItem(int index, string text, EventHandler onClick)
@@ -94,10 +101,14 @@ public class SystemMenu
         return this;
     }
 
-    public static SystemMenu From(Form wnd)
+    public static SystemMenu FromWindow(IAppWindow wnd)
     {
-        var hwnd = wnd.Handle;
-        var ncm = new SystemMenu(Win32UI.GetSystemMenu(hwnd, false), hwnd);
+        return FromHwnd(wnd.Handle);
+    }
+
+    public static SystemMenu FromHwnd(IntPtr hWnd)
+    {
+        var ncm = new SystemMenu(Win32UI.GetSystemMenu(hWnd, false), hWnd);
         return ncm;
     }
 

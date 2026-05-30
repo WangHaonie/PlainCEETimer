@@ -271,7 +271,7 @@ public abstract class AppForm : Form, IAppWindow
 
         if (IsSizable && !setSysMenu)
         {
-            SystemMenu.From(this)
+            SystemMenu.FromWindow(this)
                 .InsertItem(-2, "默认大小(&D)", (_, _) =>
                 {
                     var def = MinimumSize;

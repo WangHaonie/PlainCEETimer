@@ -97,6 +97,9 @@ internal static class Win32UI
     public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
     [DllImport(App.User32Dll)]
+    public static extern bool EnableMenuItem(IntPtr hMenu, int uIDEnableItem, int uEnable);
+
+    [DllImport(App.User32Dll)]
     public static extern int GetMenuItemCount(IntPtr hMenu);
 
     [DllImport(App.User32Dll)]
