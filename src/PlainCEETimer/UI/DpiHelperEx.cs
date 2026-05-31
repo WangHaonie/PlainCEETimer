@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
@@ -179,7 +178,7 @@ public static class DpiHelperEx
     private static double GetDeviceDpi()
     {
         if (isDpiAwarenessSupported
-            && Win32UI.GetDpiForMonitor(Screen.PrimaryScreen.GetHandle(MemberTypes.Field, "hmonitor"),
+            && Win32UI.GetDpiForMonitor(Screen.PrimaryScreen.hmonitor,
                 MONITOR_DPI_TYPE.EFFECTIVE, out var dpix, out _).Succeeded)
         {
             return dpix;

@@ -1,24 +1,33 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainToolTip : ToolTip, IThemeAware
 {
-    private IntPtr Handle;
+    public IntPtr Handle
+    {
+        get
+        {
+            m_piHandle ??= typeof(ToolTip).GetProperty(nameof(Handle), BindingFlags.NonPublic | BindingFlags.Instance);
+            return (IntPtr)m_piHandle.GetValue(this);
+        }
+    }
+
     private ThemeHelper themeHelper;
+    private PropertyInfo m_piHandle;
 
     public void InitStyle()
     {
-        Handle = this.GetHandle();
+        var hwnd = Handle;
 
         if (SystemVersion.IsWindows11)
         {
-            Win32UI.SetRoundCornerEx(Handle, true);
+            Win32UI.SetRoundCornerEx(hwnd, true);
         }
 
         themeHelper ??= new(this);

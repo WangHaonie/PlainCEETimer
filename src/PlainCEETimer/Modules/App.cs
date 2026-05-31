@@ -334,6 +334,9 @@ internal static class App
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
+#if DEBUG
+        AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleException(e.Exception);
+#endif
     }
 
     private static void HideDotNetAppConfig()
