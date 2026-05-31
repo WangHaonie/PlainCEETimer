@@ -670,18 +670,18 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void FullScreenTracker_FullScreenEntered(object sender, FullScreenWindowEventArgs e)
     {
-        SetWindowVisible(false);
+        SetWindowVisible(false, false);
     }
 
     private void FullScreenTracker_FullScreenExited(object sender, FullScreenWindowEventArgs e)
     {
-        SetWindowVisible(true);
+        SetWindowVisible(true, false);
     }
 
     private void ToggleVisibilityHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
         IsHotKey1Activated = !IsHotKey1Activated;
-        SetWindowVisible(!IsHotKey1Activated);
+        SetWindowVisible(!IsHotKey1Activated, true);
     }
 
     private void SwitchToPreviousExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
@@ -699,9 +699,17 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         Countdown.Enabled = Styles.Visible || ShowTrayText;
     }
 
-    private void SetWindowVisible(bool visible)
+    private void SetWindowVisible(bool visible, bool activate)
     {
-        Styles.Visible = visible;
+        if (visible)
+        {
+            Styles.ShowActivated(activate);
+        }
+        else
+        {
+            Styles.Visible = false;
+        }
+
         IsHotKey1Activated = !visible;
         SetCountdownVisible();
     }

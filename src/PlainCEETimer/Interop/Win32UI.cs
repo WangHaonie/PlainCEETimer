@@ -51,6 +51,9 @@ internal static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
+    [DllImport(App.User32Dll)]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool SetWindowText(IntPtr hWnd, string lpString);
 

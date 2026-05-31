@@ -37,4 +37,10 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
         get => window.Opacity;
         set => window.Opacity = value;
     }
+
+    public void ShowActivated(bool activate)
+    {
+        window.ShowActivated = activate;
+        window.Show();
+    }
 }

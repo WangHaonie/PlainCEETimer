@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.UI.Controls;
+﻿using PlainCEETimer.Interop;
+using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Core;
 
@@ -26,5 +27,17 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
     {
         get => form.Opacity;
         set => form.Opacity = value;
+    }
+
+    public void ShowActivated(bool activate)
+    {
+        if (activate)
+        {
+            Visible = true;
+        }
+        else
+        {
+            Win32UI.ShowWindow(form.Handle, ShowWindowCommand.NoActivate);
+        }
     }
 }

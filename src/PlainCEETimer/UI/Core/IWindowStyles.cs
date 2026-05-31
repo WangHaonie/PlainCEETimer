@@ -9,4 +9,6 @@ public interface IWindowStyles
     bool Visible { get; set; }
 
     double Opacity { get; set; }
+
+    void ShowActivated(bool activate);
 }

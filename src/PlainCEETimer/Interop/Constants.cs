@@ -6,6 +6,8 @@ namespace PlainCEETimer.Interop;
 [CompilerRemove]
 public static class NativeConstants
 {
+    public const int HWND_TOP = 0;
+    public const int HWND_TOPMOST = -1;
     public const int HWND_MESSAGE = -3;
 
     public const int UIS_SET = 1;
@@ -206,6 +208,7 @@ public static class ShowWindowCommand
 {
     public const int Normal = 1;
     public const int Maximize = 3;
+    public const int NoActivate = 4;
     public const int Minimize = 7;
 }
 
