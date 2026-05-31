@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -54,6 +55,7 @@ public static class FullScreenTracker
     private static readonly Throttler throttler = new(ProcessPendingWindow, ThrottleInterval);
 
     private const int ThrottleInterval = 300;
+    private const int FSTolerance = 2;
 
     private static readonly string[] m_banlist =
     [
@@ -184,12 +186,7 @@ public static class FullScreenTracker
     {
         if (Win32UI.GetWindowRect(hWnd, out var rcw))
         {
-            var rc = m_screen.Bounds;
-
-            return rc.X - rcw.Left >= 0
-                && rc.Y - rcw.Top >= 0
-                && rcw.Right - rc.Right >= 0
-                && rcw.Bottom - rc.Bottom >= 0;
+            return Rectangle.Inflate(rcw, FSTolerance, FSTolerance).Contains(m_screen.Bounds);
         }
 
         return false;
@@ -203,12 +200,7 @@ public static class FullScreenTracker
 
     private static IntPtr ResolveActiveFullScreenWindow(IntPtr hWnd)
     {
-        if (hWnd == IntPtr.Zero)
-        {
-            return IntPtr.Zero;
-        }
-
-        if (m_mode == FullScreenTrackingMode.FocusLoss)
+        if (hWnd != IntPtr.Zero && m_mode == FullScreenTrackingMode.FocusLoss)
         {
             var fore = GetRootWindow(Win32UI.GetForegroundWindow());
 

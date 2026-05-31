@@ -111,12 +111,12 @@ public enum FullScreenTrackingMode
     None,
 
     /// <summary>
-    /// 正常模式。检测前景窗口是否进入/退出全屏。
+    /// 正常模式。检测窗口是否进入/退出全屏。
     /// </summary>
     Normal,
 
     /// <summary>
-    /// 失焦模式。当全屏前景窗口失去焦点时视为退出全屏。
+    /// 失焦模式。当全屏窗口失去焦点时视为退出全屏。
     /// </summary>
     FocusLoss
 }
