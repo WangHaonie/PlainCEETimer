@@ -186,7 +186,7 @@ public class ControlBuilder
     }
 #endif
 
-    public NavigationView NavBar(int x, int y, int bw, int pw, int h, int hh, int indent, NavigationPage[] pages)
+    public NavigationView NavigationView(int x, int y, int bw, int pw, int h, int hh, int indent, NavigationPage[] pages)
     {
         var ctrl = new NavigationView()
         {

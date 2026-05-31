@@ -64,7 +64,8 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelMaxCpp;
     private PlainLabel LabelTruncate;
     private PlainLabel LabelFullScreen;
-    private NavigationView NavBar;
+    private PlainLabel LabelExit;
+    private NavigationView MainNavigationView;
     private NavigationPage PageAppearance;
     private PlainButton ButtonApply;
     private PlainButton ButtonCancel;
@@ -121,8 +122,9 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            NavBar = b.NavBar(5, 1, 54, 315, 222, 26, 7,
+            MainNavigationView = b.NavigationView(5, 1, 54, 315, 222, 26, 7,
             [
+                #region NavPage_General
                 b.NavPage("基本",
                 [
                     GBoxExamInfo = b.GroupBox("考试信息",
@@ -225,7 +227,9 @@ public sealed class SettingsForm : AppForm
                         CheckBoxTrayText = b.CheckBox("鼠标悬停在通知图标上时显示倒计时内容(&N)", SettingsChanged),
                     ])
                 ]),
+                #endregion
 
+                #region NavPage_Display
                 b.NavPage("显示",
                 [
                     GBoxContent = b.GroupBox("倒计时",
@@ -293,7 +297,9 @@ public sealed class SettingsForm : AppForm
                             "隐藏直到其失焦或退出全屏")
                     ])
                 ]),
+                #endregion
 
+                #region NavPage_Appearance
                 PageAppearance = b.NavPage("外观",
                 [
                     GBoxColors = b.GroupBox("字体颜色",
@@ -342,7 +348,9 @@ public sealed class SettingsForm : AppForm
                         BlockColor42 = b.Block(false, BlockPreviewColor4, SettingsChanged)
                     ])
                 ]),
+                #endregion
 
+                #region NavPage_Styles
                 b.NavPage("样式",
                 [
                     GBoxTheme = b.GroupBox("应用主题样式",
@@ -394,7 +402,9 @@ public sealed class SettingsForm : AppForm
                         CheckBoxShowNo = b.CheckBox("在考试名称前显示序号", SettingsChanged)
                     ])
                 ]),
+                #endregion
 
+                #region NavPage_Others
                 b.NavPage("其它",
                 [
                     GBoxPptsvc = b.GroupBox("兼容希沃PPT小工具",
@@ -403,7 +413,9 @@ public sealed class SettingsForm : AppForm
                         CheckBoxPptSvc = b.CheckBox(" ", SettingsChanged)
                     ])
                 ]),
+                #endregion
 
+                #region NavPage_Advanced
                 b.NavPage("高级",
                 [
                     GBoxSyncTime = b.GroupBox("同步网络时钟",
@@ -425,9 +437,9 @@ public sealed class SettingsForm : AppForm
                         })
                     ]),
 
-                    GBoxRestart = b.GroupBox(null,
+                    GBoxRestart = b.GroupBox("重启倒计时",
                     [
-                        LabelRestart = b.Label(null),
+                        LabelRestart = b.Label("用于更改了屏幕缩放之后，可以点击此按钮来重启程序以确保 UI 正常显示。"),
 
                         ButtonRestart = b.Button(null, true, (_, _) => App.Exit(!AllowExit)).With(x => x.MouseDown += (_, e) =>
                         {
@@ -444,14 +456,19 @@ public sealed class SettingsForm : AppForm
                                     App.Exit();
                                 }
                             }
-                        })
+                        }),
+
+                        LabelExit = b.Label("(●'◡'●)")
                     ])
                 ])
+                #endregion
             ]),
 
+            #region Footer
             ButtonApply = b.Button("应用(&A)", (_, _) => ApplyChanged()).Disable(),
             ButtonOK = b.Button("确定(&O)", (_, _) => SaveChanges()).Disable(),
             ButtonCancel = b.Button("取消(&C)", (_, _) => Close())
+            #endregion
         ]);
 
         ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
@@ -462,6 +479,7 @@ public sealed class SettingsForm : AppForm
         }
 
         UpdateSettingsArea(SettingsArea.StartUp, false);
+        UpdateSettingsArea(SettingsArea.Restart, false);
     }
 
     protected override void RunLayout(bool isHighDpi)
@@ -602,14 +620,15 @@ public sealed class SettingsForm : AppForm
 
         ArrangeControlYL(GBoxRestart, GBoxSyncTime, 0, 2);
         GroupBoxArrageControl(GBoxRestart, LabelRestart);
-        UpdateSettingsArea(SettingsArea.Restart, false);
         SetLabelAutoWrap(LabelRestart, true);
         ArrangeControlYL(ButtonRestart, LabelRestart, isHighDpi ? 3 : 2, 3);
+        ArrangeControlXT(LabelExit, ButtonRestart);
+        CenterControlY(LabelExit, ButtonRestart);
         GroupBoxAutoAdjustHeight(GBoxRestart, ButtonRestart, 5);
         #endregion
 
         #region Footer
-        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, NavBar, -3, 4);
+        ArrangeCommonButtonsR(ButtonOK, ButtonCancel, MainNavigationView, -3, 4);
         RtlArrangeControlXT(ButtonApply, ButtonOK, -3);
         InitWindowSize(ButtonCancel, 5, 4);
         #endregion
@@ -770,9 +789,8 @@ public sealed class SettingsForm : AppForm
                 ButtonCancel.Enabled = !isWorking;
                 break;
             case SettingsArea.Restart:
-                GBoxRestart.Text = isWorking ? "关闭倒计时" : "重启倒计时";
-                LabelRestart.Text = $"用于更改了屏幕缩放之后，可以点击此按钮来重启程序以确保 UI 正常显示。{(isWorking ? "(●'◡'●)" : "")}";
-                ButtonRestart.Text = isWorking ? "点击关闭(&G)" : "点击重启(&R)";
+                ButtonRestart.Text = isWorking ? "点击关闭(&R)" : "点击重启(&R)";
+                LabelExit.Visible = isWorking;
                 break;
             case SettingsArea.PPTService:
                 CheckBoxPptSvc.Enabled = isWorking;
@@ -870,7 +888,7 @@ public sealed class SettingsForm : AppForm
 
         if (index != -1)
         {
-            NavBar.SwitchTo(PageAppearance);
+            MainNavigationView.SwitchTo(PageAppearance);
             MessageX.Error($"第{index + 1}组颜色的对比度较低，将无法看清文字。\n\n请更换其它背景颜色或文字颜色！");
             return false;
         }
