@@ -14,7 +14,7 @@ using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
-using NativeContextMenu = System.Windows.Forms.ContextMenu;
+using WFContextMenu = System.Windows.Forms.ContextMenu;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
 using WFSize = System.Drawing.Size;
@@ -60,7 +60,7 @@ public class AppWindow : Window, IAppWindow
         }
     }
 
-    public NativeContextMenu NativeContextMenu { get; set; }
+    public WFContextMenu LegacyContextMenu { get; set; }
 
     public IntPtr Handle => EnsureInteropHelper().EnsureHandle();
 
@@ -367,7 +367,7 @@ public class AppWindow : Window, IAppWindow
 
     private void WmContextMenu(ref Message m)
     {
-        var cm = NativeContextMenu;
+        var cm = LegacyContextMenu;
 
         if (cm != null)
         {
@@ -442,9 +442,9 @@ public class AppWindow : Window, IAppWindow
         ThemeManager.EnableDarkModeForWindow(Handle, useDark);
     }
 
-    NativeContextMenu IHasContextMenu.ContextMenu
+    WFContextMenu IHasContextMenu.ContextMenu
     {
-        get => NativeContextMenu;
-        set => NativeContextMenu = value;
+        get => LegacyContextMenu;
+        set => LegacyContextMenu = value;
     }
 }

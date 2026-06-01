@@ -85,9 +85,9 @@ public static class ThemeManager
 
     public static void EnableDarkModeForControl(IntPtr hWnd, SystemStyle type, bool AutoUpgrade = false)
     {
-        if (canUseNewTheme && AutoUpgrade && type == SystemStyle.CfdDark)
+        if (AutoUpgrade)
         {
-            type = SystemStyle.DarkTheme;
+            UpgradeStyle(ref type);
         }
 
         Win32UI.SetWindowTheme(hWnd, GetSubAppName(type), null);
@@ -127,6 +127,14 @@ public static class ThemeManager
         shouldUseDarkMode = theme == SystemTheme.Dark;
         UpdateAppTheme();
         ThemeChanged?.Invoke(null, new(theme));
+    }
+
+    private static void UpgradeStyle(ref SystemStyle style)
+    {
+        if (canUseNewTheme && style == SystemStyle.CfdDark)
+        {
+            style = SystemStyle.DarkTheme;
+        }
     }
 
     private static void UpdateAppTheme()
