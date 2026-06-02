@@ -20,13 +20,17 @@ using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 using fnFlushMenuThemes = void (WINAPI*)();
 using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
 
+static COLORREF g_crFore = 0;
+static COLORREF g_crBack = 0;
+static BOOL g_fUseDark = FALSE;
+
 static fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
 static fnOpenNcThemeData g_OpenNcThemeData = nullptr;
 static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
-static COLORREF g_crFore = 0;
-static COLORREF g_crBack = 0;
-static BOOL g_fUseDark = FALSE;
+
+static IAT_HOOK_DATA<fnOpenNcThemeData> IatHookOpenNcThemeData = {};
+static IAT_HOOK_DATA<fnGetSysColor> IatHookGetSysColor = {};
 
 /*
 
@@ -95,7 +99,12 @@ void EnableDarkModeForApp(BOOL enabled)
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
             {
                 g_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
-                ReplaceFunction<fnOpenNcThemeData>(HOOK_OPENNCTHEMEDATA_ARGS, OpenNcThemeDataNew, nullptr);
+                
+                if (InitializeIatHook(HOOK_OPENNCTHEMEDATA_ARGS, IatHookOpenNcThemeData))
+                {
+                    ReplaceFunction(IatHookOpenNcThemeData, OpenNcThemeDataNew);
+                    IatHookOpenNcThemeData.OldFunc = g_OpenNcThemeData;
+                }
             }
 
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)))
@@ -111,8 +120,17 @@ void EnableDarkModeForApp(BOOL enabled)
 
 void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 {
-    if (!g_GetSysColor
-        && ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, GetSysColorNew, &g_GetSysColor))
+    if (!InitializeIatHook(HOOK_GETSYSCOLOR_ARGS, IatHookGetSysColor))
+    {
+        return;
+    }
+
+    if (!g_GetSysColor)
+    {
+        g_GetSysColor = IatHookGetSysColor.OldFunc;
+    }
+
+    if (ReplaceFunction(IatHookGetSysColor, GetSysColorNew))
     {
         g_crFore = crFore;
         g_crBack = crBack;
@@ -121,12 +139,7 @@ void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 
 void ComctlUnhookSysColor()
 {
-    if (g_GetSysColor)
-    {
-        ReplaceFunction<fnGetSysColor>(HOOK_GETSYSCOLOR_ARGS, g_GetSysColor, nullptr);
-        g_GetSysColor = nullptr;
-    }
-
+    RestoreFunction(IatHookGetSysColor);
     g_crFore = 0;
     g_crBack = 0;
 }

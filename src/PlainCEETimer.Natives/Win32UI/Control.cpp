@@ -5,11 +5,10 @@
 #include <CommCtrl.h>
 #include <Windows.h>
 
-static fnMessageBoxW g_MessageBoxW = nullptr;
-static fnMessageBoxW g_UserMessageBoxW = nullptr;
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
 static HHOOK g_hGetMsgProc = nullptr;
+static IAT_HOOK_DATA<fnMessageBoxW> IatHookMessageBoxW = {};
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -34,7 +33,7 @@ static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 static int WINAPI MessageBoxNew(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
     HHOOK hk = SetWindowsHookEx(WH_CBT, CbtMessageBoxHookProc, nullptr, GetCurrentThreadId());
-    auto ret = g_MessageBoxW(hWnd, lpText, lpCaption, uType);
+    auto ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
     UnhookWindowsHookEx(hk);
     return ret;
 }
@@ -133,9 +132,14 @@ void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 
 void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
 {
+    if (!InitializeIatHook(HOOK_MESSAGEBOXW_ARGS, IatHookMessageBoxW))
+    {
+        return;
+    }
+
     if (dwHookFlag == HMBF_GETMSGBOX && lpfnCbtProc)
     {
-        if (!g_MsgBoxCbtProc && ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, MessageBoxNew, &g_MessageBoxW) && g_MessageBoxW)
+        if (!g_MsgBoxCbtProc && ReplaceFunction(IatHookMessageBoxW, MessageBoxNew))
         {
             g_MsgBoxCbtProc = lpfnCbtProc;
             return;
@@ -144,19 +148,15 @@ void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, D
 
     if (dwHookFlag == HMBF_REPMSGBOX && lpfnMessageBoxW && !g_MsgBoxCbtProc)
     {
-        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, lpfnMessageBoxW, &g_MessageBoxW);
-        g_UserMessageBoxW = lpfnMessageBoxW;
+        ReplaceFunction(IatHookMessageBoxW, lpfnMessageBoxW);
     }
 }
 
 void ComdlgUnhookMessageBox()
 {
-    if (g_MessageBoxW)
+    if (RestoreFunction(IatHookMessageBoxW))
     {
-        ReplaceFunction<fnMessageBoxW>(HOOK_MESSAGEBOXW_ARGS, g_MessageBoxW, nullptr);
-        g_MessageBoxW = nullptr;
         g_MsgBoxCbtProc = nullptr;
-        g_UserMessageBoxW = nullptr;
     }
 }
 

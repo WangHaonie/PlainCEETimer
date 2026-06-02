@@ -9,6 +9,16 @@
 #include <utils.h>
 #include <Windows.h>
 
+template <typename TFunc>
+struct IAT_HOOK_DATA
+{
+    PIMAGE_THUNK_DATA pThunk = nullptr;
+    TFunc OldFunc = nullptr;
+    TFunc NewFunc = nullptr;
+    bool Initialized = false;
+    bool Hooked = false;
+};
+
 /*
 
 IAT Hook 参考：
@@ -97,7 +107,7 @@ inline PIMAGE_THUNK_DATA FindDelayLoadThunkInModule(void* moduleBase, const char
 }
 
 template <typename TFunc>
-inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc, TFunc* ppOldFunc)
+inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc)
 {
     if (addr)
     {
@@ -105,11 +115,6 @@ inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc
 
         if (VirtualProtect(&addr->u1.Function, sizeof(void*), PAGE_READWRITE, &oldProtect))
         {
-            if (ppOldFunc)
-            {
-                *ppOldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
-            }
-
             addr->u1.Function = reinterpret_cast<ULONGLONG>(pNewFunc);
             VirtualProtect(&addr->u1.Function, sizeof(void*), oldProtect, &oldProtect);
             return true;
@@ -120,27 +125,86 @@ inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc
 }
 
 template <typename TFunc>
-inline bool __stdcall ReplaceFunction(LPCSTR targetModuleName, const char* importedModuleName, const char* importedFuncName, uint16_t importedFuncOrdinal, bool fDelayImport, TFunc pNewFunc, TFunc* ppOldFunc)
+inline bool __stdcall InitializeIatHook(
+    LPCSTR targetModuleName,
+    const char* importedModuleName,
+    const char* importedFuncName,
+    uint16_t importedFuncOrdinal,
+    bool fDelayImport,
+    IAT_HOOK_DATA<TFunc>& data)
 {
-    if (String_IsNullOrEmpty(targetModuleName) || String_IsNullOrEmpty(importedModuleName))
+    if (data.Initialized)
+    {
+        return true;
+    }
+
+    HMODULE hMod = GetModuleHandleA(targetModuleName);
+
+    if (!hMod)
+    {
+        hMod = LoadLibraryExA(targetModuleName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    }
+
+    if (!hMod)
     {
         return false;
     }
 
-    HMODULE hModule = GetModuleHandleA(targetModuleName);
+    auto addr = fDelayImport
+        ? FindDelayLoadThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal)
+        : FindIatThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal);
 
-    if (!hModule)
+    if (!addr)
     {
-        hModule = LoadLibraryExA(targetModuleName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        return false;
     }
 
-    if (hModule)
-    {
-        auto addr = fDelayImport
-            ? FindDelayLoadThunkInModule(hModule, importedModuleName, importedFuncName, importedFuncOrdinal)
-            : FindIatThunkInModule(hModule, importedModuleName, importedFuncName, importedFuncOrdinal);
+    data.pThunk = addr;
+    data.OldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
+    data.Initialized = true;
+    return true;
+}
 
-        return ReplaceFunctionCore(addr, pNewFunc, ppOldFunc);
+template <typename TFunc>
+inline bool __stdcall ReplaceFunction(IAT_HOOK_DATA<TFunc>& data, TFunc newFunc)
+{
+    if (data.Hooked)
+    {
+        return true;
+    }
+
+    if (!data.Initialized || !data.pThunk)
+    {
+        return false;
+    }
+
+    if (ReplaceFunctionCore(data.pThunk, newFunc))
+    {
+        data.NewFunc = newFunc;
+        data.Hooked = true;
+        return true;
+    }
+
+    return false;
+}
+
+template <typename TFunc>
+inline bool __stdcall RestoreFunction(IAT_HOOK_DATA<TFunc>& data)
+{
+    if (!data.Hooked)
+    {
+        return true;
+    }
+
+    if (!data.Initialized || !data.pThunk)
+    {
+        return false;
+    }
+
+    if (ReplaceFunctionCore(data.pThunk, data.OldFunc))
+    {
+        data.Hooked = false;
+        return true;
     }
 
     return false;
