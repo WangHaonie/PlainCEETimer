@@ -19,6 +19,7 @@
         <Grid>
             <TextBlock x:Name="TextBlockCountdown"
                 Margin="5,0,5,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                TextWrapping="Wrap"
                 Text="{Binding Content}"
                 Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}}"
                 FontFamily="{Binding Font.FontFamily.Value}"

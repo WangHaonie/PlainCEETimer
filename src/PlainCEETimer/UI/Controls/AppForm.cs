@@ -322,13 +322,19 @@ public abstract class AppForm : Form, IAppWindow
     /// 在 <see cref="AppForm"/> 完成设定基本选项时触发，可用于让派生类修改有关窗体的属性，这将覆盖先前设定的选项。
     /// 该方法没有默认实现，可不调用 base.OnInitialize();
     /// </summary>
-    protected virtual void OnInitializing() { }
+    protected virtual void OnInitializing()
+    {
+        return;
+    }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> OnLoad 之前触发，可用于对控件进行最后的布局。
     /// 该方法没有默认实现，可不调用 base.RunLayout(bool);
     /// </summary>
-    protected virtual void RunLayout(bool isHighDpi) { }
+    protected virtual void RunLayout(bool isHighDpi)
+    {
+        return;
+    }
 
     /// <summary>
     /// 更新当前窗口的样式主题。该方法将在 <see cref="OnHandleCreated(EventArgs)"/> 中被首次调用。
@@ -349,23 +355,35 @@ public abstract class AppForm : Form, IAppWindow
     /// <summary>
     /// 在 <see cref="AppForm"/> 加载时触发。该方法没有默认实现，直接派生自 <see cref="AppForm"/> 的类可不调用 base.OnLoad();
     /// </summary>
-    protected virtual void OnLoad() { }
+    protected virtual void OnLoad()
+    {
+        return;
+    }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> 已向用户显示时触发。该方法没有默认实现，可不调用 base.OnShown();
     /// </summary>
-    protected virtual void OnShown() { }
+    protected virtual void OnShown()
+    {
+        return;
+    }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> 被关闭时触发。该方法默认返回 <see langword="false"/>，可不调用 base.OnClosing(CloseReason);
     /// </summary>
     /// <returns><see langword="true"/> 则取消关闭窗口, <see langword="false"/> 则允许关闭窗口</returns>
-    protected virtual bool OnClosing(CloseReason closeReason) => false;
+    protected virtual bool OnClosing(CloseReason closeReason)
+    {
+        return false;
+    }
 
     /// <summary>
     /// 在 <see cref="AppForm"/> 关闭后触发。该方法没有默认实现，可不调用 base.OnClosed();
     /// </summary>
-    protected virtual void OnClosed() { }
+    protected virtual void OnClosed()
+    {
+        return;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected bool CheckParam(AppWindowStyle param)
