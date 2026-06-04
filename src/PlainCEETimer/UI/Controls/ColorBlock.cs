@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
@@ -14,40 +16,36 @@ public sealed class ColorBlock : PlainLabel
     [NoConstants]
     private sealed class ScreenColorPicker : AppForm
     {
-        private int HeightWidth;
+        public Color Result => color;
+
+        protected override AppWindowStyle Params => AppWindowStyle.RoundCorner;
+
+        private int InfoHeight;
+        private int InfoLineHeight;
+        private int WindowHeight;
         private int MouseX;
         private int MouseY;
         private int PosOffset;
         private int XY;
-        private Bitmap ScreenCut;
+        private string strpos;
+        private string strrgb;
+        private string strhex;
         private Pen CrossPen;
+        private Pen BorderPen;
+        private Bitmap ScreenCut;
+        private Graphics gScreenCut;
+        private Color color;
+        private Size ScreenCutSize;
         private Rectangle DestRect;
-        private const int HW = 64;
-        private const int ScreenCutHW = 16;
-        private readonly Size ScreenCutSize;
-        private readonly Rectangle SourceRect;
+        private Rectangle PreviewRect;
+        private Rectangle SourceRect;
 
-        public Color CurrentPixelColor
-        {
-            get
-            {
-                if (ScreenCut != null)
-                {
-                    return ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
-                }
+        private int HW = 72;
+        private int ScreenCutHW = 16;
+        private int PreviewHW = 22;
+        private int PreviewMargin = 4;
 
-                return Color.Empty;
-            }
-        }
-
-        protected override AppWindowStyle Params => AppWindowStyle.RoundCorner;
-
-        public ScreenColorPicker()
-        {
-            ScreenCut = new(ScreenCutHW, ScreenCutHW);
-            ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
-            SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
-        }
+        private const int InfoLines = 3;
 
         public void UpdateFrame(Point mp)
         {
@@ -57,14 +55,14 @@ public sealed class ColorBlock : PlainLabel
             int x = mx + PosOffset;
             int y = my + PosOffset;
 
-            if (x + HeightWidth > screen.Right)
+            if (x + Width > screen.Right)
             {
-                x = mx - HeightWidth - PosOffset;
+                x = mx - Width - PosOffset;
             }
 
-            if (y + HeightWidth > screen.Bottom)
+            if (y + WindowHeight > screen.Bottom)
             {
-                y = my - HeightWidth - PosOffset;
+                y = my - WindowHeight - PosOffset;
             }
 
             SetLocation(x, y);
@@ -73,39 +71,104 @@ public sealed class ColorBlock : PlainLabel
             Invalidate();
         }
 
+        public string GetInfoLine(int line) => line switch
+        {
+            1 => strpos,
+            2 => strrgb,
+            3 => strhex,
+            _ => null
+        };
+
         protected override void OnInitializing()
         {
             Text = "屏幕拾色器 - 高考倒计时";
             TopMost = true;
         }
 
-        protected override void OnLoad()
+        protected override void RunLayout(bool isHighDpi)
         {
-            HeightWidth = ScaleToDpi(HW);
-            XY = HeightWidth / 2;
-            PosOffset = ScaleToDpi(HW / 4);
-            CrossPen = new(Color.Red, ScaleToDpi(1));
-            Size = new(HeightWidth, HeightWidth);
-            DestRect = new(0, 0, HeightWidth + 2, HeightWidth + 2);
+            HW = ScaleToDpi(HW);
+            ScreenCutHW = ScaleToDpi(ScreenCutHW);
+            PreviewHW = ScaleToDpi(PreviewHW);
+            PreviewMargin = ScaleToDpi(PreviewMargin);
+            CrossPen = new(Color.Red, ScaleToDpi(1F));
+            BorderPen = new(Color.Black, ScaleToDpi(1F));
+
+            XY = HW / 2;
+            PosOffset = HW / 4;
+            InfoLineHeight = FontHeight;
+            InfoHeight = InfoLineHeight * InfoLines;
+            WindowHeight = HW + InfoHeight;
+
+            Size = new(HW, WindowHeight);
+            ScreenCut = new(ScreenCutHW, ScreenCutHW);
+            ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
+            SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
+            DestRect = new(0, 0, HW, HW);
+            PreviewRect = new(
+                HW - PreviewMargin - PreviewHW,
+                HW - PreviewMargin - PreviewHW,
+                PreviewHW, PreviewHW);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            using var gg = Graphics.FromImage(ScreenCut);
             var g = e.Graphics;
-            gg.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
-            g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
-            g.DrawLine(CrossPen, PosOffset, XY, HeightWidth - PosOffset, XY);
-            g.DrawLine(CrossPen, XY, PosOffset, XY, HeightWidth - PosOffset);
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+            gScreenCut = Graphics.FromImage(ScreenCut);
+            UpdateInfo();
+            DrawScreenshot(g);
+            DrawPreview(g);
+            DrawInfoText(g);
+            gScreenCut.Destroy();
         }
 
         protected override void Dispose(bool disposing)
         {
-            ScreenCut.Dispose();
-            CrossPen.Dispose();
-            ScreenCut = null;
+            ScreenCut.Destroy();
+            CrossPen.Destroy();
+            BorderPen.Destroy();
             base.Dispose(disposing);
+        }
+
+        private void UpdateInfo()
+        {
+            color = ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
+            strpos = $"{MouseX},{MouseY}";
+            strrgb = $"{color.R},{color.G},{color.B}";
+            strhex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        }
+
+        private void DrawScreenshot(Graphics g)
+        {
+            gScreenCut.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
+
+            g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
+            g.DrawLine(CrossPen, PosOffset, XY, HW - PosOffset, XY);
+            g.DrawLine(CrossPen, XY, PosOffset, XY, HW - PosOffset);
+        }
+
+        private void DrawPreview(Graphics g)
+        {
+            using var fillBrush = new SolidBrush(color);
+
+            g.FillRectangle(fillBrush, PreviewRect);
+            g.DrawRectangle(BorderPen, PreviewRect);
+        }
+
+        private void DrawInfoText(Graphics g)
+        {
+            using var b = new SolidBrush(ForeColor);
+            var rc = new RectangleF(0, HW, Width, InfoLineHeight);
+            var font = Font;
+
+            g.DrawString(strpos, font, b, rc);
+            rc.Y += InfoLineHeight;
+            g.DrawString(strrgb, font, b, rc);
+            rc.Y += InfoLineHeight;
+            g.DrawString(strhex, font, b, rc);
         }
     }
 
@@ -113,14 +176,7 @@ public sealed class ColorBlock : PlainLabel
     {
         public unsafe bool OnMessage(MSG* lpMsg)
         {
-            if (lpMsg->message == WM.KEYDOWN
-                && (int)lpMsg->wParam == NativeConstants.VK_ESCAPE)
-            {
-                ctrl.CancelScreenColorPicker();
-                return true;
-            }
-
-            return false;
+            return lpMsg->message == WM.KEYDOWN && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
         }
     }
 
@@ -273,12 +329,13 @@ public sealed class ColorBlock : PlainLabel
                 }
                 else
                 {
-                    Color = ColorPicker.CurrentPixelColor;
+                    Color = ColorPicker.Result;
                 }
 
                 AppMessageFilter.RemoveMessageFilter(MsgFilter);
                 HideParentForm(false);
                 ColorPicker.Close();
+                ColorPicker = null;
                 IsPicking = false;
             }
         }
@@ -288,6 +345,40 @@ public sealed class ColorBlock : PlainLabel
     {
         IsPickingCancelled = true;
         EndPicking();
+    }
+
+    private bool WmKeyDown(Keys vk)
+    {
+        switch (vk)
+        {
+            case Keys.Escape:
+                CancelScreenColorPicker();
+                return true;
+            case Keys.D1 or Keys.NumPad1:
+                CopyInfoToClipboard(1);
+                return true;
+            case Keys.D2 or Keys.NumPad2:
+                CopyInfoToClipboard(2);
+                return true;
+            case Keys.D3 or Keys.NumPad3:
+                CopyInfoToClipboard(3);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void CopyInfoToClipboard(int id)
+    {
+        if (ColorPicker != null)
+        {
+            var info = ColorPicker.GetInfoLine(id);
+
+            if (info != null)
+            {
+                Clipboard.SetText(info);
+            }
+        }
     }
 
     private void HideParentForm(bool hide = true)
