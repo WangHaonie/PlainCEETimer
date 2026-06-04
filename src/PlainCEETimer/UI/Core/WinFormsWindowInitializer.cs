@@ -3,12 +3,11 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Core;
 
-public class WinFormsWindowInitializer : IWindowInitializer
+public class WinFormsWindowInitializer(AppForm appForm) : IWindowInitializer
 {
-    public event EventHandler Initialize;
-
-    public WinFormsWindowInitializer(AppForm appForm)
+    public event EventHandler Initialize
     {
-        appForm.Shown += (_, e) => Initialize?.Invoke(this, e);
+        add => appForm.Shown += value;
+        remove => appForm.Shown -= value;
     }
 }

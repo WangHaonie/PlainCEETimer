@@ -82,6 +82,7 @@ public static class FullScreenTracker
             hasStarted = m_hForegroundHook != IntPtr.Zero && m_hLocationChangeHook != IntPtr.Zero;
             m_screen ??= Screen.PrimaryScreen;
             m_timer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+            App.AppExit += Stop;
 
             if (!hasStarted)
             {
@@ -99,6 +100,7 @@ public static class FullScreenTracker
         {
             Win32.UnhookWinEvent(m_hForegroundHook);
             Win32.UnhookWinEvent(m_hLocationChangeHook);
+            App.AppExit -= Stop;
             m_proc = null;
         }
 

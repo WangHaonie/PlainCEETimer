@@ -4,55 +4,52 @@ using PlainCEETimer.UI.Controls;
 
 namespace PlainCEETimer.UI.Core;
 
-public class WinFormsWindowBounds : IWindowBounds
+public class WinFormsWindowBounds(AppForm form) : IWindowBounds
 {
     public int X
     {
-        get => f.Left;
-        set => f.Left = value;
+        get => form.Left;
+        set => form.Left = value;
     }
 
     public int Y
     {
-        get => f.Top;
-        set => f.Top = value;
+        get => form.Top;
+        set => form.Top = value;
     }
 
     public int Width
     {
-        get => f.Width;
-        set => f.Width = value;
+        get => form.Width;
+        set => form.Width = value;
     }
 
     public int Height
     {
-        get => f.Height;
-        set => f.Height = value;
+        get => form.Height;
+        set => form.Height = value;
     }
 
     public Point Location
     {
-        get => f.Location;
-        set => f.Location = value;
+        get => form.Location;
+        set => form.Location = value;
     }
 
     public Size Size
     {
-        get => f.Size;
-        set => f.Size = value;
+        get => form.Size;
+        set => form.Size = value;
     }
 
-    public event EventHandler SizeChanged;
-    private readonly AppForm f;
-
-    public WinFormsWindowBounds(AppForm form)
+    public event EventHandler SizeChanged
     {
-        f = form;
-        f.SizeChanged += (_, _) => SizeChanged?.Invoke(this, EventArgs.Empty);
+        add => form.SizeChanged += value;
+        remove => form.SizeChanged -= value;
     }
 
     public Point KeepOnScreen()
     {
-        return f.KeepOnScreen();
+        return form.KeepOnScreen();
     }
 }

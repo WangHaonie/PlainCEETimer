@@ -16,7 +16,7 @@ public sealed class ColorBlock : PlainLabel
     [NoConstants]
     private sealed class ScreenColorPicker : AppForm
     {
-        public Color Result => color;
+        public Color Result => CurrentColor;
 
         protected override AppWindowStyle Params => AppWindowStyle.RoundCorner;
 
@@ -25,26 +25,29 @@ public sealed class ColorBlock : PlainLabel
         private int WindowHeight;
         private int MouseX;
         private int MouseY;
-        private int PosOffset;
-        private int XY;
+        private int CrossPosX;
+        private int CrossPosY;
+        private int ScreenshotSize;
+        private int ScreenshotSample;
+        private int PreviewSize;
+        private int PreviewMargin;
         private string strpos;
         private string strrgb;
         private string strhex;
+        private Color CurrentColor;
+        private Size ScreenshotSampleSize;
+        private Rectangle ScreenshotRect;
+        private Rectangle ScreenshotSampleRect;
+        private Rectangle PreviewRect;
         private Pen CrossPen;
         private Pen BorderPen;
-        private Bitmap ScreenCut;
-        private Graphics gScreenCut;
-        private Color color;
-        private Size ScreenCutSize;
-        private Rectangle DestRect;
-        private Rectangle PreviewRect;
-        private Rectangle SourceRect;
+        private Bitmap Screenshot;
+        private Graphics gScreenshot;
 
-        private int HW = 72;
-        private int ScreenCutHW = 16;
-        private int PreviewHW = 22;
-        private int PreviewMargin = 4;
-
+        private const int _ScreenshotSize = 72;
+        private const int _ScreenshotSample = 16;
+        private const int _PreviewSize = 22;
+        private const int _PreviewMargin = 4;
         private const int InfoLines = 3;
 
         public void UpdateFrame(Point mp)
@@ -52,17 +55,17 @@ public sealed class ColorBlock : PlainLabel
             var screen = Screen.FromPoint(mp).Bounds;
             var mx = mp.X;
             var my = mp.Y;
-            int x = mx + PosOffset;
-            int y = my + PosOffset;
+            int x = mx + CrossPosX;
+            int y = my + CrossPosX;
 
             if (x + Width > screen.Right)
             {
-                x = mx - Width - PosOffset;
+                x = mx - Width - CrossPosX;
             }
 
             if (y + WindowHeight > screen.Bottom)
             {
-                y = my - WindowHeight - PosOffset;
+                y = my - WindowHeight - CrossPosX;
             }
 
             SetLocation(x, y);
@@ -87,28 +90,28 @@ public sealed class ColorBlock : PlainLabel
 
         protected override void RunLayout(bool isHighDpi)
         {
-            HW = ScaleToDpi(HW);
-            ScreenCutHW = ScaleToDpi(ScreenCutHW);
-            PreviewHW = ScaleToDpi(PreviewHW);
-            PreviewMargin = ScaleToDpi(PreviewMargin);
+            ScreenshotSize = ScaleToDpi(_ScreenshotSize);
+            ScreenshotSample = ScaleToDpi(_ScreenshotSample);
+            PreviewSize = ScaleToDpi(_PreviewSize);
+            PreviewMargin = ScaleToDpi(_PreviewMargin);
             CrossPen = new(Color.Red, ScaleToDpi(1F));
             BorderPen = new(Color.Black, ScaleToDpi(1F));
 
-            XY = HW / 2;
-            PosOffset = HW / 4;
+            CrossPosY = ScreenshotSize / 2;
+            CrossPosX = ScreenshotSize / 4;
             InfoLineHeight = FontHeight;
             InfoHeight = InfoLineHeight * InfoLines;
-            WindowHeight = HW + InfoHeight;
+            WindowHeight = ScreenshotSize + InfoHeight;
 
-            Size = new(HW, WindowHeight);
-            ScreenCut = new(ScreenCutHW, ScreenCutHW);
-            ScreenCutSize = new(ScreenCutHW, ScreenCutHW);
-            SourceRect = new(0, 0, ScreenCutHW, ScreenCutHW);
-            DestRect = new(0, 0, HW, HW);
+            Size = new(ScreenshotSize, WindowHeight);
+            Screenshot = new(ScreenshotSample, ScreenshotSample);
+            ScreenshotSampleSize = new(ScreenshotSample, ScreenshotSample);
+            ScreenshotSampleRect = new(0, 0, ScreenshotSample, ScreenshotSample);
+            ScreenshotRect = new(0, 0, ScreenshotSize + 1, ScreenshotSize);
             PreviewRect = new(
-                HW - PreviewMargin - PreviewHW,
-                HW - PreviewMargin - PreviewHW,
-                PreviewHW, PreviewHW);
+                ScreenshotSize - PreviewMargin - PreviewSize,
+                ScreenshotSize - PreviewMargin - PreviewSize,
+                PreviewSize, PreviewSize);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -117,17 +120,17 @@ public sealed class ColorBlock : PlainLabel
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
-            gScreenCut = Graphics.FromImage(ScreenCut);
+            gScreenshot = Graphics.FromImage(Screenshot);
             UpdateInfo();
             DrawScreenshot(g);
             DrawPreview(g);
             DrawInfoText(g);
-            gScreenCut.Destroy();
+            gScreenshot.Destroy();
         }
 
         protected override void Dispose(bool disposing)
         {
-            ScreenCut.Destroy();
+            Screenshot.Destroy();
             CrossPen.Destroy();
             BorderPen.Destroy();
             base.Dispose(disposing);
@@ -135,33 +138,33 @@ public sealed class ColorBlock : PlainLabel
 
         private void UpdateInfo()
         {
-            color = ScreenCut.GetPixel(ScreenCutHW / 2, ScreenCutHW / 2);
+            CurrentColor = Screenshot.GetPixel(ScreenshotSample / 2, ScreenshotSample / 2);
             strpos = $"{MouseX},{MouseY}";
-            strrgb = $"{color.R},{color.G},{color.B}";
-            strhex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            strrgb = $"{CurrentColor.R},{CurrentColor.G},{CurrentColor.B}";
+            strhex = $"#{CurrentColor.R:X2}{CurrentColor.G:X2}{CurrentColor.B:X2}";
         }
 
         private void DrawScreenshot(Graphics g)
         {
-            gScreenCut.CopyFromScreen(MouseX - (ScreenCutHW / 2), MouseY - (ScreenCutHW / 2), 0, 0, ScreenCutSize);
+            gScreenshot.CopyFromScreen(MouseX - (ScreenshotSample / 2), MouseY - (ScreenshotSample / 2), 0, 0, ScreenshotSampleSize);
 
-            g.DrawImage(ScreenCut, DestRect, SourceRect, GraphicsUnit.Pixel);
-            g.DrawLine(CrossPen, PosOffset, XY, HW - PosOffset, XY);
-            g.DrawLine(CrossPen, XY, PosOffset, XY, HW - PosOffset);
+            g.DrawImage(Screenshot, ScreenshotRect, ScreenshotSampleRect, GraphicsUnit.Pixel);
+            g.DrawLine(CrossPen, CrossPosX, CrossPosY, ScreenshotSize - CrossPosX, CrossPosY);
+            g.DrawLine(CrossPen, CrossPosY, CrossPosX, CrossPosY, ScreenshotSize - CrossPosX);
         }
 
         private void DrawPreview(Graphics g)
         {
-            using var fillBrush = new SolidBrush(color);
+            using var b = new SolidBrush(CurrentColor);
 
-            g.FillRectangle(fillBrush, PreviewRect);
+            g.FillRectangle(b, PreviewRect);
             g.DrawRectangle(BorderPen, PreviewRect);
         }
 
         private void DrawInfoText(Graphics g)
         {
             using var b = new SolidBrush(ForeColor);
-            var rc = new RectangleF(0, HW, Width, InfoLineHeight);
+            var rc = new RectangleF(0, ScreenshotSize, Width, InfoLineHeight);
             var font = Font;
 
             g.DrawString(strpos, font, b, rc);
@@ -179,8 +182,6 @@ public sealed class ColorBlock : PlainLabel
             return lpMsg->message == WM.KEYDOWN && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
         }
     }
-
-    private AppForm ParentForm => field ??= this.FindParentForm();
 
     public ColorBlock[] Fellows { get; set; } = [];
 
@@ -209,6 +210,8 @@ public sealed class ColorBlock : PlainLabel
             }
         }
     }
+
+    private AppForm ParentForm => field ??= this.FindParentForm();
 
     public event EventHandler ColorChanged;
 

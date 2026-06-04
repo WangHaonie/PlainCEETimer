@@ -203,7 +203,7 @@ public sealed class ConsoleWindow : AppDialog
         return cancel;
     }
 
-    public static void Run(string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
+    public static void Run(IWin32Window owner, string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
     {
         new ConsoleWindow
         {
@@ -213,7 +213,7 @@ public sealed class ConsoleWindow : AppDialog
             ExePath = path,
             ExeArgs = args,
             Key = $"PlainCEETimer.ShExecCommandOutputRedirector_{Guid.NewGuid()}"
-        }.ShowDialog();
+        }.ShowDialog(owner);
     }
 
     private void ConsoleTimer_Tick(object sender, EventArgs e)

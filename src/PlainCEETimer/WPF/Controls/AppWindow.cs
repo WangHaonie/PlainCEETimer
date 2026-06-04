@@ -24,16 +24,8 @@ namespace PlainCEETimer.WPF.Controls;
 [NoConstants]
 public class AppWindow : Window, IAppWindow
 {
-    private sealed class AppNativeWindow : NativeWindow
+    private sealed class AppNativeWindow(AppWindow wnd) : NativeWindow
     {
-        private readonly AppWindow wnd;
-
-        public AppNativeWindow(AppWindow appWindow)
-        {
-            wnd = appWindow;
-            AssignHandle(wnd.Handle);
-        }
-
         protected override void WndProc(ref Message m)
         {
             wnd.WndProc(ref m);
@@ -175,14 +167,14 @@ public class AppWindow : Window, IAppWindow
 
     protected override void OnSourceInitialized(EventArgs e)
     {
+        var hwnd = Handle;
         window = new(this);
+        window.AssignHandle(hwnd);
 
         if (_owner != null)
         {
             EnsureInteropHelper().Owner = _owner.Handle;
         }
-
-        var hwnd = Handle;
 
         if (NativeRoundCorner)
         {
