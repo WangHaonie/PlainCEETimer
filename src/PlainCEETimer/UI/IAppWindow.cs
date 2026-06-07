@@ -12,7 +12,7 @@ public interface IAppWindow : IHasContextMenu, IWin32Window, IThemeAware
 
     void ReActivate();
 
-    object Invoke(Delegate method);
+    object Invoke(Delegate method, params object[] args);
 
-    IAsyncResult BeginInvoke(Delegate method);
+    IAsyncResult BeginInvoke(Delegate method, params object[] args);
 }

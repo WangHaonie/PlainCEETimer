@@ -124,14 +124,14 @@ public class AppWindow : Window, IAppWindow
         UpdateDpiScale(VisualTreeHelper.GetDpi(this));
     }
 
-    public object Invoke(Delegate method)
+    public object Invoke(Delegate method, params object[] args)
     {
-        return Dispatcher.Invoke(method);
+        return Dispatcher.Invoke(method, args);
     }
 
-    public IAsyncResult BeginInvoke(Delegate method)
+    public IAsyncResult BeginInvoke(Delegate method, params object[] args)
     {
-        return Dispatcher.BeginInvoke(method).Task;
+        return Dispatcher.BeginInvoke(method, args).Task;
     }
 
     public void ReActivate()

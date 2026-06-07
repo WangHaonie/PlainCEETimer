@@ -4,7 +4,7 @@ namespace PlainCEETimer.Modules;
 
 public class DebounceState(Action action) : IDebounceState
 {
-    public void Invoke()
+    public void Invoke(object state)
     {
         action();
     }
@@ -14,7 +14,7 @@ public class DebounceState<T>(Action<T> action) : IDebounceState<T>
 {
     private T m_arg;
 
-    public void Invoke()
+    public void Invoke(object state)
     {
         action(m_arg);
     }

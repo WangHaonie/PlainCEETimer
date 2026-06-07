@@ -46,10 +46,9 @@ public class Debouncer : IDisposable
         lock (syncLock)
         {
             s = m_state;
-            m_state = null;
         }
 
-        SafeExecutionContext.Execute(_ => s.Invoke());
+        SafeExecutionContext.Execute(s.Invoke, state);
     }
 
     ~Debouncer()

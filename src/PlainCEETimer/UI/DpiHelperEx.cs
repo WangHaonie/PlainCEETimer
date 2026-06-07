@@ -30,16 +30,6 @@ public static class DpiHelperEx
 
     */
 
-    private const int PROCESS_DPI_UNAWARE = 0;
-    private const int PROCESS_SYSTEM_DPI_AWARE = 1;
-    private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
-
-    private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(WindowsVersions.NT6);
-    private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows81);
-    private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1607);
-    private static readonly bool isPMv2Supported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1703);
-    private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1809);
-
     public static DpiAwarenessContext Current
     {
         get
@@ -64,6 +54,24 @@ public static class DpiHelperEx
 
             return DpiAwarenessContext.Unknown;
         }
+    }
+
+    private const int PROCESS_DPI_UNAWARE = 0;
+    private const int PROCESS_SYSTEM_DPI_AWARE = 1;
+    private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
+
+    private static readonly Throttler throttler;
+    private static readonly Action GlobalUpdateDeviceDpiAction;
+    private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(WindowsVersions.NT6);
+    private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows81);
+    private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1607);
+    private static readonly bool isPMv2Supported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1703);
+    private static readonly bool isGdiScaledSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1809);
+
+    static DpiHelperEx()
+    {
+        throttler = new();
+        GlobalUpdateDeviceDpiAction = GlobalUpdateDeviceDpiCore;
     }
 
     public static int GetFriendlyScale(int dpi)
@@ -116,9 +124,7 @@ public static class DpiHelperEx
 
     internal static void GlobalUpdateDeviceDpi()
     {
-        var dpi = GetDeviceDpi();
-        DpiHelper.deviceDpi = dpi;
-        DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
+        throttler.Throttle(GlobalUpdateDeviceDpiAction);
     }
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)
@@ -194,6 +200,13 @@ public static class DpiHelperEx
         }
 
         return dpi;
+    }
+
+    private static void GlobalUpdateDeviceDpiCore()
+    {
+        var dpi = GetDeviceDpi();
+        DpiHelper.deviceDpi = dpi;
+        DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
     }
 
     private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch

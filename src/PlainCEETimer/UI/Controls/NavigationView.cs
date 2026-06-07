@@ -40,6 +40,7 @@ public sealed class NavigationView : Control
         protected override void Dispose(bool disposing)
         {
             themeHelper.Destroy();
+            debouncer.Destroy();
             base.Dispose(disposing);
         }
 

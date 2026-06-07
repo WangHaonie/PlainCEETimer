@@ -200,7 +200,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
                 */
 
-                return (bool?)parent.Invoke(() => Popup(message, level, buttons, autoClose));
+                return (bool?)parent.Invoke(new Func<string, MessageLevel, MessageButtons, bool, bool?>(Popup), message, level, buttons, autoClose);
             }
         }
 

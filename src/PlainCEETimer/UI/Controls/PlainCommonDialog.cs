@@ -55,16 +55,16 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         public IntPtr Handle => hWnd;
 
-        public IAsyncResult BeginInvoke(Delegate method)
+        public object Invoke(Delegate method, params object[] args)
         {
-            method.DynamicInvoke();
+            method.DynamicInvoke(args);
             return default;
         }
 
-        public object Invoke(Delegate method)
+        public IAsyncResult BeginInvoke(Delegate method, params object[] args)
         {
-            method.DynamicInvoke();
-            return 0;
+            method.DynamicInvoke(args);
+            return default;
         }
 
         public void ReActivate()

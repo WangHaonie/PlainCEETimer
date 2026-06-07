@@ -2,7 +2,7 @@
 
 public interface IDebounceState
 {
-    void Invoke();
+    void Invoke(object state);
 }
 
 public interface IDebounceState<T> : IDebounceState
