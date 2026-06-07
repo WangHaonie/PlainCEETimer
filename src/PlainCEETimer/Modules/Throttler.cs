@@ -3,28 +3,44 @@ using System.Diagnostics;
 
 namespace PlainCEETimer.Modules;
 
-public class Throttler(Action action, int interval = 500)
+public class Throttler(long interval = 500L)
 {
-    private readonly Action m_action = action ?? throw new ArgumentNullException(nameof(action));
     private readonly Stopwatch sw = new();
     private readonly object syncLock = new();
 
-    public void Throttle()
+    public void Throttle(Action action)
+    {
+        if (CanExecute())
+        {
+            action();
+        }
+    }
+
+    public void Throttle<T>(Action<T> action, T obj)
+    {
+        if (CanExecute())
+        {
+            action(obj);
+        }
+    }
+
+    private bool CanExecute()
     {
         lock (syncLock)
         {
             if (!sw.IsRunning)
             {
                 sw.Start();
-                m_action();
-                return;
+                return true;
             }
 
             if (sw.ElapsedMilliseconds >= interval)
             {
                 sw.Restart();
-                m_action();
+                return true;
             }
+
+            return false;
         }
     }
 }

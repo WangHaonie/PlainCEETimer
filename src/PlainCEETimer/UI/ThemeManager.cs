@@ -11,13 +11,20 @@ public static class ThemeManager
 {
     private class ThemeChangedMessageFilter : IAppMessageFilter
     {
-        private readonly Throttler thr = new(TryFireOnThemeChanged);
+        private readonly Throttler thr;
+        private readonly Action TryFireOnThemeChangedAction;
+
+        public ThemeChangedMessageFilter()
+        {
+            thr = new();
+            TryFireOnThemeChangedAction = TryFireOnThemeChanged;
+        }
 
         public unsafe bool OnMessage(MSG* lpMsg)
         {
             if (IsThemeChanged(lpMsg))
             {
-                thr.Throttle();
+                thr.Throttle(TryFireOnThemeChangedAction);
                 return true;
             }
 

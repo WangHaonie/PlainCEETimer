@@ -52,15 +52,22 @@ public static class FullScreenTracker
     private static Timer m_timer;
     private static WINEVENTPROC m_proc;
     private static readonly object syncLock = new();
-    private static readonly Throttler throttler = new(ProcessPendingWindow, ThrottleInterval);
+    private static readonly Throttler throttler;
+    private static readonly Action ProcessPendingWindowAction;
 
-    private const int ThrottleInterval = 300;
     private const int FSTolerance = 2;
+    private const long ThrottleInterval = 300;
 
     private static readonly string[] m_banlist =
     [
         "XamlExplorerHostIslandWindow"
     ];
+
+    static FullScreenTracker()
+    {
+        throttler = new(ThrottleInterval);
+        ProcessPendingWindowAction = ProcessPendingWindow;
+    }
 
     public static void SetScreen(Screen screen)
     {
@@ -129,7 +136,7 @@ public static class FullScreenTracker
             m_timer.Change(ThrottleInterval, Timeout.Infinite);
         }
 
-        throttler.Throttle();
+        throttler.Throttle(ProcessPendingWindowAction);
     }
 
     private static void SyncCurrentState()
