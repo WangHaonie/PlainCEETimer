@@ -11,7 +11,7 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
     private bool Calculated;
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
-    private readonly DebounceState<EventArgs> debounceState;
+    private readonly IDebounceState<EventArgs> debounceState;
     private readonly ControlDebounceHelper debounceHelper;
 
     public PlainComboBox()
@@ -20,7 +20,7 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
         FlatStyle = FlatStyle.System;
         debounceHelper = new(this);
         debouncer = new();
-        debounceState = new(base.OnSelectedIndexChanged);
+        debounceState = new DebounceState<EventArgs>(base.OnSelectedIndexChanged);
     }
 
     protected override void OnHandleCreated(EventArgs e)

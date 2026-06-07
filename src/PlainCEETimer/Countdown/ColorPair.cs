@@ -2,6 +2,7 @@
 using System.Drawing;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Countdown;
@@ -28,12 +29,7 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
 
                 var L1 = GetRelativeLum(fore);
                 var L2 = GetRelativeLum(back);
-
-                if (L1 < L2)
-                {
-                    (L1, L2) = (L2, L1);
-                }
-
+                double.SwapIf(L1 < L2, ref L1, ref L2);
                 field = (L1 + 0.05) / (L2 + 0.05) >= 3;
             }
 

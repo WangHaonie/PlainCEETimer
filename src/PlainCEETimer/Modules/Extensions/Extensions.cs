@@ -32,9 +32,6 @@ public static class Extensions
     public static T Copy<T>(this T obj) where T : ICloneable
         => (T)obj.Clone();
 
-    public static T PassIf<T>(this T obj, bool condition)
-        => condition ? obj : default;
-
     public static bool IsEnabled(this ExamSettings settings)
         => settings != null && settings.Enabled;
 

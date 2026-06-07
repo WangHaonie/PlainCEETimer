@@ -17,10 +17,7 @@ public class FontSizeItem(double value)
             throw new InvalidOperationException();
         }
 
-        if (min > max)
-        {
-            (min, max) = (max, min);
-        }
+        double.SwapIf(min > max, ref min, ref max);
 
         var current = min;
 

@@ -10,7 +10,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 {
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
-    private readonly DebounceState<EventArgs> debounceState;
+    private readonly IDebounceState<EventArgs> debounceState;
     private readonly ControlDebounceHelper debounceHelper;
 
     public PlainNumericUpDown()
@@ -18,7 +18,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
         TextAlign = HorizontalAlignment.Right;
         debounceHelper = new(this);
         debouncer = new();
-        debounceState = new(base.OnValueChanged);
+        debounceState = new DebounceState<EventArgs>(base.OnValueChanged);
     }
 
     protected override void OnHandleCreated(EventArgs e)

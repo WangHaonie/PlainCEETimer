@@ -24,6 +24,28 @@ internal static class DebugExtensions
     }
 
     [Obsolete]
+    public static T Execute<T>(this T obj, Action<T> action, int repeat = 1)
+    {
+        for (int i = 0; i < repeat; i++)
+        {
+            action(obj);
+        }
+
+        return obj;
+    }
+
+    [Obsolete]
+    public static T PassIf<T>(this T obj, bool condition)
+    {
+        if (condition)
+        {
+            return obj;
+        }
+
+        return default;
+    }
+
+    [Obsolete]
     public static T CastTo<T>(this object obj)
     {
         return (T)obj;

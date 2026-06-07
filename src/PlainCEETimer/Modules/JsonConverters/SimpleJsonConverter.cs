@@ -3,9 +3,6 @@ using Newtonsoft.Json;
 
 namespace PlainCEETimer.Modules.JsonConverters;
 
-/// <summary>
-/// 在一个复杂类型与 .NET 基本数据类型之间进行转换
-/// </summary>
 public abstract class SimpleJsonConverter<TObject, TValue> : JsonConverter<TObject>
 {
     public sealed override TObject ReadJson(JsonReader reader, Type objectType, TObject existingValue, bool hasExistingValue, JsonSerializer serializer)

@@ -107,7 +107,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     private ThemeHelper themeHelper;
     private readonly bool expandable;
     private readonly Debouncer debouncer;
-    private readonly DebounceState<EventArgs> debounceState;
+    private readonly IDebounceState<EventArgs> debounceState;
     private readonly ControlDebounceHelper debounceHelper;
 
     public PlainTextBox(bool isExpandable)
@@ -144,7 +144,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         }
 
         debouncer = new();
-        debounceState = new(base.OnTextChanged);
+        debounceState = new DebounceState<EventArgs>(base.OnTextChanged);
     }
 
     public void Input(int totalLength, string text)

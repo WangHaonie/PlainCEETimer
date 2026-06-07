@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
@@ -13,10 +14,16 @@ public class RandomUID
 
     public RandomUID(int minValue, int maxValue)
     {
+        if (minValue == maxValue)
+        {
+            throw new InvalidOperationException();
+        }
+
         idset = [];
         ids = new();
         min = minValue;
         max = maxValue;
+        int.SwapIf(min > max, ref min, ref max);
         total = max - min;
     }
 
