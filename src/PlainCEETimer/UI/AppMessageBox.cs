@@ -72,7 +72,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
             if (autoClose)
             {
-                3200.AsDelay(new Action(Close).WithUI(this));
+                3200.AsDelay(new Action(Close).SafeExecute());
             }
         }
 

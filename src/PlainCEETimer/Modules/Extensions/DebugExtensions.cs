@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using PlainCEETimer.UI;
@@ -87,17 +88,7 @@ internal static class DebugExtensions
     public static void ForEachAll<TObject, TCollection>(this TObject obj, Func<TObject, TCollection> selector, Predicate<TObject> move, Action<TObject> action)
         where TCollection : System.Collections.IEnumerable
     {
-        action(obj);
-
-        if (move(obj))
-        {
-            var collection = selector(obj);
-
-            foreach (TObject item in collection)
-            {
-                ForEachAll(item, selector, move, action);
-            }
-        }
+        ForEachAllEx(obj, o => selector(o).Cast<TObject>(), move, action);
     }
 
     [Obsolete]

@@ -144,7 +144,7 @@ public sealed class DownloaderForm(string url, long size) : AppForm
         {
             ProcessHelper.Run(DownloadPath, "/Skip");
             App.Exit();
-        }).WithUI(this));
+        }).SafeExecute());
     }
 
     private void UpdateLabels(string info, string size, string speed)

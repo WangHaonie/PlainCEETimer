@@ -782,11 +782,7 @@ public sealed class SettingsForm : AppForm
         {
             case SettingsArea.SyncTime:
                 IsSyncingTime = isWorking;
-                ButtonSyncTime.Enabled = !isWorking;
-                ComboBoxNtpServers.Enabled = !isWorking;
-                ButtonRestart.Enabled = !isWorking;
-                ButtonOK.Enabled = !isWorking && UserChanged;
-                ButtonCancel.Enabled = !isWorking;
+                Enabled = !isWorking;
                 break;
             case SettingsArea.Restart:
                 ButtonRestart.Text = isWorking ? "点击关闭(&R)" : "点击重启(&R)";

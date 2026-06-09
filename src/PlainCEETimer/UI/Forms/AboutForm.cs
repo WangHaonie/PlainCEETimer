@@ -47,7 +47,7 @@ public sealed class AboutForm : AppForm
                             ButtonOK.Text = buttonText;
                             ButtonOK.Enabled = true;
                             IsCheckingUpdate = false;
-                        }).WithUI(this));
+                        }).SafeExecute());
                     }
                 };
             }),
