@@ -13,12 +13,12 @@ public abstract class WindowScreenChangeService : IWindowScreenChangeService
 
     private Screen lastScreen;
     private readonly Debouncer debouncer;
-    private readonly IDebounceState debounceState;
+    private readonly ActionInvoker OnScreenChangedInvoker;
 
     protected WindowScreenChangeService()
     {
         debouncer = new();
-        debounceState = new DebounceState(OnScreenChanged);
+        OnScreenChangedInvoker = new(OnScreenChanged);
     }
 
     public virtual void Dispose()
@@ -32,7 +32,7 @@ public abstract class WindowScreenChangeService : IWindowScreenChangeService
     protected void HandleLocationChanged(object sender, EventArgs e)
     {
         lastScreen ??= GetScreen();
-        debouncer.Debounce(debounceState);
+        debouncer.Debounce(OnScreenChangedInvoker);
     }
 
     private void OnScreenChanged()

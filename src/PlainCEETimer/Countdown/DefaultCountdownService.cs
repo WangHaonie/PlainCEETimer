@@ -60,6 +60,14 @@ public class DefaultCountdownService : ICountdownService
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
     private readonly StringBuilder ContentBuilder = new(128);
+    private readonly ActionInvoker<int> OnExamSwitchedInvoker;
+    private readonly ActionInvoker<string, ColorPair> OnCountdownUpdatedInvoker;
+
+    public DefaultCountdownService()
+    {
+        OnExamSwitchedInvoker = new(i => ExamSwitched?.Invoke(this, new(i)));
+        OnCountdownUpdatedInvoker = new((s, cp) => CountdownUpdated?.Invoke(this, new(s, cp.Fore, cp.Back)));
+    }
 
     public void Start(CountdownStartInfo startInfo)
     {
@@ -321,14 +329,14 @@ public class DefaultCountdownService : ICountdownService
     {
         if (ExamIndex != LastExamIndex)
         {
-            SafeExecutionContext.Execute(_ => ExamSwitched?.Invoke(this, new(ExamIndex)));
+            SafeExecutionContext.Execute(OnExamSwitchedInvoker.WithArgs(ExamIndex));
             LastExamIndex = ExamIndex;
         }
     }
 
     private void OnCountdownUpdated(string content, ColorPair colors)
     {
-        SafeExecutionContext.Execute(_ => CountdownUpdated?.Invoke(this, new(content, colors.Fore, colors.Back)));
+        SafeExecutionContext.Execute(OnCountdownUpdatedInvoker.WithArgs(content, colors));
     }
 
     private void StopAutoSwitchTimer()

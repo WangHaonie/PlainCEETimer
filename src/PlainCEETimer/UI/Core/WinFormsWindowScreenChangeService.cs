@@ -22,6 +22,6 @@ public sealed class WinFormsWindowScreenChangeService : WindowScreenChangeServic
 
     protected override Screen GetScreen()
     {
-        return Screen.FromHandle((IntPtr)form.Invoke(() => form.Handle));
+        return Screen.FromHandle((IntPtr)form.Invoke((Func<AppForm, IntPtr>)(f => f.Handle), form));
     }
 }

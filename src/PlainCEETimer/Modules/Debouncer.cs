@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules;
 
 public class Debouncer : IDisposable
 {
-    private IDebounceState m_state;
+    private IActionInvoker m_invoker;
     private readonly long m_delay;
     private readonly Timer m_timer;
     private readonly object syncLock;
@@ -18,19 +18,13 @@ public class Debouncer : IDisposable
         syncLock = new();
     }
 
-    public void Debounce(IDebounceState state)
+    public void Debounce(IActionInvoker invoker)
     {
         lock (syncLock)
         {
-            m_state = state;
+            m_invoker = invoker;
             m_timer.Change(m_delay, Timeout.Infinite);
         }
-    }
-
-    public void Debounce<T>(IDebounceState<T> state, T arg)
-    {
-        state.Update(arg);
-        Debounce(state);
     }
 
     public void Dispose()
@@ -41,14 +35,14 @@ public class Debouncer : IDisposable
 
     private void TimerCallback(object state)
     {
-        IDebounceState s;
+        IActionInvoker invoker;
 
         lock (syncLock)
         {
-            s = m_state;
+            invoker = m_invoker;
         }
 
-        SafeExecutionContext.Execute(s.Invoke, state);
+        SafeExecutionContext.Execute(invoker.Invoke, state);
     }
 
     ~Debouncer()

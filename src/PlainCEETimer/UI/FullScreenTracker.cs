@@ -54,6 +54,8 @@ public static class FullScreenTracker
     private static readonly object syncLock = new();
     private static readonly Throttler throttler;
     private static readonly Action ProcessPendingWindowAction;
+    private static readonly ActionInvoker<IntPtr> OnFullScreenEnteredInvoker;
+    private static readonly ActionInvoker<IntPtr> OnFullScreenExitedInvoker;
 
     private const int FSTolerance = 2;
     private const long ThrottleInterval = 300;
@@ -67,6 +69,8 @@ public static class FullScreenTracker
     {
         throttler = new(ThrottleInterval);
         ProcessPendingWindowAction = ProcessPendingWindow;
+        OnFullScreenEnteredInvoker = new(hWnd => FullScreenEntered?.Invoke(null, new(hWnd)));
+        OnFullScreenExitedInvoker = new(hWnd => FullScreenExited?.Invoke(null, new(hWnd)));
     }
 
     public static void SetScreen(Screen screen)
@@ -271,11 +275,11 @@ public static class FullScreenTracker
 
     private static void OnFullScreenEntered(IntPtr hWnd)
     {
-        SafeExecutionContext.Execute(_ => FullScreenEntered?.Invoke(null, new(hWnd)));
+        SafeExecutionContext.Execute(OnFullScreenEnteredInvoker.WithArgs(hWnd));
     }
 
     private static void OnFullScreenExited(IntPtr hWnd)
     {
-        SafeExecutionContext.Execute(_ => FullScreenExited?.Invoke(null, new(hWnd)));
+        SafeExecutionContext.Execute(OnFullScreenExitedInvoker.WithArgs(hWnd));
     }
 }

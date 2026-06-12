@@ -14,8 +14,8 @@ public sealed class NavigationView : Control
     {
         private ThemeHelper themeHelper;
         private readonly bool canHandleStyle;
-        private readonly IDebounceState debounceState;
         private readonly Debouncer debouncer;
+        private readonly ActionInvoker ThemeHelperUpdateInvoker;
 
         internal NavigationBar()
         {
@@ -28,7 +28,7 @@ public sealed class NavigationView : Control
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             canHandleStyle = DpiHelper.enableDpiChangedMessageHandling;
             debouncer = new(300);
-            debounceState = new DebounceState(() => themeHelper?.Update());
+            ThemeHelperUpdateInvoker = new(() => themeHelper?.Update());
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -50,7 +50,7 @@ public sealed class NavigationView : Control
 
             if (canHandleStyle && m.Msg == WM.WINDOWPOSCHANGED)
             {
-                debouncer.Debounce(debounceState);
+                debouncer.Debounce(ThemeHelperUpdateInvoker);
             }
         }
 

@@ -22,6 +22,11 @@ public static class SafeExecutionContext
         }
     }
 
+    public static void Execute(IActionInvoker state)
+    {
+        Execute(state.Invoke, null);
+    }
+
     public static void Execute(SendOrPostCallback callback, object state = null)
     {
         if (m_context == null)

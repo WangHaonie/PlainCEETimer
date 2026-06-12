@@ -10,15 +10,15 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 {
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
-    private readonly IDebounceState<EventArgs> debounceState;
     private readonly ControlDebounceHelper debounceHelper;
+    private readonly ActionInvoker<EventArgs> OnValueChangedInvoker;
 
     public PlainNumericUpDown()
     {
         TextAlign = HorizontalAlignment.Right;
-        debounceHelper = new(this);
         debouncer = new();
-        debounceState = new DebounceState<EventArgs>(base.OnValueChanged);
+        debounceHelper = new(this);
+        OnValueChangedInvoker = new(base.OnValueChanged);
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -35,7 +35,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
             return;
         }
 
-        debouncer.Debounce(debounceState, e);
+        debouncer.Debounce(OnValueChangedInvoker.WithArgs(e));
     }
 
     protected override void Dispose(bool disposing)

@@ -107,13 +107,12 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     private ThemeHelper themeHelper;
     private readonly bool expandable;
     private readonly Debouncer debouncer;
-    private readonly IDebounceState<EventArgs> debounceState;
+    private readonly ActionInvoker<EventArgs> OnTextChangedInvoker;
     private readonly ControlDebounceHelper debounceHelper;
 
     public PlainTextBox(bool isExpandable)
     {
         MaxLength = ConfigValidator.MaxCustomTextLength;
-        debounceHelper = new(this);
 
         if (expandable = isExpandable)
         {
@@ -144,7 +143,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         }
 
         debouncer = new();
-        debounceState = new DebounceState<EventArgs>(base.OnTextChanged);
+        debounceHelper = new(this);
+        OnTextChangedInvoker = new(base.OnTextChanged);
     }
 
     public void Input(int totalLength, string text)
@@ -193,7 +193,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             return;
         }
 
-        debouncer.Debounce(debounceState, e);
+        debouncer.Debounce(OnTextChangedInvoker.WithArgs(e));
     }
 
     protected override void WndProc(ref Message m)
