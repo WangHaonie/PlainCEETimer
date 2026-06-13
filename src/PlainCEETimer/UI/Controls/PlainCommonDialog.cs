@@ -86,8 +86,14 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private static FnMessageBoxW fnMessageBox;
     private ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
+    private static readonly ActionInvoker ClearParkingWindowsInvoker;
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
+
+    static PlainCommonDialog()
+    {
+        ClearParkingWindowsInvoker = new(ClearParkingWindows_);
+    }
 
     public new bool? ShowDialog()
     {
@@ -238,22 +244,25 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private static int MessageBoxW(IntPtr hWnd, string lpText, string lpCaption, int uType)
     {
         var result = new IAppWindowWrapper(hWnd).MessageX.Popup(uType, lpText);
-        ClearParkingWindowChildControls();
+        ClearParkingWindows();
         return result;
     }
 
-    private static void ClearParkingWindowChildControls()
+    private static void ClearParkingWindows()
     {
-        var hWnd = Win32UI.FindWindowEx(new(NativeConstants.HWND_MESSAGE), IntPtr.Zero, null, "WindowsFormsParkingWindow");
+        SafeExecutionContext.Execute(ClearParkingWindowsInvoker);
+    }
 
-        if (hWnd != IntPtr.Zero)
+    private static void ClearParkingWindows_()
+    {
+        var pws = ApplicationInternals.ThreadContext.Instance.parkingWindows;
+
+        if (pws != null)
         {
-            Win32UI.EnumChildWindows(hWnd, (hwnd, _) =>
+            foreach (var pw in pws)
             {
-                if (Win32UI.GetClassName(hwnd).Contains("BUTTON", StringComparison.Ordinal))
-                    Win32UI.DestroyWindow(hwnd);
-                return true;
-            }, IntPtr.Zero);
+                pw.Dispose();
+            }
         }
     }
 
