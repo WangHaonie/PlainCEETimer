@@ -8,6 +8,26 @@ public static class SafeExecutionContext
     private static int m_tid;
     private static SynchronizationContext m_context;
 
+    public static void Send(IActionInvoker state)
+    {
+        Send(state.Invoke, null);
+    }
+
+    public static void Send(SendOrPostCallback callback, object state = null)
+    {
+        Execute(callback, state, false);
+    }
+
+    public static void Post(IActionInvoker state)
+    {
+        Post(state.Invoke, null);
+    }
+
+    public static void Post(SendOrPostCallback callback, object state = null)
+    {
+        Execute(callback, state);
+    }
+
     internal static void SetContext(SynchronizationContext context)
     {
         if (m_tid == default)
@@ -22,12 +42,7 @@ public static class SafeExecutionContext
         }
     }
 
-    public static void Execute(IActionInvoker state)
-    {
-        Execute(state.Invoke, null);
-    }
-
-    public static void Execute(SendOrPostCallback callback, object state = null)
+    private static void Execute(SendOrPostCallback callback, object state = null, bool post = true)
     {
         if (m_context == null)
         {
@@ -35,7 +50,14 @@ public static class SafeExecutionContext
         }
         else
         {
-            m_context.Post(callback, state);
+            if (post)
+            {
+                m_context.Post(callback, state);
+            }
+            else
+            {
+                m_context.Send(callback, state);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ public class Debouncer : IDisposable
             invoker = m_invoker;
         }
 
-        SafeExecutionContext.Execute(invoker.Invoke, state);
+        SafeExecutionContext.Post(invoker.Invoke, state);
     }
 
     ~Debouncer()

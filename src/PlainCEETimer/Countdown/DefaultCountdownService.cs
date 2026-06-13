@@ -329,14 +329,14 @@ public class DefaultCountdownService : ICountdownService
     {
         if (ExamIndex != LastExamIndex)
         {
-            SafeExecutionContext.Execute(OnExamSwitchedInvoker.WithArgs(ExamIndex));
+            SafeExecutionContext.Post(OnExamSwitchedInvoker.WithArgs(ExamIndex));
             LastExamIndex = ExamIndex;
         }
     }
 
     private void OnCountdownUpdated(string content, ColorPair colors)
     {
-        SafeExecutionContext.Execute(OnCountdownUpdatedInvoker.WithArgs(content, colors));
+        SafeExecutionContext.Post(OnCountdownUpdatedInvoker.WithArgs(content, colors));
     }
 
     private void StopAutoSwitchTimer()

@@ -15,7 +15,7 @@ public static class TaskExtensions
         => Task.Delay(delay).ContinueWith(after);
 
     public static Action<Task> SafeExecute(this Action action)
-        => _ => SafeExecutionContext.Execute(SafeExecute_, action);
+        => _ => SafeExecutionContext.Post(SafeExecute_, action);
 
     private static void SafeExecute_(object state)
         => ((Action)state)();

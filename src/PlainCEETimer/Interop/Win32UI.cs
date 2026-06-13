@@ -39,12 +39,6 @@ internal static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
 
-    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    public static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
-
-    [DllImport(App.User32Dll)]
-    public static extern bool DestroyWindow(IntPtr hWnd);
-
     [DllImport(App.User32Dll)]
     public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 

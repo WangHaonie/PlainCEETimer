@@ -250,7 +250,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private static void ClearParkingWindows()
     {
-        SafeExecutionContext.Execute(ClearParkingWindowsInvoker);
+        SafeExecutionContext.Send(ClearParkingWindowsInvoker);
     }
 
     private static void ClearParkingWindows_()
