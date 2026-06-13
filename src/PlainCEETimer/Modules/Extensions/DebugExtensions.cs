@@ -53,14 +53,14 @@ internal static class DebugExtensions
     }
 
     [Obsolete]
-    public static T Dump<T, TMember>(this T obj, Func<T, TMember> selector, [CallerArgumentExpression(nameof(selector))] string name = "")
+    public static T Dump<T, TMember>(this T obj, Func<T, TMember> selector, bool dumpExp = false, [CallerArgumentExpression(nameof(selector))] string name = "")
     {
-        Dump(selector(obj), name);
+        Dump(selector(obj), dumpExp, name);
         return obj;
     }
 
     [Obsolete]
-    public static T Dump<T>(this T obj, [CallerArgumentExpression(nameof(obj))] string name = "")
+    public static T Dump<T>(this T obj, bool dumpExp = false, [CallerArgumentExpression(nameof(obj))] string name = "")
     {
         var json = obj is string s ? s : JsonConvert.SerializeObject(obj);
 
@@ -69,7 +69,7 @@ internal static class DebugExtensions
             var tmp = ConsoleHelper.Instance
                 .Write("[").Write(DateTime.Now.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff")).Write("] ");
 
-            if (App.DebugShouldDumpExpression)
+            if (dumpExp)
             {
                 tmp.Write(name).Write(": ");
             }

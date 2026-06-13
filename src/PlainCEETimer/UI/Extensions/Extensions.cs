@@ -117,6 +117,9 @@ public static class Extensions
 
     public static void HideFocusIndicator(this Control control)
     {
-        Win32UI.SendMessage(control.Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
+        if (control.IsHandleCreated)
+        {
+            Win32UI.SendMessage(control.Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
+        }
     }
 }
