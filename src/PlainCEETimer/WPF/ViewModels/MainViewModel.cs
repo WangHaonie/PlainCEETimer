@@ -198,6 +198,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
                     if (FontService.ShowFontDialog(font) == true)
                     {
+                        font.Sync(!IsWpf);
                         ChangeCountdownFont(font);
                     }
                 }),

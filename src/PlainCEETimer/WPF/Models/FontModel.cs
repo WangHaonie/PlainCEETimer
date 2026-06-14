@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.WPF.Extensions;
 using Font = System.Drawing.Font;
+using WFFontStyle = System.Drawing.FontStyle;
 
 namespace PlainCEETimer.WPF.Models;
 
@@ -32,6 +35,40 @@ public class FontModel : IEquatable<FontModel>
     }
 
     public FontWeight Weight { get; init; }
+
+    public Font ToGdiFont()
+    {
+        var ff = FontFamily;
+
+        if (ff != null)
+        {
+            var name = ff.FirstFontFamilyName;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                try
+                {
+                    var result = new Font(name, (float)SizePt,
+                        Weight == FontWeights.Bold ? WFFontStyle.Bold : WFFontStyle.Regular,
+                        GraphicsUnit.Point);
+
+                    if (result.Name != name)
+                    {
+                        result.Destroy();
+                        return null;
+                    }
+
+                    return result;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
 
     public static FontModel FromGdiFont(Font font)
     {
@@ -68,7 +105,7 @@ public class FontModel : IEquatable<FontModel>
 
     public override string ToString()
     {
-        return FontFamily.Value.Source;
+        return FontFamily?.Value.Source;
     }
 
     public override int GetHashCode()
