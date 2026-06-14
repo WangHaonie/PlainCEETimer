@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Internals;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -16,10 +17,12 @@ public class PlainLabel : Label, IThemeAware
     private bool UseDark;
     private bool canResize;
     private ThemeHelper themeHelper;
+    private readonly LabelInternals internals;
 
     public PlainLabel()
     {
         AutoSize = true;
+        internals = LabelInternals.AttachTo(this);
 
         SetStyle(ControlStyles.UserPaint
             | ControlStyles.AllPaintingInWmPaint
@@ -49,7 +52,7 @@ public class PlainLabel : Label, IThemeAware
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
-        using var sf = CA2SF();
+        using var sf = internals.CreateStringFormat();
         using var b = new SolidBrush(GetForeColor());
         g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
         g.DrawString(Text, Font, b, GetTextRectangle(), sf);
@@ -83,55 +86,6 @@ public class PlainLabel : Label, IThemeAware
         }
     }
 
-    private StringFormat CA2SF()
-    {
-        var sf = new StringFormat();
-        var align = TextAlign;
-        sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-        sf.Trimming = StringTrimming.None;
-
-        sf.HotkeyPrefix = UseMnemonic
-            ? ShowKeyboardCues ? HotkeyPrefix.Show : HotkeyPrefix.Hide
-            : HotkeyPrefix.None;
-
-        sf.Alignment = align switch
-        {
-            ContentAlignment.TopCenter or ContentAlignment.MiddleCenter or ContentAlignment.BottomCenter
-                => StringAlignment.Center,
-            ContentAlignment.TopRight or ContentAlignment.MiddleRight or ContentAlignment.BottomRight
-                => StringAlignment.Far,
-            _
-                => StringAlignment.Near,
-        };
-
-        sf.LineAlignment = align switch
-        {
-            ContentAlignment.MiddleLeft or ContentAlignment.MiddleCenter or ContentAlignment.MiddleRight
-                => StringAlignment.Center,
-            ContentAlignment.BottomLeft or ContentAlignment.BottomCenter or ContentAlignment.BottomRight
-                => StringAlignment.Far,
-            _
-                => StringAlignment.Near,
-        };
-
-        if (RightToLeft == RightToLeft.Yes)
-        {
-            sf.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
-        }
-
-        if (AutoEllipsis)
-        {
-            sf.Trimming = StringTrimming.EllipsisCharacter;
-        }
-
-        if (!AutoSize && MaximumSize.Width <= 0)
-        {
-            sf.FormatFlags |= StringFormatFlags.NoWrap;
-        }
-
-        return sf;
-    }
-
     private void UpdateAutoSize()
     {
         if (!AutoSize || canResize || !IsHandleCreated)
@@ -155,7 +109,7 @@ public class PlainLabel : Label, IThemeAware
     private Size MeasureText(Size proposedSize)
     {
         using var g = CreateGraphics();
-        using var sf = CA2SF();
+        using var sf = internals.CreateStringFormat();
         var sz = g.MeasureString(Text, Font, new SizeF(GetLayoutWidth(proposedSize.Width), float.MaxValue), sf);
         return new Size((int)Math.Ceiling(sz.Width), (int)Math.Ceiling(sz.Height));
     }

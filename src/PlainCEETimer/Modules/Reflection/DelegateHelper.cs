@@ -7,6 +7,12 @@ namespace PlainCEETimer.Modules.Reflection;
 
 internal static class DelegateHelper
 {
+    public static TDelegate CreateDelegate<TDelegate>(object instance, Type type, BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance, [CallerMemberName] string methodName = "")
+        where TDelegate : Delegate
+    {
+        return (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, type.GetMethod(methodName, flags));
+    }
+
     public static TDelegate StaticCreateDelegate<TDelegate>(Type referenceType, Type classType, BindingFlags flags = BindingFlags.Public | BindingFlags.Static, [CallerMemberName] string methodName = null)
         where TDelegate : Delegate
     {
