@@ -10,7 +10,7 @@ public static class SafeExecutionContext
 
     public static void Send(IActionInvoker state)
     {
-        Send(state.Invoke, null);
+        Send(state.Invoke);
     }
 
     public static void Send(SendOrPostCallback callback, object state = null)
@@ -20,7 +20,7 @@ public static class SafeExecutionContext
 
     public static void Post(IActionInvoker state)
     {
-        Post(state.Invoke, null);
+        Post(state.Invoke);
     }
 
     public static void Post(SendOrPostCallback callback, object state = null)

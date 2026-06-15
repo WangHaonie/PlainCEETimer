@@ -1,4 +1,5 @@
 ﻿using System;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
@@ -66,7 +67,7 @@ public unsafe readonly ref struct NativeStringUni
         return !(a == b);
     }
 
-    private static void TryGetString(char* ptr, int len, out ReadOnlySpan<char> value)
+    private static void TryGetString(char* ptr, int length, out ReadOnlySpan<char> value)
     {
         value = default;
 
@@ -77,22 +78,31 @@ public unsafe readonly ref struct NativeStringUni
 
         try
         {
-            if (len < 0)
-            {
-                len = 0;
+            var first = ptr;
 
-                while (ptr[len] != char.MinValue)
-                {
-                    len++;
-                }
+            while (*ptr != char.MinValue)
+            {
+                ptr++;
             }
 
-            value = new ReadOnlySpan<char>(ptr, len);
+            var n = (int)(ptr - first);
+
+            if (n > 0)
+            {
+                if (length <= 0)
+                {
+                    length = n;
+                }
+                else
+                {
+                    length = length.Clamp(0, n);
+                }
+
+                value = new ReadOnlySpan<char>(first, length);
+            }
+
             return;
         }
-        catch
-        {
-            return;
-        }
+        catch { }
     }
 }

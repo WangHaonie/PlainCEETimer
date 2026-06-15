@@ -22,6 +22,7 @@ public class PlainLabel : Label, IThemeAware
     public PlainLabel()
     {
         AutoSize = true;
+        UseCompatibleTextRendering = false;
         internals = LabelInternals.AttachTo(this);
 
         SetStyle(ControlStyles.UserPaint

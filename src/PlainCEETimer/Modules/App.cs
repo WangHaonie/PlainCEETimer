@@ -228,6 +228,13 @@ internal static class App
         }
     }
 
+#if DEBUG
+    internal static void HandleFirstChanceException(Exception ex)
+    {
+        MessageBox.Show(ex.ToString(), nameof(AppDomain.CurrentDomain.FirstChanceException));
+    }
+#endif
+
     private static void PrintHelp()
     {
         ConsoleHelper.Instance
@@ -323,7 +330,6 @@ internal static class App
         HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
         InitDpiAware();
-        Application.SetCompatibleTextRenderingDefault(false);
         ThemeManager.Initialize();
         Application.EnableVisualStyles();
         DefaultValues.InitEssentials();
@@ -334,7 +340,7 @@ internal static class App
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #if DEBUG
-        AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleException(e.Exception);
+        AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleFirstChanceException(e.Exception);
 #endif
     }
 

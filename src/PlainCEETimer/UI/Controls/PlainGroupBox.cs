@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
@@ -27,25 +26,12 @@ public sealed class PlainGroupBox : GroupBox, IThemeAware
 
     protected override void OnPaint(PaintEventArgs e)
     {
-        if (UseDark && !ThemeManager.NewThemeAvailable)
+        if (!ThemeManager.NewThemeAvailable)
         {
-            //
-            // 深色模式下 GroupBox 应使用灰色边框 参考:
-            //
-            // How to create a Custom group box control with border color - Vb.net @mikecodz2821 - YouTube
-            // https://www.youtube.com/watch?v=_7NwVqfNU1g
-            //
-
-            var g = e.Graphics;
-            var client = ClientSize;
-            var text = Text;
-            var font = Font;
-            var textHeight = Font.Height / 2 + 2;
-            var rect = new Rectangle(0, textHeight, client.Width, client.Height - textHeight);
-            var textRect = Rectangle.Inflate(ClientRectangle, -4, 0);
-
-            ControlPaint.DrawBorder(g, rect, Colors.DarkBorder, ButtonBorderStyle.Solid);
-            TextRenderer.DrawText(g, text, font, textRect, ForeColor, BackColor, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.LeftAndRightPadding | TextFormatFlags.EndEllipsis);
+            ControlRenderer.DrawGroupBox(e.Graphics,
+                Text, Font, ClientRectangle,
+                UseDark, ForeColor, BackColor,
+                RightToLeft == RightToLeft.Yes, ShowKeyboardCues);
         }
         else
         {
@@ -68,12 +54,9 @@ public sealed class PlainGroupBox : GroupBox, IThemeAware
         {
             ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
         }
-        else
+        else if (!init)
         {
-            if (!init)
-            {
-                Invalidate();
-            }
+            Invalidate();
         }
     }
 }

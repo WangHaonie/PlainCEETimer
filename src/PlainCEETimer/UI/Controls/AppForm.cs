@@ -48,7 +48,7 @@ public abstract class AppForm : Form, IAppWindow
     private FormWindowState lastState;
     private Font AppFont;
     private ThemeHelper themeHelper;
-    private Action<DialogEndEventArgs> ehOnDialogEnd;
+    private Action<DialogEndEventArgs> DialogEnd;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
@@ -144,7 +144,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public void WhenEnd(Action<DialogEndEventArgs> onDialogEnd)
     {
-        ehOnDialogEnd = onDialogEnd;
+        DialogEnd = onDialogEnd;
     }
 
     public void ReActivate()
@@ -561,7 +561,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void OnDialogEnd()
     {
-        ehOnDialogEnd?.Invoke(new(DialogEndResult));
+        DialogEnd?.Invoke(new(DialogEndResult));
     }
 
     /// <summary>
