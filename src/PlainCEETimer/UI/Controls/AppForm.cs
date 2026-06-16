@@ -21,7 +21,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public Control FocusControl { get; set; }
 
-    internal bool IsLoaded => !IsLoading;
+    internal bool Loaded => !IsLoading;
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
@@ -177,6 +177,41 @@ public abstract class AppForm : Form, IAppWindow
         Opacity = hide ? 0D : 1D;
     }
 
+    protected sealed override void OnHandleCreated(EventArgs e)
+    {
+        UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
+        ApplyAppFont();
+        themeHelper ??= new(this);
+
+        if (SetRoundCorner)
+        {
+            if (SystemVersion.IsWindows11)
+            {
+                Win32UI.SetRoundCornerEx(Handle, SmallRoundCorner);
+            }
+            else
+            {
+                SetRoundRegion = true;
+            }
+        }
+
+        if (IsSizable && !setSysMenu)
+        {
+            SystemMenu.FromWindow(this)
+                .InsertItem(-2, "默认大小(&D)", (_, _) =>
+                {
+                    var def = MinimumSize;
+                    if (def != Size) Size = def;
+                    WindowState = FormWindowState.Normal;
+                })
+                .InsertSeparator(-2);
+
+            setSysMenu = true;
+        }
+
+        base.OnHandleCreated(e);
+    }
+
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();
@@ -194,6 +229,36 @@ public abstract class AppForm : Form, IAppWindow
         OnShown();
         FocusControl?.Focus();
         base.OnShown(e);
+    }
+
+    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    {
+        SuspendLayout();
+        var newDpi = e.DeviceDpiNew;
+        IsDpiChanged = newDpi != InitDpi;
+
+        if (newDpi < InitDpi)
+        {
+            MinimumSize = e.SuggestedRectangle.Size;
+        }
+
+        DpiHelperEx.GlobalUpdateDeviceDpi();
+        base.OnDpiChanged(e);
+        UpdateDpiScale(newDpi, e.DeviceDpiOld);
+        ApplyAppFont();
+        LegacySetRoundCorner();
+        RunLayout(IsHighDpi);
+        ResumeLayout();
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        if (OnEscClosing && e.KeyCode == Keys.Escape)
+        {
+            Close();
+        }
+
+        base.OnKeyDown(e);
     }
 
     protected sealed override void OnResizeBegin(EventArgs e)
@@ -256,68 +321,6 @@ public abstract class AppForm : Form, IAppWindow
         base.OnHandleDestroyed(e);
     }
 
-    protected sealed override void OnHandleCreated(EventArgs e)
-    {
-        UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
-        ApplyAppFont();
-        themeHelper ??= new(this);
-
-        if (SetRoundCorner)
-        {
-            if (SystemVersion.IsWindows11)
-            {
-                Win32UI.SetRoundCornerEx(Handle, SmallRoundCorner);
-            }
-            else
-            {
-                SetRoundRegion = true;
-            }
-        }
-
-        if (IsSizable && !setSysMenu)
-        {
-            SystemMenu.FromWindow(this)
-                .InsertItem(-2, "默认大小(&D)", (_, _) =>
-                {
-                    var def = MinimumSize;
-                    if (def != Size) Size = def;
-                    WindowState = FormWindowState.Normal;
-                })
-                .InsertSeparator(-2);
-
-            setSysMenu = true;
-        }
-
-        base.OnHandleCreated(e);
-    }
-
-    protected override void OnDpiChanged(DpiChangedEventArgs e)
-    {
-        var newDpi = e.DeviceDpiNew;
-        IsDpiChanged = newDpi != InitDpi;
-
-        if (newDpi < InitDpi)
-        {
-            MinimumSize = e.SuggestedRectangle.Size;
-        }
-
-        DpiHelperEx.GlobalUpdateDeviceDpi();
-        base.OnDpiChanged(e);
-        UpdateDpiScale(newDpi, e.DeviceDpiOld);
-        ApplyAppFont();
-        LegacySetRoundCorner();
-    }
-
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        if (OnEscClosing && e.KeyCode == Keys.Escape)
-        {
-            Close();
-        }
-
-        base.OnKeyDown(e);
-    }
-
     /// <summary>
     /// 在 <see cref="AppForm"/> 完成设定基本选项时触发，可用于让派生类修改有关窗体的属性，这将覆盖先前设定的选项。
     /// 该方法没有默认实现，可不调用 base.OnInitialize();
@@ -328,7 +331,7 @@ public abstract class AppForm : Form, IAppWindow
     }
 
     /// <summary>
-    /// 在 <see cref="AppForm"/> OnLoad 之前触发，可用于对控件进行最后的布局。
+    /// 对控件进行的布局。
     /// 该方法没有默认实现，可不调用 base.RunLayout(bool);
     /// </summary>
     protected virtual void RunLayout(bool isHighDpi)
@@ -555,8 +558,11 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void InitWindowSize(Control xLast, Control yLast, int xOffset = 0, int yOffset = 0)
     {
-        ClientSize = new(xLast.Right + ScaleToDpi(xOffset), yLast.Bottom + ScaleToDpi(yOffset));
-        MinimumSize = Size;
+        if (IsLoading)
+        {
+            ClientSize = new(xLast.Right + ScaleToDpi(xOffset), yLast.Bottom + ScaleToDpi(yOffset));
+            MinimumSize = Size;
+        }
     }
 
     protected void OnDialogEnd()

@@ -51,7 +51,7 @@ public class WindowManager
     internal static void TryExitUI()
     {
         System.Windows.Application.Current?.Shutdown();
-        150.AsDelay(_ => Application.ExitThread());
+        300.AsDelay(_ => Application.ExitThread());
         Application.Exit();
     }
 
