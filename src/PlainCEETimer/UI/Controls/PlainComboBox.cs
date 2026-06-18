@@ -11,15 +11,13 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
     private bool Calculated;
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
-    private readonly ControlDebounceHelper debounceHelper;
     private readonly ActionInvoker<EventArgs> OnSelectedIndexChangedInvoker;
 
     public PlainComboBox()
     {
         DropDownStyle = ComboBoxStyle.DropDownList;
         FlatStyle = FlatStyle.System;
-        debouncer = new();
-        debounceHelper = new(this);
+        debouncer = new(new ControlDebounceHelper(this));
         OnSelectedIndexChangedInvoker = new(base.OnSelectedIndexChanged);
     }
 
@@ -68,12 +66,6 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
 
     protected override void OnSelectedIndexChanged(EventArgs e)
     {
-        if (!debounceHelper.ShouldDebounce)
-        {
-            base.OnSelectedIndexChanged(e);
-            return;
-        }
-
         debouncer.Debounce(OnSelectedIndexChangedInvoker.WithArgs(e));
     }
 

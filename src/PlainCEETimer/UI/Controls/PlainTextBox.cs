@@ -108,7 +108,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
     private readonly bool expandable;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnTextChangedInvoker;
-    private readonly ControlDebounceHelper debounceHelper;
 
     public PlainTextBox(bool isExpandable)
     {
@@ -142,8 +141,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             ]);
         }
 
-        debouncer = new();
-        debounceHelper = new(this);
+        debouncer = new(new ControlDebounceHelper(this));
         OnTextChangedInvoker = new(base.OnTextChanged);
     }
 
@@ -187,12 +185,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     protected override void OnTextChanged(EventArgs e)
     {
-        if (!debounceHelper.ShouldDebounce)
-        {
-            base.OnTextChanged(e);
-            return;
-        }
-
         debouncer.Debounce(OnTextChangedInvoker.WithArgs(e));
     }
 

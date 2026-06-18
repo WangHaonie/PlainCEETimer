@@ -216,7 +216,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         SuspendLayout();
         RunLayout(IsHighDpi);
-        InitToUserSize();
+        ApplyLastSize();
         ResumeLayout(true);
         OnLoad();
         ApplyStartPositionNonModal();
@@ -305,7 +305,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnClosed(EventArgs e)
     {
-        SaveWindowParameters();
+        SaveWindowSize();
         ClearEvents();
         OnClosed();
         base.OnClosed(e);
@@ -623,7 +623,7 @@ public abstract class AppForm : Form, IAppWindow
         return font;
     }
 
-    private void InitToUserSize()
+    private void ApplyLastSize()
     {
         if (IsSizable)
         {
@@ -648,7 +648,7 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void SaveWindowParameters()
+    private void SaveWindowSize()
     {
         if (IsSizable)
         {

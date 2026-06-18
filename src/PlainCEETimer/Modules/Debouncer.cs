@@ -7,9 +7,11 @@ namespace PlainCEETimer.Modules;
 public class Debouncer : IDisposable
 {
     private IActionInvoker m_invoker;
+    private readonly IDebounceState m_state;
     private readonly long m_delay;
-    private readonly Timer m_timer;
+    private readonly bool m_condition;
     private readonly object syncLock;
+    private readonly Timer m_timer;
 
     public Debouncer(long delay = 500L)
     {
@@ -18,12 +20,25 @@ public class Debouncer : IDisposable
         syncLock = new();
     }
 
+    public Debouncer(IDebounceState state, long delay = 500L) : this(delay)
+    {
+        m_state = state;
+        m_condition = state != null;
+    }
+
     public void Debounce(IActionInvoker invoker)
     {
         lock (syncLock)
         {
-            m_invoker = invoker;
-            m_timer.Change(m_delay, Timeout.Infinite);
+            if (m_condition && !m_state.ShouldDebounce)
+            {
+                SafeExecutionContext.Post(invoker.Invoke);
+            }
+            else
+            {
+                m_invoker = invoker;
+                m_timer.Change(m_delay, Timeout.Infinite);
+            }
         }
     }
 
