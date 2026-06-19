@@ -17,7 +17,7 @@ public abstract class WindowScreenChangeService : IWindowScreenChangeService
 
     protected WindowScreenChangeService()
     {
-        debouncer = new();
+        debouncer = new(400);
         OnScreenChangedInvoker = new(OnScreenChanged);
     }
 
@@ -50,7 +50,7 @@ public abstract class WindowScreenChangeService : IWindowScreenChangeService
             return;
         }
 
-        if (currentScreen.Equals(lastScreen))
+        if (!currentScreen.Equals(lastScreen))
         {
             var oldScreen = lastScreen;
             lastScreen = currentScreen;
