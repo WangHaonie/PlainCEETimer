@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace PlainCEETimer.Modules.Http;
 
-public class NetworkedAction(Action action)
+public class NetworkedAction(IActionInvoker action)
 {
     private int m_flag;
 
     private static readonly string[] m_tests =
     [
-        "http://g.cn/generate_204",
         "http://connectivitycheck.gstatic.com/generate_204",
-        "http://connect.rom.miui.com/generate_204"
+        "http://connect.rom.miui.com/generate_204",
+        "http://g.cn/generate_204"
     ];
 
     public void Invoke()
@@ -32,7 +32,7 @@ public class NetworkedAction(Action action)
         {
             if (await CheckConnectivityAsync())
             {
-                action();
+                SafeExecutionContext.Post(action);
                 NetworkChange.NetworkAddressChanged -= NetworkChange_NetworkAddressChanged;
                 NetworkChange.NetworkAvailabilityChanged -= NetworkChange_NetworkAvailabilityChanged;
             }

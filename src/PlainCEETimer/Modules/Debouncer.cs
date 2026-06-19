@@ -7,11 +7,11 @@ namespace PlainCEETimer.Modules;
 public class Debouncer : IDisposable
 {
     private IActionInvoker m_invoker;
-    private readonly IDebounceState m_state;
     private readonly long m_delay;
     private readonly bool m_condition;
     private readonly object syncLock;
     private readonly Timer m_timer;
+    private readonly IDebounceState m_state;
 
     public Debouncer(long delay = 500L)
     {

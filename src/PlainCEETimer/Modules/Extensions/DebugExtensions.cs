@@ -67,7 +67,7 @@ internal static class DebugExtensions
         if (App.DebugShouldDumpToConsole)
         {
             var tmp = ConsoleHelper.Instance
-                .Write("[").Write(DateTime.Now.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff")).Write("] ");
+                .Write("[").Write(DateTime.Now.LogFormat()).Write("] ");
 
             if (dumpExp)
             {
@@ -106,6 +106,11 @@ internal static class DebugExtensions
                 ForEachAllEx(item, selector, move, action);
             }
         }
+    }
+
+    public static string LogFormat(this DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy/MM/dd ddd HH:mm:ss.ffffff");
     }
 }
 #endif

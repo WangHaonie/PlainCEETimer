@@ -8,9 +8,12 @@ public static class SafeExecutionContext
     private static int m_tid;
     private static SynchronizationContext m_context;
 
-    public static void Send(IActionInvoker state)
+    public static void Send(IActionInvoker invoker)
     {
-        Send(state.Invoke);
+        if (invoker != null)
+        {
+            Send(invoker.Invoke);
+        }
     }
 
     public static void Send(SendOrPostCallback callback, object state = null)
@@ -18,9 +21,12 @@ public static class SafeExecutionContext
         Execute(callback, state, false);
     }
 
-    public static void Post(IActionInvoker state)
+    public static void Post(IActionInvoker invoker)
     {
-        Post(state.Invoke);
+        if (invoker != null)
+        {
+            Post(invoker.Invoke);
+        }
     }
 
     public static void Post(SendOrPostCallback callback, object state = null)
@@ -44,6 +50,11 @@ public static class SafeExecutionContext
 
     private static void Execute(SendOrPostCallback callback, object state = null, bool post = true)
     {
+        if (callback == null)
+        {
+            return;
+        }
+
         if (m_context == null)
         {
             callback(state);

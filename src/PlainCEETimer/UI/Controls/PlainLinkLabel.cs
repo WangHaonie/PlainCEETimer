@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Extensions;
 
@@ -13,6 +14,13 @@ public class PlainLinkLabel : LinkLabel, IThemeAware
         AutoSize = true;
         LinkBehavior = LinkBehavior.HoverUnderline;
         themeHelper = new(this);
+    }
+
+    internal void AdjustLine(bool flag)
+    {
+        TextAlign = flag
+            ? DeviceDpi > 96F ? ContentAlignment.MiddleLeft : ContentAlignment.BottomLeft
+            : ContentAlignment.TopLeft;
     }
 
     protected override void OnLinkClicked(LinkLabelLinkClickedEventArgs e)

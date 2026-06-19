@@ -218,7 +218,7 @@ internal static class App
 #if DEBUG
         if (Debugger.IsAttached)
         {
-            return;
+            throw ex;
         }
 #endif
 
@@ -231,7 +231,9 @@ internal static class App
 #if DEBUG
     internal static void HandleFirstChanceException(Exception ex)
     {
-        MessageBox.Show(ex.ToString(), nameof(AppDomain.CurrentDomain.FirstChanceException));
+        ConsoleHelper.Instance
+            .Write(DateTime.Now.LogFormat()).Write(" [").Write(nameof(AppDomain.CurrentDomain.FirstChanceException)).Write("] ").WriteLine()
+            .WriteLine(ex.ToString());
     }
 #endif
 

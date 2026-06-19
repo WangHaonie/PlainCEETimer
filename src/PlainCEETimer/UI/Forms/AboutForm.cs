@@ -77,6 +77,7 @@ public sealed class AboutForm : AppForm
         ArrangeCommonButtonsR(null, ButtonOK, LabelLicense, -3);
         AlignControlXL(Links, LabelLicense, 2);
         CenterControlY(Links, ButtonOK, 2);
+        LinkVersion.AdjustLine(true);
         LabelLicense.BringToFront();
         InitWindowSize(ButtonOK, 6, 5);
     }

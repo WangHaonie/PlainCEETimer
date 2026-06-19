@@ -148,7 +148,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                 Startup.RefreshTaskState();
             }).Start();
 
-            new NetworkedAction(() => Updater.Instance.CheckForUpdate(false, Owner)).Invoke();
+            new NetworkedAction(new ActionInvoker(() => Updater.Instance.CheckForUpdate(false, Owner))).Invoke();
 
             SystemEvents.DisplaySettingsChanged += (_, _) =>
             {
