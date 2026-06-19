@@ -32,7 +32,7 @@ public class Debouncer : IDisposable
         {
             if (m_condition && !m_state.ShouldDebounce)
             {
-                SafeExecutionContext.Post(invoker.Invoke);
+                SafeExecutionContext.Send(invoker);
             }
             else
             {

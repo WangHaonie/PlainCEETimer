@@ -187,8 +187,6 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
     {
         if (parent != null)
         {
-            parent.ReActivate();
-
             if (parent.InvokeRequired)
             {
                 /*
@@ -202,6 +200,8 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
 
                 return (bool?)parent.Invoke(new Func<string, MessageLevel, MessageButtons, bool, bool?>(Popup), message, level, buttons, autoClose);
             }
+
+            parent.ReActivate();
         }
 
         return new MessageBox(parent, level, message, buttons, autoClose).ShowCore();

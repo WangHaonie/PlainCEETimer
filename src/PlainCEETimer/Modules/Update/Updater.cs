@@ -53,7 +53,10 @@ internal class Updater : IDisposable
             {
                 if (mx.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == true)
                 {
-                    owner.BeginInvoke(() => ShowDownloaderUI(response.Url, response.Size));
+                    owner.BeginInvoke(delegate (AppUpdateInfo info)
+                    {
+                        ShowDownloaderUI(info.Url, info.Size);
+                    }, response);
                 }
             }
             else if (popup)
@@ -91,7 +94,7 @@ internal class Updater : IDisposable
             }
         }
 
-        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 600 * 1024L);
+        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 700 * 1024L);
     }
 
     public void Dispose()

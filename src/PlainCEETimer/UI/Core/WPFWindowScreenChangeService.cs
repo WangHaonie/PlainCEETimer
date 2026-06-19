@@ -22,6 +22,9 @@ public sealed class WPFWindowScreenChangeService : WindowScreenChangeService
 
     protected override Screen GetScreen()
     {
-        return Screen.FromHandle((IntPtr)window.Invoke(() => window.Handle));
+        return Screen.FromHandle((IntPtr)window.Invoke(delegate (AppWindow w)
+        {
+            return w.Handle;
+        }, window));
     }
 }
