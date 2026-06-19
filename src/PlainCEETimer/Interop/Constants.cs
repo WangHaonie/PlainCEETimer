@@ -145,6 +145,7 @@ public static class WS
     public const int MINIMIZE = 0x20000000;
     public const int EX_COMPOSITED = 0x02000000;
     public const int EX_CLIENTEDGE = 0x00000200;
+    public const int EX_TOPMOST = 0x00000008;
     public const int BORDER = 0x00800000;
 }
 

@@ -55,3 +55,4 @@ EXPORTS
     RemoveWindowIcon @43 NONAME
     HookGetMessage @44 NONAME
     UnhookGetMessage @45 NONAME
+    CheckWindowExStyle @46 NONAME

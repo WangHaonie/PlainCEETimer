@@ -210,6 +210,9 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#37")]
     public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
 
+    [DllImport(App.NativesDll, EntryPoint = "#46")]
+    public static extern bool CheckWindowExStyle(IntPtr hWnd, long dwExStyle);
+
     [DllImport(App.NativesDll, EntryPoint = "#38")]
     public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
 

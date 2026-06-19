@@ -130,6 +130,16 @@ void RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
     SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
+BOOL CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
+{
+    if ((GetWindowLongPtr(hWnd, GWL_EXSTYLE) & dwExStyle) == dwExStyle)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
 {
     if (!InitializeIatHook(HOOK_MESSAGEBOXW_ARGS, IatHookMessageBoxW))

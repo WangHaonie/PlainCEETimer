@@ -136,7 +136,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public new bool? ShowDialog(IWin32Window owner)
     {
-        StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
+        InitModal(owner);
         var result = base.ShowDialog(owner).AsBoolean();
         Dispose();
         return result;
@@ -688,6 +688,16 @@ public abstract class AppForm : Form, IAppWindow
         }
 
         themeHelper.Destroy();
+    }
+
+    private void InitModal(IWin32Window owner)
+    {
+        StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
+
+        if (owner != null && !TopMost && Win32UI.CheckWindowExStyle(owner.Handle, WS.EX_TOPMOST))
+        {
+            TopMost = true;
+        }
     }
 
     private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)
