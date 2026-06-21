@@ -129,7 +129,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
 
     protected override void OnLoad()
     {
-        var a = App.AppConfig;
+        var a = App.Current.AppConfig;
         GlobalRules = a.GlobalRules;
 
         if (data != null)

@@ -108,7 +108,7 @@ internal static class HotKeyManager
 
     static HotKeyManager()
     {
-        App.AppExit += UnregisterAll;
+        App.Current.AppExit += UnregisterAll;
     }
 
     public static HotKey[] EnsureHotKeys(HotKey[] value)

@@ -13,17 +13,18 @@ internal static class Startup
 
     private static string TaskName;
     private static string StartupKey;
+    private static readonly App app = App.Current;
     private static readonly bool NotElevated = Win32User.NotImpersonal;
     private static readonly string UserName = Win32User.LogonUser;
     private static readonly string UserNameOnly = UserName.Split('\\')[1];
-    private static readonly string AppPath = $"\"{App.ExecutablePath}\"";
-    private static readonly string Id = new HashCode().Add(UserName).Add(App.ExecutablePath).Combine().ToString("X");
+    private static readonly string AppPath = $"\"{app.ExecutablePath}\"";
+    private static readonly string Id = new HashCode().Add(UserName).Add(app.ExecutablePath).Combine().ToString("X");
     private static readonly string IdOld = UserName.GetHashCode().ToString("X");
     private static readonly RegistryHelper Registry = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
 
     static Startup()
     {
-        App.AppExit += () =>
+        app.AppExit += () =>
         {
             EnableTask();
             Win32TaskScheduler.Release();

@@ -28,7 +28,7 @@ public sealed class AboutForm : AppForm
 
         this.AddControls(b =>
         [
-            ImageLogo = b.Image(App.AppIcon.ToBitmap()).With(x =>
+            ImageLogo = b.Image(App.Current.AppIcon.ToBitmap()).With(x =>
             {
                 x.Cursor = Cursors.Help;
 

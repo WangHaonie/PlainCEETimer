@@ -22,7 +22,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
 
     static HotKeyService()
     {
-        App.AppExit += () =>
+        App.Current.AppExit += () =>
         {
             hkmw.Destroy();
             hkmw = null;

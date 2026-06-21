@@ -96,6 +96,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private readonly IScreenService Screen;
     private readonly IUnifiedFontService FontService;
     private readonly IBorderColorService BorderColorService;
+    private readonly App app = App.Current;
 
     private const int PptsvcThreshold = 1;
 
@@ -254,7 +255,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             }),
 
             b.Separator(),
-            b.Item("安装目录(&D)", (_, _) => Process.Start(App.ExecutableDir))
+            b.Item("安装目录(&D)", (_, _) => Process.Start(app.ExecutableDir))
         ];
 
         Countdown.ExamSwitched += (_, e) =>
@@ -292,7 +293,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void LoadConfig()
     {
-        AppConfig = App.AppConfig;
+        AppConfig = app.AppConfig;
         General = AppConfig.General;
         Display = AppConfig.Display;
 
@@ -387,13 +388,13 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
                 b.Menu("关闭(&C)",
                 [
-                    b.Item("重启(&R)", (_, _) => App.Exit(true)),
-                    b.Item("退出(&Q)", (_, _) => App.Exit())
+                    b.Item("重启(&R)", (_, _) => app.Shutdown(true)),
+                    b.Item("退出(&Q)", (_, _) => app.Shutdown())
                 ])
             ]);
 
         TrayIcon.Text = App.AppName;
-        TrayIcon.Icon = App.AppIcon;
+        TrayIcon.Icon = app.AppIcon;
     }
 
     private void ApplyStyle()
@@ -439,7 +440,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         if (!ConfigValidator.ValidateNeeded && IsWpf != newIsWpf)
         {
             MessageX.Warn("需要重启程序以更换主窗口渲染方式！");
-            App.Exit(true);
+            app.Shutdown(true);
             return;
         }
 

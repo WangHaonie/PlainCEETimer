@@ -48,7 +48,7 @@ internal class Updater : IDisposable
             var content = response.Changelog;
             var sha = response.Commit;
 
-            if (latest > App.VersionObject
+            if (latest > App.Current.VersionObject
                 || (isPreview && sha != AppInfo.CommitSHA && date.ToTimestamp() > AppInfo.Timestamp))
             {
                 if (mx.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == true)

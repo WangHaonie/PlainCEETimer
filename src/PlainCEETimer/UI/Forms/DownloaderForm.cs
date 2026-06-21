@@ -144,7 +144,7 @@ public sealed class DownloaderForm(string url, long size) : AppForm
         2500.AsDelay(new Action(() =>
         {
             ProcessHelper.Run(DownloadPath, "/Skip");
-            App.Exit();
+            App.Current.Shutdown();
         }).SafeExecute());
     }
 

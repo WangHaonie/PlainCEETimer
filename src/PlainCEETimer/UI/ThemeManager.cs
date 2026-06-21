@@ -112,7 +112,7 @@ public static class ThemeManager
 
     internal static SystemTheme UpdateThemeForUserChoice()
     {
-        var option = App.AppConfig.Theme;
+        var option = App.Current.AppConfig.Theme;
         canFireThemeChanged = option == SystemTheme.Auto;
 
         if (!canFireThemeChanged)
@@ -166,7 +166,7 @@ public static class ThemeManager
         {
             msgfilter = new();
             AppMessageFilter.AddMessageFilter(msgfilter);
-            App.AppExit += StopDetectingThemeChanges;
+            App.Current.AppExit += StopDetectingThemeChanges;
         }
     }
 
@@ -176,7 +176,7 @@ public static class ThemeManager
         {
             AppMessageFilter.RemoveMessageFilter(msgfilter);
             msgfilter = null;
-            App.AppExit -= StopDetectingThemeChanges;
+            App.Current.AppExit -= StopDetectingThemeChanges;
         }
     }
 

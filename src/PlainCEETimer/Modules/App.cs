@@ -16,21 +16,23 @@ using PlainCEETimer.UI;
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
-internal static class App
+internal class App
 {
-    public static string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
+    public string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
 
-    public static string ExecutablePath => field ??= Application.ExecutablePath;
+    public string ExecutablePath => field ??= Application.ExecutablePath;
 
-    public static string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
+    public string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
 
-    public static Icon AppIcon => appIcon ??= HICON.FromFile(ExecutablePath).ToIcon();
+    public Icon AppIcon => appIcon ??= HICON.FromFile(ExecutablePath).ToIcon();
 
-    public static AppConfig AppConfig { get; private set; }
+    public AppConfig AppConfig { get; private set; }
 
-    public static Version VersionObject => field ??= Version.Parse(AppInfo.Version);
+    public Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
-    internal static event Action AppExit;
+    public static App Current => appInstance;
+
+    internal event Action AppExit;
 
     public const string AppName = "高考倒计时 by WangHaonie";
     public const string AppNameEng = "PlainCEETimer";
@@ -49,33 +51,110 @@ internal static class App
     public const string AppTitle = $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
     private const string UEFilePrefix = "UnhandledException_";
 
-    private static bool IsMainProcess;
-    private static bool IsExiting;
-    private static string AllArgs;
-    private static Icon appIcon;
-    private static Mutex MainMutex;
-    private static readonly object syncLock1 = new();
-    private static readonly object syncLock2 = new();
-    private static readonly string ExecutableName = Path.GetFileName(ExecutablePath);
-    private static readonly string PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
-    private static readonly string MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
-    private static readonly AppMessageBox MessageX = AppMessageBox.Instance;
+    private bool IsExiting;
+    private string AllArgs;
+    private Icon appIcon;
+    private Mutex MainMutex;
+    private static App appInstance;
+    private readonly bool IsMainProcess;
+    private readonly string ExecutableName;
+    private readonly string PipeName;
+    private readonly string MutexName;
+    private readonly object syncLock1;
+    private readonly object syncLock2;
 
 #if DEBUG
     internal static readonly bool DebugShouldDumpToConsole = true;
 #endif
 
-    [STAThread]
-    private static void Main(string[] args)
+    private App()
     {
+        syncLock1 = new();
+        syncLock2 = new();
         MainMutex = new(true, MutexName, out IsMainProcess);
-        AllArgs = string.Join(" ", args);
+        ExecutableName = Path.GetFileName(ExecutablePath);
+        PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
+        MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
+        appInstance = this;
+    }
 
-        if (IsMainProcess)
+    public void PopupAbortRetryIgnore(string message, string title)
+    {
+        var result = MessageBox.Show(message, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
+
+        if (result != DialogResult.Ignore)
         {
-            new Action(StartPipeServer).Start();
+            Shutdown(result == DialogResult.Retry, true);
         }
+    }
 
+    public string WriteException(Exception ex)
+    {
+        lock (syncLock1)
+        {
+            var now = DateTime.Now;
+            var content = $"—————————————————— {AppTitle} - {now.Format()} ——————————————————\n{ex}";
+            var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
+            var exFilePath = $"{ExecutableDir}{exFileName}";
+            File.AppendAllText(exFilePath, content);
+            return "安装目录：\n" + exFileName;
+        }
+    }
+
+    public void Shutdown(bool restart = false, bool useArgs = false)
+    {
+        lock (syncLock2)
+        {
+            if (IsExiting)
+            {
+                return;
+            }
+
+            IsExiting = true;
+            appIcon.Destroy();
+            AppExit?.Invoke();
+
+            if (MainMutex != null)
+            {
+                if (IsMainProcess)
+                {
+                    MainMutex.ReleaseMutex();
+                }
+
+                MainMutex.Destroy();
+                MainMutex = null;
+            }
+
+            if (restart)
+            {
+                ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+            }
+
+            appInstance = null;
+            750.AsDelay(_ => Win32.ExitProcess(0));
+            WindowManager.TryExitUI();
+            Environment.Exit(0);
+        }
+    }
+
+    internal void HandleException(Exception ex)
+    {
+#if DEBUG
+        if (Debugger.IsAttached)
+        {
+            throw ex;
+        }
+#endif
+
+        if (!IsExiting && ex != null)
+        {
+            PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
+        }
+    }
+
+    private void Run(string[] args)
+    {
+        AllArgs = string.Join(" ", args);
         var parsed = Arguments.Parse(args);
         var hasArgs = !string.IsNullOrWhiteSpace(parsed.FirstOption);
         var argc = hasArgs ? args.Length : 0;
@@ -85,11 +164,11 @@ internal static class App
         if (!StartProgram(argc, parsed))
         {
             StartPipeClient();
-            Exit();
+            Shutdown();
         }
     }
 
-    private static bool StartProgram(int argc, Arguments args)
+    private bool StartProgram(int argc, Arguments args)
     {
         if (IsMainProcess)
         {
@@ -137,7 +216,7 @@ internal static class App
             }
             else
             {
-                MessageX.Error($"为了您的使用体验，请不要更改程序文件名! \n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}\n\n程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。", autoClose: true);
+                AppMessageBox.Instance.Error($"为了您的使用体验，请不要更改程序文件名! \n\n当前文件名: {ExecutableName}\n原始文件名: {OriginalFileName}\n\n程序将在该消息框自动关闭后尝试自动恢复到原文件名，若自动恢复失败请手动改回。", autoClose: true);
                 RenameAndRestart();
             }
 
@@ -154,88 +233,124 @@ internal static class App
         return false;
     }
 
-    public static void PopupAbortRetryIgnore(string message, string title)
+    private void DeleteExtraFiles()
     {
-        var result = MessageBox.Show(message, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
-
-        if (result != DialogResult.Ignore)
+        try
         {
-            Exit(result == DialogResult.Retry, true);
+            foreach (var uefile in Directory.GetFiles(ExecutableDir, $"{UEFilePrefix}*.txt"))
+            {
+                File.Delete(uefile);
+            }
+        }
+        catch { }
+    }
+
+    private void StartPipeServer()
+    {
+        try
+        {
+            while (true)
+            {
+                using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
+                server.WaitForConnection();
+                WindowManager.Current.OnActivateRequested();
+            }
+        }
+        catch { }
+    }
+
+    private bool TryRunRedirector(Arguments args)
+    {
+        if (args.FirstOption == "run")
+        {
+            var exe = args.Get("exe");
+            var arg_ = args.Get("args");
+
+            if (exe != null && arg_ != null)
+            {
+                return StartPipeClient(args.GetFirst(), exe, arg_);
+            }
+        }
+
+        return false;
+    }
+
+    private bool StartPipeClient(string pipe = null, string path = null, string args = null)
+    {
+        var isRedirector = !string.IsNullOrEmpty(pipe);
+
+        try
+        {
+            using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
+            client.Connect(isRedirector ? 500 : 1000);
+            using var w = new StreamWriter(client);
+
+            if (isRedirector)
+            {
+                ProcessHelper.RunRedirector(w, path, args);
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 
-    public static string WriteException(Exception ex)
+    private void InternalInit()
     {
-        lock (syncLock1)
-        {
-            var now = DateTime.Now;
-            var content = $"—————————————————— {AppTitle} - {now.Format()} ——————————————————\n{ex}";
-            var exFileName = $"{UEFilePrefix}{now.ToString(DateTimeFormat)}.txt";
-            var exFilePath = $"{ExecutableDir}{exFileName}";
-            File.AppendAllText(exFilePath, content);
-            return "安装目录：\n" + exFileName;
-        }
-    }
-
-    public static void Exit(bool restart = false, bool useArgs = false)
-    {
-        lock (syncLock2)
-        {
-            if (IsExiting)
-            {
-                return;
-            }
-
-            IsExiting = true;
-            appIcon.Destroy();
-            AppExit?.Invoke();
-            AppExit = null;
-
-            if (MainMutex != null)
-            {
-                if (IsMainProcess)
-                {
-                    MainMutex.ReleaseMutex();
-                }
-
-                MainMutex.Destroy();
-                MainMutex = null;
-            }
-
-            if (restart)
-            {
-                ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
-            }
-
-            750.AsDelay(_ => Win32.ExitProcess(0));
-            WindowManager.TryExitUI();
-            Environment.Exit(0);
-        }
-    }
-
-    internal static void HandleException(Exception ex)
-    {
+        AppMessageFilter.Initialize();
+        HideDotNetAppConfig();
+        AppConfig = ConfigValidator.ReadConfig();
+        InitDpiAware();
+        ThemeManager.Initialize();
+        Application.EnableVisualStyles();
+        DefaultValues.InitEssentials();
+        ConfigValidator.Validate();
+        SystemEvents.SessionEnding += (_, _) => Shutdown();
+        Application.ApplicationExit += (_, _) => Shutdown();
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.ThreadException += (_, e) => HandleException(e.Exception);
+        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #if DEBUG
-        if (Debugger.IsAttached)
-        {
-            throw ex;
-        }
+        AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleFirstChanceException(e.Exception);
 #endif
 
-        if (!IsExiting && ex != null)
+        if (IsMainProcess)
         {
-            PopupAbortRetryIgnore($"程序出现意外错误，非常抱歉给您带来不便！\n\n个别常见错误可能收录于用户手册中，请到仓库首页访问并查询可能的解决办法。若无则建议您及时将相关内容提交到 Issues 以帮助我们定位并解决问题。\n\n错误信息：\n{ex.Message}\n\n详细错误信息已保存至{WriteException(ex)}\n\n现在您可以点击【中止】关闭应用程序，【重试】重启应用程序，【忽略】忽略本次错误。", "意外错误 - 高考倒计时");
+            new Action(StartPipeServer).Start();
         }
     }
 
-#if DEBUG
-    internal static void HandleFirstChanceException(Exception ex)
+    private void HideDotNetAppConfig()
     {
-        ConsoleHelper.Instance
-            .Write(DateTime.Now.LogFormat()).Write(" [").Write(nameof(AppDomain.CurrentDomain.FirstChanceException)).Write("] ").WriteLine()
-            .WriteLine(ex.ToString());
+        try
+        {
+            var file = $"{ExecutableDir}{AppNameEng}.exe.config";
+
+            if (File.Exists(file))
+            {
+                File.SetAttributes(file, File.GetAttributes(file) | FileAttributes.Hidden | FileAttributes.System);
+            }
+        }
+        catch { }
     }
-#endif
+
+    private void RenameAndRestart()
+    {
+        ProcessHelper.Run("cmd", new Arguments(ArgumentType.System)
+            .Add("/c")
+            .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
+            .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
+            .ToArgs());
+    }
+
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        new App().Run(args);
+    }
 
     private static void PrintHelp()
     {
@@ -261,117 +376,23 @@ internal static class App
                 .WriteLine("\t优化当前程序集, 提升运行速度.");
     }
 
-    private static void DeleteExtraFiles()
-    {
-        try
-        {
-            foreach (var uefile in Directory.GetFiles(ExecutableDir, $"{UEFilePrefix}*.txt"))
-            {
-                File.Delete(uefile);
-            }
-        }
-        catch { }
-    }
-
-    private static void StartPipeServer()
-    {
-        try
-        {
-            while (true)
-            {
-                using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
-                server.WaitForConnection();
-                WindowManager.Current.OnActivateRequested();
-            }
-        }
-        catch { }
-    }
-
-    private static bool TryRunRedirector(Arguments args)
-    {
-        if (args.FirstOption == "run")
-        {
-            var exe = args.Get("exe");
-            var arg_ = args.Get("args");
-
-            if (exe != null && arg_ != null)
-            {
-                return StartPipeClient(args.GetFirst(), exe, arg_);
-            }
-        }
-
-        return false;
-    }
-
-    private static bool StartPipeClient(string pipe = null, string path = null, string args = null)
-    {
-        var isRedirector = !string.IsNullOrEmpty(pipe);
-
-        try
-        {
-            using var client = new NamedPipeClientStream(".", isRedirector ? pipe : PipeName, PipeDirection.Out);
-            client.Connect(isRedirector ? 500 : 1000);
-            using var w = new StreamWriter(client);
-
-            if (isRedirector)
-            {
-                ProcessHelper.RunRedirector(w, path, args);
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private static void InternalInit()
-    {
-        AppMessageFilter.Initialize();
-        HideDotNetAppConfig();
-        AppConfig = ConfigValidator.ReadConfig();
-        InitDpiAware();
-        ThemeManager.Initialize();
-        Application.EnableVisualStyles();
-        DefaultValues.InitEssentials();
-        ConfigValidator.Validate();
-        SystemEvents.SessionEnding += (_, _) => Exit();
-        Application.ApplicationExit += (_, _) => Exit();
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-        Application.ThreadException += (_, e) => HandleException(e.Exception);
-        AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
-#if DEBUG
-        AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleFirstChanceException(e.Exception);
-#endif
-    }
-
-    private static void HideDotNetAppConfig()
-    {
-        try
-        {
-            var file = $"{ExecutableDir}{AppNameEng}.exe.config";
-
-            if (File.Exists(file))
-            {
-                File.SetAttributes(file, File.GetAttributes(file) | FileAttributes.Hidden | FileAttributes.System);
-            }
-        }
-        catch { }
-    }
-
-    private static void RenameAndRestart()
-    {
-        ProcessHelper.Run("cmd", new Arguments(ArgumentType.System)
-            .Add("/c")
-            .Add("ren").Add(ExecutablePath).Add(OriginalFileName)
-            .Add("&&").Add("start").Add("").Add(ExecutableDir + OriginalFileName).Add(AllArgs)
-            .ToArgs());
-    }
-
     private static void InitDpiAware()
     {
         DpiHelperEx.GlobalUpdateDeviceDpi();
         DpiHelperEx.Initialize();
+    }
+
+#if DEBUG
+    internal static void HandleFirstChanceException(Exception ex)
+    {
+        ConsoleHelper.Instance
+            .Write(DateTime.Now.LogFormat()).Write(" [").Write(nameof(AppDomain.CurrentDomain.FirstChanceException)).Write("] ").WriteLine()
+            .WriteLine(ex.ToString());
+    }
+#endif
+
+    ~App()
+    {
+        AppExit = null;
     }
 }

@@ -16,7 +16,7 @@ public sealed class PlainColorDialog(AppForm owner, Color existing) : PlainCommo
     private readonly COLORREF color = existing;
 
     private readonly COLORREF[] customColors = DefaultValues.ColorDialogColors
-        .Copy().PopulateWith(App.AppConfig.CustomColors);
+        .Copy().PopulateWith(App.Current.AppConfig.CustomColors);
 
     protected unsafe override bool StartDialog(IntPtr hWndOwner)
     {
@@ -29,7 +29,7 @@ public sealed class PlainColorDialog(AppForm owner, Color existing) : PlainCommo
             {
                 if (!customColors.AsSpan().SequenceEqual(new ReadOnlySpan<COLORREF>(lpColor, COLORREF.LPCUSTCOLORS_Length)))
                 {
-                    App.AppConfig.CustomColors =
+                    App.Current.AppConfig.CustomColors =
                     [..
                         customColors
                         .ArrayWhere(c => c != COLORREF.EmptyValue)

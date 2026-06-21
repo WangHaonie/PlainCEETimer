@@ -71,7 +71,7 @@ public static class DefaultValues
 
     public static void InitEssentials()
     {
-        var config = App.AppConfig;
+        var config = App.Current.AppConfig;
 
         if (config == null)
         {

@@ -36,7 +36,7 @@ public sealed class GlobalRulesConverter : JsonConverter<CountdownRule[]>
     {
         if (value == null
             || (writer.Path != nameof(AppConfig.GlobalRules)
-                && value.ArrayEquals(App.AppConfig.GlobalRules, CountdownRule.FullComparer)))
+                && value.ArrayEquals(App.Current.AppConfig.GlobalRules, CountdownRule.FullComparer)))
         {
             writer.WriteNull();
         }

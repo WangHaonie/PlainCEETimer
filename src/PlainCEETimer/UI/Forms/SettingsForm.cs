@@ -116,7 +116,7 @@ public sealed class SettingsForm : AppForm
     {
         Text = "设置 - 高考倒计时";
         AllowTheme = ThemeManager.IsDarkModeSupported;
-        AppConfig = App.AppConfig;
+        AppConfig = App.Current.AppConfig;
         General = AppConfig.General;
         Display = AppConfig.Display;
 
@@ -441,7 +441,7 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelRestart = b.Label("用于更改了屏幕缩放之后，可以点击此按钮来重启程序以确保 UI 正常显示。"),
 
-                        ButtonRestart = b.Button(null, true, (_, _) => App.Exit(!AllowExit)).With(x => x.MouseDown += (_, e) =>
+                        ButtonRestart = b.Button(null, true, (_, _) => App.Current.Shutdown(!AllowExit)).With(x => x.MouseDown += (_, e) =>
                         {
                             if (e.Button == MouseButtons.Right)
                             {
@@ -452,8 +452,8 @@ public sealed class SettingsForm : AppForm
                             {
                                 if (MessageX.Info("是否重启到命令行模式？", MessageButtons.YesNo) == true)
                                 {
-                                    ProcessHelper.Run("cmd", $"/k title PlainCEETimer & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.ExecutableDir}", true);
-                                    App.Exit();
+                                    ProcessHelper.Run("cmd", $"/k title PlainCEETimer & echo PlainCEETimer 命令行选项 & echo. & echo 请在此处输入命令行 & echo 或者输入 PlainCEETimer /h 获取帮助 && cd /d {App.Current.ExecutableDir}", true);
+                                    App.Current.Shutdown();
                                 }
                             }
                         }),
@@ -656,7 +656,7 @@ public sealed class SettingsForm : AppForm
                             if (ConfigValidator.ImportConfig(file))
                             {
                                 MessageX.Info("配置文件导入成功，需要立即重启！");
-                                App.Exit(true);
+                                App.Current.Shutdown(true);
                             }
                             else
                             {

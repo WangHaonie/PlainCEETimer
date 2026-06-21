@@ -57,6 +57,7 @@ internal static class ConfigValidator
     private static volatile bool canSaveConfig;
     private static volatile bool isSuppressing;
     private static readonly object _lock = new();
+    private static readonly App app = App.Current;
 
     private static readonly JsonSerializerSettings Settings = new()
     {
@@ -70,17 +71,17 @@ internal static class ConfigValidator
 
     static ConfigValidator()
     {
-        App.AppExit += SaveConfig;
+        app.AppExit += SaveConfig;
     }
 
     public static void Validate()
     {
-        var rules = App.AppConfig.GlobalRules;
+        var rules = app.AppConfig.GlobalRules;
 
         if (rules == null || rules.Length < 3)
         {
             validateNeeded = false;
-            App.AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
+            app.AppConfig.GlobalRules = DefaultValues.GlobalDefaultRules.Copy().PopulateWith(rules);
             validateNeeded = true;
         }
     }
@@ -96,7 +97,7 @@ internal static class ConfigValidator
         {
             if (!isSuppressing && canSaveConfig)
             {
-                WriteToConfig(App.ConfigFilePath, App.AppConfig);
+                WriteToConfig(app.ConfigFilePath, app.AppConfig);
                 canSaveConfig = false;
             }
         }
@@ -104,9 +105,9 @@ internal static class ConfigValidator
 
     public static AppConfig ReadConfig()
     {
-        if (!TryReadConfig(App.ConfigFilePath, out var config, out var ex) && ex != null)
+        if (!TryReadConfig(app.ConfigFilePath, out var config, out var ex) && ex != null)
         {
-            App.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{App.WriteException(ex)}\n\n" + ex.Message, App.AppName);
+            app.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{app.WriteException(ex)}\n\n" + ex.Message, App.AppName);
         }
 
         return config ?? AppConfig.Empty;
@@ -222,7 +223,7 @@ internal static class ConfigValidator
         {
             isSuppressing = true;
             BackupConfig();
-            WriteToConfig(App.ConfigFilePath, config);
+            WriteToConfig(app.ConfigFilePath, config);
             return true;
         }
 
@@ -236,7 +237,7 @@ internal static class ConfigValidator
             File.Delete(path);
         }
 
-        WriteToConfig(path, App.AppConfig);
+        WriteToConfig(path, app.AppConfig);
     }
 
     private static void WriteToConfig(string path, AppConfig config)
@@ -252,7 +253,7 @@ internal static class ConfigValidator
     {
         try
         {
-            var cfg = App.ConfigFilePath;
+            var cfg = app.ConfigFilePath;
 
             if (File.Exists(cfg))
             {
@@ -263,7 +264,7 @@ internal static class ConfigValidator
                     File.Delete(cfg);
                 }
 
-                WriteToConfig(bak, App.AppConfig);
+                WriteToConfig(bak, app.AppConfig);
             }
         }
         catch { }

@@ -627,7 +627,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         if (IsSizable)
         {
-            var dic = App.AppConfig.Sizes;
+            var dic = App.Current.AppConfig.Sizes;
 
             if (dic != null && dic.TryGetValue(Name, out var szobj))
             {
@@ -660,7 +660,7 @@ public abstract class AppForm : Form, IAppWindow
                 || (!ismax && sz != lastSize && !isdef)
                 || (!ismax && isdef && lastSize != Size.Empty))
             {
-                var dic = App.AppConfig.Sizes ??= [];
+                var dic = App.Current.AppConfig.Sizes ??= [];
                 dic[Name] = new(ismax, ismax ? lastSize : isdef ? Size.Empty : UnscaleToDpi(ClientSize));
                 ConfigValidator.DemandConfig();
             }

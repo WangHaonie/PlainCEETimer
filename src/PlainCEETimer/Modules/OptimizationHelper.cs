@@ -14,6 +14,7 @@ public class OptimizationHelper(bool isAuto)
     private readonly string NGenPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\Microsoft.NET\Framework64\";
     private readonly string NetFxVersion = "v4*";
     private readonly AppMessageBox MessageX = AppMessageBox.Instance;
+    private readonly App app = App.Current;
 
     public void Optimize()
     {
@@ -100,11 +101,11 @@ public class OptimizationHelper(bool isAuto)
 
                 if (r != null)
                 {
-                    App.Exit(r == true);
+                    app.Shutdown(r == true);
                 }
             };
         }
 
-        ConsoleWindow.Run(null, path, new Arguments(ArgumentType.System).Add("install").Add(App.ExecutablePath).Add("/verbose").ToArgs(), complete, param);
+        ConsoleWindow.Run(null, path, new Arguments(ArgumentType.System).Add("install").Add(app.ExecutablePath).Add("/verbose").ToArgs(), complete, param);
     }
 }

@@ -41,7 +41,7 @@ public class AppMessageFilter : IDisposable
         if (!isRunning)
         {
             Win32UI.HookGetMessage(GetMsgHook, m_tid);
-            App.AppExit += Dispose;
+            App.Current.AppExit += Dispose;
             isRunning = true;
         }
     }

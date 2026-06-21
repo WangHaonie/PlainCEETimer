@@ -30,7 +30,7 @@ public sealed class WPFApp : Application, IThemeAware
     {
         themeHelper.Destroy();
         base.OnExit(e);
-        App.Exit();
+        App.Current.Shutdown();
     }
 
     private void InitializeComponent()
@@ -39,7 +39,7 @@ public sealed class WPFApp : Application, IThemeAware
         {
             if (!e.Handled)
             {
-                App.HandleException(e.Exception);
+                App.Current.HandleException(e.Exception);
                 e.Handled = true;
             }
         };

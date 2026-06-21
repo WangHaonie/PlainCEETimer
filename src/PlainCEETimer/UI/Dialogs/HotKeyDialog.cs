@@ -19,7 +19,7 @@ public sealed class HotKeyDialog : AppDialog
     private PlainHotkeyControl HotkeyCtrl2;
     private PlainHotkeyControl HotkeyCtrl3;
     private PlainHotkeyControl[] HotKeyCtrls;
-    private readonly AppConfig AppConfig = App.AppConfig;
+    private readonly AppConfig AppConfig = App.Current.AppConfig;
 
     protected override void OnInitializing()
     {
