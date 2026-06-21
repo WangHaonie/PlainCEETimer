@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
-using PlainCEETimer.Modules.Linq;
 using Timer = System.Threading.Timer;
 
 namespace PlainCEETimer.UI;
@@ -187,7 +187,17 @@ public static class FullScreenTracker
 
     private static bool ShouldIgnoreWindow(IntPtr hWnd)
     {
-        return m_banlist.ArrayContains(Win32UI.GetClassName(hWnd));
+        var cn = Win32UI.GetClassName(hWnd).AsStringUni();
+
+        foreach (var wnd in m_banlist)
+        {
+            if (cn == wnd)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsOnTargetScreen(IntPtr hWnd)

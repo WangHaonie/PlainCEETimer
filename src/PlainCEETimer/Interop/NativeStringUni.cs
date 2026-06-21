@@ -47,6 +47,11 @@ public unsafe readonly ref struct NativeStringUni
         return m_value.GetHashCode();
     }
 
+    public override string ToString()
+    {
+        return m_value.ToString();
+    }
+
     public static bool operator ==(NativeStringUni a, string b)
     {
         return a.Equals(b);
@@ -71,21 +76,14 @@ public unsafe readonly ref struct NativeStringUni
     {
         value = default;
 
-        if (ptr == null || (nuint)ptr < 0x10000)
+        if (ptr == null)
         {
             return;
         }
 
         try
         {
-            var first = ptr;
-
-            while (*ptr != char.MinValue)
-            {
-                ptr++;
-            }
-
-            var n = (int)(ptr - first);
+            var n = Win32.lstrlenW(ptr);
 
             if (n > 0)
             {
@@ -98,10 +96,8 @@ public unsafe readonly ref struct NativeStringUni
                     length = length.Clamp(0, n);
                 }
 
-                value = new ReadOnlySpan<char>(first, length);
+                value = new ReadOnlySpan<char>(ptr, length);
             }
-
-            return;
         }
         catch { }
     }

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
@@ -182,7 +183,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
-        var cn = Win32UI.GetClassName(hWnd);
+        var cn = Win32UI.GetClassName(hWnd).AsStringUni();
 
         if (cn == "ComboBox")
         {

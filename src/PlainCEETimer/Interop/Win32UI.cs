@@ -199,7 +199,7 @@ internal static class Win32UI
     public static extern string GetWindowText(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#34", CharSet = CharSet.Unicode)]
-    public static extern string GetClassName(IntPtr hWnd);
+    public static extern IntPtr GetClassName(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#35")]
     public static extern void ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
