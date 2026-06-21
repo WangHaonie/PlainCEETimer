@@ -36,6 +36,29 @@ public sealed class ConsoleWindow : AppDialog
     private PlainToolTip ToolTipCloseInfo;
     private Process ExternalProc;
     private readonly Timer ConsoleTimer = new();
+    private readonly ActionInvoker OnCompleteInvoker;
+    private readonly ActionInvoker<string> SafeWriteInvoker;
+
+    public ConsoleWindow()
+    {
+        OnCompleteInvoker = new(() =>
+        {
+            IsRunning = false;
+            ConsoleTimer.Stop();
+            LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
+            tbp.SetState(ProgressStyle.Normal);
+            tbp.SetValue(1, 1);
+            Complete?.Invoke(this);
+            ButtonB.Enabled = true;
+
+            if ((Param & ConsoleParam.AutoClose) == ConsoleParam.AutoClose)
+            {
+                Close();
+            }
+        });
+
+        SafeWriteInvoker = new(Write);
+    }
 
     protected override void OnInitializing()
     {
@@ -114,7 +137,7 @@ public sealed class ConsoleWindow : AppDialog
                 }
                 finally
                 {
-                    Final();
+                    OnComplete();
                 }
             }).Start();
         }
@@ -151,7 +174,7 @@ public sealed class ConsoleWindow : AppDialog
                 }
                 finally
                 {
-                    Final();
+                    OnComplete();
                 }
             }).Start();
         }
@@ -192,7 +215,7 @@ public sealed class ConsoleWindow : AppDialog
             cancel = false;
             Win32.KillProcessTree(ExternalProc.Id);
             ToolTipCloseInfo.Hide(this);
-            Final();
+            OnComplete();
         }
         else
         {
@@ -225,7 +248,7 @@ public sealed class ConsoleWindow : AppDialog
         {
             if (ExternalProc != null && ExternalProc.HasExited)
             {
-                Final();
+                OnComplete();
             }
         }
         catch { }
@@ -233,25 +256,13 @@ public sealed class ConsoleWindow : AppDialog
 
     private void SafeWrite(string line)
     {
-        SafeExecute(() => Write(line));
+        SafeExecutionContext.Send(SafeWriteInvoker.WithArgs(line));
     }
 
     private void WaitForExit(Process process)
     {
         ExternalProc = process;
         process.WaitForExit();
-    }
-
-    private void SafeExecute(Action action)
-    {
-        if (InvokeRequired)
-        {
-            BeginInvoke(action);
-        }
-        else
-        {
-            action();
-        }
     }
 
     private void Write(string line)
@@ -263,25 +274,11 @@ public sealed class ConsoleWindow : AppDialog
         }
     }
 
-    private void Final()
+    private void OnComplete()
     {
         if (Interlocked.Exchange(ref finalCount, 1) == 0)
         {
-            SafeExecute(() =>
-            {
-                IsRunning = false;
-                ConsoleTimer.Stop();
-                LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
-                tbp.SetState(ProgressStyle.Normal);
-                tbp.SetValue(1, 1);
-                Complete?.Invoke(this);
-                ButtonB.Enabled = true;
-
-                if ((Param & ConsoleParam.AutoClose) == ConsoleParam.AutoClose)
-                {
-                    Close();
-                }
-            });
+            SafeExecutionContext.Send(OnCompleteInvoker);
         }
     }
 }

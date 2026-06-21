@@ -22,6 +22,7 @@ https://support.cyberfox.com/settings/360048585292-UAC-Levels-Windows-User-Accou
 public static class UacHelper
 {
     public static bool IsAdmin { get; private set; }
+
     public static bool IsUacDisabled => Level <= UacNotifyLevel.Disabled;
 
     private static readonly UacNotifyLevel Level;

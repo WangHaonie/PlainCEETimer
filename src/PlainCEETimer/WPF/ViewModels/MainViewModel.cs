@@ -78,6 +78,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private HotKeyDialog DialogHotKey;
     private MenuItemBuilder ItemBuilder;
     private ContextMenu ContextMenuMain;
+    private FullScreenTracker fullScreenTracker;
     private Exam[] Exams;
     private BorderColorObject BorderColorObj;
     private Rect ScreenRect;
@@ -481,24 +482,37 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private void RunFullScreenTracker()
     {
         var mode = Display.FSTMode;
-        FullScreenTracker.TrackingMode = mode;
+        var shouldTrack = mode != FullScreenTrackingMode.None && General.TopMost;
 
-        if (!IsTracking && General.TopMost && mode != FullScreenTrackingMode.None)
+        if (!shouldTrack)
         {
-            ScreenChangeService.ScreenChanged += ScreenChangeService_ScreenChanged;
-            FullScreenTracker.FullScreenEntered += FullScreenTracker_FullScreenEntered;
-            FullScreenTracker.FullScreenExited += FullScreenTracker_FullScreenExited;
-            FullScreenTracker.SetScreen(ScreenChangeService.Current);
-            FullScreenTracker.Start();
-            IsTracking = true;
+            if (IsTracking)
+            {
+                ScreenChangeService.ScreenChanged -= ScreenChangeService_ScreenChanged;
+                fullScreenTracker.FullScreenEntered -= FullScreenTracker_FullScreenEntered;
+                fullScreenTracker.FullScreenExited -= FullScreenTracker_FullScreenExited;
+                fullScreenTracker.Stop();
+                IsTracking = false;
+            }
+
+            return;
         }
-        else if (mode == FullScreenTrackingMode.None || !General.TopMost)
+
+        fullScreenTracker ??= FullScreenTracker.Instance;
+        fullScreenTracker.TrackingMode = mode;
+
+        if (IsTracking)
         {
-            ScreenChangeService.ScreenChanged -= ScreenChangeService_ScreenChanged;
-            FullScreenTracker.FullScreenEntered -= FullScreenTracker_FullScreenEntered;
-            FullScreenTracker.FullScreenExited -= FullScreenTracker_FullScreenExited;
-            IsTracking = false;
+            fullScreenTracker.SetScreen(ScreenChangeService.Current);
+            return;
         }
+
+        ScreenChangeService.ScreenChanged += ScreenChangeService_ScreenChanged;
+        fullScreenTracker.FullScreenEntered += FullScreenTracker_FullScreenEntered;
+        fullScreenTracker.FullScreenExited += FullScreenTracker_FullScreenExited;
+        fullScreenTracker.SetScreen(ScreenChangeService.Current);
+        fullScreenTracker.Start();
+        IsTracking = true;
     }
 
     private void VerifyLocation()
@@ -666,7 +680,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void ScreenChangeService_ScreenChanged(object sender, ScreenChangedEventArgs e)
     {
-        FullScreenTracker.SetScreen(e.ScreenNew);
+        fullScreenTracker.SetScreen(e.ScreenNew);
     }
 
     private void FullScreenTracker_FullScreenEntered(object sender, FullScreenWindowEventArgs e)
