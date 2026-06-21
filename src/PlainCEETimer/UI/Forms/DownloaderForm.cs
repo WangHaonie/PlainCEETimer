@@ -81,6 +81,7 @@ public sealed class DownloaderForm(string url, long size) : AppForm
         AlignControlXR(LinkBrowser, ProgressBarMain, 3);
         ArrangeCommonButtonsR(ButtonRetry, ButtonCancel, ProgressBarMain, 1, 6);
         InitWindowSize(ButtonCancel, 4, 6);
+        ProgressBarMain.BringToFront();
     }
 
     protected override void OnShown()
