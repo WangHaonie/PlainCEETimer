@@ -37,7 +37,7 @@ public class FullScreenTracker : IDisposable
         }
     }
 
-    public static FullScreenTracker Instance => field ??= new();
+    public static FullScreenTracker Instance { get; } = new();
 
     public event EventHandler<FullScreenWindowEventArgs> FullScreenEntered;
     public event EventHandler<FullScreenWindowEventArgs> FullScreenExited;

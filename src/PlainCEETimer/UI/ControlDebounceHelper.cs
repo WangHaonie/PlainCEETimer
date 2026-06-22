@@ -9,5 +9,21 @@ public class ControlDebounceHelper(Control control) : IDebounceState
 {
     private AppForm parentForm;
 
-    public bool ShouldDebounce => (parentForm ??= control.FindParentForm())?.Loaded == true;
+    public bool ShouldDebounce
+    {
+        get
+        {
+            if (parentForm == null || parentForm.IsDisposed)
+            {
+                parentForm = control.FindParentForm();
+            }
+
+            if (parentForm != null)
+            {
+                return parentForm.Loaded;
+            }
+
+            return false;
+        }
+    }
 }

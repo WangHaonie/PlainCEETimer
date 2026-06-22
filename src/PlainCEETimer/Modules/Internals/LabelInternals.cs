@@ -1,8 +1,7 @@
 ﻿using System.Drawing;
-using System.Windows.Forms;
 using PlainCEETimer.Modules.Reflection;
 
-namespace PlainCEETimer.Modules.Internals;
+namespace System.Windows.Forms;
 
 internal class LabelInternals
 {

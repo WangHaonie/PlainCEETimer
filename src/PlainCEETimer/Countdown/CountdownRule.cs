@@ -13,13 +13,13 @@ namespace PlainCEETimer.Countdown;
 [JsonConverter(typeof(CountdownRuleConverter))]
 public class CountdownRule : IListViewData<CountdownRule>
 {
-    internal static readonly CountdownRuleFullEqualityComparer FullComparer = new();
+    internal static readonly IEqualityComparer<CountdownRule> FullComparer = new CountdownRuleFullEqualityComparer();
 
-    internal static readonly CountdownRulePhaseOnlyEqualityComparer PhaseOnlyComparer = new();
+    internal static readonly IEqualityComparer<CountdownRule> PhaseOnlyComparer = new CountdownRulePhaseOnlyEqualityComparer();
 
-    internal static readonly CountdownRuleNormalEqualityComparer NormalComparer = new();
+    internal static readonly IEqualityComparer<CountdownRule> NormalComparer = new CountdownRuleNormalEqualityComparer();
 
-    internal class CountdownRuleFullEqualityComparer : IEqualityComparer<CountdownRule>
+    private class CountdownRuleFullEqualityComparer : IEqualityComparer<CountdownRule>
     {
         public bool Equals(CountdownRule x, CountdownRule y)
         {
@@ -55,7 +55,7 @@ public class CountdownRule : IListViewData<CountdownRule>
         }
     }
 
-    internal class CountdownRulePhaseOnlyEqualityComparer : IEqualityComparer<CountdownRule>
+    private class CountdownRulePhaseOnlyEqualityComparer : IEqualityComparer<CountdownRule>
     {
         public bool Equals(CountdownRule x, CountdownRule y)
         {
@@ -83,7 +83,7 @@ public class CountdownRule : IListViewData<CountdownRule>
         }
     }
 
-    internal class CountdownRuleNormalEqualityComparer : IEqualityComparer<CountdownRule>
+    private class CountdownRuleNormalEqualityComparer : IEqualityComparer<CountdownRule>
     {
         public bool Equals(CountdownRule x, CountdownRule y)
         {

@@ -71,10 +71,10 @@ internal class App
     {
         syncLock1 = new();
         syncLock2 = new();
-        MainMutex = new(true, MutexName, out IsMainProcess);
         ExecutableName = Path.GetFileName(ExecutablePath);
         PipeName = $"{AppNameEngOld}_[34c14833-98da-49f7-a2ab-369e88e73b95]";
         MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
+        MainMutex = new(true, MutexName, out IsMainProcess);
         appInstance = this;
     }
 

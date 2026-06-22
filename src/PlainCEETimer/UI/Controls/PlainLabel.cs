@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Fody;
-using PlainCEETimer.Modules.Internals;
 
 namespace PlainCEETimer.UI.Controls;
 

@@ -24,13 +24,12 @@ public static class ApplicationInternals
 
         private static readonly FieldInfo m_fiCurrentThreadContext;
         private static readonly FieldInfo m_fiParkingWindows;
-        private static readonly Type m_type;
 
         static ThreadContext()
         {
-            m_type = ApplicationInternals.m_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic);
-            m_fiCurrentThreadContext = m_type.GetField(nameof(currentThreadContext), BindingFlags.NonPublic | BindingFlags.Static);
-            m_fiParkingWindows = m_type.GetField(nameof(parkingWindows), BindingFlags.NonPublic | BindingFlags.Instance);
+            var type = m_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic);
+            m_fiCurrentThreadContext = type.GetField(nameof(currentThreadContext), BindingFlags.NonPublic | BindingFlags.Static);
+            m_fiParkingWindows = type.GetField(nameof(parkingWindows), BindingFlags.NonPublic | BindingFlags.Instance);
             Instance = new();
         }
     }

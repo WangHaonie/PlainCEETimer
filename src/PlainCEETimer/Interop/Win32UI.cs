@@ -257,7 +257,9 @@ internal static class Win32UI
     {
         if (UnmanagedWindows != null)
         {
-            for (int i = 0; i < UnmanagedWindows.Count; i++)
+            var count = UnmanagedWindows.Count;
+
+            for (int i = 0; i < count; i++)
             {
                 var hWnd = UnmanagedWindows[i];
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
@@ -7,6 +8,9 @@ public class ConsoleHelper
 {
     public static ConsoleHelper Instance { get; } = new();
 
+    private readonly object syncLock = new();
+    private static readonly TextWriter m_out = Console.Out;
+
     static ConsoleHelper()
     {
         Win32.AllocConsole();
@@ -14,8 +18,11 @@ public class ConsoleHelper
 
     public ConsoleHelper Write(string s)
     {
-        Console.Write(s);
-        return this;
+        lock (syncLock)
+        {
+            m_out.Write(s);
+            return this;
+        }
     }
 
     public ConsoleHelper Write(string s, ConsoleColor color)
