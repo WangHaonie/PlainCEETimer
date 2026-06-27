@@ -22,4 +22,15 @@
     <SolidColorBrush x:Key="BackComboBoxDropDown" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="BackComboBoxItemHot" Color="#E5F3FF"/>
     <SolidColorBrush x:Key="BackComboBoxItemSelected" Color="#0078D7"/>
+
+    <SolidColorBrush x:Key="ForeContextMenu" Color="#000000"/>
+    <SolidColorBrush x:Key="ForeMenuItemDisabled" Color="#9F9F9F"/>
+    <SolidColorBrush x:Key="BackContextMenu" Color="#F9F9F9"/>
+    <SolidColorBrush x:Key="BackMenuItemHot" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="BackMenuSeparator" Color="#D7D7D7"/>
+    <SolidColorBrush x:Key="BorderContextMenu" Color="#E5E5E5"/>
+
+    <SolidColorBrush x:Key="BackScrollBar" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="BackScrollBarThumb" Color="#858585"/>
+    <SolidColorBrush x:Key="BackScrollBarGlyph" Color="#858585"/>
 </ResourceDictionary>
