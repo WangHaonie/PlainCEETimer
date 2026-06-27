@@ -13,12 +13,12 @@ internal static class DpiHelper
         get
         {
             EnsureAccess(ID_isInitialized);
-            return (bool)m_fiIsInitialized.GetValue(null);
+            return (bool)s_fiIsInitialized.GetValue(null);
         }
         set
         {
             EnsureAccess(ID_isInitialized);
-            m_fiIsInitialized.SetValue(null, value);
+            s_fiIsInitialized.SetValue(null, value);
         }
     }
 
@@ -27,12 +27,12 @@ internal static class DpiHelper
         get
         {
             EnsureAccess(ID_deviceDpi);
-            return (double)m_fiDeviceDpi.GetValue(null);
+            return (double)s_fiDeviceDpi.GetValue(null);
         }
         set
         {
             EnsureAccess(ID_deviceDpi);
-            m_fiDeviceDpi.SetValue(null, value);
+            s_fiDeviceDpi.SetValue(null, value);
         }
     }
 
@@ -41,12 +41,12 @@ internal static class DpiHelper
         get
         {
             EnsureAccess(ID_logicalToDeviceUnitsScalingFactor);
-            return (double)m_filogicalToDeviceUnitsScalingFactor.GetValue(null);
+            return (double)s_filogicalToDeviceUnitsScalingFactor.GetValue(null);
         }
         set
         {
             EnsureAccess(ID_logicalToDeviceUnitsScalingFactor);
-            m_filogicalToDeviceUnitsScalingFactor.SetValue(null, value);
+            s_filogicalToDeviceUnitsScalingFactor.SetValue(null, value);
         }
     }
 
@@ -55,12 +55,12 @@ internal static class DpiHelper
         get
         {
             EnsureAccess(ID_enableHighDpi);
-            return (bool)m_fiEnableHighDpi.GetValue(null);
+            return (bool)s_fiEnableHighDpi.GetValue(null);
         }
         set
         {
             EnsureAccess(ID_enableHighDpi);
-            m_fiEnableHighDpi.SetValue(null, value);
+            s_fiEnableHighDpi.SetValue(null, value);
         }
     }
 
@@ -69,12 +69,12 @@ internal static class DpiHelper
         get
         {
             EnsureAccess(ID_enableDpiChangedMessageHandling);
-            return (bool)m_fiEnableDpiChangedMessageHandling.GetValue(null);
+            return (bool)s_fiEnableDpiChangedMessageHandling.GetValue(null);
         }
         set
         {
             EnsureAccess(ID_enableDpiChangedMessageHandling);
-            m_fiEnableDpiChangedMessageHandling.SetValue(null, value);
+            s_fiEnableDpiChangedMessageHandling.SetValue(null, value);
         }
     }
 
@@ -84,35 +84,31 @@ internal static class DpiHelper
     private const int ID_enableDpiChangedMessageHandling = 0x00F0;
     private const int ID_logicalToDeviceUnitsScalingFactor = 0x0002;
 
-    private static FieldInfo m_fiIsInitialized;
-    private static FieldInfo m_fiDeviceDpi;
-    private static FieldInfo m_fiEnableHighDpi;
-    private static FieldInfo m_fiEnableDpiChangedMessageHandling;
-    private static FieldInfo m_filogicalToDeviceUnitsScalingFactor;
-    private static DpiHelper_LogicalToDeviceUnits1 m_fnLogicalToDeviceUnits1;
-    private static DpiHelper_LogicalToDeviceUnits2 m_fnLogicalToDeviceUnits2;
-    private static readonly Type m_ref;
-    private static readonly Type m_current;
-    private static readonly Type m_type;
-    private static readonly BindingFlags m_bfAttr = BindingFlags.Static | BindingFlags.NonPublic;
+    private static FieldInfo s_fiIsInitialized;
+    private static FieldInfo s_fiDeviceDpi;
+    private static FieldInfo s_fiEnableHighDpi;
+    private static FieldInfo s_fiEnableDpiChangedMessageHandling;
+    private static FieldInfo s_filogicalToDeviceUnitsScalingFactor;
+    private static DpiHelper_LogicalToDeviceUnits1 s_fnLogicalToDeviceUnits1;
+    private static DpiHelper_LogicalToDeviceUnits2 s_fnLogicalToDeviceUnits2;
+    private static readonly Type s_type;
+    private static readonly BindingFlags s_bfAttr = BindingFlags.Static | BindingFlags.NonPublic;
 
     static DpiHelper()
     {
-        m_ref = typeof(Control);
-        m_current = typeof(DpiHelper);
-        m_type = m_ref.Assembly.GetType(m_current.FullName);
+        s_type = typeof(Control).Assembly.GetType(typeof(DpiHelper).FullName);
     }
 
     public static int LogicalToDeviceUnits(int value, int devicePixels = 0)
     {
-        m_fnLogicalToDeviceUnits1 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits1>(m_ref, m_current, typeof(int));
-        return m_fnLogicalToDeviceUnits1(value, devicePixels);
+        s_fnLogicalToDeviceUnits1 ??= DelegateHelper.StaticCreateDelegateCore<DpiHelper_LogicalToDeviceUnits1>(s_type, typeof(int));
+        return s_fnLogicalToDeviceUnits1(value, devicePixels);
     }
 
     public static WFSize LogicalToDeviceUnits(WFSize logicalSize, int deviceDpi = 0)
     {
-        m_fnLogicalToDeviceUnits2 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits2>(m_ref, m_current, typeof(WFSize));
-        return m_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
+        s_fnLogicalToDeviceUnits2 ??= DelegateHelper.StaticCreateDelegateCore<DpiHelper_LogicalToDeviceUnits2>(s_type, typeof(WFSize));
+        return s_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
     }
 
     private static void EnsureAccess(int id)
@@ -120,19 +116,19 @@ internal static class DpiHelper
         switch (id)
         {
             case ID_isInitialized:
-                m_fiIsInitialized ??= m_type.GetField(nameof(isInitialized), m_bfAttr);
+                s_fiIsInitialized ??= s_type.GetField(nameof(isInitialized), s_bfAttr);
                 break;
             case ID_deviceDpi:
-                m_fiDeviceDpi ??= m_type.GetField(nameof(deviceDpi), m_bfAttr);
+                s_fiDeviceDpi ??= s_type.GetField(nameof(deviceDpi), s_bfAttr);
                 break;
             case ID_enableHighDpi:
-                m_fiEnableHighDpi ??= m_type.GetField(nameof(enableHighDpi), m_bfAttr);
+                s_fiEnableHighDpi ??= s_type.GetField(nameof(enableHighDpi), s_bfAttr);
                 break;
             case ID_enableDpiChangedMessageHandling:
-                m_fiEnableDpiChangedMessageHandling ??= m_type.GetField(nameof(enableDpiChangedMessageHandling), m_bfAttr);
+                s_fiEnableDpiChangedMessageHandling ??= s_type.GetField(nameof(enableDpiChangedMessageHandling), s_bfAttr);
                 break;
             case ID_logicalToDeviceUnitsScalingFactor:
-                m_filogicalToDeviceUnitsScalingFactor ??= m_type.GetField(nameof(logicalToDeviceUnitsScalingFactor), m_bfAttr);
+                s_filogicalToDeviceUnitsScalingFactor ??= s_type.GetField(nameof(logicalToDeviceUnitsScalingFactor), s_bfAttr);
                 break;
         }
     }

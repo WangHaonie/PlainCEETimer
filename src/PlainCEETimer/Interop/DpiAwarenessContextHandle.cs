@@ -8,7 +8,7 @@ public struct DpiAwarenessContextHandle(IntPtr ptr)
     {
         get
         {
-            foreach (var context in m_values)
+            foreach (var context in s_values)
             {
                 if (Win32UI.AreDpiAwarenessContextsEqual(context, ptr))
                 {
@@ -20,7 +20,7 @@ public struct DpiAwarenessContextHandle(IntPtr ptr)
         }
     }
 
-    private static readonly DpiAwarenessContext[] m_values =
+    private static readonly DpiAwarenessContext[] s_values =
     [
         DpiAwarenessContext.Unaware,
         DpiAwarenessContext.System,

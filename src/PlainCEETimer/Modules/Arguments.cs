@@ -16,7 +16,8 @@ public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<
     private string m_first;
     private StringBuilder m_args;
     private readonly Dictionary<string, string> m_argsdic = [];
-    private static readonly char[] m_idchars = ['/', '-'];
+    private static readonly char[] s_idchars = ['/', '-'];
+
     private const char Quote = '"';
     private const char Backslash = '\\';
 
@@ -186,7 +187,7 @@ public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<
     {
         if (!string.IsNullOrWhiteSpace(arg))
         {
-            foreach (var c in m_idchars)
+            foreach (var c in s_idchars)
             {
                 if (arg.StartsWith(c))
                 {

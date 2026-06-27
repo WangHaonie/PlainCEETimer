@@ -64,8 +64,8 @@ public class AppWindow : Window, IAppWindow
     {
         get
         {
-            m_fiShowingAsDialog ??= typeof(Window).GetField("_showingAsDialog", BindingFlags.Instance | BindingFlags.NonPublic);
-            return (bool)m_fiShowingAsDialog.GetValue(this);
+            s_fiShowingAsDialog ??= typeof(Window).GetField("_showingAsDialog", BindingFlags.Instance | BindingFlags.NonPublic);
+            return (bool)s_fiShowingAsDialog.GetValue(this);
         }
     }
 
@@ -75,6 +75,7 @@ public class AppWindow : Window, IAppWindow
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
+    private bool IsClosed;
     private bool IsClosing;
     private double DpiScaleX;
     private double DpiScaleY;
@@ -82,7 +83,7 @@ public class AppWindow : Window, IAppWindow
     private ThemeHelper themeHelper;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
-    private FieldInfo m_fiShowingAsDialog;
+    private static FieldInfo s_fiShowingAsDialog;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
     private readonly bool NativeRoundCorner;
@@ -136,6 +137,11 @@ public class AppWindow : Window, IAppWindow
 
     public void ReActivate()
     {
+        if (IsClosed)
+        {
+            return;
+        }
+
         var tmp = Topmost;
         WindowState = WindowState.Normal;
         Topmost = true;
@@ -211,6 +217,7 @@ public class AppWindow : Window, IAppWindow
         OnClosed();
         ClearEvents();
         base.OnClosed(e);
+        IsClosed = true;
     }
 
     protected virtual bool OnClosing()

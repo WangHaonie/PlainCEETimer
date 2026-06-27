@@ -5,8 +5,8 @@ namespace PlainCEETimer.Modules;
 
 public static class SafeExecutionContext
 {
-    private static int m_tid;
-    private static SynchronizationContext m_context;
+    private static int s_tid;
+    private static SynchronizationContext s_context;
 
     public static void Send(IActionInvoker invoker)
     {
@@ -36,14 +36,14 @@ public static class SafeExecutionContext
 
     internal static void SetContext(SynchronizationContext context)
     {
-        if (m_tid == default)
+        if (s_tid == default)
         {
             var tid = Environment.CurrentManagedThreadId;
 
-            if (tid != m_tid)
+            if (tid != s_tid)
             {
-                m_tid = tid;
-                m_context = context;
+                s_tid = tid;
+                s_context = context;
             }
         }
     }
@@ -55,7 +55,7 @@ public static class SafeExecutionContext
             return;
         }
 
-        if (m_context == null)
+        if (s_context == null)
         {
             callback(state);
         }
@@ -63,11 +63,11 @@ public static class SafeExecutionContext
         {
             if (post)
             {
-                m_context.Post(callback, state);
+                s_context.Post(callback, state);
             }
             else
             {
-                m_context.Send(callback, state);
+                s_context.Send(callback, state);
             }
         }
     }

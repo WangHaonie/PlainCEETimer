@@ -4,11 +4,11 @@ namespace System;
 
 internal static class StringInternals
 {
-    private static String_FastAllocateString m_fnFastAllocateString;
+    private static String_FastAllocateString s_fnFastAllocateString;
 
     internal static string FastAllocateString(int length)
     {
-        m_fnFastAllocateString ??= DelegateHelper.StaticCreateDelegate<String_FastAllocateString>(typeof(string));
-        return m_fnFastAllocateString(length);
+        s_fnFastAllocateString ??= DelegateHelper.StaticCreateDelegate<String_FastAllocateString>(typeof(string));
+        return s_fnFastAllocateString(length);
     }
 }

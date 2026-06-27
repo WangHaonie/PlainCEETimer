@@ -11,7 +11,7 @@ public class NetworkedAction(IActionInvoker action)
 {
     private int m_flag;
 
-    private static readonly string[] m_tests =
+    private static readonly string[] s_urls =
     [
         "http://connectivitycheck.gstatic.com/generate_204",
         "http://connect.rom.miui.com/generate_204",
@@ -64,7 +64,7 @@ public class NetworkedAction(IActionInvoker action)
             return false;
         }
 
-        foreach (var url in m_tests)
+        foreach (var url in s_urls)
         {
             try
             {

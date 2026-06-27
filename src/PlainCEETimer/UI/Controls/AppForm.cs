@@ -149,6 +149,11 @@ public abstract class AppForm : Form, IAppWindow
 
     public void ReActivate()
     {
+        if (!IsLoading && (IsDisposed || !IsHandleCreated))
+        {
+            return;
+        }
+
         var tmp = TopMost;
         WindowState = FormWindowState.Normal;
         TopMost = true;

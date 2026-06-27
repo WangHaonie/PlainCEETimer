@@ -12,32 +12,32 @@ internal static class ApplicationInternals
 
         internal static object currentThreadContext
         {
-            get => m_fiCurrentThreadContext.GetValue(null);
-            set => m_fiCurrentThreadContext.SetValue(null, value);
+            get => s_fiCurrentThreadContext.GetValue(null);
+            set => s_fiCurrentThreadContext.SetValue(null, value);
         }
 
         internal IEnumerable<Control> parkingWindows
         {
-            get => (IEnumerable<Control>)m_fiParkingWindows.GetValue(currentThreadContext);
-            set => m_fiParkingWindows.SetValue(currentThreadContext, value);
+            get => (IEnumerable<Control>)s_fiParkingWindows.GetValue(currentThreadContext);
+            set => s_fiParkingWindows.SetValue(currentThreadContext, value);
         }
 
-        private static readonly FieldInfo m_fiCurrentThreadContext;
-        private static readonly FieldInfo m_fiParkingWindows;
+        private static readonly FieldInfo s_fiCurrentThreadContext;
+        private static readonly FieldInfo s_fiParkingWindows;
 
         static ThreadContext()
         {
-            var type = m_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic);
-            m_fiCurrentThreadContext = type.GetField(nameof(currentThreadContext), BindingFlags.NonPublic | BindingFlags.Static);
-            m_fiParkingWindows = type.GetField(nameof(parkingWindows), BindingFlags.NonPublic | BindingFlags.Instance);
+            var type = s_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic);
+            s_fiCurrentThreadContext = type.GetField(nameof(currentThreadContext), BindingFlags.NonPublic | BindingFlags.Static);
+            s_fiParkingWindows = type.GetField(nameof(parkingWindows), BindingFlags.NonPublic | BindingFlags.Instance);
             Instance = new();
         }
     }
 
-    private static readonly Type m_type;
+    private static readonly Type s_type;
 
     static ApplicationInternals()
     {
-        m_type = typeof(Application);
+        s_type = typeof(Application);
     }
 }
