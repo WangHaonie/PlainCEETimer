@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms;
 
-public static class ApplicationInternals
+internal static class ApplicationInternals
 {
     internal sealed class ThreadContext
     {

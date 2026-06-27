@@ -13,24 +13,39 @@ internal static class DelegateHelper
         return (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, type.GetMethod(methodName, flags));
     }
 
-    public static TDelegate StaticCreateDelegate<TDelegate>(Type referenceType, Type classType, BindingFlags flags = BindingFlags.Public | BindingFlags.Static, [CallerMemberName] string methodName = null)
+    public static TDelegate StaticCreateDelegate<TDelegate>(Type type, BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        return StaticCreateDelegate<TDelegate>(referenceType, classType, null, flags, methodName);
+        return StaticCreateDelegateCore<TDelegate>(type, null, flags, methodName);
     }
 
-    public static TDelegate StaticCreateDelegate<TDelegate>(Type referenceType, Type classType, Type returnType, BindingFlags flags = BindingFlags.Public | BindingFlags.Static, [CallerMemberName] string methodName = null)
+    public static TDelegate StaticCreateDelegate<TDelegate>(Type referenceType, Type pseudoType, BindingFlags flags = BindingFlags.Public | BindingFlags.Static, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        var type = referenceType.Assembly.GetType(classType.FullName);
+        return StaticCreateDelegate<TDelegate>(referenceType, pseudoType, null, flags, methodName);
+    }
 
+    public static TDelegate StaticCreateDelegate<TDelegate>(Type referenceType, Type pseudoType, Type returnType, BindingFlags flags = BindingFlags.Public | BindingFlags.Static, [CallerMemberName] string methodName = "")
+        where TDelegate : Delegate
+    {
+        return StaticCreateDelegateCore<TDelegate>(referenceType.Assembly.GetType(pseudoType.FullName), returnType, flags, methodName);
+    }
+
+    private static TDelegate StaticCreateDelegateCore<TDelegate>(Type type, Type returnType, BindingFlags flags, string methodName)
+        where TDelegate : Delegate
+    {
         if (type != null)
         {
-            var methods = type.GetMethods(flags).Where(m => m.Name == methodName);
+            MethodInfo method;
 
-            MethodInfo method = returnType == null
-                ? methods.FirstOrDefault()
-                : methods.FirstOrDefault(x => x.ReturnType == returnType);
+            if (returnType == null)
+            {
+                method = type.GetMethod(methodName, flags);
+            }
+            else
+            {
+                method = GetMethodByReturnType(type, returnType, flags, methodName);
+            }
 
             if (method != null)
             {
@@ -39,5 +54,12 @@ internal static class DelegateHelper
         }
 
         return null;
+    }
+
+    private static MethodInfo GetMethodByReturnType(Type type, Type returnType, BindingFlags flags, string methodName)
+    {
+        return type.GetMethods(flags)
+            .Where(m => m.Name == methodName)
+            .FirstOrDefault(x => x.ReturnType == returnType);
     }
 }

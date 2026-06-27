@@ -131,9 +131,7 @@ internal class App
             }
 
             appInstance = null;
-#if !DEBUG
             750.AsDelay(_ => Win32.ExitProcess(0));
-#endif
             WindowManager.TryExitUI();
             Environment.Exit(0);
         }

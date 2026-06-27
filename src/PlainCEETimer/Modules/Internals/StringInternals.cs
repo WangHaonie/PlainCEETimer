@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using PlainCEETimer.Modules.Reflection;
 
 namespace System;
 
@@ -9,11 +8,7 @@ internal static class StringInternals
 
     internal static string FastAllocateString(int length)
     {
-        m_fnFastAllocateString ??= (String_FastAllocateString)Delegate.CreateDelegate(
-            typeof(String_FastAllocateString),
-            typeof(string).GetRuntimeMethods().FirstOrDefault(m => m.Name == nameof(FastAllocateString))
-        );
-
+        m_fnFastAllocateString ??= DelegateHelper.StaticCreateDelegate<String_FastAllocateString>(typeof(string));
         return m_fnFastAllocateString(length);
     }
 }
