@@ -49,7 +49,8 @@ public sealed class WPFApp : Application, IThemeAware
         Resources.MergedDictionaries
             .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
             .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11)
-            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10);
+            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10)
+            .AddEx(Resource.Create("WPF/Appearance/Controls.xaml"));
 
         themeHelper ??= new(this);
         SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());

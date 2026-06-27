@@ -128,6 +128,19 @@ public static class WM
     public const int CTLCOLORBTN = 0x0135;
     public const int GETFONT = 0x0031;
     public const int WINDOWPOSCHANGED = 0x0047;
+    public const int NCLBUTTONDOWN = 0x00A1;
+    public const int NCRBUTTONDOWN = 0x00A4;
+    public const int NCMBUTTONDOWN = 0x00A7;
+    public const int NCXBUTTONDOWN = 0x00AB;
+    public const int NCLBUTTONDBLCLK = 0x00A3;
+    public const int NCRBUTTONDBLCLK = 0x00A6;
+    public const int NCMBUTTONDBLCLK = 0x00A9;
+    public const int NCXBUTTONDBLCLK = 0x00AD;
+    public const int MOVE = 0x0003;
+    public const int MOVING = 0x0216;
+    public const int SIZE = 0x0005;
+    public const int SIZING = 0x0214;
+    public const int ACTIVATE = 0x0006;
 }
 
 [NoConstants]

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Forms;
 using PlainCEETimer.WPF;
 using PlainCEETimer.WPF.Views;
@@ -51,7 +50,9 @@ public class WindowManager
     internal static void TryExitUI()
     {
         System.Windows.Application.Current?.Shutdown();
+#if !DEBUG
         300.AsDelay(_ => Application.ExitThread());
+#endif
         Application.Exit();
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using PlainCEETimer.Interop;
 
 namespace PlainCEETimer.Modules;
@@ -9,7 +8,6 @@ public class ConsoleHelper
     public static ConsoleHelper Instance { get; } = new();
 
     private readonly object syncLock = new();
-    private static readonly TextWriter m_out = Console.Out;
 
     static ConsoleHelper()
     {
@@ -20,7 +18,7 @@ public class ConsoleHelper
     {
         lock (syncLock)
         {
-            m_out.Write(s);
+            Console.Write(s);
             return this;
         }
     }

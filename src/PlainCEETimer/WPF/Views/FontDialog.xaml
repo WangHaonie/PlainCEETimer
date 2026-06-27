@@ -33,8 +33,8 @@
         <TextBlock Grid.Row="0" Grid.Column="0"
             Margin="0,0,10,15" VerticalAlignment="Center"
             Text="字体家族" />
-        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-            Margin="0,0,0,15" Padding="1,3,1,3"
+        <base:FontFamilyInputBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+            Height="23" Padding="1" Margin="0,0,0,13"
             MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
             Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=500}"
             mod:TextBoxErrorActionHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"

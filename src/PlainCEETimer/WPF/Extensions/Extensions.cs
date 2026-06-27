@@ -49,4 +49,36 @@ public static class Extensions
     {
         return dip / PtToDipRatio;
     }
+
+    public static bool IsChildOf(this DependencyObject child, DependencyObject parent)
+    {
+        while (child != null)
+        {
+            if (child == parent)
+            {
+                return true;
+            }
+
+            child = VisualTreeHelper.GetParent(child);
+        }
+
+        return false;
+    }
+
+    public static bool GetParent<T>(this DependencyObject source, out T instance)
+    {
+        while (source != null && source is not T)
+        {
+            source = VisualTreeHelper.GetParent(source);
+        }
+
+        if (source is T value)
+        {
+            instance = value;
+            return true;
+        }
+
+        instance = default;
+        return false;
+    }
 }

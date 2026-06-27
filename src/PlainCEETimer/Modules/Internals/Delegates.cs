@@ -1,4 +1,9 @@
-﻿namespace System.Windows.Forms
+﻿namespace System
+{
+    internal delegate string String_FastAllocateString(int length);
+}
+
+namespace System.Windows.Forms
 {
     using System.Drawing;
 
