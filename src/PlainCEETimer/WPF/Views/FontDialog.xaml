@@ -11,7 +11,7 @@
         xmlns:mod="clr-namespace:PlainCEETimer.WPF.Modules"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:FontDialogViewModel}"
         Title="字体设置 - 高考倒计时" ResizeMode="NoResize" Height="300" Width="450"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner" UseLayoutRounding="True">
     <Window.Resources>
         <c:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>

@@ -14,7 +14,7 @@
         <MenuItem Command="ApplicationCommands.Cut"/>
         <MenuItem Command="ApplicationCommands.Copy"/>
         <MenuItem Command="ApplicationCommands.Paste"/>
-        <MenuItem Command="ApplicationCommands.Delete"/>
+        <MenuItem Command="EditingCommands.Delete" InputGestureText="Del"/>
         <Separator/>
         <MenuItem Command="ApplicationCommands.SelectAll"/>
     </ContextMenu>
@@ -139,7 +139,7 @@
                                             BorderThickness="{TemplateBinding BorderThickness}">
                                         <Grid HorizontalAlignment="Right">
                                             <Path Name="Arrow" Stroke="{TemplateBinding Foreground}" 
-                                                  Data="M 0 0 L 3 3 L 6 0" Margin="0,0,5,0"
+                                                  Data="M 0,0 L 3,3 L 6,0" Margin="0,0,5,0"
                                                   VerticalAlignment="Center" StrokeThickness="0.6"/>
                                         </Grid>
                                     </Border>
@@ -190,11 +190,12 @@
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Height" Value="1"/>
-        <Setter Property="Margin" Value="29,2,0,2"/>
+        <Setter Property="Margin" Value="6,4,6,4"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Separator">
-                    <Border BorderBrush="{DynamicResource BackMenuSeparator}" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+                    <Border BorderThickness="0,0,0,1" SnapsToDevicePixels="True"
+                            BorderBrush="{DynamicResource BackMenuSeparator}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -209,12 +210,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
-                    <Border Background="{TemplateBinding Background}"
+                    <Border SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True" CornerRadius="{DynamicResource SmallCornerRadius}">
-                        <ItemsPresenter Grid.IsSharedSizeScope="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            CornerRadius="{DynamicResource SmallCornerRadius}">
+                        <ItemsPresenter Grid.IsSharedSizeScope="True"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -229,51 +232,51 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
-                    <Border x:Name="templateRoot"
+                    <Border x:Name="templateRoot" SnapsToDevicePixels="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True" CornerRadius="{DynamicResource MenuItemCornerRadius}">
+                            CornerRadius="{DynamicResource MenuItemCornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="25" SharedSizeGroup="MenuIconColumn"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="26" SharedSizeGroup="MenuIconColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="MenuHeaderColumn"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="MenuShortcutColumn"/>
-                                <ColumnDefinition Width="22"/>
+                                <ColumnDefinition Width="20"/>
                             </Grid.ColumnDefinitions>
-                            <ContentPresenter x:Name="IconContent" ContentSource="Icon"
-                                              Margin="4,0,6,0" VerticalAlignment="Center"
+                            <ContentPresenter x:Name="IconContent" Margin="4,0,6,0" VerticalAlignment="Center"
+                                              ContentSource="Icon"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            <Border x:Name="GlyphPanel" Background="Transparent" BorderBrush="Transparent" BorderThickness="1"
-                                    Width="22" Height="22" Margin="4,0,6,0" Visibility="Collapsed"
+                            <Border x:Name="GlyphPanel" Width="22" Height="22" Margin="4,0,6,0" Visibility="Collapsed"
+                                    Background="Transparent" BorderBrush="Transparent" BorderThickness="1"
                                     VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Grid>
-                                    <Path x:Name="CheckMark" Data="M0,5.3 L2.6,8 L7.6,2.3"
+                                    <Path x:Name="CheckMark" Data="M 0,5.3 L 2.6,8 L 7.6,2.3"
                                           Visibility="Hidden" Stretch="None" StrokeThickness="1.5"
-                                          Stroke="{TemplateBinding Foreground}"
-                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                    <Path x:Name="Bullet" Data="M0,3.5 A3.5,3.5 0 1 1 7,3.5 A3.5,3.5 0 1 1 0,3.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          Stroke="{TemplateBinding Foreground}"/>
+                                    <Path x:Name="Bullet" Data="M 0,3.5 A 3.5,3.5 0 1 1 7,3.5 A 3.5,3.5 0 1 1 0,3.5"
                                           Visibility="Hidden" Stretch="None" Fill="{TemplateBinding Foreground}"/>
                                 </Grid>
                             </Border>
                             <ContentPresenter x:Name="HeaderContent" Grid.Column="1" ContentSource="Header"
-                                              RecognizesAccessKey="True" Margin="5,0"
+                                              RecognizesAccessKey="True" Margin="5,0,30,0"
                                               VerticalAlignment="Center"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            <TextBlock x:Name="InputGestureText" Grid.Column="2"
-                                       Text="{TemplateBinding InputGestureText}" Margin="0,2,0,2"
-                                       VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
-                            <Path x:Name="RightArrow" Grid.Column="3" Data="M0,0 L4,3.5 L0,7"
-                                  Fill="{TemplateBinding Foreground}" Visibility="Collapsed"
+                            <TextBlock x:Name="InputGestureText" Grid.Column="2" Margin="0,1,0,1"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Text="{TemplateBinding InputGestureText}"
+                                       Foreground="{TemplateBinding Foreground}"/>
+                            <Path x:Name="RightArrow" Grid.Column="3" Data="M 0,0 L 4,3.5 L 0,7" Visibility="Collapsed"
                                   Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  SnapsToDevicePixels="True"/>
+                                  SnapsToDevicePixels="True" Fill="{TemplateBinding Foreground}"/>
                             <Popup x:Name="PART_Popup" Placement="Right"
                                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                    AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
-                                    <Border Background="{DynamicResource BackContextMenu}"
-                                         BorderBrush="{DynamicResource BorderContextMenu}"
-                                         BorderThickness="1" SnapsToDevicePixels="True"
-                                         CornerRadius="{DynamicResource SmallCornerRadius}">
+                                    <Border BorderThickness="1" SnapsToDevicePixels="True"
+                                            Background="{DynamicResource BackContextMenu}"
+                                            BorderBrush="{DynamicResource BorderContextMenu}"
+                                            CornerRadius="{DynamicResource SmallCornerRadius}">
                                     <ScrollViewer CanContentScroll="True"
                                                   Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                         <ItemsPresenter Grid.IsSharedSizeScope="True"
@@ -324,10 +327,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="{TemplateBinding Background}"
+                    <Border SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True">
+                            BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
@@ -341,7 +344,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True"/>
+                    <Border SnapsToDevicePixels="True" Background="{TemplateBinding Background}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -355,11 +358,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Rectangle Fill="{TemplateBinding Background}"
-                               Stroke="{TemplateBinding BorderBrush}"
-                               StrokeThickness="{TemplateBinding BorderThickness}"
-                               RadiusX="3" RadiusY="3"
-                               SnapsToDevicePixels="True"/>
+                    <Rectangle RadiusX="3" RadiusY="3"
+                        SnapsToDevicePixels="True"
+                        Fill="{TemplateBinding Background}"
+                        Stroke="{TemplateBinding BorderBrush}"
+                        StrokeThickness="{TemplateBinding BorderThickness}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -371,7 +374,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <Grid x:Name="Bg" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                    <Grid x:Name="Bg" SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="16"/>
                             <RowDefinition Height="*"/>
@@ -383,39 +386,39 @@
                             <ColumnDefinition Width="16"/>
                         </Grid.ColumnDefinitions>
                         <RepeatButton x:Name="PART_LineUpButton" Grid.Row="0" Grid.Column="0"
-                                      Style="{StaticResource ScrollBarLineButtonStyle}"
-                                      Command="ScrollBar.LineUpCommand">
-                            <Path Data="M0,4 L4,0 L8,4 Z"
-                                  Fill="{DynamicResource BackScrollBarGlyph}"
+                                      Command="ScrollBar.LineUpCommand"
+                                      Style="{StaticResource ScrollBarLineButtonStyle}">
+                            <Path Data="M 0,4 L 4,0 L 8,4 Z"
                                   Stretch="None" Width="8" Height="4"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  SnapsToDevicePixels="True"/>
+                                  SnapsToDevicePixels="True"
+                                  Fill="{DynamicResource BackScrollBarGlyph}"/>
                         </RepeatButton>
                         <Track x:Name="PART_Track" Grid.Row="1" Grid.Column="0" Width="8"
+                               IsDirectionReversed="True"
                                Orientation="{TemplateBinding Orientation}"
                                Minimum="{TemplateBinding Minimum}"
                                Maximum="{TemplateBinding Maximum}"
                                Value="{TemplateBinding Value}"
-                               ViewportSize="{TemplateBinding ViewportSize}"
-                               IsDirectionReversed="True">
+                               ViewportSize="{TemplateBinding ViewportSize}">
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton x:Name="PART_PageUpButton" Style="{StaticResource ScrollBarPageButtonStyle}" Command="ScrollBar.PageUpCommand"/>
+                                <RepeatButton x:Name="PART_PageUpButton" Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}"/>
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
                                 <Thumb Style="{StaticResource ScrollBarThumbStyle}"/>
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>
-                                <RepeatButton x:Name="PART_PageDownButton" Style="{StaticResource ScrollBarPageButtonStyle}" Command="ScrollBar.PageDownCommand"/>
+                                <RepeatButton x:Name="PART_PageDownButton" Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}"/>
                             </Track.IncreaseRepeatButton>
                         </Track>
                         <RepeatButton x:Name="PART_LineDownButton" Grid.Row="2" Grid.Column="0"
-                                      Style="{StaticResource ScrollBarLineButtonStyle}"
-                                      Command="ScrollBar.LineDownCommand">
-                            <Path Data="M0,0 L4,4 L8,0 Z"
-                                  Fill="{DynamicResource BackScrollBarGlyph}"
+                                      Command="ScrollBar.LineDownCommand"
+                                      Style="{StaticResource ScrollBarLineButtonStyle}">
+                            <Path Data="M 0,0 L 4,4 L 8,0 Z"
                                   Stretch="None" Width="8" Height="4"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  SnapsToDevicePixels="True"/>
+                                  SnapsToDevicePixels="True"
+                                  Fill="{DynamicResource BackScrollBarGlyph}"/>
                         </RepeatButton>
                     </Grid>
                     <ControlTemplate.Triggers>

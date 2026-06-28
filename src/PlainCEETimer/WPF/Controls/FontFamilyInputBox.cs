@@ -20,6 +20,12 @@ namespace PlainCEETimer.WPF.Controls;
 [TemplatePart(Name = PART_ListBox, Type = typeof(ListBox))]
 public sealed class FontFamilyInputBox : TextBox
 {
+    public bool IsFocusWithin
+    {
+        get => (bool)GetValue(IsFocusWithinProperty);
+        private set => SetValue(IsFocusWithinProperty, value);
+    }
+
     private bool IsOpen
     {
         get => m_popup?.IsOpen ?? false;
@@ -39,9 +45,21 @@ public sealed class FontFamilyInputBox : TextBox
     private const string PART_Popup = nameof(PART_Popup);
     private const string PART_ListBox = nameof(PART_ListBox);
 
+    public static readonly DependencyProperty IsFocusWithinProperty;
+
     static FontFamilyInputBox()
     {
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(FontFamilyInputBox), new FrameworkPropertyMetadata(typeof(FontFamilyInputBox)));
+        DefaultStyleKeyProperty.OverrideMetadata(
+            typeof(FontFamilyInputBox),
+            new FrameworkPropertyMetadata(typeof(FontFamilyInputBox))
+        );
+
+        IsFocusWithinProperty = DependencyProperty.Register(
+            nameof(IsFocusWithin),
+            typeof(bool),
+            typeof(FontFamilyInputBox),
+            new FrameworkPropertyMetadata(false)
+        );
     }
 
     public FontFamilyInputBox()
@@ -102,58 +120,6 @@ public sealed class FontFamilyInputBox : TextBox
         }
     }
 
-    private void ScrollToMatch()
-    {
-        var front = Text.Substring(0, CaretIndex);
-        var lastComma = front.LastIndexOf(',');
-        var token = lastComma >= 0 ? front.Substring(lastComma + 1).Compact() : front.Compact();
-
-        ScrollToMatchCore(token);
-    }
-
-    private void ScrollToMatchCore(string token)
-    {
-        if (m_listbox != null)
-        {
-            var items = m_listbox.Items;
-            var count = items.Count;
-
-            if (count > 0)
-            {
-                int index = -1;
-
-                if (!string.IsNullOrWhiteSpace(token))
-                {
-                    var length = systemFonts.Count;
-
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (systemFonts[i].StartsWith(token, StringComparison.OrdinalIgnoreCase))
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-
-                    if (index < 0)
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
-                            if (systemFonts[i].Contains(token, StringComparison.OrdinalIgnoreCase))
-                            {
-                                index = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                m_listbox.SelectedIndex = index;
-                m_listbox.ScrollIntoView(items[index.Clamp(0, count)]);
-            }
-        }
-    }
-
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         var flag = false;
@@ -179,6 +145,7 @@ public sealed class FontFamilyInputBox : TextBox
     protected override void OnLostFocus(RoutedEventArgs e)
     {
         base.OnLostFocus(e);
+        UpdateEffectiveFocus();
 
         if (m_listbox?.IsKeyboardFocusWithin == true)
         {
@@ -188,6 +155,11 @@ public sealed class FontFamilyInputBox : TextBox
         IsOpen = false;
     }
 
+    protected override void OnGotFocus(RoutedEventArgs e)
+    {
+        base.OnGotFocus(e);
+        UpdateEffectiveFocus();
+    }
 
     private void FontFamilyInputBox_Loaded(object sender, RoutedEventArgs e)
     {
@@ -268,6 +240,16 @@ public sealed class FontFamilyInputBox : TextBox
         }
     }
 
+    private void ListBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        UpdateEffectiveFocus();
+    }
+
+    private void ListBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        UpdateEffectiveFocus();
+    }
+
     private void HandleCommonKeys(KeyEventArgs e)
     {
         if (m_listbox == null)
@@ -338,6 +320,58 @@ public sealed class FontFamilyInputBox : TextBox
         return IntPtr.Zero;
     }
 
+    private void ScrollToMatch()
+    {
+        var front = Text.Substring(0, CaretIndex);
+        var lastComma = front.LastIndexOf(',');
+        var token = lastComma >= 0 ? front.Substring(lastComma + 1).Compact() : front.Compact();
+
+        ScrollToMatchCore(token);
+    }
+
+    private void ScrollToMatchCore(string token)
+    {
+        if (m_listbox != null)
+        {
+            var items = m_listbox.Items;
+            var count = items.Count;
+
+            if (count > 0)
+            {
+                int index = -1;
+
+                if (!string.IsNullOrWhiteSpace(token))
+                {
+                    var length = systemFonts.Count;
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (systemFonts[i].StartsWith(token, StringComparison.OrdinalIgnoreCase))
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index < 0)
+                    {
+                        for (int i = 0; i < length; i++)
+                        {
+                            if (systemFonts[i].Contains(token, StringComparison.OrdinalIgnoreCase))
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                m_listbox.SelectedIndex = index;
+                m_listbox.ScrollIntoView(items[index.Clamp(0, count)]);
+            }
+        }
+    }
+
     private void ApplySelection(string fontName)
     {
         var text = Text;
@@ -376,6 +410,8 @@ public sealed class FontFamilyInputBox : TextBox
         {
             m_listbox.PreviewKeyDown += ListBox_PreviewKeyDown;
             m_listbox.PreviewMouseLeftButtonDown += ListBox_PreviewMouseLeftButtonDown;
+            m_listbox.GotKeyboardFocus += ListBox_GotKeyboardFocus;
+            m_listbox.LostKeyboardFocus += ListBox_LostKeyboardFocus;
         }
     }
 
@@ -385,7 +421,14 @@ public sealed class FontFamilyInputBox : TextBox
         {
             m_listbox.PreviewKeyDown -= ListBox_PreviewKeyDown;
             m_listbox.PreviewMouseLeftButtonDown -= ListBox_PreviewMouseLeftButtonDown;
+            m_listbox.GotKeyboardFocus -= ListBox_GotKeyboardFocus;
+            m_listbox.LostKeyboardFocus -= ListBox_LostKeyboardFocus;
         }
+    }
+
+    private void UpdateEffectiveFocus()
+    {
+        IsFocusWithin = IsFocused || (m_listbox?.IsKeyboardFocusWithin ?? false);
     }
 
     private static bool IsComma(char value)
