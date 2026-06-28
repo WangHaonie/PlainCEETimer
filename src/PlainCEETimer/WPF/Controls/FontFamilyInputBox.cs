@@ -47,21 +47,6 @@ public sealed class FontFamilyInputBox : TextBox
 
     public static readonly DependencyProperty IsFocusWithinProperty;
 
-    static FontFamilyInputBox()
-    {
-        DefaultStyleKeyProperty.OverrideMetadata(
-            typeof(FontFamilyInputBox),
-            new FrameworkPropertyMetadata(typeof(FontFamilyInputBox))
-        );
-
-        IsFocusWithinProperty = DependencyProperty.Register(
-            nameof(IsFocusWithin),
-            typeof(bool),
-            typeof(FontFamilyInputBox),
-            new FrameworkPropertyMetadata(false)
-        );
-    }
-
     public FontFamilyInputBox()
     {
         lastText = string.Empty;
@@ -75,6 +60,16 @@ public sealed class FontFamilyInputBox : TextBox
         Unloaded += FontFamilyInputBox_Unloaded;
         throttler = new(300);
         ClosePopupAction = () => IsOpen = false;
+    }
+
+    static FontFamilyInputBox()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(FontFamilyInputBox),
+            new FrameworkPropertyMetadata(typeof(FontFamilyInputBox)));
+
+        IsFocusWithinProperty =
+            DependencyProperty.Register(nameof(IsFocusWithin), typeof(bool), typeof(FontFamilyInputBox),
+                new FrameworkPropertyMetadata(false));
     }
 
     public override void OnApplyTemplate()
@@ -122,21 +117,7 @@ public sealed class FontFamilyInputBox : TextBox
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
-        var flag = false;
-
-        if (!IsOpen)
-        {
-            flag = true;
-        }
-
-        HandleCommonKeys(e);
-
-        if (!flag && !e.Handled)
-        {
-            flag = true;
-        }
-
-        if (flag)
+        if (!HandleCommonKeys(e))
         {
             base.OnPreviewKeyDown(e);
         }
@@ -250,18 +231,20 @@ public sealed class FontFamilyInputBox : TextBox
         UpdateEffectiveFocus();
     }
 
-    private void HandleCommonKeys(KeyEventArgs e)
+    private bool HandleCommonKeys(KeyEventArgs e)
     {
-        if (m_listbox == null)
+        if (!IsOpen || m_listbox == null)
         {
-            return;
+            return false;
         }
+
+        var handled = false;
 
         switch (e.Key)
         {
             case Key.Up:
             case Key.Down:
-                if (IsOpen && m_listbox != null && !m_listbox.IsKeyboardFocusWithin)
+                if (!m_listbox.IsKeyboardFocusWithin)
                 {
                     m_listbox.Focus();
 
@@ -271,27 +254,33 @@ public sealed class FontFamilyInputBox : TextBox
                     }
 
                     (m_listbox.ItemContainerGenerator.ContainerFromIndex(m_listbox.SelectedIndex) as ListBoxItem)?.Focus();
-                    e.Handled = true;
+                    handled = true;
                 }
                 break;
 
             case Key.Tab:
             case Key.Enter:
-                if (IsOpen && m_listbox.SelectedItem is string s)
+                if (m_listbox.SelectedItem is string s)
                 {
                     ApplySelection(s);
-                    e.Handled = true;
+                    handled = true;
                 }
                 break;
+
             case Key.Escape:
-                if (IsOpen)
-                {
-                    IsOpen = false;
-                    Focus();
-                    e.Handled = true;
-                }
+                IsOpen = false;
+                Focus();
+                handled = true;
                 break;
         }
+
+        if (handled)
+        {
+            e.Handled = true;
+            return true;
+        }
+
+        return false;
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
