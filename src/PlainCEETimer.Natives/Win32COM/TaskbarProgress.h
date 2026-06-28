@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <ShObjIdl_core.h>
 #include <Windows.h>

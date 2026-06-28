@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <taskschd.h>
 #include <Windows.h>
