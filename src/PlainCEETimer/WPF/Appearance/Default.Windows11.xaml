@@ -2,5 +2,22 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <CornerRadius x:Key="SmallCornerRadius">4</CornerRadius>
     <CornerRadius x:Key="MenuItemCornerRadius">2</CornerRadius>
-    <CornerRadius x:Key="WindowBorderCornerRadius">0</CornerRadius> <!-- 0 because it's defined by system on Windows 11 -->
+    <CornerRadius x:Key="SelectionRectangleCornerRadius">1</CornerRadius>
+    <CornerRadius x:Key="WindowBorderCornerRadius">0</CornerRadius>
+    <!-- 0 because it's defined by system on Windows 11 -->
+
+    <Thickness x:Key="ContextMenuSeparatorMagrin">6,4,6,4</Thickness>
+    <GridLength x:Key="ContextMenuLeftMagrin">26</GridLength>
+    
+    <Color x:Key="Dark_ForeMenuItemDisabled">#6D6D6D</Color>
+    <Color x:Key="Dark_BackContextMenu">#2C2C2C</Color>
+    <Color x:Key="Dark_BackMenuItemHot">#353535</Color>
+    <Color x:Key="Dark_BackMenuSeparator">#3E3E3E</Color>
+    <Color x:Key="Dark_BorderContextMenu">#3E3E3E</Color>
+
+    <Color x:Key="Light_ForeMenuItemDisabled">#9F9F9F</Color>
+    <Color x:Key="Light_BackContextMenu">#F9F9F9</Color>
+    <Color x:Key="Light_BackMenuItemHot">#F0F0F0</Color>
+    <Color x:Key="Light_BackMenuSeparator">#D7D7D7</Color>
+    <Color x:Key="Light_BorderContextMenu">#E5E5E5</Color>
 </ResourceDictionary>

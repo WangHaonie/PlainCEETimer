@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:PlainCEETimer.WPF.Controls">
-    
+
     <Style TargetType="Controls:FontFamilyInputBox" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Template">
@@ -19,11 +19,12 @@
                         </Border>
                         <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="True" AllowsTransparency="True"
                             PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                            MaxHeight="{TemplateBinding PopupMaxHeight}">
                             <Border BorderThickness="1,0,1,1" SnapsToDevicePixels="True"
                                     Background="{DynamicResource BackText}"
                                     BorderBrush="{TemplateBinding BorderBrush}">
-                                <ListBox x:Name="PART_ListBox" MaxHeight="200" BorderThickness="0"
+                                <ListBox x:Name="PART_ListBox" BorderThickness="0"
                                     SnapsToDevicePixels="True"
                                     VirtualizingPanel.IsVirtualizing="True"
                                     VirtualizingPanel.VirtualizationMode="Recycling"

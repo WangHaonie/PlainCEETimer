@@ -20,10 +20,12 @@ namespace PlainCEETimer.WPF.Controls;
 [TemplatePart(Name = PART_ListBox, Type = typeof(ListBox))]
 public sealed class FontFamilyInputBox : TextBox
 {
-    public bool IsFocusWithin
+    public bool IsFocusWithin => (bool)GetValue(IsFocusWithinProperty);
+
+    public double PopupMaxHeight
     {
-        get => (bool)GetValue(IsFocusWithinProperty);
-        private set => SetValue(IsFocusWithinProperty, value);
+        get => (double)GetValue(PopupMaxHeightProperty);
+        set => SetValue(PopupMaxHeightProperty, value);
     }
 
     private bool IsOpen
@@ -46,6 +48,9 @@ public sealed class FontFamilyInputBox : TextBox
     private const string PART_ListBox = nameof(PART_ListBox);
 
     public static readonly DependencyProperty IsFocusWithinProperty;
+    public static readonly DependencyProperty PopupMaxHeightProperty;
+
+    private static readonly DependencyPropertyKey IsFocusWithinPropertyKey;
 
     public FontFamilyInputBox()
     {
@@ -67,9 +72,15 @@ public sealed class FontFamilyInputBox : TextBox
         DefaultStyleKeyProperty.OverrideMetadata(typeof(FontFamilyInputBox),
             new FrameworkPropertyMetadata(typeof(FontFamilyInputBox)));
 
-        IsFocusWithinProperty =
-            DependencyProperty.Register(nameof(IsFocusWithin), typeof(bool), typeof(FontFamilyInputBox),
+        IsFocusWithinPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(IsFocusWithin), typeof(bool), typeof(FontFamilyInputBox),
                 new FrameworkPropertyMetadata(false));
+
+        PopupMaxHeightProperty =
+            DependencyProperty.Register(nameof(PopupMaxHeight), typeof(double), typeof(FontFamilyInputBox),
+                new PropertyMetadata(200D));
+
+        IsFocusWithinProperty = IsFocusWithinPropertyKey.DependencyProperty;
     }
 
     public override void OnApplyTemplate()
@@ -126,7 +137,7 @@ public sealed class FontFamilyInputBox : TextBox
     protected override void OnLostFocus(RoutedEventArgs e)
     {
         base.OnLostFocus(e);
-        UpdateEffectiveFocus();
+        UpdateFocusState();
 
         if (m_listbox?.IsKeyboardFocusWithin == true)
         {
@@ -139,7 +150,7 @@ public sealed class FontFamilyInputBox : TextBox
     protected override void OnGotFocus(RoutedEventArgs e)
     {
         base.OnGotFocus(e);
-        UpdateEffectiveFocus();
+        UpdateFocusState();
     }
 
     private void FontFamilyInputBox_Loaded(object sender, RoutedEventArgs e)
@@ -223,12 +234,12 @@ public sealed class FontFamilyInputBox : TextBox
 
     private void ListBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        UpdateEffectiveFocus();
+        UpdateFocusState();
     }
 
     private void ListBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        UpdateEffectiveFocus();
+        UpdateFocusState();
     }
 
     private bool HandleCommonKeys(KeyEventArgs e)
@@ -415,9 +426,9 @@ public sealed class FontFamilyInputBox : TextBox
         }
     }
 
-    private void UpdateEffectiveFocus()
+    private void UpdateFocusState()
     {
-        IsFocusWithin = IsFocused || (m_listbox?.IsKeyboardFocusWithin ?? false);
+        SetValue(IsFocusWithinPropertyKey, IsFocused || (m_listbox?.IsKeyboardFocusWithin ?? false));
     }
 
     private static bool IsComma(char value)

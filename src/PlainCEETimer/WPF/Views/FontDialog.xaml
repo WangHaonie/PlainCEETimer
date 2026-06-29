@@ -34,7 +34,7 @@
             Margin="0,0,10,15" VerticalAlignment="Center"
             Text="字体家族" />
         <base:FontFamilyInputBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-            Height="23" Padding="1" Margin="0,0,0,13"
+            Height="23" Padding="1" Margin="0,0,0,13" PopupMaxHeight="180"
             MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
             Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=300}"
             mod:TextBoxHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"

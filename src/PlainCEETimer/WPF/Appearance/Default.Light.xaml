@@ -15,6 +15,7 @@
     <SolidColorBrush x:Key="BorderButtonClick" Color="#0F5D9E"/>
     <SolidColorBrush x:Key="BorderButtonDisabled" Color="#EAEAEA"/>
 
+    <SolidColorBrush x:Key="ForeComboBoxItemSelected" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="BorderComboBox" Color="#D2D2D2"/>
     <SolidColorBrush x:Key="BorderComboBoxDropDown" Color="#0172CB"/>
     <SolidColorBrush x:Key="BackComboBox" Color="#FDFDFD"/>
@@ -24,13 +25,17 @@
     <SolidColorBrush x:Key="BackComboBoxItemSelected" Color="#0078D7"/>
 
     <SolidColorBrush x:Key="ForeContextMenu" Color="#000000"/>
-    <SolidColorBrush x:Key="ForeMenuItemDisabled" Color="#9F9F9F"/>
-    <SolidColorBrush x:Key="BackContextMenu" Color="#F9F9F9"/>
-    <SolidColorBrush x:Key="BackMenuItemHot" Color="#F0F0F0"/>
-    <SolidColorBrush x:Key="BackMenuSeparator" Color="#D7D7D7"/>
-    <SolidColorBrush x:Key="BorderContextMenu" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="ForeMenuItemDisabled" Color="{DynamicResource Light_ForeMenuItemDisabled}"/>
+    <SolidColorBrush x:Key="BackContextMenu" Color="{DynamicResource Light_BackContextMenu}"/>
+    <SolidColorBrush x:Key="BackMenuItemHot" Color="{DynamicResource Light_BackMenuItemHot}"/>
+    <SolidColorBrush x:Key="BackMenuSeparator" Color="{DynamicResource Light_BackMenuSeparator}"/>
+    <SolidColorBrush x:Key="BorderContextMenu" Color="{DynamicResource Light_BorderContextMenu}"/>
 
     <SolidColorBrush x:Key="BackScrollBar" Color="#F0F0F0"/>
     <SolidColorBrush x:Key="BackScrollBarThumb" Color="#858585"/>
     <SolidColorBrush x:Key="BackScrollBarGlyph" Color="#858585"/>
+
+    <SolidColorBrush x:Key="BackItemHot" Color="#CCE8FF"/>
+    <SolidColorBrush x:Key="BackItemSelected" Color="#CCE8FF"/>
+    <SolidColorBrush x:Key="BorderItemSelected" Color="#0078D4"/>
 </ResourceDictionary>

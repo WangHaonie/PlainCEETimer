@@ -8,6 +8,12 @@
         <Setter Property="Background" Value="{DynamicResource BackText}"/>
     </Style>
 
+    <Style x:Key="RoundCornerBorder" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{DynamicResource WindowBorderCornerRadius}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+    </Style>
+
     <ContextMenu x:Key="EditContextMenu" x:Shared="False">
         <MenuItem Command="ApplicationCommands.Undo"/>
         <Separator/>
@@ -20,10 +26,12 @@
     </ContextMenu>
 
     <Style TargetType="TextBox">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>
         <Setter Property="Background" Value="{DynamicResource BackText}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderTextBox}"/>
         <Setter Property="ContextMenu" Value="{StaticResource EditContextMenu}"/>
+        <Setter Property="SelectionBrush" Value="#0078D7" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -94,6 +102,7 @@
                             <Setter Property="Background" Value="{DynamicResource BackComboBoxItemHot}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource ForeComboBoxItemSelected}"/>
                             <Setter Property="Background" Value="{DynamicResource BackComboBoxItemSelected}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -190,7 +199,7 @@
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Height" Value="1"/>
-        <Setter Property="Margin" Value="6,4,6,4"/>
+        <Setter Property="Margin" Value="{DynamicResource ContextMenuSeparatorMagrin}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Separator">
@@ -239,7 +248,7 @@
                             CornerRadius="{DynamicResource MenuItemCornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="26" SharedSizeGroup="MenuIconColumn"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenuLeftMagrin}" SharedSizeGroup="MenuIconColumn"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="MenuHeaderColumn"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="MenuShortcutColumn"/>
                                 <ColumnDefinition Width="20"/>
@@ -435,6 +444,33 @@
                             <Setter TargetName="PART_LineDownButton" Property="Grid.Column" Value="2"/>
                             <Setter TargetName="PART_LineUpButton" Property="Command" Value="ScrollBar.LineLeftCommand"/>
                             <Setter TargetName="PART_LineDownButton" Property="Command" Value="ScrollBar.LineRightCommand"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ListBoxItem">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Bd" BorderThickness="1" SnapsToDevicePixels="True"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource SelectionRectangleCornerRadius}">
+                        <ContentPresenter />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BackItemHot}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BackItemSelected}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BorderItemSelected}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

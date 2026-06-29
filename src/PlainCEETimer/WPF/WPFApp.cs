@@ -1,12 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Threading;
+using MS.Internal;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 using PlainCEETimer.WPF.Modules;
 
 namespace PlainCEETimer.WPF;
 
+[NoConstants]
 public sealed class WPFApp : Application, IThemeAware
 {
     public static bool IsSystemClosing { get; private set; }
@@ -14,6 +17,8 @@ public sealed class WPFApp : Application, IThemeAware
     private ResourceDictionary themeDict;
     private ThemeHelper themeHelper;
     private readonly bool nt10 = !SystemVersion.BeforeNT10;
+
+    private const string ThemeDir = "WPF/Appearance/";
 
     public WPFApp()
     {
@@ -46,14 +51,23 @@ public sealed class WPFApp : Application, IThemeAware
 
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-        Resources.MergedDictionaries
-            .AddEx(Resource.Create("WPF/Appearance/RoundCorner.xaml"))
-            .AddEx(Resource.Create("WPF/Appearance/Default.Windows11.xaml"), SystemVersion.IsWindows11)
-            .AddEx(Resource.Create("WPF/Appearance/Default.xaml"), nt10)
-            .AddEx(Resource.Create("WPF/Appearance/Controls.xaml"));
+        var dict = Resources.MergedDictionaries;
+
+        if (SystemVersion.IsWindows11)
+        {
+            dict.Add(Resource.Create(ThemeDir + "Default.Windows11.xaml"));
+        }
+        else if (SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1903))
+        {
+            dict.Add(Resource.Create(ThemeDir + "Default.Windows10.xaml"));
+        }
+
+        dict.AddEx(Resource.Create(ThemeDir + "Default.xaml"), nt10)
+            .AddEx(Resource.Create(ThemeDir + "Controls.xaml"));
 
         themeHelper ??= new(this);
         SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());
+        FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
@@ -62,7 +76,7 @@ public sealed class WPFApp : Application, IThemeAware
         {
             var dict = Resources.MergedDictionaries;
             var old = themeDict;
-            themeDict = Resource.Create("WPF/Appearance/Default." + (useDark ? "Dark.xaml" : "Light.xaml"));
+            themeDict = Resource.Create(ThemeDir + "Default." + (useDark ? "Dark.xaml" : "Light.xaml"));
 
             if (old == null)
             {
