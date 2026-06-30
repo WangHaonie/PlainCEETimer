@@ -301,16 +301,15 @@ internal class App
     private void InternalInit()
     {
         AppMessageFilter.Initialize();
-        HideDotNetAppConfig();
         AppConfig = ConfigValidator.ReadConfig();
-        InitDpiAware();
+        DpiHelperEx.Initialize();
         ThemeManager.Initialize();
         Application.EnableVisualStyles();
         DefaultValues.InitEssentials();
         ConfigValidator.Validate();
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         SystemEvents.SessionEnding += (_, _) => Shutdown();
         Application.ApplicationExit += (_, _) => Shutdown();
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => HandleException(e.Exception);
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #if DEBUG
@@ -321,20 +320,6 @@ internal class App
         {
             new Action(StartPipeServer).Start();
         }
-    }
-
-    private void HideDotNetAppConfig()
-    {
-        try
-        {
-            var file = $"{ExecutableDir}{AppNameEng}.exe.config";
-
-            if (File.Exists(file))
-            {
-                File.SetAttributes(file, File.GetAttributes(file) | FileAttributes.Hidden | FileAttributes.System);
-            }
-        }
-        catch { }
     }
 
     private void RenameAndRestart()
@@ -374,12 +359,6 @@ internal class App
                 .WriteLine("\t向开始菜单文件夹和桌面创建指向本程序的快捷方式. /custom 表示自行选择保存快捷方式的文件夹.")
             .WriteLine("/op", ConsoleColor.White)
                 .WriteLine("\t优化当前程序集, 提升运行速度.");
-    }
-
-    private static void InitDpiAware()
-    {
-        DpiHelperEx.GlobalUpdateDeviceDpi();
-        DpiHelperEx.Initialize();
     }
 
 #if DEBUG

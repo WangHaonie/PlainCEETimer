@@ -20,4 +20,9 @@ public class ArrayCache<T> : IDisposable
         m_pool.Return(m_array);
         GC.SuppressFinalize(this);
     }
+
+    ~ArrayCache()
+    {
+        Dispose();
+    }
 }

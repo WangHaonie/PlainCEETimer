@@ -123,6 +123,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         CenterControlY(ButtonRulesMan, ComboBoxCountdownFormat);
         GroupBoxAutoAdjustHeight(GBoxContent, ButtonRulesMan, 5);
         GBoxContent.Width = ButtonRulesMan.Right + ScaleToDpi(5);
+        ComboBoxCountdownEnd.BringToFront();
         ArrangeCommonButtonsR(ButtonA, ButtonB, GBoxContent, 1, 3);
         InitWindowSize(ButtonB, 4, 4);
     }

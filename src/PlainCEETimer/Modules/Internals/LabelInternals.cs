@@ -1,12 +1,14 @@
 ﻿using System.Drawing;
+using System.Reflection;
 using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Forms;
 
 internal class LabelInternals
 {
-    private readonly Label m_target;
     private Label_CreateStringFormat m_fnCreateStringFormat;
+    private readonly Label m_target;
+    private static MethodInfo s_miCreateStringFormat;
 
     private LabelInternals(Label target)
     {
@@ -20,7 +22,8 @@ internal class LabelInternals
 
     internal StringFormat CreateStringFormat()
     {
-        m_fnCreateStringFormat ??= DelegateHelper.CreateDelegate<Label_CreateStringFormat>(m_target, typeof(Label));
+        s_miCreateStringFormat ??= typeof(Label).GetMethod(nameof(CreateStringFormat), BindingFlags.Instance | BindingFlags.NonPublic);
+        m_fnCreateStringFormat ??= DelegateHelper.CreateDelegate<Label_CreateStringFormat>(m_target, s_miCreateStringFormat);
         return m_fnCreateStringFormat();
     }
 }

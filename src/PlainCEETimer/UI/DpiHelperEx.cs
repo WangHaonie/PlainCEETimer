@@ -117,6 +117,7 @@ public static class DpiHelperEx
 
     internal static void Initialize()
     {
+        GlobalUpdateDeviceDpi();
         DpiHelper.enableHighDpi = true;
         DpiHelper.enableDpiChangedMessageHandling = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_RS2);
         DpiHelper.isInitialized = true;

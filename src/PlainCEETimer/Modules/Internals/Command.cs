@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.Modules.Reflection;
+﻿using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Forms;
 
@@ -8,7 +9,8 @@ internal static class Command
 
     public static bool DispatchID(int id)
     {
-        fnDispatchID ??= DelegateHelper.StaticCreateDelegate<Command_DispatchID>(typeof(Control), typeof(Command));
+        fnDispatchID ??= DelegateHelper.StaticCreateDelegate<Command_DispatchID>(
+            ReflectionHelper.RevealType(typeof(Control), typeof(Command)), BindingFlags.Public);
         return fnDispatchID(id);
     }
 }
