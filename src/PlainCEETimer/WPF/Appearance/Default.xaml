@@ -241,7 +241,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
-                    <Border x:Name="templateRoot" SnapsToDevicePixels="True"
+                    <Border x:Name="Bd" SnapsToDevicePixels="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -298,8 +298,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource BackMenuItemHot}"/>
-                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource BackMenuItemHot}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BackMenuItemHot}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BackMenuItemHot}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource ForeMenuItemDisabled}"/>

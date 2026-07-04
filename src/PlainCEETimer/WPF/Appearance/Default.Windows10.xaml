@@ -16,7 +16,7 @@
 
     <Color x:Key="Light_ForeMenuItemDisabled">#6D6D6D</Color>
     <Color x:Key="Light_BackContextMenu">#F2F2F2</Color>
-    <Color x:Key="Light_BackMenuItemHot">#F2F2F2</Color>
+    <Color x:Key="Light_BackMenuItemHot">#90C8F6</Color>
     <Color x:Key="Light_BackMenuSeparator">#D7D7D7</Color>
     <Color x:Key="Light_BorderContextMenu">#C5C5C5</Color>
 </ResourceDictionary>
