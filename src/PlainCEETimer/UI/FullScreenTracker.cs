@@ -75,6 +75,11 @@ public class FullScreenTracker : IDisposable
         OnFullScreenExitedInvoker = new(hWnd => FullScreenExited?.Invoke(null, new(hWnd)));
     }
 
+    static FullScreenTracker()
+    {
+        App.Current.AppExit += Instance.Destroy;
+    }
+
     public void SetScreen(Screen screen)
     {
         m_screen = screen;

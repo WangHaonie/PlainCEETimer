@@ -7,8 +7,8 @@ namespace System.Windows.Forms;
 internal class LabelInternals
 {
     private Label_CreateStringFormat m_fnCreateStringFormat;
-    private readonly Label m_target;
     private static MethodInfo s_miCreateStringFormat;
+    private readonly Label m_target;
 
     private LabelInternals(Label target)
     {

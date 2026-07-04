@@ -48,7 +48,7 @@ public abstract class AppForm : Form, IAppWindow
     private FormWindowState lastState;
     private Font AppFont;
     private ThemeHelper themeHelper;
-    private Action<DialogEndEventArgs> DialogEnd;
+    private Action<DialogEndEventArgs> DialogEndAction;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
@@ -144,7 +144,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public void WhenEnd(Action<DialogEndEventArgs> onDialogEnd)
     {
-        DialogEnd = onDialogEnd;
+        DialogEndAction = onDialogEnd;
     }
 
     public void ReActivate()
@@ -313,17 +313,8 @@ public abstract class AppForm : Form, IAppWindow
         SaveWindowSize();
         ClearEvents();
         OnClosed();
+        TryEndModelessDialog();
         base.OnClosed(e);
-    }
-
-    protected sealed override void OnHandleDestroyed(EventArgs e)
-    {
-        if (CheckParam(AppWindowStyle.ModelessDialog) && !SuppressDialogEnd)
-        {
-            OnDialogEnd();
-        }
-
-        base.OnHandleDestroyed(e);
     }
 
     /// <summary>
@@ -572,7 +563,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void OnDialogEnd()
     {
-        DialogEnd?.Invoke(new(DialogEndResult));
+        DialogEndAction?.Invoke(new(DialogEndResult));
     }
 
     /// <summary>
@@ -768,6 +759,14 @@ public abstract class AppForm : Form, IAppWindow
             {
                 CenterToParent();
             }
+        }
+    }
+
+    private void TryEndModelessDialog()
+    {
+        if (CheckParam(AppWindowStyle.ModelessDialog) && !SuppressDialogEnd)
+        {
+            OnDialogEnd();
         }
     }
 

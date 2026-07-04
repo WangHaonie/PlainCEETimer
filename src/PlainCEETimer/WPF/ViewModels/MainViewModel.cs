@@ -220,7 +220,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
                     {
                         if (e.Result == true)
                         {
-                            RefreshSettings();
+                            RefreshSettingsAsync();
                         }
                     });
                 }
@@ -677,6 +677,11 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         {
             BorderColor = (BorderColorObj.Enabled && enabled ? color : Colors.WindowBorder).ToColor();
         }
+    }
+
+    private void RefreshSettingsAsync()
+    {
+        Owner.BeginInvoke(new Action(RefreshSettings));
     }
 
     private void ScreenChangeService_ScreenChanged(object sender, ScreenChangedEventArgs e)
