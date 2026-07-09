@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
@@ -18,6 +19,12 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
         private bool? Result;
         private PlainLabel LabelMessage;
         private PictureBox ImageIcon;
+        private static readonly ActionInvoker ClearParkingWindowsAction;
+
+        static MessageBox()
+        {
+            ClearParkingWindowsAction = new(ClearParkingWindowsImpl);
+        }
 
         protected override void OnInitializing()
         {
@@ -89,10 +96,35 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
             Close();
         }
 
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            if (Owner == null)
+            {
+                SafeExecutionContext.Send(ClearParkingWindowsAction);
+            }
+
+            base.OnHandleDestroyed(e);
+        }
+
         public bool? ShowCore()
         {
             ShowDialog(owner);
             return Result;
+        }
+
+        private static void ClearParkingWindowsImpl()
+        {
+            var pws = ApplicationInternals.ThreadContext.Instance.parkingWindows;
+
+            if (pws != null)
+            {
+                foreach (var pw in pws)
+                {
+                    pw.Dispose();
+                }
+
+                ((System.Collections.IList)pws).Clear();
+            }
         }
     }
 

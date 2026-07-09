@@ -220,7 +220,9 @@ public class FullScreenTracker : IDisposable
     {
         if (Win32UI.GetWindowRect(hWnd, out var rcw))
         {
-            return Rectangle.Inflate(rcw, FSTolerance, FSTolerance).Contains(m_screen.Bounds);
+            Rectangle r = rcw;
+            r.Inflate(FSTolerance, FSTolerance);
+            return r.Contains(m_screen.Bounds);
         }
 
         return false;

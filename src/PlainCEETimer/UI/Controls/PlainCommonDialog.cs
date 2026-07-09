@@ -87,14 +87,8 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private static FnMessageBoxW fnMessageBox;
     private ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
-    private static readonly ActionInvoker ClearParkingWindowsInvoker;
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
-
-    static PlainCommonDialog()
-    {
-        ClearParkingWindowsInvoker = new(ClearParkingWindows_);
-    }
 
     public new bool? ShowDialog()
     {
@@ -245,26 +239,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private static int MessageBoxW(IntPtr hWnd, string lpText, string lpCaption, int uType)
     {
         var result = new IAppWindowWrapper(hWnd).MessageX.Popup(uType, lpText);
-        ClearParkingWindows();
         return result;
-    }
-
-    private static void ClearParkingWindows()
-    {
-        SafeExecutionContext.Send(ClearParkingWindowsInvoker);
-    }
-
-    private static void ClearParkingWindows_()
-    {
-        var pws = ApplicationInternals.ThreadContext.Instance.parkingWindows;
-
-        if (pws != null)
-        {
-            foreach (var pw in pws)
-            {
-                pw.Dispose();
-            }
-        }
     }
 
     public sealed override void Reset()
