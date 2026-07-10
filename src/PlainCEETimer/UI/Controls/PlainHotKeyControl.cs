@@ -26,19 +26,6 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 [DebuggerDisplay("{HotKey}")]
 public class PlainHotkeyControl : Control, IThemeAware
 {
-    private sealed class ParentNativeWindow(PlainHotkeyControl ctrl) : NativeWindow
-    {
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == WM.COMMAND && m.LParam == Handle && m.WParam.ToInt32().HiWord == NativeConstants.EN_CHANGE)
-            {
-                ctrl.OnHotKeyChanged();
-            }
-
-            base.WndProc(ref m);
-        }
-    }
-
     public event EventHandler HotKeyChanged;
 
     public Hotkey Hotkey
@@ -78,7 +65,6 @@ public class PlainHotkeyControl : Control, IThemeAware
 
     private bool UseDark;
     private Hotkey hotkey;
-    private ParentNativeWindow pnw;
     private readonly ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
@@ -94,9 +80,6 @@ public class PlainHotkeyControl : Control, IThemeAware
         Win32UI.RemoveWindowExStyle(Handle, WS.EX_CLIENTEDGE);
         Win32UI.SendMessage(Handle, NativeConstants.HKM_SETRULES, NativeConstants.HKCOMB_NONE | NativeConstants.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
         SetHotKey(hotkey);
-        pnw?.ReleaseHandle();
-        pnw ??= new ParentNativeWindow(this);
-        pnw.AssignHandle(Parent.Handle);
     }
 
     protected override void Dispose(bool disposing)
@@ -121,6 +104,10 @@ public class PlainHotkeyControl : Control, IThemeAware
                     base.WndProc(ref m);
                     Win32UI.ComctlUnhookSysColor();
                     return;
+                case WM.REFLECT + WM.COMMAND:
+                    if (m.WParam.ToInt32().HiWord == NativeConstants.EN_CHANGE)
+                        OnHotKeyChanged();
+                    break;
                 case WM.DESTROY:
                     Win32UI.DeleteObject(hBrush);
                     break;
