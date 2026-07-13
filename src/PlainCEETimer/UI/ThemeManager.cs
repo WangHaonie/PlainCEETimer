@@ -38,7 +38,7 @@ public static class ThemeManager
                 WM.SYSCOLORCHANGE
                     => true,
                 WM.SETTINGCHANGE or WM.SETTINGCHANGE + WM.REFLECT
-                    => lpMsg->lParam.AsStringUni() == "ImmersiveColorSet",
+                    => lpMsg->lParam.AsStringUni(free: false) == "ImmersiveColorSet",
                 _
                     => false,
             };

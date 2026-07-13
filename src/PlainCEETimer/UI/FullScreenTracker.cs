@@ -198,7 +198,7 @@ public class FullScreenTracker : IDisposable
 
     private bool ShouldIgnoreWindow(IntPtr hWnd)
     {
-        var cn = Win32UI.GetClassName(hWnd).AsStringUni();
+        using var cn = Win32UI.GetClassName(hWnd).AsStringUni();
 
         foreach (var wnd in m_banlist)
         {

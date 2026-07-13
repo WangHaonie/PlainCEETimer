@@ -111,8 +111,8 @@ internal class App
             }
 
             IsExiting = true;
-            appIcon.Destroy();
             AppExit?.Invoke();
+            appIcon.Destroy();
 
             if (MainMutex != null)
             {

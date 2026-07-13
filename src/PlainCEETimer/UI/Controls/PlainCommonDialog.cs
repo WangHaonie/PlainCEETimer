@@ -177,7 +177,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
-        var cn = Win32UI.GetClassName(hWnd).AsStringUni();
+        using var cn = Win32UI.GetClassName(hWnd).AsStringUni();
 
         if (cn == "ComboBox")
         {
