@@ -98,7 +98,7 @@ inline LPWSTR __stdcall CoTaskStrAllocW(SIZE_T strLength, SIZE_T* bytesAllocated
     SIZE_T s = strLength * sizeof(WCHAR);
     LPWSTR ptr = (LPWSTR)CoTaskMemAlloc(s);
 
-    if (bytesAllocated)
+    if (bytesAllocated && ptr)
     {
         *bytesAllocated = s;
     }
