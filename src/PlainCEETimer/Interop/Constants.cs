@@ -152,6 +152,13 @@ public static class ERROR
 
 [NoConstants]
 [CompilerRemove]
+public static class MUI
+{
+    public const int LANGUAGE_NAME = 0x8;
+}
+
+[NoConstants]
+[CompilerRemove]
 public static class WS
 {
     public const int CHILD = 0x40000000;

@@ -57,7 +57,7 @@ public sealed class FontFamilyInputBox : TextBox
         lastText = string.Empty;
 
         systemFonts = Fonts.SystemFontFamilies
-            .Select(ff => ff.Source)
+            .Select(ff => ff.LocaleDisplayName)
             .OrderBy(ff => ff, StringComparer.OrdinalIgnoreCase)
             .ToList().AsReadOnly();
 

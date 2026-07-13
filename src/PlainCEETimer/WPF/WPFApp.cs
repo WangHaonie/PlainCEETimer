@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using MS.Internal;
 using PlainCEETimer.Modules;
@@ -40,6 +42,10 @@ public sealed class WPFApp : Application, IThemeAware
 
     private void InitializeComponent()
     {
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+
         DispatcherUnhandledException += (_, e) =>
         {
             if (!e.Handled)

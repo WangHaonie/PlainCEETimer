@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
@@ -334,6 +335,7 @@ internal class App
     [STAThread]
     private static void Main(string[] args)
     {
+        SetCultureInfo("zh-CN");
         new App().Run(args);
     }
 
@@ -359,6 +361,16 @@ internal class App
                 .WriteLine("\t向开始菜单文件夹和桌面创建指向本程序的快捷方式. /custom 表示自行选择保存快捷方式的文件夹.")
             .WriteLine("/op", ConsoleColor.White)
                 .WriteLine("\t优化当前程序集, 提升运行速度.");
+    }
+
+    private static void SetCultureInfo(string sci)
+    {
+        var ci = new CultureInfo(sci);
+        Thread.CurrentThread.CurrentCulture = ci;
+        Thread.CurrentThread.CurrentUICulture = ci;
+        CultureInfo.DefaultThreadCurrentCulture = ci;
+        CultureInfo.DefaultThreadCurrentUICulture = ci;
+        Win32.SetThreadPreferredUILanguages(MUI.LANGUAGE_NAME, sci, IntPtr.Zero);
     }
 
 #if DEBUG

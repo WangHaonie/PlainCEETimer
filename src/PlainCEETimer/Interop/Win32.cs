@@ -35,6 +35,9 @@ internal static class Win32
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
     public unsafe static extern int lstrlenW(char* lpString);
 
+    [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
+    public static extern bool SetThreadPreferredUILanguages(int dwFlags, PCZZWSTR pwszLanguagesBuffer, IntPtr pulNumLanguages);
+
     [DllImport(App.User32Dll)]
     public static extern IntPtr SetWinEventHook(int eventMin, int eventMax, IntPtr hmodWinEventProc, WINEVENTPROC pfnWinEventProc, int idProcess, int idThread, int dwFlags);
 

@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 using PlainCEETimer.Modules.Fody;
 using WFColor = System.Drawing.Color;
@@ -12,6 +14,8 @@ namespace PlainCEETimer.WPF.Extensions;
 public static class Extensions
 {
     private const double PtToDipRatio = 96.0 / 72.0;
+
+    private static XmlLanguage s_lang;
 
     public static Color ToColor(this WFColor color)
     {
@@ -80,5 +84,23 @@ public static class Extensions
 
         instance = default;
         return false;
+    }
+
+    extension(FontFamily ff)
+    {
+        public string LocaleDisplayName
+        {
+            get
+            {
+                s_lang ??= XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.Name);
+
+                if (ff.FamilyNames.TryGetValue(s_lang, out var result))
+                {
+                    return result;
+                }
+
+                return ff.Source;
+            }
+        }
     }
 }

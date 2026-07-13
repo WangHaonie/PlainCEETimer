@@ -346,3 +346,19 @@ public struct MSG
     public int x;
     public int y;
 }
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+public readonly struct PCZZWSTR
+{
+    private readonly string m_str;
+
+    private PCZZWSTR(string s)
+    {
+        m_str = s + '\0';
+    }
+
+    public static implicit operator PCZZWSTR(string s)
+    {
+        return new(s);
+    }
+}
