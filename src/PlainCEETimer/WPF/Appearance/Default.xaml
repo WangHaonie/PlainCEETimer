@@ -20,7 +20,7 @@
         <MenuItem Command="ApplicationCommands.Cut"/>
         <MenuItem Command="ApplicationCommands.Copy"/>
         <MenuItem Command="ApplicationCommands.Paste"/>
-        <MenuItem Command="EditingCommands.Delete" InputGestureText="Del"/>
+        <MenuItem Command="EditingCommands.Delete"/>
         <Separator/>
         <MenuItem Command="ApplicationCommands.SelectAll"/>
     </ContextMenu>

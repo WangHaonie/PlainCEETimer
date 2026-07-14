@@ -42,10 +42,6 @@ public sealed class WPFApp : Application, IThemeAware
 
     private void InitializeComponent()
     {
-        FrameworkElement.LanguageProperty.OverrideMetadata(
-            typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-
         DispatcherUnhandledException += (_, e) =>
         {
             if (!e.Handled)
@@ -56,7 +52,14 @@ public sealed class WPFApp : Application, IThemeAware
         };
 
         ShutdownMode = ShutdownMode.OnMainWindowClose;
+        InternalInit();
+        LoadTheme();
+        SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());
+        FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
+    }
 
+    private void LoadTheme()
+    {
         var dict = Resources.MergedDictionaries;
 
         if (SystemVersion.IsWindows11)
@@ -72,8 +75,15 @@ public sealed class WPFApp : Application, IThemeAware
             .AddEx(Resource.Create(ThemeDir + "Controls.xaml"));
 
         themeHelper ??= new(this);
-        SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());
-        FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
+    }
+
+    private static void InternalInit()
+    {
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+
+        AppCommands.Initialize();
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

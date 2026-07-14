@@ -30,3 +30,16 @@ namespace System.Windows.Forms
     /// </summary>
     internal delegate StringFormat Label_CreateStringFormat();
 }
+
+namespace System.Windows.Input
+{
+    /// <summary>
+    /// public static class internal static method.
+    /// </summary>
+    internal delegate string ApplicationCommands_GetUIText(byte commandId);
+
+    /// <summary>
+    /// public static class internal static method.
+    /// </summary>
+    internal delegate InputGestureCollection ApplicationCommands_LoadDefaultGestureFromResource(byte commandId);
+}
