@@ -6,8 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using PlainCEETimer.Interop.Extensions;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.JsonConverters;
 using PlainCEETimer.UI;
 

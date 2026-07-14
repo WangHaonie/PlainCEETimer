@@ -4,8 +4,8 @@ using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.Interop;
 

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI;

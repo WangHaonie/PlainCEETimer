@@ -2,8 +2,8 @@
 using System.Linq;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 

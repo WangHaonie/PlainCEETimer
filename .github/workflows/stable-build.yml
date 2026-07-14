@@ -71,7 +71,7 @@ jobs:
           + [点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。" >content.txt
 
           $AppInfo = "
-          using PlainCEETimer.Modules.Fody; namespace PlainCEETimer.Modules;
+          using PlainCEETimer.Modules.Annotations.Fody; namespace PlainCEETimer.Modules;
           [NoConstants, CompilerRemove] internal static class AppInfo
           {
               public const string Version = `"${{ steps.read_version.outputs.version }}`";

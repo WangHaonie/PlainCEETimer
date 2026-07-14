@@ -8,9 +8,9 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
 

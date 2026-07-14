@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Reflection;
 using WFSize = System.Drawing.Size;
 

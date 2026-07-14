@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.UI.Controls;
 

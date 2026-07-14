@@ -5,8 +5,8 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using Timer = System.Threading.Timer;
 
 namespace PlainCEETimer.UI;

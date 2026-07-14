@@ -23,7 +23,7 @@ public class ModuleWeaver : BaseModuleWeaver
         public string Namespace => ns;
     }
 
-    private const string BaseNamespace = "PlainCEETimer.Modules.Fody";
+    private const string BaseNamespace = "PlainCEETimer.Modules.Annotations.Fody";
 
     private static readonly AttributeInfo NoConstantsAttribute = new(BaseNamespace, nameof(NoConstantsAttribute));
     private static readonly AttributeInfo ConstantAttribute = new(BaseNamespace, nameof(ConstantAttribute));

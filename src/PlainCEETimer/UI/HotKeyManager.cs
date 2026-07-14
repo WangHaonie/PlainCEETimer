@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.UI;
 

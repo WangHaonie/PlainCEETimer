@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI.Core;
 
 namespace PlainCEETimer.UI.Controls;

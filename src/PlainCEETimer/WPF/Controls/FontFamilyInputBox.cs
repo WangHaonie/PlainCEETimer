@@ -9,8 +9,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.WPF.Extensions;
 
 namespace PlainCEETimer.WPF.Controls;

@@ -5,8 +5,8 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI;
 

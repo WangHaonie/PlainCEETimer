@@ -4,8 +4,8 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using MS.Internal;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 using PlainCEETimer.UI;
 using PlainCEETimer.WPF.Modules;
 

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 using WFColor = System.Drawing.Color;
 using WFPoint = System.Drawing.Point;
 using WFSize = System.Drawing.Size;

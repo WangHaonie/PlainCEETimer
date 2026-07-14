@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Win32;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.Modules;
 

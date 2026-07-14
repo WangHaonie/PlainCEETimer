@@ -1,4 +1,4 @@
-﻿using PlainCEETimer.Modules.Fody;
+﻿using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.Countdown;
 

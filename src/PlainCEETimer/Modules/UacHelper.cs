@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Fody;
 
 namespace PlainCEETimer.Modules;
 

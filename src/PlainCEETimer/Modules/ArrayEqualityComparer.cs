@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PlainCEETimer.Modules.Fody;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Modules;
