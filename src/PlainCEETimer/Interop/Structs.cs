@@ -347,14 +347,17 @@ public struct MSG
     public int y;
 }
 
+[DebuggerDisplay("{m_str}")]
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public readonly struct PCZZWSTR
 {
+    public static readonly PCZZWSTR Empty = new("\0");
+
     private readonly string m_str;
 
     private PCZZWSTR(string s)
     {
-        m_str = s + '\0';
+        m_str = s.EndsWith(char.MinValue) ? s : s + char.MinValue;
     }
 
     public static implicit operator PCZZWSTR(string s)
