@@ -9,7 +9,7 @@ internal static class StringInternals
 
     internal static string FastAllocateString(int length)
     {
-        s_fnFastAllocateString ??= DelegateHelper.StaticCreateDelegate<String_FastAllocateString>(typeof(string), BindingFlags.NonPublic);
+        DelegateHelper.StaticCreateDelegate(ref s_fnFastAllocateString, typeof(string), BindingFlags.NonPublic);
         return s_fnFastAllocateString(length);
     }
 }

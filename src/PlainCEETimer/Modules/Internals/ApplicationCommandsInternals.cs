@@ -5,18 +5,18 @@ namespace System.Windows.Input;
 
 internal static class ApplicationCommandsInternals
 {
-    private static ApplicationCommands_GetUIText m_fnGetUIText;
-    private static ApplicationCommands_LoadDefaultGestureFromResource m_fnLoadDefaultGestureFromResource;
+    private static ApplicationCommands_GetUIText s_fnGetUIText;
+    private static ApplicationCommands_LoadDefaultGestureFromResource s_fnLoadDefaultGestureFromResource;
 
     internal static string GetUIText(byte commandId)
     {
-        m_fnGetUIText ??= DelegateHelper.StaticCreateDelegate<ApplicationCommands_GetUIText>(typeof(ApplicationCommands), BindingFlags.NonPublic);
-        return m_fnGetUIText(commandId);
+        DelegateHelper.StaticCreateDelegate(ref s_fnGetUIText, typeof(ApplicationCommands), BindingFlags.NonPublic);
+        return s_fnGetUIText(commandId);
     }
 
     internal static InputGestureCollection LoadDefaultGestureFromResource(byte commandId)
     {
-        m_fnLoadDefaultGestureFromResource ??= DelegateHelper.StaticCreateDelegate<ApplicationCommands_LoadDefaultGestureFromResource>(typeof(ApplicationCommands), BindingFlags.NonPublic);
-        return m_fnLoadDefaultGestureFromResource(commandId);
+        DelegateHelper.StaticCreateDelegate(ref s_fnLoadDefaultGestureFromResource, typeof(ApplicationCommands), BindingFlags.NonPublic);
+        return s_fnLoadDefaultGestureFromResource(commandId);
     }
 }

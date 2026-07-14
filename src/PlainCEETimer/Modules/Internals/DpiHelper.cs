@@ -100,13 +100,13 @@ internal static class DpiHelper
 
     public static int LogicalToDeviceUnits(int value, int devicePixels = 0)
     {
-        s_fnLogicalToDeviceUnits1 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits1>(s_type, typeof(int), BindingFlags.Public);
+        DelegateHelper.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits1, s_type, typeof(int), BindingFlags.Public);
         return s_fnLogicalToDeviceUnits1(value, devicePixels);
     }
 
     public static WFSize LogicalToDeviceUnits(WFSize logicalSize, int deviceDpi = 0)
     {
-        s_fnLogicalToDeviceUnits2 ??= DelegateHelper.StaticCreateDelegate<DpiHelper_LogicalToDeviceUnits2>(s_type, typeof(WFSize), BindingFlags.Public);
+        DelegateHelper.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits2, s_type, typeof(WFSize), BindingFlags.Public);
         return s_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
     }
 

@@ -5,12 +5,12 @@ namespace System.Windows.Forms;
 
 internal static class Command
 {
-    private static Command_DispatchID fnDispatchID;
+    private static Command_DispatchID s_fnDispatchID;
 
     public static bool DispatchID(int id)
     {
-        fnDispatchID ??= DelegateHelper.StaticCreateDelegate<Command_DispatchID>(
+        DelegateHelper.StaticCreateDelegate(ref s_fnDispatchID,
             ReflectionHelper.RevealType(typeof(Control), typeof(Command)), BindingFlags.Public);
-        return fnDispatchID(id);
+        return s_fnDispatchID(id);
     }
 }

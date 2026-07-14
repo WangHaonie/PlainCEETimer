@@ -7,22 +7,22 @@ namespace PlainCEETimer.Modules.Reflection;
 
 internal static class DelegateHelper
 {
-    public static TDelegate CreateDelegate<TDelegate>(object instance, MethodInfo methodInfo)
+    public static void CreateDelegate<TDelegate>(ref TDelegate fn, object instance, MethodInfo methodInfo)
         where TDelegate : Delegate
     {
-        return (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, methodInfo);
+        fn ??= (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, methodInfo);
     }
 
-    public static TDelegate StaticCreateDelegate<TDelegate>(Type type, BindingFlags methodMod, [CallerMemberName] string methodName = "")
+    public static void StaticCreateDelegate<TDelegate>(ref TDelegate fn, Type type, BindingFlags methodMod, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        return StaticCreateDelegate<TDelegate>(type, null, methodMod, methodName);
+        StaticCreateDelegate(ref fn, type, null, methodMod, methodName);
     }
 
-    public static TDelegate StaticCreateDelegate<TDelegate>(Type type, Type returnType, BindingFlags methodMod, [CallerMemberName] string methodName = "")
+    public static void StaticCreateDelegate<TDelegate>(ref TDelegate fn, Type type, Type returnType, BindingFlags methodMod, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        return StaticCreateDelegateCore<TDelegate>(type, returnType, methodMod, methodName);
+        fn ??= StaticCreateDelegateCore<TDelegate>(type, returnType, methodMod, methodName);
     }
 
     private static TDelegate StaticCreateDelegateCore<TDelegate>(Type type, Type returnType, BindingFlags methodMod, string methodName)
