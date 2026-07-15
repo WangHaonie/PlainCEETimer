@@ -10,7 +10,7 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
 
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)},nq}}")]
 public class Exam : IListViewData<Exam>
 {
     private static readonly ExamNormalEqualityComparer NormalComparer = new();

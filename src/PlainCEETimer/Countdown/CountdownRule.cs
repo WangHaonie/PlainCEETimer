@@ -9,8 +9,8 @@ using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
 
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
 [JsonConverter(typeof(CountdownRuleConverter))]
+[DebuggerDisplay($"{{{nameof(DebuggerDisplay)},nq}}")]
 public class CountdownRule : IListViewData<CountdownRule>
 {
     internal static readonly IEqualityComparer<CountdownRule> FullComparer = new CountdownRuleFullEqualityComparer();

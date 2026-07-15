@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
@@ -8,6 +9,7 @@ using PlainCEETimer.Modules.Linq;
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
+[DebuggerDisplay($"{{{nameof(m_argsdic)}}}")]
 public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<KeyValuePair<string, string>>
 {
     public string FirstOption => m_first;
@@ -20,6 +22,7 @@ public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<
 
     private const char Quote = '"';
     private const char Backslash = '\\';
+    private const string OrphanedArg = "\x1corphaned";
 
     public static Arguments Parse(string[] args)
     {
@@ -150,18 +153,43 @@ public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<
         if (!args.IsNullOrEmpty())
         {
             var length = args.Length;
+            var i = 0;
 
-            for (int i = 0; i < length; i++)
+            if (i < length && !IsOption(args[i]))
+            {
+                var arg = args[i];
+                i++;
+
+                if (i < length && !IsOption(args[i]))
+                {
+                    var sb = new StringBuilder(arg);
+
+                    do
+                    {
+                        sb.Append(' ');
+                        sb.Append(args[i]);
+                        i++;
+                    } while (i < length && !IsOption(args[i]));
+
+                    arg = sb.ToString();
+                }
+
+                m_argsdic[OrphanedArg] = arg;
+                m_first ??= OrphanedArg;
+            }
+
+            for (; i < length; i++)
             {
                 var arg = args[i];
 
                 if (IsOption(arg))
                 {
                     var op = arg.Substring(1).ToLower();
-                    string value = null;
 
                     if (!string.IsNullOrWhiteSpace(op))
                     {
+                        string value = null;
+
                         if (i + 1 < length)
                         {
                             var next = args[i + 1];

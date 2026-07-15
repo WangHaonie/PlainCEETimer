@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
@@ -58,14 +59,12 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         public object Invoke(Delegate method, params object[] args)
         {
-            method.DynamicInvoke(args);
-            return default;
+            return method.DynamicInvoke(args);
         }
 
         public IAsyncResult BeginInvoke(Delegate method, params object[] args)
         {
-            method.DynamicInvoke(args);
-            return default;
+            return Task.Run(() => method.DynamicInvoke(args));
         }
 
         public void ReActivate()
