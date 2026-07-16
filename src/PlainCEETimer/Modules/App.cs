@@ -157,8 +157,7 @@ internal class App
     {
         AllArgs = string.Join(" ", args);
         var parsed = Arguments.Parse(args);
-        var hasArgs = !string.IsNullOrWhiteSpace(parsed.FirstOption);
-        var argc = hasArgs ? args.Length : 0;
+        var argc = parsed.DefinedAny == true ? args.Length : 0;
 
         InternalInit();
 

@@ -12,6 +12,8 @@ namespace PlainCEETimer.Modules;
 [DebuggerDisplay($"{{{nameof(m_argsdic)}}}")]
 public class Arguments(ArgumentType type = ArgumentType.Internal) : IEnumerable<KeyValuePair<string, string>>
 {
+    public bool? DefinedAny => field ??= !string.IsNullOrWhiteSpace(m_first);
+
     public string FirstOption => m_first;
 
     private bool init;
