@@ -5,8 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace PlainCEETimer.Modules.Reflection;
 
-internal static class DelegateHelper
+public static class ReflectionUtils
 {
+    public static Type RevealType(Type refType, Type pseudoType)
+    {
+        return refType.Assembly.GetType(pseudoType.FullName);
+    }
+
     public static void CreateDelegate<TDelegate>(ref TDelegate fn, object instance, MethodInfo methodInfo)
         where TDelegate : Delegate
     {

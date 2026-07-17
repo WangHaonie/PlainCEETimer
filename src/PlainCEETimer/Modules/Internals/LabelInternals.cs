@@ -23,7 +23,7 @@ internal class LabelInternals
     internal StringFormat CreateStringFormat()
     {
         s_miCreateStringFormat ??= typeof(Label).GetMethod(nameof(CreateStringFormat), BindingFlags.Instance | BindingFlags.NonPublic);
-        DelegateHelper.CreateDelegate(ref m_fnCreateStringFormat, m_target, s_miCreateStringFormat);
+        ReflectionUtils.CreateDelegate(ref m_fnCreateStringFormat, m_target, s_miCreateStringFormat);
         return m_fnCreateStringFormat();
     }
 }

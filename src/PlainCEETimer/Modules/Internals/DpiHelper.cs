@@ -95,18 +95,18 @@ internal static class DpiHelper
 
     static DpiHelper()
     {
-        s_type = ReflectionHelper.RevealType(typeof(Control), typeof(DpiHelper));
+        s_type = ReflectionUtils.RevealType(typeof(Control), typeof(DpiHelper));
     }
 
     public static int LogicalToDeviceUnits(int value, int devicePixels = 0)
     {
-        DelegateHelper.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits1, s_type, typeof(int), BindingFlags.Public);
+        ReflectionUtils.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits1, s_type, typeof(int), BindingFlags.Public);
         return s_fnLogicalToDeviceUnits1(value, devicePixels);
     }
 
     public static WFSize LogicalToDeviceUnits(WFSize logicalSize, int deviceDpi = 0)
     {
-        DelegateHelper.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits2, s_type, typeof(WFSize), BindingFlags.Public);
+        ReflectionUtils.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits2, s_type, typeof(WFSize), BindingFlags.Public);
         return s_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
     }
 

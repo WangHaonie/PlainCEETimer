@@ -10,13 +10,13 @@ internal static class ApplicationCommandsInternals
 
     internal static string GetUIText(byte commandId)
     {
-        DelegateHelper.StaticCreateDelegate(ref s_fnGetUIText, typeof(ApplicationCommands), BindingFlags.NonPublic);
+        ReflectionUtils.StaticCreateDelegate(ref s_fnGetUIText, typeof(ApplicationCommands), BindingFlags.NonPublic);
         return s_fnGetUIText(commandId);
     }
 
     internal static InputGestureCollection LoadDefaultGestureFromResource(byte commandId)
     {
-        DelegateHelper.StaticCreateDelegate(ref s_fnLoadDefaultGestureFromResource, typeof(ApplicationCommands), BindingFlags.NonPublic);
+        ReflectionUtils.StaticCreateDelegate(ref s_fnLoadDefaultGestureFromResource, typeof(ApplicationCommands), BindingFlags.NonPublic);
         return s_fnLoadDefaultGestureFromResource(commandId);
     }
 }
