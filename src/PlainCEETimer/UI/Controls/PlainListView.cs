@@ -97,6 +97,18 @@ public sealed class PlainListView : ListView, IThemeAware
         }
     }
 
+    public void InvertSelection()
+    {
+        var items = Items;
+        var count = items.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            var item = items[i];
+            item.Selected = !item.Selected;
+        }
+    }
+
     public new void EndUpdate()
     {
         base.EndUpdate();

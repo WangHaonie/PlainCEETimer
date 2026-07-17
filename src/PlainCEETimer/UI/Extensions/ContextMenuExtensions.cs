@@ -39,17 +39,17 @@ public static class ContextMenuExtensions
         return new(builder(new()));
     }
 
-    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder, int index = -1)
+    public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder, int index = 0)
     {
         var items = menu.MenuItems;
         var count = items.Count;
         var newItems = builder(new());
 
-        if (index > 0 && index < count - 1)
+        if (index != 0 && (index += count) < count)
         {
-            for (int i = 0; i < newItems.Length; i++)
+            for (int i = newItems.Length - 1; i > -1; i--)
             {
-                items.Add(index + i, newItems[i]);
+                items.Add(index, newItems[i]);
             }
 
             return menu;

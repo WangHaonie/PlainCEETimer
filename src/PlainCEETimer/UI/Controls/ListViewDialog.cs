@@ -78,6 +78,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     private MenuItem MenuItemDelete;
     private MenuItem MenuItemExclude;
     private MenuItem MenuItemInclude;
+    private MenuItem MenuItemInvertSelect;
     private MenuItem MenuItemSelectAll;
     private PlainButton ButtonOperation;
     private HashSet<ListViewItem> FixedDataItemSet;
@@ -144,7 +145,8 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 MenuItemEdit = b.Item("编辑(&E)", MenuItemEdit_Click),
                 MenuItemDelete = b.Item("删除(&D)", MenuItemDelete_Click),
                 b.Separator(),
-                MenuItemSelectAll = b.Item("全选(&Q)", MenuItemSelectAll_Click)
+                MenuItemSelectAll = b.Item("全选(&Q)", MenuItemSelectAll_Click),
+                MenuItemInvertSelect = b.Item("反选(&N)", MenuItemInvertSelect_Click)
             ], (_, _) =>
             {
                 ListViewMain.GetSelection(out _, out var item, out var total);
@@ -153,11 +155,13 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 var selected = total != 0;
 
                 var def = atMost1 && hasFixedData && IsDefault(item);
+                var hasItem = Items.Count != 0;
 
                 MenuItemDelete.Enabled = selected && !def;
                 MenuItemDuplicate.Enabled = atMost1 && !def;
                 MenuItemEdit.Enabled = atMost1;
-                MenuItemSelectAll.Enabled = Items.Count != 0;
+                MenuItemSelectAll.Enabled = hasItem;
+                MenuItemInvertSelect.Enabled = hasItem;
 
                 if (AllowExcludeItems)
                 {
@@ -176,7 +180,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 b.Separator(),
                 MenuItemExclude = b.Item("排除(&X)", MenuItemExclude_Click),
                 MenuItemInclude = b.Item("包括(&I)", MenuItemInclude_Click)
-            ], MenuItemSelectAll.Index - 1);
+            ], -3);
         }
 
         ListViewMain.ContextMenu = ContextMenuMain;
@@ -245,6 +249,9 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 break;
             case (true, Keys.C):
                 MenuItemDuplicate_Click(null, null);
+                break;
+            case (true, Keys.N):
+                MenuItemInvertSelect_Click(null, null);
                 break;
             case (true, Keys.X):
                 MenuItemExclude_Click(null, null);
@@ -365,6 +372,13 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         ListViewMain.BeginUpdate();
         ListViewMain.SelectAll(true);
+        ListViewMain.EndUpdate();
+    }
+
+    private void MenuItemInvertSelect_Click(object sender, EventArgs e)
+    {
+        ListViewMain.BeginUpdate();
+        ListViewMain.InvertSelection();
         ListViewMain.EndUpdate();
     }
 
