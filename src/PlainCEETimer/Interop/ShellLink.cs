@@ -96,7 +96,7 @@ public static class ShellLink
             lnk.Description = App.AppName;
             lnk.IconPath = string.Empty;
             lnk.IconIndex = 0;
-            Create(lnk);
+            Create(ref lnk);
         }
     }
 
@@ -104,7 +104,7 @@ public static class ShellLink
     private static extern void Initialize();
 
     [DllImport(App.NativesDll, EntryPoint = "#11", CharSet = CharSet.Unicode)]
-    private static extern void Create(LNKFILEINFO lnkFileInfo);
+    private static extern void Create(ref LNKFILEINFO lpLnkFileInfo);
 
     [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
     private static extern void Query(ref LNKFILEINFO lpLnkFileInfo);

@@ -199,7 +199,7 @@
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Height" Value="1"/>
-        <Setter Property="Margin" Value="{DynamicResource ContextMenuSeparatorMagrin}"/>
+        <Setter Property="Margin" Value="{DynamicResource ContextMenuSeparatorMargin}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Separator">
@@ -242,13 +242,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
                     <Border x:Name="Bd" SnapsToDevicePixels="True"
+                            Margin="{DynamicResource ContextMenuItemMargin}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{DynamicResource MenuItemCornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{DynamicResource ContextMenuLeftMagrin}" SharedSizeGroup="MenuIconColumn"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenuLeftMargin}" SharedSizeGroup="MenuIconColumn"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="MenuHeaderColumn"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="MenuShortcutColumn"/>
                                 <ColumnDefinition Width="20"/>

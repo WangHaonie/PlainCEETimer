@@ -6,8 +6,9 @@
     <CornerRadius x:Key="WindowBorderCornerRadius">0</CornerRadius>
     <!-- 0 because it's defined by system on Windows 11 -->
 
-    <Thickness x:Key="ContextMenuSeparatorMagrin">6,4,6,4</Thickness>
-    <GridLength x:Key="ContextMenuLeftMagrin">26</GridLength>
+    <Thickness x:Key="ContextMenuSeparatorMargin">6,4,6,4</Thickness>
+    <Thickness x:Key="ContextMenuItemMargin">2.3,0,4.5,0</Thickness>
+    <GridLength x:Key="ContextMenuLeftMargin">24</GridLength>
     
     <Color x:Key="Dark_ForeMenuItemDisabled">#6D6D6D</Color>
     <Color x:Key="Dark_BackContextMenu">#2C2C2C</Color>

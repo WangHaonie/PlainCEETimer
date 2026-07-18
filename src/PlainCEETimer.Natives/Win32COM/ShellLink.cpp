@@ -18,18 +18,18 @@ void InitializeShellLink()
     }
 }
 
-void ShellLinkCreateLnk(LNKFILEINFO lnkFileInfo)
+void ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
     if (init)
     {
-        psh->SetPath(lnkFileInfo.pszTarget);
-        psh->SetArguments(lnkFileInfo.pszArgs);
-        psh->SetWorkingDirectory(lnkFileInfo.pszWorkingDir);
-        psh->SetHotkey(lnkFileInfo.wHotkey);
-        psh->SetShowCmd(lnkFileInfo.iShowCmd);
-        psh->SetDescription(lnkFileInfo.pszDescription);
-        psh->SetIconLocation(lnkFileInfo.pszIconPath, lnkFileInfo.iIcon);
-        ppf->Save(lnkFileInfo.lnkPath, FALSE);
+        psh->SetPath(lpLnkFileInfo->pszTarget);
+        psh->SetArguments(lpLnkFileInfo->pszArgs);
+        psh->SetWorkingDirectory(lpLnkFileInfo->pszWorkingDir);
+        psh->SetHotkey(lpLnkFileInfo->wHotkey);
+        psh->SetShowCmd(lpLnkFileInfo->iShowCmd);
+        psh->SetDescription(lpLnkFileInfo->pszDescription);
+        psh->SetIconLocation(lpLnkFileInfo->pszIconPath, lpLnkFileInfo->iIcon);
+        ppf->Save(lpLnkFileInfo->lnkPath, FALSE);
     }
 }
 

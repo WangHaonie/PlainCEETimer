@@ -5,8 +5,9 @@
     <CornerRadius x:Key="SelectionRectangleCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="WindowBorderCornerRadius">8</CornerRadius>
 
-    <Thickness x:Key="ContextMenuSeparatorMagrin">24,2,1,3</Thickness>
-    <GridLength x:Key="ContextMenuLeftMagrin">22</GridLength>
+    <Thickness x:Key="ContextMenuSeparatorMargin">24,2,1,3</Thickness>
+    <Thickness x:Key="ContextMenuItemMargin">0</Thickness>
+    <GridLength x:Key="ContextMenuLeftMargin">22</GridLength>
 
     <Color x:Key="Dark_ForeMenuItemDisabled">#6D6D6D</Color>
     <Color x:Key="Dark_BackContextMenu">#2B2B2B</Color>
