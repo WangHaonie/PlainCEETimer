@@ -10,5 +10,7 @@
 **/PlainCEETimer.Fody/obj/
 **/PlainCEETimer.Appcom/x64/
 **/PlainCEETimer.Natives/x64/
+**/PlainCEETimer.SourceGenerators/bin/
+**/PlainCEETimer.SourceGenerators/obj/
 **/PlainCEETimer.Setup/*.exe
 *.aps

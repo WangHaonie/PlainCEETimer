@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
@@ -12,10 +12,15 @@
   <Project Path="PlainCEETimer.Natives/PlainCEETimer.Natives.vcxproj" Id="86cb09fc-384d-42e6-a102-7c54c154d111">
     <BuildType Project="Debug" />
   </Project>
+  <Project Path="PlainCEETimer.SourceGenerators/PlainCEETimer.SourceGenerators.csproj" Id="15adf1a8-e2c7-417f-9f44-16a3f96d8475">
+    <BuildType Project="Release" />
+    <Platform Project="x64" />
+  </Project>
   <Project Path="PlainCEETimer/PlainCEETimer.csproj" Id="ba4d9680-5e05-4fdb-b198-f16e3a64b582">
     <BuildDependency Project="PlainCEETimer.Appcom/PlainCEETimer.Appcom.vcxproj" />
     <BuildDependency Project="PlainCEETimer.Fody/PlainCEETimer.Fody.csproj" />
     <BuildDependency Project="PlainCEETimer.Natives/PlainCEETimer.Natives.vcxproj" />
+    <BuildDependency Project="PlainCEETimer.SourceGenerators/PlainCEETimer.SourceGenerators.csproj" />
     <Platform Project="x64" />
   </Project>
 </Solution>
