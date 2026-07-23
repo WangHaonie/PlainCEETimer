@@ -73,9 +73,26 @@ static void CreateNewState(LPPTSPSTATE lpState)
     }
 }
 
-static void ScrollNumeric(PTSPSEG& seg, int delta)
+static void NotifyValueChanged(HWND hWnd)
 {
-    seg.value = std::clamp(seg.value + delta, 0, seg.maxValue);
+    HWND hParent = GetParent(hWnd);
+    if (!hParent) hParent = hWnd;
+
+    SendMessage(hParent, WM_COMMAND,
+        MAKEWPARAM(CastToS(UINT, GetWindowLongPtr(hWnd, GWLP_ID)), PTSPN_VALUECHANGE),
+        CastToP(LPARAM, hWnd));
+}
+
+static void ScrollNumeric(PTSPSEG& seg, int delta, HWND hPtsp)
+{
+    int value = seg.value + delta;
+    int clamped = std::clamp(value, 0, seg.maxValue);
+    seg.value = clamped;
+
+    if (clamped == value)
+    {
+        NotifyValueChanged(hPtsp);
+    }
 }
 
 static void UpdateSegmentText(std::vector<PTSPSEG>& segs)
@@ -90,16 +107,6 @@ static void UpdateSegmentText(std::vector<PTSPSEG>& segs)
             seg.text = buffer;
         }
     }
-}
-
-static void NotifyValueChanged(HWND hWnd)
-{
-    HWND hParent = GetParent(hWnd);
-    if (!hParent) hParent = hWnd;
-
-    SendMessage(hParent, WM_COMMAND,
-        MAKEWPARAM(CastToS(UINT, GetWindowLongPtr(hWnd, GWLP_ID)), PTSPN_VALUECHANGE),
-        CastToP(LPARAM, hWnd));
 }
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -216,7 +223,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
                 if (steps != 0)
                 {
-                    ScrollNumeric(lpState->segments[lpState->index], steps);
+                    ScrollNumeric(lpState->segments[lpState->index], steps, hWnd);
                     InvalidateRect(hWnd, nullptr, TRUE);
                     return 0;
                 }
@@ -286,7 +293,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             {
                 int i = lpState->index;
                 auto& segs = lpState->segments;
-                int length = static_cast<int>(segs.size());
+                int length = CastToS(int, segs.size());
 
                 switch (wParam)
                 {
@@ -312,9 +319,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                         lpState->buffer.clear();
                         auto& seg = segs[lpState->index];
                         int delta = (wParam == VK_UP) ? 1 : -1;
-                        ScrollNumeric(seg, delta);
+                        ScrollNumeric(seg, delta, hWnd);
                         InvalidateRect(hWnd, nullptr, TRUE);
-                        NotifyValueChanged(hWnd);
                         return 0;
                     }
                     
@@ -509,6 +515,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                     {
                         InvalidateRect(hWnd, nullptr, TRUE);
                     }
+                }
+            }
+
+            return 0;
+        }
+
+        case PTSPM_INCREASE:
+        {
+            if (lpState && lpState->index >= 0 && IsWindowEnabled(hWnd))
+            {
+                auto& seg = lpState->segments[lpState->index];
+
+                if (seg.type == PTSPSEG_NUMERIC)
+                {
+                    int delta = CastToS(int, wParam);
+                    ScrollNumeric(seg, delta, hWnd);
+                    lpState->buffer.clear();
+                    InvalidateRect(hWnd, nullptr, TRUE);
                 }
             }
 

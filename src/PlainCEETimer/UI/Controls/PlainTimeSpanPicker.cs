@@ -3,13 +3,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
-public sealed class PlainTimeSpanPicker : Control, IThemeAware
+public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 {
     public unsafe int MaxDays
     {
@@ -88,6 +89,7 @@ public sealed class PlainTimeSpanPicker : Control, IThemeAware
     private const int PTSPM_SETDAYSMAX = WM.USER + 0x0013;
     private const int PTSPM_OVERRIDECOLORS = WM.USER + 0x0014;
     private const int PTSPM_QUERYMAXSIZE = WM.USER + 0x0015;
+    private const int PTSPM_INCREASE = WM.USER + 0x0016;
     private const int PTSPN_VALUECHANGE = 1;
     private const int PTSPCOLOR_BACKTEXT = 0;
     private const int PTSPCOLOR_FORETEXT = 1;
@@ -104,8 +106,24 @@ public sealed class PlainTimeSpanPicker : Control, IThemeAware
         Win32Controls.PlainTimeSpanPick_RegisterWC();
     }
 
+    public override void DownButton()
+    {
+        Increase(-1);
+    }
+
+    public override void UpButton()
+    {
+        Increase(1);
+    }
+
+    protected override void UpdateEditText()
+    {
+        return;
+    }
+
     protected override void OnHandleCreated(EventArgs e)
     {
+        Controls[1].Visible = false;
         base.OnHandleCreated(e);
         SetMaxDays();
         SetValue();
@@ -149,6 +167,14 @@ public sealed class PlainTimeSpanPicker : Control, IThemeAware
         }
     }
 
+    private void Increase(int i)
+    {
+        if (IsHandleCreated)
+        {
+            Win32UI.SendMessage(Handle, PTSPM_INCREASE, i, 0);
+        }
+    }
+
     private void OnValueChanged()
     {
         ValueChanged?.Invoke(this, EventArgs.Empty);
@@ -163,17 +189,21 @@ public sealed class PlainTimeSpanPicker : Control, IThemeAware
 
             if (useDark)
             {
+                BackColor = Colors.DarkBackText;
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkBackText.ToWin32(), PTSPCOLOR_BACKTEXT));
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeText.ToWin32(), PTSPCOLOR_FORETEXT));
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeTextDisabled.ToWin32(), PTSPCOLOR_FORETEXTDISABLED));
+                ThemeManager.EnableDarkModeForControl(Controls[0], SystemStyle.ExplorerDark);
             }
             else
             {
+                BackColor = SystemColors.Window;
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(0, PTSPCOLOR_RESTORE));
+                ThemeManager.EnableDarkModeForControl(Controls[0], SystemStyle.Explorer);
             }
         }
     }
