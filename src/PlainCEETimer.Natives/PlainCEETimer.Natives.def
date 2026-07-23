@@ -56,3 +56,5 @@ EXPORTS
     HookGetMessage @44 NONAME
     UnhookGetMessage @45 NONAME
     CheckWindowExStyle @46 NONAME
+
+    PlainTimeSpanPick_RegisterWC @47 NONAME

@@ -79,6 +79,16 @@ inline void __stdcall ReleasePPI(TInterface** ppi)
     }
 }
 
+inline LPVOID __stdcall HeapAllocEx(SIZE_T dwBytes)
+{
+    return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwBytes);
+}
+
+inline BOOL __stdcall HeapFreeEx(LPVOID lpMem)
+{
+    return HeapFree(GetProcessHeap(), 0, lpMem);
+}
+
 /*
 
 关于字符串内存分配：

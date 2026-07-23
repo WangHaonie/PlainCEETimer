@@ -80,6 +80,9 @@
     <Compile Update="UI\Controls\PlainTextCounter.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainTimeSpanPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="UI\Controls\PlainToolTip.cs">
       <SubType>Component</SubType>
     </Compile>

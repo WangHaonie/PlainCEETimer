@@ -22,5 +22,21 @@ public static class Extensions
         {
             return (ushort)low | ((ushort)high << 16);
         }
+
+        public static int MakeLong24(int low, int high)
+        {
+            return (int)(((uint)low & 0xFFFFFF) | ((uint)high << 24));
+        }
     }
+
+    //extension(long value)
+    //{
+    //    public int LoDWord => (int)(uint)(value & 0xFFFFFFFF);
+    //    public int HiDWord => (int)(uint)((value >> 32) & 0xFFFFFFFF);
+
+    //    public static long MakeQWord(int low, int high)
+    //    {
+    //        return (long)(((uint)low) | ((ulong)(uint)high << 32));
+    //    }
+    //}
 }

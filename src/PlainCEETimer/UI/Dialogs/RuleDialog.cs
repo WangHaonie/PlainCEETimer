@@ -23,20 +23,13 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     private PlainComboBox ComboBoxRuleType;
     private PlainComboBox ComboBoxPlaceholders;
     private PlainLabel LabelCharExam;
-    private PlainLabel LabelCharDay;
-    private PlainLabel LabelCharHour;
-    private PlainLabel LabelCharMinute;
-    private PlainLabel LabelCharSecond;
     private PlainLabel LabelFore;
     private PlainLabel LabelBack;
     private PlainLabel LabelCustomText;
     private PlainLinkLabel LinkResetColor;
     private PlainLinkLabel LinkResetText;
-    private PlainNumericUpDown NUDDays;
-    private PlainNumericUpDown NUDHours;
-    private PlainNumericUpDown NUDMinutes;
-    private PlainNumericUpDown NUDSeconds;
     private PlainTextBox TextBoxCustomText;
+    private PlainTimeSpanPicker PTSPExam;
     private EventHandler OnUserChanged;
     private CountdownRule data = existing;
     private readonly CountdownRule[] Presets = presets ?? DefaultValues.GlobalDefaultRules;
@@ -50,10 +43,6 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         this.AddControls(b =>
         [
             LabelCharExam = b.Label("距离考试"),
-            LabelCharDay = b.Label("天"),
-            LabelCharHour = b.Label("时"),
-            LabelCharMinute = b.Label("分"),
-            LabelCharSecond = b.Label("秒"),
             LabelFore = b.Label("文字颜色"),
             LabelBack = b.Label("背景颜色"),
             LabelCustomText = b.Label("自定义文本"),
@@ -63,7 +52,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             BlockFore = b.Block(true, BlockPreview, ColorBlocks_Click),
             BlockBack = b.Block(false, BlockPreview, ColorBlocks_Click),
 
-            TextBoxCustomText = b.TextBox(295, true, (_, _) =>
+            TextBoxCustomText = b.TextBox(228, true, (_, _) =>
             {
                 if (!IsEditMode)
                 {
@@ -96,10 +85,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
                 UserChanged();
             }, Ph.RuleTypes),
 
-            NUDDays = b.NumericUpDown(53, 0M, 65535M, OnUserChanged),
-            NUDHours = b.NumericUpDown(40, 0M, 23M, OnUserChanged),
-            NUDMinutes = b.NumericUpDown(40, 0M, 59M, OnUserChanged),
-            NUDSeconds = b.NumericUpDown(40, 0M, 59M, OnUserChanged),
+            PTSPExam = b.New<PlainTimeSpanPicker>(151, 0, null).With(x => x.ValueChanged += OnUserChanged),
 
             ComboBoxPlaceholders = b.ComboBox(160, (_, _) =>
                 TextBoxCustomText.InputFlyout(Ph.FormatPhs[ComboBoxPlaceholders.SelectedIndex]),
@@ -132,16 +118,9 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     protected override void RunLayout(bool isHighDpi)
     {
         ArrangeFirstControl(LabelCharExam);
-        ArrangeControlXT(ComboBoxRuleType, LabelCharExam);
+        ArrangeControlXT(ComboBoxRuleType, LabelCharExam, 3);
         CenterControlY(LabelCharExam, ComboBoxRuleType);
-        ArrangeControlXT(NUDDays, ComboBoxRuleType, 6, 0);
-        ArrangeControlXRT(LabelCharDay, NUDDays, LabelCharExam);
-        ArrangeControlXRT(NUDHours, LabelCharDay, NUDDays);
-        ArrangeControlXRT(LabelCharHour, NUDHours, LabelCharDay);
-        ArrangeControlXRT(NUDMinutes, LabelCharHour, NUDHours);
-        ArrangeControlXRT(LabelCharMinute, NUDMinutes, LabelCharHour);
-        ArrangeControlXRT(NUDSeconds, LabelCharMinute, NUDMinutes);
-        ArrangeControlXRT(LabelCharSecond, NUDSeconds, LabelCharMinute);
+        ArrangeControlXT(PTSPExam, ComboBoxRuleType, 6, 0);
         ArrangeControlYL(LabelFore, LabelCharExam);
         ArrangeControlYL(BlockFore, ComboBoxRuleType, 0, 3);
         CenterControlY(LabelFore, BlockFore);
@@ -170,7 +149,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         {
             if (IsGlobal = Data.Default)
             {
-                Control[] rtctrls = [ComboBoxRuleType, NUDDays, NUDHours, NUDMinutes, NUDSeconds];
+                Control[] rtctrls = [ComboBoxRuleType, PTSPExam];
 
                 foreach (var ctrl in rtctrls)
                 {
@@ -179,11 +158,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             }
 
             ComboBoxRuleType.SelectedIndex = (int)Data.Phase;
-            var tick = Data.Tick;
-            NUDDays.Value = tick.Days;
-            NUDHours.Value = tick.Hours;
-            NUDMinutes.Value = tick.Minutes;
-            NUDSeconds.Value = tick.Seconds;
+            PTSPExam.Value = Data.Tick;
             ApplyColorBlock(Data.Colors);
             TextBoxCustomText.Text = Data.Text;
         }
@@ -195,12 +170,9 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
 
     protected override bool OnClickButtonA()
     {
-        var d = (int)NUDDays.Value;
-        var h = (int)NUDHours.Value;
-        var m = (int)NUDMinutes.Value;
-        var s = (int)NUDSeconds.Value;
+        var ts = PTSPExam.Value;
 
-        if (!IsGlobal && d == 0 && m == 0 && h == 0 && s == 0)
+        if (!IsGlobal && ts == TimeSpan.Zero)
         {
             MessageX.Error("时刻不能为0，请重新设置！");
             return false;
@@ -225,7 +197,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         data = new()
         {
             Phase = IsGlobal ? Data.Phase : (CountdownPhase)ComboBoxRuleType.SelectedIndex,
-            Tick = IsGlobal ? default : new(d, h, m, s),
+            Tick = IsGlobal ? default : ts,
             Text = text,
             Colors = colors,
             Default = IsGlobal

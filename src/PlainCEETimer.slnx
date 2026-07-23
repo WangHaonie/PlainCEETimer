@@ -9,9 +9,7 @@
     <BuildType Project="Release" />
     <Platform Project="x64" />
   </Project>
-  <Project Path="PlainCEETimer.Natives/PlainCEETimer.Natives.vcxproj" Id="86cb09fc-384d-42e6-a102-7c54c154d111">
-    <BuildType Project="Debug" />
-  </Project>
+  <Project Path="PlainCEETimer.Natives/PlainCEETimer.Natives.vcxproj" Id="86cb09fc-384d-42e6-a102-7c54c154d111" />
   <Project Path="PlainCEETimer.SourceGenerators/PlainCEETimer.SourceGenerators.csproj" Id="15adf1a8-e2c7-417f-9f44-16a3f96d8475">
     <BuildType Project="Release" />
     <Platform Project="x64" />

@@ -63,6 +63,9 @@
     <ClInclude Include="Win32\Win32.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Controls\PlainTimeSpanPick.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Win32\Win32.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\PlainTimeSpanPick.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

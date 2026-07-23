@@ -58,6 +58,12 @@ internal static class Win32UI
     public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
     [DllImport(App.User32Dll)]
+    public static extern IntPtr SendMessage(IntPtr hWnd, int msg, long wParam, long lParam);
+
+    [DllImport(App.User32Dll)]
+    public unsafe static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, void* lParam);
+
+    [DllImport(App.User32Dll)]
     public static extern bool DestroyIcon(HICON hIcon);
 
     [DllImport(App.User32Dll)]
