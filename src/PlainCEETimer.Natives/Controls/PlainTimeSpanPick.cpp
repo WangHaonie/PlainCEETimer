@@ -346,6 +346,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             {
                 PAINTSTRUCT ps;
                 HDC hdc = BeginPaint(hWnd, &ps);
+                BOOL enabled = IsWindowEnabled(hWnd);
 
                 RECT rc;
                 GetClientRect(hWnd, &rc);
@@ -356,6 +357,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
                 HBRUSH hBgBrush = CreateSolidBrush(colors->backText);
                 FillRect(cdc, &rc, hBgBrush);
+                DeleteObject(hBgBrush);
+                
+                COLORREF crBd = GetSysColor(enabled ? COLOR_ACTIVEBORDER : COLOR_WINDOWFRAME);
+                HBRUSH hBorderBrush = CreateSolidBrush(crBd);
+                FrameRect(cdc, &rc, hBorderBrush);
+                DeleteObject(hBorderBrush);
 
                 HFONT fontOld = CastToP(HFONT, SelectObject(cdc, lpState->hFont));
                 UpdateSegmentText(lpState->segments);
@@ -363,7 +370,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 TEXTMETRIC tm;
                 GetTextMetrics(cdc, &tm);
 
-                int x = 5;
+                int x = 4;
                 int y = (rc.bottom - tm.tmHeight) / 2;
 
                 for (int i = 0; i < lpState->segments.size(); i++)
@@ -385,7 +392,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                     }
                     else
                     {
-                        SetTextColor(cdc, IsWindowEnabled(hWnd) ? colors->foreText : colors->foreTextDisabled);
+                        SetTextColor(cdc, enabled ? colors->foreText : colors->foreTextDisabled);
                     }
 
                     SetBkMode(cdc, TRANSPARENT);
@@ -399,7 +406,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 SelectObject(cdc, bmOld);
 
                 DeleteObject(bm);
-                DeleteObject(hBgBrush);
                 DeleteDC(cdc);
 
                 EndPaint(hWnd, &ps);

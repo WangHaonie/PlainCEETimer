@@ -70,7 +70,6 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         {
             var cp = base.CreateParams;
             cp.ClassName = Win32Controls.WC_PLAINTIMESPANPICK;
-            cp.Style |= WS.BORDER;
             return cp;
         }
     }
