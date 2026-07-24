@@ -7,8 +7,7 @@
 #define PTSPM_GETDAYSMAX            (WM_USER + 0x0012)
 #define PTSPM_SETDAYSMAX            (WM_USER + 0x0013)
 #define PTSPM_OVERRIDECOLORS        (WM_USER + 0x0014)
-#define PTSPM_QUERYMAXSIZE          (WM_USER + 0x0015)
-#define PTSPM_INCREASE              (WM_USER + 0x0016)
+#define PTSPM_INCREASE              (WM_USER + 0x0015)
 
 #define PTSPN_VALUECHANGE           1
 

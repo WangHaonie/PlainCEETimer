@@ -82,14 +82,15 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     private long m_ticks;
     private int m_maxdays = 65535;
     private ThemeHelper themeHelper;
+    private readonly Debouncer debouncer;
+    private readonly ActionInvoker OnValueChangedAction;
 
     private const int PTSPM_GETVALUE = WM.USER + 0x0010;
     private const int PTSPM_SETVALUE = WM.USER + 0x0011;
     private const int PTSPM_GETDAYSMAX = WM.USER + 0x0012;
     private const int PTSPM_SETDAYSMAX = WM.USER + 0x0013;
     private const int PTSPM_OVERRIDECOLORS = WM.USER + 0x0014;
-    private const int PTSPM_QUERYMAXSIZE = WM.USER + 0x0015;
-    private const int PTSPM_INCREASE = WM.USER + 0x0016;
+    private const int PTSPM_INCREASE = WM.USER + 0x0015;
     private const int PTSPN_VALUECHANGE = 1;
     private const int PTSPCOLOR_BACKTEXT = 0;
     private const int PTSPCOLOR_FORETEXT = 1;
@@ -99,6 +100,8 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     public PlainTimeSpanPicker()
     {
         SetStyle(ControlStyles.UserPaint, false);
+        OnValueChangedAction = new(OnValueChangedImpl);
+        debouncer = new(new ControlDebounceHelper(this));
     }
 
     static PlainTimeSpanPicker()
@@ -176,6 +179,11 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     }
 
     private void OnValueChanged()
+    {
+        debouncer.Debounce(OnValueChangedAction);
+    }
+
+    private void OnValueChangedImpl()
     {
         ValueChanged?.Invoke(this, EventArgs.Empty);
     }
