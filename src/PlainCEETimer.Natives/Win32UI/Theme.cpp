@@ -93,12 +93,12 @@ void EnableDarkModeForApp(BOOL enabled)
 
             if (addr)
             {
-                g_SetPreferredAppMode = reinterpret_cast<fnSetPreferredAppMode>(addr);
+                g_SetPreferredAppMode = CastToP(fnSetPreferredAppMode, addr);
             }
 
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
             {
-                g_OpenNcThemeData = reinterpret_cast<fnOpenNcThemeData>(addr);
+                g_OpenNcThemeData = CastToP(fnOpenNcThemeData, addr);
                 
                 if (InitializeIatHook(HOOK_OPENNCTHEMEDATA_ARGS, IatHookOpenNcThemeData))
                 {
@@ -109,7 +109,7 @@ void EnableDarkModeForApp(BOOL enabled)
 
             if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)))
             {
-                g_FlushMenuThemes = reinterpret_cast<fnFlushMenuThemes>(addr);
+                g_FlushMenuThemes = CastToP(fnFlushMenuThemes, addr);
             }
         }
     }

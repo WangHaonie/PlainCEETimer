@@ -54,7 +54,7 @@ static double GetRefreshRate(const DISPLAYCONFIG_PATH_INFO& path, const std::vec
 
     if (rate.Denominator != 0)
     {
-        return static_cast<double>(rate.Numerator) / static_cast<double>(rate.Denominator);
+        return CastToS(double, rate.Numerator) / CastToS(double, rate.Denominator);
     }
 
     return 0.0;
@@ -141,13 +141,13 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
 
     return EnumDisplayMonitors(nullptr, nullptr, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) -> BOOL
     {
-        auto* pdata = reinterpret_cast<EnumDisplayData*>(dwData);
+        EnumDisplayData* pdata = CastToP(EnumDisplayData*, dwData);
 
         SystemDisplay info = { pdata->index };
         DISPLAY_DEVICEW dd = { sizeof(dd) };
         MONITORINFOEXW mi = { sizeof(MONITORINFOEXW) };
 
-        if (GetMonitorInfoW(hMonitor, reinterpret_cast<MONITORINFO*>(&mi)))
+        if (GetMonitorInfoW(hMonitor, CastToP(LPMONITORINFO, &mi)))
         {
             info.dosPath = mi.szDevice;
             info.position = { mi.rcMonitor.left, mi.rcMonitor.top };
@@ -158,7 +158,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
 
             if (EnumDisplaySettingsW(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm))
             {
-                info.refreshRate = static_cast<double>(dm.dmDisplayFrequency);
+                info.refreshRate = CastToS(double, dm.dmDisplayFrequency);
             }
 
             if (FillDeviceId(mi.szDevice, dd, info.deviceId))
@@ -175,7 +175,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
         }
 
         return TRUE;
-    }, reinterpret_cast<LPARAM>(&data));
+    }, CastToP(LPARAM, &data));
 }
 
 BOOL EnumSystemDisplays(EnumDisplayProc lpfnEnum)

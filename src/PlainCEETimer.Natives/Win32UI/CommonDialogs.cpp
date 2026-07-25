@@ -26,7 +26,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColo
 
     cc.Flags = flags;
     cc.hwndOwner = hWndOwner;
-    cc.hInstance = reinterpret_cast<HWND>(GetModuleHandleW(LIBRARYNAME));
+    cc.hInstance = CastToP(HWND, GetModuleHandleW(LIBRARYNAME));
     cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
 
     if (ChooseColor(&cc))
