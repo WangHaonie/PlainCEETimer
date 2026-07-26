@@ -19,6 +19,7 @@ public sealed class NavigationPage : Panel, IThemeAware
         themeHelper = new(this);
         Dock = DockStyle.Fill;
         Visible = false;
+        AutoScroll = true;
     }
 
     protected override void Dispose(bool disposing)

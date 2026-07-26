@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
@@ -12,6 +13,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms;
 
+[NoConstants]
 public sealed class SettingsForm : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
@@ -24,6 +26,7 @@ public sealed class SettingsForm : AppForm
     private bool ShowingDialog;
     private bool IsApply;
     private int SelectedTheme;
+    private int DebugTriggerArea = DebugTriggerArea_value;
     private AppConfig AppConfig;
     private GeneralObject General;
     private DisplayObject Display;
@@ -121,6 +124,13 @@ public sealed class SettingsForm : AppForm
     private readonly ComboTrigger comboTrigger = new(10, 500);
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
+
+    private const int DebugTriggerArea_value = 15;
+
+    public SettingsForm()
+    {
+        SetStyle(ControlStyles.StandardDoubleClick, false);
+    }
 
     protected override void OnInitializing()
     {
@@ -746,11 +756,16 @@ public sealed class SettingsForm : AppForm
         RefreshSettings();
     }
 
+    protected override void ScaleParamters(bool isHighDpi, float dpi, float dpiRatio, float dpiRatioRel)
+    {
+        DebugTriggerArea = ScaleToDpi(DebugTriggerArea_value);
+    }
+
     protected override void OnMouseClick(MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left)
         {
-            const int xy = 10;
+            int xy = DebugTriggerArea;
 
             if (new Rectangle(0, ClientSize.Height - xy, xy, xy)
                 .Contains(e.Location))

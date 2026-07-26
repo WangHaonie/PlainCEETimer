@@ -14,10 +14,11 @@ namespace PlainCEETimer.WPF;
 [NoConstants]
 public sealed class WPFApp : Application, IThemeAware
 {
-    public static bool IsSystemClosing { get; private set; }
+    public static bool IsSystemClosing => m_closing || App.Current.IsExiting;
 
     private ResourceDictionary themeDict;
     private ThemeHelper themeHelper;
+    private static bool m_closing;
     private readonly bool nt10 = !SystemVersion.BeforeNT10;
 
     private const string ThemeDir = "WPF/Appearance/";
@@ -29,7 +30,7 @@ public sealed class WPFApp : Application, IThemeAware
 
     protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
     {
-        IsSystemClosing = true;
+        m_closing = true;
         base.OnSessionEnding(e);
     }
 

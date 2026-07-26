@@ -9,6 +9,13 @@ namespace PlainCEETimer.UI.Extensions;
 
 public static class Extensions
 {
+    public static void AddControls(this Control control, ControlsBuilder builder)
+    {
+        control.SuspendLayout();
+        control.Controls.AddRange(builder(new()));
+        control.ResumeLayout(control.Visible);
+    }
+
     public static TControl With<TControl>(this TControl control, Action<TControl> additions)
         where TControl : Control
     {
@@ -58,17 +65,6 @@ public static class Extensions
         if (control is not Form)
         {
             control.Parent.Controls.Remove(control);
-        }
-    }
-
-    public static void AddControls(this Control control, ControlsBuilder builder)
-    {
-        var ctrls = builder(new());
-        var collection = control.Controls;
-
-        foreach (var ctrl in ctrls)
-        {
-            collection.Add(ctrl);
         }
     }
 

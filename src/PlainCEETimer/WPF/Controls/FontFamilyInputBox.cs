@@ -41,7 +41,6 @@ public sealed class FontFamilyInputBox : TextBox
     private HwndSource hwndSource;
     private HwndSourceHook m_hook;
     private readonly Throttler throttler;
-    private readonly Action ClosePopupAction;
     private readonly ReadOnlyCollection<string> systemFonts;
 
     private const string PART_Popup = nameof(PART_Popup);
@@ -64,7 +63,6 @@ public sealed class FontFamilyInputBox : TextBox
         Loaded += FontFamilyInputBox_Loaded;
         Unloaded += FontFamilyInputBox_Unloaded;
         throttler = new(300);
-        ClosePopupAction = () => IsOpen = false;
     }
 
     static FontFamilyInputBox()
@@ -311,7 +309,8 @@ public sealed class FontFamilyInputBox : TextBox
             case WM.SIZE:
             case WM.SIZING:
             case WM.ACTIVATE when wParam == IntPtr.Zero:
-                throttler.Throttle(ClosePopupAction);
+                if (throttler.Throttle())
+                    IsOpen = false;
                 break;
             default:
                 break;

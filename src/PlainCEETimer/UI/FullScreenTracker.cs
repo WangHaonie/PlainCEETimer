@@ -55,7 +55,6 @@ public class FullScreenTracker : IDisposable
     private WINEVENTPROC m_proc;
     private readonly object syncLock = new();
     private readonly Throttler throttler;
-    private readonly Action ProcessPendingWindowAction;
     private readonly ActionInvoker<IntPtr> OnFullScreenEnteredInvoker;
     private readonly ActionInvoker<IntPtr> OnFullScreenExitedInvoker;
 
@@ -70,7 +69,6 @@ public class FullScreenTracker : IDisposable
     private FullScreenTracker()
     {
         throttler = new(ThrottleInterval);
-        ProcessPendingWindowAction = ProcessPendingWindow;
         OnFullScreenEnteredInvoker = new(hWnd => FullScreenEntered?.Invoke(null, new(hWnd)));
         OnFullScreenExitedInvoker = new(hWnd => FullScreenExited?.Invoke(null, new(hWnd)));
     }
@@ -151,7 +149,10 @@ public class FullScreenTracker : IDisposable
             m_timer.Change(ThrottleInterval, Timeout.Infinite);
         }
 
-        throttler.Throttle(ProcessPendingWindowAction);
+        if (throttler.Throttle())
+        {
+            ProcessPendingWindow();
+        }
     }
 
     private void SyncCurrentState()

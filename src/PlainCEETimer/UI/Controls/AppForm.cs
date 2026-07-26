@@ -237,7 +237,7 @@ public abstract class AppForm : Form, IAppWindow
         base.OnShown(e);
     }
 
-    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    protected sealed override void OnDpiChanged(DpiChangedEventArgs e)
     {
         SuspendLayout();
         var newDpi = e.DeviceDpiNew;
@@ -306,7 +306,9 @@ public abstract class AppForm : Form, IAppWindow
         base.OnFormClosing(e);
 
         var reason = e.CloseReason;
-        e.Cancel = reason != CloseReason.WindowsShutDown && OnClosing(reason);
+        e.Cancel = !App.Current.IsExiting
+            && reason != CloseReason.WindowsShutDown
+            && OnClosing(reason);
     }
 
     protected sealed override void OnClosed(EventArgs e)
@@ -364,6 +366,11 @@ public abstract class AppForm : Form, IAppWindow
     /// 在 <see cref="AppForm"/> 已向用户显示时触发。该方法没有默认实现，可不调用 base.OnShown();
     /// </summary>
     protected virtual void OnShown()
+    {
+        return;
+    }
+
+    protected virtual void ScaleParamters(bool isHighDpi, float dpi, float dpiRatio, float dpiRatioRel)
     {
         return;
     }
@@ -731,6 +738,7 @@ public abstract class AppForm : Form, IAppWindow
         DpiRatio = newDpi / 96F;
         DpiRatioRel = newDpi / oldDpi;
         IsHighDpi = DpiRatio > 1F;
+        ScaleParamters(IsHighDpi, newDpi, DpiRatio, DpiRatioRel);
     }
 
     private void ApplyAppFont()

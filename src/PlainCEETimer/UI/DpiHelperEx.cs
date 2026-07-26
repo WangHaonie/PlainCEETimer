@@ -61,7 +61,6 @@ public static class DpiHelperEx
     private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
 
     private static readonly Throttler throttler;
-    private static readonly Action GlobalUpdateDeviceDpiAction;
     private static readonly bool isDpiAwareSupported = SystemVersion.Current.AtLeast(WindowsVersions.NT6);
     private static readonly bool isDpiAwarenessSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows81);
     private static readonly bool isApiSupported = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_1607);
@@ -71,7 +70,6 @@ public static class DpiHelperEx
     static DpiHelperEx()
     {
         throttler = new();
-        GlobalUpdateDeviceDpiAction = GlobalUpdateDeviceDpiCore;
     }
 
     public static int GetFriendlyScale(int dpi)
@@ -119,13 +117,19 @@ public static class DpiHelperEx
     {
         GlobalUpdateDeviceDpi();
         DpiHelper.enableHighDpi = true;
-        DpiHelper.enableDpiChangedMessageHandling = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_RS2);
+        DpiHelper.enableDpiChangedMessageHandling = !AppParams.DisableWFPMv2
+            && SystemVersion.Current.AtLeast(WindowsVersions.Windows10_RS2);
         DpiHelper.isInitialized = true;
     }
 
     internal static void GlobalUpdateDeviceDpi()
     {
-        throttler.Throttle(GlobalUpdateDeviceDpiAction);
+        if (throttler.Throttle())
+        {
+            var dpi = GetDeviceDpi();
+            DpiHelper.deviceDpi = dpi;
+            DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
+        }
     }
 
     private static bool TryGetProcessDpiAwareness(out DpiAwarenessContext dpiContext)
@@ -201,13 +205,6 @@ public static class DpiHelperEx
         }
 
         return dpi;
-    }
-
-    private static void GlobalUpdateDeviceDpiCore()
-    {
-        var dpi = GetDeviceDpi();
-        DpiHelper.deviceDpi = dpi;
-        DpiHelper.logicalToDeviceUnitsScalingFactor = dpi / 96;
     }
 
     private static int ConvertToLegacy(DpiAwarenessContext dpiContext) => dpiContext switch

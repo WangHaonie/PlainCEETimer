@@ -48,9 +48,8 @@ public sealed class MainForm : AppForm
         TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
     }
 
-    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    protected override void ScaleParamters(bool isHighDpi, float dpi, float dpiRatio, float dpiRatioRel)
     {
-        base.OnDpiChanged(e);
         ApplyCountdownFont();
     }
 

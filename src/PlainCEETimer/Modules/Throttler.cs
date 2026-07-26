@@ -1,42 +1,24 @@
 ﻿using System;
-using System.Diagnostics;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
-public class Throttler(long interval = 500L)
+public class Throttler(ulong interval = 500L)
 {
-    private readonly Stopwatch sw = new();
+    private ulong lastTick;
+    private bool initialized;
     private readonly object syncLock = new();
 
-    public void Throttle(Action action)
-    {
-        if (CanExecute())
-        {
-            action();
-        }
-    }
-
-    public void Throttle<T>(Action<T> action, T obj)
-    {
-        if (CanExecute())
-        {
-            action(obj);
-        }
-    }
-
-    private bool CanExecute()
+    public bool Throttle()
     {
         lock (syncLock)
         {
-            if (!sw.IsRunning)
-            {
-                sw.Start();
-                return true;
-            }
+            var now = DateTime.TickCount;
 
-            if (sw.ElapsedMilliseconds >= interval)
+            if (!initialized || now - lastTick >= interval)
             {
-                sw.Restart();
+                lastTick = now;
+                initialized = true;
                 return true;
             }
 

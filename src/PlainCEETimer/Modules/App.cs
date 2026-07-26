@@ -25,6 +25,8 @@ internal class App
 
     public string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
 
+    public bool IsExiting => m_IsExiting;
+
     public Icon AppIcon => appIcon ??= HICON.FromFile(ExecutablePath).ToIcon();
 
     public AppConfig AppConfig { get; private set; }
@@ -52,7 +54,7 @@ internal class App
     public const string AppTitle = $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
     private const string UEFilePrefix = "UnhandledException_";
 
-    private bool IsExiting;
+    private bool m_IsExiting;
     private string AllArgs;
     private Icon appIcon;
     private Mutex MainMutex;
@@ -106,12 +108,12 @@ internal class App
     {
         lock (syncLock2)
         {
-            if (IsExiting)
+            if (m_IsExiting)
             {
                 return;
             }
 
-            IsExiting = true;
+            m_IsExiting = true;
             AppExit?.Invoke();
             appIcon.Destroy();
 
@@ -131,10 +133,10 @@ internal class App
                 ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
             }
 
-            appInstance = null;
             750.AsDelay(_ => Win32.ExitProcess(0));
             WindowManager.TryExitUI();
             Environment.Exit(0);
+            appInstance = null;
         }
     }
 
