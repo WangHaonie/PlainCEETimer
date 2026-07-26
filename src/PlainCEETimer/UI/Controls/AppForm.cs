@@ -25,7 +25,8 @@ public abstract class AppForm : Form, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
-    protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => DpiAwarenessContext.PerMonitorV2;
+    protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => AppParams.DisableWFPMv2
+        ? DpiAwarenessContext.System : DpiAwarenessContext.PerMonitorV2;
 
     protected virtual bool SuppressAutoPosition { get; }
 

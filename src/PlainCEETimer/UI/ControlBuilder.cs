@@ -9,6 +9,17 @@ namespace PlainCEETimer.UI;
 
 public class ControlBuilder
 {
+    public TControl Conditional<TControl>(bool condition, Func<ControlBuilder, TControl> build)
+        where TControl : Control
+    {
+        if (condition)
+        {
+            return build(this);
+        }
+
+        return null;
+    }
+
     public PlainLabel Label(string text)
     {
         return new() { Text = text };

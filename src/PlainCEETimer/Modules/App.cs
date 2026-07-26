@@ -302,6 +302,7 @@ internal class App
     {
         AppMessageFilter.Initialize();
         AppConfig = ConfigValidator.ReadConfig();
+        AppParams.LoadConfig();
         DpiHelperEx.Initialize();
         ThemeManager.Initialize();
         Application.EnableVisualStyles();

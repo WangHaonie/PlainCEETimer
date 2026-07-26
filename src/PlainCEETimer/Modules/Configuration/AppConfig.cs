@@ -17,6 +17,8 @@ public class AppConfig
 
     public DisplayObject Display { get; set; } = new();
 
+    public AppParamsInfo Params { get; set; } = new();
+
     public int Exam { get; set; }
 
     public Exam[] Exams

@@ -16,6 +16,8 @@ public class ComboTrigger
         }
     }
 
+    public bool Stop { get; set; }
+
     private int m_count;
     private ulong m_lastTick;
     private readonly int m_total;
@@ -37,6 +39,11 @@ public class ComboTrigger
     {
         lock (m_lock)
         {
+            if (Stop)
+            {
+                return false;
+            }
+
             var tick = DateTime.TickCount;
 
             if (tick - m_lastTick > m_delay)

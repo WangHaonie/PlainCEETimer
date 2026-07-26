@@ -15,7 +15,7 @@ public sealed class NavigationView : Control
         private ThemeHelper themeHelper;
         private readonly bool canHandleStyle;
         private readonly Debouncer debouncer;
-        private readonly ActionInvoker ThemeHelperUpdateInvoker;
+        private readonly ActionInvoker UpdateThemeAction;
 
         internal NavigationBar()
         {
@@ -28,7 +28,7 @@ public sealed class NavigationView : Control
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             canHandleStyle = DpiHelper.enableDpiChangedMessageHandling;
             debouncer = new(300);
-            ThemeHelperUpdateInvoker = new(() => themeHelper?.Update());
+            UpdateThemeAction = new(() => themeHelper?.Update());
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -50,7 +50,7 @@ public sealed class NavigationView : Control
 
             if (canHandleStyle && m.Msg == WM.WINDOWPOSCHANGED)
             {
-                debouncer.Debounce(ThemeHelperUpdateInvoker);
+                debouncer.Debounce(UpdateThemeAction);
             }
         }
 
@@ -129,25 +129,34 @@ public sealed class NavigationView : Control
 
     public NavigationView()
     {
-        Initialize();
+        InitializeComponent();
     }
 
     public void AddPage(NavigationPage page)
     {
-        page.Header = m_headers.Add(page.Text);
-        m_ctrls.Add(page);
-        m_pages.Add(page);
+        if (page != null)
+        {
+            page.Header = m_headers.Add(page.Text);
+            m_ctrls.Add(page);
+            m_pages.Add(page);
+        }
     }
 
     public void AddPages(NavigationPage[] pages)
     {
+        SuspendLayout();
+
         foreach (var page in pages)
         {
-            page.Header = m_headers.Add(page.Text);
+            if (page != null)
+            {
+                page.Header = m_headers.Add(page.Text);
+                m_ctrls.Add(page);
+                m_pages.Add(page);
+            }
         }
 
-        m_ctrls.AddRange(pages);
-        m_pages.AddRange(pages);
+        ResumeLayout();
     }
 
     public void RemovePage(NavigationPage page)
@@ -208,7 +217,7 @@ public sealed class NavigationView : Control
         for (int i = 0; i < length; i++)
         {
             var current = m_pages[i];
-            current.Visible = page == current && i == index;
+            current?.Visible = page == current && i == index;
         }
 
         if (index != cindex)
@@ -221,10 +230,19 @@ public sealed class NavigationView : Control
 
     private void OnSelectedPageChanged(int index, NavigationPage page)
     {
-        SelectedPageChanged?.Invoke(this, new(index, page));
+        if (page != null)
+        {
+            SelectedPageChanged?.Invoke(this, new(index, page));
+        }
     }
 
-    private void Initialize()
+    private void UpdateNavBar()
+    {
+        navBar.Indent = DpiHelper.LogicalToDeviceUnits(m_hindent);
+        navBar.ItemHeight = DpiHelper.LogicalToDeviceUnits(m_hheight);
+    }
+
+    private void InitializeComponent()
     {
         navBar = new();
         navBar.AfterSelect += OnAfterSelect;
@@ -238,11 +256,5 @@ public sealed class NavigationView : Control
         UpdateView();
         Controls.AddRange([panelNavBar, panelNavPages]);
         SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-    }
-
-    private void UpdateNavBar()
-    {
-        navBar.Indent = DpiHelper.LogicalToDeviceUnits(m_hindent);
-        navBar.ItemHeight = DpiHelper.LogicalToDeviceUnits(m_hheight);
     }
 }

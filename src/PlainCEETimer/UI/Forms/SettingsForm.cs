@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
 using PlainCEETimer.Interop;
@@ -26,6 +27,7 @@ public sealed class SettingsForm : AppForm
     private AppConfig AppConfig;
     private GeneralObject General;
     private DisplayObject Display;
+    private AppParamsInfo ParamsInfo;
     private ColorBlock BlockBorderColor;
     private ColorBlock BlockColor11;
     private ColorBlock BlockColor12;
@@ -87,6 +89,10 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxTrayText;
     private PlainCheckBox CheckBoxUniTopMost;
     private PlainCheckBox CheckBoxShowNo;
+    private PlainCheckBox CheckBoxDebug;
+    private PlainCheckBox CheckBoxWFDpiAware;
+    private PlainCheckBox CheckBoxCommDlgDpiAware;
+    private PlainCheckBox CheckBoxCTSP;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
     private PlainNumericUpDown NudTruncate;
@@ -102,6 +108,8 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxRestart;
     private PlainGroupBox GBoxSyncTime;
     private PlainGroupBox GBoxTheme;
+    private PlainGroupBox GBoxDpiAware;
+    private PlainGroupBox GBoxAppControls;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
@@ -110,7 +118,9 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private ColorPair[] SelectedColors;
+    private readonly ComboTrigger comboTrigger = new(10, 500);
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
+    private readonly bool IsDebug = AppParams.DebugMode;
 
     protected override void OnInitializing()
     {
@@ -119,6 +129,7 @@ public sealed class SettingsForm : AppForm
         AppConfig = App.Current.AppConfig;
         General = AppConfig.General;
         Display = AppConfig.Display;
+        ParamsInfo = AppConfig.Params;
 
         this.AddControls(b =>
         [
@@ -415,6 +426,32 @@ public sealed class SettingsForm : AppForm
                 ]),
                 #endregion
 
+                #region NavPage_Debug
+                b.Conditional(IsDebug, b =>
+                    b.NavPage("调试",
+                    [
+                        CheckBoxDebug = b.CheckBox("使用调试选项", (_, _) =>
+                        {
+                            var enabled = CheckBoxDebug.Checked;
+                            GBoxDpiAware.Enabled = enabled;
+                            GBoxAppControls.Enabled = enabled;
+                            SettingsChanged();
+                        }),
+
+                        GBoxDpiAware = b.GroupBox("DPI 感知",
+                        [
+                            CheckBoxWFDpiAware = b.CheckBox("禁用 WinForms 窗口 Per-Monitor V2", SettingsChanged),
+                            CheckBoxCommDlgDpiAware = b.CheckBox("强制为通用对话框启用 Per-Monitor V2", SettingsChanged)
+                        ]),
+
+                        GBoxAppControls = b.GroupBox("App 控件",
+                        [
+                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", SettingsChanged)
+                        ])
+                    ])
+                ),
+                #endregion
+
                 #region NavPage_Advanced
                 b.NavPage("高级",
                 [
@@ -611,6 +648,21 @@ public sealed class SettingsForm : AppForm
         GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, 2);
         #endregion
 
+        #region NavPage_Debug
+        if (IsDebug)
+        {
+            ArrangeFirstControl(CheckBoxDebug, 4, 4);
+            ArrangeControlYL(GBoxDpiAware, CheckBoxDebug, 0, 2);
+            GroupBoxArrageControl(GBoxDpiAware, CheckBoxWFDpiAware, 4);
+            ArrangeControlYL(CheckBoxCommDlgDpiAware, CheckBoxWFDpiAware, 0, 2);
+            GroupBoxAutoAdjustHeight(GBoxDpiAware, CheckBoxCommDlgDpiAware, 4);
+
+            ArrangeControlYL(GBoxAppControls, GBoxDpiAware, 0, 2);
+            GroupBoxArrageControl(GBoxAppControls, CheckBoxCTSP, 4);
+            GroupBoxAutoAdjustHeight(GBoxAppControls, CheckBoxCTSP, 4);
+        }
+        #endregion
+
         #region NavPage_Advanced
         GroupBoxArrageControl(GBoxSyncTime, LabelSyncTime);
         SetLabelAutoWrap(LabelSyncTime, true);
@@ -694,6 +746,33 @@ public sealed class SettingsForm : AppForm
         RefreshSettings();
     }
 
+    protected override void OnMouseClick(MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+        {
+            const int xy = 10;
+
+            if (new Rectangle(0, ClientSize.Height - xy, xy, xy)
+                .Contains(e.Location))
+            {
+                if (comboTrigger.Stop || IsDebug)
+                {
+                    MessageX.Info("已开启调试选项，无需执行此操作。");
+                }
+                else if (comboTrigger.Trigger())
+                {
+                    ParamsInfo.Debug = true;
+                    comboTrigger.Stop = true;
+                    AppParams.LoadConfig();
+                    ConfigValidator.DemandConfig();
+                    MessageX.Info("调试选项已开启，重新打开设置生效！");
+                }
+            }
+        }
+
+        base.OnMouseClick(e);
+    }
+
     protected override bool OnClosing(CloseReason closeReason)
     {
         return IsSyncingTime || (UserChanged && ShowUnsavedWarning("检测到当前设置未保存，是否立即进行保存？", SaveChanges, ref UserChanged));
@@ -774,6 +853,14 @@ public sealed class SettingsForm : AppForm
         CheckBoxStartup.Checked = Startup.GetRegistryState() || IsTaskStartUp;
         UpdateSettingsArea(SettingsArea.StartUp, IsTaskStartUp);
         UpdateSettingsArea(SettingsArea.BorderColor, Display.UseWPF);
+
+        if (IsDebug)
+        {
+            CheckBoxDebug.Checked = true;
+            CheckBoxWFDpiAware.Checked = ParamsInfo.DisableWFPMv2;
+            CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
+            CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
+        }
     }
 
     private void UpdateSettingsArea(SettingsArea area, bool isWorking = true, int subCase = 0)
@@ -958,6 +1045,15 @@ public sealed class SettingsForm : AppForm
         Display.SeewoPptsvc = CheckBoxPptSvc.Checked;
         Display.FSTMode = (FullScreenTrackingMode)ComboBoxFullScreen.SelectedIndex;
         Display.UseWPF = CheckBoxMainFormUseWPF.Checked;
+
+        if (IsDebug)
+        {
+            ParamsInfo.Debug = CheckBoxDebug.Checked;
+            ParamsInfo.DisableWFPMv2 = CheckBoxWFDpiAware.Checked;
+            ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
+            ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
+            AppParams.LoadConfig();
+        }
 
         ConfigValidator.DemandConfig();
         ConfigValidator.SaveConfig();

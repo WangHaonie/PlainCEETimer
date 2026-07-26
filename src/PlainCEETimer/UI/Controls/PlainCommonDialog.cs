@@ -91,7 +91,8 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
     public new bool? ShowDialog()
     {
-        using (new DpiAwarenessContextScope(DpiAwarenessContext.System))
+        using (new DpiAwarenessContextScope(AppParams.EnableCommDlgPMv2
+            ? DpiAwarenessContext.PerMonitorV2 : DpiAwarenessContext.System))
         {
             return ShowDialog(owner).AsBoolean();
         }
