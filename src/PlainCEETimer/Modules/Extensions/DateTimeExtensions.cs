@@ -1,10 +1,16 @@
 ﻿using System;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules.Extensions;
 
 public static class DateTimeExtensions
 {
+    extension(DateTime)
+    {
+        public static ulong TickCount => Win32.GetTickCount64();
+    }
+
     public static long ToTimestamp(this DateTime dt)
         => (dt.Ticks / ConfigValidator.MinTick) - ConfigValidator.MinDateSeconds;
 

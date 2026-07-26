@@ -24,6 +24,9 @@ internal static class Win32
     public static extern void KillProcessTree(int dwProcessId);
 
     [DllImport(App.Kernel32Dll)]
+    public static extern ulong GetTickCount64();
+
+    [DllImport(App.Kernel32Dll)]
     public static extern void ExitProcess(int uExitCode);
 
     [DllImport(App.Kernel32Dll)]

@@ -19,15 +19,13 @@ public sealed class ConsoleWindow : AppDialog
     protected override AppWindowStyle Params => AppWindowStyle.AllControl;
 
     private int finalCount;
-    private int closeClickCount;
     private int ConsoleTimerTick;
     private bool IsRunning;
+    private ulong taskStartTime;
     private string Key;
     private string ExePath;
     private string ExeArgs;
     private ConsoleParam Param;
-    private DateTime taskStartTime;
-    private DateTime lastClickTime;
     private Action<ConsoleWindow> Complete;
     private PlainLabel LabelMessage;
     private MenuItem MenuItemCopy;
@@ -35,6 +33,7 @@ public sealed class ConsoleWindow : AppDialog
     private TaskbarProgress tbp;
     private PlainToolTip ToolTipCloseInfo;
     private Process ExternalProc;
+    private readonly ComboTrigger comboTrigger;
     private readonly Timer ConsoleTimer = new();
     private readonly ActionInvoker OnCompleteInvoker;
     private readonly ActionInvoker<string> SafeWriteInvoker;
@@ -58,6 +57,7 @@ public sealed class ConsoleWindow : AppDialog
         });
 
         SafeWriteInvoker = new(Write);
+        comboTrigger = new(10, 3000);
     }
 
     protected override void OnInitializing()
@@ -117,7 +117,7 @@ public sealed class ConsoleWindow : AppDialog
         tbp.SetState(ProgressStyle.Indeterminate);
         ConsoleTimer_Tick(null, null);
         ConsoleTimer.Start();
-        taskStartTime = DateTime.Now;
+        taskStartTime = DateTime.TickCount;
         ToolTipCloseInfo.InitStyle();
 
         if (UacHelper.IsAdmin)
@@ -189,41 +189,22 @@ public sealed class ConsoleWindow : AppDialog
             return false;
         }
 
-        var now = DateTime.Now;
-        var uptime = now - taskStartTime;
-
-        if (uptime.TotalSeconds <= 10D)
+        if (DateTime.TickCount - taskStartTime <= 10 * 1000)
         {
             return true;
         }
 
-        var cancel = true;
-
-        if ((now - lastClickTime).TotalSeconds > 3D)
+        if (comboTrigger.Trigger())
         {
-            closeClickCount = 1;
-        }
-        else
-        {
-            closeClickCount++;
-        }
-
-        lastClickTime = now;
-
-        if (closeClickCount >= 10)
-        {
-            cancel = false;
             Win32.KillProcessTree(ExternalProc.Id);
             ToolTipCloseInfo.Hide(this);
             OnComplete();
-        }
-        else
-        {
-            var fh = FontHeight * 2;
-            ToolTipCloseInfo.Show($"再点击 {10 - closeClickCount} 次强制关闭本窗口", this, new Point(ClientSize.Width - fh, fh), 2000);
+            return false;
         }
 
-        return cancel;
+        var fh = FontHeight * 2;
+        ToolTipCloseInfo.Show($"再点击 {comboTrigger.RemainCount} 次强制关闭本窗口", this, new Point(ClientSize.Width - fh, fh), 2000);
+        return true;
     }
 
     public static void Run(IWin32Window owner, string path, string args, Action<ConsoleWindow> onComplete, ConsoleParam param = ConsoleParam.None)
