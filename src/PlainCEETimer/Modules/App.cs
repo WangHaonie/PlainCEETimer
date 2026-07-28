@@ -166,8 +166,9 @@ internal class App
         if (!StartProgram(argc, parsed))
         {
             StartPipeClient();
-            Shutdown();
         }
+
+        Shutdown();
     }
 
     private bool StartProgram(int argc, Arguments args)
