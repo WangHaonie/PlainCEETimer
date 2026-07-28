@@ -29,7 +29,7 @@ static void KillProcessTreeCore(DWORD dwProcessId)
     }
 }
 
-HWND AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
+HWND AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
 {
     BOOL attached = AttachConsole(ATTACH_PARENT_PROCESS);
     if (!attached) AllocConsole();
@@ -46,7 +46,7 @@ HWND AllocConsoleForApp(BOOL fRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDL
     if (phStdOut) *phStdOut = hStdOut;
     if (phStdErr) *phStdErr = hStdErr;
 
-    if (fRefresh)
+    if (bRefresh)
     {
         INPUT_RECORD irs[2] = {};
 

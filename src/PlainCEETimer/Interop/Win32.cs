@@ -18,7 +18,7 @@ internal static class Win32
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#41")]
-    private static extern IntPtr AllocConsoleForApp(bool fRefresh, out IntPtr phStdIn, out IntPtr phStdOut, out IntPtr phStdErr);
+    private static extern IntPtr AllocConsoleForApp(bool bRefresh, out IntPtr phStdIn, out IntPtr phStdOut, out IntPtr phStdErr);
 
     [DllImport(App.NativesDll, EntryPoint = "#42")]
     public static extern void KillProcessTree(int dwProcessId);
