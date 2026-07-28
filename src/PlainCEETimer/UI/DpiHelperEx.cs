@@ -195,13 +195,12 @@ public static class DpiHelperEx
             return dpix;
         }
 
-        var dc = Win32UI.GetDC(IntPtr.Zero);
+        using var dc = DeviceContext.CreateDC(IntPtr.Zero);
         var dpi = 0;
 
-        if (dc != IntPtr.Zero)
+        if (dc.IsValid)
         {
-            dpi = Win32UI.GetDeviceCaps(dc, WinGdi.LOGPIXELSX);
-            Win32UI.ReleaseDC(IntPtr.Zero, dc);
+            dpi = Win32UI.GetDeviceCaps(dc.GetHdc(), WinGdi.LOGPIXELSX);
         }
 
         return dpi;

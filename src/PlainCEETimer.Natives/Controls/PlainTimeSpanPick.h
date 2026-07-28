@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define WC_PLAINTIMESPANPICK        L"PlainTimeSpanPick"
 

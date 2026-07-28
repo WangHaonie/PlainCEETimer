@@ -240,17 +240,13 @@ public abstract class AppForm : Form, IAppWindow
     protected sealed override void OnDpiChanged(DpiChangedEventArgs e)
     {
         SuspendLayout();
-        var newDpi = e.DeviceDpiNew;
-        IsDpiChanged = newDpi != InitDpi;
-
-        if (newDpi < InitDpi)
-        {
-            MinimumSize = e.SuggestedRectangle.Size;
-        }
-
+        var dpiNew = e.DeviceDpiNew;
+        var dpiOld = e.DeviceDpiOld;
+        IsDpiChanged = dpiNew != InitDpi;
         DpiHelperEx.GlobalUpdateDeviceDpi();
         base.OnDpiChanged(e);
-        UpdateDpiScale(newDpi, e.DeviceDpiOld);
+        UpdateSizeForFixedSize(dpiNew - dpiOld, e.SuggestedRectangle.Size);
+        UpdateDpiScale(dpiNew, dpiOld);
         ApplyAppFont();
         LegacySetRoundCorner();
         RunLayout(IsHighDpi);
@@ -605,6 +601,15 @@ public abstract class AppForm : Form, IAppWindow
         target.AutoSize = true;
     }
 
+    protected void SetFixedSize(Size size)
+    {
+        SuspendLayout();
+        MinimumSize = size;
+        MaximumSize = size;
+        Size = size;
+        ResumeLayout();
+    }
+
     protected Size KeepOnScreen(Size size)
     {
         var screen = GetCurrentScreenRect();
@@ -615,16 +620,28 @@ public abstract class AppForm : Form, IAppWindow
 
     protected Font ScaleFont(DipFont dipFont)
     {
-        var font = dipFont.Value;
-
-        if (IsDpiChanged)
+        if (dipFont != null)
         {
-            return new(font.FontFamily, dipFont.Size * DpiRatioRel,
-                font.Style, font.Unit,
-                font.GdiCharSet, font.GdiVerticalFont);
+            var font = dipFont.Value;
+
+            if (IsDpiChanged)
+            {
+                var ratio = DpiRatio;
+
+                if (ratio == 1F)
+                {
+                    ratio = DpiRatioRel;
+                }
+
+                return new(font.FontFamily, font.Size * ratio,
+                    font.Style, font.Unit,
+                    font.GdiCharSet, font.GdiVerticalFont);
+            }
+
+            return font;
         }
 
-        return font;
+        return null;
     }
 
     private void ApplyLastSize()
@@ -733,12 +750,20 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void UpdateDpiScale(float newDpi, float oldDpi)
+    private void UpdateSizeForFixedSize(int delta, Size suggestedSize)
     {
-        DpiRatio = newDpi / 96F;
-        DpiRatioRel = newDpi / oldDpi;
+        if (!Special && !IsSizableForm(FormBorderStyle) && delta != 0)
+        {
+            SetFixedSize(suggestedSize);
+        }
+    }
+
+    private void UpdateDpiScale(float dpiNew, float dpiOld)
+    {
+        DpiRatio = dpiNew / 96F;
+        DpiRatioRel = dpiNew / dpiOld;
         IsHighDpi = DpiRatio > 1F;
-        ScaleParamters(IsHighDpi, newDpi, DpiRatio, DpiRatioRel);
+        ScaleParamters(IsHighDpi, dpiNew, DpiRatio, DpiRatioRel);
     }
 
     private void ApplyAppFont()
@@ -777,6 +802,13 @@ public abstract class AppForm : Form, IAppWindow
         {
             OnDialogEnd();
         }
+    }
+
+    private bool IsSizableForm(FormBorderStyle fbs)
+    {
+        return (fbs != FormBorderStyle.None || IsSizable)
+            || fbs == FormBorderStyle.Sizable
+            || fbs == FormBorderStyle.SizableToolWindow;
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

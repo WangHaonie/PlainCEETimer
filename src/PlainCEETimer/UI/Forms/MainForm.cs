@@ -45,7 +45,8 @@ public sealed class MainForm : AppForm
     {
         var g = e.Graphics;
         g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-        TextRenderer.DrawText(g, CountdownContent, CountdownFont, ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
+        TextRenderer.DrawText(g, CountdownContent, CountdownFont,
+            ClientRectangle, CountdownForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
     }
 
     protected override void ScaleParamters(bool isHighDpi, float dpi, float dpiRatio, float dpiRatioRel)
@@ -85,7 +86,9 @@ public sealed class MainForm : AppForm
                         CountdownForeColor = i.ForeColor;
                         BackColor = i.BackColor;
                         CountdownContent = i.Content;
-                        Size = TextRenderer.MeasureText(CountdownContent, CountdownFont, new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak);
+                        using var dc = DeviceContext.CreateDC(this);
+                        SetFixedSize(TextRenderer.MeasureText(dc, CountdownContent, CountdownFont,
+                            new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak));
                         Invalidate();
                     }
                 }
