@@ -128,7 +128,12 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             ),
         ]);
 
-        TextBoxCustomText.ExpandableVisibleChanged += (_, v) => ComboBoxPlaceholders.Visible = v;
+        TextBoxCustomText.FlyoutVisibleChanged += (_, _) =>
+        {
+            var visible = TextBoxCustomText.FlyoutVisible;
+            ComboBoxPlaceholders.Visible = visible;
+            if (visible) ComboBoxPlaceholders.BringToFront();
+        };
 
         ColorBlock[] blocks = [BlockFore, BlockBack];
 

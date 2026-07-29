@@ -14,6 +14,40 @@ namespace PlainCEETimer.UI.Controls;
 [NoConstants]
 public abstract class AppForm : Form, IAppWindow
 {
+    public new double Opacity
+    {
+        get => base.Opacity;
+        set
+        {
+            var visible = IsVisible;
+            base.Opacity = value;
+
+            if (visible != IsVisible)
+            {
+                OnVisibleChanged(EventArgs.Empty);
+            }
+        }
+    }
+
+    public new FormWindowState WindowState
+    {
+        get => base.WindowState;
+        set
+        {
+            var visible = IsVisible;
+            base.WindowState = value;
+
+            if (visible != IsVisible)
+            {
+                OnVisibleChanged(EventArgs.Empty);
+            }
+        }
+    }
+
+    public bool IsVisible => Visible
+        && base.Opacity != 0D
+        && base.WindowState != FormWindowState.Minimized;
+
     /// <summary>
     /// 获取当前 <see cref="AppForm"/> 的消息框实例。
     /// </summary>
@@ -156,7 +190,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public void ReActivate()
     {
-        if (!IsLoading && (IsDisposed || !IsHandleCreated))
+        if (SuppressAutoPosition || !IsLoading && (IsDisposed || !IsHandleCreated))
         {
             return;
         }
@@ -744,7 +778,6 @@ public abstract class AppForm : Form, IAppWindow
     private void WindowManager_ActivateRequested(object sender, EventArgs e)
     {
         ReActivate();
-        KeepOnScreen();
     }
 
     private void LegacySetRoundCorner()

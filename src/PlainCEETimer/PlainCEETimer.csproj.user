@@ -23,6 +23,9 @@
     <Compile Update="UI\Controls\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UI\Controls\BlurOverlay.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="UI\Controls\ColorBlock.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -85,6 +88,9 @@
     </Compile>
     <Compile Update="UI\Controls\PlainToolTip.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainFlyout.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="WPF\Views\FontDialog.xaml.cs">
       <SubType>Code</SubType>

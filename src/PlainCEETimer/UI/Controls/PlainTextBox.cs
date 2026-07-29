@@ -12,7 +12,7 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainTextBox : TextBox, IThemeAware
 {
-    private sealed class TextBoxFlyout(PlainTextBox parent) : AppForm
+    private sealed class TextBoxFlyout(PlainTextBox parent) : PlainFlyout
     {
         public string Content
         {
@@ -20,9 +20,12 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             set => ContentBox.Text = value;
         }
 
-        protected override AppWindowStyle Params => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog;
+        protected override AppWindowStyle Params
+            => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog;
 
-        protected override bool SuppressAutoPosition => true;
+        protected override Point Offset => new(-4, -4);
+
+        protected override Control OwnerControl => parent;
 
         private PlainTextBox ContentBox;
         private PlainButton ButtonClose;
@@ -37,7 +40,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         protected override void OnInitializing()
         {
             base.OnInitializing();
-            Location = parent.LocationToScreen(-4, -4);
 
             this.AddControls(b =>
             [
@@ -56,8 +58,13 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
-            parent.OnExpandableVisibleChanged(true);
             InitWindowSize(ButtonClose, 3, 3);
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            parent.OnFlyoutVisibleChanged(e);
+            base.OnVisibleChanged(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -72,8 +79,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
         protected override void OnClosed()
         {
-            parent.OnExpandableVisibleChanged(false);
             parent.Focus();
+            base.OnClosed();
         }
 
         private void ButtonApply_Click(object sender, EventArgs e)
@@ -90,49 +97,47 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         {
             base.Text = value;
 
-            if (expandable && Child != null && !Child.IsDisposed)
+            if (hasFlyout && flyout != null && !flyout.IsDisposed)
             {
-                Child.Content = value;
+                flyout.Content = value;
             }
         }
     }
 
+    public bool FlyoutVisible => flyout?.Visible ?? false;
+
     public PreferredColors PreferredColors { get; set; }
 
-    public event EventHandler<bool> ExpandableVisibleChanged;
+    public event EventHandler FlyoutVisibleChanged;
 
-    private AppForm ParentForm;
     private PlainButton ButtonExpand;
-    private TextBoxFlyout Child;
+    private TextBoxFlyout flyout;
     private ThemeHelper themeHelper;
-    private readonly bool expandable;
+    private readonly bool hasFlyout;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnTextChangedInvoker;
 
-    public PlainTextBox(bool isExpandable)
+    public PlainTextBox(bool hasFlyout = false)
     {
         MaxLength = ConfigValidator.MaxCustomTextLength;
 
-        if (expandable = isExpandable)
+        if (this.hasFlyout = hasFlyout)
         {
             this.AddControls(b =>
             [
-                ButtonExpand = b.Button("..", 18, 20, (_, _) =>
+                ButtonExpand = b.Button("..", 18, 20, (object _, EventArgs _) =>
                 {
-                    Child = new(this);
-                    ParentForm.LocationChanged += OnParentLocationChanged;
+                    flyout = new(this);
 
-                    Child.WhenEnd(e =>
+                    flyout.WhenEnd(e =>
                     {
                         if (e.Result == true)
                         {
-                            Text = Child.Content;
+                            Text = flyout.Content;
                         }
-
-                        ParentForm.LocationChanged -= OnParentLocationChanged;
                     });
 
-                    Child.Show(ParentForm);
+                    flyout.Show();
                 }).With(x =>
                 {
                     x.Cursor = Cursors.Arrow;
@@ -155,20 +160,19 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     public void InputFlyout(string text)
     {
-        Child?.Input(text);
+        flyout?.Input(text);
     }
 
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
 
-        if (expandable)
+        if (hasFlyout)
         {
             UpdateExpandButtonMargin();
         }
 
         themeHelper ??= new(this);
-        ParentForm = this.FindParentForm();
     }
 
     protected override void OnDpiChangedAfterParent(EventArgs e)
@@ -211,14 +215,9 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         base.Dispose(disposing);
     }
 
-    private void OnParentLocationChanged(object sender, EventArgs e)
-    {
-        Child.Location = this.LocationToScreen(-4, -4);
-    }
-
     private void UpdateExpandButtonMargin()
     {
-        if (expandable)
+        if (hasFlyout)
         {
             /*
 
@@ -233,9 +232,9 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         }
     }
 
-    private void OnExpandableVisibleChanged(bool visible)
+    private void OnFlyoutVisibleChanged(EventArgs e)
     {
-        ExpandableVisibleChanged?.Invoke(this, visible);
+        FlyoutVisibleChanged?.Invoke(this, e);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

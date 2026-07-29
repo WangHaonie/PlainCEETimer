@@ -17,8 +17,8 @@ public sealed class NavigationPage : Panel, IThemeAware
     public NavigationPage()
     {
         themeHelper = new(this);
-        Dock = DockStyle.Fill;
         Visible = false;
+        Dock = DockStyle.Fill;
         AutoScroll = true;
     }
 

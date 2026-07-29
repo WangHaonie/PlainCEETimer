@@ -378,7 +378,6 @@ public class AppWindow : Window, IAppWindow
     private void WindowManager_ActivateRequested(object sender, EventArgs e)
     {
         ReActivate();
-        KeepOnScreen();
     }
 
     private void WmClose(ref Message m)

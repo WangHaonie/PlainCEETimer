@@ -123,9 +123,9 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public PlainTextBox TextBox(int w, bool expandable, EventHandler onTextChanged)
+    public PlainTextBox TextBox(int w, bool hasFlyout, EventHandler onTextChanged)
     {
-        var ctrl = new PlainTextBox(expandable);
+        var ctrl = new PlainTextBox(hasFlyout);
         ctrl.SetBounds(0, 0, w, 23);
         ctrl.MaxLength = ConfigValidator.MaxCustomTextLength;
         ctrl.TextChanged += onTextChanged;
