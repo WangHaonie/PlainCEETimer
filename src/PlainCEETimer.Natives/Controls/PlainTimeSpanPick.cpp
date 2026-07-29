@@ -109,6 +109,23 @@ static void UpdateSegmentText(std::vector<PTSPSEG>& segs)
     }
 }
 
+static void BuildDisplayText(LPPTSPSTATE lpState, std::wstring& buffer)
+{
+    buffer.clear();
+
+    if (lpState)
+    {
+        auto& segs = lpState->segments;
+        buffer.reserve(32);
+        UpdateSegmentText(segs);
+
+        for (auto& seg : segs)
+        {
+            buffer += seg.text;
+        }
+    }
+}
+
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LPPTSPSTATE lpState = CastToP(LPPTSPSTATE, GetWindowLongPtr(hWnd, NULL));
@@ -131,6 +148,50 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             if (!hFont) hFont = CastToP(HFONT, GetStockObject(DEFAULT_GUI_FONT));
             if (hFont && lpState) lpState->hFont = hFont;
             return 0;
+        }
+
+        case WM_GETTEXT:
+        {
+            if (lpState && lParam)
+            {
+                std::wstring text;
+                BuildDisplayText(lpState, text);
+
+                LPWSTR buffer = CastToP(LPWSTR, lParam);
+                size_t bufSize = CastToS(size_t, wParam);
+
+                if (bufSize != 0)
+                {
+                    size_t count = std::min<size_t>(text.length(), bufSize - 1);
+
+                    if (count > 0)
+                    {
+                        wmemcpy(buffer, text.c_str(), count);
+                    }
+
+                    buffer[count] = L'\0';
+                    return CastToS(LRESULT, count);
+                }
+            }
+
+            return 0;
+        }
+
+        case WM_GETTEXTLENGTH:
+        {
+            if (lpState)
+            {
+                std::wstring text;
+                BuildDisplayText(lpState, text);
+                return CastToS(LRESULT, text.length());
+            }
+
+            return 0;
+        }
+
+        case WM_SETTEXT:
+        {
+            return FALSE;
         }
 
         case WM_GETDLGCODE:
@@ -260,8 +321,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                             if (segBuffer.length() >= length)
                             {
                                 segBuffer.clear();
-
                                 int i = lpState->index;
+
                                 do
                                 {
                                     i = (i + 1) % lpState->segments.size();

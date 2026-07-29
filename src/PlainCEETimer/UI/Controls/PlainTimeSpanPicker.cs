@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
@@ -10,6 +11,7 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
+[DebuggerDisplay("{Text}")]
 public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 {
     public unsafe int MaxDays
@@ -76,6 +78,12 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     protected override Size DefaultMinimumSize => new(50, 23);
 
+    public override string Text
+    {
+        get => internals.WindowText;
+        set { }
+    }
+
     public event EventHandler ValueChanged;
 
     private long m_ticks;
@@ -83,6 +91,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;
+    private readonly ControlInternals internals;
 
     private const int PTSPM_GETVALUE = WM.USER + 0x0010;
     private const int PTSPM_SETVALUE = WM.USER + 0x0011;
@@ -101,6 +110,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         SetStyle(ControlStyles.UserPaint, false);
         OnValueChangedAction = new(OnValueChangedImpl);
         debouncer = new(new ControlDebounceHelper(this));
+        internals = ControlInternals.AttachTo(this);
     }
 
     static PlainTimeSpanPicker()
