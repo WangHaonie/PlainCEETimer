@@ -20,4 +20,6 @@ public interface IWindowBounds
     event EventHandler SizeChanged;
 
     Point KeepOnScreen();
+
+    void RefreshMaxWidth();
 }

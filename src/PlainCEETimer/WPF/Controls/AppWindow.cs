@@ -60,6 +60,12 @@ public class AppWindow : Window, IAppWindow
 
     public IDialogService MessageX { get; }
 
+    public double SuggestedMaxWidth
+    {
+        get => (double)GetValue(SuggestedMaxWidthProperty);
+        private set => SetValue(SuggestedMaxWidthProperty, value);
+    }
+
     public bool Modal
     {
         get
@@ -75,6 +81,10 @@ public class AppWindow : Window, IAppWindow
 
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
+    public static readonly DependencyProperty SuggestedMaxWidthProperty =
+        DependencyProperty.Register(nameof(SuggestedMaxWidth), typeof(double), typeof(AppWindow),
+            new FrameworkPropertyMetadata(double.PositiveInfinity, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
     private bool IsClosed;
     private bool IsClosing;
     private double DpiScaleX;
@@ -86,8 +96,11 @@ public class AppWindow : Window, IAppWindow
     private static FieldInfo s_fiShowingAsDialog;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
+    private readonly bool suggestMaxWidth;
     private readonly bool NativeRoundCorner;
     private readonly AppWindowStyle ParamsInternal;
+
+    private const double AutoWrapMargin = 10D;
 
     public AppWindow()
     {
@@ -95,6 +108,7 @@ public class AppWindow : Window, IAppWindow
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
+        suggestMaxWidth = CheckParam(AppWindowStyle.SuggestMaxWidth);
         InitEvents();
         FontFamily = new("Segoe UI, Microsoft YaHei");
         FontSize = 9D.Pt2Dip();
@@ -202,12 +216,14 @@ public class AppWindow : Window, IAppWindow
             .SetEnabled(NativeConstants.SC_MAXIMIZE, canResize);
 
         themeHelper ??= new(this);
+        RefreshSuggestedMaxWidth();
         base.OnSourceInitialized(e);
     }
 
     protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
     {
         UpdateDpiScale(newDpi);
+        RefreshSuggestedMaxWidth();
         base.OnDpiChanged(oldDpi, newDpi);
         DpiHelperEx.GlobalUpdateDeviceDpi();
     }
@@ -269,6 +285,17 @@ public class AppWindow : Window, IAppWindow
         var y = Dip2PxY(Top).Clamp(screen.Y, screen.Bottom - Dip2PxY(ActualHeight));
         SetLocation(x, y);
         return Location;
+    }
+
+    internal protected void RefreshSuggestedMaxWidth()
+    {
+        if (suggestMaxWidth)
+        {
+            SuggestedMaxWidth = Math.Max(0D,
+                Px2DipX(ScreenService.WorkingArea.Width)
+                - AutoWrapMargin
+                - SystemParameters.WindowResizeBorderThickness.Left * 2);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

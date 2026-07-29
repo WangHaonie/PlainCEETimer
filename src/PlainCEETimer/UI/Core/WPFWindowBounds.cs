@@ -56,4 +56,9 @@ public class WPFWindowBounds : IWindowBounds
     {
         return w.Dip2Px(w.KeepOnScreen());
     }
+
+    public void RefreshMaxWidth()
+    {
+        w.RefreshSuggestedMaxWidth();
+    }
 }

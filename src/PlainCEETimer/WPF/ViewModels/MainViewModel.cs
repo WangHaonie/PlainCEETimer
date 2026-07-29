@@ -46,9 +46,6 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     [ObservableProperty]
     public partial FontModel Font { get; set; }
 
-    [ObservableProperty]
-    public partial double MaximumWidth { get; set; }
-
     #region For MainForm
     [ObservableProperty]
     public partial CountdownBasicInfo Info { get; private set; }
@@ -646,7 +643,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void SetCountdownAutoWrap()
     {
-        MaximumWidth = Screen.WorkingArea.Width - 10;
+        Bounds.RefreshMaxWidth();
     }
 
     private void UpdateTrayText(string content)

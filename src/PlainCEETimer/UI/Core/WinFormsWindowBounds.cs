@@ -52,4 +52,9 @@ public class WinFormsWindowBounds(AppForm form) : IWindowBounds
     {
         return form.KeepOnScreen();
     }
+
+    public void RefreshMaxWidth()
+    {
+        form.RefreshSuggestedMaxWidth();
+    }
 }

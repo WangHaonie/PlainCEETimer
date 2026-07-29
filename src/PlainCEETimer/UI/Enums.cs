@@ -51,6 +51,7 @@ public enum AppWindowStyle
     RoundCornerSmall = 1 << 7 | RoundCorner,
     ModelessDialog = 1 << 8,
     Sizable = 1 << 9,
+    SuggestMaxWidth = 1 << 10,
     AllControl = BindButtons | KeyPreview
 }
 

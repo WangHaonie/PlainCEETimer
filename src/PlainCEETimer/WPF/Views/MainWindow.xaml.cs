@@ -9,7 +9,8 @@ namespace PlainCEETimer.WPF.Views;
 
 public sealed partial class MainWindow : AppWindow
 {
-    protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
+    protected override AppWindowStyle Params
+        => AppWindowStyle.Special | AppWindowStyle.RoundCorner | AppWindowStyle.SuggestMaxWidth;
 
     private readonly MainViewModel vm;
 

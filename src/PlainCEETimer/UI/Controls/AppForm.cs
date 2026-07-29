@@ -19,6 +19,8 @@ public abstract class AppForm : Form, IAppWindow
     /// </summary>
     public IDialogService MessageX { get; }
 
+    public int SuggestedMaxWidth => m_SuggestedMaxWidth;
+
     public Control FocusControl { get; set; }
 
     internal bool Loaded => !IsLoading;
@@ -43,8 +45,10 @@ public abstract class AppForm : Form, IAppWindow
     private bool IsHighDpi;
     private bool SetRoundRegion;
     private bool setSysMenu;
+    private bool suggestMaxWidth;
     private float DpiRatio = 1F;
     private float DpiRatioRel = 1F;
+    private int m_SuggestedMaxWidth = int.MaxValue;
     private Size lastSize;
     private FormWindowState lastState;
     private Font AppFont;
@@ -58,6 +62,7 @@ public abstract class AppForm : Form, IAppWindow
     private readonly bool SmallRoundCorner;
     private readonly bool Special;
     private readonly bool OnEscClosing;
+    private const int AutoWrapMargin = 10;
     private const string AppFontFamily = "Segoe UI";
 
     protected sealed override CreateParams CreateParams
@@ -86,6 +91,7 @@ public abstract class AppForm : Form, IAppWindow
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
         IsSizable = CheckParam(AppWindowStyle.Sizable);
+        suggestMaxWidth = CheckParam(AppWindowStyle.SuggestMaxWidth);
         InitEvents();
         MessageX = new AppMessageBox(this);
         ScreenService = new ScreenHelper(Special ? this : null);
@@ -173,6 +179,14 @@ public abstract class AppForm : Form, IAppWindow
         return new(x, y);
     }
 
+    internal protected void RefreshSuggestedMaxWidth()
+    {
+        if (suggestMaxWidth)
+        {
+            m_SuggestedMaxWidth = Math.Max(0, ScreenService.WorkingArea.Width - ScaleToDpi(AutoWrapMargin));
+        }
+    }
+
     internal protected void SetLocation(int x, int y)
     {
         SetBounds(x, y, 0, 0, BoundsSpecified.Location);
@@ -248,6 +262,7 @@ public abstract class AppForm : Form, IAppWindow
         UpdateFixedSize(dpiNew - dpiOld, e.SuggestedRectangle.Size);
         UpdateDpiScale(dpiNew, dpiOld);
         ApplyAppFont();
+        RefreshSuggestedMaxWidth();
         LegacySetRoundCorner();
         RunLayout(IsHighDpi);
         ResumeLayout();

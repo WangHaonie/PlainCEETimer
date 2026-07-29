@@ -11,13 +11,13 @@ namespace PlainCEETimer.UI.Forms;
 
 public sealed class MainForm : AppForm
 {
-    protected override AppWindowStyle Params => AppWindowStyle.Special | AppWindowStyle.RoundCorner;
+    protected override AppWindowStyle Params
+        => AppWindowStyle.Special | AppWindowStyle.RoundCorner | AppWindowStyle.SuggestMaxWidth;
 
     private MainViewModel vm;
     private Font CountdownFont;
     private Color CountdownForeColor;
     private string CountdownContent;
-    private int CountdownMaxWidth;
 
     protected override void OnInitializing()
     {
@@ -88,7 +88,7 @@ public sealed class MainForm : AppForm
                         CountdownContent = i.Content;
                         using var dc = DeviceContext.CreateDC(this);
                         SetFixedSize(TextRenderer.MeasureText(dc, CountdownContent, CountdownFont,
-                            new(CountdownMaxWidth, 0), TextFormatFlags.WordBreak));
+                            new(SuggestedMaxWidth, 0), TextFormatFlags.WordBreak));
                         Invalidate();
                     }
                 }
@@ -102,10 +102,6 @@ public sealed class MainForm : AppForm
                 break;
 
             default:
-                if (prop == nameof(MainViewModel.MaximumWidth))
-                {
-                    CountdownMaxWidth = (int)vm.MaximumWidth;
-                }
                 break;
         }
     }
