@@ -544,11 +544,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
             return 0;
         }
-        
-        default:
-        {
-            break;
-        }
     }
 
     return DefWindowProc(hWnd, message, wParam, lParam);

@@ -146,8 +146,6 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
                 if (m.WParam.ToInt32().HiWord == PTSPN_VALUECHANGE)
                     OnValueChanged();
                 return;
-            default:
-                break;
         }
 
         base.WndProc(ref m);

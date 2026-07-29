@@ -90,34 +90,25 @@ public class PlainHotkeyControl : Control, IThemeAware
 
     protected override void WndProc(ref Message m)
     {
-        if (UseDark)
+        switch (m.Msg)
         {
-            switch (m.Msg)
-            {
-                case WM.ERASEBKGND:
-                    Win32UI.GetClientRect(m.HWnd, out var rc);
-                    Win32UI.FillRect(m.WParam, ref rc, hBrush);
-                    m.Result = new(1);
-                    return;
-                case WM.PAINT:
-                    Win32UI.ComctlHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
-                    base.WndProc(ref m);
-                    Win32UI.ComctlUnhookSysColor();
-                    return;
-                case WM.DESTROY:
-                    Win32UI.DeleteObject(hBrush);
-                    break;
-            }
-        }
-        else
-        {
-            switch (m.Msg)
-            {
-                case WM.REFLECT + WM.COMMAND:
-                    if (m.WParam.ToInt32().HiWord == NativeConstants.EN_CHANGE)
-                        OnHotKeyChanged();
-                    break;
-            }
+            case WM.REFLECT + WM.COMMAND:
+                if (m.WParam.ToInt32().HiWord == NativeConstants.EN_CHANGE)
+                    OnHotKeyChanged();
+                return;
+            case WM.ERASEBKGND when UseDark:
+                Win32UI.GetClientRect(m.HWnd, out var rc);
+                Win32UI.FillRect(m.WParam, ref rc, hBrush);
+                m.Result = new(1);
+                return;
+            case WM.PAINT when UseDark:
+                Win32UI.ComctlHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
+                base.WndProc(ref m);
+                Win32UI.ComctlUnhookSysColor();
+                return;
+            case WM.DESTROY when UseDark:
+                Win32UI.DeleteObject(hBrush);
+                break;
         }
 
         base.WndProc(ref m);

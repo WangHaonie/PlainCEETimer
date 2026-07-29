@@ -245,7 +245,7 @@ public abstract class AppForm : Form, IAppWindow
         IsDpiChanged = dpiNew != InitDpi;
         DpiHelperEx.GlobalUpdateDeviceDpi();
         base.OnDpiChanged(e);
-        UpdateSizeForFixedSize(dpiNew - dpiOld, e.SuggestedRectangle.Size);
+        UpdateFixedSize(dpiNew - dpiOld, e.SuggestedRectangle.Size);
         UpdateDpiScale(dpiNew, dpiOld);
         ApplyAppFont();
         LegacySetRoundCorner();
@@ -750,7 +750,7 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private void UpdateSizeForFixedSize(int delta, Size suggestedSize)
+    private void UpdateFixedSize(int delta, Size suggestedSize)
     {
         if (!Special && !IsSizableForm(FormBorderStyle) && delta != 0)
         {
