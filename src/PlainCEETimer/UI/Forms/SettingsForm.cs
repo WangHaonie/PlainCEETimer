@@ -143,7 +143,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            MainNavigationView = b.NavigationView(5, 1, 54, 315, 222, 26, 7,
+            MainNavigationView = b.NavigationView(5, 1, 54, 320, 230, 26, 7,
             [
                 #region NavPage_General
                 b.NavPage("基本",
@@ -661,8 +661,8 @@ public sealed class SettingsForm : AppForm
         #region NavPage_Debug
         if (IsDebug)
         {
-            ArrangeFirstControl(CheckBoxDebug, 4, 4);
-            ArrangeControlYL(GBoxDpiAware, CheckBoxDebug, 0, 2);
+            ArrangeFirstControl(CheckBoxDebug, 8, 4);
+            CompactControlY(GBoxDpiAware, CheckBoxDebug, 2);
             GroupBoxArrageControl(GBoxDpiAware, CheckBoxWFDpiAware, 4);
             ArrangeControlYL(CheckBoxCommDlgDpiAware, CheckBoxWFDpiAware, 0, 2);
             GroupBoxAutoAdjustHeight(GBoxDpiAware, CheckBoxCommDlgDpiAware, 4);

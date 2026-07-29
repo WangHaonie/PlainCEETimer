@@ -267,7 +267,11 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 break;
         }
 
-        e.Handled = handled;
+        if (handled)
+        {
+            e.Handled = true;
+        }
+
         base.OnKeyDown(e);
     }
 
