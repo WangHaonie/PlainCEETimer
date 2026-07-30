@@ -31,8 +31,6 @@ public abstract class PlainFlyout : AppForm
 
     protected override void OnInitializing()
     {
-        UpdateLocation();
-
         m_parentForm = OwnerControl.FindParentForm();
         m_parentForm.LocationChanged += ParentForm_LocationChanged;
         m_parentForm.VisibleChanged += ParentForm_VisibleChanged;
@@ -41,6 +39,12 @@ public abstract class PlainFlyout : AppForm
         [
             BlurOverlayMain = b.New<BlurOverlay>(0, 0, null),
         ]);
+    }
+
+    protected sealed override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        UpdateLocation();
     }
 
     protected override void OnClosed()

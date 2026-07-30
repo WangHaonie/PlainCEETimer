@@ -231,7 +231,7 @@ public abstract class AppForm : Form, IAppWindow
         Opacity = hide ? 0D : 1D;
     }
 
-    protected sealed override void OnHandleCreated(EventArgs e)
+    protected override void OnHandleCreated(EventArgs e)
     {
         UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
