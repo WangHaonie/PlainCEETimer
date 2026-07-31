@@ -19,6 +19,8 @@ public static class NativeConstants
     public const int PBST_PAUSED = 3;
 
     public const int NM_CUSTOMDRAW = WM.FIRST - 12;
+    public const int NM_CLICK = -2;
+    public const int NM_DBLCLK = -3;
     public const int CDDS_PREPAINT = 0x00000001;
     public const int CDRF_NOTIFYITEMDRAW = 0x00000020;
     public const int CDDS_ITEM = 0x00010000;
@@ -32,6 +34,9 @@ public static class NativeConstants
     public const int LVM_FIRST = 0x1000;
     public const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
     public const int LVM_GETHEADER = LVM_FIRST + 31;
+    public const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
+
+    public const int LVS_EX_CHECKBOXES = 0x00000004;
 
     public const int grp2 = 0x0431;
 
@@ -111,8 +116,10 @@ public static class WM
     public const int SYSCOMMAND = 0x0112;
     public const int SETTINGCHANGE = 0x001A;
     public const int SYSCOLORCHANGE = 0x0015;
+    public const int THEMECHANGED = 0x031A;
     public const int CHANGEUISTATE = 0x0127;
     public const int DWMCOLORIZATIONCOLORCHANGED = 0x0320;
+    public const int DPICHANGED_BEFOREPARENT = 0x02E2;
     public const int SETCURSOR = 0x0020;
     public const int ERASEBKGND = 0x0014;
     public const int PAINT = 0x000F;

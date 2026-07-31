@@ -73,7 +73,8 @@ public sealed class PlainListView : ListView, IThemeAware
 
     private int columnMaxWidth;
     private bool UseDark;
-    private bool invalidate;
+    private bool _SuppressFuckingAutoCheck;
+    private readonly bool isW11 = SystemVersion.IsWindows11;
     private ThemeHelper themeHelper;
     private SysHeader32NativeWindow hnw;
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
@@ -85,7 +86,6 @@ public sealed class PlainListView : ListView, IThemeAware
         HeaderStyle = ColumnHeaderStyle.Nonclickable;
         HideSelection = false;
         ShowItemToolTips = true;
-
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
 
@@ -149,8 +149,8 @@ public sealed class PlainListView : ListView, IThemeAware
     protected override void OnHandleCreated(EventArgs e)
     {
         themeHelper ??= new(this);
-        UpdateRowHeight();
         base.OnHandleCreated(e);
+        UpdateRowHeight();
     }
 
     protected override void OnDpiChangedAfterParent(EventArgs e)
@@ -158,6 +158,26 @@ public sealed class PlainListView : ListView, IThemeAware
         base.OnDpiChangedAfterParent(e);
         UpdateRowHeight();
         AutoAdjustWidth();
+    }
+
+    protected override void OnItemCheck(ItemCheckEventArgs ice)
+    {
+        if (_SuppressFuckingAutoCheck)
+        {
+            ice.NewValue = ice.CurrentValue;
+        }
+        else
+        {
+            base.OnItemCheck(ice);
+        }
+    }
+
+    protected override void OnItemChecked(ItemCheckedEventArgs e)
+    {
+        if (!_SuppressFuckingAutoCheck)
+        {
+            base.OnItemChecked(e);
+        }
     }
 
     protected override void OnColumnWidthChanging(ColumnWidthChangingEventArgs e)
@@ -177,6 +197,22 @@ public sealed class PlainListView : ListView, IThemeAware
     {
         switch (m.Msg)
         {
+            case WM.SYSCOLORCHANGE:
+            case WM.THEMECHANGED:
+            case WM.SETTINGCHANGE:
+            case WM.DPICHANGED_BEFOREPARENT:
+            case NativeConstants.LVM_SETEXTENDEDLISTVIEWSTYLE:
+
+                if (CheckBoxes && isW11 && UseDark)
+                {
+                    Win32UI.ComctlHookOpenTheme();
+                    base.WndProc(ref m);
+                    Win32UI.ComctlUnhookOpenTheme();
+                    return;
+                }
+
+                break;
+
             case WM.NOTIFY:
 
                 switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
@@ -210,6 +246,28 @@ public sealed class PlainListView : ListView, IThemeAware
                         base.WndProc(ref m);
                         Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), NativeConstants.TTM_SETMAXTIPWIDTH, 0, Width);
                         return;
+                }
+
+                break;
+
+            case WM.REFLECT + WM.NOTIFY:
+
+                switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
+                {
+                    case NativeConstants.NM_CLICK:
+                    case NativeConstants.NM_DBLCLK:
+
+                        if (HitTest(PointToClient(Cursor.Position)).Location == ListViewHitTestLocations.StateImage)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            _SuppressFuckingAutoCheck = true;
+                            base.WndProc(ref m);
+                            _SuppressFuckingAutoCheck = false;
+                            return;
+                        }
                 }
 
                 break;
@@ -254,7 +312,7 @@ public sealed class PlainListView : ListView, IThemeAware
         ThemeManager.EnableDarkModeForControl(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
         ThemeManager.EnableDarkModeForControl(hToolTips, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
 
-        if (!invalidate)
+        if (init)
         {
             Win32UI.SetTopMostWindow(hToolTips);
             hnw?.ReleaseHandle();
@@ -265,8 +323,6 @@ public sealed class PlainListView : ListView, IThemeAware
             {
                 Win32UI.SetRoundCornerEx(hToolTips, true);
             }
-
-            invalidate = true;
         }
     }
 }

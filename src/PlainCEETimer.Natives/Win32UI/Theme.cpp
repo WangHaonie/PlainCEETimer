@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Control.h"
 #include "Theme.h"
 #include "utils.h"
 #include "Win32/IATHook.h"
@@ -17,6 +18,7 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
 using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
+using fnOpenThemeDataForDpi = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList, UINT dpi);
 using fnFlushMenuThemes = void (WINAPI*)();
 using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
 
@@ -26,10 +28,12 @@ static BOOL g_fUseDark = FALSE;
 
 static fnSetPreferredAppMode g_SetPreferredAppMode = nullptr;
 static fnOpenNcThemeData g_OpenNcThemeData = nullptr;
+static fnOpenThemeDataForDpi g_OpenThemeDataForDpi = nullptr;
 static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
 
 static IAT_HOOK_DATA<fnOpenNcThemeData> IatHookOpenNcThemeData = {};
+static IAT_HOOK_DATA<fnOpenThemeDataForDpi> IatHookOpenThemeDataForDpi = {};
 static IAT_HOOK_DATA<fnGetSysColor> IatHookGetSysColor = {};
 
 /*
@@ -49,13 +53,27 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
 {
-    if (g_fUseDark && WString_Equals(pszClassList, WC_SCROLLBAR, false))
+    if (g_fUseDark && WString_Equals(pszClassList, WC_SCROLLBAR, true))
     {
         hWnd = nullptr;
         pszClassList = L"DarkMode_Explorer::ScrollBar";
     }
 
     return g_OpenNcThemeData(hWnd, pszClassList);
+};
+
+static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
+{
+    if (WString_Equals(pszClassList, WC_BUTTON, true) && !hWnd)
+    {
+        pszClassList = L"DarkMode_Explorer::Button";
+    }
+}
+
+static HTHEME WINAPI OpenThemeDataForDpiNew(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
+{
+    HandleListViewCheckBoxes(hWnd, pszClassList);
+    return g_OpenThemeDataForDpi(hWnd, pszClassList, dpi);
 };
 
 static DWORD WINAPI GetSysColorNew(int nIndex)
@@ -144,6 +162,24 @@ void ComctlUnhookSysColor()
     g_crBack = 0;
 }
 
+void ComctlHookOpenTheme()
+{
+    if (InitializeIatHook(HOOK_OPENTHEMEDATAFORDPI_ARGS, IatHookOpenThemeDataForDpi))
+    {
+        if (!g_OpenThemeDataForDpi)
+        {
+            g_OpenThemeDataForDpi = IatHookOpenThemeDataForDpi.OldFunc;
+        }
+
+        ReplaceFunction(IatHookOpenThemeDataForDpi, OpenThemeDataForDpiNew);
+    }
+}
+
+void ComctlUnhookOpenTheme()
+{
+    RestoreFunction(IatHookOpenThemeDataForDpi);
+}
+
 /*
 
 窗体标题栏深色样式 参考：
@@ -157,7 +193,10 @@ void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
 {
     if (hWnd)
     {
-        DwmSetWindowAttribute(hWnd, after20h1 ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, &enabled, sizeof(enabled));
+        DwmSetWindowAttribute(hWnd, after20h1
+            ? DWMWA_USE_IMMERSIVE_DARK_MODE
+            : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1,
+            &enabled, sizeof(enabled));
     }
 }
 

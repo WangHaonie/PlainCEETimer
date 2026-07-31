@@ -58,3 +58,6 @@ EXPORTS
     CheckWindowExStyle @46 NONAME
 
     PlainTimeSpanPick_RegisterWC @47 NONAME
+
+    ComctlHookOpenTheme @48 NONAME
+    ComctlUnhookOpenTheme @49 NONAME

@@ -189,6 +189,12 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#29")]
     public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
 
+    [DllImport(App.NativesDll, EntryPoint = "#48")]
+    public static extern void ComctlHookOpenTheme();
+
+    [DllImport(App.NativesDll, EntryPoint = "#49")]
+    public static extern void ComctlUnhookOpenTheme();
+
     [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern void SetTopMostWindow(IntPtr hWnd);
 

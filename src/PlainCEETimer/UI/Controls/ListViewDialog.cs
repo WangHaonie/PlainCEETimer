@@ -58,10 +58,16 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
 
         set
         {
-            if (FixedDataItemSet == null && (hasFixedData = !value.IsNullOrEmpty()))
+            hasFixedData = !value.IsNullOrEmpty();
+            fixedData = value;
+
+            if (hasFixedData)
             {
-                FixedDataItemSet = new(value.Length);
-                fixedData = value;
+                FixedDataItemSet ??= new(value.Length);
+            }
+            else
+            {
+                FixedDataItemSet?.Clear();
             }
         }
     }
@@ -166,8 +172,8 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 if (AllowExcludeItems)
                 {
                     var excluded = selected && ((TData)item.Tag).Excluded;
-                    MenuItemExclude.Enabled = selected && (!atMost1 || !excluded);
-                    MenuItemInclude.Enabled = selected && (!atMost1 || excluded);
+                    MenuItemExclude.Enabled = selected && !def && (!atMost1 || !excluded);
+                    MenuItemInclude.Enabled = selected && !def && (!atMost1 || excluded);
                 }
 
             }, out ContextMenuMain)
@@ -181,6 +187,9 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 MenuItemExclude = b.Item("排除(&X)", MenuItemExclude_Click),
                 MenuItemInclude = b.Item("包括(&I)", MenuItemInclude_Click)
             ], -3);
+
+            ListViewMain.ItemChecked += ListViewMain_ItemChecked;
+            ListViewMain.CheckBoxes = true;
         }
 
         ListViewMain.ContextMenu = ContextMenuMain;
@@ -203,6 +212,19 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         base.UpdateTheme(useDark, init);
         UseDark = useDark;
+
+        if (!init)
+        {
+            var count = Items.Count;
+            ListViewMain.BeginUpdate();
+
+            for (int i = 0; i < count; i++)
+            {
+                UpdateItemState(Items[i]);
+            }
+
+            ListViewMain.EndUpdate();
+        }
     }
 
     protected sealed override void OnLoad()
@@ -402,6 +424,33 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
+    private void ListViewMain_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+        if (AllowExcludeItems)
+        {
+            var item = e.Item;
+            var data = (TData)item.Tag;
+            bool excluded;
+
+            if (IsDefault(item))
+            {
+                excluded = false;
+                if (!data.Excluded && item.Checked) return;
+            }
+            else
+            {
+                excluded = !item.Checked;
+                if (data.Excluded == excluded) return;
+            }
+
+            var newData = ReplaceItemData(item, data);
+            newData.Excluded = excluded;
+            item.Checked = !excluded;
+            UpdateItemState(item);
+            UserChanged();
+        }
+    }
+
     private void AddItemSafe(TData data)
     {
         if (ItemSet.CanAdd(data))
@@ -429,7 +478,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         {
             if (flag == true)
             {
-                EditItem(item, newData, oldData, false);
+                EditItem(item, newData, oldData);
             }
             else
             {
@@ -445,14 +494,14 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         }
     }
 
-    private void EditItem(ListViewItem item, TData newData, TData oldData, bool reverseEx)
+    private void EditItem(ListViewItem item, TData newData, TData oldData)
     {
         if (hasFixedData)
         {
             FixedDataItemSet.Remove(item);
         }
 
-        newData.Excluded = reverseEx ^ oldData.Excluded;
+        newData.Excluded = oldData.Excluded;
         RemoveItem(item, oldData, true);
         AddItem(newData);
     }
@@ -471,34 +520,34 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
     {
         var item = GetListViewItem(data);
         var isDefault = data.Default;
-        item.Group = Groups[GetGroupIndex(data)];
+        if (Groups != null) item.Group = Groups[GetGroupIndex(data)];
         item.Tag = data;
         item.Selected = isSelected;
         item.Focused = isSelected;
+
+        if (isDefault && data.Excluded)
+        {
+            data = data.Copy();
+            data.Excluded = false;
+        }
+
+        if (AllowExcludeItems) item.Checked = !data.Excluded;
         Items.Add(item);
         ItemSet.Add(data, item);
-
-        if (isSelected)
-        {
-            item.EnsureVisible();
-        }
+        if (isSelected) item.EnsureVisible();
 
         if (isDefault)
         {
             item.Text = DefaultItemDesc;
-            item.ForeColor = UseDark ? Colors.DarkForeListViewDefaultItem : Colors.LightForeListViewDefaultItem;
             FixedDataItemSet.Add(item);
         }
 
-        if (AllowExcludeItems && data.Excluded)
-        {
-            item.ForeColor = UseDark ? Colors.DarkForeTextDisabled : Colors.LightForeTextDisabled;
-        }
+        UpdateItemState(item);
     }
 
-    private void RemoveItem(ListViewItem item, TData data, bool isEdit = false)
+    private void RemoveItem(ListViewItem item, TData data, bool allowDefault = false)
     {
-        if (isEdit || !IsDefault(item))
+        if (allowDefault || !IsDefault(item))
         {
             Items.Remove(item);
             ItemSet.Remove(data);
@@ -517,12 +566,19 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
             for (int i = 0; i < total; i++)
             {
                 var item = items[i];
-                var data = (TData)item.Tag;
 
-                if (data.Excluded != exclude)
+                if (!IsDefault(item))
                 {
-                    EditItem(item, data.Copy(), data, true);
-                    changed = true;
+                    var data = (TData)item.Tag;
+
+                    if (data.Excluded != exclude)
+                    {
+                        var newData = ReplaceItemData(item, data);
+                        newData.Excluded = exclude;
+                        item.Checked = !exclude;
+                        UpdateItemState(item);
+                        changed = true;
+                    }
                 }
             }
 
@@ -533,6 +589,27 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
                 UserChanged();
             }
         }
+    }
+
+    private void UpdateItemState(ListViewItem item)
+    {
+        var data = (TData)item.Tag;
+
+        if (AllowExcludeItems && data.Excluded)
+            item.ForeColor = UseDark ? Colors.DarkForeTextDisabled : Colors.LightForeTextDisabled;
+        else if (IsDefault(item))
+            item.ForeColor = UseDark ? Colors.DarkForeListViewDefaultItem : Colors.LightForeListViewDefaultItem;
+        else
+            item.ForeColor = UseDark ? Colors.DarkForeText : SystemColors.WindowText;
+    }
+
+    private TData ReplaceItemData(ListViewItem item, TData oldData)
+    {
+        var newData = oldData.Copy();
+        item.Tag = newData;
+        ItemSet.Remove(oldData);
+        ItemSet.Add(newData, item);
+        return newData;
     }
 
     private void RemoveAllItems()
