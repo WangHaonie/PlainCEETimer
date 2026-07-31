@@ -179,7 +179,7 @@ public sealed class ColorBlock : PlainLabel
     {
         public unsafe bool OnMessage(MSG* lpMsg)
         {
-            return lpMsg->message == WM.KEYDOWN && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
+            return lpMsg->message == WinUser.WM_KEYDOWN && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
         }
     }
 

@@ -33,9 +33,9 @@ public static class ThemeManager
         {
             return lpMsg->message switch
             {
-                WM.SYSCOLORCHANGE
+                WinUser.WM_SYSCOLORCHANGE
                     => true,
-                WM.SETTINGCHANGE or WM.SETTINGCHANGE + WM.REFLECT
+                WinUser.WM_SETTINGCHANGE or WinUser.WM_SETTINGCHANGE + WinUser.WM_REFLECT
                     => lpMsg->lParam.AsStringUni(free: false) == "ImmersiveColorSet",
                 _
                     => false,

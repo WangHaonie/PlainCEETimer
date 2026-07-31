@@ -210,10 +210,10 @@ public class AppWindow : Window, IAppWindow
         var canMinimize = ResizeMode != ResizeMode.NoResize;
 
         SystemMenu.FromHwnd(hwnd)
-            .SetEnabled(NativeConstants.SC_RESTORE, !Modal)
-            .SetEnabled(NativeConstants.SC_SIZE, canResize)
-            .SetEnabled(NativeConstants.SC_MINIMIZE, canMinimize)
-            .SetEnabled(NativeConstants.SC_MAXIMIZE, canResize);
+            .SetEnabled(WinUser.SC_RESTORE, !Modal)
+            .SetEnabled(WinUser.SC_SIZE, canResize)
+            .SetEnabled(WinUser.SC_MINIMIZE, canMinimize)
+            .SetEnabled(WinUser.SC_MAXIMIZE, canResize);
 
         themeHelper ??= new(this);
         RefreshSuggestedMaxWidth();
@@ -250,16 +250,16 @@ public class AppWindow : Window, IAppWindow
     {
         switch (m.Msg)
         {
-            case WM.CLOSE:
+            case WinUser.WM_CLOSE:
                 WmClose(ref m);
                 return;
-            case WM.CONTEXTMENU:
+            case WinUser.WM_CONTEXTMENU:
                 WmContextMenu(ref m);
                 return;
-            case WM.COMMAND:
+            case WinUser.WM_COMMAND:
                 WmCommand(ref m);
                 return;
-            case WM.SYSCOMMAND:
+            case WinUser.WM_SYSCOMMAND:
                 WmSysCommand(ref m);
                 return;
         }
@@ -416,7 +416,7 @@ public class AppWindow : Window, IAppWindow
 
     private void WmSysCommand(ref Message m)
     {
-        if ((m.WParam.ToInt32() & 0xFFF0) == NativeConstants.SC_CLOSE && FireOnClosing())
+        if ((m.WParam.ToInt32() & 0xFFF0) == WinUser.SC_CLOSE && FireOnClosing())
         {
             return;
         }

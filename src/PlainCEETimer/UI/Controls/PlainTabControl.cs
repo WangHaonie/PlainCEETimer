@@ -41,8 +41,8 @@ public class PlainTabControl : TabControl
 
     protected override void WndProc(ref Message m)
     {
-        if (UseDark && m.Msg == WM.PARENTNOTIFY
-            && m.WParam.ToInt32().LoWord == WM.CREATE)
+        if (UseDark && m.Msg == WinUser.WM_PARENTNOTIFY
+            && m.WParam.ToInt32().LoWord == WinUser.WM_CREATE)
         {
             ThemeManager.EnableDarkModeForControl(m.LParam, SystemStyle.ExplorerDark);
         }

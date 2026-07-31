@@ -93,8 +93,10 @@ public class FullScreenTracker : IDisposable
         if (!hasStarted && m_mode != FullScreenTrackingMode.None)
         {
             m_proc = WinEventProc;
-            m_hForegroundHook = Win32.SetWinEventHook(WEH.EVENT_SYSTEM_FOREGROUND, WEH.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, m_proc, 0, 0, WEH.WINEVENT_OUTOFCONTEXT);
-            m_hLocationChangeHook = Win32.SetWinEventHook(WEH.EVENT_OBJECT_LOCATIONCHANGE, WEH.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, m_proc, 0, 0, WEH.WINEVENT_OUTOFCONTEXT);
+            m_hForegroundHook = Win32.SetWinEventHook(WinUser.EVENT_SYSTEM_FOREGROUND, WinUser.EVENT_SYSTEM_FOREGROUND,
+                IntPtr.Zero, m_proc, 0, 0, WinUser.WINEVENT_OUTOFCONTEXT);
+            m_hLocationChangeHook = Win32.SetWinEventHook(WinUser.EVENT_OBJECT_LOCATIONCHANGE, WinUser.EVENT_OBJECT_LOCATIONCHANGE,
+                IntPtr.Zero, m_proc, 0, 0, WinUser.WINEVENT_OUTOFCONTEXT);
             hasStarted = m_hForegroundHook != IntPtr.Zero && m_hLocationChangeHook != IntPtr.Zero;
             m_screen ??= Screen.PrimaryScreen;
             m_timer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
@@ -137,7 +139,7 @@ public class FullScreenTracker : IDisposable
 
     private void WinEventProc(IntPtr hWinEventHook, int dwEvent, IntPtr hwnd, int idObject, int idChild, int idEventThread, int dwmsEventTime)
     {
-        if (idObject != WEH.OBJID_WINDOW || idChild != WEH.CHILDID_SELF || hwnd == IntPtr.Zero)
+        if (idObject != WinUser.OBJID_WINDOW || idChild != WinUser.CHILDID_SELF || hwnd == IntPtr.Zero)
         {
             return;
         }
@@ -192,7 +194,7 @@ public class FullScreenTracker : IDisposable
             && hWnd != Win32UI.GetShellWindow()
             && !ShouldIgnoreWindow(hWnd)
             && Win32UI.IsWindowVisible(hWnd)
-            && (Win32UI.GetWindowLong(hWnd, GWL.STYLE) & (WS.CHILD | WS.MINIMIZE)) == 0
+            && (Win32UI.GetWindowLong(hWnd, WinUser.GWL_STYLE) & (WinUser.WS_CHILD | WinUser.WS_MINIMIZE)) == 0
             && IsOnTargetScreen(hWnd)
             && IsFullScreenWindow(hWnd);
     }
@@ -303,7 +305,7 @@ public class FullScreenTracker : IDisposable
 
     private static IntPtr GetRootWindow(IntPtr hWnd)
     {
-        var root = Win32UI.GetAncestor(hWnd, GA.ROOT);
+        var root = Win32UI.GetAncestor(hWnd, WinUser.GA_ROOT);
         return root != IntPtr.Zero ? root : hWnd;
     }
 

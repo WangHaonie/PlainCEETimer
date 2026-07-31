@@ -80,12 +80,12 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
 
             var pbs = m_style switch
             {
-                ProgressStyle.Error => NativeConstants.PBST_ERROR,
-                ProgressStyle.Paused => NativeConstants.PBST_PAUSED,
-                _ => NativeConstants.PBST_NORMAL
+                ProgressStyle.Error => CommCtrl.PBST_ERROR,
+                ProgressStyle.Paused => CommCtrl.PBST_PAUSED,
+                _ => CommCtrl.PBST_NORMAL
             };
 
-            Win32UI.SendMessage(Handle, NativeConstants.PBM_SETSTATE, pbs, 0);
+            Win32UI.SendMessage(Handle, CommCtrl.PBM_SETSTATE, pbs, 0);
         }
     }
 

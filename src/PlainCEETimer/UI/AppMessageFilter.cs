@@ -22,13 +22,13 @@ public class AppMessageFilter : IDisposable
 
     private unsafe IntPtr GetMsgHookProc(int nCode, IntPtr wParam, MSG* lParam)
     {
-        if (nCode >= 0 && (int)wParam == NativeConstants.PM_REMOVE)
+        if (nCode >= 0 && (int)wParam == WinUser.PM_REMOVE)
         {
             for (int i = 0; i < filtersCount; i++)
             {
                 if (filters[i].OnMessage(lParam))
                 {
-                    lParam->message = WM.NULL;
+                    lParam->message = WinUser.WM_NULL;
                 }
             }
         }

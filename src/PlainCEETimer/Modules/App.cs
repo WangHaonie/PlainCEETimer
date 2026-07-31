@@ -373,7 +373,7 @@ internal class App
         Thread.CurrentThread.CurrentUICulture = ci;
         CultureInfo.DefaultThreadCurrentCulture = ci;
         CultureInfo.DefaultThreadCurrentUICulture = ci;
-        Win32.SetThreadPreferredUILanguages(MUI.LANGUAGE_NAME, sci, IntPtr.Zero);
+        Win32.SetThreadPreferredUILanguages(WinNls.MUI_LANGUAGE_NAME, sci, IntPtr.Zero);
     }
 
 #if DEBUG

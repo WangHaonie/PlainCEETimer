@@ -24,7 +24,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WM.PAINT)
+            if (m.Msg == WinUser.WM_PAINT)
             {
                 base.WndProc(ref m);
 
@@ -32,7 +32,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                 {
                     var hWnd = Handle;
                     using var g = Graphics.FromHwnd(hWnd);
-                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WM.GETFONT, 0, 0));
+                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WinUser.WM_GETFONT, 0, 0));
                     using var brush = new SolidBrush(Colors.DarkForeText);
 
                     Win32UI.GetClientRect(hWnd, out var rc);
@@ -116,15 +116,15 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         return msg switch
         {
-            WM.INITDIALOG
+            WinUser.WM_INITDIALOG
                 => WmInitDialog(hWnd),
-            WM.CTLCOLORDLG
-            or WM.CTLCOLOREDIT
-            or WM.CTLCOLORSTATIC
-            or WM.CTLCOLORLISTBOX
-            or WM.CTLCOLORBTN
+            WinUser.WM_CTLCOLORDLG
+            or WinUser.WM_CTLCOLOREDIT
+            or WinUser.WM_CTLCOLORSTATIC
+            or WinUser.WM_CTLCOLORLISTBOX
+            or WinUser.WM_CTLCOLORBTN
                 => WmCtlColor(wparam),
-            WM.DESTROY
+            WinUser.WM_DESTROY
                 => WmDestroy(),
             _
                 => IntPtr.Zero,
@@ -157,7 +157,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         if (UseDark)
         {
-            Win32UI.SetBkMode(hDC, NativeConstants.TRANSPARENT);
+            Win32UI.SetBkMode(hDC, WinGdi.TRANSPARENT);
             Win32UI.SetBkColor(hDC, BackCrColor);
             Win32UI.SetTextColor(hDC, ForeCrColor);
             return hBrush;
@@ -199,7 +199,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     {
         switch (nCode)
         {
-            case NativeConstants.HCBT_CREATEWND:
+            case WinUser.HCBT_CREATEWND:
                 var lpcs = Marshal.ReadIntPtr(lParam);
 
                 if (Win32UI.IsDialog(lpcs))
@@ -223,7 +223,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                 }
 
                 break;
-            case NativeConstants.HCBT_DESTROYWND:
+            case WinUser.HCBT_DESTROYWND:
 
                 if (wParam == MsgBoxHandle)
                 {
@@ -263,7 +263,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
         {
             IntPtr hCtrl;
 
-            if ((hCtrl = Win32UI.GetDlgItem(hWnd, NativeConstants.grp2)) != IntPtr.Zero)
+            if ((hCtrl = Win32UI.GetDlgItem(hWnd, Dlgs.grp2)) != IntPtr.Zero)
             {
                 if (useDark)
                 {

@@ -13,9 +13,9 @@ public sealed class PlainButton : Button, IThemeAware
     {
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WM.NOTIFY)
+            if (m.Msg == WinUser.WM_NOTIFY)
             {
-                if (Marshal.ReadInt32(m.LParam, NMHDR.code) == NativeConstants.BCN_DROPDOWN
+                if (Marshal.ReadInt32(m.LParam, NMHDR.code) == CommCtrl.BCN_DROPDOWN
                     && Marshal.ReadIntPtr(m.LParam, NMHDR.hwndFrom) == b.Handle)
                 {
                     b.ContextMenu.Show(b, new(0, b.Height));
@@ -34,7 +34,7 @@ public sealed class PlainButton : Button, IThemeAware
 
             if (ContextMenu != null)
             {
-                cp.Style |= NativeConstants.BS_SPLITBUTTON;
+                cp.Style |= CommCtrl.BS_SPLITBUTTON;
             }
 
             return cp;

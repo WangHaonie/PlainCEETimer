@@ -296,19 +296,19 @@ public sealed class FontFamilyInputBox : TextBox
     {
         switch (msg)
         {
-            case WM.NCLBUTTONDOWN:
-            case WM.NCRBUTTONDOWN:
-            case WM.NCMBUTTONDOWN:
-            case WM.NCXBUTTONDOWN:
-            case WM.NCLBUTTONDBLCLK:
-            case WM.NCRBUTTONDBLCLK:
-            case WM.NCMBUTTONDBLCLK:
-            case WM.NCXBUTTONDBLCLK:
-            case WM.MOVE:
-            case WM.MOVING:
-            case WM.SIZE:
-            case WM.SIZING:
-            case WM.ACTIVATE when wParam == IntPtr.Zero:
+            case WinUser.WM_NCLBUTTONDOWN:
+            case WinUser.WM_NCRBUTTONDOWN:
+            case WinUser.WM_NCMBUTTONDOWN:
+            case WinUser.WM_NCXBUTTONDOWN:
+            case WinUser.WM_NCLBUTTONDBLCLK:
+            case WinUser.WM_NCRBUTTONDBLCLK:
+            case WinUser.WM_NCMBUTTONDBLCLK:
+            case WinUser.WM_NCXBUTTONDBLCLK:
+            case WinUser.WM_MOVE:
+            case WinUser.WM_MOVING:
+            case WinUser.WM_SIZE:
+            case WinUser.WM_SIZING:
+            case WinUser.WM_ACTIVATE when wParam == IntPtr.Zero:
                 if (throttler.Throttle())
                     IsOpen = false;
                 break;

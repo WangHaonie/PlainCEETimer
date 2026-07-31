@@ -9,8 +9,8 @@ public static class SystemInformationEx
     public static Size GetBorder3DSizeForDpi(int? dpi = null)
     {
         return new(
-            DpiHelperEx.GetSystemMetricsForDpi(SystemMetric.CXEDGE, dpi),
-            DpiHelperEx.GetSystemMetricsForDpi(SystemMetric.CYEDGE, dpi)
+            DpiHelperEx.GetSystemMetricsForDpi(WinUser.SM_CXEDGE, dpi),
+            DpiHelperEx.GetSystemMetricsForDpi(WinUser.SM_CYEDGE, dpi)
         );
     }
 }

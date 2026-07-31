@@ -107,7 +107,7 @@ public abstract class AppForm : Form, IAppWindow
 
             if (CheckParam(AppWindowStyle.CompositedStyle))
             {
-                cp.ExStyle |= WS.EX_COMPOSITED;
+                cp.ExStyle |= WinUser.WS_EX_COMPOSITED;
             }
 
             return cp;
@@ -764,7 +764,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
 
-        if (owner != null && !TopMost && Win32UI.CheckWindowExStyle(owner.Handle, WS.EX_TOPMOST))
+        if (owner != null && !TopMost && Win32UI.CheckWindowExStyle(owner.Handle, WinUser.WS_EX_TOPMOST))
         {
             TopMost = true;
         }

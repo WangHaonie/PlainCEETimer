@@ -48,7 +48,7 @@ public sealed class NavigationView : Control
         {
             base.WndProc(ref m);
 
-            if (canHandleStyle && m.Msg == WM.WINDOWPOSCHANGED)
+            if (canHandleStyle && m.Msg == WinUser.WM_WINDOWPOSCHANGED)
             {
                 debouncer.Debounce(UpdateThemeAction);
             }

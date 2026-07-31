@@ -28,12 +28,12 @@ internal static class HotKeyManager
     {
         public MessageWindow()
         {
-            CreateHandle(new() { Parent = new(NativeConstants.HWND_MESSAGE) });
+            CreateHandle(new() { Parent = new(WinUser.HWND_MESSAGE) });
         }
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WM.HOTKEY && hksvcs != null)
+            if (m.Msg == WinUser.WM_HOTKEY && hksvcs != null)
             {
                 var count = hksvcs.Count;
 

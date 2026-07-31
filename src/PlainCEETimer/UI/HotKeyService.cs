@@ -49,7 +49,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
         hhkmw = hkmw.Handle;
 
         if (TestCore(hk)
-            && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), NativeConstants.MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
+            && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), WinUser.MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
         {
             hid = new(m_id);
             registered = true;

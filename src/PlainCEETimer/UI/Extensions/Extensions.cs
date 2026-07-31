@@ -115,7 +115,7 @@ public static class Extensions
     {
         if (control.IsHandleCreated)
         {
-            Win32UI.SendMessage(control.Handle, WM.CHANGEUISTATE, int.MakeLong(NativeConstants.UIS_SET, NativeConstants.UISF_HIDEFOCUS), 0);
+            Win32UI.SendMessage(control.Handle, WinUser.WM_CHANGEUISTATE, int.MakeLong(WinUser.UIS_SET, WinUser.UISF_HIDEFOCUS), 0);
         }
     }
 }

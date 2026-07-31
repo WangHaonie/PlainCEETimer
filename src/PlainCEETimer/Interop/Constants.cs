@@ -4,8 +4,13 @@ namespace PlainCEETimer.Interop;
 
 [NoConstants]
 [CompilerRemove]
-public static class NativeConstants
+public static class WinUser
 {
+    public const int HCBT_CREATEWND = 3;
+    public const int HCBT_DESTROYWND = 4;
+
+    public const int HTCAPTION = 2;
+
     public const int HWND_TOP = 0;
     public const int HWND_TOPMOST = -1;
     public const int HWND_MESSAGE = -3;
@@ -13,259 +18,162 @@ public static class NativeConstants
     public const int UIS_SET = 1;
     public const int UISF_HIDEFOCUS = 0x1;
 
-    public const int PBM_SETSTATE = 0x0410;
-    public const int PBST_NORMAL = 1;
-    public const int PBST_ERROR = 2;
-    public const int PBST_PAUSED = 3;
-
-    public const int NM_CUSTOMDRAW = WM.FIRST - 12;
-    public const int NM_CLICK = -2;
-    public const int NM_DBLCLK = -3;
-    public const int CDDS_PREPAINT = 0x00000001;
-    public const int CDRF_NOTIFYITEMDRAW = 0x00000020;
-    public const int CDDS_ITEM = 0x00010000;
-    public const int CDDS_ITEMPREPAINT = CDDS_ITEM | CDDS_PREPAINT;
-    public const int CDRF_DODEFAULT = 0x00000000;
-
-    public const int TTN_FIRST = unchecked((int)(0U - 520U));
-    public const int TTN_GETDISPINFOW = TTN_FIRST - 10;
-    public const int TTM_SETMAXTIPWIDTH = WM.USER + 24;
-
-    public const int LVM_FIRST = 0x1000;
-    public const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
-    public const int LVM_GETHEADER = LVM_FIRST + 31;
-    public const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
-
-    public const int LVS_EX_CHECKBOXES = 0x00000004;
-
-    public const int grp2 = 0x0431;
-
-    public const int HCBT_CREATEWND = 3;
-    public const int HCBT_DESTROYWND = 4;
-    public const int TRANSPARENT = 1;
-
-    public const int BCN_FIRST = unchecked((int)(0U - 1250U));
-    public const int BCN_DROPDOWN = BCN_FIRST + 0x0002;
-    public const int BS_SPLITBUTTON = 0x0000000C;
-
-    public const int SC_MOVE = 0xF010;
     public const int SC_SIZE = 0xF000;
+    public const int SC_MOVE = 0xF010;
     public const int SC_MINIMIZE = 0xF020;
     public const int SC_MAXIMIZE = 0xF030;
     public const int SC_CLOSE = 0xF060;
     public const int SC_RESTORE = 0xF120;
-    public const int HTCAPTION = 2;
-
-    public const int HDM_FIRST = 0x1200;
-    public const int HDM_LAYOUT = HDM_FIRST + 5;
 
     public const int EN_CHANGE = 0x0300;
     public const int EM_SETMARGINS = 0x00D3;
     public const int EC_RIGHTMARGIN = 0x0002;
 
-    public const int HKM_SETHOTKEY = WM.USER + 1;
-    public const int HKM_GETHOTKEY = WM.USER + 2;
-    public const int HKM_SETRULES = WM.USER + 3;
-    public const int HKCOMB_NONE = 0x0001;
-    public const int HKCOMB_S = 0x0002;
+    public const int MOD_NOREPEAT = 0x4000;
 
-    public const ushort MOD_NOREPEAT = 0x4000;
+    public const int PM_REMOVE = 0x0001;
 
-    public const int PM_REMOVE = 1;
+    public const int SM_CXEDGE = 45;
+    public const int SM_CYEDGE = 46;
+
+    public const int WM_NULL = 0;
+    public const int WM_FIRST = (int)(0U - 0U);
+    public const int WM_CREATE = 0x0001;
+    public const int WM_HOTKEY = 0x0312;
+    public const int WM_CLOSE = 0x0010;
+    public const int WM_MOVE = 0x0003;
+    public const int WM_SIZE = 0x0005;
+    public const int WM_ACTIVATE = 0x0006;
+    public const int WM_CONTEXTMENU = 0x007B;
+    public const int WM_COMMAND = 0x0111;
+    public const int WM_PASTE = 0x0302;
+    public const int WM_REFLECT = 0x2000;
+    public const int WM_PARENTNOTIFY = 0x0210;
+    public const int WM_SYSCOMMAND = 0x0112;
+    public const int WM_SETTINGCHANGE = 0x001A;
+    public const int WM_SYSCOLORCHANGE = 0x0015;
+    public const int WM_THEMECHANGED = 0x031A;
+    public const int WM_CHANGEUISTATE = 0x0127;
+    public const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
+    public const int WM_DPICHANGED_BEFOREPARENT = 0x02E2;
+    public const int WM_SETCURSOR = 0x0020;
+    public const int WM_ERASEBKGND = 0x0014;
+    public const int WM_PAINT = 0x000F;
+    public const int WM_KEYDOWN = 0x0100;
+    public const int WM_NOTIFY = 0x004E;
+    public const int WM_USER = 0x0400;
+    public const int WM_DESTROY = 0x0002;
+    public const int WM_INITDIALOG = 0x0110;
+    public const int WM_CTLCOLORDLG = 0x0136;
+    public const int WM_CTLCOLOREDIT = 0x0133;
+    public const int WM_CTLCOLORSTATIC = 0x0138;
+    public const int WM_CTLCOLORLISTBOX = 0x0134;
+    public const int WM_CTLCOLORBTN = 0x0135;
+    public const int WM_GETFONT = 0x0031;
+    public const int WM_WINDOWPOSCHANGED = 0x0047;
+    public const int WM_NCLBUTTONDOWN = 0x00A1;
+    public const int WM_NCRBUTTONDOWN = 0x00A4;
+    public const int WM_NCMBUTTONDOWN = 0x00A7;
+    public const int WM_NCXBUTTONDOWN = 0x00AB;
+    public const int WM_NCLBUTTONDBLCLK = 0x00A3;
+    public const int WM_NCRBUTTONDBLCLK = 0x00A6;
+    public const int WM_NCMBUTTONDBLCLK = 0x00A9;
+    public const int WM_NCXBUTTONDBLCLK = 0x00AD;
+    public const int WM_MOVING = 0x0216;
+    public const int WM_SIZING = 0x0214;
+
+    public const int WS_CHILD = 0x40000000;
+    public const int WS_MINIMIZE = 0x20000000;
+    public const int WS_BORDER = 0x00800000;
+    public const int WS_EX_TOPMOST = 0x00000008;
+    public const int WS_EX_CLIENTEDGE = 0x00000200;
+    public const int WS_EX_COMPOSITED = 0x02000000;
+
+    public const int GA_ROOT = 2;
+
+    public const int GWL_STYLE = -16;
+
+    public const int WINEVENT_OUTOFCONTEXT = 0x0000;
+
+    public const int OBJID_WINDOW = 0x00000000;
+
+    public const int CHILDID_SELF = 0;
+
+    public const int EVENT_SYSTEM_FOREGROUND = 0x0003;
+    public const int EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
 }
 
 [NoConstants]
 [CompilerRemove]
-public static class SystemMetric
+public static class CommCtrl
 {
-    public const int CXEDGE = 45;
-    public const int CYEDGE = 46;
+    public const int CDRF_DODEFAULT = 0x00000000;
+    public const int CDRF_NOTIFYITEMDRAW = 0x00000020;
+
+    public const int CDDS_PREPAINT = 0x00000001;
+    public const int CDDS_ITEM = 0x00010000;
+    public const int CDDS_ITEMPREPAINT = CDDS_ITEM | CDDS_PREPAINT;
+
+    public const int NM_FIRST = (int)(0U - 0U);
+    public const int NM_CLICK = NM_FIRST - 2;
+    public const int NM_DBLCLK = NM_FIRST - 3;
+    public const int NM_CUSTOMDRAW = NM_FIRST - 12;
+
+    public const int BS_SPLITBUTTON = 0x0000000C;
+    public const int BCN_FIRST = unchecked((int)(0U - 1250U));
+    public const int BCN_DROPDOWN = BCN_FIRST + 0x0002;
+
+    public const int HDM_FIRST = 0x1200;
+    public const int HDM_LAYOUT = HDM_FIRST + 5;
+
+    public const int HKM_SETHOTKEY = WinUser.WM_USER + 1;
+    public const int HKM_GETHOTKEY = WinUser.WM_USER + 2;
+    public const int HKM_SETRULES = WinUser.WM_USER + 3;
+    public const int HKCOMB_NONE = 0x0001;
+    public const int HKCOMB_S = 0x0002;
+
+    public const int PBM_SETSTATE = WinUser.WM_USER + 16;
+    public const int PBST_NORMAL = 0x0001;
+    public const int PBST_ERROR = 0x0002;
+    public const int PBST_PAUSED = 0x0003;
+
+    public const int TTN_FIRST = unchecked((int)(0U - 520U));
+    public const int TTN_GETDISPINFOW = TTN_FIRST - 10;
+    public const int TTM_SETMAXTIPWIDTH = WinUser.WM_USER + 24;
+
+    public const int LVM_FIRST = 0x1000;
+    public const int LVM_GETHEADER = LVM_FIRST + 31;
+    public const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
+    public const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
+    public const int LVS_EX_CHECKBOXES = 0x00000004;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class Dlgs
+{
+    public const int grp2 = 0x0431;
 }
 
 [NoConstants]
 [CompilerRemove]
 public static class WinGdi
 {
+    public const int TRANSPARENT = 1;
+
     public const int LOGPIXELSX = 88;
 }
 
 [NoConstants]
 [CompilerRemove]
-public static class MONITOR_DPI_TYPE
+public static class WinNls
 {
-    public const int EFFECTIVE = 0;
-    public const int ANGULAR = 1;
-    public const int RAW = 2;
-    public const int DEFAULT = 0;
+    public const int MUI_LANGUAGE_NAME = 0x8;
 }
 
 [NoConstants]
 [CompilerRemove]
-public static class WM
+public static class WinError
 {
-    public const int NULL = 0;
-    public const int FIRST = (int)(0U - 0U);
-    public const int CREATE = 0x0001;
-    public const int HOTKEY = 0x0312;
-    public const int CLOSE = 0x0010;
-    public const int CONTEXTMENU = 0x007B;
-    public const int COMMAND = 0x0111;
-    public const int PASTE = 0x0302;
-    public const int REFLECT = 0x2000;
-    public const int PARENTNOTIFY = 0x0210;
-    public const int SYSCOMMAND = 0x0112;
-    public const int SETTINGCHANGE = 0x001A;
-    public const int SYSCOLORCHANGE = 0x0015;
-    public const int THEMECHANGED = 0x031A;
-    public const int CHANGEUISTATE = 0x0127;
-    public const int DWMCOLORIZATIONCOLORCHANGED = 0x0320;
-    public const int DPICHANGED_BEFOREPARENT = 0x02E2;
-    public const int SETCURSOR = 0x0020;
-    public const int ERASEBKGND = 0x0014;
-    public const int PAINT = 0x000F;
-    public const int KEYDOWN = 0x0100;
-    public const int NOTIFY = 0x004E;
-    public const int USER = 0x0400;
-    public const int DESTROY = 0x0002;
-    public const int INITDIALOG = 0x0110;
-    public const int CTLCOLORDLG = 0x0136;
-    public const int CTLCOLOREDIT = 0x0133;
-    public const int CTLCOLORSTATIC = 0x0138;
-    public const int CTLCOLORLISTBOX = 0x0134;
-    public const int CTLCOLORBTN = 0x0135;
-    public const int GETFONT = 0x0031;
-    public const int WINDOWPOSCHANGED = 0x0047;
-    public const int NCLBUTTONDOWN = 0x00A1;
-    public const int NCRBUTTONDOWN = 0x00A4;
-    public const int NCMBUTTONDOWN = 0x00A7;
-    public const int NCXBUTTONDOWN = 0x00AB;
-    public const int NCLBUTTONDBLCLK = 0x00A3;
-    public const int NCRBUTTONDBLCLK = 0x00A6;
-    public const int NCMBUTTONDBLCLK = 0x00A9;
-    public const int NCXBUTTONDBLCLK = 0x00AD;
-    public const int MOVE = 0x0003;
-    public const int MOVING = 0x0216;
-    public const int SIZE = 0x0005;
-    public const int SIZING = 0x0214;
-    public const int ACTIVATE = 0x0006;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class ERROR
-{
-    public const int CANCELLED = 1223;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class MUI
-{
-    public const int LANGUAGE_NAME = 0x8;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class WS
-{
-    public const int CHILD = 0x40000000;
-    public const int MINIMIZE = 0x20000000;
-    public const int EX_COMPOSITED = 0x02000000;
-    public const int EX_CLIENTEDGE = 0x00000200;
-    public const int EX_TOPMOST = 0x00000008;
-    public const int BORDER = 0x00800000;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class GWL
-{
-    public const int STYLE = -16;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class GA
-{
-    public const uint ROOT = 2;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class MenuFlag
-{
-    public const int ByCommand = 0x0000;
-    public const int ByPosition = 0x0400;
-    public const int Bitmap = 0x0004;
-    public const int Checked = 0x0008;
-    public const int Disabled = 0x0002;
-    public const int Enabled = 0x0000;
-    public const int Grayed = 0x0001;
-    public const int MenuBarBreak = 0x0020;
-    public const int MenuBreak = 0x0040;
-    public const int OwnerDraw = 0x0100;
-    public const int Popup = 0x0010;
-    public const int Separator = 0x0800;
-    public const int String = 0x0000;
-    public const int Unchecked = 0x0000;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class TrackPopupMenu
-{
-    public const int LeftAlign = 0x0000;
-    public const int RightAlign = 0x0008;
-    public const int HorizontalCenterAlign = 0x0004;
-    public const int BottomAlign = 0x0020;
-    public const int TopAlign = 0x0000;
-    public const int VerticalCenterAlign = 0x0010;
-    public const int NoNotify = 0x0080;
-    public const int ReturnCmd = 0x0100;
-    public const int LeftButton = 0x0000;
-    public const int RightButton = 0x0002;
-    public const int Horizontal = 0x0000;
-    public const int Vertical = 0x0040;
-    public const int Default = LeftAlign | TopAlign | RightButton | Vertical;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class ShowWindowCommand
-{
-    public const int Normal = 1;
-    public const int Maximize = 3;
-    public const int NoActivate = 4;
-    public const int Minimize = 7;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class RDW
-{
-    public const uint Common = Invalidate | Erase | UpdateNow;
-
-    public const uint Invalidate = 0x0001;
-    public const uint InternalPaint = 0x0002;
-    public const uint Erase = 0x0004;
-    public const uint Validate = 0x0008;
-    public const uint NoInternalPaint = 0x0010;
-    public const uint NoErase = 0x0020;
-    public const uint NoChildren = 0x0040;
-    public const uint AllChildren = 0x0080;
-    public const uint UpdateNow = 0x0100;
-    public const uint EraseNow = 0x0200;
-    public const uint Frame = 0x0400;
-    public const uint NoFrame = 0x0800;
-}
-
-[NoConstants]
-[CompilerRemove]
-public static class WEH
-{
-    public const int EVENT_SYSTEM_FOREGROUND = 0x0003;
-    public const int EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
-    public const int WINEVENT_OUTOFCONTEXT = 0x0000;
-    public const int OBJID_WINDOW = 0;
-    public const int CHILDID_SELF = 0;
+    public const int ERROR_CANCELLED = 1223;
 }

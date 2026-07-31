@@ -93,12 +93,12 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     private readonly ActionInvoker OnValueChangedAction;
     private readonly ControlInternals internals;
 
-    private const int PTSPM_GETVALUE = WM.USER + 0x0010;
-    private const int PTSPM_SETVALUE = WM.USER + 0x0011;
-    private const int PTSPM_GETDAYSMAX = WM.USER + 0x0012;
-    private const int PTSPM_SETDAYSMAX = WM.USER + 0x0013;
-    private const int PTSPM_OVERRIDECOLORS = WM.USER + 0x0014;
-    private const int PTSPM_INCREASE = WM.USER + 0x0015;
+    private const int PTSPM_GETVALUE = WinUser.WM_USER + 0x0010;
+    private const int PTSPM_SETVALUE = WinUser.WM_USER + 0x0011;
+    private const int PTSPM_GETDAYSMAX = WinUser.WM_USER + 0x0012;
+    private const int PTSPM_SETDAYSMAX = WinUser.WM_USER + 0x0013;
+    private const int PTSPM_OVERRIDECOLORS = WinUser.WM_USER + 0x0014;
+    private const int PTSPM_INCREASE = WinUser.WM_USER + 0x0015;
     private const int PTSPN_VALUECHANGE = 1;
     private const int PTSPCOLOR_BACKTEXT = 0;
     private const int PTSPCOLOR_FORETEXT = 1;
@@ -152,7 +152,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     {
         switch (m.Msg)
         {
-            case WM.REFLECT + WM.COMMAND:
+            case WinUser.WM_REFLECT + WinUser.WM_COMMAND:
                 if (m.WParam.ToInt32().HiWord == PTSPN_VALUECHANGE)
                     OnValueChanged();
                 return;

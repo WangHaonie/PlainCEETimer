@@ -26,11 +26,11 @@ public sealed class PlainListView : ListView, IThemeAware
         {
             switch (m.Msg)
             {
-                case WM.SETCURSOR:
-                case WM.CONTEXTMENU:
+                case WinUser.WM_SETCURSOR:
+                case WinUser.WM_CONTEXTMENU:
                     m.Result = new(1);
                     return;
-                case NativeConstants.HDM_LAYOUT:
+                case CommCtrl.HDM_LAYOUT:
                     base.WndProc(ref m);
                     var lparam = m.LParam;
                     var prc = Marshal.ReadIntPtr(lparam, HDLAYOUT.prc);
@@ -197,11 +197,11 @@ public sealed class PlainListView : ListView, IThemeAware
     {
         switch (m.Msg)
         {
-            case WM.SYSCOLORCHANGE:
-            case WM.THEMECHANGED:
-            case WM.SETTINGCHANGE:
-            case WM.DPICHANGED_BEFOREPARENT:
-            case NativeConstants.LVM_SETEXTENDEDLISTVIEWSTYLE:
+            case WinUser.WM_SYSCOLORCHANGE:
+            case WinUser.WM_THEMECHANGED:
+            case WinUser.WM_SETTINGCHANGE:
+            case WinUser.WM_DPICHANGED_BEFOREPARENT:
+            case CommCtrl.LVM_SETEXTENDEDLISTVIEWSTYLE:
 
                 if (CheckBoxes && isW11 && UseDark)
                 {
@@ -213,27 +213,27 @@ public sealed class PlainListView : ListView, IThemeAware
 
                 break;
 
-            case WM.NOTIFY:
+            case WinUser.WM_NOTIFY:
 
                 switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
                 {
-                    case NativeConstants.NM_CUSTOMDRAW:
+                    case CommCtrl.NM_CUSTOMDRAW:
 
                         switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW.dwDrawStage))
                         {
-                            case NativeConstants.CDDS_PREPAINT:
-                                m.Result = new(NativeConstants.CDRF_NOTIFYITEMDRAW);
+                            case CommCtrl.CDDS_PREPAINT:
+                                m.Result = new(CommCtrl.CDRF_NOTIFYITEMDRAW);
                                 return;
-                            case NativeConstants.CDDS_ITEMPREPAINT:
+                            case CommCtrl.CDDS_ITEMPREPAINT:
                                 Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW.hdc),
                                     UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
-                                m.Result = new(NativeConstants.CDRF_DODEFAULT);
+                                m.Result = new(CommCtrl.CDRF_DODEFAULT);
                                 return;
                         }
 
                         break;
 
-                    case NativeConstants.TTN_GETDISPINFOW:
+                    case CommCtrl.TTN_GETDISPINFOW:
                         /*
 
                         ToolTip 自动换行 参考：
@@ -244,18 +244,18 @@ public sealed class PlainListView : ListView, IThemeAware
                          */
 
                         base.WndProc(ref m);
-                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), NativeConstants.TTM_SETMAXTIPWIDTH, 0, Width);
+                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), CommCtrl.TTM_SETMAXTIPWIDTH, 0, Width);
                         return;
                 }
 
                 break;
 
-            case WM.REFLECT + WM.NOTIFY:
+            case WinUser.WM_REFLECT + WinUser.WM_NOTIFY:
 
                 switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
                 {
-                    case NativeConstants.NM_CLICK:
-                    case NativeConstants.NM_DBLCLK:
+                    case CommCtrl.NM_CLICK:
+                    case CommCtrl.NM_DBLCLK:
 
                         if (HitTest(PointToClient(Cursor.Position)).Location == ListViewHitTestLocations.StateImage)
                         {
@@ -305,8 +305,8 @@ public sealed class PlainListView : ListView, IThemeAware
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
 
         IntPtr hListView = Handle;
-        IntPtr hHeader = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETHEADER, 0, 0);
-        IntPtr hToolTips = Win32UI.SendMessage(hListView, NativeConstants.LVM_GETTOOLTIPS, 0, 0);
+        IntPtr hHeader = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETHEADER, 0, 0);
+        IntPtr hToolTips = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETTOOLTIPS, 0, 0);
 
         ThemeManager.EnableDarkModeForControl(hListView, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
         ThemeManager.EnableDarkModeForControl(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);

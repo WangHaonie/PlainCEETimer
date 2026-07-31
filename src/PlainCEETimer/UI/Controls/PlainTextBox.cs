@@ -194,7 +194,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == WM.PASTE)
+        if (m.Msg == WinUser.WM_PASTE)
         {
             if (Clipboard.ContainsText())
             {
@@ -228,7 +228,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
             */
 
-            Win32UI.SendMessage(Handle, NativeConstants.EM_SETMARGINS, NativeConstants.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
+            Win32UI.SendMessage(Handle, WinUser.EM_SETMARGINS, WinUser.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
         }
     }
 
