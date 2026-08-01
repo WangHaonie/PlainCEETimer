@@ -29,9 +29,8 @@ public readonly struct HotKey : IEquatable<HotKey>
 
     public HotKey(IntPtr lParam)
     {
-        var lparam = lParam.ToInt32();
-        var m = (HotKeyModifiers)lparam.LoWord;
-        var k = (Keys)(byte)lparam.HiWord;
+        var m = (HotKeyModifiers)lParam.LoWord;
+        var k = (Keys)lParam.HiWord;
 
         Modifiers = m;
         Key = k;

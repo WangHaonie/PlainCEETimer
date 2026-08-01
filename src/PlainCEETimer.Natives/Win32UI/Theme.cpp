@@ -17,10 +17,10 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 */
 
 using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
-using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
-using fnOpenThemeDataForDpi = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList, UINT dpi);
+using fnOpenNcThemeData = decltype(&OpenThemeData);
+using fnOpenThemeDataForDpi = decltype(&OpenThemeDataForDpi);
 using fnFlushMenuThemes = void (WINAPI*)();
-using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
+using fnGetSysColor = decltype(&GetSysColor);
 using fnGetSysColorBrush = decltype(&GetSysColorBrush);
 
 static COLORREF g_crFore = 0;
@@ -34,10 +34,10 @@ static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
 static fnGetSysColorBrush g_GetSysColorBrush = nullptr;
 
-static IAT_HOOK_DATA<fnOpenNcThemeData> IatHookOpenNcThemeData = {};
-static IAT_HOOK_DATA<fnOpenThemeDataForDpi> IatHookOpenThemeDataForDpi = {};
-static IAT_HOOK_DATA<fnGetSysColor> IatHookGetSysColor = {};
-static IAT_HOOK_DATA<fnGetSysColorBrush> IatHookGetSysColorBrush = {};
+static IAT_HOOK_DATA<fnOpenNcThemeData> IatHookComctlOpenNcThemeData = {};
+static IAT_HOOK_DATA<fnOpenThemeDataForDpi> IatHookComctlOpenThemeDataForDpi = {};
+static IAT_HOOK_DATA<fnGetSysColor> IatHookComctlGetSysColor = {};
+static IAT_HOOK_DATA<fnGetSysColorBrush> IatHookComdlgGetSysColorBrush = {};
 
 /*
 
@@ -54,7 +54,7 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 */
 
-static HTHEME WINAPI OpenNcThemeDataNew(HWND hWnd, LPCWSTR pszClassList)
+static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
 {
     if (g_fUseDark && WString_Equals(pszClassList, WC_SCROLLBAR, true))
     {
@@ -81,7 +81,7 @@ static void HandleColorDlgLumArrow(int& nIndex)
     }
 }
 
-static HTHEME WINAPI OpenThemeDataForDpiNew(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
+static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
 {
     HandleListViewCheckBoxes(hWnd, pszClassList);
     return g_OpenThemeDataForDpi(hWnd, pszClassList, dpi);
@@ -135,10 +135,10 @@ void EnableDarkModeForApp(BOOL enabled)
             {
                 g_OpenNcThemeData = CastToP(fnOpenNcThemeData, addr);
                 
-                if (InitializeIatHook(HOOK_OPENNCTHEMEDATA_ARGS, IatHookOpenNcThemeData))
+                if (InitializeIatHook(HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS, IatHookComctlOpenNcThemeData))
                 {
-                    ReplaceFunction(IatHookOpenNcThemeData, OpenNcThemeDataNew);
-                    IatHookOpenNcThemeData.OldFunc = g_OpenNcThemeData;
+                    ReplaceFunction(IatHookComctlOpenNcThemeData, OpenNcThemeData_);
+                    IatHookComctlOpenNcThemeData.OldFunc = g_OpenNcThemeData;
                 }
             }
 
@@ -155,17 +155,17 @@ void EnableDarkModeForApp(BOOL enabled)
 
 void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 {
-    if (!InitializeIatHook(HOOK_GETSYSCOLOR_ARGS, IatHookGetSysColor))
+    if (!InitializeIatHook(HOOK_COMCTL32_GETSYSCOLOR_ARGS, IatHookComctlGetSysColor))
     {
         return;
     }
 
     if (!g_GetSysColor)
     {
-        g_GetSysColor = IatHookGetSysColor.OldFunc;
+        g_GetSysColor = IatHookComctlGetSysColor.OldFunc;
     }
 
-    if (ReplaceFunction(IatHookGetSysColor, GetSysColorNew))
+    if (ReplaceFunction(IatHookComctlGetSysColor, GetSysColorNew))
     {
         g_crFore = crFore;
         g_crBack = crBack;
@@ -174,45 +174,45 @@ void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 
 void ComctlUnhookSysColor()
 {
-    RestoreFunction(IatHookGetSysColor);
+    RestoreFunction(IatHookComctlGetSysColor);
     g_crFore = 0;
     g_crBack = 0;
 }
 
 void ComctlHookOpenTheme()
 {
-    if (InitializeIatHook(HOOK_OPENTHEMEDATAFORDPI_ARGS, IatHookOpenThemeDataForDpi))
+    if (InitializeIatHook(HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS, IatHookComctlOpenThemeDataForDpi))
     {
         if (!g_OpenThemeDataForDpi)
         {
-            g_OpenThemeDataForDpi = IatHookOpenThemeDataForDpi.OldFunc;
+            g_OpenThemeDataForDpi = IatHookComctlOpenThemeDataForDpi.OldFunc;
         }
 
-        ReplaceFunction(IatHookOpenThemeDataForDpi, OpenThemeDataForDpiNew);
+        ReplaceFunction(IatHookComctlOpenThemeDataForDpi, OpenThemeDataForDpi_);
     }
 }
 
 void ComctlUnhookOpenTheme()
 {
-    RestoreFunction(IatHookOpenThemeDataForDpi);
+    RestoreFunction(IatHookComctlOpenThemeDataForDpi);
 }
 
 void ComdlgHookGetSysColorBrush()
 {
-    if (InitializeIatHook(HOOK_GETSYSCOLORBRUSH_ARGS, IatHookGetSysColorBrush))
+    if (InitializeIatHook(HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS, IatHookComdlgGetSysColorBrush))
     {
         if (!g_GetSysColorBrush)
         {
-            g_GetSysColorBrush = IatHookGetSysColorBrush.OldFunc;
+            g_GetSysColorBrush = IatHookComdlgGetSysColorBrush.OldFunc;
         }
 
-        ReplaceFunction(IatHookGetSysColorBrush, GetSysColorBrush_);
+        ReplaceFunction(IatHookComdlgGetSysColorBrush, GetSysColorBrush_);
     }
 }
 
 void ComdlgUnhookGetSysColorBrush()
 {
-    RestoreFunction(IatHookGetSysColorBrush);
+    RestoreFunction(IatHookComdlgGetSysColorBrush);
 }
 
 /*

@@ -406,7 +406,7 @@ public class AppWindow : Window, IAppWindow
 
     private void WmCommand(ref Message m)
     {
-        if (m.LParam == IntPtr.Zero && Command.DispatchID(m.WParam.ToInt32().LoWord))
+        if (m.LParam == IntPtr.Zero && Command.DispatchID(m.WParam.LoWord))
         {
             return;
         }
@@ -416,7 +416,7 @@ public class AppWindow : Window, IAppWindow
 
     private void WmSysCommand(ref Message m)
     {
-        if ((m.WParam.ToInt32() & 0xFFF0) == WinUser.SC_CLOSE && FireOnClosing())
+        if ((((nint)m.WParam) & 0xFFF0) == WinUser.SC_CLOSE && FireOnClosing())
         {
             return;
         }

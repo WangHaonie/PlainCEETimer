@@ -55,10 +55,7 @@ internal static class Win32UI
     public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
     [DllImport(App.User32Dll)]
-    public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
-
-    [DllImport(App.User32Dll)]
-    public unsafe static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, void* lParam);
+    public static extern nint SendMessage(IntPtr hWnd, int msg, int wParam, nint lParam);
 
     [DllImport(App.User32Dll)]
     public static extern bool DestroyIcon(HICON hIcon);
@@ -245,6 +242,16 @@ internal static class Win32UI
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
     public static extern void UnhookGetMessage();
+
+    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
+    {
+        return SendMessage(hWnd, msg, wParam, (nint)lParam);
+    }
+
+    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, void* lParam)
+    {
+        return SendMessage(hWnd, msg, wParam, (nint)lParam);
+    }
 
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {

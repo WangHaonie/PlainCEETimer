@@ -153,7 +153,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         switch (m.Msg)
         {
             case WinUser.WM_REFLECT + WinUser.WM_COMMAND:
-                if (m.WParam.ToInt32().HiWord == PTSPN_VALUECHANGE)
+                if (m.WParam.HiWord == PTSPN_VALUECHANGE)
                     OnValueChanged();
                 return;
         }

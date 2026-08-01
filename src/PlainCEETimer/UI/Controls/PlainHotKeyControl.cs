@@ -23,7 +23,7 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 
 */
 
-[DebuggerDisplay("{HotKey}")]
+[DebuggerDisplay("{Hotkey}")]
 public class PlainHotkeyControl : Control, IThemeAware
 {
     public event EventHandler HotKeyChanged;
@@ -34,7 +34,7 @@ public class PlainHotkeyControl : Control, IThemeAware
         {
             if (IsHandleCreated)
             {
-                hotkey = new((ushort)Win32UI.SendMessage(Handle, CommCtrl.HKM_GETHOTKEY, 0, 0).ToInt32());
+                hotkey = new((ushort)Win32UI.SendMessage(Handle, CommCtrl.HKM_GETHOTKEY, 0, 0));
             }
 
             return hotkey;
@@ -93,7 +93,7 @@ public class PlainHotkeyControl : Control, IThemeAware
         switch (m.Msg)
         {
             case WinUser.WM_REFLECT + WinUser.WM_COMMAND:
-                if (m.WParam.ToInt32().HiWord == WinUser.EN_CHANGE)
+                if (m.WParam.HiWord == WinUser.EN_CHANGE)
                     OnHotKeyChanged();
                 return;
             case WinUser.WM_ERASEBKGND when UseDark:

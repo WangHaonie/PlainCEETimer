@@ -5,6 +5,7 @@ public static class Extensions
     extension(ushort value)
     {
         public byte LoByte => (byte)(value & 0xFF);
+
         public byte HiByte => (byte)((value >> 8) & 0xFF);
 
         public static ushort MakeWord(byte low, byte high)
@@ -16,6 +17,7 @@ public static class Extensions
     extension(int value)
     {
         public int LoWord => value & 0xFFFF;
+
         public int HiWord => (value >> 16) & 0xFFFF;
 
         public static int MakeLong(int low, int high)
@@ -32,6 +34,7 @@ public static class Extensions
     //extension(long value)
     //{
     //    public int LoDWord => (int)(uint)(value & 0xFFFFFFFF);
+    //
     //    public int HiDWord => (int)(uint)((value >> 32) & 0xFFFFFFFF);
 
     //    public static long MakeQWord(int low, int high)

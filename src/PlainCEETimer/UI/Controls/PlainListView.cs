@@ -203,7 +203,7 @@ public sealed class PlainListView : ListView, IThemeAware
             case WinUser.WM_DPICHANGED_BEFOREPARENT:
             case CommCtrl.LVM_SETEXTENDEDLISTVIEWSTYLE:
 
-                if (CheckBoxes && isW11 && UseDark)
+                if (UseDark && isW11 && CheckBoxes)
                 {
                     Win32UI.ComctlHookOpenTheme();
                     base.WndProc(ref m);
@@ -257,17 +257,15 @@ public sealed class PlainListView : ListView, IThemeAware
                     case CommCtrl.NM_CLICK:
                     case CommCtrl.NM_DBLCLK:
 
-                        if (HitTest(PointToClient(Cursor.Position)).Location == ListViewHitTestLocations.StateImage)
-                        {
-                            break;
-                        }
-                        else
+                        if (HitTest(PointToClient(Cursor.Position)).Location != ListViewHitTestLocations.StateImage)
                         {
                             _SuppressFuckingAutoCheck = true;
                             base.WndProc(ref m);
                             _SuppressFuckingAutoCheck = false;
                             return;
                         }
+
+                        break;
                 }
 
                 break;

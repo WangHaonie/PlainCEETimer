@@ -8,7 +8,7 @@
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
 static HHOOK g_hGetMsgProc = nullptr;
-static IAT_HOOK_DATA<fnMessageBoxW> IatHookMessageBoxW = {};
+static IAT_HOOK_DATA<fnMessageBoxW> IatHookComdlgMessageBoxW = {};
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -30,7 +30,7 @@ static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-static int WINAPI MessageBoxNew(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
+static int WINAPI MessageBox_(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
     HHOOK hk = SetWindowsHookEx(WH_CBT, CbtMessageBoxHookProc, nullptr, GetCurrentThreadId());
     auto ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
@@ -142,14 +142,14 @@ BOOL CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 
 void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
 {
-    if (!InitializeIatHook(HOOK_MESSAGEBOXW_ARGS, IatHookMessageBoxW))
+    if (!InitializeIatHook(HOOK_COMDLG32_MESSAGEBOXW_ARGS, IatHookComdlgMessageBoxW))
     {
         return;
     }
 
     if (dwHookFlag == HMBF_GETMSGBOX && lpfnCbtProc)
     {
-        if (!g_MsgBoxCbtProc && ReplaceFunction(IatHookMessageBoxW, MessageBoxNew))
+        if (!g_MsgBoxCbtProc && ReplaceFunction(IatHookComdlgMessageBoxW, MessageBox_))
         {
             g_MsgBoxCbtProc = lpfnCbtProc;
             return;
@@ -158,13 +158,13 @@ void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, D
 
     if (dwHookFlag == HMBF_REPMSGBOX && lpfnMessageBoxW && !g_MsgBoxCbtProc)
     {
-        ReplaceFunction(IatHookMessageBoxW, lpfnMessageBoxW);
+        ReplaceFunction(IatHookComdlgMessageBoxW, lpfnMessageBoxW);
     }
 }
 
 void ComdlgUnhookMessageBox()
 {
-    if (RestoreFunction(IatHookMessageBoxW))
+    if (RestoreFunction(IatHookComdlgMessageBoxW))
     {
         g_MsgBoxCbtProc = nullptr;
     }

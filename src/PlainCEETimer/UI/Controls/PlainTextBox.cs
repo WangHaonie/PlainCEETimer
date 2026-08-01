@@ -228,7 +228,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
             */
 
-            Win32UI.SendMessage(Handle, WinUser.EM_SETMARGINS, WinUser.EC_RIGHTMARGIN, int.MakeLong(0, ButtonExpand.Width));
+            Win32UI.SendMessage(Handle, WinUser.EM_SETMARGINS, WinUser.EC_RIGHTMARGIN,
+                nint.MakeLong(0, ButtonExpand.Width));
         }
     }
 
