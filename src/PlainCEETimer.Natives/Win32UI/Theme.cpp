@@ -21,6 +21,7 @@ using fnOpenNcThemeData = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList);
 using fnOpenThemeDataForDpi = HTHEME (WINAPI*)(HWND hWnd, LPCWSTR pszClassList, UINT dpi);
 using fnFlushMenuThemes = void (WINAPI*)();
 using fnGetSysColor = DWORD (WINAPI*)(int nIndex);
+using fnGetSysColorBrush = decltype(&GetSysColorBrush);
 
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
@@ -31,10 +32,12 @@ static fnOpenNcThemeData g_OpenNcThemeData = nullptr;
 static fnOpenThemeDataForDpi g_OpenThemeDataForDpi = nullptr;
 static fnFlushMenuThemes g_FlushMenuThemes = nullptr;
 static fnGetSysColor g_GetSysColor = nullptr;
+static fnGetSysColorBrush g_GetSysColorBrush = nullptr;
 
 static IAT_HOOK_DATA<fnOpenNcThemeData> IatHookOpenNcThemeData = {};
 static IAT_HOOK_DATA<fnOpenThemeDataForDpi> IatHookOpenThemeDataForDpi = {};
 static IAT_HOOK_DATA<fnGetSysColor> IatHookGetSysColor = {};
+static IAT_HOOK_DATA<fnGetSysColorBrush> IatHookGetSysColorBrush = {};
 
 /*
 
@@ -70,6 +73,14 @@ static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
     }
 }
 
+static void HandleColorDlgLumArrow(int& nIndex)
+{
+    if (nIndex == COLOR_BTNTEXT)
+    {
+        nIndex = COLOR_WINDOW;
+    }
+}
+
 static HTHEME WINAPI OpenThemeDataForDpiNew(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
 {
     HandleListViewCheckBoxes(hWnd, pszClassList);
@@ -95,6 +106,12 @@ static DWORD WINAPI GetSysColorNew(int nIndex)
     }
 
     return g_GetSysColor(nIndex);
+}
+
+static HBRUSH WINAPI GetSysColorBrush_(int nIndex)
+{
+    HandleColorDlgLumArrow(nIndex);
+    return g_GetSysColorBrush(nIndex);
 }
 
 void EnableDarkModeForApp(BOOL enabled)
@@ -178,6 +195,24 @@ void ComctlHookOpenTheme()
 void ComctlUnhookOpenTheme()
 {
     RestoreFunction(IatHookOpenThemeDataForDpi);
+}
+
+void ComdlgHookGetSysColorBrush()
+{
+    if (InitializeIatHook(HOOK_GETSYSCOLORBRUSH_ARGS, IatHookGetSysColorBrush))
+    {
+        if (!g_GetSysColorBrush)
+        {
+            g_GetSysColorBrush = IatHookGetSysColorBrush.OldFunc;
+        }
+
+        ReplaceFunction(IatHookGetSysColorBrush, GetSysColorBrush_);
+    }
+}
+
+void ComdlgUnhookGetSysColorBrush()
+{
+    RestoreFunction(IatHookGetSysColorBrush);
 }
 
 /*

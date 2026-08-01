@@ -195,6 +195,12 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#49")]
     public static extern void ComctlUnhookOpenTheme();
 
+    [DllImport(App.NativesDll, EntryPoint = "#50")]
+    public static extern void ComdlgHookGetSysColorBrush();
+
+    [DllImport(App.NativesDll, EntryPoint = "#51")]
+    public static extern void ComdlgUnhookGetSysColorBrush();
+
     [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern void SetTopMostWindow(IntPtr hWnd);
 

@@ -10,8 +10,30 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : CommonDialog, IThemeAware
+public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 {
+    private sealed class ColorDlgNativeWindow : NativeWindow
+    {
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WinUser.WM_MOUSEMOVE:
+                case WinUser.WM_LBUTTONDOWN:
+                case WinUser.WM_LBUTTONUP:
+                case WinUser.WM_LBUTTONDBLCLK:
+                case WinUser.WM_COMMAND:
+                case WinUser.WM_PAINT:
+                    Win32UI.ComdlgHookGetSysColorBrush();
+                    base.WndProc(ref m);
+                    Win32UI.ComdlgUnhookGetSysColorBrush();
+                    return;
+            }
+
+            base.WndProc(ref m);
+        }
+    }
+
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
         private bool Handled;
@@ -82,19 +104,32 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private IntPtr Handle;
     private IntPtr MsgBoxHandle;
     private HOOKPROC CBTHookProc;
+    private ColorDlgNativeWindow window;
     private GroupBoxNativeWindow gpnw;
-    private static FnMessageBoxW fnMessageBox;
     private ThemeHelper themeHelper;
+    private readonly bool IsFont;
+    private readonly bool IsColor;
+    private readonly string Text;
+    private readonly AppForm Owner;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(BackCrColor);
+    private static FnMessageBoxW fnMessageBox;
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
+
+    protected PlainCommonDialog(AppForm owner, string dialogTitle)
+    {
+        Owner = owner;
+        Text = dialogTitle;
+        IsFont = this is PlainFontDialog;
+        IsColor = this is PlainColorDialog;
+    }
 
     public new bool? ShowDialog()
     {
         using (new DpiAwarenessContextScope(AppParams.EnableCommDlgPMv2
             ? DpiAwarenessContext.PerMonitorV2 : DpiAwarenessContext.System))
         {
-            return ShowDialog(owner).AsBoolean();
+            return ShowDialog(Owner).AsBoolean();
         }
     }
 
@@ -134,21 +169,21 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
     private IntPtr WmInitDialog(IntPtr hWnd)
     {
         Handle = hWnd;
-        owner.ReActivate();
+        Owner.ReActivate();
         CBTHookProc = CbtHookProc;
         fnMessageBox ??= MessageBoxW;
         Win32UI.RegisterUnmanagedWindow(hWnd);
         const int HMBF_REPMSGBOX = 1;
         Win32UI.ComdlgHookMessageBox(CBTHookProc, fnMessageBox, HMBF_REPMSGBOX);
 
-        if (dialogTitle != null)
+        if (Text != null)
         {
-            Win32UI.SetWindowText(hWnd, dialogTitle);
+            Win32UI.SetWindowText(hWnd, Text);
         }
 
         themeHelper ??= new(this);
         Win32UI.GetWindowRect(hWnd, out var rect);
-        Win32UI.MakeCenter(rect, owner.Bounds, out var r);
+        Win32UI.MakeCenter(rect, Owner.Bounds, out var r);
         Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
         return new(1);
     }
@@ -259,7 +294,7 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
             return true;
         }, IntPtr.Zero);
 
-        if (this is PlainFontDialog)
+        if (IsFont)
         {
             IntPtr hCtrl;
 
@@ -293,6 +328,19 @@ public abstract class PlainCommonDialog(AppForm owner, string dialogTitle) : Com
                         }
                     }
                 }
+            }
+        }
+
+        if (IsColor)
+        {
+            if (useDark)
+            {
+                window ??= new();
+                window.AssignHandle(hWnd);
+            }
+            else
+            {
+                window.ReleaseHandle();
             }
         }
 

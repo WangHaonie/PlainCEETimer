@@ -61,3 +61,5 @@ EXPORTS
 
     ComctlHookOpenTheme @48 NONAME
     ComctlUnhookOpenTheme @49 NONAME
+    ComdlgHookGetSysColorBrush @50 NONAME
+    ComdlgUnhookGetSysColorBrush @51 NONAME

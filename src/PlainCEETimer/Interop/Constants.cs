@@ -71,6 +71,10 @@ public static class WinUser
     public const int WM_CTLCOLORBTN = 0x0135;
     public const int WM_GETFONT = 0x0031;
     public const int WM_WINDOWPOSCHANGED = 0x0047;
+    public const int WM_MOUSEMOVE = 0x0200;
+    public const int WM_LBUTTONDOWN = 0x0201;
+    public const int WM_LBUTTONUP = 0x0202;
+    public const int WM_LBUTTONDBLCLK = 0x0203;
     public const int WM_NCLBUTTONDOWN = 0x00A1;
     public const int WM_NCRBUTTONDOWN = 0x00A4;
     public const int WM_NCMBUTTONDOWN = 0x00A7;
