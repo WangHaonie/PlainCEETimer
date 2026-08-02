@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PlainCEETimer": {
+      "commandName": "Project",
+      "debugEngines": "managed,native"
+    }
+  }
+}
