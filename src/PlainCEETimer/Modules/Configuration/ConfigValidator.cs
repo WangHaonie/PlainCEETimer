@@ -281,7 +281,7 @@ internal static class ConfigValidator
             {
                 if (new FileInfo(path).Length < MaxConfigFileSize)
                 {
-                    config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path));
+                    config = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(path), Settings);
                     return true;
                 }
                 else
