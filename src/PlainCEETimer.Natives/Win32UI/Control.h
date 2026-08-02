@@ -7,7 +7,7 @@
 #define HMBF_GETMSGBOX 0
 #define HMBF_REPMSGBOX 1
 
-using fnMessageBoxW = decltype(&MessageBox);
+DeclDelegateType(MessageBoxW);
 
 cexport(void) ListViewSelectAllItems(HWND hLV, BOOL selected);
 cexport(void) SetTopMostWindow(HWND hWnd);

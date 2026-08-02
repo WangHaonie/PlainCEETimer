@@ -8,7 +8,8 @@
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
 static HHOOK g_hGetMsgProc = nullptr;
-static IAT_HOOK_DATA<fnMessageBoxW> IatHookComdlgMessageBoxW = {};
+
+DeclIatData(MessageBoxW, Comdlg);
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
