@@ -1,0 +1,3 @@
+[submodule "src/PlainCEETimer.Natives/Detours"]
+	path = src/PlainCEETimer.Natives/Detours
+	url = https://github.com/microsoft/Detours.git
