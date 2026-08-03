@@ -43,6 +43,7 @@ public static class WinUser
     public const int WM_CLOSE = 0x0010;
     public const int WM_MOVE = 0x0003;
     public const int WM_SIZE = 0x0005;
+    public const int WM_SETREDRAW = 0x000B;
     public const int WM_ACTIVATE = 0x0006;
     public const int WM_CONTEXTMENU = 0x007B;
     public const int WM_COMMAND = 0x0111;
@@ -55,6 +56,7 @@ public static class WinUser
     public const int WM_THEMECHANGED = 0x031A;
     public const int WM_CHANGEUISTATE = 0x0127;
     public const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
+    public const int WM_DPICHANGED = 0x02E0;
     public const int WM_DPICHANGED_BEFOREPARENT = 0x02E2;
     public const int WM_SETCURSOR = 0x0020;
     public const int WM_ERASEBKGND = 0x0014;
@@ -150,6 +152,14 @@ public static class CommCtrl
     public const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
     public const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
     public const int LVS_EX_CHECKBOXES = 0x00000004;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class BOOL
+{
+    public const int FALSE = 0;
+    public const int TRUE = 1;
 }
 
 [NoConstants]

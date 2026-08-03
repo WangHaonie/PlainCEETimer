@@ -79,7 +79,6 @@ public abstract class AppForm : Form, IAppWindow
     private bool IsHighDpi;
     private bool SetRoundRegion;
     private bool setSysMenu;
-    private bool suggestMaxWidth;
     private float DpiRatio = 1F;
     private float DpiRatioRel = 1F;
     private int m_SuggestedMaxWidth = int.MaxValue;
@@ -91,6 +90,7 @@ public abstract class AppForm : Form, IAppWindow
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
+    private readonly bool suggestMaxWidth;
     private readonly bool IsSizable;
     private readonly bool SetRoundCorner;
     private readonly bool SmallRoundCorner;
@@ -287,19 +287,16 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnDpiChanged(DpiChangedEventArgs e)
     {
-        SuspendLayout();
         var dpiNew = e.DeviceDpiNew;
         var dpiOld = e.DeviceDpiOld;
         IsDpiChanged = dpiNew != InitDpi;
         DpiHelperEx.GlobalUpdateDeviceDpi();
         base.OnDpiChanged(e);
-        UpdateFixedSize(dpiNew - dpiOld, e.SuggestedRectangle.Size);
         UpdateDpiScale(dpiNew, dpiOld);
         ApplyAppFont();
         RefreshSuggestedMaxWidth();
         LegacySetRoundCorner();
         RunLayout(IsHighDpi);
-        ResumeLayout();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -363,6 +360,18 @@ public abstract class AppForm : Form, IAppWindow
         OnClosed();
         TryEndModelessDialog();
         base.OnClosed(e);
+    }
+
+    protected override void WndProc(ref Message m)
+    {
+        switch (m.Msg)
+        {
+            case WinUser.WM_DPICHANGED:
+                WmDpiChanged(ref m);
+                return;
+        }
+
+        base.WndProc(ref m);
     }
 
     /// <summary>
@@ -653,9 +662,11 @@ public abstract class AppForm : Form, IAppWindow
     protected void SetFixedSize(Size size)
     {
         SuspendLayout();
+        MinimumSize = Size.Empty;
+        MaximumSize = Size.Empty;
+        Size = size;
         MinimumSize = size;
         MaximumSize = size;
-        Size = size;
         ResumeLayout();
     }
 
@@ -691,6 +702,45 @@ public abstract class AppForm : Form, IAppWindow
         }
 
         return null;
+    }
+
+    private unsafe void WmDpiChanged(ref Message m)
+    {
+        SuspendLayout();
+        var hwnd = m.HWnd;
+        Win32UI.SendMessage(hwnd, WinUser.WM_SETREDRAW, BOOL.FALSE, 0);
+
+        try
+        {
+            var updateFixedSize = !Special && !IsSizableForm(FormBorderStyle);
+
+            if (updateFixedSize)
+            {
+                MinimumSize = Size.Empty;
+                MaximumSize = Size.Empty;
+            }
+
+            base.WndProc(ref m);
+
+            if (updateFixedSize)
+            {
+                Rectangle rc = *(RECT*)m.LParam;
+                var size = rc.Size;
+                Win32UI.MoveWindow(hwnd, rc.X, rc.Y, size.Width, size.Height, false);
+                MinimumSize = size;
+                MaximumSize = size;
+            }
+
+            OnLocationChanged(EventArgs.Empty);
+        }
+        finally
+        {
+            Win32UI.SendMessage(hwnd, WinUser.WM_SETREDRAW, BOOL.TRUE, 0);
+            Refresh();
+        }
+
+        m.Result = IntPtr.Zero;
+        ResumeLayout();
     }
 
     private void ApplyLastSize()
@@ -795,14 +845,6 @@ public abstract class AppForm : Form, IAppWindow
         if (DpiHelperEx.Current != suggest)
         {
             DpiHelperEx.SetDpiContext(suggest);
-        }
-    }
-
-    private void UpdateFixedSize(int delta, Size suggestedSize)
-    {
-        if (!Special && !IsSizableForm(FormBorderStyle) && delta != 0)
-        {
-            SetFixedSize(suggestedSize);
         }
     }
 
