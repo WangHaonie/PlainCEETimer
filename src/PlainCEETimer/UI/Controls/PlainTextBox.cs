@@ -21,7 +21,8 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         }
 
         protected override AppWindowStyle Params
-            => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog;
+            => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog
+                | AppWindowStyle.HideBeforeClose;
 
         protected override Point Offset => new(-4, -4);
 
@@ -59,6 +60,9 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
             InitWindowSize(ButtonClose, 3, 3);
+            ContentBox.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
+            ButtonClose.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+            ButtonApply.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
         }
 
         protected override void OnVisibleChanged(EventArgs e)
@@ -125,7 +129,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         {
             this.AddControls(b =>
             [
-                ButtonExpand = b.Button("..", 18, 20, (object _, EventArgs _) =>
+                ButtonExpand = b.Button("..", 18, 20, (_, _) =>
                 {
                     flyout = new(this);
 

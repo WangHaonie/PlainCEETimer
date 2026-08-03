@@ -128,12 +128,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             ),
         ]);
 
-        TextBoxCustomText.FlyoutVisibleChanged += (_, _) =>
-        {
-            var visible = TextBoxCustomText.FlyoutVisible;
-            ComboBoxPlaceholders.Visible = visible;
-            if (visible) ComboBoxPlaceholders.BringToFront();
-        };
+        TextBoxCustomText.FlyoutVisibleChanged += (_, _) => SetPhVisible(TextBoxCustomText.FlyoutVisible);
 
         ColorBlock[] blocks = [BlockFore, BlockBack];
 
@@ -182,8 +177,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         ArrangeControlXRT(LinkResetColor, BlockPreview, LabelBack);
         ArrangeCommonButtonsR(ButtonA, ButtonB, LinkResetText, -3, 6);
         ArrangeControlXLT(ComboBoxPlaceholders, TextBoxCustomText, BlockFore, 0, -6);
-        ComboBoxPlaceholders.BringToFront();
-        ComboBoxPlaceholders.Visible = false;
+        SetPhVisible(TextBoxCustomText.FlyoutVisible);
         InitWindowSize(ButtonB, 5, 5);
     }
 
@@ -284,6 +278,12 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         var flag = (LinkLabel)sender == LinkResetColor;
         GetNewData(false, flag, !flag);
         UserChanged();
+    }
+
+    private void SetPhVisible(bool visible)
+    {
+        ComboBoxPlaceholders.Visible = visible;
+        if (visible) ComboBoxPlaceholders.BringToFront();
     }
 
     private void SaveTemp()

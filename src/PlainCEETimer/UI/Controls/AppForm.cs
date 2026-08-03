@@ -204,6 +204,16 @@ public abstract class AppForm : Form, IAppWindow
         KeepOnScreen();
     }
 
+    public new void Close()
+    {
+        if (CheckParam(AppWindowStyle.HideBeforeClose))
+        {
+            Hide();
+        }
+
+        base.Close();
+    }
+
     internal protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
