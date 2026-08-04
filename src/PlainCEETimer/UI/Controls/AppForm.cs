@@ -91,7 +91,7 @@ public abstract class AppForm : Form, IAppWindow
     private readonly int RoundCornerRadius = 13;
     private readonly float InitDpi;
     private readonly bool suggestMaxWidth;
-    private readonly bool IsSizable;
+    private readonly bool HasSizable;
     private readonly bool SetRoundCorner;
     private readonly bool SmallRoundCorner;
     private readonly bool Special;
@@ -124,7 +124,7 @@ public abstract class AppForm : Form, IAppWindow
         KeyPreview = CheckParam(AppWindowStyle.KeyPreview);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
-        IsSizable = CheckParam(AppWindowStyle.Sizable);
+        HasSizable = CheckParam(AppWindowStyle.Sizable);
         suggestMaxWidth = CheckParam(AppWindowStyle.SuggestMaxWidth);
         InitEvents();
         MessageX = new AppMessageBox(this);
@@ -139,7 +139,7 @@ public abstract class AppForm : Form, IAppWindow
         ShowIcon = false;
         StartPosition = FormStartPosition.Manual;
 
-        if (IsSizable)
+        if (HasSizable)
         {
             MaximizeBox = true;
             FormBorderStyle = FormBorderStyle.Sizable;
@@ -259,7 +259,7 @@ public abstract class AppForm : Form, IAppWindow
             }
         }
 
-        if (IsSizable && !setSysMenu)
+        if (HasSizable && !setSysMenu)
         {
             SystemMenu.FromWindow(this)
                 .InsertItem(-2, "默认大小(&D)", (_, _) =>
@@ -321,7 +321,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnResizeBegin(EventArgs e)
     {
-        if (IsSizable)
+        if (IsSizable())
         {
             SuspendLayout();
         }
@@ -331,7 +331,7 @@ public abstract class AppForm : Form, IAppWindow
 
     protected sealed override void OnResizeEnd(EventArgs e)
     {
-        if (IsSizable)
+        if (IsSizable())
         {
             var sz = KeepOnScreen(Size);
             Size = sz;
@@ -728,7 +728,7 @@ public abstract class AppForm : Form, IAppWindow
 
         try
         {
-            var updateFixedSize = !Special && !IsSizableForm(FormBorderStyle);
+            var updateFixedSize = !Special && !IsSizable();
 
             if (updateFixedSize)
             {
@@ -761,7 +761,7 @@ public abstract class AppForm : Form, IAppWindow
 
     private void ApplyLastSize()
     {
-        if (IsSizable)
+        if (HasSizable)
         {
             var dic = App.Current.AppConfig.Sizes;
 
@@ -786,7 +786,7 @@ public abstract class AppForm : Form, IAppWindow
 
     private void SaveWindowSize()
     {
-        if (IsSizable)
+        if (HasSizable)
         {
             var sz = Size;
             var ismax = WindowState == FormWindowState.Maximized;
@@ -910,9 +910,11 @@ public abstract class AppForm : Form, IAppWindow
         }
     }
 
-    private bool IsSizableForm(FormBorderStyle fbs)
+    private bool IsSizable()
     {
-        return (fbs != FormBorderStyle.None || IsSizable)
+        var fbs = FormBorderStyle;
+
+        return (fbs != FormBorderStyle.None && HasSizable)
             || fbs == FormBorderStyle.Sizable
             || fbs == FormBorderStyle.SizableToolWindow;
     }
