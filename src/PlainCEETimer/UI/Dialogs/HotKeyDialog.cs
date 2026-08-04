@@ -40,7 +40,7 @@ public sealed class HotKeyDialog : AppDialog
         base.OnInitializing();
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         ArrangeFirstControl(HotkeyCtrl1);
         ArrangeFirstControl(LabelHotKey1);

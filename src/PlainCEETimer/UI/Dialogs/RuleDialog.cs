@@ -140,7 +140,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         base.OnInitializing();
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         ArrangeFirstControl(LabelCharExam);
         ArrangeControlXT(ComboBoxRuleType, LabelCharExam, ctsp ? 0 : 3);

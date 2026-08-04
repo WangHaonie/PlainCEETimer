@@ -94,7 +94,7 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
         base.OnInitializing();
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         ArrangeFirstControl(LabelName, 3, 6);
         ArrangeControlXT(TextBoxName, LabelName);

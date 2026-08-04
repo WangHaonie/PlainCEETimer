@@ -279,7 +279,7 @@ public abstract class AppForm : Form, IAppWindow
     protected sealed override void OnLoad(EventArgs e)
     {
         SuspendLayout();
-        RunLayout(IsHighDpi);
+        RunLayout(true, IsHighDpi);
         ApplyLastSize();
         ResumeLayout(true);
         OnLoad();
@@ -306,7 +306,7 @@ public abstract class AppForm : Form, IAppWindow
         ApplyAppFont();
         RefreshSuggestedMaxWidth();
         LegacySetRoundCorner();
-        RunLayout(IsHighDpi);
+        RunLayout(false, IsHighDpi);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -397,7 +397,7 @@ public abstract class AppForm : Form, IAppWindow
     /// 对控件进行的布局。
     /// 该方法没有默认实现，可不调用 base.RunLayout(bool);
     /// </summary>
-    protected virtual void RunLayout(bool isHighDpi)
+    protected virtual void RunLayout(bool init, bool isHighDpi)
     {
         return;
     }
@@ -513,6 +513,12 @@ public abstract class AppForm : Form, IAppWindow
     protected static bool IsModkeysPressed(Keys keys)
     {
         return (ModifierKeys & keys) == keys;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int UnscaleToDpi(int value, float dpi)
+    {
+        return (int)(value / (dpi / 96F));
     }
 
     protected Rectangle GetCurrentScreenRect()

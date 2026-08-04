@@ -20,7 +20,7 @@ internal sealed class FileDialogWrapper(string title) : AppForm
         this.AddControls(b => [LabelMessage = b.Label(title)]);
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         InitWindowSize(LabelMessage, 1, 3);
     }

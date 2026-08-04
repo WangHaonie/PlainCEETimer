@@ -88,7 +88,7 @@ public sealed class ColorBlock : PlainLabel
             TopMost = true;
         }
 
-        protected override void RunLayout(bool isHighDpi)
+        protected override void RunLayout(bool init, bool isHighDpi)
         {
             ScreenshotSize = ScaleToDpi(_ScreenshotSize);
             ScreenshotSample = ScaleToDpi(_ScreenshotSample);

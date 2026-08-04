@@ -529,7 +529,7 @@ public sealed class SettingsForm : AppForm
         UpdateSettingsArea(SettingsArea.Restart, false);
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         #region NavPage_General
         GroupBoxArrageControl(GBoxExamInfo, LabelExamInfo);

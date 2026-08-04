@@ -51,18 +51,23 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             ]);
         }
 
-        protected override void RunLayout(bool isHighDpi)
+        protected override void RunLayout(bool init, bool isHighDpi)
         {
-            ContentBox.Text = parent.Text;
-            ContentBox.SetBounds(0, 0, parent.Width, ScaleToDpi(110), BoundsSpecified.Size);
+            ContentBox.SetBounds(0, 0, ScaleToDpi(UnscaleToDpi(parent.Width, parent.DeviceDpi)), ScaleToDpi(110), BoundsSpecified.Size);
             ArrangeFirstControl(ContentBox, 4, 4);
             ArrangeCommonButtonsR(ButtonApply, ButtonClose, ContentBox, 0, 3);
             ArrangeControlYL(LabelCounter, ContentBox);
             CenterControlY(LabelCounter, ButtonApply);
             InitWindowSize(ButtonClose, 3, 3);
-            ContentBox.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
-            ButtonClose.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
-            ButtonApply.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+
+            if (init)
+            {
+                ContentBox.Text = parent.Text;
+                ContentBox.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
+                ButtonClose.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+                ButtonApply.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+                LabelCounter.Pin(AnchorStyles.Left | AnchorStyles.Bottom);
+            }
         }
 
         protected override void OnVisibleChanged(EventArgs e)

@@ -40,7 +40,7 @@ public class AppMessageBox(IAppWindow parent = null) : IDialogService
             ButtonA.Enabled = true;
         }
 
-        protected override void RunLayout(bool isHighDpi)
+        protected override void RunLayout(bool init, bool isHighDpi)
         {
             ArrangeControlXT(LabelMessage, ImageIcon, 2);
             SetLabelAutoWrap(LabelMessage, false);

@@ -103,12 +103,16 @@ public sealed class ConsoleWindow : AppDialog
         }
     }
 
-    protected override void RunLayout(bool isHighDpi)
+    protected override void RunLayout(bool init, bool isHighDpi)
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ConsoleBox, 1, 3);
         CenterControlY(LabelMessage, ButtonA);
         InitWindowSize(ButtonB, 3, 3);
-        ButtonA.Delete();
+
+        if (init)
+        {
+            ButtonA.Delete();
+        }
     }
 
     protected override void OnShown()

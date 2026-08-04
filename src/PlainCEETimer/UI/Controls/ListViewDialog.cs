@@ -196,16 +196,20 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         base.OnInitializing();
     }
 
-    protected sealed override void RunLayout(bool isHighDpi)
+    protected sealed override void RunLayout(bool init, bool isHighDpi)
     {
         ArrangeCommonButtonsR(ButtonA, ButtonB, ListViewMain, 1, 3);
         ArrangeControlYL(ButtonOperation, ListViewMain, -1, 3);
         InitWindowSize(ButtonB, 3, 3);
         ListViewMain.ColumnMaxWidth = ScaleToDpi(500);
-        ListViewMain.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
-        ButtonA.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
-        ButtonB.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
-        ButtonOperation.Pin(AnchorStyles.Left | AnchorStyles.Bottom);
+
+        if (init)
+        {
+            ListViewMain.Pin(AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom);
+            ButtonA.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+            ButtonB.Pin(AnchorStyles.Right | AnchorStyles.Bottom);
+            ButtonOperation.Pin(AnchorStyles.Left | AnchorStyles.Bottom);
+        }
     }
 
     protected override void UpdateTheme(bool useDark, bool init)
