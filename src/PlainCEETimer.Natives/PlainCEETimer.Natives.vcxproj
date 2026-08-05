@@ -91,7 +91,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Win32COM\ShellLink.h" />
     <ClInclude Include="Win32COM\TaskbarProgress.h" />
     <ClInclude Include="Win32COM\TaskScheduler.h" />

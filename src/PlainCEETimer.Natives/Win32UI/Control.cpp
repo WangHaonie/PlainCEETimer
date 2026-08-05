@@ -101,7 +101,7 @@ LPCWSTR NATIVESAPI GetWindowTextEx(HWND hWnd)
     if (hWnd)
     {
         int length = GetWindowTextLength(hWnd) + 1;
-        LPWSTR buffer = CoTaskStrAllocW(length, nullptr);
+        LPWSTR buffer = CoTaskStrAllocW(length);
         
         if (buffer)
         {
@@ -117,7 +117,7 @@ LPCWSTR NATIVESAPI GetWindowClassName(HWND hWnd)
 {
     if (hWnd)
     {
-        LPWSTR buffer = CoTaskStrAllocW(256, nullptr); // lpszClassName 最大长度
+        LPWSTR buffer = CoTaskStrAllocW(256); // lpszClassName 最大长度
         GetClassName(hWnd, buffer, 256);
         return buffer;
     }

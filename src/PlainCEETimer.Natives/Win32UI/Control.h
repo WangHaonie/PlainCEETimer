@@ -2,10 +2,10 @@
 
 #include <Windows.h>
 
-#define HOOK_COMDLG32_MESSAGEBOXW_ARGS "comdlg32.dll", "user32.dll", "MessageBoxW", 0, false
+#define HOOK_COMDLG32_MESSAGEBOXW_ARGS			"comdlg32.dll", "user32.dll", "MessageBoxW", 0, false
 
-#define HMBF_GETMSGBOX 0
-#define HMBF_REPMSGBOX 1
+#define HMBF_GETMSGBOX							0
+#define HMBF_REPMSGBOX							1
 
 DeclDelegateType(MessageBoxW);
 

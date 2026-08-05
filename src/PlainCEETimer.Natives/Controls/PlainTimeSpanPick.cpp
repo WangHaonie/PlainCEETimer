@@ -64,9 +64,9 @@ static void PtspFreeMemory(LPPTSPSTATE lpState)
 {
     if (lpState)
     {
-        HeapFreeEx(CastToP(LPVOID*, &lpState->buffer));
-        HeapFreeEx(CastToP(LPVOID*, &lpState->literals));
-        HeapFreeEx(CastToP(LPVOID*, &lpState->numerics));
+        HEAPFREE(lpState->buffer);
+        HEAPFREE(lpState->literals);
+        HEAPFREE(lpState->numerics);
     }
 }
 
@@ -110,16 +110,16 @@ static void PtspCreateNewState(LPPTSPSTATE lpState)
         RestoreCtrlColors(CastToP(LPCTRLCOLORS, lpState));
         PTSPSTATE& state = *lpState;
         state.index = -1;
-        state.buffer = CastToP(LPWSTR, HeapAllocEx(PTSP_TEXT_BUFFER * sizeof(WCHAR)));
+        state.buffer = HEAPALLOC_M(WCHAR, PTSP_TEXT_BUFFER);
 
-        PZPCWSTR literals = CastToP(PZPCWSTR, HeapAllocEx(PTSP_SEGS_COUNT * sizeof(LPCWSTR)));
+        PZPCWSTR literals = HEAPALLOC_M(LPCWSTR, PTSP_SEGS_COUNT);
         literals[PTSPPART_DAYS] = L"天";
         literals[PTSPPART_HOURS] = L"时";
         literals[PTSPPART_MINUTES] = L"分";
         literals[PTSPPART_SECONDS] = L"秒";
         state.literals = CastToP(LPPTSPSEGLIT, literals);
 
-        LPPTSPSEGNUM numerics = CastToP(LPPTSPSEGNUM, HeapAllocEx(PTSP_SEGS_COUNT * sizeof(PTSPSEGNUM)));
+        LPPTSPSEGNUM numerics = HEAPALLOC_M(PTSPSEGNUM, PTSP_SEGS_COUNT);
         numerics[PTSPPART_DAYS] = { PTSPPART_DAYS, 0, 65535 };
         numerics[PTSPPART_HOURS] = { PTSPPART_HOURS, 0, 23 };
         numerics[PTSPPART_MINUTES] = { PTSPPART_MINUTES, 0, 59 };
@@ -186,7 +186,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
     {
         case WM_NCCREATE:
         {
-            LPPTSPSTATE pState = CastToP(LPPTSPSTATE, HeapAllocEx(sizeof(PTSPSTATE)));
+            LPPTSPSTATE pState = HEAPALLOC(PTSPSTATE);
             if (!pState) return FALSE;
             PtspCreateNewState(pState);
             SetWindowLongPtr(hWnd, NULL, CastToP(LONG_PTR, pState));
@@ -474,7 +474,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
         case WM_NCDESTROY:
         {
             PtspFreeMemory(lpState);
-            HeapFreeEx(CastToP(LPVOID*, &lpState));
+            HEAPFREE(lpState);
             SetWindowLongPtr(hWnd, GWLP_USERDATA, NULL);
             return 0;
         }

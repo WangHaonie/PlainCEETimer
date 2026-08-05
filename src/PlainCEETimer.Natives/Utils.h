@@ -3,13 +3,18 @@
 #include <combaseapi.h>
 #include <wchar.h>
 #include <Windows.h>
+#include <strsafe.h>
+
+#define HEAPALLOC(type)             CastToP(type*, HeapAllocEx(sizeof(type)))
+#define HEAPALLOC_M(type, count)    CastToP(type*, HeapAllocEx(count * sizeof(type)))
+#define HEAPFREE(lpMem)             HeapFreeEx(CastToP(LPVOID*, &lpMem))
 
 inline bool __cdecl String_IsNullOrEmpty(const char* str) noexcept
 {
     return !str || !*str;
 }
 
-inline bool __cdecl String_Equals(const char* strA, const char* strB, bool fIgnoreCase)
+inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {
     if (!strA || !strB)
     {
@@ -21,7 +26,7 @@ inline bool __cdecl String_Equals(const char* strA, const char* strB, bool fIgno
         return true;
     }
 
-    if (fIgnoreCase)
+    if (bIgnoreCase)
     {
         return _stricmp(strA, strB) == 0;
     }
@@ -49,7 +54,7 @@ inline bool __cdecl WString_StartsWith(const wchar_t* strA, const wchar_t* strB)
     return _wcsnicmp(strA, strB, wcslen(strB)) == 0;
 }
 
-inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, bool fIgnoreCase)
+inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, bool bIgnoreCase)
 {
     if (!strA || !strB)
     {
@@ -61,7 +66,7 @@ inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, boo
         return true;
     }
 
-    if (fIgnoreCase)
+    if (bIgnoreCase)
     {
         return _wcsicmp(strA, strB) == 0;
     }
@@ -110,28 +115,17 @@ https://learn.microsoft.com/en-us/dotnet/framework/interop/default-marshalling-b
 
 */
 
-inline LPWSTR __stdcall CoTaskStrAllocW(SIZE_T strLength, SIZE_T* bytesAllocated)
+inline LPWSTR __stdcall CoTaskStrAllocW(size_t strLength)
 {
-    SIZE_T s = strLength * sizeof(WCHAR);
-    LPWSTR ptr = (LPWSTR)CoTaskMemAlloc(s);
-
-    if (bytesAllocated && ptr)
-    {
-        *bytesAllocated = s;
-    }
-
+    size_t s = strLength * sizeof(WCHAR);
+    LPWSTR ptr = CastToP(LPWSTR, CoTaskMemAlloc(s));
     return ptr;
 }
 
 inline LPWSTR __stdcall CoTaskStrDupW(LPCWSTR str)
 {
-    SIZE_T size = 0;
-    LPWSTR ptr = CoTaskStrAllocW(wcslen(str) + 1, &size);
-
-    if (ptr)
-    {
-        memcpy(ptr, str, size);
-    }
-
+    size_t count = lstrlen(str) + 1;
+    LPWSTR ptr = CoTaskStrAllocW(count);
+    StringCchCopy(ptr, count, str);
     return ptr;
 }

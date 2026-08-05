@@ -27,7 +27,7 @@ static LPCWSTR BuildUserName(BOOL hasDomain, LPWSTR bufferDomain, DWORD cbDomain
 
     if (count)
     {
-        LPWSTR buffer = CoTaskStrAllocW(count, nullptr);
+        LPWSTR buffer = CoTaskStrAllocW(count);
 
         if (buffer && hasDomain)
         {
@@ -60,7 +60,7 @@ static LPWSTR BuildCommandLine(LPWSTR application, LPWSTR args)
     count += lstrlen(args);
     count += 2; // L' ' 和 L'\0'
 
-    LPWSTR buffer = CastToP(LPWSTR, HeapAllocEx(count * sizeof(WCHAR)));
+    LPWSTR buffer = HEAPALLOC_M(WCHAR, count);
     
     if (buffer)
     {
@@ -171,7 +171,7 @@ BOOL NATIVESAPI RunProcessAsLogonUser(LPWSTR path, LPWSTR args, LPDWORD lpExitCo
                 }
             }
 
-            HeapFreeEx(CastToP(LPVOID*, &cli));
+            HEAPFREE(cli);
             CloseHandle(hTokenPrimary);
         }
 

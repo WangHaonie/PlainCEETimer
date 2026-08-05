@@ -38,11 +38,11 @@ void NATIVESAPI ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
     if (init && lpLnkFileInfo &&
         SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
     {
-        LPWSTR t = CoTaskStrAllocW(MAX_PATH, nullptr);
-        LPWSTR a = CoTaskStrAllocW(INFOTIPSIZE, nullptr);
-        LPWSTR wd = CoTaskStrAllocW(MAX_PATH, nullptr);
-        LPWSTR d = CoTaskStrAllocW(MAX_PATH, nullptr);
-        LPWSTR ip = CoTaskStrAllocW(MAX_PATH, nullptr);
+        LPWSTR t = CoTaskStrAllocW(MAX_PATH);
+        LPWSTR a = CoTaskStrAllocW(INFOTIPSIZE);
+        LPWSTR wd = CoTaskStrAllocW(MAX_PATH);
+        LPWSTR d = CoTaskStrAllocW(MAX_PATH);
+        LPWSTR ip = CoTaskStrAllocW(MAX_PATH);
 
         psh->GetPath(t, MAX_PATH, nullptr, 0);
         psh->GetArguments(a, INFOTIPSIZE);

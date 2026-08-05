@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-#include "Control.h"
 #include "Theme.h"
 #include "utils.h"
 #include "Win32/IATHook.h"

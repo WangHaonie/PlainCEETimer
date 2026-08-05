@@ -7,8 +7,7 @@ static bool GetSourceName(const DISPLAYCONFIG_PATH_INFO& path, DISPLAYCONFIG_SOU
 {
     auto ph = &name.header;
 
-    *ph =
-    {
+    *ph = {
         DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME,
         sizeof(name),
         path.sourceInfo.adapterId,
@@ -22,8 +21,7 @@ static bool GetTargetName(const DISPLAYCONFIG_PATH_INFO& path, DISPLAYCONFIG_TAR
 {
     auto ph = &name.header;
 
-    *ph =
-    {
+    *ph = {
         DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
         sizeof(name),
         path.targetInfo.adapterId,
@@ -62,7 +60,7 @@ static double GetRefreshRate(const DISPLAYCONFIG_PATH_INFO& path, const DISPLAYC
 
 static bool FillDeviceId(LPCWSTR dosPath, DISPLAY_DEVICEW& dd, LPCWSTR& did)
 {
-    if (EnumDisplayDevicesW(dosPath, 0, &dd, 0) && *dd.DeviceID)
+    if (EnumDisplayDevices(dosPath, 0, &dd, 0) && !WString_IsNullOrEmpty(dd.DeviceID))
     {
         did = dd.DeviceID;
         return true;
@@ -81,8 +79,8 @@ static bool CcdEnumDisplays(EnumDisplayProc lpfnEnum)
         return false;
     }
 
-    auto paths = CastToP(DISPLAYCONFIG_PATH_INFO*, HeapAllocEx(pathCount * sizeof(DISPLAYCONFIG_PATH_INFO)));
-    auto modes = CastToP(DISPLAYCONFIG_MODE_INFO*, HeapAllocEx(modeCount * sizeof(DISPLAYCONFIG_MODE_INFO)));
+    auto paths = HEAPALLOC_M(DISPLAYCONFIG_PATH_INFO, pathCount);
+    auto modes = HEAPALLOC_M(DISPLAYCONFIG_MODE_INFO, modeCount);
 
     if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths, &modeCount, modes, nullptr) != ERROR_SUCCESS || pathCount == 0)
     {
@@ -108,17 +106,18 @@ static bool CcdEnumDisplays(EnumDisplayProc lpfnEnum)
 
         if (srcIdx < modeCount && modes[srcIdx].infoType == DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE)
         {
-            info.position = modes[srcIdx].sourceMode.position;
-            info.width = modes[srcIdx].sourceMode.width;
-            info.height = modes[srcIdx].sourceMode.height;
+            auto& sourceMode = modes[srcIdx].sourceMode;
+            info.position = sourceMode.position;
+            info.width = sourceMode.width;
+            info.height = sourceMode.height;
         }
 
-        if (GetSourceName(path, sourceName) && *sourceName.viewGdiDeviceName)
+        if (GetSourceName(path, sourceName) && !WString_IsNullOrEmpty(sourceName.viewGdiDeviceName))
         {
             info.dosPath = sourceName.viewGdiDeviceName;
         }
 
-        if (GetTargetName(path, targetName) && *targetName.monitorFriendlyDeviceName)
+        if (GetTargetName(path, targetName) && !WString_IsNullOrEmpty(targetName.monitorFriendlyDeviceName))
         {
             info.deviceName = targetName.monitorFriendlyDeviceName;
         }
@@ -134,8 +133,8 @@ static bool CcdEnumDisplays(EnumDisplayProc lpfnEnum)
         index++;
     }
 
-    HeapFreeEx(CastToP(LPVOID*, &paths));
-    HeapFreeEx(CastToP(LPVOID*, &modes));
+    HEAPFREE(paths);
+    HEAPFREE(modes);
 
     return true;
 }
@@ -152,7 +151,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
         DISPLAY_DEVICEW dd = { sizeof(dd) };
         MONITORINFOEXW mi = { sizeof(MONITORINFOEXW) };
 
-        if (GetMonitorInfoW(hMonitor, CastToP(LPMONITORINFO, &mi)))
+        if (GetMonitorInfo(hMonitor, CastToP(LPMONITORINFO, &mi)))
         {
             info.dosPath = mi.szDevice;
             info.position = { mi.rcMonitor.left, mi.rcMonitor.top };
@@ -161,7 +160,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
 
             DEVMODEW dm = { sizeof(dm) };
 
-            if (EnumDisplaySettingsW(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm))
+            if (EnumDisplaySettings(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm))
             {
                 info.refreshRate = CastToS(double, dm.dmDisplayFrequency);
             }
@@ -176,7 +175,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
                 return FALSE;
             }
 
-            pdata->index++;
+            ++pdata->index;
         }
 
         return TRUE;
