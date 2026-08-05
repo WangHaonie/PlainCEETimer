@@ -2,5 +2,5 @@
 
 #include <Windows.h>
 
-cexport(LPCWSTR) GetLogonUserName();
-cexport(BOOL) RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode);
+NATIVES_EXPORT LPCWSTR NATIVESAPI GetLogonUserName();
+NATIVES_EXPORT BOOL NATIVESAPI RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode);

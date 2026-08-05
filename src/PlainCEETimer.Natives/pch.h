@@ -9,7 +9,8 @@
 #define DeclDelegateType(Func)      using fn##Func = decltype(&Func)
 #define DeclDelegateField(Func)     static fn##Func g_##Func = nullptr
 
-#define cexport(ret)                extern "C" __declspec(dllexport) ret WINAPI
+#define NATIVES_EXPORT              extern "C" __declspec(dllexport)
+#define NATIVESAPI                  __stdcall
 #define CastToP(t, v)               reinterpret_cast<t>(v)
 #define CastToS(t, v)               static_cast<t>(v)
 

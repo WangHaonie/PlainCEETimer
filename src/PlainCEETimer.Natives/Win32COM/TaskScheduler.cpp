@@ -10,7 +10,7 @@ static ITaskFolder* ptf = nullptr;
 static IRegisteredTask* prt = nullptr;
 static bool init = false;
 
-void InitializeTaskScheduler()
+void NATIVESAPI InitializeTaskScheduler()
 {
     if (!init &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pts))))
@@ -21,7 +21,7 @@ void InitializeTaskScheduler()
     }
 }
 
-void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType)
+void NATIVESAPI TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType)
 {
     if (init)
     {
@@ -31,7 +31,7 @@ void TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TY
     ReleasePPI(&prt);
 }
 
-BOOL TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
+BOOL NATIVESAPI TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 {
     if (init
         && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt))
@@ -44,7 +44,7 @@ BOOL TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
     return FALSE;
 }
 
-BOOL TaskSchedulerExistsTask(LPCWSTR path)
+BOOL NATIVESAPI TaskSchedulerExistsTask(LPCWSTR path)
 {
     if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
@@ -55,7 +55,7 @@ BOOL TaskSchedulerExistsTask(LPCWSTR path)
     return FALSE;
 }
 
-void TaskSchedulerEnableTask(LPCWSTR path)
+void NATIVESAPI TaskSchedulerEnableTask(LPCWSTR path)
 {
     if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
     {
@@ -71,7 +71,7 @@ void TaskSchedulerEnableTask(LPCWSTR path)
     ReleasePPI(&prt);
 }
 
-void TaskSchedulerDeleteTask(LPCWSTR path)
+void NATIVESAPI TaskSchedulerDeleteTask(LPCWSTR path)
 {
     if (init)
     {
@@ -79,7 +79,7 @@ void TaskSchedulerDeleteTask(LPCWSTR path)
     }
 }
 
-void ReleaseTaskScheduler()
+void NATIVESAPI ReleaseTaskScheduler()
 {
     ReleasePPI(&ptf);
     ReleasePPI(&pts);

@@ -2,7 +2,7 @@
 #include "CommonDialogs.h"
 #include <Windows.h>
 
-BOOL RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors)
+BOOL NATIVESAPI RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors)
 {
     CHOOSECOLOR cc = { sizeof(cc) };
     DWORD flags = CC_ANYCOLOR | CC_FULLOPEN | CC_ENABLETEMPLATE;
@@ -39,7 +39,7 @@ BOOL RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColo
     return FALSE;
 }
 
-BOOL RunFontDialog(HWND hWndOwner, LPCFHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit)
+BOOL NATIVESAPI RunFontDialog(HWND hWndOwner, LPCFHOOKPROC lpfnHookProc, LPLOGFONT lpLogFont, INT nSizeLimit)
 {
     CHOOSEFONT cf = { sizeof(cf) };
     DWORD flags = CF_NOVERTFONTS | CF_TTONLY | CF_FORCEFONTEXIST | CF_SCRIPTSONLY | CF_ENABLETEMPLATE;

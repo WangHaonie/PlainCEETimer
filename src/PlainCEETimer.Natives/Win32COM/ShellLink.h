@@ -15,7 +15,7 @@ typedef struct tagLNKFILEINFO
     INT iIcon;
 } LNKFILEINFO, *LPLNKFILEINFO;
 
-cexport(void) InitializeShellLink();
-cexport(void) ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo);
-cexport(void) ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo);
-cexport(void) ReleaseShellLink();
+NATIVES_EXPORT void NATIVESAPI InitializeShellLink();
+NATIVES_EXPORT void NATIVESAPI ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo);
+NATIVES_EXPORT void NATIVESAPI ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo);
+NATIVES_EXPORT void NATIVESAPI ReleaseShellLink();

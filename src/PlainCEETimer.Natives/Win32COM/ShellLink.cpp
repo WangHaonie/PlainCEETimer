@@ -8,7 +8,7 @@ static IShellLink* psh = nullptr;
 static IPersistFile* ppf = nullptr;
 static bool init = false;
 
-void InitializeShellLink()
+void NATIVESAPI InitializeShellLink()
 {
     if (!init &&
         SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&psh))))
@@ -18,7 +18,7 @@ void InitializeShellLink()
     }
 }
 
-void ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo)
+void NATIVESAPI ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
     if (init)
     {
@@ -33,7 +33,7 @@ void ShellLinkCreateLnk(LPLNKFILEINFO lpLnkFileInfo)
     }
 }
 
-void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
+void NATIVESAPI ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
 {
     if (init && lpLnkFileInfo &&
         SUCCEEDED(ppf->Load(lpLnkFileInfo->lnkPath, STGM_READ)))
@@ -60,7 +60,7 @@ void ShellLinkQueryLnk(LPLNKFILEINFO lpLnkFileInfo)
     }
 }
 
-void ReleaseShellLink()
+void NATIVESAPI ReleaseShellLink()
 {
     ReleasePPI(&ppf);
     ReleasePPI(&psh);

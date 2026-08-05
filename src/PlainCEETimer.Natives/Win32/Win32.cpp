@@ -29,7 +29,7 @@ static void KillProcessTreeCore(DWORD dwProcessId)
     }
 }
 
-HWND AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
+HWND NATIVESAPI AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
 {
     BOOL attached = AttachConsole(ATTACH_PARENT_PROCESS);
     if (!attached) AllocConsole();
@@ -73,7 +73,7 @@ HWND AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDL
     return GetConsoleWindow();
 }
 
-void KillProcessTree(DWORD dwProcessId)
+void NATIVESAPI KillProcessTree(DWORD dwProcessId)
 {
     KillProcessTreeCore(dwProcessId);
 }

@@ -19,7 +19,7 @@ https://learn.microsoft.com/zh-cn/windows/win32/api/shobjidl_core/nn-shobjidl_co
 static ITaskbarList3* ptl = nullptr;
 static bool init = false;
 
-void InitializeTaskbarList()
+void NATIVESAPI InitializeTaskbarList()
 {
     if (!init &&
         SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&ptl))))
@@ -29,7 +29,7 @@ void InitializeTaskbarList()
     }
 }
 
-void TaskbarListSetProgressState(HWND hWnd, TBPFLAG tbpFlags)
+void NATIVESAPI TaskbarListSetProgressState(HWND hWnd, TBPFLAG tbpFlags)
 {
     if (init && hWnd)
     {
@@ -37,7 +37,7 @@ void TaskbarListSetProgressState(HWND hWnd, TBPFLAG tbpFlags)
     }
 }
 
-void TaskbarListSetProgressValue(HWND hWnd, ULONGLONG ullCompleted, ULONGLONG ullTotal)
+void NATIVESAPI TaskbarListSetProgressValue(HWND hWnd, ULONGLONG ullCompleted, ULONGLONG ullTotal)
 {
     if (init && hWnd)
     {
@@ -45,7 +45,7 @@ void TaskbarListSetProgressValue(HWND hWnd, ULONGLONG ullCompleted, ULONGLONG ul
     }
 }
 
-void ReleaseTaskbarList()
+void NATIVESAPI ReleaseTaskbarList()
 {
     ReleasePPI(&ptl);
     init = false;

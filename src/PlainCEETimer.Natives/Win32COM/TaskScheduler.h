@@ -3,10 +3,10 @@
 #include <taskschd.h>
 #include <Windows.h>
 
-cexport(void) InitializeTaskScheduler();
-cexport(void) TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType);
-cexport(BOOL) TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml);
-cexport(BOOL) TaskSchedulerExistsTask(LPCWSTR path);
-cexport(void) TaskSchedulerEnableTask(LPCWSTR path);
-cexport(void) TaskSchedulerDeleteTask(LPCWSTR path);
-cexport(void) ReleaseTaskScheduler();
+NATIVES_EXPORT void NATIVESAPI InitializeTaskScheduler();
+NATIVES_EXPORT void NATIVESAPI TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TASK_LOGON_TYPE logonType);
+NATIVES_EXPORT BOOL NATIVESAPI TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml);
+NATIVES_EXPORT BOOL NATIVESAPI TaskSchedulerExistsTask(LPCWSTR path);
+NATIVES_EXPORT void NATIVESAPI TaskSchedulerEnableTask(LPCWSTR path);
+NATIVES_EXPORT void NATIVESAPI TaskSchedulerDeleteTask(LPCWSTR path);
+NATIVES_EXPORT void NATIVESAPI ReleaseTaskScheduler();

@@ -15,7 +15,7 @@ https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-rounde
 
 */
 
-void SetRoundCorner(HWND hWnd, int width, int height, int radius)
+void NATIVESAPI SetRoundCorner(HWND hWnd, int width, int height, int radius)
 {
     if (hWnd)
     {
@@ -23,7 +23,7 @@ void SetRoundCorner(HWND hWnd, int width, int height, int radius)
     }
 }
 
-void SetRoundCornerEx(HWND hWnd, BOOL smallCorner)
+void NATIVESAPI SetRoundCornerEx(HWND hWnd, BOOL smallCorner)
 {
     if (hWnd)
     {

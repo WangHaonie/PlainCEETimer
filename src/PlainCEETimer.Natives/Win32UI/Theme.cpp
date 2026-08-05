@@ -114,7 +114,7 @@ static HBRUSH WINAPI GetSysColorBrush_(int nIndex)
     return g_GetSysColorBrush(nIndex);
 }
 
-void EnableDarkModeForApp(BOOL enabled)
+void NATIVESAPI EnableDarkModeForApp(BOOL enabled)
 {
     g_fUseDark = enabled;
 
@@ -153,7 +153,7 @@ void EnableDarkModeForApp(BOOL enabled)
     if (g_FlushMenuThemes) g_FlushMenuThemes();
 }
 
-void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
+void NATIVESAPI ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
 {
     if (!InitializeIatHook(HOOK_COMCTL32_GETSYSCOLOR_ARGS, IatHookComctlGetSysColor))
     {
@@ -172,14 +172,14 @@ void ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
     }
 }
 
-void ComctlUnhookSysColor()
+void NATIVESAPI ComctlUnhookSysColor()
 {
     UnhookIat(IatHookComctlGetSysColor);
     g_crFore = 0;
     g_crBack = 0;
 }
 
-void ComctlHookOpenTheme()
+void NATIVESAPI ComctlHookOpenTheme()
 {
     HookIat(HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS,
         IatHookComctlOpenThemeDataForDpi,
@@ -188,12 +188,12 @@ void ComctlHookOpenTheme()
     );
 }
 
-void ComctlUnhookOpenTheme()
+void NATIVESAPI ComctlUnhookOpenTheme()
 {
     UnhookIat(IatHookComctlOpenThemeDataForDpi);
 }
 
-void ComdlgHookGetSysColorBrush()
+void NATIVESAPI ComdlgHookGetSysColorBrush()
 {
     HookIat(HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS,
         IatHookComdlgGetSysColorBrush,
@@ -202,7 +202,7 @@ void ComdlgHookGetSysColorBrush()
     );
 }
 
-void ComdlgUnhookGetSysColorBrush()
+void NATIVESAPI ComdlgUnhookGetSysColorBrush()
 {
     UnhookIat(IatHookComdlgGetSysColorBrush);
 }
@@ -216,7 +216,7 @@ https://stackoverflow.com/a/62811758
 
 */
 
-void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
+void NATIVESAPI EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
 {
     if (hWnd)
     {
@@ -227,7 +227,7 @@ void EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
     }
 }
 
-void SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
+void NATIVESAPI SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
 {
     if (hWnd)
     {
@@ -236,7 +236,7 @@ void SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
     }
 }
 
-DWORD GetSystemAccentColor()
+DWORD NATIVESAPI GetSystemAccentColor()
 {
     DWORD result = 0;
     BOOL flag = FALSE;

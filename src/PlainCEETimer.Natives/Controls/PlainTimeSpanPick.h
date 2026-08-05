@@ -55,4 +55,4 @@ typedef struct tagCTRLCOLORS
 #define PTSP_TEXT_BUFFER            10
 #define PTSP_SEGS_COUNT             4
 
-cexport(ATOM) PlainTimeSpanPick_RegisterWC();
+NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();

@@ -9,17 +9,17 @@
 
 DeclDelegateType(MessageBoxW);
 
-cexport(void) ListViewSelectAllItems(HWND hLV, BOOL selected);
-cexport(void) SetTopMostWindow(HWND hWnd);
-cexport(BOOL) MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition);
-cexport(BOOL) MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition);
-cexport(LPCWSTR) GetWindowTextEx(HWND hWnd);
-cexport(LPCWSTR) GetWindowClassName(HWND hWnd);
-cexport(void) RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
-cexport(BOOL) CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
-cexport(void) ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag);
-cexport(void) ComdlgUnhookMessageBox();
-cexport(BOOL) IsDialog(LPCREATESTRUCT lpCreateStruct);
-cexport(void) RemoveWindowIcon(HWND hWnd);
-cexport(void) HookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId);
-cexport(void) UnhookGetMessage();
+NATIVES_EXPORT void NATIVESAPI ListViewSelectAllItems(HWND hLV, BOOL selected);
+NATIVES_EXPORT void NATIVESAPI SetTopMostWindow(HWND hWnd);
+NATIVES_EXPORT BOOL NATIVESAPI MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition);
+NATIVES_EXPORT BOOL NATIVESAPI MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition);
+NATIVES_EXPORT LPCWSTR NATIVESAPI GetWindowTextEx(HWND hWnd);
+NATIVES_EXPORT LPCWSTR NATIVESAPI GetWindowClassName(HWND hWnd);
+NATIVES_EXPORT void NATIVESAPI RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
+NATIVES_EXPORT BOOL NATIVESAPI CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle);
+NATIVES_EXPORT void NATIVESAPI ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag);
+NATIVES_EXPORT void NATIVESAPI ComdlgUnhookMessageBox();
+NATIVES_EXPORT BOOL NATIVESAPI IsDialog(LPCREATESTRUCT lpCreateStruct);
+NATIVES_EXPORT void NATIVESAPI RemoveWindowIcon(HWND hWnd);
+NATIVES_EXPORT void NATIVESAPI HookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId);
+NATIVES_EXPORT void NATIVESAPI UnhookGetMessage();

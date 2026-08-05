@@ -2,5 +2,5 @@
 
 #include <Windows.h>
 
-cexport(void) ClearProcessWS();
-cexport(SIZE_T) GetProcessPrivateWS();
+NATIVES_EXPORT void NATIVESAPI ClearProcessWS();
+NATIVES_EXPORT SIZE_T NATIVESAPI GetProcessPrivateWS();

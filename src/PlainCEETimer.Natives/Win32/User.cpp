@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include <WtsApi32.h>
 
-LPCWSTR GetLogonUserName()
+LPCWSTR NATIVESAPI GetLogonUserName()
 {
     std::wstring tmp = L"<未知用户名>";
     LPWSTR buffer = nullptr;
@@ -31,7 +31,7 @@ LPCWSTR GetLogonUserName()
     return CoTaskStrDupW(tmp.c_str());
 }
 
-BOOL RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
+BOOL NATIVESAPI RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
 {
     if (WString_IsNullOrEmpty(path) && WString_IsNullOrEmpty(args))
     {
