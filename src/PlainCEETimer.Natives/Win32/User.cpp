@@ -1,37 +1,97 @@
 ﻿#include "pch.h"
 #include "User.h"
 #include "Utils.h"
-#include <string>
+#include <strsafe.h>
 #include <TlHelp32.h>
 #include <Windows.h>
 #include <WtsApi32.h>
 
-LPCWSTR NATIVESAPI GetLogonUserName()
+static LPCWSTR BuildUserName(BOOL hasDomain, LPWSTR bufferDomain, DWORD cbDomain, BOOL hasUser, LPWSTR bufferUser, DWORD cbUser)
 {
-    std::wstring tmp = L"<未知用户名>";
-    LPWSTR buffer = nullptr;
-    DWORD length = 0;
-    DWORD sid = WTSGetActiveConsoleSessionId();
+    size_t count = 0;
 
-    if (WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sid, WTSDomainName, &buffer, &length) && length > 1)
+    if (hasUser && cbUser > sizeof(WCHAR))
     {
-        tmp = buffer;
-        WTSFreeMemory(buffer);
-        buffer = nullptr;
+        count += (cbUser / sizeof(WCHAR));
 
-        if (WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sid, WTSUserName, &buffer, &length) && length > 1)
+        if (hasDomain && cbDomain > sizeof(WCHAR))
         {
-            tmp += L"\\";
-            tmp += buffer;
-            WTSFreeMemory(buffer);
-            buffer = nullptr;
+            count += (cbDomain / sizeof(WCHAR));
+            // 多出来的 L'\0' 恰好可以用来填 L'\\'，故不 += 1
+        }
+        else
+        {
+            hasDomain = FALSE;
         }
     }
 
-    return CoTaskStrDupW(tmp.c_str());
+    if (count)
+    {
+        LPWSTR buffer = CoTaskStrAllocW(count, nullptr);
+
+        if (buffer && hasDomain)
+        {
+            LPWSTR current = buffer;
+            StringCchCopyEx(current, count, bufferDomain, &current, &count, STRSAFE_DEFAULT);
+            StringCchCopyEx(current, count, L"\\", &current, &count, STRSAFE_DEFAULT);
+            StringCchCopyEx(current, count, bufferUser, &current, &count, STRSAFE_DEFAULT);
+        }
+
+        return buffer;
+    }
+
+    return CoTaskStrDupW(L"未知用户名");
 }
 
-BOOL NATIVESAPI RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExitCode)
+static LPWSTR BuildCommandLine(LPWSTR application, LPWSTR args)
+{
+    if (WString_IsNullOrEmpty(args))
+    {
+        return application;
+    }
+
+    if (WString_IsNullOrEmpty(application))
+    {
+        return args;
+    }
+
+    size_t count = 0;
+    count += lstrlen(application);
+    count += lstrlen(args);
+    count += 2; // L' ' 和 L'\0'
+
+    LPWSTR buffer = CastToP(LPWSTR, HeapAllocEx(count * sizeof(WCHAR)));
+    
+    if (buffer)
+    {
+        LPWSTR current = buffer;
+        StringCchCopyEx(current, count, application, &current, &count, STRSAFE_DEFAULT);
+        StringCchCopyEx(current, count, L" ", &current, &count, STRSAFE_DEFAULT);
+        StringCchCopyEx(current, count, args, &current, &count, STRSAFE_DEFAULT);
+    }
+
+    return buffer;
+}
+
+LPCWSTR NATIVESAPI GetLogonUserName()
+{
+    DWORD cbDomain;
+    DWORD cbUser;
+    LPWSTR bufferDomain = nullptr;
+    LPWSTR bufferUser = nullptr;
+
+    DWORD sid = WTSGetActiveConsoleSessionId();
+    BOOL hasDomain = WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sid, WTSDomainName, &bufferDomain, &cbDomain);
+    BOOL hasUser = WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sid, WTSUserName, &bufferUser, &cbUser);
+
+    LPCWSTR result = BuildUserName(hasDomain, bufferDomain, cbDomain, hasUser, bufferUser, cbUser);
+    if (bufferDomain) WTSFreeMemory(bufferDomain);
+    if (bufferUser) WTSFreeMemory(bufferUser);
+
+    return result;
+}
+
+BOOL NATIVESAPI RunProcessAsLogonUser(LPWSTR path, LPWSTR args, LPDWORD lpExitCode)
 {
     if (WString_IsNullOrEmpty(path) && WString_IsNullOrEmpty(args))
     {
@@ -92,11 +152,9 @@ BOOL NATIVESAPI RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExit
         {
             STARTUPINFO si = { sizeof(si) };
             PROCESS_INFORMATION pi = {};
-            std::wstring cmd = path;
-            cmd += L" ";
-            cmd += args;
+            LPWSTR cli = BuildCommandLine(path, args);
 
-            if (CreateProcessWithTokenW(hTokenPrimary, 0, nullptr, &cmd[0], CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
+            if (CreateProcessWithTokenW(hTokenPrimary, 0, nullptr, cli, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
             {
                 if (lpExitCode)
                 {
@@ -113,6 +171,7 @@ BOOL NATIVESAPI RunProcessAsLogonUser(LPCWSTR path, LPCWSTR args, LPDWORD lpExit
                 }
             }
 
+            HeapFreeEx(CastToP(LPVOID*, &cli));
             CloseHandle(hTokenPrimary);
         }
 

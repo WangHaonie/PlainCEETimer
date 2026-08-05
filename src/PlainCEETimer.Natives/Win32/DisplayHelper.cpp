@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
+#include "..\Utils.h"
 #include "DisplayHelper.h"
-#include <vector>
 #include <Windows.h>
 
 static bool GetSourceName(const DISPLAYCONFIG_PATH_INFO& path, DISPLAYCONFIG_SOURCE_DEVICE_NAME& name)
@@ -33,7 +33,7 @@ static bool GetTargetName(const DISPLAYCONFIG_PATH_INFO& path, DISPLAYCONFIG_TAR
     return DisplayConfigGetDeviceInfo(ph) == ERROR_SUCCESS;
 }
 
-static double GetRefreshRate(const DISPLAYCONFIG_PATH_INFO& path, const std::vector<DISPLAYCONFIG_MODE_INFO>& modes)
+static double GetRefreshRate(const DISPLAYCONFIG_PATH_INFO& path, const DISPLAYCONFIG_MODE_INFO* modes)
 {
     if (path.targetInfo.modeInfoIdx == DISPLAYCONFIG_PATH_MODE_IDX_INVALID)
     {
@@ -81,18 +81,20 @@ static bool CcdEnumDisplays(EnumDisplayProc lpfnEnum)
         return false;
     }
 
-    std::vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
-    std::vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
+    auto paths = CastToP(DISPLAYCONFIG_PATH_INFO*, HeapAllocEx(pathCount * sizeof(DISPLAYCONFIG_PATH_INFO)));
+    auto modes = CastToP(DISPLAYCONFIG_MODE_INFO*, HeapAllocEx(modeCount * sizeof(DISPLAYCONFIG_MODE_INFO)));
 
-    if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr) != ERROR_SUCCESS || pathCount == 0)
+    if (QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths, &modeCount, modes, nullptr) != ERROR_SUCCESS || pathCount == 0)
     {
         return false;
     }
 
     int index = 0;
 
-    for (const auto& path : paths)
+    for (UINT32 i = 0; i < pathCount; ++i)
     {
+        auto& path = paths[i];
+
         if (!(path.flags & DISPLAYCONFIG_PATH_ACTIVE))
         {
             continue;
@@ -126,11 +128,14 @@ static bool CcdEnumDisplays(EnumDisplayProc lpfnEnum)
 
         if (!lpfnEnum(info))
         {
-            return true;
+            break;
         }
 
         index++;
     }
+
+    HeapFreeEx(CastToP(LPVOID*, &paths));
+    HeapFreeEx(CastToP(LPVOID*, &modes));
 
     return true;
 }
