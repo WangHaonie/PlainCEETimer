@@ -1,45 +1,43 @@
 ﻿#include "pch.h"
-#include "resource.h"
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <intsafe.h>
-#include <windowsx.h>
-#include <algorithm>
 #include "../Utils.h"
 #include "PlainTimeSpanPick.h"
+#include "resource.h"
+#include <algorithm>
+#include <cstdlib>
+#include <strsafe.h>
+#include <windowsx.h>
 
-typedef enum _PTSPSEGTYPE
-{
-    PTSPSEG_LITERAL,
-    PTSPSEG_NUMERIC
-} PTSPSEGTYPE;
+#define PTSPPART_DAYS               0
+#define PTSPPART_HOURS              1
+#define PTSPPART_MINUTES            2
+#define PTSPPART_SECONDS            3
 
-typedef enum _PTSPPART
-{
-    PTSPPART_DAYS,
-    PTSPPART_HOURS,
-    PTSPPART_MINUTES,
-    PTSPPART_SECONDS
-} PTSPPART;
+#define PTSPPART_MIN                PTSPPART_DAYS
+#define PTSPPART_MAX                PTSPPART_SECONDS
 
-typedef struct tagPTSPSEG
+#define PTSP_NUMERIC_FORMAT         L"%d"
+
+typedef struct tagPTSPSEGLIT
 {
-    PTSPSEGTYPE type;
-    PTSPPART part;
-    RECT bounds;
-    INT value;
-    INT maxValue;
-    std::wstring text;
-} PTSPSEG, *LPPTSPSEG;
+    LPWSTR pszText;
+} PTSPSEGLIT, *LPPTSPSEGLIT;
+
+typedef struct tagPTSPSEGNUM
+{
+    DWORD dwPart;
+    INT nValue;
+    INT nValueMax;
+    RECT rcBounds;
+} PTSPSEGNUM, *LPPTSPSEGNUM;
 
 typedef struct tagPTSPSTATE
 {
     CTRLCOLORS colors;
-    HFONT hFont;
     INT index;
-    std::vector<PTSPSEG> segments;
-    std::wstring buffer;
+    LPWSTR buffer;
+    HFONT hFont;
+    LPPTSPSEGLIT literals;
+    LPPTSPSEGNUM numerics;
 } PTSPSTATE, *LPPTSPSTATE;
 
 static void RestoreCtrlColors(LPCTRLCOLORS colors)
@@ -49,27 +47,6 @@ static void RestoreCtrlColors(LPCTRLCOLORS colors)
         colors->backText = GetSysColor(COLOR_WINDOW);
         colors->foreText = GetSysColor(COLOR_WINDOWTEXT);
         colors->foreTextDisabled = GetSysColor(COLOR_GRAYTEXT);
-    }
-}
-
-static void CreateNewState(LPPTSPSTATE lpState)
-{
-    if (lpState)
-    {
-        PTSPSTATE& state = *lpState;
-        state = {};
-        state.index = -1;
-        auto& seg = state.segments;
-        seg.reserve(8);
-        seg.push_back({ PTSPSEG_NUMERIC, PTSPPART_DAYS, {}, 0, 65535 });
-        seg.push_back({ PTSPSEG_LITERAL, PTSPPART_DAYS, {}, 0, 0, L"天" });
-        seg.push_back({ PTSPSEG_NUMERIC, PTSPPART_HOURS, {}, 0, 23 });
-        seg.push_back({ PTSPSEG_LITERAL, PTSPPART_HOURS, {}, 0, 0, L"时" });
-        seg.push_back({ PTSPSEG_NUMERIC, PTSPPART_MINUTES, {}, 0, 59 });
-        seg.push_back({ PTSPSEG_LITERAL, PTSPPART_MINUTES, {}, 0, 0, L"分" });
-        seg.push_back({ PTSPSEG_NUMERIC, PTSPPART_SECONDS, {}, 0, 59 });
-        seg.push_back({ PTSPSEG_LITERAL, PTSPPART_SECONDS, {}, 0, 0, L"秒" });
-        RestoreCtrlColors(CastToP(LPCTRLCOLORS, lpState));
     }
 }
 
@@ -83,11 +60,79 @@ static void NotifyValueChanged(HWND hWnd)
         CastToP(LPARAM, hWnd));
 }
 
-static void ScrollNumeric(PTSPSEG& seg, int delta, HWND hPtsp)
+static void PtspFreeMemory(LPPTSPSTATE lpState)
 {
-    int value = seg.value + delta;
-    int clamped = std::clamp(value, 0, seg.maxValue);
-    seg.value = clamped;
+    if (lpState)
+    {
+        HeapFreeEx(CastToP(LPVOID*, &lpState->buffer));
+        HeapFreeEx(CastToP(LPVOID*, &lpState->literals));
+        HeapFreeEx(CastToP(LPVOID*, &lpState->numerics));
+    }
+}
+
+static void PtspClearStringBuffer(LPWSTR buffer)
+{
+    if (buffer) *buffer = L'\0';
+}
+
+static void PtspDrawText(HDC hdc, LPCWSTR text, LPCTRLCOLORS colors, LPRECT prc, int& x, int& y, bool isEnabled, bool isSelected)
+{
+    if (text && colors)
+    {
+        RECT rcText = {};
+        DrawText(hdc, text, -1, &rcText, DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE);
+        int cx = rcText.right - rcText.left;
+        int cy = rcText.bottom - rcText.top;
+
+        RECT rcBounds = { x, y, x + cx, y + cy };
+        if (prc) *prc = rcBounds;
+
+        if (isSelected)
+        {
+            FillRect(hdc, &rcBounds, GetSysColorBrush(COLOR_HIGHLIGHT));
+            SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
+        }
+        else
+        {
+            SetTextColor(hdc, isEnabled ? colors->foreText : colors->foreTextDisabled);
+        }
+
+        DrawText(hdc, text, -1, &rcBounds, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
+        x += cx;
+    }
+}
+
+static void PtspCreateNewState(LPPTSPSTATE lpState)
+{
+    if (lpState)
+    {
+        PtspFreeMemory(lpState);
+        RestoreCtrlColors(CastToP(LPCTRLCOLORS, lpState));
+        PTSPSTATE& state = *lpState;
+        state.index = -1;
+        state.buffer = CastToP(LPWSTR, HeapAllocEx(PTSP_TEXT_BUFFER * sizeof(WCHAR)));
+
+        PZPCWSTR literals = CastToP(PZPCWSTR, HeapAllocEx(PTSP_SEGS_COUNT * sizeof(LPCWSTR)));
+        literals[PTSPPART_DAYS] = L"天";
+        literals[PTSPPART_HOURS] = L"时";
+        literals[PTSPPART_MINUTES] = L"分";
+        literals[PTSPPART_SECONDS] = L"秒";
+        state.literals = CastToP(LPPTSPSEGLIT, literals);
+
+        LPPTSPSEGNUM numerics = CastToP(LPPTSPSEGNUM, HeapAllocEx(PTSP_SEGS_COUNT * sizeof(PTSPSEGNUM)));
+        numerics[PTSPPART_DAYS] = { PTSPPART_DAYS, 0, 65535 };
+        numerics[PTSPPART_HOURS] = { PTSPPART_HOURS, 0, 23 };
+        numerics[PTSPPART_MINUTES] = { PTSPPART_MINUTES, 0, 59 };
+        numerics[PTSPPART_SECONDS] = { PTSPPART_SECONDS, 0, 59 };
+        state.numerics = numerics;
+    }
+}
+
+static void PtspScrollNumeric(PTSPSEGNUM& seg, int delta, HWND hPtsp)
+{
+    int value = seg.nValue + delta;
+    int clamped = std::clamp(value, 0, seg.nValueMax);
+    seg.nValue = clamped;
 
     if (clamped == value)
     {
@@ -95,38 +140,45 @@ static void ScrollNumeric(PTSPSEG& seg, int delta, HWND hPtsp)
     }
 }
 
-static void UpdateSegmentText(std::vector<PTSPSEG>& segs)
+static size_t PtspBuildDisplayText(LPPTSPSTATE lpState, LPWSTR buffer, size_t count)
 {
-    WCHAR buffer[PTSP_SEG_BUFFER];
-
-    for (auto& seg : segs)
-    {
-        if (seg.type == PTSPSEG_NUMERIC)
-        {
-            swprintf_s(buffer, L"%d", seg.value);
-            seg.text = buffer;
-        }
-    }
-}
-
-static void BuildDisplayText(LPPTSPSTATE lpState, std::wstring& buffer)
-{
-    buffer.clear();
-
     if (lpState)
     {
-        auto& segs = lpState->segments;
-        buffer.reserve(32);
-        UpdateSegmentText(segs);
+        PZPCWSTR literals = CastToP(PZPCWSTR, lpState->literals);
+        LPPTSPSEGNUM numerics = lpState->numerics;
 
-        for (auto& seg : segs)
+        if (buffer)
         {
-            buffer += seg.text;
+            size_t remain = count;
+
+            for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
+            {
+                HRESULT hr = StringCchPrintfExW(buffer, remain, &buffer, &remain, STRSAFE_DEFAULT, PTSP_NUMERIC_FORMAT, numerics[i].nValue);
+                if (FAILED(hr)) break;
+                hr = StringCchCopyExW(buffer, remain, literals[i], &buffer, &remain, STRSAFE_DEFAULT);
+                if (FAILED(hr)) break;
+            }
+
+            return count - remain;
+        }
+        else
+        {
+            size_t size = 0;
+
+            for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
+            {
+                size += _scwprintf(PTSP_NUMERIC_FORMAT, numerics[i].nValue);
+                size += lstrlen(literals[i]);
+            }
+
+            return size;
         }
     }
+
+    return 0;
 }
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LPPTSPSTATE lpState = CastToP(LPPTSPSTATE, GetWindowLongPtr(hWnd, NULL));
     
@@ -136,7 +188,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         {
             LPPTSPSTATE pState = CastToP(LPPTSPSTATE, HeapAllocEx(sizeof(PTSPSTATE)));
             if (!pState) return FALSE;
-            CreateNewState(pState);
+            PtspCreateNewState(pState);
             SetWindowLongPtr(hWnd, NULL, CastToP(LONG_PTR, pState));
             break;
         }
@@ -154,24 +206,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         {
             if (lpState && lParam)
             {
-                std::wstring text;
-                BuildDisplayText(lpState, text);
-
-                LPWSTR buffer = CastToP(LPWSTR, lParam);
-                size_t bufSize = CastToS(size_t, wParam);
-
-                if (bufSize != 0)
-                {
-                    size_t count = std::min<size_t>(text.length(), bufSize - 1);
-
-                    if (count > 0)
-                    {
-                        wmemcpy(buffer, text.c_str(), count);
-                    }
-
-                    buffer[count] = L'\0';
-                    return CastToS(LRESULT, count);
-                }
+                return CastToS(LRESULT, PtspBuildDisplayText(lpState, CastToP(LPWSTR, lParam), CastToS(size_t, wParam)));
             }
 
             return 0;
@@ -181,9 +216,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         {
             if (lpState)
             {
-                std::wstring text;
-                BuildDisplayText(lpState, text);
-                return CastToS(LRESULT, text.length());
+                return CastToS(LRESULT, PtspBuildDisplayText(lpState, nullptr, 0));
             }
 
             return 0;
@@ -231,29 +264,18 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 int maxcx = INT_MAX;
                 int x = GET_X_LPARAM(lParam);
 
-                for (int i = 0; i < lpState->segments.size(); i++)
+                for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
                 {
-                    auto& seg = lpState->segments[i];
-
-                    if (seg.type != PTSPSEG_NUMERIC)
-                    {
-                        continue;
-                    }
-
+                    auto& seg = lpState->numerics[i];
+                    auto& rc = seg.rcBounds;
                     int cx;
 
-                    if (x < seg.bounds.left)
-                    {
-                        cx = seg.bounds.left - x;
-                    }
-                    else if (x > seg.bounds.right)
-                    {
-                        cx = x - seg.bounds.right;
-                    }
+                    if (x < rc.left)
+                        cx = rc.left - x;
+                    else if (x > rc.right)
+                        cx = x - rc.right;
                     else
-                    {
                         cx = 0;
-                    }
 
                     if (cx < maxcx)
                     {
@@ -265,7 +287,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 if (idx >= 0)
                 {
                     lpState->index = idx;
-                    lpState->buffer.clear();
+                    PtspClearStringBuffer(lpState->buffer);
                     InvalidateRect(hWnd, nullptr, TRUE);
                 }
 
@@ -284,7 +306,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
                 if (steps != 0)
                 {
-                    ScrollNumeric(lpState->segments[lpState->index], steps, hWnd);
+                    PtspScrollNumeric(lpState->numerics[lpState->index], steps, hWnd);
                     InvalidateRect(hWnd, nullptr, TRUE);
                     return 0;
                 }
@@ -301,47 +323,40 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
                 if (c >= L'0' && c <= L'9')
                 {
-                    auto& seg = lpState->segments[lpState->index];
+                    auto& seg = lpState->numerics[lpState->index];
+                    int lenMax = _scwprintf(PTSP_NUMERIC_FORMAT, seg.nValueMax);
+                    LPWSTR buffer = lpState->buffer;
+                    int len = lstrlen(buffer);
 
-                    if (seg.type == PTSPSEG_NUMERIC)
+                    if (len < lenMax && len + 1 < PTSP_TEXT_BUFFER)
                     {
-                        WCHAR buffer[PTSP_SEG_BUFFER];
-                        swprintf_s(buffer, L"%d", seg.maxValue);
-                        size_t length = wcslen(buffer);
+                        buffer[len] = c;
+                        buffer[len + 1] = L'\0';
 
-                        auto& segBuffer = lpState->buffer;
-                        std::wstring buf = segBuffer + c;
-                        int val = _wtoi(buf.c_str());
+                        int val = _wtoi(buffer);
+                        int lenTest = len + 1;
 
-                        if (buf.length() <= length && val <= seg.maxValue)
+                        if (val <= seg.nValueMax)
                         {
-                            segBuffer = buf;
-                            seg.value = val;
+                            seg.nValue = val;
 
-                            if (segBuffer.length() >= length)
+                            if (lenTest >= lenMax)
                             {
-                                segBuffer.clear();
+                                PtspClearStringBuffer(buffer);
                                 int i = lpState->index;
-
-                                do
-                                {
-                                    i = (i + 1) % lpState->segments.size();
-                                }
-                                while (lpState->segments[i].type != PTSPSEG_NUMERIC);
-
-                                lpState->index = i;
+                                lpState->index = (i + 1) % PTSP_SEGS_COUNT;
                             }
                         }
                         else
                         {
-                            segBuffer.clear();
-                            seg.value = seg.maxValue;
+                            PtspClearStringBuffer(buffer);
+                            seg.nValue = seg.nValueMax;
                         }
-
-                        InvalidateRect(hWnd, nullptr, TRUE);
-                        NotifyValueChanged(hWnd);
-                        return 0;
                     }
+
+                    InvalidateRect(hWnd, nullptr, TRUE);
+                    NotifyValueChanged(hWnd);
+                    return 0;
                 }
             }
 
@@ -350,44 +365,40 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
         case WM_KEYDOWN:
         {
-            if (lpState && lpState->index >= 0)
+            if (lpState)
             {
                 int i = lpState->index;
-                auto& segs = lpState->segments;
-                int length = CastToS(int, segs.size());
 
-                switch (wParam)
+                if (i >= 0)
                 {
-                    case VK_RIGHT:
-                    case VK_LEFT:
-                    {
-                        lpState->buffer.clear();
+                    LPPTSPSEGNUM segs = lpState->numerics;
 
-                        do
+                    switch (wParam)
+                    {
+                        case VK_RIGHT:
+                        case VK_LEFT:
                         {
-                            i = wParam == VK_RIGHT ? ((i + 1) % length) : ((i - 1 + length) % length);
+                            PtspClearStringBuffer(lpState->buffer);
+                            lpState->index = wParam == VK_RIGHT ? ((i + 1) % PTSP_SEGS_COUNT) : ((i - 1 + PTSP_SEGS_COUNT) % PTSP_SEGS_COUNT);
+                            InvalidateRect(hWnd, nullptr, TRUE);
+                            return 0;
                         }
-                        while (segs[i].type != PTSPSEG_NUMERIC);
 
-                        lpState->index = i;
-                        InvalidateRect(hWnd, nullptr, TRUE);
-                        return 0;
-                    }
+                        case VK_UP:
+                        case VK_DOWN:
+                        {
+                            PtspClearStringBuffer(lpState->buffer);
+                            auto& seg = segs[lpState->index];
+                            int delta = (wParam == VK_UP) ? 1 : -1;
+                            PtspScrollNumeric(seg, delta, hWnd);
+                            InvalidateRect(hWnd, nullptr, TRUE);
+                            return 0;
+                        }
 
-                    case VK_UP:
-                    case VK_DOWN:
-                    {
-                        lpState->buffer.clear();
-                        auto& seg = segs[lpState->index];
-                        int delta = (wParam == VK_UP) ? 1 : -1;
-                        ScrollNumeric(seg, delta, hWnd);
-                        InvalidateRect(hWnd, nullptr, TRUE);
-                        return 0;
-                    }
-                    
-                    default:
-                    {
-                        break;
+                        default:
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -424,41 +435,25 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 HBRUSH hBorderBrush = CreateSolidBrush(crBd);
                 FrameRect(cdc, &rc, hBorderBrush);
                 DeleteObject(hBorderBrush);
-
                 HFONT fontOld = CastToP(HFONT, SelectObject(cdc, lpState->hFont));
-                UpdateSegmentText(lpState->segments);
 
                 TEXTMETRIC tm;
                 GetTextMetrics(cdc, &tm);
+                SetBkMode(cdc, TRANSPARENT);
 
                 int x = 4;
                 int y = (rc.bottom - tm.tmHeight) / 2;
 
-                for (int i = 0; i < lpState->segments.size(); i++)
+                WCHAR buffer[PTSP_TEXT_BUFFER] = {};
+
+                for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
                 {
-                    auto& seg = lpState->segments[i];
-                    LPCWSTR text = seg.text.c_str();
+                    auto& numeric = lpState->numerics[i];
+                    StringCchPrintf(buffer, PTSP_TEXT_BUFFER, PTSP_NUMERIC_FORMAT, numeric.nValue);
+                    PtspDrawText(cdc, buffer, colors, &numeric.rcBounds, x, y, enabled, lpState->index == i && GetFocus() == hWnd);
 
-                    RECT rcText = {};
-                    DrawTextW(cdc, text, -1, &rcText, DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE);
-
-                    int cx = rcText.right - rcText.left;
-                    int cy = rcText.bottom - rcText.top;
-                    seg.bounds = { x, y, x + cx, y + cy };
-
-                    if (seg.type == PTSPSEG_NUMERIC && lpState->index == i && GetFocus() == hWnd)
-                    {
-                        FillRect(cdc, &seg.bounds, GetSysColorBrush(COLOR_HIGHLIGHT));
-                        SetTextColor(cdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
-                    }
-                    else
-                    {
-                        SetTextColor(cdc, enabled ? colors->foreText : colors->foreTextDisabled);
-                    }
-
-                    SetBkMode(cdc, TRANSPARENT);
-                    DrawText(cdc, text, -1, &seg.bounds, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
-                    x += cx;
+                    PZPCWSTR literals = CastToP(PZPCWSTR, lpState->literals);
+                    PtspDrawText(cdc, literals[i], colors, nullptr, x, y, enabled, false);
                 }
 
                 BitBlt(hdc, 0, 0, rc.right, rc.bottom, cdc, 0, 0, SRCCOPY);
@@ -478,7 +473,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
         case WM_NCDESTROY:
         {
-            HeapFreeEx(lpState);
+            PtspFreeMemory(lpState);
+            HeapFreeEx(CastToP(LPVOID*, &lpState));
             SetWindowLongPtr(hWnd, GWLP_USERDATA, NULL);
             return 0;
         }
@@ -488,8 +484,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             if (lpState && lParam)
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
-                auto& segs = lpState->segments;
-                *pts = MAKETIMESPAN(segs[0].value, segs[2].value, segs[4].value, segs[6].value);
+                LPPTSPSEGNUM segs = lpState->numerics;
+
+                *pts = MAKETIMESPAN(
+                    segs[PTSPPART_DAYS].nValue,
+                    segs[PTSPPART_HOURS].nValue,
+                    segs[PTSPPART_MINUTES].nValue,
+                    segs[PTSPPART_SECONDS].nValue
+                );
             }
 
             return 0;
@@ -501,11 +503,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
                 TIMESPAN ts = std::clamp(*pts, TIMESPAN_ZERO, TIMESPAN_MAX);
-                auto& segs = lpState->segments;
-                segs[0].value = std::clamp(GET_DAYS_TIMESPAN(ts), TIMESPAN_DAYS_ZERO, segs[0].maxValue);
-                segs[2].value = GET_HOURS_TIMESPAN(ts);
-                segs[4].value = GET_MINUTES_TIMESPAN(ts);
-                segs[6].value = GET_SECONDS_TIMESPAN(ts);
+                LPPTSPSEGNUM segs = lpState->numerics;
+                segs[PTSPPART_DAYS].nValue = std::clamp(GET_DAYS_TIMESPAN(ts), TIMESPAN_DAYS_ZERO, segs[PTSPPART_DAYS].nValueMax);
+                segs[PTSPPART_HOURS].nValue = GET_HOURS_TIMESPAN(ts);
+                segs[PTSPPART_MINUTES].nValue = GET_MINUTES_TIMESPAN(ts);
+                segs[PTSPPART_SECONDS].nValue = GET_SECONDS_TIMESPAN(ts);
                 InvalidateRect(hWnd, nullptr, TRUE);
                 NotifyValueChanged(hWnd);
             }
@@ -518,7 +520,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             if (lpState && lParam)
             {
                 LPINT pl = CastToP(LPINT, lParam);
-                *pl = lpState->segments[0].maxValue;
+                *pl = lpState->numerics[PTSPPART_DAYS].nValueMax;
             }
 
             return 0;
@@ -530,7 +532,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             {
                 LPINT pl = CastToP(LPINT, lParam);
                 int value = std::clamp(*pl, TIMESPAN_DAYS_ZERO, TIMESPAN_DAYS_MAX);
-                lpState->segments[0].maxValue = value;
+                lpState->numerics[PTSPPART_DAYS].nValueMax = value;
             }
 
             return 0;
@@ -592,15 +594,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         {
             if (lpState && lpState->index >= 0 && IsWindowEnabled(hWnd))
             {
-                auto& seg = lpState->segments[lpState->index];
-
-                if (seg.type == PTSPSEG_NUMERIC)
-                {
-                    int delta = CastToS(int, wParam);
-                    ScrollNumeric(seg, delta, hWnd);
-                    lpState->buffer.clear();
-                    InvalidateRect(hWnd, nullptr, TRUE);
-                }
+                auto& seg = lpState->numerics[lpState->index];
+                int delta = CastToS(int, wParam);
+                PtspScrollNumeric(seg, delta, hWnd);
+                PtspClearStringBuffer(lpState->buffer);
+                InvalidateRect(hWnd, nullptr, TRUE);
             }
 
             return 0;
@@ -614,7 +612,7 @@ ATOM PlainTimeSpanPick_RegisterWC()
 {
     WNDCLASSEX wcx = { sizeof(wcx) };
     wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_GLOBALCLASS;
-    wcx.lpfnWndProc = WndProc;
+    wcx.lpfnWndProc = PlainTimeSpanPick_WndProc;
     wcx.cbWndExtra = sizeof(LONG_PTR);
     wcx.hInstance = GetModuleHandle(LIBRARYNAME);
     wcx.hCursor = LoadCursor(nullptr, IDC_ARROW);

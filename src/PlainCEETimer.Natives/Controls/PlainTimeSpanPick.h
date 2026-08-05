@@ -52,6 +52,7 @@ typedef struct tagCTRLCOLORS
 #define TIMESPAN_DAYS_ZERO          0
 #define TIMESPAN_DAYS_MAX           (GET_DAYS_TIMESPAN(TIMESPAN_MAX))
 
-#define PTSP_SEG_BUFFER 10
+#define PTSP_TEXT_BUFFER            10
+#define PTSP_SEGS_COUNT             4
 
 cexport(ATOM) PlainTimeSpanPick_RegisterWC();

@@ -84,9 +84,16 @@ inline LPVOID __stdcall HeapAllocEx(SIZE_T dwBytes)
     return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwBytes);
 }
 
-inline BOOL __stdcall HeapFreeEx(LPVOID lpMem)
+inline BOOL __stdcall HeapFreeEx(LPVOID* ppMem)
 {
-    return HeapFree(GetProcessHeap(), 0, lpMem);
+    if (ppMem && *ppMem)
+    {
+        BOOL result = HeapFree(GetProcessHeap(), 0, *ppMem);
+        if (result) *ppMem = nullptr;
+        return result;
+    }
+
+    return TRUE;
 }
 
 /*
