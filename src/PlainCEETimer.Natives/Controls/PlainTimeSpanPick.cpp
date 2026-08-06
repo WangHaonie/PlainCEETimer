@@ -17,27 +17,39 @@
 
 #define PTSP_NUMERIC_FORMAT         L"%d"
 
-typedef struct tagPTSPSEGLIT
+/* Fast Access Macros - begin */
+#define get_SelectedIndex()         lpState->iSelected
+#define set_SelectedIndex(value)    get_SelectedIndex() = value
+
+#define GetSegmentAt(index)         lpState->lpNumerics[index]
+#define get_SelectedSegment()       GetSegmentAt(get_SelectedIndex())
+
+#define ClearEditBuffer()           PtspClearStringBuffer(lpState->lpBufferEdit)
+
+#define Invalidate()                InvalidateRect(hWnd, nullptr, TRUE)
+/* Fast Access Macros - end */
+
+typedef struct tagPTSPLITERALSEG
 {
     LPWSTR pszText;
-} PTSPSEGLIT, *LPPTSPSEGLIT;
+} PTSPLITERALSEG, *LPPTSPLITERALSEG;
 
-typedef struct tagPTSPSEGNUM
+typedef struct tagPTSPNUMERICSEG
 {
     DWORD dwPart;
     INT nValue;
     INT nValueMax;
     RECT rcBounds;
-} PTSPSEGNUM, *LPPTSPSEGNUM;
+} PTSPNUMERICSEG, *LPPTSPNUMERICSEG;
 
 typedef struct tagPTSPSTATE
 {
-    CTRLCOLORS colors;
-    INT index;
-    LPWSTR buffer;
+    CTRLCOLORS crCtrlColors;
+    INT iSelected;
+    LPWSTR lpBufferEdit;
     HFONT hFont;
-    LPPTSPSEGLIT literals;
-    LPPTSPSEGNUM numerics;
+    LPPTSPLITERALSEG lpLiterals;
+    LPPTSPNUMERICSEG lpNumerics;
 } PTSPSTATE, *LPPTSPSTATE;
 
 static void RestoreCtrlColors(LPCTRLCOLORS colors)
@@ -64,9 +76,9 @@ static void PtspFreeMemory(LPPTSPSTATE lpState)
 {
     if (lpState)
     {
-        HEAPFREE(lpState->buffer);
-        HEAPFREE(lpState->literals);
-        HEAPFREE(lpState->numerics);
+        HEAPFREE(lpState->lpBufferEdit);
+        HEAPFREE(lpState->lpLiterals);
+        HEAPFREE(lpState->lpNumerics);
     }
 }
 
@@ -109,26 +121,26 @@ static void PtspCreateNewState(LPPTSPSTATE lpState)
         PtspFreeMemory(lpState);
         RestoreCtrlColors(CastToP(LPCTRLCOLORS, lpState));
         PTSPSTATE& state = *lpState;
-        state.index = -1;
-        state.buffer = HEAPALLOC_M(WCHAR, PTSP_TEXT_BUFFER);
+        state.iSelected = -1;
+        state.lpBufferEdit = HEAPALLOC_M(WCHAR, PTSP_EDIT_BUFFER);
 
         PZPCWSTR literals = HEAPALLOC_M(LPCWSTR, PTSP_SEGS_COUNT);
         literals[PTSPPART_DAYS] = L"天";
         literals[PTSPPART_HOURS] = L"时";
         literals[PTSPPART_MINUTES] = L"分";
         literals[PTSPPART_SECONDS] = L"秒";
-        state.literals = CastToP(LPPTSPSEGLIT, literals);
+        state.lpLiterals = CastToP(LPPTSPLITERALSEG, literals);
 
-        LPPTSPSEGNUM numerics = HEAPALLOC_M(PTSPSEGNUM, PTSP_SEGS_COUNT);
+        LPPTSPNUMERICSEG numerics = HEAPALLOC_M(PTSPNUMERICSEG, PTSP_SEGS_COUNT);
         numerics[PTSPPART_DAYS] = { PTSPPART_DAYS, 0, 65535 };
         numerics[PTSPPART_HOURS] = { PTSPPART_HOURS, 0, 23 };
         numerics[PTSPPART_MINUTES] = { PTSPPART_MINUTES, 0, 59 };
         numerics[PTSPPART_SECONDS] = { PTSPPART_SECONDS, 0, 59 };
-        state.numerics = numerics;
+        state.lpNumerics = numerics;
     }
 }
 
-static void PtspScrollNumeric(PTSPSEGNUM& seg, int delta, HWND hPtsp)
+static void PtspScrollNumeric(PTSPNUMERICSEG& seg, int delta, HWND hPtsp)
 {
     int value = seg.nValue + delta;
     int clamped = std::clamp(value, 0, seg.nValueMax);
@@ -144,8 +156,8 @@ static size_t PtspBuildDisplayText(LPPTSPSTATE lpState, LPWSTR buffer, size_t co
 {
     if (lpState)
     {
-        PZPCWSTR literals = CastToP(PZPCWSTR, lpState->literals);
-        LPPTSPSEGNUM numerics = lpState->numerics;
+        PZPCWSTR literals = CastToP(PZPCWSTR, lpState->lpLiterals);
+        LPPTSPNUMERICSEG numerics = lpState->lpNumerics;
 
         if (buffer)
         {
@@ -240,17 +252,18 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
                 if (LOWORD(lParam))
                 {
-                    InvalidateRect(hWnd, nullptr, TRUE);
+                    Invalidate();
                 }
             }
 
             return 0;
         }
 
+        case WM_ENABLE:
         case WM_SETFOCUS:
         case WM_KILLFOCUS:
         {
-            InvalidateRect(hWnd, nullptr, TRUE);
+            Invalidate();
             return 0;
         }
 
@@ -266,7 +279,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
                 for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
                 {
-                    auto& seg = lpState->numerics[i];
+                    auto& seg = GetSegmentAt(i);
                     auto& rc = seg.rcBounds;
                     int cx;
 
@@ -286,9 +299,9 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
                 if (idx >= 0)
                 {
-                    lpState->index = idx;
-                    PtspClearStringBuffer(lpState->buffer);
-                    InvalidateRect(hWnd, nullptr, TRUE);
+                    set_SelectedIndex(idx);
+                    ClearEditBuffer();
+                    Invalidate();
                 }
 
                 return 0;
@@ -299,15 +312,15 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
         
         case WM_MOUSEWHEEL:
         {
-            if (lpState && lpState->index >= 0)
+            if (lpState && get_SelectedIndex() >= 0)
             {
                 int delta = GET_WHEEL_DELTA_WPARAM(wParam);
                 int steps = (delta > 0) - (delta < 0);
 
                 if (steps != 0)
                 {
-                    PtspScrollNumeric(lpState->numerics[lpState->index], steps, hWnd);
-                    InvalidateRect(hWnd, nullptr, TRUE);
+                    PtspScrollNumeric(get_SelectedSegment(), steps, hWnd);
+                    Invalidate();
                     return 0;
                 }
             }
@@ -317,18 +330,18 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
         case WM_CHAR:
         {
-            if (lpState && lpState->index >= 0)
+            if (lpState && get_SelectedIndex() >= 0)
             {
                 WCHAR c = CastToS(WCHAR, wParam);
 
                 if (c >= L'0' && c <= L'9')
                 {
-                    auto& seg = lpState->numerics[lpState->index];
+                    auto& seg = get_SelectedSegment();
                     int lenMax = _scwprintf(PTSP_NUMERIC_FORMAT, seg.nValueMax);
-                    LPWSTR buffer = lpState->buffer;
+                    LPWSTR buffer = lpState->lpBufferEdit;
                     int len = lstrlen(buffer);
 
-                    if (len < lenMax && len + 1 < PTSP_TEXT_BUFFER)
+                    if (len < lenMax && len + 1 < PTSP_EDIT_BUFFER)
                     {
                         buffer[len] = c;
                         buffer[len + 1] = L'\0';
@@ -343,8 +356,8 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
                             if (lenTest >= lenMax)
                             {
                                 PtspClearStringBuffer(buffer);
-                                int i = lpState->index;
-                                lpState->index = (i + 1) % PTSP_SEGS_COUNT;
+                                int i = get_SelectedIndex();
+                                set_SelectedIndex((i + 1) % PTSP_SEGS_COUNT);
                             }
                         }
                         else
@@ -354,7 +367,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
                         }
                     }
 
-                    InvalidateRect(hWnd, nullptr, TRUE);
+                    Invalidate();
                     NotifyValueChanged(hWnd);
                     return 0;
                 }
@@ -367,31 +380,31 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
         {
             if (lpState)
             {
-                int i = lpState->index;
+                int i = get_SelectedIndex();
 
                 if (i >= 0)
                 {
-                    LPPTSPSEGNUM segs = lpState->numerics;
-
                     switch (wParam)
                     {
                         case VK_RIGHT:
                         case VK_LEFT:
                         {
-                            PtspClearStringBuffer(lpState->buffer);
-                            lpState->index = wParam == VK_RIGHT ? ((i + 1) % PTSP_SEGS_COUNT) : ((i - 1 + PTSP_SEGS_COUNT) % PTSP_SEGS_COUNT);
-                            InvalidateRect(hWnd, nullptr, TRUE);
+                            ClearEditBuffer();
+                            set_SelectedIndex(wParam == VK_RIGHT
+                                ? ((i + 1) % PTSP_SEGS_COUNT)
+                                : ((i - 1 + PTSP_SEGS_COUNT) % PTSP_SEGS_COUNT));
+                            Invalidate();
                             return 0;
                         }
 
                         case VK_UP:
                         case VK_DOWN:
                         {
-                            PtspClearStringBuffer(lpState->buffer);
-                            auto& seg = segs[lpState->index];
+                            ClearEditBuffer();
+                            auto& seg = get_SelectedSegment();
                             int delta = (wParam == VK_UP) ? 1 : -1;
                             PtspScrollNumeric(seg, delta, hWnd);
-                            InvalidateRect(hWnd, nullptr, TRUE);
+                            Invalidate();
                             return 0;
                         }
 
@@ -404,12 +417,6 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
             }
 
             break;
-        }
-
-        case WM_ENABLE:
-        {
-            InvalidateRect(hWnd, nullptr, TRUE);
-            return 0;
         }
 
         case WM_PAINT:
@@ -444,15 +451,15 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
                 int x = 4;
                 int y = (rc.bottom - tm.tmHeight) / 2;
 
-                WCHAR buffer[PTSP_TEXT_BUFFER] = {};
+                WCHAR buffer[PTSP_EDIT_BUFFER] = {};
 
                 for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
                 {
-                    auto& numeric = lpState->numerics[i];
-                    StringCchPrintf(buffer, PTSP_TEXT_BUFFER, PTSP_NUMERIC_FORMAT, numeric.nValue);
-                    PtspDrawText(cdc, buffer, colors, &numeric.rcBounds, x, y, enabled, lpState->index == i && GetFocus() == hWnd);
+                    auto& numeric = GetSegmentAt(i);
+                    StringCchPrintf(buffer, PTSP_EDIT_BUFFER, PTSP_NUMERIC_FORMAT, numeric.nValue);
+                    PtspDrawText(cdc, buffer, colors, &numeric.rcBounds, x, y, enabled, get_SelectedIndex() == i && GetFocus() == hWnd);
 
-                    PZPCWSTR literals = CastToP(PZPCWSTR, lpState->literals);
+                    PZPCWSTR literals = CastToP(PZPCWSTR, lpState->lpLiterals);
                     PtspDrawText(cdc, literals[i], colors, nullptr, x, y, enabled, false);
                 }
 
@@ -484,7 +491,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
             if (lpState && lParam)
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
-                LPPTSPSEGNUM segs = lpState->numerics;
+                LPPTSPNUMERICSEG segs = lpState->lpNumerics;
 
                 *pts = MAKETIMESPAN(
                     segs[PTSPPART_DAYS].nValue,
@@ -503,12 +510,12 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
                 TIMESPAN ts = std::clamp(*pts, TIMESPAN_ZERO, TIMESPAN_MAX);
-                LPPTSPSEGNUM segs = lpState->numerics;
+                LPPTSPNUMERICSEG segs = lpState->lpNumerics;
                 segs[PTSPPART_DAYS].nValue = std::clamp(GET_DAYS_TIMESPAN(ts), TIMESPAN_DAYS_ZERO, segs[PTSPPART_DAYS].nValueMax);
                 segs[PTSPPART_HOURS].nValue = GET_HOURS_TIMESPAN(ts);
                 segs[PTSPPART_MINUTES].nValue = GET_MINUTES_TIMESPAN(ts);
                 segs[PTSPPART_SECONDS].nValue = GET_SECONDS_TIMESPAN(ts);
-                InvalidateRect(hWnd, nullptr, TRUE);
+                Invalidate();
                 NotifyValueChanged(hWnd);
             }
 
@@ -520,7 +527,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
             if (lpState && lParam)
             {
                 LPINT pl = CastToP(LPINT, lParam);
-                *pl = lpState->numerics[PTSPPART_DAYS].nValueMax;
+                *pl = GetSegmentAt(PTSPPART_DAYS).nValueMax;
             }
 
             return 0;
@@ -532,7 +539,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
             {
                 LPINT pl = CastToP(LPINT, lParam);
                 int value = std::clamp(*pl, TIMESPAN_DAYS_ZERO, TIMESPAN_DAYS_MAX);
-                lpState->numerics[PTSPPART_DAYS].nValueMax = value;
+                GetSegmentAt(PTSPPART_DAYS).nValueMax = value;
             }
 
             return 0;
@@ -582,7 +589,7 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
                     if (wParam)
                     {
-                        InvalidateRect(hWnd, nullptr, TRUE);
+                        Invalidate();
                     }
                 }
             }
@@ -592,13 +599,13 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
 
         case PTSPM_INCREASE:
         {
-            if (lpState && lpState->index >= 0 && IsWindowEnabled(hWnd))
+            if (lpState && get_SelectedIndex() >= 0 && IsWindowEnabled(hWnd))
             {
-                auto& seg = lpState->numerics[lpState->index];
+                auto& seg = get_SelectedSegment();
                 int delta = CastToS(int, wParam);
                 PtspScrollNumeric(seg, delta, hWnd);
-                PtspClearStringBuffer(lpState->buffer);
-                InvalidateRect(hWnd, nullptr, TRUE);
+                ClearEditBuffer();
+                Invalidate();
             }
 
             return 0;
