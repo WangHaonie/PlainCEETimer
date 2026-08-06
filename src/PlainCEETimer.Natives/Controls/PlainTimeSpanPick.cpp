@@ -40,9 +40,8 @@ typedef struct tagPTSPLITERALSEG
 
 typedef struct tagPTSPNUMERICSEG
 {
-    DWORD dwPart;
-    INT nValue;
     INT nValueMax;
+    INT nValue;
     RECT rcBounds;
 } PTSPNUMERICSEG, *LPPTSPNUMERICSEG;
 
@@ -143,10 +142,10 @@ static void PtspCreateNewState(LPPTSPSTATE lpState)
         state.lpLiterals = literals;
 
         LPPTSPNUMERICSEG numerics = HEAPALLOC_M(PTSPNUMERICSEG, PTSP_SEGS_COUNT);
-        numerics[PTSPPART_DAYS] = { PTSPPART_DAYS, 0, 65535 };
-        numerics[PTSPPART_HOURS] = { PTSPPART_HOURS, 0, 23 };
-        numerics[PTSPPART_MINUTES] = { PTSPPART_MINUTES, 0, 59 };
-        numerics[PTSPPART_SECONDS] = { PTSPPART_SECONDS, 0, 59 };
+        numerics[PTSPPART_DAYS] = { 65535 };
+        numerics[PTSPPART_HOURS] = { 23 };
+        numerics[PTSPPART_MINUTES] = { 59 };
+        numerics[PTSPPART_SECONDS] = { 59 };
         state.lpNumerics = numerics;
     }
 }
