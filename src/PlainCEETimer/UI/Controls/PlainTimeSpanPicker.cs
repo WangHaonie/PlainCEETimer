@@ -142,6 +142,18 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         themeHelper = new(this);
     }
 
+#if DEBUG
+    private readonly bool FixWheelClicksButton;
+
+    protected override void OnMouseWheel(MouseEventArgs e)
+    {
+        if (!FixWheelClicksButton)
+        {
+            base.OnMouseWheel(e);
+        }
+    }
+#endif
+
     protected override void Dispose(bool disposing)
     {
         themeHelper.Destroy();

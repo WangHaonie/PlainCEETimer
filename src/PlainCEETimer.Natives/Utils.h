@@ -129,3 +129,29 @@ inline LPWSTR __stdcall CoTaskStrDupW(LPCWSTR str)
     StringCchCopy(ptr, count, str);
     return ptr;
 }
+
+inline int __stdcall LoadStringExW(HINSTANCE hInstance, UINT uID, LPWSTR* ppBuffer)
+{
+    if (ppBuffer)
+    {
+        return LoadString(hInstance, uID, CastToP(LPWSTR, ppBuffer), 0);
+    }
+
+    return 0;
+}
+
+inline void __stdcall SetDlgItemTextFromResW(HWND hDlg, int nIDDlgItem, LPWSTR lpResString, int cch)
+{
+    if (hDlg && cch > 0 && lpResString)
+    {
+        LPWSTR buffer = CastToP(LPWSTR, _malloca((cch + 1) * sizeof(WCHAR)));
+
+        if (buffer)
+        {
+            StringCchCopy(buffer, cch, lpResString);
+            SetDlgItemText(hDlg, nIDDlgItem, buffer);
+        }
+
+        _freea(buffer);
+    }
+}

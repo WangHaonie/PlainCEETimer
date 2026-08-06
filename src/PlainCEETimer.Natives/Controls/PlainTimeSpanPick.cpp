@@ -29,9 +29,13 @@
 #define Invalidate()                InvalidateRect(hWnd, nullptr, TRUE)
 /* Fast Access Macros - end */
 
+#define IDS_PTSP_LITERALS_START     IDS_CTRL_PTSP_DAYS
+#define IDS_PTSP_LITERALS_END       IDS_CTRL_PTSP_SECONDS
+
 typedef struct tagPTSPLITERALSEG
 {
-    LPWSTR pszText;
+    LPCWSTR pszText;
+    INT cchText;
 } PTSPLITERALSEG, *LPPTSPLITERALSEG;
 
 typedef struct tagPTSPNUMERICSEG
@@ -87,12 +91,12 @@ static void PtspClearStringBuffer(LPWSTR buffer)
     if (buffer) *buffer = L'\0';
 }
 
-static void PtspDrawText(HDC hdc, LPCWSTR text, LPCTRLCOLORS colors, LPRECT prc, int& x, int& y, bool isEnabled, bool isSelected)
+static void PtspDrawText(HDC hdc, LPCWSTR text, int cch, LPCTRLCOLORS colors, LPRECT prc, int& x, int& y, bool isEnabled, bool isSelected)
 {
     if (text && colors)
     {
         RECT rcText = {};
-        DrawText(hdc, text, -1, &rcText, DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE);
+        DrawText(hdc, text, cch, &rcText, DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE);
         int cx = rcText.right - rcText.left;
         int cy = rcText.bottom - rcText.top;
 
@@ -109,7 +113,7 @@ static void PtspDrawText(HDC hdc, LPCWSTR text, LPCTRLCOLORS colors, LPRECT prc,
             SetTextColor(hdc, isEnabled ? colors->foreText : colors->foreTextDisabled);
         }
 
-        DrawText(hdc, text, -1, &rcBounds, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
+        DrawText(hdc, text, cch, &rcBounds, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
         x += cx;
     }
 }
@@ -118,18 +122,25 @@ static void PtspCreateNewState(LPPTSPSTATE lpState)
 {
     if (lpState)
     {
+        HINSTANCE hMod = GetModuleHandleW(LIBRARYNAME);
         PtspFreeMemory(lpState);
         RestoreCtrlColors(CastToP(LPCTRLCOLORS, lpState));
         PTSPSTATE& state = *lpState;
         state.iSelected = -1;
         state.lpBufferEdit = HEAPALLOC_M(WCHAR, PTSP_EDIT_BUFFER);
 
-        PZPCWSTR literals = HEAPALLOC_M(LPCWSTR, PTSP_SEGS_COUNT);
-        literals[PTSPPART_DAYS] = L"天";
-        literals[PTSPPART_HOURS] = L"时";
-        literals[PTSPPART_MINUTES] = L"分";
-        literals[PTSPPART_SECONDS] = L"秒";
-        state.lpLiterals = CastToP(LPPTSPLITERALSEG, literals);
+        LPPTSPLITERALSEG literals = HEAPALLOC_M(PTSPLITERALSEG, PTSP_SEGS_COUNT);
+        LPWSTR buffer = nullptr;
+        LPWSTR* ppBuffer = &buffer;
+
+        for (int pos = IDS_PTSP_LITERALS_START; pos <= IDS_PTSP_LITERALS_END; ++pos)
+        {
+            PTSPLITERALSEG& lseg = literals[pos - IDS_PTSP_LITERALS_START];
+            lseg.cchText = LoadStringExW(hMod, pos, ppBuffer);
+            lseg.pszText = buffer;
+        }
+
+        state.lpLiterals = literals;
 
         LPPTSPNUMERICSEG numerics = HEAPALLOC_M(PTSPNUMERICSEG, PTSP_SEGS_COUNT);
         numerics[PTSPPART_DAYS] = { PTSPPART_DAYS, 0, 65535 };
@@ -156,7 +167,7 @@ static size_t PtspBuildDisplayText(LPPTSPSTATE lpState, LPWSTR buffer, size_t co
 {
     if (lpState)
     {
-        PZPCWSTR literals = CastToP(PZPCWSTR, lpState->lpLiterals);
+        LPPTSPLITERALSEG literals = lpState->lpLiterals;
         LPPTSPNUMERICSEG numerics = lpState->lpNumerics;
 
         if (buffer)
@@ -165,9 +176,10 @@ static size_t PtspBuildDisplayText(LPPTSPSTATE lpState, LPWSTR buffer, size_t co
 
             for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
             {
+                auto& lseg = literals[i];
                 HRESULT hr = StringCchPrintfExW(buffer, remain, &buffer, &remain, STRSAFE_DEFAULT, PTSP_NUMERIC_FORMAT, numerics[i].nValue);
                 if (FAILED(hr)) break;
-                hr = StringCchCopyExW(buffer, remain, literals[i], &buffer, &remain, STRSAFE_DEFAULT);
+                hr = StringCchCopyNExW(buffer, remain, lseg.pszText, lseg.cchText, &buffer, &remain, STRSAFE_DEFAULT);
                 if (FAILED(hr)) break;
             }
 
@@ -180,7 +192,7 @@ static size_t PtspBuildDisplayText(LPPTSPSTATE lpState, LPWSTR buffer, size_t co
             for (int i = 0; i < PTSP_SEGS_COUNT; ++i)
             {
                 size += _scwprintf(PTSP_NUMERIC_FORMAT, numerics[i].nValue);
-                size += lstrlen(literals[i]);
+                size += literals[i].cchText;
             }
 
             return size;
@@ -340,20 +352,20 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
                     int lenMax = _scwprintf(PTSP_NUMERIC_FORMAT, seg.nValueMax);
                     LPWSTR buffer = lpState->lpBufferEdit;
                     int len = lstrlen(buffer);
+                    int lenLast = len + 1;
 
-                    if (len < lenMax && len + 1 < PTSP_EDIT_BUFFER)
+                    if (len < lenMax && lenLast < PTSP_EDIT_BUFFER)
                     {
                         buffer[len] = c;
-                        buffer[len + 1] = L'\0';
+                        buffer[lenLast] = L'\0';
 
                         int val = _wtoi(buffer);
-                        int lenTest = len + 1;
 
                         if (val <= seg.nValueMax)
                         {
                             seg.nValue = val;
 
-                            if (lenTest >= lenMax)
+                            if (lenLast >= lenMax)
                             {
                                 PtspClearStringBuffer(buffer);
                                 int i = get_SelectedIndex();
@@ -457,10 +469,10 @@ static LRESULT CALLBACK PlainTimeSpanPick_WndProc(HWND hWnd, UINT message, WPARA
                 {
                     auto& numeric = GetSegmentAt(i);
                     StringCchPrintf(buffer, PTSP_EDIT_BUFFER, PTSP_NUMERIC_FORMAT, numeric.nValue);
-                    PtspDrawText(cdc, buffer, colors, &numeric.rcBounds, x, y, enabled, get_SelectedIndex() == i && GetFocus() == hWnd);
+                    PtspDrawText(cdc, buffer, -1, colors, &numeric.rcBounds, x, y, enabled, get_SelectedIndex() == i && GetFocus() == hWnd);
 
-                    PZPCWSTR literals = CastToP(PZPCWSTR, lpState->lpLiterals);
-                    PtspDrawText(cdc, literals[i], colors, nullptr, x, y, enabled, false);
+                    auto& literal = lpState->lpLiterals[i];
+                    PtspDrawText(cdc, literal.pszText, literal.cchText, colors, nullptr, x, y, enabled, false);
                 }
 
                 BitBlt(hdc, 0, 0, rc.right, rc.bottom, cdc, 0, 0, SRCCOPY);
