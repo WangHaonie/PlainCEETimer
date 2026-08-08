@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
@@ -104,9 +105,9 @@
     <ClInclude Include="Win32\MemoryCleaner.h" />
     <ClInclude Include="Win32\User.h" />
     <ClInclude Include="Win32\Win32.h" />
-    <ClInclude Include="Controls\PlainTimeSpanPick.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -122,7 +123,6 @@
     <ClCompile Include="Win32\MemoryCleaner.cpp" />
     <ClCompile Include="Win32\User.cpp" />
     <ClCompile Include="Win32\Win32.cpp" />
-    <ClCompile Include="Controls\PlainTimeSpanPick.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PlainCEETimer.Natives.rc" />

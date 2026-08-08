@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{297718e0-8e08-40ee-99a8-fbb6d8e5fc1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\PlainTimeSpanPick">
+      <UniqueIdentifier>{9ec69e38-3c66-4c18-9ffa-d1deef6db070}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -63,8 +69,8 @@
     <ClInclude Include="Win32\Win32.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\PlainTimeSpanPick.h">
-      <Filter>Headers</Filter>
+    <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.h">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +110,8 @@
     <ClCompile Include="Win32\Win32.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Controls\PlainTimeSpanPick.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.cpp">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

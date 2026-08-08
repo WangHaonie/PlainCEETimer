@@ -9,6 +9,9 @@
 #define HEAPALLOC_M(type, count)    CastToP(type*, HeapAllocEx(count * sizeof(type)))
 #define HEAPFREE(lpMem)             HeapFreeEx(CastToP(LPVOID*, &lpMem))
 
+#define HEAPDUPSTRW(str)            StringCchCopyToHeapW(str, -1)
+#define HEAPDUPSTRNW(str, cch)      StringCchCopyToHeapW(str, cch + 1)
+
 inline bool __cdecl String_IsNullOrEmpty(const char* str) noexcept
 {
     return !str || !*str;
@@ -99,6 +102,36 @@ inline BOOL __stdcall HeapFreeEx(LPVOID* ppMem)
     }
 
     return TRUE;
+}
+
+inline LPWSTR __stdcall StringCchCopyToHeapW(LPCWSTR lpString, size_t cchString)
+{
+    if (!WString_IsNullOrEmpty(lpString))
+    {
+        if (cchString < 0)
+        {
+            cchString = lstrlen(lpString) + 1;
+        }
+
+        if (cchString)
+        {
+            LPWSTR buffer = HEAPALLOC_M(WCHAR, cchString);
+
+            if (buffer)
+            {
+                HRESULT hr = StringCchCopyN(buffer, cchString, lpString, cchString);
+
+                if (FAILED(hr))
+                {
+                    HEAPFREE(buffer);
+                }
+
+                return buffer;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 /*
