@@ -253,6 +253,14 @@ internal static class Win32UI
         return SendMessage(hWnd, msg, wParam, (nint)lParam);
     }
 
+    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, string lParam)
+    {
+        fixed (char* ptr = lParam)
+        {
+            return SendMessage(hWnd, msg, wParam, ptr);
+        }
+    }
+
     public static void MakeCenter(Rectangle target, Rectangle parent, out Rectangle targetNew)
     {
         var screen = Screen.GetWorkingArea(target);

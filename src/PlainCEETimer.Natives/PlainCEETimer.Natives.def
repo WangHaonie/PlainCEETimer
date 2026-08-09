@@ -63,3 +63,5 @@ EXPORTS
     ComctlUnhookOpenTheme @49 NONAME
     ComdlgHookGetSysColorBrush @50 NONAME
     ComdlgUnhookGetSysColorBrush @51 NONAME
+
+    PlainTimeSpanPick_ValidateFormat @52 NONAME

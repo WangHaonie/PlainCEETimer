@@ -72,6 +72,12 @@
     <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.h">
       <Filter>Controls\PlainTimeSpanPick</Filter>
     </ClInclude>
+    <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.Core.h">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.h">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -111,6 +117,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.cpp">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.Core.cpp">
+      <Filter>Controls\PlainTimeSpanPick</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.cpp">
       <Filter>Controls\PlainTimeSpanPick</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,32 +14,6 @@ namespace PlainCEETimer.UI.Controls;
 [DebuggerDisplay("{Text}")]
 public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 {
-    public unsafe int MaxDays
-    {
-        get
-        {
-            if (IsHandleCreated)
-            {
-                fixed (int* ptr = &m_maxdays)
-                {
-                    Win32UI.SendMessage(Handle, PTSPM_GETDAYSMAX, 0, ptr);
-                }
-            }
-
-            return m_maxdays;
-        }
-
-        set
-        {
-            m_maxdays = value;
-
-            if (IsHandleCreated)
-            {
-                SetMaxDays();
-            }
-        }
-    }
-
     public unsafe TimeSpan Value
     {
         get
@@ -66,6 +40,47 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         }
     }
 
+    public unsafe TimeSpan MaxValue
+    {
+        get
+        {
+            if (IsHandleCreated)
+            {
+                fixed (long* ptr = &maxValue)
+                {
+                    Win32UI.SendMessage(Handle, PTSPM_GETMAXVALUE, 0, ptr);
+                }
+            }
+
+            return new(maxValue);
+        }
+
+        set
+        {
+            maxValue = value.Ticks;
+
+            if (IsHandleCreated)
+            {
+                SetMaxValue();
+            }
+        }
+    }
+
+    public string CustomFormat
+    {
+        get => format;
+
+        set
+        {
+            format = value;
+
+            if (IsHandleCreated)
+            {
+                SetFormat();
+            }
+        }
+    }
+
     protected override CreateParams CreateParams
     {
         get
@@ -87,18 +102,20 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     public event EventHandler ValueChanged;
 
     private long m_ticks;
-    private int m_maxdays = 65535;
+    private long maxValue = new TimeSpan(65535, 23, 59, 59).Ticks;
+    private string format = "d天h时m分s秒";
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;
     private readonly ControlInternals internals;
 
-    private const int PTSPM_GETVALUE = WinUser.WM_USER + 0x0010;
-    private const int PTSPM_SETVALUE = WinUser.WM_USER + 0x0011;
-    private const int PTSPM_GETDAYSMAX = WinUser.WM_USER + 0x0012;
-    private const int PTSPM_SETDAYSMAX = WinUser.WM_USER + 0x0013;
-    private const int PTSPM_OVERRIDECOLORS = WinUser.WM_USER + 0x0014;
-    private const int PTSPM_INCREASE = WinUser.WM_USER + 0x0015;
+    private const int PTSPM_SETFORMAT = WinUser.WM_USER + 0x111;
+    private const int PTSPM_GETVALUE = WinUser.WM_USER + 0x112;
+    private const int PTSPM_SETVALUE = WinUser.WM_USER + 0x113;
+    private const int PTSPM_GETMAXVALUE = WinUser.WM_USER + 0x114;
+    private const int PTSPM_SETMAXVALUE = WinUser.WM_USER + 0x115;
+    private const int PTSPM_OVERRIDECOLORS = WinUser.WM_USER + 0x116;
+    private const int PTSPM_INCREASE = WinUser.WM_USER + 0x117;
     private const int PTSPN_VALUECHANGE = 1;
     private const int PTSPCOLOR_BACKTEXT = 0;
     private const int PTSPCOLOR_FORETEXT = 1;
@@ -137,7 +154,8 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     {
         Controls[1].Visible = false;
         base.OnHandleCreated(e);
-        SetMaxDays();
+        SetFormat();
+        SetMaxValue();
         SetValue();
         themeHelper = new(this);
     }
@@ -173,19 +191,27 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         base.WndProc(ref m);
     }
 
-    private unsafe void SetMaxDays()
-    {
-        fixed (int* ptr = &m_maxdays)
-        {
-            Win32UI.SendMessage(Handle, PTSPM_SETDAYSMAX, 0, ptr);
-        }
-    }
-
     private unsafe void SetValue()
     {
         fixed (long* ptr = &m_ticks)
         {
             Win32UI.SendMessage(Handle, PTSPM_SETVALUE, 0, ptr);
+        }
+    }
+
+    private unsafe void SetMaxValue()
+    {
+        fixed (long* ptr = &maxValue)
+        {
+            Win32UI.SendMessage(Handle, PTSPM_SETMAXVALUE, 0, ptr);
+        }
+    }
+
+    private void SetFormat()
+    {
+        if (!string.IsNullOrWhiteSpace(format))
+        {
+            Win32UI.SendMessage(Handle, PTSPM_SETFORMAT, 0, format);
         }
     }
 

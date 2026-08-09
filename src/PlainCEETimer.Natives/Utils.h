@@ -12,10 +12,10 @@
 #define HEAPDUPSTRW(str)            StringCchCopyToHeapW(str, -1)
 #define HEAPDUPSTRNW(str, cch)      StringCchCopyToHeapW(str, cch + 1)
 
-inline bool __cdecl String_IsNullOrEmpty(const char* str) noexcept
-{
-    return !str || !*str;
-}
+#define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
+
+#define String_IsNullOrEmpty(str)   (!str || !*str)
+#define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
 
 inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {
@@ -35,11 +35,6 @@ inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgno
     }
 
     return strcmp(strA, strB) == 0;
-}
-
-inline bool __cdecl WString_IsNullOrEmpty(const wchar_t* str) noexcept
-{
-    return !str || !*str;
 }
 
 inline bool __cdecl WString_StartsWith(const wchar_t* strA, const wchar_t* strB)

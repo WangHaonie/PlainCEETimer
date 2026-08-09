@@ -11,4 +11,7 @@ internal static class Win32Controls
 
     [DllImport(App.NativesDll, EntryPoint = "#47", CharSet = CharSet.Unicode)]
     public static extern ushort PlainTimeSpanPick_RegisterWC();
+
+    [DllImport(App.NativesDll, EntryPoint = "#52", CharSet = CharSet.Unicode)]
+    public static extern bool PlainTimeSpanPick_ValidateFormat(string pszFormat);
 }
