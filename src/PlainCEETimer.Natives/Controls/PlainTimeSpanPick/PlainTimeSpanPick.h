@@ -46,7 +46,7 @@ typedef struct tagPTSPSEGMENT
     LONGLONG nValue;
     LONGLONG nValueMax;
     RECT rcBounds;
-} PTSPSEGMENT, * LPPTSPSEGMENT;
+} PTSPSEGMENT, *LPPTSPSEGMENT;
 
 typedef struct PTSPFORMAT_PARSE_RESULT
 {
@@ -79,9 +79,6 @@ typedef struct PTSPFORMAT_PARSE_RESULT
 
 #define PTSP_EDIT_BUFFER            14
 #define PTSP_NUM_SEGS_COUNT         4
-
-NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();
-NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat);
 
 class PlainTimeSpanPick
 {
@@ -127,3 +124,6 @@ private:
     static BOOL ParseFormat(LPCNZWSTR lpFormat, PTSPFORMAT_PARSE_RESULT* pResult);
     static void RestoreCtrlColors(LPCTRLCOLORS lpColors);
 };
+
+NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat);

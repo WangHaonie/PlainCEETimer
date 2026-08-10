@@ -5,12 +5,12 @@
 
 void PlainTimeSpanPick::RestoreCtrlColors(LPCTRLCOLORS lpColors)
 {
-	if (lpColors)
-	{
-		lpColors->backText = GetSysColor(COLOR_WINDOW);
-		lpColors->foreText = GetSysColor(COLOR_WINDOWTEXT);
-		lpColors->foreTextDisabled = GetSysColor(COLOR_GRAYTEXT);
-	}
+    if (lpColors)
+    {
+        lpColors->backText = GetSysColor(COLOR_WINDOW);
+        lpColors->foreText = GetSysColor(COLOR_WINDOWTEXT);
+        lpColors->foreTextDisabled = GetSysColor(COLOR_GRAYTEXT);
+    }
 }
 
 size_t PlainTimeSpanPick::BuildDisplayText(LPWSTR buffer, size_t count)
@@ -252,7 +252,6 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             break;
         }
 
-
         case WM_MOUSEWHEEL:
         {
             if (get_SelectedIndex() >= 0)
@@ -335,7 +334,6 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
         case WM_KEYDOWN:
         {
-
             INT i = get_SelectedIndex();
 
             if (i >= 0)
@@ -510,33 +508,19 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
                 switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
                 {
                     case PTSPCOLOR_RESTORE:
-                    {
                         RestoreCtrlColors(colors);
                         break;
-                    }
-
                     case PTSPCOLOR_BACKTEXT:
-                    {
                         colors->backText = color;
                         break;
-                    }
-
                     case PTSPCOLOR_FORETEXT:
-                    {
                         colors->foreText = color;
                         break;
-                    }
-
                     case PTSPCOLOR_FORETEXTDISABLED:
-                    {
                         colors->foreTextDisabled = color;
                         break;
-                    }
-
                     default:
-                    {
                         return 0;
-                    }
                 }
 
                 if (wParam)

@@ -322,6 +322,7 @@ LONGLONG PlainTimeSpanPick::GetTicksByPart(DWORD part)
 
     return 0LL;
 }
+
 void PlainTimeSpanPick::UpdateSegmentValue(TIMESPAN tsValue)
 {
     TIMESPAN ts = std::clamp(tsValue, TIMESPAN_ZERO, m_tsValueMax);
