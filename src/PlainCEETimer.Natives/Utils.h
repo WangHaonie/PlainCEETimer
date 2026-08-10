@@ -14,6 +14,8 @@
 
 #define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
 
+#define CASE(val, ret)              case val: return ret
+
 #define String_IsNullOrEmpty(str)   (!str || !*str)
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
 

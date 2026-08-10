@@ -310,14 +310,10 @@ LONGLONG PlainTimeSpanPick::GetTicksByPart(DWORD part)
 {
     switch (part)
     {
-        case PTSPSEG_DAYS:
-            return TICKS_PER_DAY;
-        case PTSPSEG_HOURS:
-            return TICKS_PER_HOUR;
-        case PTSPSEG_MINUTES:
-            return TICKS_PER_MINUTE;
-        case PTSPSEG_SECONDS:
-            return TICKS_PER_SECOND;
+        CASE(PTSPSEG_DAYS, TICKS_PER_DAY);
+        CASE(PTSPSEG_HOURS, TICKS_PER_HOUR);
+        CASE(PTSPSEG_MINUTES, TICKS_PER_MINUTE);
+        CASE(PTSPSEG_SECONDS, TICKS_PER_SECOND);
     }
 
     return 0LL;
@@ -355,51 +351,32 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
         LONGLONG remain = m_tsValueMax;
         if (remain < 0) remain = 0;
 
-        INT prevIndex = -1;
-
-        for (INT i = 0; i < m_cSegments; ++i)
+        for (DWORD part = PTSPSEG_NUM_MIN; part <= PTSPSEG_NUM_MAX; ++part)
         {
-            LPPTSPSEGMENT seg = &GetSegmentAt(i);
-
-            if (IsNumericPart(seg->dwType))
+            LPPTSPSEGMENT seg = FindSegmentByPart(part);
+            LONGLONG ticks = GetTicksByPart(part);
+            
+            if (ticks > 0)
             {
-                LONGLONG ticks = GetTicksByPart(seg->dwType);
-
-                if (ticks <= 0)
-                {
-                    seg->nValue = 0;
-                    seg->nValueMax = 0;
-                    prevIndex = i;
-                    continue;
-                }
-
-                LONGLONG nMax = GetNaturalMax(i, prevIndex);
+                LONGLONG nMax = GetNaturalMax(part);
                 LONGLONG eMax = remain / ticks;
                 seg->nValueMax = std::clamp(eMax, 0LL, nMax);
                 seg->nValue = std::clamp(seg->nValue, 0LL, seg->nValueMax);
                 remain -= seg->nValue * ticks;
                 if (remain < 0) remain = 0;
-                prevIndex = i;
             }
         }
     }
 }
 
-LONGLONG PlainTimeSpanPick::GetNaturalMax(INT index, INT prevIndex)
+LONGLONG PlainTimeSpanPick::GetNaturalMax(DWORD part) const
 {
-    if (m_lpSegments && index >= 0 && index < m_cSegments)
+    switch (part)
     {
-        LPPTSPSEGMENT seg = &GetSegmentAt(index);
-        LONGLONG ticks = GetTicksByPart(seg->dwType);
-
-        if (ticks <= 0) return 0LL;
-        if (prevIndex < 0) return m_tsValueMax / ticks;
-
-        LPPTSPSEGMENT prevSeg = &GetSegmentAt(prevIndex);
-        LONGLONG prevTicks = GetTicksByPart(prevSeg->dwType);
-
-        if (prevTicks <= ticks) return 0LL;
-        return (prevTicks / ticks) - 1;
+        CASE(PTSPSEG_DAYS, m_tsValueMax / TICKS_PER_DAY);
+        CASE(PTSPSEG_HOURS, 23);
+        CASE(PTSPSEG_MINUTES, 59);
+        CASE(PTSPSEG_SECONDS, 59);
     }
 
     return 0LL;

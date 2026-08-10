@@ -111,7 +111,7 @@ private:
     void NotifyValueChanged() const;
     INT FindNextNumericPart(INT start, int step) const;
     LPPTSPSEGMENT FindSegmentByPart(DWORD part);
-    LONGLONG GetNaturalMax(INT index, INT prevIndex);
+    LONGLONG GetNaturalMax(DWORD part) const;
     size_t BuildDisplayText(LPWSTR buffer, size_t count);
     LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
