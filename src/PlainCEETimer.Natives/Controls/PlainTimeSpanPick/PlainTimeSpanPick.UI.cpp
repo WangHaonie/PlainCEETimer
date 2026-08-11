@@ -13,19 +13,22 @@ void PlainTimeSpanPick::RestoreCtrlColors(LPCTRLCOLORS lpColors)
     }
 }
 
-size_t PlainTimeSpanPick::BuildDisplayText(LPWSTR buffer, size_t count)
+size_t PlainTimeSpanPick::BuildDisplayText(LPWSTR buffer, size_t count) const
 {
-    LPPTSPSEGMENT segments = m_lpSegments;
+    return BuildDisplayTextInternal(m_lpSegments, m_cSegments, buffer, count);
+}
 
-    if (segments)
+size_t PlainTimeSpanPick::BuildDisplayTextInternal(LPPTSPSEGMENT lpSegments, INT cSegments, LPWSTR buffer, size_t count)
+{
+    if (lpSegments)
     {
         if (buffer)
         {
             size_t remain = count;
 
-            for (int i = 0; i < m_cSegments; ++i)
+            for (int i = 0; i < cSegments; ++i)
             {
-                auto& seg = GetSegmentAt(i);
+                auto& seg = lpSegments[i];
 
                 if (IsNumericPart(seg.dwType))
                 {
@@ -45,9 +48,9 @@ size_t PlainTimeSpanPick::BuildDisplayText(LPWSTR buffer, size_t count)
         {
             size_t length = 0;
 
-            for (int i = 0; i < m_cSegments; ++i)
+            for (int i = 0; i < cSegments; ++i)
             {
-                auto& seg = GetSegmentAt(i);
+                auto& seg = lpSegments[i];
 
                 if (IsNumericPart(seg.dwType))
                 {

@@ -51,3 +51,18 @@ BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat)
 {
     return PlainTimeSpanPick::ValidateFormat(pszFormat);
 }
+
+HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat)
+{
+    return PlainTimeSpanPick::CreateFormat(pszFormat);
+}
+
+BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer)
+{
+    return PlainTimeSpanPick::Format(hFormat, lptsValue, lpBuffer, lpcchBuffer);
+}
+
+BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat)
+{
+    return PlainTimeSpanPick::FreeFormatMemory(hFormat);
+}

@@ -85,6 +85,9 @@ class PlainTimeSpanPick
 public:
 
     static BOOL ValidateFormat(LPCWSTR pszFormat);
+    static HANDLE CreateFormat(LPCWSTR pszFormat);
+    static BOOL Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
+    static BOOL FreeFormatMemory(HANDLE hFormat);
     static LRESULT CALLBACK s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
@@ -110,9 +113,8 @@ private:
     void ScrollNumeric(PTSPSEGMENT& seg, int delta);
     void NotifyValueChanged() const;
     INT FindNextNumericPart(INT start, int step) const;
-    LPPTSPSEGMENT FindSegmentByPart(DWORD part);
-    LONGLONG GetNaturalMax(DWORD part) const;
-    size_t BuildDisplayText(LPWSTR buffer, size_t count);
+    LPPTSPSEGMENT FindSegmentByPart(DWORD part) const;
+    size_t BuildDisplayText(LPWSTR buffer, size_t count) const;
     LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     static void CreateCNZWStr(CNZWSTR& snz, LPCWSTR psz);
@@ -123,7 +125,14 @@ private:
     static void LoadFormat(CNZWSTR& snzFormat, LPCWSTR pszFormat);
     static BOOL ParseFormat(LPCNZWSTR lpFormat, PTSPFORMAT_PARSE_RESULT* pResult);
     static void RestoreCtrlColors(LPCTRLCOLORS lpColors);
+    static LONGLONG GetNaturalMax(DWORD part, TIMESPAN tsMax);
+    static LPPTSPSEGMENT FindSegmentByPartInternal(LPPTSPSEGMENT lpSegments, INT cSegments, DWORD part);
+    static void ApplySegmentValue(LPPTSPSEGMENT lpSegments, INT cSegments, TIMESPAN tsValue);
+    static size_t BuildDisplayTextInternal(LPPTSPSEGMENT lpSegments, INT cSegments, LPWSTR buffer, size_t count);
 };
 
 NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat);
+NATIVES_EXPORT HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat);
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat);

@@ -65,3 +65,6 @@ EXPORTS
     ComdlgUnhookGetSysColorBrush @51 NONAME
 
     PlainTimeSpanPick_ValidateFormat @52 NONAME
+    PlainTimeSpanPick_ParseFormat @53 NONAME
+    PlainTimeSpanPick_Format @54 NONAME
+    PlainTimeSpanPick_FreeMemory @55 NONAME

@@ -4,6 +4,14 @@
 #include "PlainTimeSpanPick.UI.h"
 #include <algorithm>
 
+typedef struct tagPTSPFORMAT
+{
+    LPWSTR lpLiterals;
+    LPPTSPSEGMENT lpSegments;
+    INT cchLiterals;
+    INT cSegments;
+} PTSPFORMAT, *LPPTSPFORMAT;
+
 void PlainTimeSpanPick::CreateCNZWStr(CNZWSTR& snz, LPCWSTR psz)
 {
     snz.cchString = lstrlen(psz);
@@ -17,7 +25,7 @@ BOOL PlainTimeSpanPick::SetFormat(LPCWSTR pszFormat)
     LPCNZWSTR lpFormat = &str;
     PTSPFORMAT_PARSE_RESULT result;
 
-    if (ParseFormat(lpFormat, &result))
+    if (ParseFormat(lpFormat, &result) && result.cSegments > 0)
     {
         size_t cchBufferLiteral = result.cchLiterals + result.cLiterals;
 
@@ -38,11 +46,9 @@ BOOL PlainTimeSpanPick::SetFormat(LPCWSTR pszFormat)
                 UpdateSegmentValue(m_tsValue);
                 return TRUE;
             }
-            else
-            {
-                HEAPFREE(segments);
-                HEAPFREE(literals);
-            }
+
+            HEAPFREE(segments);
+            HEAPFREE(literals);
         }
     }
 
@@ -53,8 +59,14 @@ void PlainTimeSpanPick::LoadFormat(CNZWSTR& snzFormat, LPCWSTR pszFormat)
 {
     if (WString_IsNullOrEmpty(pszFormat))
     {
-        LPWSTR res = nullptr;
-        int cch = LoadStringExW(GetModuleHandleW(LIBRARYNAME), IDS_CTRL_PTSP_FORMAT, &res);
+        static LPWSTR res = nullptr;
+        static int cch = 0;
+
+        if (!res || !cch)
+        {
+            cch = LoadStringExW(GetModuleHandleW(LIBRARYNAME), IDS_CTRL_PTSP_FORMAT, &res);
+        }
+
         LPWSTR pBuffer = res;
 
         if (cch > 0 && pBuffer)
@@ -322,23 +334,11 @@ LONGLONG PlainTimeSpanPick::GetTicksByPart(DWORD part)
 void PlainTimeSpanPick::UpdateSegmentValue(TIMESPAN tsValue)
 {
     TIMESPAN ts = std::clamp(tsValue, TIMESPAN_ZERO, m_tsValueMax);
-    LONGLONG remain = ts;
     m_tsValue = ts;
 
     if (m_lpSegments)
     {
-        for (DWORD part = PTSPSEG_NUM_MIN; part <= PTSPSEG_NUM_MAX; ++part)
-        {
-            LPPTSPSEGMENT seg = FindSegmentByPart(part);
-
-            if (seg)
-            {
-                LONGLONG ticks = GetTicksByPart(part);
-                seg->nValue = remain / ticks;
-                remain %= ticks;
-            }
-        }
-
+        ApplySegmentValue(m_lpSegments, m_cSegments, ts);
         UpdateSegmentMaxValue();
         UpdateValue();
     }
@@ -358,7 +358,7 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
             
             if (ticks > 0)
             {
-                LONGLONG nMax = GetNaturalMax(part);
+                LONGLONG nMax = GetNaturalMax(part, m_tsValueMax);
                 LONGLONG eMax = remain / ticks;
                 seg->nValueMax = std::clamp(eMax, 0LL, nMax);
                 seg->nValue = std::clamp(seg->nValue, 0LL, seg->nValueMax);
@@ -369,11 +369,11 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
     }
 }
 
-LONGLONG PlainTimeSpanPick::GetNaturalMax(DWORD part) const
+LONGLONG PlainTimeSpanPick::GetNaturalMax(DWORD part, TIMESPAN tsMax)
 {
     switch (part)
     {
-        CASE(PTSPSEG_DAYS, m_tsValueMax / TICKS_PER_DAY);
+        CASE(PTSPSEG_DAYS, tsMax / TICKS_PER_DAY);
         CASE(PTSPSEG_HOURS, 23);
         CASE(PTSPSEG_MINUTES, 59);
         CASE(PTSPSEG_SECONDS, 59);
@@ -408,13 +408,38 @@ void PlainTimeSpanPick::UpdateMaxValue(TIMESPAN tsMax)
     UpdateSegmentValue(m_tsValue);
 }
 
-LPPTSPSEGMENT PlainTimeSpanPick::FindSegmentByPart(DWORD part)
+void PlainTimeSpanPick::ApplySegmentValue(LPPTSPSEGMENT lpSegments, INT cSegments, TIMESPAN tsValue)
 {
-    if (m_lpSegments)
+    if (lpSegments)
     {
-        for (int i = 0; i < m_cSegments; ++i)
+        LONGLONG remain = tsValue;
+
+        for (DWORD part = PTSPSEG_NUM_MIN; part <= PTSPSEG_NUM_MAX; ++part)
         {
-            LPPTSPSEGMENT current = &GetSegmentAt(i);
+            LPPTSPSEGMENT seg = FindSegmentByPartInternal(lpSegments, cSegments, part);
+
+            if (seg)
+            {
+                LONGLONG ticks = GetTicksByPart(part);
+                seg->nValue = remain / ticks;
+                remain %= ticks;
+            }
+        }
+    }
+}
+
+LPPTSPSEGMENT PlainTimeSpanPick::FindSegmentByPart(DWORD part) const
+{
+    return FindSegmentByPartInternal(m_lpSegments, m_cSegments, part);
+}
+
+LPPTSPSEGMENT PlainTimeSpanPick::FindSegmentByPartInternal(LPPTSPSEGMENT lpSegments, INT cSegments, DWORD part)
+{
+    if (lpSegments)
+    {
+        for (int i = 0; i < cSegments; ++i)
+        {
+            LPPTSPSEGMENT current = &lpSegments[i];
 
             if (current->dwType == part)
             {
@@ -424,4 +449,81 @@ LPPTSPSEGMENT PlainTimeSpanPick::FindSegmentByPart(DWORD part)
     }
 
     return nullptr;
+}
+
+HANDLE PlainTimeSpanPick::CreateFormat(LPCWSTR pszFormat)
+{
+    CNZWSTR format = {};
+    LoadFormat(format, pszFormat);
+    PTSPFORMAT_PARSE_RESULT result;
+
+    if (ParseFormat(&format, &result) && result.cSegments > 0)
+    {
+        size_t cchBufferLiterals = result.cchLiterals + result.cLiterals;
+
+        if (cchBufferLiterals)
+        {
+            INT cSegments = result.cSegments;
+            LPWSTR literals = HEAPALLOC_M(WCHAR, cchBufferLiterals);
+            LPPTSPSEGMENT segments = HEAPALLOC_M(PTSPSEGMENT, cSegments);
+
+            if (literals && segments
+                && CreateSegments(&format, literals, cchBufferLiterals, segments, cSegments))
+            {
+                LPPTSPFORMAT lpFormat = HEAPALLOC(PTSPFORMAT);
+
+                if (lpFormat)
+                {
+                    lpFormat->lpLiterals = literals;
+                    lpFormat->lpSegments = segments;
+                    lpFormat->cchLiterals = cchBufferLiterals;
+                    lpFormat->cSegments = cSegments;
+                    return CastToP(HANDLE, lpFormat);
+                }
+            }
+
+            HEAPFREE(literals);
+            HEAPFREE(segments);
+        }
+    }
+
+    return nullptr;
+}
+
+BOOL PlainTimeSpanPick::Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer)
+{
+    LPPTSPFORMAT lpFormat = CastToP(LPPTSPFORMAT, hFormat);
+
+    if (lpFormat)
+    {
+        TIMESPAN ts = std::clamp(*lptsValue, TIMESPAN_ZERO, TIMESPAN_MAX);
+        ApplySegmentValue(lpFormat->lpSegments, lpFormat->cSegments, ts);
+
+        if (lpcchBuffer)
+        {
+            size_t count = BuildDisplayTextInternal(lpFormat->lpSegments, lpFormat->cSegments, lpBuffer, *lpcchBuffer);
+
+            if (!lpBuffer)
+            {
+                *lpcchBuffer = CastToS(INT, count);
+            }
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+BOOL PlainTimeSpanPick::FreeFormatMemory(HANDLE hFormat)
+{
+    LPPTSPFORMAT lpFormat = CastToP(LPPTSPFORMAT, hFormat);
+
+    if (lpFormat
+        && HEAPFREE(lpFormat->lpLiterals) && HEAPFREE(lpFormat->lpSegments) && HEAPFREE(lpFormat))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
