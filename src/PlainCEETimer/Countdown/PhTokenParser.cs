@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Countdown;
 
 public static class PhTokenParser
 {
-    private static readonly Dictionary<string, ReadOnlyCollection<PhParsedToken>> _cache = new(StringComparer.Ordinal);
+    private static readonly Dictionary<StringHashCodeProvider, ReadOnlyCollection<PhParsedToken>> _cache
+        = new(StringHashCodeProvider.OrdinalComparer);
 
     public static ReadOnlyCollection<PhParsedToken> Parse(string format)
     {

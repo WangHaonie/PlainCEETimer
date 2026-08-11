@@ -1,12 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PlainCEETimer.Modules;
 
-public readonly struct StringHashCodeProvider(string s) : IEquatable<StringHashCodeProvider>
+[DebuggerDisplay("{_value}")]
+public readonly struct StringHashCodeProvider : IEquatable<StringHashCodeProvider>
 {
-    public string Value => s;
+    private class StringOrdinalComparer : IEqualityComparer<StringHashCodeProvider>
+    {
+        public bool Equals(StringHashCodeProvider x, StringHashCodeProvider y)
+        {
+            return x._value == y._value;
+        }
 
-    private readonly int _hashCode = (s ?? string.Empty).GetHashCode();
+        public int GetHashCode(StringHashCodeProvider obj)
+        {
+            return obj._hashCode;
+        }
+    }
+
+    public string Value => _value;
+
+    public static IEqualityComparer<StringHashCodeProvider> OrdinalComparer => field ??= new StringOrdinalComparer();
+
+    private readonly string _value;
+    private readonly int _hashCode;
+
+    public StringHashCodeProvider(string s)
+    {
+        _value = s ?? string.Empty;
+        _hashCode = _value.GetHashCode();
+    }
 
     public bool Equals(StringHashCodeProvider other)
     {
@@ -25,7 +50,7 @@ public readonly struct StringHashCodeProvider(string s) : IEquatable<StringHashC
 
     public override string ToString()
     {
-        return s;
+        return _value;
     }
 
     public static bool operator ==(StringHashCodeProvider left, StringHashCodeProvider right)
