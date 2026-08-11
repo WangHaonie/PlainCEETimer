@@ -469,9 +469,13 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
                 TIMESPAN ts = std::clamp(*pts, TIMESPAN_ZERO, m_tsValueMax);
-                UpdateSegmentValue(ts);
-                Invalidate();
-                NotifyValueChanged();
+
+                if (ts != m_tsValue)
+                {
+                    UpdateSegmentValue(ts);
+                    Invalidate();
+                    NotifyValueChanged();
+                }
             }
 
             return 0;
@@ -493,8 +497,13 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             if (lParam)
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
-                UpdateMaxValue(*pts);
-                Invalidate();
+                TIMESPAN value = *pts;
+
+                if (value != m_tsValueMax)
+                {
+                    UpdateMaxValue(value);
+                    Invalidate();
+                }
             }
 
             return 0;
@@ -503,33 +512,29 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         case PTSPM_OVERRIDECOLORS:
         {
             LPCTRLCOLORS colors = &m_crCtrlColors;
+            COLORREF color = PTSPCOLOR_GET_COLOR_LPARAM(lParam);
 
-            if (colors)
+            switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
             {
-                COLORREF color = PTSPCOLOR_GET_COLOR_LPARAM(lParam);
+                case PTSPCOLOR_RESTORE:
+                    RestoreCtrlColors(colors);
+                    break;
+                case PTSPCOLOR_BACKTEXT:
+                    colors->backText = color;
+                    break;
+                case PTSPCOLOR_FORETEXT:
+                    colors->foreText = color;
+                    break;
+                case PTSPCOLOR_FORETEXTDISABLED:
+                    colors->foreTextDisabled = color;
+                    break;
+                default:
+                    return 0;
+            }
 
-                switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
-                {
-                    case PTSPCOLOR_RESTORE:
-                        RestoreCtrlColors(colors);
-                        break;
-                    case PTSPCOLOR_BACKTEXT:
-                        colors->backText = color;
-                        break;
-                    case PTSPCOLOR_FORETEXT:
-                        colors->foreText = color;
-                        break;
-                    case PTSPCOLOR_FORETEXTDISABLED:
-                        colors->foreTextDisabled = color;
-                        break;
-                    default:
-                        return 0;
-                }
-
-                if (wParam)
-                {
-                    Invalidate();
-                }
+            if (wParam)
+            {
+                Invalidate();
             }
 
             return 0;

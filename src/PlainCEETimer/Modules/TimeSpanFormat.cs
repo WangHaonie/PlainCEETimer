@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules;
 
 public static class TimeSpanFormat
 {
-    private static Dictionary<StringHashCodeProvider, IntPtr> m_cache;
+    private readonly static Dictionary<StringHashCodeProvider, IntPtr> m_cache;
 
     static TimeSpanFormat()
     {

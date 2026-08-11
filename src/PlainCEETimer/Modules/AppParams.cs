@@ -17,10 +17,13 @@ internal static class AppParams
 
     public static bool UseClassicTSP => m_DebugMode && m_UseClassicTSP;
 
+    public static string TimeSpanFormat => m_DebugMode ? m_TSFormat : null;
+
     private static bool m_DebugMode;
     private static bool m_DisableWFPMv2;
     private static bool m_EnableCommDlgPMv2;
     private static bool m_UseClassicTSP;
+    private static string m_TSFormat;
 
     public const string DisableWFPMv2_Key = "BBFB";
     public const string EnableCommDlgPMv2_Key = "ACB1";

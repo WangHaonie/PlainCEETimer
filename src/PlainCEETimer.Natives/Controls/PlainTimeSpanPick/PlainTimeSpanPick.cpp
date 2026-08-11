@@ -5,15 +5,8 @@
 BOOL PlainTimeSpanPick::ValidateFormat(LPCWSTR pszFormat)
 {
     CNZWSTR format = {};
-    CreateCNZWStr(format, pszFormat);
     PTSPFORMAT_PARSE_RESULT result;
-
-    if (ParseFormat(&format, &result))
-    {
-        return result.cSegments > 0;
-    }
-
-    return FALSE;
+    return TryParseFormat(pszFormat, format, &result);
 }
 
 LRESULT CALLBACK PlainTimeSpanPick::s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

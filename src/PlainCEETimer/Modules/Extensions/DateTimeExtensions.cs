@@ -35,7 +35,7 @@ public static class DateTimeExtensions
         => dateTime.ToString(ConfigValidator.DateTimeFormat);
 
     public static string Format(this TimeSpan timeSpan)
-        => TimeSpanFormat.Format(timeSpan, "d'天'h'时'm'分's'秒'");
+        => TimeSpanFormat.Format(timeSpan, AppParams.TimeSpanFormat);
 
     public static string FormatToTimeAgo(this DateTime dt) => ProcessTimeSpan(DateTime.Now - dt, out var str) switch
     {

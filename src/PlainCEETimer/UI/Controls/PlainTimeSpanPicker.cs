@@ -103,7 +103,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private long m_ticks;
     private long maxValue = new TimeSpan(65535, 23, 59, 59).Ticks;
-    private string format = "d天h时m分s秒";
+    private string format = AppParams.TimeSpanFormat;
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;

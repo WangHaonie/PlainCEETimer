@@ -14,42 +14,36 @@ typedef struct tagPTSPFORMAT
 
 void PlainTimeSpanPick::CreateCNZWStr(CNZWSTR& snz, LPCWSTR psz)
 {
-    snz.cchString = lstrlen(psz);
+    snz.cchString = psz ? lstrlen(psz) : 0;
     snz.lpString = psz;
 }
 
 BOOL PlainTimeSpanPick::SetFormat(LPCWSTR pszFormat)
 {
     CNZWSTR str = {};
-    LoadFormat(str, pszFormat);
-    LPCNZWSTR lpFormat = &str;
     PTSPFORMAT_PARSE_RESULT result;
 
-    if (ParseFormat(lpFormat, &result) && result.cSegments > 0)
+    if (TryParseFormat(pszFormat, str, &result))
     {
         size_t cchBufferLiteral = result.cchLiterals + result.cLiterals;
+        INT cSegments = result.cSegments;
+        LPWSTR literals = cchBufferLiteral ? HEAPALLOC_M(WCHAR, cchBufferLiteral) : nullptr;
+        LPPTSPSEGMENT segments = HEAPALLOC_M(PTSPSEGMENT, cSegments);
 
-        if (cchBufferLiteral)
+        if ((literals || !cchBufferLiteral) && segments
+            && CreateSegments(&str, literals, cchBufferLiteral, segments, cSegments))
         {
-            INT cSegments = result.cSegments;
-            LPWSTR literals = HEAPALLOC_M(WCHAR, cchBufferLiteral);
-            LPPTSPSEGMENT segments = HEAPALLOC_M(PTSPSEGMENT, cSegments);
-
-            if (literals && segments
-                && CreateSegments(lpFormat, literals, cchBufferLiteral, segments, cSegments))
-            {
-                FreeCore();
-                m_lpLiterals = literals;
-                m_lpSegments = segments;
-                m_cSegments = cSegments;
-                m_iSelected = -1;
-                UpdateSegmentValue(m_tsValue);
-                return TRUE;
-            }
-
-            HEAPFREE(segments);
-            HEAPFREE(literals);
+            FreeCore();
+            m_lpLiterals = literals;
+            m_lpSegments = segments;
+            m_cSegments = cSegments;
+            m_iSelected = -1;
+            UpdateSegmentValue(m_tsValue);
+            return TRUE;
         }
+
+        HEAPFREE(segments);
+        HEAPFREE(literals);
     }
 
     return FALSE;
@@ -157,13 +151,19 @@ BOOL PlainTimeSpanPick::ParseFormat(LPCNZWSTR lpFormat, PTSPFORMAT_PARSE_RESULT*
     return FALSE;
 }
 
+BOOL PlainTimeSpanPick::TryParseFormat(LPCWSTR pszFormat, CNZWSTR& snzFormat, PTSPFORMAT_PARSE_RESULT* pResult)
+{
+    LoadFormat(snzFormat, pszFormat);
+    return ParseFormat(&snzFormat, pResult);
+}
+
 BOOL PlainTimeSpanPick::CreateSegments(LPCNZWSTR lpFormat, LPWSTR lpBufferLiterals, size_t cchBufferLiterals, LPPTSPSEGMENT lpSegments, INT cSegments)
 {
     if (lpFormat)
     {
         LPCWSTR s = lpFormat->lpString;
 
-        if (s && lpBufferLiterals && cchBufferLiterals && lpSegments && cSegments > 0)
+        if (s && lpSegments && cSegments > 0)
         {
             bool segsDefined[PTSP_NUM_SEGS_COUNT] = {};
             bool inQuote = false;
@@ -356,7 +356,7 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
             LPPTSPSEGMENT seg = FindSegmentByPart(part);
             LONGLONG ticks = GetTicksByPart(part);
             
-            if (ticks > 0)
+            if (seg && ticks > 0)
             {
                 LONGLONG nMax = GetNaturalMax(part, m_tsValueMax);
                 LONGLONG eMax = remain / ticks;
@@ -454,37 +454,32 @@ LPPTSPSEGMENT PlainTimeSpanPick::FindSegmentByPartInternal(LPPTSPSEGMENT lpSegme
 HANDLE PlainTimeSpanPick::CreateFormat(LPCWSTR pszFormat)
 {
     CNZWSTR format = {};
-    LoadFormat(format, pszFormat);
     PTSPFORMAT_PARSE_RESULT result;
 
-    if (ParseFormat(&format, &result) && result.cSegments > 0)
+    if (TryParseFormat(pszFormat, format, &result))
     {
         size_t cchBufferLiterals = result.cchLiterals + result.cLiterals;
+        INT cSegments = result.cSegments;
+        LPWSTR literals = cchBufferLiterals ? HEAPALLOC_M(WCHAR, cchBufferLiterals) : nullptr;
+        LPPTSPSEGMENT segments = HEAPALLOC_M(PTSPSEGMENT, cSegments);
 
-        if (cchBufferLiterals)
+        if ((literals || !cchBufferLiterals) && segments
+            && CreateSegments(&format, literals, cchBufferLiterals, segments, cSegments))
         {
-            INT cSegments = result.cSegments;
-            LPWSTR literals = HEAPALLOC_M(WCHAR, cchBufferLiterals);
-            LPPTSPSEGMENT segments = HEAPALLOC_M(PTSPSEGMENT, cSegments);
+            LPPTSPFORMAT lpFormat = HEAPALLOC(PTSPFORMAT);
 
-            if (literals && segments
-                && CreateSegments(&format, literals, cchBufferLiterals, segments, cSegments))
+            if (lpFormat)
             {
-                LPPTSPFORMAT lpFormat = HEAPALLOC(PTSPFORMAT);
-
-                if (lpFormat)
-                {
-                    lpFormat->lpLiterals = literals;
-                    lpFormat->lpSegments = segments;
-                    lpFormat->cchLiterals = cchBufferLiterals;
-                    lpFormat->cSegments = cSegments;
-                    return CastToP(HANDLE, lpFormat);
-                }
+                lpFormat->lpLiterals = literals;
+                lpFormat->lpSegments = segments;
+                lpFormat->cchLiterals = cchBufferLiterals;
+                lpFormat->cSegments = cSegments;
+                return CastToP(HANDLE, lpFormat);
             }
-
-            HEAPFREE(literals);
-            HEAPFREE(segments);
         }
+
+        HEAPFREE(literals);
+        HEAPFREE(segments);
     }
 
     return nullptr;
@@ -519,9 +514,11 @@ BOOL PlainTimeSpanPick::FreeFormatMemory(HANDLE hFormat)
 {
     LPPTSPFORMAT lpFormat = CastToP(LPPTSPFORMAT, hFormat);
 
-    if (lpFormat
-        && HEAPFREE(lpFormat->lpLiterals) && HEAPFREE(lpFormat->lpSegments) && HEAPFREE(lpFormat))
+    if (lpFormat)
     {
+        HEAPFREE(lpFormat->lpLiterals);
+        HEAPFREE(lpFormat->lpSegments);
+        HEAPFREE(lpFormat);
         return TRUE;
     }
 

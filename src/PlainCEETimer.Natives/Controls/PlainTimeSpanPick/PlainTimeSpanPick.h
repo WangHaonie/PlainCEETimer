@@ -124,6 +124,7 @@ private:
     static bool IsPartValid(WCHAR c, DWORD& part);
     static void LoadFormat(CNZWSTR& snzFormat, LPCWSTR pszFormat);
     static BOOL ParseFormat(LPCNZWSTR lpFormat, PTSPFORMAT_PARSE_RESULT* pResult);
+    static BOOL TryParseFormat(LPCWSTR pszFormat, CNZWSTR& snzFormat, PTSPFORMAT_PARSE_RESULT* pResult);
     static void RestoreCtrlColors(LPCTRLCOLORS lpColors);
     static LONGLONG GetNaturalMax(DWORD part, TIMESPAN tsMax);
     static LPPTSPSEGMENT FindSegmentByPartInternal(LPPTSPSEGMENT lpSegments, INT cSegments, DWORD part);
