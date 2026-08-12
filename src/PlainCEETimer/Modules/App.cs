@@ -19,6 +19,13 @@ namespace PlainCEETimer.Modules;
 [NoConstants]
 internal class App
 {
+#if DEBUG
+    private static void DebugTest()
+    {
+
+    }
+#endif
+
     public string ExecutableDir => field ??= AppDomain.CurrentDomain.BaseDirectory;
 
     public string ExecutablePath => field ??= Application.ExecutablePath;
@@ -318,6 +325,7 @@ internal class App
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException((Exception)e.ExceptionObject);
 #if DEBUG
         AppDomain.CurrentDomain.FirstChanceException += (_, e) => HandleFirstChanceException(e.Exception);
+        DebugTest();
 #endif
 
         if (IsMainProcess)
@@ -379,9 +387,9 @@ internal class App
 #if DEBUG
     internal static void HandleFirstChanceException(Exception ex)
     {
-        ConsoleHelper.Instance
+        ConsoleHelper.Instance.Color(ConsoleColor.Yellow)
             .Write(DateTime.Now.LogFormat()).Write(" [").Write(nameof(AppDomain.CurrentDomain.FirstChanceException)).Write("] ").WriteLine()
-            .WriteLine(ex.ToString());
+            .WriteLine(ex.ToString()).ResetColor();
     }
 #endif
 

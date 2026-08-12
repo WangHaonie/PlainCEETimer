@@ -23,8 +23,6 @@ internal static class DebugExtensions
 
         internal static void PrintLayout<T>()
         {
-            Type type = typeof(T);
-
             static int OffsetOf(Type type, string name)
             {
                 try { return Marshal.OffsetOf(type, name).ToInt32(); }
@@ -34,8 +32,10 @@ internal static class DebugExtensions
             static int SizeOf(Type type)
             {
                 try { return Marshal.SizeOf(type); }
-                catch { return -1; }
+                catch { return Unsafe.SizeOf<T>(); }
             }
+
+            var type = typeof(T);
 
             if (type.IsValueType)
             {
@@ -44,7 +44,7 @@ internal static class DebugExtensions
                     .OrderBy(x => x.Offset).ToList();
 
                 var c = ConsoleHelper.Instance;
-                c.Write("----- Memory Layout of ").Write(type.FullName).WriteLine(" -----");
+                c.Write("----- Memory Layout of ").Write(type.FullName, ConsoleColor.DarkGreen).Write(" (").Write(SizeOf(type)).WriteLine(" bytes) -----");
 
                 foreach (var item in data)
                 {
@@ -52,6 +52,8 @@ internal static class DebugExtensions
                         .Write(SizeOf(item.Field.FieldType)).Write("] ")
                         .Write(item.Field.FieldType.FullName).Write(" ").WriteLine(item.Field.Name);
                 }
+
+                c.WriteLine();
             }
         }
     }

@@ -20,18 +20,18 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         {
             if (IsHandleCreated)
             {
-                fixed (long* ptr = &m_ticks)
+                fixed (TimeSpan* ptr = &m_value)
                 {
                     Win32UI.SendMessage(Handle, PTSPM_GETVALUE, 0, ptr);
                 }
             }
 
-            return new(m_ticks);
+            return m_value;
         }
 
         set
         {
-            m_ticks = value.Ticks;
+            m_value = value;
 
             if (IsHandleCreated)
             {
@@ -46,18 +46,18 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         {
             if (IsHandleCreated)
             {
-                fixed (long* ptr = &maxValue)
+                fixed (TimeSpan* ptr = &m_valueMax)
                 {
                     Win32UI.SendMessage(Handle, PTSPM_GETMAXVALUE, 0, ptr);
                 }
             }
 
-            return new(maxValue);
+            return m_valueMax;
         }
 
         set
         {
-            maxValue = value.Ticks;
+            m_valueMax = value;
 
             if (IsHandleCreated)
             {
@@ -68,11 +68,11 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     public string CustomFormat
     {
-        get => format;
+        get => m_format;
 
         set
         {
-            format = value;
+            m_format = value;
 
             if (IsHandleCreated)
             {
@@ -101,9 +101,9 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     public event EventHandler ValueChanged;
 
-    private long m_ticks;
-    private long maxValue = new TimeSpan(65535, 23, 59, 59).Ticks;
-    private string format = AppParams.TimeSpanFormat;
+    private TimeSpan m_value;
+    private TimeSpan m_valueMax = new(65535, 23, 59, 59);
+    private string m_format = AppParams.TimeSpanFormat;
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;
@@ -193,7 +193,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private unsafe void SetValue()
     {
-        fixed (long* ptr = &m_ticks)
+        fixed (TimeSpan* ptr = &m_value)
         {
             Win32UI.SendMessage(Handle, PTSPM_SETVALUE, 0, ptr);
         }
@@ -201,7 +201,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private unsafe void SetMaxValue()
     {
-        fixed (long* ptr = &maxValue)
+        fixed (TimeSpan* ptr = &m_valueMax)
         {
             Win32UI.SendMessage(Handle, PTSPM_SETMAXVALUE, 0, ptr);
         }
@@ -209,9 +209,9 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private void SetFormat()
     {
-        if (!string.IsNullOrWhiteSpace(format))
+        if (!string.IsNullOrWhiteSpace(m_format))
         {
-            Win32UI.SendMessage(Handle, PTSPM_SETFORMAT, 0, format);
+            Win32UI.SendMessage(Handle, PTSPM_SETFORMAT, 0, m_format);
         }
     }
 

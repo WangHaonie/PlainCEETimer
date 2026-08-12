@@ -63,6 +63,24 @@ public class ConsoleHelper
         return WriteLine(obj.ToString(), color);
     }
 
+    public ConsoleHelper Color(ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        return this;
+    }
+
+    public ConsoleHelper Color(ConsoleColor fore, ConsoleColor back)
+    {
+        Console.BackgroundColor = back;
+        return Color(fore);
+    }
+
+    public ConsoleHelper ResetColor()
+    {
+        Console.ResetColor();
+        return this;
+    }
+
     public ConsoleHelper Timeout(int seconds)
     {
         CStd.system($"timeout {seconds} >nul");

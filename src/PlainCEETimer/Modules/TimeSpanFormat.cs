@@ -16,7 +16,7 @@ public static class TimeSpanFormat
 
     public unsafe static string Format(TimeSpan value, string format)
     {
-        if (!m_cache.TryGetValue(format, out IntPtr hFormat))
+        if (!m_cache.TryGetValue(format, out var hFormat))
         {
             var h = Win32Controls.PlainTimeSpanPick_ParseFormat(format);
 
@@ -30,16 +30,15 @@ public static class TimeSpanFormat
         }
 
         int count = 0;
-        long ticks = value.Ticks;
 
-        if (Win32Controls.PlainTimeSpanPick_Format(hFormat, ref ticks, null, ref count))
+        if (Win32Controls.PlainTimeSpanPick_Format(hFormat, ref value, null, ref count))
         {
             string result = StringInternals.FastAllocateString(count);
             ++count;
 
             fixed (char* lpBuffer = result)
             {
-                if (Win32Controls.PlainTimeSpanPick_Format(hFormat, ref ticks, lpBuffer, ref count))
+                if (Win32Controls.PlainTimeSpanPick_Format(hFormat, ref value, lpBuffer, ref count))
                 {
                     return result;
                 }
