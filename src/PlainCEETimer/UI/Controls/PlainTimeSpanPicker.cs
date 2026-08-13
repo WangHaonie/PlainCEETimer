@@ -103,7 +103,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private TimeSpan m_value;
     private TimeSpan m_valueMax = new(65535, 23, 59, 59);
-    private string m_format = AppParams.TimeSpanFormat;
+    private string m_format = AppParams.TSFormat;
     private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;

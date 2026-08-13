@@ -1,4 +1,6 @@
-﻿using PlainCEETimer.Modules.Annotations.Fody;
+﻿using System.Configuration;
+using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules;
 
@@ -17,7 +19,7 @@ internal static class AppParams
 
     public static bool UseClassicTSP => m_DebugMode && m_UseClassicTSP;
 
-    public static string TimeSpanFormat => m_DebugMode ? m_TSFormat : null;
+    public static string TSFormat => m_DebugMode ? m_TSFormat : null;
 
     private static bool m_DebugMode;
     private static bool m_DisableWFPMv2;
@@ -28,6 +30,7 @@ internal static class AppParams
     public const string DisableWFPMv2_Key = "BBFB";
     public const string EnableCommDlgPMv2_Key = "ACB1";
     public const string UseClassicTSP_Key = "9AA6";
+    public const string TSFormat_Key = "4BD0";
 
     public static void LoadConfig()
     {
@@ -39,6 +42,7 @@ internal static class AppParams
             m_DisableWFPMv2 = info.DisableWFPMv2;
             m_EnableCommDlgPMv2 = info.EnableCommDlgPMv2;
             m_UseClassicTSP = info.UseClassicTSP;
+            m_TSFormat = info.TSFormat;
         }
     }
 }

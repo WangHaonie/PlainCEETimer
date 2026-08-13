@@ -52,6 +52,7 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
     private PlainComboBox ComboBoxFullScreen;
+    private PlainTextBox TextBoxTSFormat;
     private PlainLabel LabelCountdownEnd;
     private PlainLabel LabelCountdownFormat;
     private PlainLabel LabelExamInfo;
@@ -70,8 +71,10 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelTruncate;
     private PlainLabel LabelFullScreen;
     private PlainLabel LabelExit;
+    private PlainLabel LabelTSFormat;
     private NavigationView MainNavigationView;
     private NavigationPage PageAppearance;
+    private NavigationPage PageDebug;
     private PlainButton ButtonApply;
     private PlainButton ButtonCancel;
     private PlainButton ButtonExamInfo;
@@ -112,7 +115,7 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxSyncTime;
     private PlainGroupBox GBoxTheme;
     private PlainGroupBox GBoxDpiAware;
-    private PlainGroupBox GBoxAppControls;
+    private PlainGroupBox GBoxTSPresent;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
@@ -121,6 +124,7 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedGlobalRules;
     private CountdownRule[] EditedCustomRules;
     private ColorPair[] SelectedColors;
+    private string DebugTSFormat;
     private readonly ComboTrigger comboTrigger = new(10, 500);
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
@@ -438,13 +442,13 @@ public sealed class SettingsForm : AppForm
 
                 #region NavPage_Debug
                 b.Conditional(IsDebug, b =>
-                    b.NavPage("调试",
+                    PageDebug = b.NavPage("调试",
                     [
                         CheckBoxDebug = b.CheckBox("使用调试选项", (_, _) =>
                         {
                             var enabled = CheckBoxDebug.Checked;
                             GBoxDpiAware.Enabled = enabled;
-                            GBoxAppControls.Enabled = enabled;
+                            GBoxTSPresent.Enabled = enabled;
                             SettingsChanged();
                         }),
 
@@ -454,9 +458,11 @@ public sealed class SettingsForm : AppForm
                             CheckBoxCommDlgDpiAware = b.CheckBox("强制为通用对话框启用 Per-Monitor V2", SettingsChanged)
                         ]),
 
-                        GBoxAppControls = b.GroupBox("App 控件",
+                        GBoxTSPresent = b.GroupBox("TimeSpan 呈现",
                         [
-                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", SettingsChanged)
+                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", SettingsChanged),
+                            LabelTSFormat = b.Label("显示格式"),
+                            TextBoxTSFormat = b.TextBox(200, false, SettingsChanged)
                         ])
                     ])
                 ),
@@ -667,9 +673,13 @@ public sealed class SettingsForm : AppForm
             ArrangeControlYL(CheckBoxCommDlgDpiAware, CheckBoxWFDpiAware, 0, 2);
             GroupBoxAutoAdjustHeight(GBoxDpiAware, CheckBoxCommDlgDpiAware, 4);
 
-            ArrangeControlYL(GBoxAppControls, GBoxDpiAware, 0, 2);
-            GroupBoxArrageControl(GBoxAppControls, CheckBoxCTSP, 4);
-            GroupBoxAutoAdjustHeight(GBoxAppControls, CheckBoxCTSP, 4);
+            ArrangeControlYL(GBoxTSPresent, GBoxDpiAware, 0, 2);
+            GroupBoxArrageControl(GBoxTSPresent, CheckBoxCTSP, 4);
+            ArrangeControlYL(TextBoxTSFormat, CheckBoxCTSP);
+            GroupBoxArrageControl(GBoxTSPresent, LabelTSFormat);
+            CompactControlX(TextBoxTSFormat, LabelTSFormat);
+            CenterControlY(LabelTSFormat, TextBoxTSFormat, -1);
+            GroupBoxAutoAdjustHeight(GBoxTSPresent, TextBoxTSFormat, 6);
         }
         #endregion
 
@@ -875,6 +885,7 @@ public sealed class SettingsForm : AppForm
             CheckBoxWFDpiAware.Checked = ParamsInfo.DisableWFPMv2;
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
             CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
+            TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
         }
     }
 
@@ -994,9 +1005,34 @@ public sealed class SettingsForm : AppForm
         return true;
     }
 
+    private bool CheckDebugParams()
+    {
+        if (IsDebug)
+        {
+            DebugTSFormat = TextBoxTSFormat.Text;
+
+            if (DebugTSFormat == TimeSpanFormat.DefaultFormat || string.IsNullOrWhiteSpace(DebugTSFormat))
+            {
+                DebugTSFormat = null;
+                return true;
+            }
+
+            if (!TimeSpanFormat.ValidateFormat(DebugTSFormat))
+            {
+                MainNavigationView.SwitchTo(PageDebug);
+                MessageX.Error("指定的 TimeSpan 格式有误！");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private bool SaveChanges()
     {
-        if (CheckSyncTime() && CollectColors())
+        if (CheckSyncTime()
+            && CollectColors()
+            && CheckDebugParams())
         {
             CanSaveChanges = true;
             UserChanged = false;
@@ -1067,6 +1103,7 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.DisableWFPMv2 = CheckBoxWFDpiAware.Checked;
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
             ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
+            ParamsInfo.TSFormat = DebugTSFormat;
             AppParams.LoadConfig();
         }
 

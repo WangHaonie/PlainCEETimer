@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "PlainTimeSpanPick.Core.h"
 #include "PlainTimeSpanPick.h"
+#include "PlainTimeSpanPick.Core.h"
 #include "PlainTimeSpanPick.UI.h"
 #include <algorithm>
 

@@ -23,6 +23,9 @@ internal static class Win32
     [DllImport(App.NativesDll, EntryPoint = "#42")]
     public static extern void KillProcessTree(int dwProcessId);
 
+    [DllImport(App.NativesDll, EntryPoint = "#56")]
+    public static extern int LoadStringInternal(uint uID, out IntPtr ppBuffer);
+
     [DllImport(App.Kernel32Dll)]
     public static extern ulong GetTickCount64();
 

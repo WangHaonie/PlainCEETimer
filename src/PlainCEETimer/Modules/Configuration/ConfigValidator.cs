@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -107,6 +108,12 @@ internal static class ConfigValidator
     {
         if (!TryReadConfig(app.ConfigFilePath, out var config, out var ex) && ex != null)
         {
+#if DEBUG
+            if (Debugger.IsAttached)
+            {
+                throw ex;
+            }
+#endif
             app.PopupAbortRetryIgnore($"无法加载配置文件，详细信息已写入{app.WriteException(ex)}\n\n" + ex.Message, App.AppName);
         }
 

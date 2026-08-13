@@ -22,7 +22,7 @@ public sealed class RulesManager : ListViewDialog<CountdownRule, RuleDialog>
     protected override ListViewItem GetListViewItem(CountdownRule data)
     {
         var tmp = data.Colors;
-        var item = new ListViewItem(data.Tick.Format()) { UseItemStyleForSubItems = false };
+        var item = new ListViewItem(data.Default ? string.Empty : data.Tick.Format()) { UseItemStyleForSubItems = false };
         item.SubItems.Add(data.Text, tmp.Fore, tmp.Back, null);
         return item;
     }

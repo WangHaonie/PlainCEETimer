@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "..\Utils.h"
 #include "Win32.h"
 #include <TlHelp32.h>
 #include <Windows.h>
@@ -76,4 +77,10 @@ HWND NATIVESAPI AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStd
 void NATIVESAPI KillProcessTree(DWORD dwProcessId)
 {
     KillProcessTreeCore(dwProcessId);
+}
+
+int NATIVESAPI LoadStringInternal(UINT uID, LPWSTR* ppBuffer)
+{
+    static HMODULE hModule = GetModuleHandle(LIBRARYNAME);
+    return LoadStringExW(hModule, uID, ppBuffer);
 }

@@ -35,7 +35,7 @@ public static class DateTimeExtensions
         => dateTime.ToString(ConfigValidator.DateTimeFormat);
 
     public static string Format(this TimeSpan timeSpan)
-        => TimeSpanFormat.Format(timeSpan, AppParams.TimeSpanFormat);
+        => TimeSpanFormat.Format(timeSpan, AppParams.TSFormat);
 
     public static string FormatToTimeAgo(this DateTime dt) => ProcessTimeSpan(DateTime.Now - dt, out var str) switch
     {

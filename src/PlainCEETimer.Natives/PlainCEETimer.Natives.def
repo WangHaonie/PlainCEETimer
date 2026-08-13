@@ -68,3 +68,5 @@ EXPORTS
     PlainTimeSpanPick_ParseFormat @53 NONAME
     PlainTimeSpanPick_Format @54 NONAME
     PlainTimeSpanPick_FreeMemory @55 NONAME
+
+    LoadStringInternal @56 NONAME
