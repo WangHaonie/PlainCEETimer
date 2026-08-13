@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using PlainCEETimer.Modules.Annotations.Fody;
-using PlainCEETimer.Modules.Configuration;
+﻿using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.Modules;
 

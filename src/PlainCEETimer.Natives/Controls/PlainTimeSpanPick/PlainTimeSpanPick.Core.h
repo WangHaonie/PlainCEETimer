@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define PTSPSEG_LITERAL             0
 #define PTSPSEG_DAYS                1

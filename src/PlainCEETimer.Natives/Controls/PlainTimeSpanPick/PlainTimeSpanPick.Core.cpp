@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PlainTimeSpanPick.h"
 #include "PlainTimeSpanPick.Core.h"
 #include "PlainTimeSpanPick.UI.h"
@@ -348,6 +348,7 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
 {
     if (m_lpSegments)
     {
+        DWORD partPrev = 0;
         LONGLONG remain = m_tsValueMax;
         if (remain < 0) remain = 0;
 
@@ -358,28 +359,27 @@ void PlainTimeSpanPick::UpdateSegmentMaxValue()
             
             if (seg && ticks > 0)
             {
-                LONGLONG nMax = GetNaturalMax(part, m_tsValueMax);
+                LONGLONG nMax = GetNaturalMax(part, partPrev);
                 LONGLONG eMax = remain / ticks;
                 seg->nValueMax = std::clamp(eMax, 0LL, nMax);
                 seg->nValue = std::clamp(seg->nValue, 0LL, seg->nValueMax);
                 remain -= seg->nValue * ticks;
                 if (remain < 0) remain = 0;
+                partPrev = part;
             }
         }
     }
 }
 
-LONGLONG PlainTimeSpanPick::GetNaturalMax(DWORD part, TIMESPAN tsMax)
+LONGLONG PlainTimeSpanPick::GetNaturalMax(DWORD part, DWORD partPrev)
 {
-    switch (part)
-    {
-        CASE(PTSPSEG_DAYS, tsMax / TICKS_PER_DAY);
-        CASE(PTSPSEG_HOURS, 23);
-        CASE(PTSPSEG_MINUTES, 59);
-        CASE(PTSPSEG_SECONDS, 59);
-    }
+    LONGLONG ticks = GetTicksByPart(part);
+    if (ticks <= 0) return 0LL;
+    if (partPrev == 0) return m_tsValueMax / ticks;
 
-    return 0LL;
+    LONGLONG ticksPrev = GetTicksByPart(partPrev);
+    if (ticksPrev <= ticks) return 0LL;
+    return (ticksPrev / ticks) - 1;
 }
 
 void PlainTimeSpanPick::UpdateValue()

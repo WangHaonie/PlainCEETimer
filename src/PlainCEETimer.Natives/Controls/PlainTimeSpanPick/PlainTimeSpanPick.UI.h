@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "PlainTimeSpanPick.h"
 #include "PlainTimeSpanPick.Core.h"

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PlainTimeSpanPick.UI.h"
 #include <algorithm>
 #include <windowsx.h>

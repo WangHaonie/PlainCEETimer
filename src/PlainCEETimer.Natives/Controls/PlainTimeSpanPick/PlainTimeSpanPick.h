@@ -110,6 +110,7 @@ private:
     void UpdateMaxValue(TIMESPAN tsMax);
     void UpdateSegmentValue(TIMESPAN tsValue);
     void UpdateSegmentMaxValue();
+    LONGLONG GetNaturalMax(DWORD part, DWORD partPrev);
     void ScrollNumeric(PTSPSEGMENT& seg, int delta);
     void NotifyValueChanged() const;
     INT FindNextNumericPart(INT start, int step) const;
@@ -126,7 +127,6 @@ private:
     static BOOL ParseFormat(LPCNZWSTR lpFormat, PTSPFORMAT_PARSE_RESULT* pResult);
     static BOOL TryParseFormat(LPCWSTR pszFormat, CNZWSTR& snzFormat, PTSPFORMAT_PARSE_RESULT* pResult);
     static void RestoreCtrlColors(LPCTRLCOLORS lpColors);
-    static LONGLONG GetNaturalMax(DWORD part, TIMESPAN tsMax);
     static LPPTSPSEGMENT FindSegmentByPartInternal(LPPTSPSEGMENT lpSegments, INT cSegments, DWORD part);
     static void ApplySegmentValue(LPPTSPSEGMENT lpSegments, INT cSegments, TIMESPAN tsValue);
     static size_t BuildDisplayTextInternal(LPPTSPSEGMENT lpSegments, INT cSegments, LPWSTR buffer, size_t count);
