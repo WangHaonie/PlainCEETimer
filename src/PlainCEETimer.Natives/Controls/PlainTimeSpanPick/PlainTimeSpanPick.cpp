@@ -59,3 +59,25 @@ BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat)
 {
     return PlainTimeSpanPick::FreeFormatMemory(hFormat);
 }
+
+BOOL NATIVESAPI PlainTimeSpanPick_SuggestValue(LPTIMESPAN lptsValue)
+{
+    if (lptsValue)
+    {
+        TIMESPAN value = *lptsValue;
+
+        if (value > TICKS_PER_SECOND && value < TIMESPAN_MAX - 1 * TICKS_PER_SECOND)
+        {
+            TIMESPAN ts = value + 1 * TICKS_PER_SECOND;
+            TIMESPAN result = RoundToNearestS(ts, TICKS_PER_DAY);
+
+            if (ts != result)
+            {
+                *lptsValue = result - 1 * TICKS_PER_SECOND;
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}

@@ -76,8 +76,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             NUDMinutes = b.Conditional(ctsp, b => b.NumericUpDown(40, 0M, 59M, OnUserChanged)),
             NUDSeconds = b.Conditional(ctsp, b => b.NumericUpDown(40, 0M, 59M, OnUserChanged)),
 
-            PTSPExam = b.Conditional(!ctsp, b => b.New<PlainTimeSpanPicker>(151, 0, null)
-                .With(x => x.ValueChanged += OnUserChanged)),
+            PTSPExam = b.Conditional(!ctsp, b => b.TimeSpanPicker(151, OnUserChanged)),
 
             TextBoxCustomText = b.TextBox(ctsp ? 295 : 228, true, (_, _) =>
             {

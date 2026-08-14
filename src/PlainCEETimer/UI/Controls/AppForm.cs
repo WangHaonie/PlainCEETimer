@@ -57,7 +57,7 @@ public abstract class AppForm : Form, IAppWindow
 
     public Control FocusControl { get; set; }
 
-    internal bool Loaded => !IsLoading;
+    internal protected virtual bool Loaded => !IsLoading;
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 

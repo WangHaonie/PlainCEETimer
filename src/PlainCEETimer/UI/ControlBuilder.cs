@@ -166,6 +166,14 @@ public class ControlBuilder
         return ctrl;
     }
 
+    public PlainTimeSpanPicker TimeSpanPicker(int w, EventHandler onValueChanged)
+    {
+        var ctrl = new PlainTimeSpanPicker();
+        ctrl.SetBounds(0, 0, w, 0);
+        ctrl.ValueChanged += onValueChanged;
+        return ctrl;
+    }
+
     public PlainHotkeyControl HotkeyCtrl(int w, EventHandler onHotKeyChanged)
     {
         var ctrl = new PlainHotkeyControl();

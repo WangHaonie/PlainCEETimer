@@ -1,4 +1,6 @@
-﻿using PlainCEETimer.Modules.Annotations.Fody;
+﻿using System;
+using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules;
 
@@ -19,16 +21,20 @@ internal static class AppParams
 
     public static string TSFormat => m_DebugMode ? m_TSFormat : null;
 
+    public static TimeSpan TSMax => m_DebugMode && !m_UseClassicTSP ? m_TSMax : ConfigValidator.MaxTick;
+
     private static bool m_DebugMode;
     private static bool m_DisableWFPMv2;
     private static bool m_EnableCommDlgPMv2;
     private static bool m_UseClassicTSP;
     private static string m_TSFormat;
+    private static TimeSpan m_TSMax;
 
     public const string DisableWFPMv2_Key = "BBFB";
     public const string EnableCommDlgPMv2_Key = "ACB1";
     public const string UseClassicTSP_Key = "9AA6";
     public const string TSFormat_Key = "4BD0";
+    public const string TSMax_Key = "A421";
 
     public static void LoadConfig()
     {
@@ -41,6 +47,7 @@ internal static class AppParams
             m_EnableCommDlgPMv2 = info.EnableCommDlgPMv2;
             m_UseClassicTSP = info.UseClassicTSP;
             m_TSFormat = info.TSFormat;
+            m_TSMax = info.TSMax;
         }
     }
 }

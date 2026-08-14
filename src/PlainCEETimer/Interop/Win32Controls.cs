@@ -24,4 +24,7 @@ internal static class Win32Controls
 
     [DllImport(App.NativesDll, EntryPoint = "#55")]
     public static extern bool PlainTimeSpanPick_FreeMemory(IntPtr hFormat);
+
+    [DllImport(App.NativesDll, EntryPoint = "#57")]
+    public static extern bool PlainTimeSpanPick_SuggestValue(ref TimeSpan lptsValue);
 }

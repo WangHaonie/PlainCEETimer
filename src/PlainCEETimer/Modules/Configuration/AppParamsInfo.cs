@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration;
 
@@ -32,5 +34,13 @@ public class AppParamsInfo
 
             field = value;
         }
+    }
+
+    [JsonProperty(AppParams.TSMax_Key)]
+    [JsonConverter(typeof(TimeSpanTicksConverter))]
+    public TimeSpan TSMax
+    {
+        get;
+        set => field = !ConfigValidator.ValidateNeeded || value.Ticks > TimeSpan.TicksPerSecond ? value : ConfigValidator.MaxTick;
     }
 }

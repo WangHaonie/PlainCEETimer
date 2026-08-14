@@ -16,7 +16,10 @@ namespace PlainCEETimer.UI.Forms;
 [NoConstants]
 public sealed class SettingsForm : AppForm
 {
-    protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
+    protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing
+        | AppWindowStyle.ModelessDialog | AppWindowStyle.CompositedStyle;
+
+    protected internal override bool Loaded => base.Loaded && !IsApply;
 
     private bool AllowTheme;
     private bool IsSyncingTime;
@@ -72,6 +75,7 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelFullScreen;
     private PlainLabel LabelExit;
     private PlainLabel LabelTSFormat;
+    private PlainLabel LabelTSMax;
     private NavigationView MainNavigationView;
     private NavigationPage PageAppearance;
     private NavigationPage PageDebug;
@@ -102,6 +106,7 @@ public sealed class SettingsForm : AppForm
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
     private PlainNumericUpDown NudTruncate;
+    private PlainTimeSpanPicker PtspTSMax;
     private PlainGroupBox GBoxContent;
     private PlainGroupBox GBoxDraggable;
     private PlainGroupBox GBoxFullScreen;
@@ -125,6 +130,7 @@ public sealed class SettingsForm : AppForm
     private CountdownRule[] EditedCustomRules;
     private ColorPair[] SelectedColors;
     private string DebugTSFormat;
+    private TimeSpan DebugTSMax;
     private readonly ComboTrigger comboTrigger = new(10, 500);
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
@@ -462,7 +468,9 @@ public sealed class SettingsForm : AppForm
                         [
                             CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", SettingsChanged),
                             LabelTSFormat = b.Label("显示格式"),
-                            TextBoxTSFormat = b.TextBox(200, false, SettingsChanged)
+                            TextBoxTSFormat = b.TextBox(200, false, SettingsChanged),
+                            LabelTSMax = b.Label("最大上限"),
+                            PtspTSMax = b.TimeSpanPicker(200, SettingsChanged).With(x => x.MaxValue = TimeSpan.MaxValue)
                         ])
                     ])
                 ),
@@ -675,11 +683,15 @@ public sealed class SettingsForm : AppForm
 
             ArrangeControlYL(GBoxTSPresent, GBoxDpiAware, 0, 2);
             GroupBoxArrageControl(GBoxTSPresent, CheckBoxCTSP, 4);
-            ArrangeControlYL(TextBoxTSFormat, CheckBoxCTSP);
+            ArrangeControlYL(TextBoxTSFormat, CheckBoxCTSP, 0, 3);
             GroupBoxArrageControl(GBoxTSPresent, LabelTSFormat);
             CompactControlX(TextBoxTSFormat, LabelTSFormat);
             CenterControlY(LabelTSFormat, TextBoxTSFormat, -1);
-            GroupBoxAutoAdjustHeight(GBoxTSPresent, TextBoxTSFormat, 6);
+            ArrangeControlYL(LabelTSMax, LabelTSFormat);
+            ArrangeControlYL(PtspTSMax, TextBoxTSFormat, 0, 3);
+            CompactControlX(PtspTSMax, LabelTSMax);
+            CenterControlY(LabelTSMax, PtspTSMax);
+            GroupBoxAutoAdjustHeight(GBoxTSPresent, PtspTSMax, 6);
         }
         #endregion
 
@@ -886,6 +898,7 @@ public sealed class SettingsForm : AppForm
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
             CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
             TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
+            PtspTSMax.Value = ParamsInfo.TSMax;
         }
     }
 
@@ -1014,14 +1027,42 @@ public sealed class SettingsForm : AppForm
             if (DebugTSFormat == TimeSpanFormat.DefaultFormat || string.IsNullOrWhiteSpace(DebugTSFormat))
             {
                 DebugTSFormat = null;
-                return true;
             }
-
-            if (!TimeSpanFormat.ValidateFormat(DebugTSFormat))
+            else if (!TimeSpanFormat.ValidateFormat(DebugTSFormat))
             {
                 MainNavigationView.SwitchTo(PageDebug);
                 MessageX.Error("指定的 TimeSpan 格式有误！");
                 return false;
+            }
+
+            DebugTSMax = PtspTSMax.Value;
+
+            if (DebugTSMax.Ticks <= TimeSpan.TicksPerSecond)
+            {
+                MainNavigationView.SwitchTo(PageDebug);
+                MessageX.Error("TimeSpan 最大值过小！");
+                return false;
+            }
+
+            var tsMaxSugg = DebugTSMax;
+
+            if (ConfigValidator.SuggestTimeSpan(ref tsMaxSugg))
+            {
+                MainNavigationView.SwitchTo(PageDebug);
+
+                if (MessageX.Warn(
+                    $"""
+                    检测到设置的 TimeSpan 最大值不是 1 天的倍数
+
+                    当前最大值：{DebugTSMax.Format()}
+                    建议最大值：{tsMaxSugg.Format()}
+
+                    是否改用推荐值？
+                    """, MessageButtons.YesNo) == true)
+                {
+                    DebugTSMax = tsMaxSugg;
+                    if (IsApply) PtspTSMax.Value = tsMaxSugg;
+                }
             }
         }
 
@@ -1104,6 +1145,7 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
             ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
             ParamsInfo.TSFormat = DebugTSFormat;
+            ParamsInfo.TSMax = PtspTSMax.Value;
             AppParams.LoadConfig();
         }
 

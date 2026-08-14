@@ -14,20 +14,9 @@ namespace PlainCEETimer.UI.Controls;
 [DebuggerDisplay("{Text}")]
 public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 {
-    public unsafe TimeSpan Value
+    public TimeSpan Value
     {
-        get
-        {
-            if (IsHandleCreated)
-            {
-                fixed (TimeSpan* ptr = &m_value)
-                {
-                    Win32UI.SendMessage(Handle, PTSPM_GETVALUE, 0, ptr);
-                }
-            }
-
-            return m_value;
-        }
+        get => m_value;
 
         set
         {
@@ -102,9 +91,10 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     public event EventHandler ValueChanged;
 
     private TimeSpan m_value;
-    private TimeSpan m_valueMax = new(65535, 23, 59, 59);
+    private TimeSpan m_valueMax = AppParams.TSMax;
     private string m_format = AppParams.TSFormat;
     private ThemeHelper themeHelper;
+    private bool inSetValue;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker OnValueChangedAction;
     private readonly ControlInternals internals;
@@ -191,12 +181,29 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         base.WndProc(ref m);
     }
 
+    private unsafe void GetValue()
+    {
+        if (inSetValue)
+        {
+            return;
+        }
+
+        fixed (TimeSpan* ptr = &m_value)
+        {
+            Win32UI.SendMessage(Handle, PTSPM_GETVALUE, 0, ptr);
+        }
+    }
+
     private unsafe void SetValue()
     {
+        inSetValue = true;
+
         fixed (TimeSpan* ptr = &m_value)
         {
             Win32UI.SendMessage(Handle, PTSPM_SETVALUE, 0, ptr);
         }
+
+        inSetValue = false;
     }
 
     private unsafe void SetMaxValue()
@@ -230,6 +237,11 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     private void OnValueChangedImpl()
     {
+        if (IsHandleCreated)
+        {
+            GetValue();
+        }
+
         ValueChanged?.Invoke(this, EventArgs.Empty);
     }
 

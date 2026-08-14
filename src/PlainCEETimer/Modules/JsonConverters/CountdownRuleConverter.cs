@@ -26,8 +26,9 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
         if (!is0tickAllowed)
         {
             tick = TimeSpan.FromSeconds(json.GetValue(nameof(existingValue.Tick), 0D));
+            var tickVal = tick.Ticks;
 
-            if (tick.Ticks is < ConfigValidator.MinTick or > ConfigValidator.MaxTick)
+            if (tickVal < ConfigValidator.MinTick || tickVal > AppParams.TSMax.Ticks)
             {
                 throw ConfigValidator.InvalidTampering(ConfigField.CustomRuleTick);
             }

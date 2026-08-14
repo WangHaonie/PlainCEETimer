@@ -74,6 +74,17 @@ inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, boo
     return wcscmp(strA, strB) == 0;
 }
 
+inline LONGLONG __cdecl RoundToNearestS(LONGLONG value, LONGLONG base)
+{
+    LONGLONG remain = value % base;
+    if (remain == 0) return value;
+
+    if (remain >= base / 2)
+        return value + (base - remain);
+    else
+        return value - remain;
+}
+
 template<typename TInterface>
 inline void __stdcall ReleasePPI(TInterface** ppi)
 {

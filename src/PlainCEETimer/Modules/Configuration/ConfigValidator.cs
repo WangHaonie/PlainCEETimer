@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
@@ -31,7 +32,6 @@ internal static class ConfigValidator
     public const int MaxCustomTextLength = 800;
     public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"
-    public const long MaxTick = 56623103990000000L; // 65535d 23h 59m 59s
     public const long MinTick = TimeSpan.TicksPerSecond; // 1s
     public const long MaxDate = 3155378975999999999L; // DateTime.Max
     public const long MinDate = 552877920000000000L; // 1753-01-01 00:00:00
@@ -41,6 +41,7 @@ internal static class ConfigValidator
     public const string ValueSeparatorString = ", ";
     public const string DateTimeFormat = "yyyy'/'M'/'d ddd H':'mm':'ss";
     public const string DTPFormat = "yyyy'/'MM'/'dd dddd HH':'mm':'ss";
+    public static TimeSpan MaxTick = new(65535, 23, 59, 59);
 
     [Constant]
     public const int MaxFontFamilyLength = 100;
@@ -222,6 +223,11 @@ internal static class ConfigValidator
         }
 
         throw InvalidTampering(ConfigField.ColorSetContrast);
+    }
+
+    public static bool SuggestTimeSpan(ref TimeSpan value)
+    {
+        return Win32Controls.PlainTimeSpanPick_SuggestValue(ref value);
     }
 
     internal static bool ImportConfig(string path)

@@ -137,3 +137,4 @@ NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszForma
 NATIVES_EXPORT HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat);
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat);
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_SuggestValue(LPTIMESPAN lptsValue);
