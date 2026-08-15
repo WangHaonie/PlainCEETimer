@@ -116,10 +116,13 @@ public class AppConfig
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {
+        AppParams.LoadConfig(Params);
         var value = Exam;
         ConfigValidator.SetValue(ref value, value, Exams.Length, 0);
         Exam = value;
-
-        Display.SeewoPptsvc = ConfigValidator.ValidateBoolean(Display.SeewoPptsvc, (General.TopMost && Display.Position == 0) || Display.Drag);
+        Display.SeewoPptsvc = ConfigValidator.ValidateBoolean(Display.SeewoPptsvc,
+            (General.TopMost && Display.Position == 0) || Display.Drag);
+        ConfigValidator.EnsureRules(Exams);
+        ConfigValidator.EnsureRules(CustomRules);
     }
 }

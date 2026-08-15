@@ -36,9 +36,9 @@ internal static class AppParams
     public const string TSFormat_Key = "4BD0";
     public const string TSMax_Key = "A421";
 
-    public static void LoadConfig()
+    public static void LoadConfig(AppParamsInfo info = null)
     {
-        var info = App.Current.AppConfig.Params;
+        info ??= App.Current.AppConfig.Params;
 
         if (info != null)
         {

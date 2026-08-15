@@ -26,12 +26,6 @@ public sealed class CountdownRuleConverter : JsonConverter<CountdownRule>
         if (!is0tickAllowed)
         {
             tick = TimeSpan.FromSeconds(json.GetValue(nameof(existingValue.Tick), 0D));
-            var tickVal = tick.Ticks;
-
-            if (tickVal < ConfigValidator.MinTick || tickVal > AppParams.TSMax.Ticks)
-            {
-                throw ConfigValidator.InvalidTampering(ConfigField.CustomRuleTick);
-            }
         }
 
         var colors = ConfigValidator.ParseColorPairFromConfig(json.GetValue(nameof(ColorPair.Fore), 0), json.GetValue(nameof(ColorPair.Back), 0));

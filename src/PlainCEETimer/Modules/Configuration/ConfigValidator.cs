@@ -210,6 +210,28 @@ internal static class ConfigValidator
         }
     }
 
+    public static void EnsureRules(Exam[] exams)
+    {
+        if (exams != null)
+        {
+            foreach (var exam in exams)
+            {
+                EnsureRules(exam.Settings?.Rules);
+            }
+        }
+    }
+
+    public static void EnsureRules(CountdownRule[] rules)
+    {
+        if (!rules.IsNullOrEmpty())
+        {
+            foreach (var rule in rules)
+            {
+                VerifyRule(rule);
+            }
+        }
+    }
+
     public static ColorPair ParseColorPairFromConfig(int fore, int back)
     {
         var f = GetColorFromInt32(fore);
@@ -260,6 +282,19 @@ internal static class ConfigValidator
             File.WriteAllText(path, JsonConvert.SerializeObject(config, Settings));
         }
         catch { }
+    }
+
+    private static void VerifyRule(CountdownRule rule)
+    {
+        if (rule != null)
+        {
+            var tickVal = rule.Tick.Ticks;
+
+            if (tickVal < MinTick || tickVal > AppParams.TSMax.Ticks)
+            {
+                throw InvalidTampering(ConfigField.CustomRuleTick);
+            }
+        }
     }
 
     private static void BackupConfig()
