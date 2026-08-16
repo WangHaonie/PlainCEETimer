@@ -19,7 +19,7 @@ public sealed class ConsoleWindow : AppDialog
     protected override AppWindowStyle Params => AppWindowStyle.AllControl;
 
     private int finalCount;
-    private int ConsoleTimerTick;
+    private int SecondsElapsed;
     private bool IsRunning;
     private ulong taskStartTime;
     private string Key;
@@ -44,7 +44,7 @@ public sealed class ConsoleWindow : AppDialog
         {
             IsRunning = false;
             ConsoleTimer.Stop();
-            LabelMessage.Text = $"命令已完成 ({ConsoleTimerTick} s)。";
+            LabelMessage.Text = $"命令已完成 ({SecondsElapsed} s)。";
             tbp.SetState(ProgressStyle.Normal);
             tbp.SetValue(1, 1);
             Complete?.Invoke(this);
@@ -226,12 +226,12 @@ public sealed class ConsoleWindow : AppDialog
 
     private void ConsoleTimer_Tick(object sender, EventArgs e)
     {
-        LabelMessage.Text = $"正在运行中... ({ConsoleTimerTick} s)";
-        ConsoleTimerTick++;
+        LabelMessage.Text = $"正在运行中... ({SecondsElapsed} s)";
+        SecondsElapsed++;
 
         try
         {
-            if (ExternalProc != null && ExternalProc.HasExited)
+            if (ExternalProc?.HasExited == true)
             {
                 OnComplete();
             }

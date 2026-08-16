@@ -29,7 +29,7 @@ internal static class FontFamilyInternals
         {
             var fff = s_piFirstFontFamily.GetValue(instance);
 
-            if (fff != null && fff.GetType() == s_typePhysicalFontFamily)
+            if (fff?.GetType() == s_typePhysicalFontFamily)
             {
                 var pff = s_fiFamily.GetValue(fff);
 

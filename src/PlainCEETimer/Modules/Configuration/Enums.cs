@@ -2,7 +2,6 @@
 
 internal enum ConfigField
 {
-    GlobalColorsLength,
     ExamNameLength,
     CustomRulesArray,
     GlobalRulesArray,
@@ -19,6 +18,5 @@ internal enum ConfigField
     CustomRuleTick,
     CountdownFont,
     PointFormat,
-    DateTimeFormat,
-    DipPointFormat
+    DateTimeFormat
 }

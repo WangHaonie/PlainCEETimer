@@ -78,7 +78,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
             return HotKeyStatus.Invalid;
         }
 
-        if (hks != null && hks.ContainsValue(hk))
+        if (hks?.ContainsValue(hk) == true)
         {
             return HotKeyStatus.Ready;
         }

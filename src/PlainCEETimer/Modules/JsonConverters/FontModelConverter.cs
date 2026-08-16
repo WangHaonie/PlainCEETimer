@@ -27,19 +27,14 @@ public sealed class FontModelConverter : JsonConverter<FontModel>
 
     public override void WriteJson(JsonWriter writer, FontModel value, JsonSerializer serializer)
     {
-        if (value != null && value.FontFamily != null)
+        if (value is { FontFamily: not null, FontFamily.Name: var src } && src != null)
         {
-            var src = value.FontFamily?.Name;
-
-            if (src != null)
+            new JObject()
             {
-                new JObject()
-                {
-                    [nameof(FontModel.FontFamily)] = src.Compact(),
-                    [nameof(FontModel.Size)] = Math.Round(value.Size, 2),
-                    [nameof(FontModel.Weight)] = value.Weight.ToOpenTypeWeight()
-                }.WriteTo(writer);
-            }
+                [nameof(FontModel.FontFamily)] = src.Compact(),
+                [nameof(FontModel.Size)] = Math.Round(value.Size, 2),
+                [nameof(FontModel.Weight)] = value.Weight.ToOpenTypeWeight()
+            }.WriteTo(writer);
         }
     }
 }

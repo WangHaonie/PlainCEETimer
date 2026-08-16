@@ -110,7 +110,7 @@ public abstract class ListViewDialog<TData, TChildDialog> : AppDialog
         ListViewMain.Headers = headers;
         ListViewMain.Size = DpiHelper.LogicalToDeviceUnits(new Size(listViewWidth, 218));
 
-        if (groups != null && groups.Length != 0)
+        if (!groups.IsNullOrEmpty())
         {
             ListViewMain.ShowGroups = true;
             Groups = ListViewMain.Groups;

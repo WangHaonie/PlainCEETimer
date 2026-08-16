@@ -765,7 +765,7 @@ public abstract class AppForm : Form, IAppWindow
         {
             var dic = App.Current.AppConfig.Sizes;
 
-            if (dic != null && dic.TryGetValue(Name, out var szobj))
+            if (dic?.TryGetValue(Name, out var szobj) == true)
             {
                 var sz = ScaleToDpi(szobj.Size);
 

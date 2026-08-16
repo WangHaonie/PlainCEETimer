@@ -106,7 +106,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
         {
             base.Text = value;
 
-            if (hasFlyout && flyout != null && !flyout.IsDisposed)
+            if (hasFlyout && flyout?.IsDisposed == false)
             {
                 flyout.Content = value;
             }

@@ -11,6 +11,11 @@ public readonly struct StringHashCodeProvider : IEquatable<StringHashCodeProvide
     {
         public bool Equals(StringHashCodeProvider x, StringHashCodeProvider y)
         {
+            if (x._hashCode != y._hashCode)
+            {
+                return false;
+            }
+
             return x._value == y._value;
         }
 

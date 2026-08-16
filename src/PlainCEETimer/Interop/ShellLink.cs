@@ -76,7 +76,7 @@ public static class ShellLink
         var args = lnk.Args;
         var needed = false;
 
-        if (path == null || !path.Equals(App.Current.ExecutablePath, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(path, App.Current.ExecutablePath, StringComparison.OrdinalIgnoreCase))
         {
             lnk.Target = AppPath;
             needed = true;

@@ -33,7 +33,7 @@ public static class Extensions
         => (T)obj.Clone();
 
     public static bool IsEnabled(this ExamSettings settings)
-        => settings != null && settings.Enabled;
+        => settings?.Enabled == true;
 
     public static StreamingContext SetContext<T>(this StreamingContext sc, T value, out StreamingContext original)
     {

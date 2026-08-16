@@ -156,7 +156,7 @@ public class PagedContextMenu
             {
                 if (pageIndex < 0)
                 {
-                    index = PagedIndexAbsoluteToRelative(index, out pageIndex);
+                    index = PagedIndexAbs2Rel(index, out pageIndex);
                 }
 
                 for (int i = 0; i <= pageIndex; i++)
@@ -202,7 +202,7 @@ public class PagedContextMenu
         {
             var index = item.Index;
             var pageIndex = (int)item.Parent.Tag;
-            absoluteIndex = PagedIndexRelativeToAbsolute(index, pageIndex);
+            absoluteIndex = PagedIndexRel2Abs(index, pageIndex);
             DoRadioCheck(index, pageIndex);
             OnItemClick(e);
         }
@@ -213,12 +213,12 @@ public class PagedContextMenu
         ItemClick?.Invoke(this, e);
     }
 
-    private int PagedIndexRelativeToAbsolute(int index, int pageIndex)
+    private int PagedIndexRel2Abs(int index, int pageIndex)
     {
         return index + ppCount * pageIndex;
     }
 
-    private int PagedIndexAbsoluteToRelative(int index, out int pageIndex)
+    private int PagedIndexAbs2Rel(int index, out int pageIndex)
     {
         pageIndex = index / ppCount;
         return index % ppCount;

@@ -1054,8 +1054,8 @@ public sealed class SettingsForm : AppForm
                     $"""
                     检测到设置的 TimeSpan 最大值不是 1 天的倍数
 
-                    当前最大值：{DebugTSMax.Format()}
-                    建议最大值：{tsMaxSugg.Format()}
+                    当前值：{DebugTSMax.Format()}
+                    建议值：{tsMaxSugg.Format()}
 
                     是否改用推荐值？
                     """, MessageButtons.YesNo) == true)

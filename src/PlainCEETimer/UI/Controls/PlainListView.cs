@@ -51,7 +51,7 @@ public sealed class PlainListView : ListView, IThemeAware
         get;
         set
         {
-            if (value != null && value.Length != 0)
+            if (!value.IsNullOrEmpty())
             {
                 Columns.Clear();
 
