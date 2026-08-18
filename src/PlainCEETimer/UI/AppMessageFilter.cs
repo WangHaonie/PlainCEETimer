@@ -20,9 +20,9 @@ public class AppMessageFilter : IDisposable
         m_tid = Win32.GetCurrentThreadId();
     }
 
-    private unsafe IntPtr GetMsgHookProc(int nCode, IntPtr wParam, MSG* lParam)
+    private unsafe IntPtr GetMsgHookProc(int nCode, nint wParam, MSG* lParam)
     {
-        if (nCode >= 0 && (int)wParam == WinUser.PM_REMOVE)
+        if (nCode >= 0 && wParam == WinUser.PM_REMOVE)
         {
             for (int i = 0; i < filtersCount; i++)
             {

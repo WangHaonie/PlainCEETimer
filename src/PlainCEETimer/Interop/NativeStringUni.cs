@@ -116,7 +116,7 @@ public ref struct NativeStringUni
 
         try
         {
-            var n = Win32.lstrlenW(ptr);
+            var n = Win32.lstrlen(ptr);
 
             if (n > 0)
             {

@@ -144,7 +144,7 @@ internal static class Win32UI
     [DllImport(App.ShcoreDll)]
     public static extern HRESULT GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 
-    [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode)]
+    [DllImport(App.UxThemeDll, CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern HRESULT SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
     /*

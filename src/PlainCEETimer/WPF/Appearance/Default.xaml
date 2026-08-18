@@ -57,6 +57,8 @@
         <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>
         <Setter Property="Background" Value="{DynamicResource BackButton}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderButton}"/>
+        <Setter Property="Width" Value="73" />
+        <Setter Property="Height" Value="21" />
 
         <Setter Property="Template">
             <Setter.Value>

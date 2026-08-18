@@ -97,9 +97,9 @@
 
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" 
                 Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button IsDefault="True" Content="确定(_O)" Width="75" Height="23" Margin="0,0,5,0"
+            <Button IsDefault="True" Content="确定(_O)" Margin="0,0,5,0"
                 Command="{Binding SaveChangesCommand}"/>
-            <Button IsCancel="True" Content="取消(_C)" Width="75" Height="23"
+            <Button IsCancel="True" Content="取消(_C)"
                 Command="{Binding CloseCommand}"/>
         </StackPanel>
     </Grid>

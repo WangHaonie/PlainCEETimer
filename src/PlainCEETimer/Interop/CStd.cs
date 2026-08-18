@@ -5,6 +5,6 @@ namespace PlainCEETimer.Interop;
 
 internal static class CStd
 {
-    [DllImport(App.CrtDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(App.CrtDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true)]
     public static extern int system(string _Command);
 }

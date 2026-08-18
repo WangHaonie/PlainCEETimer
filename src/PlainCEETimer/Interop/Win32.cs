@@ -39,9 +39,9 @@ internal static class Win32
     public static extern int GetCurrentThreadId();
 
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
-    public unsafe static extern int lstrlenW(char* lpString);
+    public unsafe static extern int lstrlen(char* lpString);
 
-    [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
+    [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern bool SetThreadPreferredUILanguages(int dwFlags, PCZZWSTR pwszLanguagesBuffer, IntPtr pulNumLanguages);
 
     [DllImport(App.User32Dll)]
