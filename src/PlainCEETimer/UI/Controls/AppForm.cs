@@ -217,8 +217,8 @@ public abstract class AppForm : Form, IAppWindow
     internal protected Point KeepOnScreen()
     {
         var screen = GetCurrentScreenRect();
-        var x = Left.Clamp(screen.X, screen.Right - Width);
-        var y = Top.Clamp(screen.Y, screen.Bottom - Height);
+        var x = Left.ClampSafe(screen.X, screen.Right - Width);
+        var y = Top.ClampSafe(screen.Y, screen.Bottom - Height);
         SetLocation(x, y);
         return new(x, y);
     }
@@ -689,8 +689,8 @@ public abstract class AppForm : Form, IAppWindow
     protected Size KeepOnScreen(Size size)
     {
         var screen = GetCurrentScreenRect();
-        var w = size.Width.Clamp(0, screen.Width);
-        var h = size.Height.Clamp(0, screen.Height);
+        var w = size.Width.ClampSafe(0, screen.Width);
+        var h = size.Height.ClampSafe(0, screen.Height);
         return new(w, h);
     }
 

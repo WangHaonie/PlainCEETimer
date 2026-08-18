@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI;
@@ -26,7 +27,7 @@ public class PagedContextMenu
         get => m_items;
         set
         {
-            if (value != null && m_items != value)
+            if (!value.IsNullOrEmpty() && m_items != value)
             {
                 m_items = value;
                 totalCount = value.Length;

@@ -268,8 +268,8 @@ internal static class Win32UI
         var h = target.Height;
         var x = parent.Left + (parent.Width / 2) - (w / 2);
         var y = parent.Top + (parent.Height / 2) - (h / 2);
-        x = x.Clamp(screen.X, screen.Right - w);
-        y = y.Clamp(screen.Y, screen.Bottom - h);
+        x = x.ClampSafe(screen.X, screen.Right - w);
+        y = y.ClampSafe(screen.Y, screen.Bottom - h);
         targetNew = new(x, y, w, h);
     }
 
@@ -297,8 +297,8 @@ internal static class Win32UI
                 {
                     Rectangle rcWnd = rc;
                     var rcScreen = Screen.GetWorkingArea(rcWnd);
-                    var x = rcWnd.X.Clamp(rcScreen.X, rcScreen.Right - rcWnd.Width);
-                    var y = rcWnd.Y.Clamp(rcScreen.Y, rcScreen.Bottom - rcWnd.Height);
+                    var x = rcWnd.X.ClampSafe(rcScreen.X, rcScreen.Right - rcWnd.Width);
+                    var y = rcWnd.Y.ClampSafe(rcScreen.Y, rcScreen.Bottom - rcWnd.Height);
                     MoveWindow(hWnd, x, y, rcWnd.Width, rcWnd.Height, false);
                 }
             }

@@ -472,6 +472,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
                 if (ts != m_tsValue)
                 {
+                    *pts = ts;
                     UpdateSegmentValue(ts);
                     Invalidate();
                     NotifyValueChanged();
@@ -497,10 +498,11 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             if (lParam)
             {
                 LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
-                TIMESPAN value = *pts;
+                TIMESPAN value = std::clamp(*pts, 1LL, TIMESPAN_MAX);
 
                 if (value != m_tsValueMax)
                 {
+                    *pts = value;
                     UpdateMaxValue(value);
                     Invalidate();
                 }

@@ -14,6 +14,34 @@ namespace PlainCEETimer.UI.Controls;
 [DebuggerDisplay("{Text}")]
 public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 {
+    private sealed class PlainTimeSpanPickerAccessibleObject(PlainTimeSpanPicker ownerControl) : ControlAccessibleObject(ownerControl)
+    {
+        public override string Name
+        {
+            get
+            {
+                var name = base.Name;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    return nameof(PlainTimeSpanPicker);
+                }
+
+                return name;
+            }
+
+            set => base.Name = value;
+        }
+
+        public override string Value
+        {
+            get => ownerControl.Text;
+            set => base.Value = value;
+        }
+
+        public override AccessibleRole Role => AccessibleRole.Text;
+    }
+
     public TimeSpan Value
     {
         get => m_value;
@@ -70,6 +98,12 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         }
     }
 
+    public override string Text
+    {
+        get => internals.WindowText;
+        set { }
+    }
+
     protected override CreateParams CreateParams
     {
         get
@@ -82,10 +116,9 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     protected override Size DefaultMinimumSize => new(50, 23);
 
-    public override string Text
+    protected override AccessibleObject CreateAccessibilityInstance()
     {
-        get => internals.WindowText;
-        set { }
+        return new PlainTimeSpanPickerAccessibleObject(this);
     }
 
     public event EventHandler ValueChanged;
