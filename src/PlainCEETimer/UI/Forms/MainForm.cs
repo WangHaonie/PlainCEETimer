@@ -72,36 +72,27 @@ public sealed class MainForm : AppForm
 
     private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        var prop = e.PropertyName;
-
-        switch (prop.Length)
+        switch (e.PropertyName)
         {
-            case 4:
-                if (prop == nameof(vm.Info))
-                {
-                    var i = vm.Info;
+            case nameof(vm.Info):
 
-                    if (i != null)
-                    {
-                        CountdownForeColor = i.ForeColor;
-                        BackColor = i.BackColor;
-                        CountdownContent = i.Content;
-                        using var dc = DeviceContext.CreateDC(this);
-                        SetFixedSize(TextRenderer.MeasureText(dc, CountdownContent, CountdownFont,
-                            new(SuggestedMaxWidth, 0), TextFormatFlags.WordBreak));
-                        Invalidate();
-                    }
+                var i = vm.Info;
+
+                if (i != null)
+                {
+                    CountdownForeColor = i.ForeColor;
+                    BackColor = i.BackColor;
+                    CountdownContent = i.Content;
+                    using var dc = DeviceContext.CreateDC(this);
+                    Size = TextRenderer.MeasureText(dc, CountdownContent, CountdownFont,
+                        new(SuggestedMaxWidth, 0), TextFormatFlags.WordBreak);
+                    Invalidate();
                 }
+
                 break;
 
-            case 7:
-                if (prop == nameof(vm.GdiFont))
-                {
-                    ApplyCountdownFont();
-                }
-                break;
-
-            default:
+            case nameof(vm.GdiFont):
+                ApplyCountdownFont();
                 break;
         }
     }

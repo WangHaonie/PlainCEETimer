@@ -2,9 +2,7 @@
 #include "Theme.h"
 #include "utils.h"
 #include "Win32/IATHook.h"
-#include <dwmapi.h>
 #include <Uxtheme.h>
-#include <Windows.h>
 
 /*
 
@@ -21,6 +19,7 @@ using fnFlushMenuThemes = void (WINAPI*)();
 DeclDelegateType(OpenThemeDataForDpi);
 DeclDelegateType(GetSysColor);
 DeclDelegateType(GetSysColorBrush);
+using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hWnd, LPWINDOWCOMPOSITIONATTRIBUTEDATA pwcad);
 
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
@@ -32,6 +31,7 @@ DeclDelegateField(OpenThemeDataForDpi);
 DeclDelegateField(FlushMenuThemes);
 DeclDelegateField(GetSysColor);
 DeclDelegateField(GetSysColorBrush);
+DeclDelegateField(SetWindowCompositionAttribute);
 
 DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
@@ -111,6 +111,90 @@ static HBRUSH WINAPI GetSysColorBrush_(int nIndex)
 {
     HandleColorDlgLumArrow(nIndex);
     return g_GetSysColorBrush(nIndex);
+}
+
+static BOOL EnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool bEnabled)
+{
+    if (!bAcrylic)
+    {
+        return FALSE; // to do
+    }
+
+    if (!g_SetWindowCompositionAttribute)
+    {
+        HMODULE hUser32 = GetModuleHandleA("user32.dll");
+
+        if (hUser32)
+        {
+            FARPROC addr = GetProcAddress(hUser32, "SetWindowCompositionAttribute");
+
+            if (addr)
+            {
+                g_SetWindowCompositionAttribute = CastToP(fnSetWindowCompositionAttribute, addr);
+            }
+        }
+    }
+
+    if (g_SetWindowCompositionAttribute)
+    {
+        ACCENT_POLICY ap =
+        {
+            ACCENT_ENABLE_ACRYLICBLURBEHIND,
+            ACCENT_WINDOWS11_LUMINOSITY | ACCENT_BORDER_ALL,
+            abgrGradient
+        };
+
+        WINDOWCOMPOSITIONATTRIBUTEDATA wcad =
+        {
+            WCA_ACCENT_POLICY,
+            &ap,
+            sizeof(ACCENT_POLICY)
+        };
+
+        return g_SetWindowCompositionAttribute(hWnd, &wcad);
+    }
+
+    return FALSE;
+}
+
+static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
+{
+    DWORD dwType = ASB_GET_BACKDROP(dwFlags);
+    BOOL bEnabled = ASB_GET_STATUS(dwFlags);
+
+    switch (dwType)
+    {
+        case ASBT_MICA:
+        case ASBT_MICAALT:
+        dwmapi:
+        {
+            DWM_SYSTEMBACKDROP_TYPE value = ASB_GET_STATUS(dwFlags) ? CastToS(DWM_SYSTEMBACKDROP_TYPE, dwType) : DWMSBT_NONE;
+
+            if (FAILED(DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &value, sizeof(value))))
+            {
+                return SUCCEEDED(DwmSetWindowAttribute(hWnd, DWMWA_MICA_EFFECT, &bEnabled, sizeof(bEnabled)));
+            }
+
+            return TRUE;
+        }
+
+        case ASBT_ACRYLIC:
+        case ASBT_AERO:
+        {
+            if (dwType == ASBT_ACRYLIC && ASB_DEFINED_FOPTIONS(dwFlags, ASBF_USE_DWMAPI))
+            {
+                goto dwmapi;
+            }
+
+            if (pvData)
+            {
+                DWORD abgrGradient = *CastToP(LPDWORD, pvData);
+                return EnableBlurBehind(hWnd, dwType == ASBT_ACRYLIC, abgrGradient, bEnabled);
+            }
+        }
+    }
+
+    return FALSE;
 }
 
 void NATIVESAPI EnableDarkModeForApp(BOOL enabled)
@@ -241,4 +325,20 @@ DWORD NATIVESAPI GetSystemAccentColor()
     BOOL flag = FALSE;
     DwmGetColorizationColor(&result, &flag);
     return result;
+}
+
+BOOL NATIVESAPI ApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
+{
+    if (hWnd && ApplySystemBackdropCore(hWnd, dwFlags, pvData))
+    {
+        MARGINS margins;
+        int* s = CastToP(int*, &margins);
+        int* e = s + 4;
+        int value = ASB_GET_STATUS(dwFlags) ? -1 : 0;
+        while (s < e) *s++ = value;
+        DwmExtendFrameIntoClientArea(hWnd, &margins);
+        return TRUE;
+    }
+
+    return FALSE;
 }

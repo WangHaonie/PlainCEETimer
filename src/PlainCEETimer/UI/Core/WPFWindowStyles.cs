@@ -38,9 +38,24 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
         set => window.Opacity = value;
     }
 
+    private SystemBackdrop backdrop;
+
     public void ShowActivated(bool activate)
     {
         window.ShowActivated = activate;
         window.Show();
+    }
+
+    public bool ApplyBackdrop(bool enabled, int type)
+    {
+        if (enabled)
+        {
+            backdrop ??= new(window.Handle);
+            backdrop.BackdropType = type;
+            return backdrop.Apply();
+        }
+
+        backdrop?.Clear();
+        return false;
     }
 }

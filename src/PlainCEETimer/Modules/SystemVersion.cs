@@ -11,12 +11,15 @@ public class SystemVersion
 
     public static bool IsWindows11 => isWindows11 ??= Current.AtLeast(WindowsVersions.Windows11_21H2);
 
+    public static bool IsWindows11_22H2 => isWindows11_22H2 ??= Current.AtLeast(WindowsVersions.Windows11_22H2);
+
     public static readonly SystemVersion Current = new();
 
     private readonly Version m_version;
 
     private static bool? isBeforeNT10;
     private static bool? isWindows11;
+    private static bool? isWindows11_22H2;
     private const string CurrentVersionRegistryPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
     private SystemVersion()

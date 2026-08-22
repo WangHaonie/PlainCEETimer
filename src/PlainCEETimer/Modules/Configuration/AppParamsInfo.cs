@@ -18,6 +18,9 @@ public class AppParamsInfo
     [JsonProperty(AppParams.UseClassicTSP_Key)]
     public bool UseClassicTSP { get; set; }
 
+    [JsonProperty(AppParams.MainBackdropAcrylic_Key)]
+    public bool MainBackdropAcrylic { get; set; }
+
     [JsonProperty(AppParams.TSFormat_Key)]
     public string TSFormat
     {

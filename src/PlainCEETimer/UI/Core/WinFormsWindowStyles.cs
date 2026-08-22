@@ -29,6 +29,8 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
         set => form.Opacity = value;
     }
 
+    private SystemBackdrop backdrop;
+
     public void ShowActivated(bool activate)
     {
         if (activate)
@@ -39,5 +41,20 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
         {
             Win32UI.ShowWindow(form.Handle, ShowWindowCommand.NoActivate);
         }
+    }
+
+    public bool ApplyBackdrop(bool enabled, int type)
+    {
+        form.TransparentBackground = enabled;
+
+        if (enabled)
+        {
+            backdrop ??= new(form.Handle);
+            backdrop.BackdropType = type;
+            return backdrop.Apply();
+        }
+
+        backdrop?.Clear();
+        return false;
     }
 }

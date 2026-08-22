@@ -24,5 +24,7 @@ public static class WindowsVersions
 
     public static Version Windows11_21H2 => field ??= new(10, 0, 22000);
 
+    public static Version Windows11_22H2 => field ??= new(10, 0, 22621);
+
     public static Version Windows11_24H2_WIP_NewDarkTheme => field ??= new(10, 0, 26120, 6682);
 }

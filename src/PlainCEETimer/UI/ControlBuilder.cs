@@ -205,15 +205,15 @@ public class ControlBuilder
     }
 #endif
 
-    public NavigationView NavigationView(int x, int y, int bw, int pw, int h, int hh, int indent, NavigationPage[] pages)
+    public NavigationView NavigationView(int x, int y, int cxBar, int cxPage, int cy, int cyHeader, int indentHeader, NavigationPage[] pages)
     {
         var ctrl = new NavigationView()
         {
-            Height = h,
-            HeaderHeight = hh,
-            NavigationBarWidth = bw,
-            NavigationPageWidth = pw,
-            HeaderIndent = indent,
+            Height = cy,
+            HeaderHeight = cyHeader,
+            NavigationBarWidth = cxBar,
+            NavigationPageWidth = cxPage,
+            HeaderIndent = indentHeader,
             Location = new(x, y)
         };
 

@@ -73,6 +73,9 @@ internal static class Win32UI
     public static extern bool IsMenu(IntPtr hMenu);
 
     [DllImport(App.User32Dll)]
+    public static extern bool IsWindow(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
     public static extern bool TrackPopupMenuEx(IntPtr hMenu, int uFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
     [DllImport(App.User32Dll)]
@@ -242,6 +245,9 @@ internal static class Win32UI
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
     public static extern void UnhookGetMessage();
+
+    [DllImport(App.NativesDll, EntryPoint = "#58")]
+    public unsafe static extern bool ApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
 
     public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
     {

@@ -46,6 +46,9 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     [ObservableProperty]
     public partial FontModel Font { get; set; }
 
+    [ObservableProperty]
+    public partial double BackOpacity { get; set; }
+
     #region For MainForm
     [ObservableProperty]
     public partial CountdownBasicInfo Info { get; private set; }
@@ -403,6 +406,9 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         WindowManager.Current.OnTopMostChanged(General.UniTopMost);
         Styles.ShowInTaskbar = !topmost;
         Styles.Opacity = General.Opacity / 100D;
+        var backdrop = AppParams.MainBackdropAcrylic;
+        BackOpacity = backdrop ? 0.01D : 1D;
+        Styles.ApplyBackdrop(backdrop, Natives.ASBT_ACRYLIC);
 
         if (BorderColorObj.Enabled)
         {

@@ -43,8 +43,10 @@ public static class WinUser
     public const int WM_CLOSE = 0x0010;
     public const int WM_MOVE = 0x0003;
     public const int WM_SIZE = 0x0005;
+    public const int WM_SETFOCUS = 0x0007;
     public const int WM_SETREDRAW = 0x000B;
     public const int WM_ACTIVATE = 0x0006;
+    public const int WM_WINDOWPOSCHANGING = 0x0046;
     public const int WM_CONTEXTMENU = 0x007B;
     public const int WM_COMMAND = 0x0111;
     public const int WM_PASTE = 0x0302;
@@ -107,6 +109,8 @@ public static class WinUser
 
     public const int EVENT_SYSTEM_FOREGROUND = 0x0003;
     public const int EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+
+    public const int SWP_NOACTIVATE = 0x0010;
 }
 
 [NoConstants]
@@ -190,4 +194,16 @@ public static class WinNls
 public static class WinError
 {
     public const int ERROR_CANCELLED = 1223;
+}
+
+[NoConstants]
+[CompilerRemove]
+public static class Natives
+{
+    public const int ASBT_AUTO = 0;
+    public const int ASBT_NONE = 1;
+    public const int ASBT_ACRYLIC = 3;
+    public const int ASBT_MICA = 2;
+    public const int ASBT_MICAALT = 4;
+    public const int ASBT_AERO = 5;
 }

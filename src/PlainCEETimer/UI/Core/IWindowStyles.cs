@@ -11,4 +11,6 @@ public interface IWindowStyles
     double Opacity { get; set; }
 
     void ShowActivated(bool activate);
+
+    bool ApplyBackdrop(bool enabled, int type);
 }

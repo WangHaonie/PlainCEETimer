@@ -12,10 +12,15 @@
         WindowStartupLocation="Manual" Height="5" Width="5" UseLayoutRounding="True">
     <Window.Resources>
         <c:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <c:ColorOpacityToBrushConverter x:Key="ColorOpacityToBrushConverter" />
     </Window.Resources>
     <Border Style="{DynamicResource RoundCornerBorder}"
-            BorderBrush="{Binding BorderColor, Converter={StaticResource ColorToBrushConverter}}"
-            Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}}">
+            BorderBrush="{Binding BorderColor, Converter={StaticResource ColorToBrushConverter}}">
+        <Border.Background>
+            <MultiBinding Converter="{StaticResource ColorOpacityToBrushConverter}">
+                <Binding Path="Background"/> <Binding Path="BackOpacity"/>
+            </MultiBinding>
+        </Border.Background>
         <Grid>
             <TextBlock Margin="5,0,5,0"
                 HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"

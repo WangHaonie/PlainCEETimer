@@ -59,6 +59,8 @@ public abstract class AppForm : Form, IAppWindow
 
     internal protected virtual bool Loaded => !IsLoading;
 
+    internal protected bool TransparentBackground { get; set; }
+
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
     protected virtual DpiAwarenessContext DefaultDpiAwarenessContext => AppParams.DisableWFPMv2
@@ -369,6 +371,14 @@ public abstract class AppForm : Form, IAppWindow
         base.OnClosed(e);
     }
 
+    protected override void OnPaintBackground(PaintEventArgs e)
+    {
+        if (TransparentBackground)
+            e.Graphics.Clear(Color.Transparent);
+        else
+            base.OnPaintBackground(e);
+    }
+
     protected override void WndProc(ref Message m)
     {
         switch (m.Msg)
@@ -670,17 +680,6 @@ public abstract class AppForm : Form, IAppWindow
 
         target.MaximumSize = new(maxWidth, 0);
         target.AutoSize = true;
-    }
-
-    protected void SetFixedSize(Size size)
-    {
-        SuspendLayout();
-        MinimumSize = Size.Empty;
-        MaximumSize = Size.Empty;
-        Size = size;
-        MinimumSize = size;
-        MaximumSize = size;
-        ResumeLayout();
     }
 
     protected Size KeepOnScreen(Size size)

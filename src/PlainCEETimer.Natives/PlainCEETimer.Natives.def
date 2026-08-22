@@ -71,3 +71,5 @@ EXPORTS
 
     LoadStringInternal @56 NONAME
     PlainTimeSpanPick_SuggestValue @57 NONAME
+
+    ApplySystemBackdrop @58 NONAME

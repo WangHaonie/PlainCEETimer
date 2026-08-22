@@ -103,6 +103,7 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxWFDpiAware;
     private PlainCheckBox CheckBoxCommDlgDpiAware;
     private PlainCheckBox CheckBoxCTSP;
+    private PlainCheckBox CheckBoxMainBackdrop;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
     private PlainNumericUpDown NudTruncate;
@@ -121,6 +122,7 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxTheme;
     private PlainGroupBox GBoxDpiAware;
     private PlainGroupBox GBoxTSPresent;
+    private PlainGroupBox GBoxDbgWndStyles;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
@@ -153,7 +155,7 @@ public sealed class SettingsForm : AppForm
 
         this.AddControls(b =>
         [
-            MainNavigationView = b.NavigationView(5, 1, 54, 320, 230, 26, 7,
+            MainNavigationView = b.NavigationView(5, 1, 54, 330, 230, 26, 7,
             [
                 #region NavPage_General
                 b.NavPage("基本",
@@ -471,6 +473,11 @@ public sealed class SettingsForm : AppForm
                             TextBoxTSFormat = b.TextBox(200, false, SettingsChanged),
                             LabelTSMax = b.Label("最大上限"),
                             PtspTSMax = b.TimeSpanPicker(200, SettingsChanged).With(x => x.MaxValue = TimeSpan.MaxValue)
+                        ]),
+
+                        GBoxDbgWndStyles = b.GroupBox("窗口样式",
+                        [
+                            CheckBoxMainBackdrop = b.CheckBox("启用主窗口 Backdrop 效果 (Acrylic)", SettingsChanged)
                         ])
                     ])
                 ),
@@ -692,6 +699,10 @@ public sealed class SettingsForm : AppForm
             CompactControlX(PtspTSMax, LabelTSMax);
             CenterControlY(LabelTSMax, PtspTSMax);
             GroupBoxAutoAdjustHeight(GBoxTSPresent, PtspTSMax, 6);
+
+            ArrangeControlYL(GBoxDbgWndStyles, GBoxTSPresent, 0, 2);
+            GroupBoxArrageControl(GBoxDbgWndStyles, CheckBoxMainBackdrop, 4);
+            GroupBoxAutoAdjustHeight(GBoxDbgWndStyles, CheckBoxMainBackdrop, 6);
         }
         #endregion
 
@@ -897,6 +908,7 @@ public sealed class SettingsForm : AppForm
             CheckBoxWFDpiAware.Checked = ParamsInfo.DisableWFPMv2;
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
             CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
+            CheckBoxMainBackdrop.Checked = ParamsInfo.MainBackdropAcrylic;
             TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
             PtspTSMax.Value = ParamsInfo.TSMax;
         }
@@ -1144,6 +1156,7 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.DisableWFPMv2 = CheckBoxWFDpiAware.Checked;
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
             ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
+            ParamsInfo.MainBackdropAcrylic = CheckBoxMainBackdrop.Checked;
             ParamsInfo.TSFormat = DebugTSFormat;
             ParamsInfo.TSMax = PtspTSMax.Value;
             AppParams.LoadConfig();
