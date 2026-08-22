@@ -83,7 +83,7 @@ public class SystemBackdrop
 
     private unsafe static bool ApplyCore(IntPtr hWnd, bool enabled, int type)
     {
-        if (!SystemVersion.IsWindows11)
+        if (!SystemVersion.IsWindows11 || !ThemeManager.TransparencyEnabled)
         {
             return false; // 非 W11 之后有时间了再研究
         }

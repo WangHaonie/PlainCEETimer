@@ -36,6 +36,15 @@ NATIVES_EXPORT void NATIVESAPI EnableDarkModeForWindowFrame(HWND hWnd, BOOL afte
 NATIVES_EXPORT void NATIVESAPI SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
 NATIVES_EXPORT DWORD NATIVESAPI GetSystemAccentColor();
 
+/*
+
+SWCA 相关定义 参考：
+
+systeminformer/phlib/include/guisup.h at 103cc43d77a6cd388d04c03371d019866d0521d6 · winsiderss/systeminformer
+https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019866d0521d6/phlib/include/guisup.h
+
+*/
+
 typedef enum _WINDOWCOMPOSITIONATTRIB
 {
     WCA_UNDEFINED = 0,

@@ -4,9 +4,11 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.UI;
 
+[NoConstants]
 public static class ThemeManager
 {
     private class ThemeChangedMessageFilter : IAppMessageFilter
@@ -49,6 +51,20 @@ public static class ThemeManager
 
     public static bool NewThemeAvailable => canUseNewTheme;
 
+    public static bool TransparencyEnabled
+    {
+        get
+        {
+            if (!SystemVersion.BeforeNT10)
+            {
+                using var reg = RegistryHelper.Open(PersonalizeRegPath);
+                return reg.Check("EnableTransparency", 1, 0);
+            }
+
+            return false;
+        }
+    }
+
     private static bool canFireThemeChanged;
     private static bool isDarkModeSupported;
     private static bool shouldUseDarkMode;
@@ -56,6 +72,7 @@ public static class ThemeManager
     private static bool isNewDwma;
     private static SystemTheme theme;
     private static ThemeChangedMessageFilter msgfilter;
+    private const string PersonalizeRegPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
     public static event EventHandler<ThemeChangedEventArgs> ThemeChanged;
 
@@ -180,8 +197,8 @@ public static class ThemeManager
 
     private static SystemTheme GetCurrentSystemTheme()
     {
-        var tmp = RegistryHelper.Open(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize").Check("AppsUseLightTheme", 0, 1);
-        return tmp ? SystemTheme.Dark : SystemTheme.Light;
+        using var reg = RegistryHelper.Open(PersonalizeRegPath);
+        return reg.Check("AppsUseLightTheme", 0, 1) ? SystemTheme.Dark : SystemTheme.Light;
     }
 
     /*

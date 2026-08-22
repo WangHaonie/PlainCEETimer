@@ -91,6 +91,8 @@ static HRESULT WINAPI GetThemeClass_(HTHEME hTheme, LPWSTR lpBuffer, int cchBuff
     {
         return g_GetThemeClass(hTheme, lpBuffer, cchBuffer);
     }
+
+    return HRESULT_FROM_WIN32(ERROR_PROC_NOT_FOUND);
 }
 
 static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
@@ -101,16 +103,21 @@ static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
     }
 }
 
+/*
+
+Progress 控件深色主题 灵感来自：
+
+systeminformer/SystemInformer/delayhook.c at master · winsiderss/systeminformer
+https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019866d0521d6/SystemInformer/delayhook.c#L1335-L1345
+
+*/
+
 static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect)
 {
     if (pRect)
     {
         RECT rc = *pRect;
-        
-        if (RECT_IS_ZEROCX(rc))
-        {
-            return false;
-        }
+        if (RECT_IS_ZEROCX(rc)) return false;
     }
 
     thread_local WCHAR buffer[VSCLASSNAME_BUFFER];
@@ -126,11 +133,8 @@ static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iS
         return true;
     };
 
-    if (last != hTheme)
-    {
-        GetThemeClass_(hTheme, buffer, VSCLASSNAME_BUFFER);
-        last = hTheme;
-    }
+    if (last != hTheme && SUCCEEDED(GetThemeClass_(hTheme, buffer, VSCLASSNAME_BUFFER))) last = hTheme;
+    if (!last) return false;
 
     if (WString_Equals(buffer, VSCLASS_PROGRESS, true))
     {
@@ -159,10 +163,7 @@ static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iS
 
 static void HandleColorDlgLumArrow(int& nIndex)
 {
-    if (nIndex == COLOR_BTNTEXT)
-    {
-        nIndex = COLOR_WINDOW;
-    }
+    if (nIndex == COLOR_BTNTEXT) nIndex = COLOR_WINDOW;
 }
 
 static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
