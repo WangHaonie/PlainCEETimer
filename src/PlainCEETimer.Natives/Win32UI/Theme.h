@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <dwmapi.h>
 
+#define VSCLASSNAME_BUFFER                      10
+
 #define HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS      "comctl32.dll", "uxtheme.dll", nullptr, 49, true
 
 NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
@@ -16,6 +18,11 @@ NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookOpenTheme();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
+
+#define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	"comctl32.dll", "uxtheme.dll", "DrawThemeBackground", 0, true
+
+NATIVES_EXPORT void NATIVESAPI ComctlHookThemeBackground();
+NATIVES_EXPORT void NATIVESAPI ComctlUnhookThemeBackground();
 
 #define HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS     "comdlg32.dll", "user32.dll", "GetSysColorBrush", 0, false
 

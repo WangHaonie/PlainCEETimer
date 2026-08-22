@@ -73,3 +73,6 @@ EXPORTS
     PlainTimeSpanPick_SuggestValue @57 NONAME
 
     ApplySystemBackdrop @58 NONAME
+
+    ComctlHookThemeBackground @59 NONAME
+    ComctlUnhookThemeBackground @60 NONAME

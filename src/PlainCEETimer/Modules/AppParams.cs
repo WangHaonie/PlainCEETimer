@@ -42,7 +42,7 @@ internal static class AppParams
 
     public static void LoadConfig(AppParamsInfo info = null)
     {
-        info ??= App.Current.AppConfig.Params;
+        info ??= App.Current.AppConfig?.Params;
 
         if (info != null)
         {

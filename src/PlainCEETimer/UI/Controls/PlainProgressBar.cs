@@ -40,6 +40,7 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
     }
 
     private bool init;
+    private bool UseDark;
     private int m_value;
     private ProgressStyle m_style;
     private TaskbarProgress tbp;
@@ -72,6 +73,18 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
         base.OnHandleDestroyed(e);
     }
 
+    protected override void WndProc(ref Message m)
+    {
+        if (m.Msg == WinUser.WM_PAINT && UseDark)
+        {
+            Win32UI.ComctlHookThemeBackground();
+            base.WndProc(ref m);
+            Win32UI.ComctlUnhookThemeBackground();
+        }
+
+        base.WndProc(ref m);
+    }
+
     private void UpdateStyle()
     {
         if (init)
@@ -102,6 +115,10 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
         if (ThemeManager.NewThemeAvailable)
         {
             ThemeManager.EnableDarkModeForControl(Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Progress);
+        }
+        else
+        {
+            UseDark = useDark;
         }
     }
 }

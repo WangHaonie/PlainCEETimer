@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "Win32/IATHook.h"
 #include <Uxtheme.h>
+#include <vsstyle.h>
 
 /*
 
@@ -20,6 +21,8 @@ DeclDelegateType(OpenThemeDataForDpi);
 DeclDelegateType(GetSysColor);
 DeclDelegateType(GetSysColorBrush);
 using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hWnd, LPWINDOWCOMPOSITIONATTRIBUTEDATA pwcad);
+DeclDelegateType(DrawThemeBackground);
+using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer);
 
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
@@ -32,11 +35,14 @@ DeclDelegateField(FlushMenuThemes);
 DeclDelegateField(GetSysColor);
 DeclDelegateField(GetSysColorBrush);
 DeclDelegateField(SetWindowCompositionAttribute);
+DeclDelegateField(DrawThemeBackground);
+DeclDelegateField(GetThemeClass);
 
 DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
 DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
+DeclIatData(DrawThemeBackground, Comctl);
 
 /*
 
@@ -64,12 +70,91 @@ static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
     return g_OpenNcThemeData(hWnd, pszClassList);
 };
 
+static HRESULT WINAPI GetThemeClass_(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer)
+{
+    if (!g_GetThemeClass)
+    {
+        HMODULE hmod = GetModuleHandleA("uxtheme.dll");
+
+        if (hmod)
+        {
+            FARPROC addr = GetProcAddress(hmod, MAKEINTRESOURCEA(74));
+
+            if (addr)
+            {
+                g_GetThemeClass = CastToP(fnGetThemeClass, addr);
+            }
+        }
+    }
+
+    if (g_GetThemeClass)
+    {
+        return g_GetThemeClass(hTheme, lpBuffer, cchBuffer);
+    }
+}
+
 static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
 {
     if (WString_Equals(pszClassList, WC_BUTTON, true) && !hWnd)
     {
         pszClassList = L"DarkMode_Explorer::Button";
     }
+}
+
+static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect)
+{
+    if (pRect)
+    {
+        RECT rc = *pRect;
+        
+        if (RECT_IS_ZEROCX(rc))
+        {
+            return false;
+        }
+    }
+
+    thread_local WCHAR buffer[VSCLASSNAME_BUFFER];
+    thread_local HTHEME last = nullptr;
+
+    auto _DrawBackground = [&](COLORREF cr) -> bool
+    {
+        HBRUSH hbrBack = CreateSolidBrush(cr);
+        FillRect(hdc, pRect, hbrBack);
+        DeleteObject(hbrBack);
+        SetDCBrushColor(hdc, cr);
+        FrameRect(hdc, pRect, CastToP(HBRUSH, GetStockObject(DC_BRUSH)));
+        return true;
+    };
+
+    if (last != hTheme)
+    {
+        GetThemeClass_(hTheme, buffer, VSCLASSNAME_BUFFER);
+        last = hTheme;
+    }
+
+    if (WString_Equals(buffer, VSCLASS_PROGRESS, true))
+    {
+        switch (iPartId)
+        {
+            case PP_TRANSPARENTBAR:
+            case PP_TRANSPARENTBARVERT:
+                return _DrawBackground(RGB(19, 19, 19));
+
+            case PP_FILL:
+            case PP_FILLVERT:
+            {
+                switch (iStateId)
+                {
+                    CASE(PBFS_NORMAL, _DrawBackground(RGB(108, 203, 95)));
+                    CASE(PBFS_ERROR, _DrawBackground(RGB(255, 153, 164)));
+                    CASE(PBFS_PAUSED, _DrawBackground(RGB(252, 225, 0)));
+                    CASE(PBFS_PARTIAL, _DrawBackground(RGB(0, 120, 212)));
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 static void HandleColorDlgLumArrow(int& nIndex)
@@ -86,21 +171,24 @@ static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT 
     return g_OpenThemeDataForDpi(hWnd, pszClassList, dpi);
 };
 
+static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, LPCRECT pClipRect)
+{
+    if (HandleProgressBackground(hTheme, hdc, iPartId, iStateId, pRect))
+    {
+        return S_OK;
+    }
+
+    return g_DrawThemeBackground(hTheme, hdc, iPartId, iStateId, pRect, pClipRect);
+}
+
 static DWORD WINAPI GetSysColor_(int nIndex)
 {
     if (g_fUseDark)
     {
         switch (nIndex)
         {
-            case COLOR_WINDOW:
-            {
-                return g_crBack;
-            }
-
-            case COLOR_WINDOWTEXT:
-            {
-                return g_crFore;
-            }
+            CASE(COLOR_WINDOW, g_crBack);
+            CASE(COLOR_WINDOWTEXT, g_crFore);
         }
     }
 
@@ -274,6 +362,20 @@ void NATIVESAPI ComctlHookOpenTheme()
 void NATIVESAPI ComctlUnhookOpenTheme()
 {
     UnhookIat(IatHookComctlOpenThemeDataForDpi);
+}
+
+void NATIVESAPI ComctlHookThemeBackground()
+{
+    HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS,
+        IatHookComctlDrawThemeBackground,
+        g_DrawThemeBackground,
+        DrawThemeBackground_
+    );
+}
+
+void NATIVESAPI ComctlUnhookThemeBackground()
+{
+    UnhookIat(IatHookComctlDrawThemeBackground);
 }
 
 void NATIVESAPI ComdlgHookGetSysColorBrush()

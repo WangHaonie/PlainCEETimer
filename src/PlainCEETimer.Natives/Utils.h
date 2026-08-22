@@ -19,6 +19,8 @@
 #define String_IsNullOrEmpty(str)   (!str || !*str)
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
 
+#define RECT_IS_ZEROCX(rc)          ((rc.right - rc.left) == 0)
+
 inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {
     if (!strA || !strB)
