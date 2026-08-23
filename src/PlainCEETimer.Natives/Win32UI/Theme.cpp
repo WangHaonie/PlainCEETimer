@@ -70,7 +70,7 @@ static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
     return g_OpenNcThemeData(hWnd, pszClassList);
 };
 
-static HRESULT WINAPI GetThemeClass_(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer)
+static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer)
 {
     if (!g_GetThemeClass)
     {
@@ -133,7 +133,7 @@ static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iS
         return true;
     };
 
-    if (last != hTheme && SUCCEEDED(GetThemeClass_(hTheme, buffer, VSCLASSNAME_BUFFER))) last = hTheme;
+    if (last != hTheme && SUCCEEDED(GetThemeClass(hTheme, buffer, VSCLASSNAME_BUFFER))) last = hTheme;
     if (!last) return false;
 
     if (WString_Equals(buffer, VSCLASS_PROGRESS, true))

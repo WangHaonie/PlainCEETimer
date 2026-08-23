@@ -23,56 +23,24 @@
 
 inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {
-    if (!strA || !strB)
-    {
-        return false;
-    }
-
-    if (strA == strB)
-    {
-        return true;
-    }
-
-    if (bIgnoreCase)
-    {
-        return _stricmp(strA, strB) == 0;
-    }
-
+    if (!strA || !strB) return false;
+    if (strA == strB) return true;
+    if (bIgnoreCase) return _stricmp(strA, strB) == 0;
     return strcmp(strA, strB) == 0;
 }
 
 inline bool __cdecl WString_StartsWith(const wchar_t* strA, const wchar_t* strB)
 {
-    if (!strA || !strB)
-    {
-        return false;
-    }
-
-    if (strA == strB)
-    {
-        return true;
-    }
-
+    if (!strA || !strB) return false;
+    if (strA == strB) return true;
     return _wcsnicmp(strA, strB, wcslen(strB)) == 0;
 }
 
 inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, bool bIgnoreCase)
 {
-    if (!strA || !strB)
-    {
-        return false;
-    }
-
-    if (strA == strB)
-    {
-        return true;
-    }
-
-    if (bIgnoreCase)
-    {
-        return _wcsicmp(strA, strB) == 0;
-    }
-
+    if (!strA || !strB) return false;
+    if (strA == strB) return true;
+    if (bIgnoreCase) return _wcsicmp(strA, strB) == 0;
     return wcscmp(strA, strB) == 0;
 }
 

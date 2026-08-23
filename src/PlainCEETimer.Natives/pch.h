@@ -32,4 +32,6 @@
 
 #define STRSAFE_DEFAULT             0
 
+#define nameof(obj)                 TEXT(#obj)
+
 #endif 

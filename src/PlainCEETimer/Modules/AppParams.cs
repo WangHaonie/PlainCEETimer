@@ -50,7 +50,7 @@ internal static class AppParams
             m_DisableWFPMv2 = info.DisableWFPMv2;
             m_EnableCommDlgPMv2 = info.EnableCommDlgPMv2;
             m_UseClassicTSP = info.UseClassicTSP;
-            m_MainBackdropAcrylic = info.MainBackdropAcrylic;
+            m_MainBackdropAcrylic = info.MainBackdropAcrylic && SystemVersion.IsWindows11;
             m_TSFormat = info.TSFormat;
             m_TSMax = info.TSMax;
         }

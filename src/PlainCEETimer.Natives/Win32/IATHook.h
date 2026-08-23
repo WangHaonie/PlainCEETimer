@@ -139,16 +139,8 @@ inline bool __stdcall InitializeIatHook(
     }
 
     HMODULE hMod = GetModuleHandleA(targetModuleName);
-
-    if (!hMod)
-    {
-        hMod = LoadLibraryExA(targetModuleName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-    }
-
-    if (!hMod)
-    {
-        return false;
-    }
+    if (!hMod) hMod = LoadLibraryExA(targetModuleName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if (!hMod) return false;
 
     auto addr = fDelayImport
         ? FindDelayLoadThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal)
@@ -168,15 +160,8 @@ inline bool __stdcall InitializeIatHook(
 template <typename TFunc>
 inline bool __stdcall ReplaceFunction(IAT_HOOK_DATA<TFunc>& data, TFunc newFunc)
 {
-    if (data.Hooked)
-    {
-        return true;
-    }
-
-    if (!data.Initialized || !data.pThunk)
-    {
-        return false;
-    }
+    if (data.Hooked) return true;
+    if (!data.Initialized || !data.pThunk) return false;
 
     if (ReplaceFunctionCore(data.pThunk, newFunc))
     {
@@ -191,15 +176,8 @@ inline bool __stdcall ReplaceFunction(IAT_HOOK_DATA<TFunc>& data, TFunc newFunc)
 template <typename TFunc>
 inline bool __stdcall RestoreFunction(IAT_HOOK_DATA<TFunc>& data)
 {
-    if (!data.Hooked)
-    {
-        return true;
-    }
-
-    if (!data.Initialized || !data.pThunk)
-    {
-        return false;
-    }
+    if (!data.Hooked) return true;
+    if (!data.Initialized || !data.pThunk) return false;
 
     if (ReplaceFunctionCore(data.pThunk, data.OldFunc))
     {
