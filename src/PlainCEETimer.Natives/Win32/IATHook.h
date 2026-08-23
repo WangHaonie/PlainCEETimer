@@ -6,7 +6,7 @@
 #pragma once
 
 #include <cstdint>
-#include <utils.h>
+#include <Utils.h>
 #include <Windows.h>
 
 template <typename TFunc>
@@ -133,23 +133,16 @@ inline bool __stdcall InitializeIatHook(
     bool fDelayImport,
     IAT_HOOK_DATA<TFunc>& data)
 {
-    if (data.Initialized)
-    {
-        return true;
-    }
+    if (data.Initialized) return true;
 
-    HMODULE hMod = GetModuleHandleA(targetModuleName);
-    if (!hMod) hMod = LoadLibraryExA(targetModuleName, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    HMODULE hMod = PnGetModuleHandleA(targetModuleName, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!hMod) return false;
 
     auto addr = fDelayImport
         ? FindDelayLoadThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal)
         : FindIatThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal);
 
-    if (!addr)
-    {
-        return false;
-    }
+    if (!addr) return false;
 
     data.pThunk = addr;
     data.OldFunc = reinterpret_cast<TFunc>(addr->u1.Function);

@@ -9,9 +9,6 @@
 #define HEAPALLOC_M(type, count)    CastToP(type*, HeapAllocEx(count * sizeof(type)))
 #define HEAPFREE(lpMem)             HeapFreeEx(CastToP(LPVOID*, &lpMem))
 
-#define HEAPDUPSTRW(str)            StringCchCopyToHeapW(str, -1)
-#define HEAPDUPSTRNW(str, cch)      StringCchCopyToHeapW(str, cch + 1)
-
 #define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
 
 #define CASE(val, ret)              case val: return ret
@@ -20,6 +17,8 @@
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
 
 #define RECT_IS_ZEROCX(rc)          ((rc.right - rc.left) == 0)
+
+#define INITFUNC(p, mn, pn)         (p || (!p && LoadFunction(&p, mn, pn)))
 
 inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {
@@ -82,34 +81,41 @@ inline BOOL __stdcall HeapFreeEx(LPVOID* ppMem)
     return TRUE;
 }
 
-inline LPWSTR __stdcall StringCchCopyToHeapW(LPCWSTR lpString, size_t cchString)
+inline HMODULE __stdcall PnGetModuleHandleA(LPCSTR lpModuleName, DWORD dwFlags)
 {
-    if (!WString_IsNullOrEmpty(lpString))
+    HMODULE hmod = GetModuleHandleA(lpModuleName);
+    if (!hmod) hmod = LoadLibraryExA(lpModuleName, nullptr, dwFlags);
+    return hmod;
+}
+
+template<typename TFunc>
+inline bool __stdcall LoadFunction(TFunc* lpProc, LPCSTR lpModuleName, LPCSTR lpProcName)
+{
+    if (lpProc)
     {
-        if (cchString < 0)
+        if (*lpProc)
         {
-            cchString = lstrlen(lpString) + 1;
+            return true;
         }
 
-        if (cchString)
+        if (lpProcName && !String_IsNullOrEmpty(lpModuleName))
         {
-            LPWSTR buffer = HEAPALLOC_M(WCHAR, cchString);
+            HMODULE hmod = PnGetModuleHandleA(lpModuleName, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
-            if (buffer)
+            if (hmod)
             {
-                HRESULT hr = StringCchCopyN(buffer, cchString, lpString, cchString);
+                FARPROC addr = GetProcAddress(hmod, lpProcName);
 
-                if (FAILED(hr))
+                if (addr)
                 {
-                    HEAPFREE(buffer);
+                    *lpProc = CastToP(TFunc, addr);
+                    return true;
                 }
-
-                return buffer;
             }
         }
     }
 
-    return nullptr;
+    return false;
 }
 
 /*

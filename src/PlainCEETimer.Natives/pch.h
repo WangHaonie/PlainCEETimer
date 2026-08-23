@@ -6,6 +6,15 @@
 #include "resource.h"
 #include <sdkddkver.h>
 
+#define LIBRARYNAME 				L"PlainCEETimer.Natives.dll"
+
+#define COMCTL32_DLL                "comctl32.dll"
+#define COMDLG32_DLL                "comdlg32.dll"
+#define USER32_DLL                  "user32.dll"
+#define UXTHEME_DLL                 "uxtheme.dll"
+
+#define ORD2STR(ord)                MAKEINTRESOURCEA(ord)
+
 #define DeclDelegateType(Func)      using fn##Func = decltype(&Func)
 #define DeclDelegateField(Func)     static fn##Func g_##Func = nullptr
 
@@ -32,6 +41,6 @@
 
 #define STRSAFE_DEFAULT             0
 
-#define nameof(obj)                 TEXT(#obj)
+#define nameof(obj)                 #obj
 
 #endif 

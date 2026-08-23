@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "Theme.h"
-#include "utils.h"
+#include "Utils.h"
 #include "Win32/IATHook.h"
 #include <Uxtheme.h>
 #include <vsstyle.h>
@@ -14,19 +14,18 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/DarkMode.h
 
 */
 
-using fnSetPreferredAppMode = int (WINAPI*)(int preferredAppMode);
+using fnSetPreferredAppMode = PreferredAppMode (WINAPI*)(PreferredAppMode preferredAppMode);
 using fnOpenNcThemeData = decltype(&OpenThemeData);
 using fnFlushMenuThemes = void (WINAPI*)();
 DeclDelegateType(OpenThemeDataForDpi);
 DeclDelegateType(GetSysColor);
 DeclDelegateType(GetSysColorBrush);
-using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hWnd, LPWINDOWCOMPOSITIONATTRIBUTEDATA pwcad);
+using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hwnd, const WINDOWCOMPOSITIONATTRIBDATA* pwcad);
 DeclDelegateType(DrawThemeBackground);
 using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer);
 
 static COLORREF g_crFore = 0;
 static COLORREF g_crBack = 0;
-static BOOL g_fUseDark = FALSE;
 
 DeclDelegateField(SetPreferredAppMode);
 DeclDelegateField(OpenNcThemeData);
@@ -44,6 +43,44 @@ DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
 DeclIatData(DrawThemeBackground, Comctl);
 
+static int WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
+{
+    if (INITFUNC(g_SetPreferredAppMode, UXTHEME_DLL, ORD2STR(135)))
+    {
+        return g_SetPreferredAppMode(preferredAppMode);
+    }
+
+    return 0;
+}
+
+static void WINAPI FlushMenuThemes()
+{
+    if (INITFUNC(g_FlushMenuThemes, UXTHEME_DLL, ORD2STR(136)))
+    {
+        return g_FlushMenuThemes();
+    }
+}
+
+static BOOL WINAPI SetWindowCompositionAttribute(HWND hwnd, const WINDOWCOMPOSITIONATTRIBDATA* pwcad)
+{
+    if (INITFUNC(g_SetWindowCompositionAttribute, USER32_DLL, nameof(SetWindowCompositionAttribute)))
+    {
+        return g_SetWindowCompositionAttribute(hwnd, pwcad);
+    }
+
+    return FALSE;
+}
+
+static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer)
+{
+    if (INITFUNC(g_GetThemeClass, UXTHEME_DLL, ORD2STR(74)))
+    {
+        return g_GetThemeClass(hTheme, lpBuffer, cchBuffer);
+    }
+
+    return HRESULT_FROM_WIN32(ERROR_PROC_NOT_FOUND);
+}
+
 /*
 
 将非 Explorer 主题的 ScrollBar 应用深色主题 参考：
@@ -59,40 +96,13 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 */
 
-static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
+static void HandleScrollBarElements(HWND& hWnd, LPCWSTR& pszClassList)
 {
-    if (g_fUseDark && WString_Equals(pszClassList, WC_SCROLLBAR, true))
+    if (WString_Equals(pszClassList, WC_SCROLLBAR, true))
     {
         hWnd = nullptr;
         pszClassList = L"DarkMode_Explorer::ScrollBar";
     }
-
-    return g_OpenNcThemeData(hWnd, pszClassList);
-};
-
-static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer)
-{
-    if (!g_GetThemeClass)
-    {
-        HMODULE hmod = GetModuleHandleA("uxtheme.dll");
-
-        if (hmod)
-        {
-            FARPROC addr = GetProcAddress(hmod, MAKEINTRESOURCEA(74));
-
-            if (addr)
-            {
-                g_GetThemeClass = CastToP(fnGetThemeClass, addr);
-            }
-        }
-    }
-
-    if (g_GetThemeClass)
-    {
-        return g_GetThemeClass(hTheme, lpBuffer, cchBuffer);
-    }
-
-    return HRESULT_FROM_WIN32(ERROR_PROC_NOT_FOUND);
 }
 
 static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
@@ -166,6 +176,12 @@ static void HandleColorDlgLumArrow(int& nIndex)
     if (nIndex == COLOR_BTNTEXT) nIndex = COLOR_WINDOW;
 }
 
+static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
+{
+    HandleScrollBarElements(hWnd, pszClassList);
+    return g_OpenNcThemeData(hWnd, pszClassList);
+};
+
 static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT dpi)
 {
     HandleListViewCheckBoxes(hWnd, pszClassList);
@@ -184,13 +200,10 @@ static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, 
 
 static DWORD WINAPI GetSysColor_(int nIndex)
 {
-    if (g_fUseDark)
+    switch (nIndex)
     {
-        switch (nIndex)
-        {
-            CASE(COLOR_WINDOW, g_crBack);
-            CASE(COLOR_WINDOWTEXT, g_crFore);
-        }
+        CASE(COLOR_WINDOW, g_crBack);
+        CASE(COLOR_WINDOWTEXT, g_crFore);
     }
 
     return g_GetSysColor(nIndex);
@@ -209,41 +222,19 @@ static BOOL EnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool 
         return FALSE; // to do
     }
 
-    if (!g_SetWindowCompositionAttribute)
+    ACCENT_POLICY ap =
     {
-        HMODULE hUser32 = GetModuleHandleA("user32.dll");
+        ACCENT_ENABLE_ACRYLICBLURBEHIND,
+        ACCENT_WINDOWS11_LUMINOSITY | ACCENT_BORDER_ALL,
+        abgrGradient
+    };
 
-        if (hUser32)
-        {
-            FARPROC addr = GetProcAddress(hUser32, "SetWindowCompositionAttribute");
-
-            if (addr)
-            {
-                g_SetWindowCompositionAttribute = CastToP(fnSetWindowCompositionAttribute, addr);
-            }
-        }
-    }
-
-    if (g_SetWindowCompositionAttribute)
+    WINDOWCOMPOSITIONATTRIBDATA wcad =
     {
-        ACCENT_POLICY ap =
-        {
-            ACCENT_ENABLE_ACRYLICBLURBEHIND,
-            ACCENT_WINDOWS11_LUMINOSITY | ACCENT_BORDER_ALL,
-            abgrGradient
-        };
+        WCA_ACCENT_POLICY, &ap, sizeof(ACCENT_POLICY)
+    };
 
-        WINDOWCOMPOSITIONATTRIBUTEDATA wcad =
-        {
-            WCA_ACCENT_POLICY,
-            &ap,
-            sizeof(ACCENT_POLICY)
-        };
-
-        return g_SetWindowCompositionAttribute(hWnd, &wcad);
-    }
-
-    return FALSE;
+    return SetWindowCompositionAttribute(hWnd, &wcad);
 }
 
 static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
@@ -288,41 +279,22 @@ static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
 
 void NATIVESAPI EnableDarkModeForApp(BOOL enabled)
 {
-    g_fUseDark = enabled;
-
-    if (!g_SetPreferredAppMode)
+    if (enabled)
     {
-        HMODULE hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-
-        if (hUxtheme)
+        if (INITFUNC(g_OpenNcThemeData, UXTHEME_DLL, ORD2STR(49))
+            && InitializeIatHook(HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS, IatHookComctlOpenNcThemeData)
+            && ReplaceFunction(IatHookComctlOpenNcThemeData, OpenNcThemeData_))
         {
-            auto addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
-
-            if (addr)
-            {
-                g_SetPreferredAppMode = CastToP(fnSetPreferredAppMode, addr);
-            }
-
-            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(49)))
-            {
-                g_OpenNcThemeData = CastToP(fnOpenNcThemeData, addr);
-                
-                if (InitializeIatHook(HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS, IatHookComctlOpenNcThemeData))
-                {
-                    ReplaceFunction(IatHookComctlOpenNcThemeData, OpenNcThemeData_);
-                    IatHookComctlOpenNcThemeData.OldFunc = g_OpenNcThemeData;
-                }
-            }
-
-            if (addr = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)))
-            {
-                g_FlushMenuThemes = CastToP(fnFlushMenuThemes, addr);
-            }
+            IatHookComctlOpenNcThemeData.OldFunc = g_OpenNcThemeData;
         }
     }
-
-    if (g_SetPreferredAppMode) g_SetPreferredAppMode(enabled ? 2 : 0);
-    if (g_FlushMenuThemes) g_FlushMenuThemes();
+    else
+    {
+        UnhookIat(IatHookComctlOpenNcThemeData);
+    }
+    
+    SetPreferredAppMode(enabled ? ForceDark : Default);
+    FlushMenuThemes();
 }
 
 void NATIVESAPI ComctlHookSysColor(COLORREF crFore, COLORREF crBack)

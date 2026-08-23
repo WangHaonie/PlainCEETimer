@@ -31,7 +31,7 @@ static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-static int WINAPI MessageBox_(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
+static int WINAPI MessageBoxW_(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 {
     HHOOK hk = SetWindowsHookEx(WH_CBT, CbtMessageBoxHookProc, nullptr, GetCurrentThreadId());
     auto ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
@@ -150,7 +150,7 @@ void NATIVESAPI ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMes
 
     if (dwHookFlag == HMBF_GETMSGBOX && lpfnCbtProc)
     {
-        if (!g_MsgBoxCbtProc && ReplaceFunction(IatHookComdlgMessageBoxW, MessageBox_))
+        if (!g_MsgBoxCbtProc && ReplaceFunction(IatHookComdlgMessageBoxW, MessageBoxW_))
         {
             g_MsgBoxCbtProc = lpfnCbtProc;
             return;

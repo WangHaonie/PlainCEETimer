@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#define HOOK_COMDLG32_MESSAGEBOXW_ARGS			"comdlg32.dll", "user32.dll", "MessageBoxW", 0, false
+#define HOOK_COMDLG32_MESSAGEBOXW_ARGS			COMDLG32_DLL, USER32_DLL, nameof(MessageBoxW), 0, false
 
 #define HMBF_GETMSGBOX							0
 #define HMBF_REPMSGBOX							1

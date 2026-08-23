@@ -472,7 +472,7 @@ HANDLE PlainTimeSpanPick::CreateFormat(LPCWSTR pszFormat)
             {
                 lpFormat->lpLiterals = literals;
                 lpFormat->lpSegments = segments;
-                lpFormat->cchLiterals = cchBufferLiterals;
+                lpFormat->cchLiterals = CastToS(INT, cchBufferLiterals);
                 lpFormat->cSegments = cSegments;
                 return CastToP(HANDLE, lpFormat);
             }

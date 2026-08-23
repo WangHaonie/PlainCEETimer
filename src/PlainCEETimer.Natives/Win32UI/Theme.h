@@ -5,26 +5,35 @@
 
 #define VSCLASSNAME_BUFFER                      10
 
-#define HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS      "comctl32.dll", "uxtheme.dll", nullptr, 49, true
+typedef enum
+{
+    Default,
+    AllowDark,
+    ForceDark,
+    ForceLight,
+    Max
+} PreferredAppMode;
+
+#define HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS      COMCTL32_DLL, UXTHEME_DLL, nullptr, 49, true
 
 NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
 
-#define HOOK_COMCTL32_GETSYSCOLOR_ARGS			"comctl32.dll", "user32.dll", "GetSysColor", 0, false
+#define HOOK_COMCTL32_GETSYSCOLOR_ARGS			COMCTL32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();
 
-#define HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS	"comctl32.dll", "uxtheme.dll", "OpenThemeDataForDpi", 0, true
+#define HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(OpenThemeDataForDpi), 0, true
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookOpenTheme();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
 
-#define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	"comctl32.dll", "uxtheme.dll", "DrawThemeBackground", 0, true
+#define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackground), 0, true
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookThemeBackground();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookThemeBackground();
 
-#define HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS     "comdlg32.dll", "user32.dll", "GetSysColorBrush", 0, false
+#define HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS     COMDLG32_DLL, USER32_DLL, nameof(GetSysColorBrush), 0, false
 
 NATIVES_EXPORT void NATIVESAPI ComdlgHookGetSysColorBrush();
 NATIVES_EXPORT void NATIVESAPI ComdlgUnhookGetSysColorBrush();
@@ -110,12 +119,12 @@ typedef enum _ACCENT_FLAG
     ACCENT_BORDER_ALL = (ACCENT_BORDER_LEFT | ACCENT_BORDER_TOP | ACCENT_BORDER_RIGHT | ACCENT_BORDER_BOTTOM)
 } ACCENT_FLAG;
 
-typedef struct tagWINDOWCOMPOSITIONATTRIBUTEDATA
+typedef struct tagWINDOWCOMPOSITIONATTRIBDATA
 {
     WINDOWCOMPOSITIONATTRIB Attribute;
     PVOID pvData;
     SIZE_T cbData;
-} WINDOWCOMPOSITIONATTRIBUTEDATA, *LPWINDOWCOMPOSITIONATTRIBUTEDATA;
+} WINDOWCOMPOSITIONATTRIBDATA;
 
 typedef struct _ACCENT_POLICY
 {

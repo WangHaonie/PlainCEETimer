@@ -9,7 +9,6 @@
 
 #define IDD_CHOOSECOLOR					998
 #define IDD_CHOOSEFONT					999
-#define LIBRARYNAME 					L"PlainCEETimer.Natives.dll"
 
 #define IDS_CTRL_PTSP_FORMAT			201
 
