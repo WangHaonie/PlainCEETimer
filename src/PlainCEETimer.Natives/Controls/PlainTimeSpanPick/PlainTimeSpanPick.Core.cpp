@@ -301,18 +301,10 @@ bool PlainTimeSpanPick::IsPartValid(WCHAR c, DWORD& part)
 {
     switch (c)
     {
-        case L'd':
-            part = PTSPSEG_DAYS;
-            return true;
-        case L'h':
-            part = PTSPSEG_HOURS;
-            return true;
-        case L'm':
-            part = PTSPSEG_MINUTES;
-            return true;
-        case L's':
-            part = PTSPSEG_SECONDS;
-            return true;
+        CASE_A(L'd', part, PTSPSEG_DAYS, true);
+        CASE_A(L'h', part, PTSPSEG_HOURS, true);
+        CASE_A(L'm', part, PTSPSEG_MINUTES, true);
+        CASE_A(L's', part, PTSPSEG_SECONDS, true);
     }
 
     return false;

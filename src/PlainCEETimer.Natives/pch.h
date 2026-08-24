@@ -26,6 +26,8 @@
 #define DetourBegin()	            DetourTransactionBegin(); DetourUpdateThread(GetCurrentThread())
 #define DetourEnd()		            DetourTransactionCommit()
 #define DETOUR_ARGS(original, hook) &(PVOID&)original, hook
+#define DetourHook(o, h)            DetourAttach(DETOUR_ARGS(o, h))
+#define DetourUnhook(o, h)          DetourDetach(DETOUR_ARGS(o, h))
 
 #define DeclIatData(n, dn)          static IAT_HOOK_DATA<fn##n> IatHook##dn##n = {}
 #define HookIat(args, data, original, hook)     \

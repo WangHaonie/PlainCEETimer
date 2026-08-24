@@ -158,9 +158,9 @@ public class ControlBuilder
         return ctrl;
     }
 
-    public DateTimePicker DateTimePicker(int w, EventHandler onValueChanged)
+    public PlainDateTimePicker DateTimePicker(int w, EventHandler onValueChanged)
     {
-        var ctrl = new DateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = ConfigValidator.DTPFormat };
+        var ctrl = new PlainDateTimePicker() { Format = DateTimePickerFormat.Custom, CustomFormat = ConfigValidator.DTPFormat };
         ctrl.SetBounds(0, 0, w, 23);
         ctrl.ValueChanged += onValueChanged;
         return ctrl;

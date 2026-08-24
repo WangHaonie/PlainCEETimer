@@ -53,6 +53,9 @@
     <Compile Update="UI\Controls\PlainCommonDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainDateTimePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="UI\Controls\PlainFontDialog.cs">
       <SubType>Component</SubType>
     </Compile>

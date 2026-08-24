@@ -85,6 +85,9 @@ internal static class Win32UI
     public static extern bool IsWindowVisible(IntPtr hWnd);
 
     [DllImport(App.User32Dll)]
+    public static extern IntPtr GetParent(IntPtr hWnd);
+
+    [DllImport(App.User32Dll)]
     public static extern IntPtr GetAncestor(IntPtr hWnd, uint gaFlags);
 
     [DllImport(App.User32Dll)]

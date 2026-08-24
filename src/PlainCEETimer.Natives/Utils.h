@@ -12,6 +12,8 @@
 #define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
 
 #define CASE(val, ret)              case val: return ret
+#define CASE_A(val, l, r, ret)      case val: l = r; return ret
+#define CASE_AB(val, l, r)          case val: l = r; break
 
 #define String_IsNullOrEmpty(str)   (!str || !*str)
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
@@ -19,6 +21,18 @@
 #define RECT_IS_ZEROCX(rc)          ((rc.right - rc.left) == 0)
 
 #define INITFUNC(p, mn, pn)         (p || (!p && LoadFunction(&p, mn, pn)))
+
+inline void DDump(const wchar_t* format, ...)
+{
+#ifdef _DEBUG
+    WCHAR buffer[512];
+    va_list args;
+    va_start(args, format);
+    StringCchVPrintfW(buffer, 512, format, args);
+    va_end(args);
+    OutputDebugStringW(buffer);
+#endif
+}
 
 inline bool __cdecl String_Equals(const char* strA, const char* strB, bool bIgnoreCase)
 {

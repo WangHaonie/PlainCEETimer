@@ -156,6 +156,9 @@ public static class CommCtrl
     public const int LVM_GETTOOLTIPS = LVM_FIRST + 78;
     public const int LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
     public const int LVS_EX_CHECKBOXES = 0x00000004;
+
+    public const int DTM_FIRST = 0x1000;
+    public const int DTM_GETMONTHCAL = DTM_FIRST + 8;
 }
 
 [NoConstants]

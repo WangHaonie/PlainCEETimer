@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <dwmapi.h>
 
-#define VSCLASSNAME_BUFFER                      10
+#define VSCLASSNAME_BUFFER                      12
 
 typedef enum
 {
@@ -28,7 +28,35 @@ NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();
 NATIVES_EXPORT void NATIVESAPI ComctlHookOpenTheme();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
 
+#define COLOR_EMPTY                             ((COLORREF)0)
+
+#define DCOLOR_PROGRESS_BACK                    RGB(19, 19, 19)
+#define DCOLOR_PROGRESS_BACK_NORMAL             RGB(108, 203, 95)
+#define DCOLOR_PROGRESS_BACK_ERROR              RGB(255, 153, 164)
+#define DCOLOR_PROGRESS_BACK_PAUSED             RGB(252, 225, 0)
+#define DCOLOR_PROGRESS_BACK_PARTIAL            RGB(0, 120, 212)
+
+#define DCOLOR_DATEPICKER_BACK                  RGB(25, 25, 25)
+#define DCOLOR_DATEPICKER_BORDER                RGB(151, 151, 151)
+#define DCOLOR_DATEPICKER_BORDER_HOT            RGB(164, 164, 164)
+#define DCOLOR_DATEPICKER_BORDER_FOCUSED        RGB(76, 194, 255)
+#define DCOLOR_DATEPICKER_BORDER_DISABLED       RGB(55, 55, 55)
+#define DCOLOR_DATEPICKER_FORE                  RGB(255, 255, 255)
+#define DCOLOR_DATEPICKER_FORE_DISABLED         RGB(124, 124, 124)
+
+#define DCOLOR_MONTHCAL_BACK                    DCOLOR_DATEPICKER_BACK
+#define DCOLOR_MONTHCAL_BORDER                  RGB(60, 60, 60)
+#define DCOLOR_MONTHCAL_FORE                    DCOLOR_DATEPICKER_FORE
+#define DCOLOR_MONTHCAL_FORE_HOT                RGB(91, 189, 233)
+#define DCOLOR_MONTHCAL_FORE_SELECTED           RGB(96, 205, 255)
+#define DCOLOR_MONTHCAL_FORE_SELECTEDHOT        DCOLOR_MONTHCAL_FORE_SELECTED
+#define DCOLOR_MONTHCAL_ARROW                   RGB(173, 173, 173)
+#define DCOLOR_MONTHCAL_ARROW_HOT               DCOLOR_MONTHCAL_FORE_HOT
+#define DCOLOR_MONTHCAL_ARROW_PRESSED           DCOLOR_MONTHCAL_FORE_SELECTED
+
 #define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackground), 0, true
+#define HOOK_COMCTL32_DRAWTHEMEBACKGROUNDEX_ARGS COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackgroundEx), 0, true
+#define HOOK_COMCTL32_DRAWTHEMETEXT_ARGS        COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeText), 0, true
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookThemeBackground();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookThemeBackground();
