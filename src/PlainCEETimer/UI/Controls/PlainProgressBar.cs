@@ -80,6 +80,7 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
             Win32UI.ComctlHookThemeBackground();
             base.WndProc(ref m);
             Win32UI.ComctlUnhookThemeBackground();
+            return;
         }
 
         base.WndProc(ref m);

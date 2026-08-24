@@ -142,7 +142,7 @@ static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBo
     return true;
 }
 
-static bool PnDrawMcSolidTriangle(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
+static bool PnDrawMcArrow(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
 {
     if (!lpRect) return false;
 
@@ -237,6 +237,15 @@ static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iS
     return false;
 }
 
+/*
+
+DateTimePicker 控件深色主题 灵感来自：
+
+systeminformer/SystemInformer/delayhook.c at master · winsiderss/systeminformer
+https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019866d0521d6/SystemInformer/delayhook.c#L1596-L1620
+
+*/
+
 static bool HandleDtpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
 {
     if (iPartId == DP_DATEBORDER)
@@ -284,9 +293,9 @@ static bool HandleMcArrows(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
 {
     switch (iStateId)
     {
-        CASE(MCNP_NORMAL, PnDrawMcSolidTriangle(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW));
-        CASE(MCNP_HOT, PnDrawMcSolidTriangle(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_HOT));
-        CASE(MCNP_PRESSED, PnDrawMcSolidTriangle(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_PRESSED));
+        CASE(MCNP_NORMAL, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW));
+        CASE(MCNP_HOT, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_HOT));
+        CASE(MCNP_PRESSED, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_PRESSED));
         default: return false;
     }
 
