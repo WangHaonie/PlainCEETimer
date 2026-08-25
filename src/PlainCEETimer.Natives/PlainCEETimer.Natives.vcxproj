@@ -43,7 +43,8 @@
     <IncludePath>..\PlainCEETimer.Natives;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
-    <LibraryPath>$(ProjectDir)Detours\lib.X64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)PlainCEETimer.Natives\Detours\lib.X64;$(LibraryPath)</LibraryPath>
+    <AdditionalIncludeDirectories>$(SolutionDir)PlainCEETimer.Natives\Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
