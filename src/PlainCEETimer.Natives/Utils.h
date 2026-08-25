@@ -25,12 +25,29 @@
 inline void DDump(const wchar_t* format, ...)
 {
 #ifdef _DEBUG
-    WCHAR buffer[512];
+    constexpr int count = 512;
+    static WCHAR buffer[count];
     va_list args;
     va_start(args, format);
-    StringCchVPrintfW(buffer, 512, format, args);
-    va_end(args);
-    OutputDebugStringW(buffer);
+
+    LPWSTR current = nullptr;
+    size_t remain = 0;
+
+    if (SUCCEEDED(StringCchVPrintfExW(buffer, count, &current, &remain, STRSAFE_DEFAULT, format, args)))
+    {
+        if (remain >= 2)
+        {
+            current[0] = L'\n';
+            current[1] = L'\0';
+        }
+        else
+        {
+            buffer[count - 2] = L'\n';
+            buffer[count - 1] = L'\0';
+        }
+
+        OutputDebugStringW(buffer);
+    }
 #endif
 }
 

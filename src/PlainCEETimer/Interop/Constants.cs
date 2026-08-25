@@ -68,6 +68,7 @@ public static class WinUser
     public const int WM_USER = 0x0400;
     public const int WM_DESTROY = 0x0002;
     public const int WM_INITDIALOG = 0x0110;
+    public const int WM_TIMER = 0x0113;
     public const int WM_CTLCOLORDLG = 0x0136;
     public const int WM_CTLCOLOREDIT = 0x0133;
     public const int WM_CTLCOLORSTATIC = 0x0138;
@@ -76,6 +77,7 @@ public static class WinUser
     public const int WM_GETFONT = 0x0031;
     public const int WM_WINDOWPOSCHANGED = 0x0047;
     public const int WM_MOUSEMOVE = 0x0200;
+    public const int WM_MOUSEWHEEL = 0x020A;
     public const int WM_LBUTTONDOWN = 0x0201;
     public const int WM_LBUTTONUP = 0x0202;
     public const int WM_LBUTTONDBLCLK = 0x0203;

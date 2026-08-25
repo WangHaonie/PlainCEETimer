@@ -5,6 +5,7 @@
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <vssym32.h>
+#include <detours.h>
 
 /*
 
@@ -27,6 +28,10 @@ using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cc
 DeclDelegateType(DrawThemeBackgroundEx);
 DeclDelegateType(DrawThemeText);
 
+static bool g_bHookThemeBackgroundInit = false;
+static bool g_bHookThemeBackgroundWork = false;
+static int g_iHookThemeBackgroundRef = 0;
+
 static WCHAR themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME lastOpenedTheme = nullptr;
 
@@ -46,9 +51,6 @@ DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
 DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
-DeclIatData(DrawThemeBackground, Comctl);
-DeclIatData(DrawThemeBackgroundEx, Comctl);
-DeclIatData(DrawThemeText, Comctl);
 
 static int WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
 {
@@ -446,7 +448,8 @@ static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT 
 
 static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, LPCRECT pClipRect)
 {
-    if (HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
+    if (g_bHookThemeBackgroundWork
+        && HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -456,7 +459,8 @@ static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, 
 
 static HRESULT WINAPI DrawThemeBackgroundEx_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, const DTBGOPTS* pOptions)
 {
-    if (HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
+    if (g_bHookThemeBackgroundWork
+        && HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -466,7 +470,8 @@ static HRESULT WINAPI DrawThemeBackgroundEx_(HTHEME hTheme, HDC hdc, int iPartId
 
 static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, DWORD dwTextFlags2, LPCRECT pRect)
 {
-    if (HandleControlVsText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
+    if (g_bHookThemeBackgroundWork
+        && HandleControlVsText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -603,30 +608,33 @@ void NATIVESAPI ComctlUnhookOpenTheme()
 
 void NATIVESAPI ComctlHookThemeBackground()
 {
-    HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS,
-        IatHookComctlDrawThemeBackground,
-        g_DrawThemeBackground,
-        DrawThemeBackground_
-    );
+    if (!g_bHookThemeBackgroundInit
+        && INITFUNC(g_DrawThemeBackground, UXTHEME_DLL, nameof(DrawThemeBackground))
+        && INITFUNC(g_DrawThemeBackgroundEx, UXTHEME_DLL, nameof(DrawThemeBackgroundEx))
+        && INITFUNC(g_DrawThemeText, UXTHEME_DLL, nameof(DrawThemeText)))
+    {
+        DetourBegin();
+        DetourHook(g_DrawThemeBackground, DrawThemeBackground_);
+        DetourHook(g_DrawThemeBackgroundEx, DrawThemeBackgroundEx_);
+        DetourHook(g_DrawThemeText, DrawThemeText_);
+        DetourEnd();
 
-    HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUNDEX_ARGS,
-        IatHookComctlDrawThemeBackgroundEx,
-        g_DrawThemeBackgroundEx,
-        DrawThemeBackgroundEx_
-    );
+        g_bHookThemeBackgroundInit = true;
+    }
 
-    HookIat(HOOK_COMCTL32_DRAWTHEMETEXT_ARGS,
-        IatHookComctlDrawThemeText,
-        g_DrawThemeText,
-        DrawThemeText_
-    );
+    if (g_bHookThemeBackgroundInit)
+    {
+        g_bHookThemeBackgroundWork = true;
+        ++g_iHookThemeBackgroundRef;
+    }
 }
 
 void NATIVESAPI ComctlUnhookThemeBackground()
 {
-    UnhookIat(IatHookComctlDrawThemeBackground);
-    UnhookIat(IatHookComctlDrawThemeBackgroundEx);
-    UnhookIat(IatHookComctlDrawThemeText);
+    if (--g_iHookThemeBackgroundRef = 0)
+    {
+        g_bHookThemeBackgroundWork = false;
+    }
 }
 
 void NATIVESAPI ComdlgHookGetSysColorBrush()
