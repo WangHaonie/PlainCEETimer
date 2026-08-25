@@ -102,7 +102,7 @@ public class PlainHotkeyControl : Control, IThemeAware
                 m.Result = new(1);
                 return;
             case WinUser.WM_PAINT when UseDark:
-                Win32UI.ComctlHookSysColor(Colors.DarkForeText, Colors.DarkBackText);
+                Win32UI.ComctlHookSysColor();
                 base.WndProc(ref m);
                 Win32UI.ComctlUnhookSysColor();
                 return;

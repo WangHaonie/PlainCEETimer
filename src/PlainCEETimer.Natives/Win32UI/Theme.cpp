@@ -27,9 +27,6 @@ using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cc
 DeclDelegateType(DrawThemeBackgroundEx);
 DeclDelegateType(DrawThemeText);
 
-static COLORREF g_crFore = 0;
-static COLORREF g_crBack = 0;
-
 static WCHAR themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME lastOpenedTheme = nullptr;
 
@@ -270,7 +267,7 @@ static bool HandleDtpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPC
 {
     if (iPartId == DP_DATETEXT)
     {
-        DTTOPTS options = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
+        static DTTOPTS options = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
 
         switch (iStateId)
         {
@@ -481,8 +478,8 @@ static DWORD WINAPI GetSysColor_(int nIndex)
 {
     switch (nIndex)
     {
-        CASE(COLOR_WINDOW, g_crBack);
-        CASE(COLOR_WINDOWTEXT, g_crFore);
+        CASE(COLOR_WINDOW, DCOLOR_TEXT_BACK);
+        CASE(COLOR_WINDOWTEXT, DCOLOR_TEXT_FORE);
     }
 
     return g_GetSysColor(nIndex);
@@ -576,30 +573,18 @@ void NATIVESAPI EnableDarkModeForApp(BOOL enabled)
     FlushMenuThemes();
 }
 
-void NATIVESAPI ComctlHookSysColor(COLORREF crFore, COLORREF crBack)
+void NATIVESAPI ComctlHookSysColor()
 {
-    if (!InitializeIatHook(HOOK_COMCTL32_GETSYSCOLOR_ARGS, IatHookComctlGetSysColor))
-    {
-        return;
-    }
-
-    if (!g_GetSysColor)
-    {
-        g_GetSysColor = IatHookComctlGetSysColor.OldFunc;
-    }
-
-    if (ReplaceFunction(IatHookComctlGetSysColor, GetSysColor_))
-    {
-        g_crFore = crFore;
-        g_crBack = crBack;
-    }
+    HookIat(HOOK_COMCTL32_GETSYSCOLOR_ARGS,
+        IatHookComctlGetSysColor,
+        g_GetSysColor,
+        GetSysColor_
+    );
 }
 
 void NATIVESAPI ComctlUnhookSysColor()
 {
     UnhookIat(IatHookComctlGetSysColor);
-    g_crFore = 0;
-    g_crBack = 0;
 }
 
 void NATIVESAPI ComctlHookOpenTheme()

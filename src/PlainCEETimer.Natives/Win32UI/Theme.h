@@ -5,14 +5,14 @@
 
 #define VSCLASSNAME_BUFFER                      12
 
-typedef enum
+enum PreferredAppMode
 {
     Default,
     AllowDark,
     ForceDark,
     ForceLight,
     Max
-} PreferredAppMode;
+};
 
 #define HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS      COMCTL32_DLL, UXTHEME_DLL, nullptr, 49, true
 
@@ -20,7 +20,7 @@ NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
 
 #define HOOK_COMCTL32_GETSYSCOLOR_ARGS			COMCTL32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 
-NATIVES_EXPORT void NATIVESAPI ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
+NATIVES_EXPORT void NATIVESAPI ComctlHookSysColor();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();
 
 #define HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(OpenThemeDataForDpi), 0, true
@@ -30,18 +30,23 @@ NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
 
 #define COLOR_EMPTY                             ((COLORREF)0)
 
+/* Dark Colors */
+
+#define DCOLOR_TEXT_FORE                        RGB(255, 255, 255)
+#define DCOLOR_TEXT_BACK                        RGB(25, 25, 25)
+
 #define DCOLOR_PROGRESS_BACK                    RGB(19, 19, 19)
 #define DCOLOR_PROGRESS_BACK_NORMAL             RGB(108, 203, 95)
 #define DCOLOR_PROGRESS_BACK_ERROR              RGB(255, 153, 164)
 #define DCOLOR_PROGRESS_BACK_PAUSED             RGB(252, 225, 0)
 #define DCOLOR_PROGRESS_BACK_PARTIAL            RGB(0, 120, 212)
 
-#define DCOLOR_DATEPICKER_BACK                  RGB(25, 25, 25)
+#define DCOLOR_DATEPICKER_BACK                  DCOLOR_TEXT_BACK
 #define DCOLOR_DATEPICKER_BORDER                RGB(151, 151, 151)
 #define DCOLOR_DATEPICKER_BORDER_HOT            RGB(164, 164, 164)
 #define DCOLOR_DATEPICKER_BORDER_FOCUSED        RGB(76, 194, 255)
 #define DCOLOR_DATEPICKER_BORDER_DISABLED       RGB(55, 55, 55)
-#define DCOLOR_DATEPICKER_FORE                  RGB(255, 255, 255)
+#define DCOLOR_DATEPICKER_FORE                  DCOLOR_TEXT_FORE
 #define DCOLOR_DATEPICKER_FORE_DISABLED         RGB(124, 124, 124)
 
 #define DCOLOR_MONTHCAL_BACK                    DCOLOR_DATEPICKER_BACK
@@ -84,7 +89,7 @@ https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019
 
 typedef enum _WINDOWCOMPOSITIONATTRIB
 {
-    WCA_UNDEFINED = 0,
+    WCA_UNDEFINED,
     WCA_NCRENDERING_ENABLED,
     WCA_NCRENDERING_POLICY,
     WCA_TRANSITIONS_FORCEDISABLED,
@@ -158,8 +163,8 @@ typedef struct _ACCENT_POLICY
 {
     ACCENT_STATE AccentState;
     DWORD AccentFlags;
-    DWORD dwGradientColor;
-    DWORD dwAnimationId;
+    DWORD GradientColor;
+    DWORD AnimationId;
 } ACCENT_POLICY, *PACCENT_POLICY;
 
 #define DWMWA_MICA_EFFECT               1029

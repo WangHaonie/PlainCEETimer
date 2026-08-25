@@ -226,7 +226,7 @@ internal static class Win32UI
     public static extern IntPtr GetClassName(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#35")]
-    public static extern void ComctlHookSysColor(COLORREF crFore, COLORREF crBack);
+    public static extern void ComctlHookSysColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#36")]
     public static extern void ComctlUnhookSysColor();
