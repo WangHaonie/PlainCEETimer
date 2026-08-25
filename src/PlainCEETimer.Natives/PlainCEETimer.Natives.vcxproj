@@ -43,8 +43,7 @@
     <IncludePath>..\PlainCEETimer.Natives;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
-    <LibraryPath>$(SolutionDir)PlainCEETimer.Natives\Detours\lib.X64;$(LibraryPath)</LibraryPath>
-    <AdditionalIncludeDirectories>$(SolutionDir)PlainCEETimer.Natives\Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    <LibraryPath>$(ProjectDir)Detours\lib.X64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
@@ -80,7 +79,7 @@
       <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
