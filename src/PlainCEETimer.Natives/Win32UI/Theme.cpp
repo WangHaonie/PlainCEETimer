@@ -25,7 +25,6 @@ DeclDelegateType(GetSysColorBrush);
 using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hwnd, const WINDOWCOMPOSITIONATTRIBDATA* pwcad);
 DeclDelegateType(DrawThemeBackground);
 using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer);
-DeclDelegateType(DrawThemeBackgroundEx);
 DeclDelegateType(DrawThemeText);
 
 static int g_iHookThemeBackgroundRef = 0;
@@ -42,7 +41,6 @@ DeclDelegateField(GetSysColorBrush);
 DeclDelegateField(SetWindowCompositionAttribute);
 DeclDelegateField(DrawThemeBackground);
 DeclDelegateField(GetThemeClass);
-DeclDelegateField(DrawThemeBackgroundEx);
 DeclDelegateField(DrawThemeText);
 
 DeclIatData(OpenNcThemeData, Comctl);
@@ -51,7 +49,6 @@ DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
 DeclIatData(GetSysColor, Comdlg);
 DeclIatData(DrawThemeBackground, Comctl);
-DeclIatData(DrawThemeBackgroundEx, Comctl);
 DeclIatData(DrawThemeText, Comctl);
 
 static int WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
@@ -458,16 +455,6 @@ static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, 
     return g_DrawThemeBackground(hTheme, hdc, iPartId, iStateId, pRect, pClipRect);
 }
 
-static HRESULT WINAPI DrawThemeBackgroundEx_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, const DTBGOPTS* pOptions)
-{
-    if (HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
-    {
-        return S_OK;
-    }
-
-    return g_DrawThemeBackgroundEx(hTheme, hdc, iPartId, iStateId, pRect, pOptions);
-}
-
 static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, DWORD dwTextFlags2, LPCRECT pRect)
 {
     if (HandleControlVsText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
@@ -621,12 +608,6 @@ void NATIVESAPI PnHookThemeBackground()
         DrawThemeBackground_
     );
 
-    HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUNDEX_ARGS,
-        IatHookComctlDrawThemeBackgroundEx,
-        g_DrawThemeBackgroundEx,
-        DrawThemeBackgroundEx_
-    );
-
     HookIat(HOOK_COMCTL32_DRAWTHEMETEXT_ARGS,
         IatHookComctlDrawThemeText,
         g_DrawThemeText,
@@ -641,7 +622,6 @@ void NATIVESAPI PnUnhookThemeBackground()
     if (--g_iHookThemeBackgroundRef == 0)
     {
         UnhookIat(IatHookComctlDrawThemeBackground);
-        UnhookIat(IatHookComctlDrawThemeBackgroundEx);
         UnhookIat(IatHookComctlDrawThemeText);
     }
 }

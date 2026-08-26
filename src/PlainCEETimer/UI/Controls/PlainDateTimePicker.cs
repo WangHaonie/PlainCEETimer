@@ -10,6 +10,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 {
     private sealed class DropDownAndSysMonthCal32NativeWindow : NativeWindow
     {
+        private bool dragging;
         private bool canHook = true;
         private Debouncer debouncer;
         private readonly PlainDateTimePicker Owner;
@@ -27,10 +28,17 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
             {
                 switch (m.Msg)
                 {
+                    case WinUser.WM_LBUTTONDOWN:
+                        dragging = true;
+                        goto proceed;
+                    case WinUser.WM_LBUTTONUP:
+                        dragging = false;
+                        break;
                     case WinUser.WM_TIMER:
                     case WinUser.WM_KEYDOWN:
-                    case WinUser.WM_LBUTTONDOWN:
                     case WinUser.WM_MOUSEWHEEL:
+                    case WinUser.WM_MOUSEMOVE when dragging:
+                    proceed:
                         if (canHook) Hook(true);
                         debouncer ??= new();
                         debouncer.Debounce(UnhookAction.WithArgs(true));
