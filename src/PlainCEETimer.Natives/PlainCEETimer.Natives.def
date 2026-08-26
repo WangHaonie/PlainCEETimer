@@ -42,27 +42,27 @@ EXPORTS
     MenuUncheckItem @32 NONAME
     GetWindowTextEx @33 NONAME
     GetWindowClassName @34 NONAME
-    ComctlHookSysColor @35 NONAME
-    ComctlUnhookSysColor @36 NONAME
+    PnHookSysColor @35 NONAME
+    PnUnhookSysColor @36 NONAME
     RemoveWindowExStyle @37 NONAME
-    ComdlgHookMessageBox @38 NONAME
-    ComdlgUnhookMessageBox @39 NONAME
+    PnHookMessageBox @38 NONAME
+    PnUnhookMessageBox @39 NONAME
     IsDialog @40 NONAME
 
     AllocConsoleForApp @41 NONAME
     KillProcessTree @42 NONAME
 
     RemoveWindowIcon @43 NONAME
-    HookGetMessage @44 NONAME
-    UnhookGetMessage @45 NONAME
+    PnHookGetMessage @44 NONAME
+    PnUnhookGetMessage @45 NONAME
     CheckWindowExStyle @46 NONAME
 
     PlainTimeSpanPick_RegisterWC @47 NONAME
 
-    ComctlHookOpenTheme @48 NONAME
-    ComctlUnhookOpenTheme @49 NONAME
-    ComdlgHookGetSysColorBrush @50 NONAME
-    ComdlgUnhookGetSysColorBrush @51 NONAME
+    PnHookOpenTheme @48 NONAME
+    PnUnhookOpenTheme @49 NONAME
+    PnHookSysColorBrush @50 NONAME
+    PnUnhookSysColorBrush @51 NONAME
 
     PlainTimeSpanPick_ValidateFormat @52 NONAME
     PlainTimeSpanPick_ParseFormat @53 NONAME
@@ -74,5 +74,5 @@ EXPORTS
 
     ApplySystemBackdrop @58 NONAME
 
-    ComctlHookThemeBackground @59 NONAME
-    ComctlUnhookThemeBackground @60 NONAME
+    PnHookThemeBackground @59 NONAME
+    PnUnhookThemeBackground @60 NONAME

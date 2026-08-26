@@ -141,7 +141,7 @@ BOOL NATIVESAPI CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
     return FALSE;
 }
 
-void NATIVESAPI ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
+void NATIVESAPI PnHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMessageBoxW, DWORD dwHookFlag)
 {
     if (!InitializeIatHook(HOOK_COMDLG32_MESSAGEBOXW_ARGS, IatHookComdlgMessageBoxW))
     {
@@ -163,7 +163,7 @@ void NATIVESAPI ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, fnMessageBoxW lpfnMes
     }
 }
 
-void NATIVESAPI ComdlgUnhookMessageBox()
+void NATIVESAPI PnUnhookMessageBox()
 {
     if (RestoreFunction(IatHookComdlgMessageBoxW))
     {
@@ -195,7 +195,7 @@ void NATIVESAPI RemoveWindowIcon(HWND hWnd)
     }
 }
 
-void NATIVESAPI HookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId)
+void NATIVESAPI PnHookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId)
 {
     if (lpfnGetMsgProc && !g_GetMsgProc)
     {
@@ -204,7 +204,7 @@ void NATIVESAPI HookGetMessage(HOOKPROC lpfnGetMsgProc, DWORD dwThreadId)
     }
 }
 
-void NATIVESAPI UnhookGetMessage()
+void NATIVESAPI PnUnhookGetMessage()
 {
     if (g_hGetMsgProc)
     {

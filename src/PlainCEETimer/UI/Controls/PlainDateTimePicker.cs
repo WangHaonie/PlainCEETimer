@@ -49,13 +49,13 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 
         private void Hook(bool flag)
         {
-            Win32UI.ComctlHookThemeBackground();
+            Win32UI.PnHookThemeBackground();
             if (flag) canHook = false;
         }
 
         private void Unhook(bool flag)
         {
-            Win32UI.ComctlUnhookThemeBackground();
+            Win32UI.PnUnhookThemeBackground();
             if (flag) canHook = true;
         }
     }
@@ -96,9 +96,9 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
             switch (m.Msg)
             {
                 case WinUser.WM_PAINT:
-                    Win32UI.ComctlHookThemeBackground();
+                    Win32UI.PnHookThemeBackground();
                     base.WndProc(ref m);
-                    Win32UI.ComctlUnhookThemeBackground();
+                    Win32UI.PnUnhookThemeBackground();
                     return;
             }
         }

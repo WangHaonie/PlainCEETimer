@@ -24,9 +24,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 case WinUser.WM_LBUTTONDBLCLK:
                 case WinUser.WM_COMMAND:
                 case WinUser.WM_PAINT:
-                    Win32UI.ComdlgHookGetSysColorBrush();
+                    Win32UI.PnHookSysColorBrush();
                     base.WndProc(ref m);
-                    Win32UI.ComdlgUnhookGetSysColorBrush();
+                    Win32UI.PnUnhookSysColorBrush();
                     return;
             }
 
@@ -41,9 +41,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             switch (m.Msg)
             {
                 case WinUser.WM_PAINT:
-                    Win32UI.ComctlHookSysColor();
+                    Win32UI.PnHookSysColor();
                     base.WndProc(ref m);
-                    Win32UI.ComctlUnhookSysColor();
+                    Win32UI.PnUnhookSysColor();
                     return;
             }
 
@@ -192,7 +192,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         fnMessageBox ??= MessageBoxW;
         Win32UI.RegisterUnmanagedWindow(hWnd);
         const int HMBF_REPMSGBOX = 1;
-        Win32UI.ComdlgHookMessageBox(CBTHookProc, fnMessageBox, HMBF_REPMSGBOX);
+        Win32UI.PnHookMessageBox(CBTHookProc, fnMessageBox, HMBF_REPMSGBOX);
 
         if (Text != null)
         {
@@ -221,7 +221,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     private IntPtr WmDestroy()
     {
-        Win32UI.ComdlgUnhookMessageBox();
+        Win32UI.PnUnhookMessageBox();
         Win32UI.DeleteObject(hBrush);
         Win32UI.UnregisterUnmanagedWindow(Handle);
         themeHelper.Destroy();

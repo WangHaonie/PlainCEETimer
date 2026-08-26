@@ -40,7 +40,7 @@ public class AppMessageFilter : IDisposable
     {
         if (!isRunning)
         {
-            Win32UI.HookGetMessage(GetMsgHook, m_tid);
+            Win32UI.PnHookGetMessage(GetMsgHook, m_tid);
             App.Current.AppExit += Dispose;
             isRunning = true;
         }
@@ -75,7 +75,7 @@ public class AppMessageFilter : IDisposable
 
     public void Dispose()
     {
-        Win32UI.UnhookGetMessage();
+        Win32UI.PnUnhookGetMessage();
         GC.SuppressFinalize(this);
     }
 

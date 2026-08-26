@@ -77,9 +77,9 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
     {
         if (m.Msg == WinUser.WM_PAINT && UseDark)
         {
-            Win32UI.ComctlHookThemeBackground();
+            Win32UI.PnHookThemeBackground();
             base.WndProc(ref m);
-            Win32UI.ComctlUnhookThemeBackground();
+            Win32UI.PnUnhookThemeBackground();
             return;
         }
 

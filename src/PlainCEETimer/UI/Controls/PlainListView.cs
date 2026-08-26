@@ -205,9 +205,9 @@ public sealed class PlainListView : ListView, IThemeAware
 
                 if (UseDark && isW11 && CheckBoxes)
                 {
-                    Win32UI.ComctlHookOpenTheme();
+                    Win32UI.PnHookOpenTheme();
                     base.WndProc(ref m);
-                    Win32UI.ComctlUnhookOpenTheme();
+                    Win32UI.PnUnhookOpenTheme();
                     return;
                 }
 

@@ -21,13 +21,13 @@ NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
 #define HOOK_COMCTL32_GETSYSCOLOR_ARGS			COMCTL32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 #define HOOK_COMDLG32_GETSYSCOLOR_ARGS			COMDLG32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 
-NATIVES_EXPORT void NATIVESAPI ComctlHookSysColor();
-NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();
+NATIVES_EXPORT void NATIVESAPI PnHookSysColor();
+NATIVES_EXPORT void NATIVESAPI PnUnhookSysColor();
 
 #define HOOK_COMCTL32_OPENTHEMEDATAFORDPI_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(OpenThemeDataForDpi), 0, true
 
-NATIVES_EXPORT void NATIVESAPI ComctlHookOpenTheme();
-NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
+NATIVES_EXPORT void NATIVESAPI PnHookOpenTheme();
+NATIVES_EXPORT void NATIVESAPI PnUnhookOpenTheme();
 
 #define COLOR_EMPTY                             ((COLORREF)0)
 
@@ -64,13 +64,13 @@ NATIVES_EXPORT void NATIVESAPI ComctlUnhookOpenTheme();
 #define HOOK_COMCTL32_DRAWTHEMEBACKGROUNDEX_ARGS COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackgroundEx), 0, true
 #define HOOK_COMCTL32_DRAWTHEMETEXT_ARGS        COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeText), 0, true
 
-NATIVES_EXPORT void NATIVESAPI ComctlHookThemeBackground();
-NATIVES_EXPORT void NATIVESAPI ComctlUnhookThemeBackground();
+NATIVES_EXPORT void NATIVESAPI PnHookThemeBackground();
+NATIVES_EXPORT void NATIVESAPI PnUnhookThemeBackground();
 
 #define HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS     COMDLG32_DLL, USER32_DLL, nameof(GetSysColorBrush), 0, false
 
-NATIVES_EXPORT void NATIVESAPI ComdlgHookGetSysColorBrush();
-NATIVES_EXPORT void NATIVESAPI ComdlgUnhookGetSysColorBrush();
+NATIVES_EXPORT void NATIVESAPI PnHookSysColorBrush();
+NATIVES_EXPORT void NATIVESAPI PnUnhookSysColorBrush();
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
 

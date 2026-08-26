@@ -193,22 +193,22 @@ internal static class Win32UI
     public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
 
     [DllImport(App.NativesDll, EntryPoint = "#48")]
-    public static extern void ComctlHookOpenTheme();
+    public static extern void PnHookOpenTheme();
 
     [DllImport(App.NativesDll, EntryPoint = "#49")]
-    public static extern void ComctlUnhookOpenTheme();
+    public static extern void PnUnhookOpenTheme();
 
     [DllImport(App.NativesDll, EntryPoint = "#59")]
-    public static extern void ComctlHookThemeBackground();
+    public static extern void PnHookThemeBackground();
 
     [DllImport(App.NativesDll, EntryPoint = "#60")]
-    public static extern void ComctlUnhookThemeBackground();
+    public static extern void PnUnhookThemeBackground();
 
     [DllImport(App.NativesDll, EntryPoint = "#50")]
-    public static extern void ComdlgHookGetSysColorBrush();
+    public static extern void PnHookSysColorBrush();
 
     [DllImport(App.NativesDll, EntryPoint = "#51")]
-    public static extern void ComdlgUnhookGetSysColorBrush();
+    public static extern void PnUnhookSysColorBrush();
 
     [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern void SetTopMostWindow(IntPtr hWnd);
@@ -226,10 +226,10 @@ internal static class Win32UI
     public static extern IntPtr GetClassName(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#35")]
-    public static extern void ComctlHookSysColor();
+    public static extern void PnHookSysColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#36")]
-    public static extern void ComctlUnhookSysColor();
+    public static extern void PnUnhookSysColor();
 
     [DllImport(App.NativesDll, EntryPoint = "#37")]
     public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
@@ -238,10 +238,10 @@ internal static class Win32UI
     public static extern bool CheckWindowExStyle(IntPtr hWnd, long dwExStyle);
 
     [DllImport(App.NativesDll, EntryPoint = "#38")]
-    public static extern void ComdlgHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
+    public static extern void PnHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
 
     [DllImport(App.NativesDll, EntryPoint = "#39")]
-    public static extern void ComdlgUnhookMessageBox();
+    public static extern void PnUnhookMessageBox();
 
     [DllImport(App.NativesDll, EntryPoint = "#40")]
     public static extern bool IsDialog(IntPtr lpCreateStruct);
@@ -250,10 +250,10 @@ internal static class Win32UI
     public static extern void RemoveWindowIcon(IntPtr hWnd);
 
     [DllImport(App.NativesDll, EntryPoint = "#44")]
-    public static extern void HookGetMessage(WHGETMESSAGE lpfnGetMsgProc, int dwThreadId);
+    public static extern void PnHookGetMessage(WHGETMESSAGE lpfnGetMsgProc, int dwThreadId);
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
-    public static extern void UnhookGetMessage();
+    public static extern void PnUnhookGetMessage();
 
     [DllImport(App.NativesDll, EntryPoint = "#58")]
     public unsafe static extern bool ApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
