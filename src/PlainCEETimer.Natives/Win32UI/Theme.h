@@ -66,8 +66,8 @@ NATIVES_EXPORT void NATIVESAPI PnUnhookOpenTheme();
 #define HOOK_COMCTL32_DRAWTHEMEBACKGROUNDEX_ARGS COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackgroundEx), 0, true
 #define HOOK_COMCTL32_DRAWTHEMETEXT_ARGS        COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeText), 0, true
 
-NATIVES_EXPORT void NATIVESAPI PnHookThemeBackground();
-NATIVES_EXPORT void NATIVESAPI PnUnhookThemeBackground();
+NATIVES_EXPORT void NATIVESAPI PnHookThemedPaint();
+NATIVES_EXPORT void NATIVESAPI PnUnhookThemedPaint();
 
 #define HOOK_COMDLG32_GETSYSCOLORBRUSH_ARGS     COMDLG32_DLL, USER32_DLL, nameof(GetSysColorBrush), 0, false
 

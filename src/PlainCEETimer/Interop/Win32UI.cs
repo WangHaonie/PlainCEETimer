@@ -199,10 +199,10 @@ internal static class Win32UI
     public static extern void PnUnhookOpenTheme();
 
     [DllImport(App.NativesDll, EntryPoint = "#59")]
-    public static extern void PnHookThemeBackground();
+    public static extern void PnHookThemedPaint();
 
     [DllImport(App.NativesDll, EntryPoint = "#60")]
-    public static extern void PnUnhookThemeBackground();
+    public static extern void PnUnhookThemedPaint();
 
     [DllImport(App.NativesDll, EntryPoint = "#50")]
     public static extern void PnHookSysColorBrush();

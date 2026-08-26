@@ -74,5 +74,5 @@ EXPORTS
 
     ApplySystemBackdrop @58 NONAME
 
-    PnHookThemeBackground @59 NONAME
-    PnUnhookThemeBackground @60 NONAME
+    PnHookThemedPaint @59 NONAME
+    PnUnhookThemedPaint @60 NONAME

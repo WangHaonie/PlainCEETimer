@@ -27,7 +27,7 @@ DeclDelegateType(DrawThemeBackground);
 using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer);
 DeclDelegateType(DrawThemeText);
 
-static int g_iHookThemeBackgroundRef = 0;
+static int g_iHookThemedPaintRef = 0;
 
 static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME s_lastOpenedTheme = nullptr;
@@ -622,7 +622,7 @@ void NATIVESAPI PnUnhookOpenTheme()
     UnhookIat(IatHookComctlOpenThemeDataForDpi);
 }
 
-void NATIVESAPI PnHookThemeBackground()
+void NATIVESAPI PnHookThemedPaint()
 {
     HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS,
         IatHookComctlDrawThemeBackground,
@@ -636,12 +636,12 @@ void NATIVESAPI PnHookThemeBackground()
         DrawThemeText_
     );
 
-    ++g_iHookThemeBackgroundRef;
+    ++g_iHookThemedPaintRef;
 }
 
-void NATIVESAPI PnUnhookThemeBackground()
+void NATIVESAPI PnUnhookThemedPaint()
 {
-    if (--g_iHookThemeBackgroundRef == 0)
+    if (--g_iHookThemedPaintRef == 0)
     {
         UnhookIat(IatHookComctlDrawThemeBackground);
         UnhookIat(IatHookComctlDrawThemeText);

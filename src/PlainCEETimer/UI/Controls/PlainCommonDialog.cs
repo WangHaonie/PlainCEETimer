@@ -57,9 +57,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             switch (m.Msg)
             {
                 case WinUser.WM_PAINT:
-                    Win32UI.PnHookThemeBackground();
+                    Win32UI.PnHookThemedPaint();
                     base.WndProc(ref m);
-                    Win32UI.PnUnhookThemeBackground();
+                    Win32UI.PnUnhookThemedPaint();
                     return;
             }
 
