@@ -34,6 +34,23 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         }
     }
 
+    private sealed class FontDlgNativeWindow : NativeWindow
+    {
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WinUser.WM_PAINT:
+                    Win32UI.ComctlHookSysColor();
+                    base.WndProc(ref m);
+                    Win32UI.ComctlUnhookSysColor();
+                    return;
+            }
+
+            base.WndProc(ref m);
+        }
+    }
+
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
         private bool Handled;
@@ -104,7 +121,8 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private IntPtr Handle;
     private IntPtr MsgBoxHandle;
     private HOOKPROC CBTHookProc;
-    private ColorDlgNativeWindow window;
+    private ColorDlgNativeWindow cdnw;
+    private FontDlgNativeWindow fdnw;
     private GroupBoxNativeWindow gpnw;
     private ThemeHelper themeHelper;
     private readonly bool IsFont;
@@ -296,6 +314,16 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         if (IsFont)
         {
+            if (useDark)
+            {
+                fdnw ??= new();
+                fdnw.AssignHandle(hWnd);
+            }
+            else
+            {
+                fdnw.ReleaseHandle();
+            }
+
             IntPtr hCtrl;
 
             if ((hCtrl = Win32UI.GetDlgItem(hWnd, Dlgs.grp2)) != IntPtr.Zero)
@@ -335,12 +363,12 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         {
             if (useDark)
             {
-                window ??= new();
-                window.AssignHandle(hWnd);
+                cdnw ??= new();
+                cdnw.AssignHandle(hWnd);
             }
             else
             {
-                window.ReleaseHandle();
+                cdnw.ReleaseHandle();
             }
         }
 

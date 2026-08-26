@@ -19,6 +19,7 @@ enum PreferredAppMode
 NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
 
 #define HOOK_COMCTL32_GETSYSCOLOR_ARGS			COMCTL32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
+#define HOOK_COMDLG32_GETSYSCOLOR_ARGS			COMDLG32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 
 NATIVES_EXPORT void NATIVESAPI ComctlHookSysColor();
 NATIVES_EXPORT void NATIVESAPI ComctlUnhookSysColor();

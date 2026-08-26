@@ -51,6 +51,7 @@ DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
 DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
+DeclIatData(GetSysColor, Comdlg);
 
 static int WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
 {
@@ -484,6 +485,7 @@ static DWORD WINAPI GetSysColor_(int nIndex)
     switch (nIndex)
     {
         CASE(COLOR_WINDOW, DCOLOR_TEXT_BACK);
+        CASE(COLOR_BTNFACE, DCOLOR_TEXT_BACK);
         CASE(COLOR_WINDOWTEXT, DCOLOR_TEXT_FORE);
     }
 
@@ -585,11 +587,18 @@ void NATIVESAPI ComctlHookSysColor()
         g_GetSysColor,
         GetSysColor_
     );
+
+    HookIat(HOOK_COMDLG32_GETSYSCOLOR_ARGS,
+        IatHookComdlgGetSysColor,
+        g_GetSysColor,
+        GetSysColor_
+    );
 }
 
 void NATIVESAPI ComctlUnhookSysColor()
 {
     UnhookIat(IatHookComctlGetSysColor);
+    UnhookIat(IatHookComdlgGetSysColor);
 }
 
 void NATIVESAPI ComctlHookOpenTheme()
