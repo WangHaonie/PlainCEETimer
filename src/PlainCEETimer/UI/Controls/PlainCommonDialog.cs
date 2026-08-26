@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -53,33 +52,15 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     private sealed class GroupBoxNativeWindow : NativeWindow
     {
-        private bool Handled;
-
-        public new void ReleaseHandle()
-        {
-            Handled = false;
-            base.ReleaseHandle();
-        }
-
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WinUser.WM_PAINT)
+            switch (m.Msg)
             {
-                base.WndProc(ref m);
-
-                if (!Handled)
-                {
-                    var hWnd = Handle;
-                    using var g = Graphics.FromHwnd(hWnd);
-                    using var font = Font.FromHfont(Win32UI.SendMessage(hWnd, WinUser.WM_GETFONT, 0, 0));
-                    using var brush = new SolidBrush(Colors.DarkForeText);
-
-                    Win32UI.GetClientRect(hWnd, out var rc);
-                    g.DrawString(Win32UI.GetWindowText(hWnd), font, brush, rc.Left + 7, rc.Top);
-                    Handled = true;
-                }
-
-                return;
+                case WinUser.WM_PAINT:
+                    Win32UI.PnHookThemeBackground();
+                    base.WndProc(ref m);
+                    Win32UI.PnUnhookThemeBackground();
+                    return;
             }
 
             base.WndProc(ref m);

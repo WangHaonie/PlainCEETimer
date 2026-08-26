@@ -29,8 +29,9 @@ DeclDelegateType(DrawThemeText);
 
 static int g_iHookThemeBackgroundRef = 0;
 
-static WCHAR themeClassCache[VSCLASSNAME_BUFFER];
-static HTHEME lastOpenedTheme = nullptr;
+static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
+static HTHEME s_lastOpenedTheme = nullptr;
+static DTTOPTS s_dttoptions = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
 
 DeclDelegateField(SetPreferredAppMode);
 DeclDelegateField(OpenNcThemeData);
@@ -91,10 +92,10 @@ static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffe
 
 static bool CacheThemeClass(HTHEME hTheme)
 {
-    if (lastOpenedTheme != hTheme && SUCCEEDED(GetThemeClass(hTheme, themeClassCache, VSCLASSNAME_BUFFER)))
-        lastOpenedTheme = hTheme;
+    if (s_lastOpenedTheme != hTheme && SUCCEEDED(GetThemeClass(hTheme, s_themeClassCache, VSCLASSNAME_BUFFER)))
+        s_lastOpenedTheme = hTheme;
 
-    if (!lastOpenedTheme) return false;
+    if (!s_lastOpenedTheme) return false;
     return true;
 }
 
@@ -130,11 +131,15 @@ static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
     }
 }
 
-static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBorder, bool bBorder)
+static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBorder, bool bBorder, bool bBack = true)
 {
-    HBRUSH hbrBack = CreateSolidBrush(crBack);
-    FillRect(hdc, lpRect, hbrBack);
-    DeleteObject(hbrBack);
+    if (bBack)
+    {
+        HBRUSH hbrBack = CreateSolidBrush(crBack);
+        FillRect(hdc, lpRect, hbrBack);
+        DeleteObject(hbrBack);
+    }
+
     SetDCBrushColor(hdc, bBorder ? crBorder : crBack);
     FrameRect(hdc, lpRect, CastToP(HBRUSH, GetStockObject(DC_BRUSH)));
     return true;
@@ -268,20 +273,18 @@ static bool HandleDtpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPC
 {
     if (iPartId == DP_DATETEXT)
     {
-        static DTTOPTS options = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
-
         switch (iStateId)
         {
             case DPDT_NORMAL:
             case DPDT_SELECTED:
-                options.crText = DCOLOR_DATEPICKER_FORE;
+                s_dttoptions.crText = DCOLOR_DATEPICKER_FORE;
                 break;
             case DPDT_DISABLED:
-                options.crText = DCOLOR_DATEPICKER_FORE_DISABLED;
+                s_dttoptions.crText = DCOLOR_DATEPICKER_FORE_DISABLED;
                 break;
         }
 
-        return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &options));
+        return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
     }
 
     return false;
@@ -317,21 +320,24 @@ static bool HandleMcBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId
     return false;
 }
 
+static bool HandleGrpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+{
+    return PnCommonPaint(hdc, pRect, COLOR_EMPTY, DCOLOR_GRPBOX_BORDER, true, false);
+}
+
 static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
 {
-    static DTTOPTS options = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
-
     switch (iPartId)
     {
         case MC_GRIDCELL:
         {
             switch (iStateId)
             {
-                CASE_AB(0, options.crText, DCOLOR_MONTHCAL_FORE);
-                CASE_AB(MCGC_HOT, options.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE);
+                CASE_AB(MCGC_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
                 case MCGC_SELECTED:
                 case MCGC_SELECTEDHOT:
-                    options.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
                     break;
                 default:
                     return false;
@@ -344,11 +350,11 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
         {
             switch (iStateId)
             {
-                CASE_AB(0, options.crText, DCOLOR_MONTHCAL_FORE);
-                CASE_AB(MCGCU_HOT, options.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE);
+                CASE_AB(MCGCU_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
                 case MCGCU_SELECTED:
                 case MCGCU_SELECTEDHOT:
-                    options.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
                     break;
                 default:
                     return false;
@@ -361,8 +367,8 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
         {
             switch (iStateId)
             {
-                CASE_AB(MCTGC_HOT, options.crText, DCOLOR_MONTHCAL_FORE_HOT);
-                CASE_AB(MCTGC_SELECTED, options.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
+                CASE_AB(MCTGC_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                CASE_AB(MCTGC_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
                 default: return false;
             }
 
@@ -373,8 +379,8 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
         {
             switch (iStateId)
             {
-                CASE_AB(MCTGCU_HOT, options.crText, DCOLOR_MONTHCAL_FORE_HOT);
-                CASE_AB(MCTGCU_SELECTED, options.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
+                CASE_AB(MCTGCU_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                CASE_AB(MCTGCU_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
                 default: return false;
             }
 
@@ -384,26 +390,37 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
 
     return false;
 paint:
-    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &options));
+    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+}
+
+static bool HandleGrpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+{
+    s_dttoptions.crText = DCOLOR_TEXT_FORE;
+    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
 }
 
 static bool HandleControlVsBg(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
 {
     if (CacheThemeClass(hTheme))
     {
-        if (WString_Equals(themeClassCache, VSCLASS_PROGRESS, true))
+        if (WString_Equals(s_themeClassCache, VSCLASS_PROGRESS, true))
         {
             return HandleProgressBackground(hTheme, hdc, iPartId, iStateId, pRect);
         }
 
-        if (WString_Equals(themeClassCache, VSCLASS_DATEPICKER, true))
+        if (WString_Equals(s_themeClassCache, VSCLASS_DATEPICKER, true))
         {
             return HandleDtpBackground(hTheme, hdc, iPartId, iStateId, pRect);
         }
 
-        if (WString_Equals(themeClassCache, VSCLASS_MONTHCAL, true))
+        if (WString_Equals(s_themeClassCache, VSCLASS_MONTHCAL, true))
         {
             return HandleMcBackground(hTheme, hdc, iPartId, iStateId, pRect);
+        }
+
+        if (WString_Equals(s_themeClassCache, VSCLASS_BUTTON, true) && iPartId == BP_GROUPBOX)
+        {
+            return HandleGrpBackground(hTheme, hdc, iPartId, iStateId, pRect);
         }
     }
 
@@ -414,14 +431,19 @@ static bool HandleControlVsText(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
 {
     if (CacheThemeClass(hTheme))
     {
-        if (WString_Equals(themeClassCache, VSCLASS_DATEPICKER, true))
+        if (WString_Equals(s_themeClassCache, VSCLASS_DATEPICKER, true))
         {
             return HandleDtpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
         }
 
-        if (WString_Equals(themeClassCache, VSCLASS_MONTHCAL, true))
+        if (WString_Equals(s_themeClassCache, VSCLASS_MONTHCAL, true))
         {
             return HandleMcText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
+        }
+
+        if (WString_Equals(s_themeClassCache, VSCLASS_BUTTON, true) && iPartId == BP_GROUPBOX)
+        {
+            return HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
         }
     }
 
