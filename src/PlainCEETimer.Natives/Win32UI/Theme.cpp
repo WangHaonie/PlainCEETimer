@@ -631,7 +631,7 @@ void NATIVESAPI ComctlHookThemeBackground()
 
 void NATIVESAPI ComctlUnhookThemeBackground()
 {
-    if (--g_iHookThemeBackgroundRef = 0)
+    if (--g_iHookThemeBackgroundRef == 0)
     {
         g_bHookThemeBackgroundWork = false;
     }

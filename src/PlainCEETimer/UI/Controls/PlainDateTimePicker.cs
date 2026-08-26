@@ -1,25 +1,62 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 {
-    private sealed class DropDownAndSysMonthCal32NativeWindow(PlainDateTimePicker owner) : NativeWindow
+    private sealed class DropDownAndSysMonthCal32NativeWindow : NativeWindow
     {
+        private bool canHook = true;
+        private Debouncer debouncer;
+        private readonly PlainDateTimePicker Owner;
+        private readonly ActionInvoker<bool> UnhookAction;
+
+        public DropDownAndSysMonthCal32NativeWindow(PlainDateTimePicker owner)
+        {
+            Owner = owner;
+            UnhookAction = new(Unhook);
+        }
+
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WinUser.WM_PAINT && owner.UseDark)
+            if (Owner.UseDark)
             {
-                Win32UI.ComctlHookThemeBackground();
-                base.WndProc(ref m);
-                Win32UI.ComctlUnhookThemeBackground();
-                return;
+                switch (m.Msg)
+                {
+                    case WinUser.WM_TIMER:
+                    case WinUser.WM_KEYDOWN:
+                    case WinUser.WM_LBUTTONDOWN:
+                    case WinUser.WM_MOUSEWHEEL:
+                        if (canHook) Hook(true);
+                        debouncer ??= new();
+                        debouncer.Debounce(UnhookAction.WithArgs(true));
+                        break;
+
+                    case WinUser.WM_PAINT:
+                        Hook(false);
+                        base.WndProc(ref m);
+                        Unhook(false);
+                        return;
+                }
             }
 
             base.WndProc(ref m);
+        }
+
+        private void Hook(bool flag)
+        {
+            Win32UI.ComctlHookThemeBackground();
+            if (flag) canHook = false;
+        }
+
+        private void Unhook(bool flag)
+        {
+            Win32UI.ComctlUnhookThemeBackground();
+            if (flag) canHook = true;
         }
     }
 
@@ -54,12 +91,16 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == WinUser.WM_PAINT && UseDark)
+        if (UseDark)
         {
-            Win32UI.ComctlHookThemeBackground();
-            base.WndProc(ref m);
-            Win32UI.ComctlUnhookThemeBackground();
-            return;
+            switch (m.Msg)
+            {
+                case WinUser.WM_PAINT:
+                    Win32UI.ComctlHookThemeBackground();
+                    base.WndProc(ref m);
+                    Win32UI.ComctlUnhookThemeBackground();
+                    return;
+            }
         }
 
         base.WndProc(ref m);
