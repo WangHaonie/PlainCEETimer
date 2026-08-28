@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -31,5 +32,10 @@ public sealed class NavigationPage : Panel, IThemeAware
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+
+        if (!init && (HScroll || VScroll))
+        {
+            Win32UI.SetWindowTheme(Handle, null, null);
+        }
     }
 }
