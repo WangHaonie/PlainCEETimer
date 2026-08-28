@@ -27,12 +27,14 @@ public class PagedContextMenu
         get => m_items;
         set
         {
+            totalCount = value?.Length ?? 0;
+
             if (!value.IsNullOrEmpty() && m_items != value)
             {
                 m_items = value;
-                totalCount = value.Length;
                 absoluteIndex = absoluteIndex.Clamp(0, totalCount - 1);
             }
+
         }
     }
 
@@ -84,7 +86,7 @@ public class PagedContextMenu
 
     public void Build()
     {
-        if (m_parent != null && m_items != null)
+        if (m_parent != null)
         {
             isLoaded = false;
             m_target = m_parent.MenuItems;
@@ -99,10 +101,11 @@ public class PagedContextMenu
 
     private void CreateNewInstance()
     {
+        isPaged = false;
+
         if (totalCount == 0)
         {
             m_target.Add(m_defitem = new MenuItem(DefaultText) { Enabled = false });
-            isPaged = false;
             return;
         }
 
@@ -115,7 +118,6 @@ public class PagedContextMenu
                 m_target.Add(item);
             }
 
-            isPaged = false;
             return;
         }
 
