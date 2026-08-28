@@ -403,24 +403,12 @@ static bool HandleControlVsBg(HTHEME hTheme, HDC hdc, int iPartId, int iStateId,
 {
     if (CacheThemeClass(hTheme))
     {
-        if (WString_Equals(s_themeClassCache, VSCLASS_PROGRESS, true))
+        switch (strhash(s_themeClassCache))
         {
-            return HandleProgressBackground(hTheme, hdc, iPartId, iStateId, pRect);
-        }
-
-        if (WString_Equals(s_themeClassCache, VSCLASS_DATEPICKER, true))
-        {
-            return HandleDtpBackground(hTheme, hdc, iPartId, iStateId, pRect);
-        }
-
-        if (WString_Equals(s_themeClassCache, VSCLASS_MONTHCAL, true))
-        {
-            return HandleMcBackground(hTheme, hdc, iPartId, iStateId, pRect);
-        }
-
-        if (WString_Equals(s_themeClassCache, VSCLASS_BUTTON, true) && iPartId == BP_GROUPBOX)
-        {
-            return HandleGrpBackground(hTheme, hdc, iPartId, iStateId, pRect);
+            CASE(strhash(VSCLASS_PROGRESS), HandleProgressBackground(hTheme, hdc, iPartId, iStateId, pRect));
+            CASE(strhash(VSCLASS_DATEPICKER), HandleDtpBackground(hTheme, hdc, iPartId, iStateId, pRect));
+            CASE(strhash(VSCLASS_MONTHCAL), HandleMcBackground(hTheme, hdc, iPartId, iStateId, pRect));
+            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, HandleGrpBackground(hTheme, hdc, iPartId, iStateId, pRect));
         }
     }
 
@@ -431,19 +419,11 @@ static bool HandleControlVsText(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
 {
     if (CacheThemeClass(hTheme))
     {
-        if (WString_Equals(s_themeClassCache, VSCLASS_DATEPICKER, true))
+        switch (strhash(s_themeClassCache))
         {
-            return HandleDtpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
-        }
-
-        if (WString_Equals(s_themeClassCache, VSCLASS_MONTHCAL, true))
-        {
-            return HandleMcText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
-        }
-
-        if (WString_Equals(s_themeClassCache, VSCLASS_BUTTON, true) && iPartId == BP_GROUPBOX)
-        {
-            return HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
+            CASE(strhash(VSCLASS_DATEPICKER), HandleDtpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+            CASE(strhash(VSCLASS_MONTHCAL), HandleMcText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
         }
     }
 

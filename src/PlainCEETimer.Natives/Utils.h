@@ -14,9 +14,12 @@
 #define CASE(val, ret)              case val: return ret
 #define CASE_A(val, l, r, ret)      case val: l = r; return ret
 #define CASE_AB(val, l, r)          case val: l = r; break
+#define CASE_CB(val, con, t)        case val: if (con) return t; else break
 
 #define String_IsNullOrEmpty(str)   (!str || !*str)
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)
+
+#define strhash(s)                  TString_iGetHashCode(s)
 
 #define RECT_IS_ZEROCX(rc)          ((rc.right - rc.left) == 0)
 
@@ -26,28 +29,20 @@ inline void DDump(const wchar_t* format, ...)
 {
 #ifdef _DEBUG
     constexpr int count = 512;
-    static WCHAR buffer[count];
+    thread_local WCHAR buffer[count];
     va_list args;
     va_start(args, format);
 
     LPWSTR current = nullptr;
     size_t remain = 0;
 
-    if (SUCCEEDED(StringCchVPrintfExW(buffer, count, &current, &remain, STRSAFE_DEFAULT, format, args)))
+    if (SUCCEEDED(StringCchVPrintfExW(buffer, count - 1, &current, &remain, STRSAFE_DEFAULT, format, args)))
     {
-        if (remain >= 2)
-        {
-            current[0] = L'\n';
-            current[1] = L'\0';
-        }
-        else
-        {
-            buffer[count - 2] = L'\n';
-            buffer[count - 1] = L'\0';
-        }
-
+        StringCchCopyExW(current, remain, L"\n", nullptr, nullptr, STRSAFE_DEFAULT);
         OutputDebugStringW(buffer);
     }
+
+    va_end(args);
 #endif
 }
 
@@ -72,6 +67,31 @@ inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, boo
     if (strA == strB) return true;
     if (bIgnoreCase) return _wcsicmp(strA, strB) == 0;
     return wcscmp(strA, strB) == 0;
+}
+
+template <typename T>
+constexpr T TString_ToLower(T c) noexcept
+{
+    return (c >= CastToS(T, 'A') && c <= CastToS(T, 'Z'))
+        ? (c + CastToS(T, 'a') - CastToS(T, 'A'))
+        : c;
+}
+
+template <typename T>
+constexpr DWORD TString_iGetHashCode(const T* str) noexcept
+{
+    if (!str) return 0;
+
+    DWORD hash = 2166136261U;
+
+    while (*str)
+    {
+        hash ^= static_cast<DWORD>(TString_ToLower(*str));
+        hash *= 16777619U;
+        ++str;
+    }
+
+    return hash;
 }
 
 inline LONGLONG __cdecl RoundToNearestS(LONGLONG value, LONGLONG base)
