@@ -283,6 +283,11 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
+        if (!ThemeManager.IsDarkModeSupported)
+        {
+            return;
+        }
+
         UseDark = useDark;
         var hWnd = Handle;
         ThemeManager.EnableDarkModeForWindow(hWnd, useDark);

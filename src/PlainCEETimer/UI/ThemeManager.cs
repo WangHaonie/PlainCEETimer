@@ -45,7 +45,7 @@ public static class ThemeManager
         }
     }
 
-    public static bool IsDarkModeSupported => isDarkModeSupported;
+    public static bool IsDarkModeSupported => initialized;
 
     public static bool ShouldUseDarkMode => shouldUseDarkMode;
 
@@ -66,7 +66,7 @@ public static class ThemeManager
     }
 
     private static bool canFireThemeChanged;
-    private static bool isDarkModeSupported;
+    private static bool initialized;
     private static bool shouldUseDarkMode;
     private static bool canUseNewTheme;
     private static bool isNewDwma;
@@ -90,7 +90,7 @@ public static class ThemeManager
             }
 
             UpdateAppTheme();
-            isDarkModeSupported = true;
+            initialized = true;
             isNewDwma = SystemVersion.Current.AtLeast(WindowsVersions.Windows10_20H1);
         }
     }
@@ -177,7 +177,7 @@ public static class ThemeManager
 
     private static void StartDetectingThemeChanges()
     {
-        if (msgfilter == null)
+        if (initialized && msgfilter == null)
         {
             msgfilter = new();
             AppMessageFilter.AddMessageFilter(msgfilter);

@@ -428,15 +428,18 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             SetBorderColor(false, default);
         }
 
-        var newTheme = AppConfig.Theme;
-        ThemeManager.UpdateThemeForUserChoice();
-
-        if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+        if (ThemeManager.IsDarkModeSupported)
         {
-            ThemeManager.OnThemeChanged(newTheme);
-        }
+            var newTheme = AppConfig.Theme;
+            ThemeManager.UpdateThemeForUserChoice();
 
-        CurrentTheme = newTheme;
+            if (!ConfigValidator.ValidateNeeded && ThemeManager.IsThemeChanged(CurrentTheme, newTheme))
+            {
+                ThemeManager.OnThemeChanged(newTheme);
+            }
+
+            CurrentTheme = newTheme;
+        }
 
         var newIsWpf = Display.UseWPF;
 

@@ -11,7 +11,7 @@ public class ThemeHelper : IDisposable
         if (obj != null)
         {
             m_obj = obj;
-            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+            if (ThemeManager.IsDarkModeSupported) ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
             m_obj.UpdateTheme(ThemeManager.ShouldUseDarkMode, true);
         }
     }
