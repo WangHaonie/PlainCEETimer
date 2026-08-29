@@ -12,9 +12,13 @@
 #define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
 
 #define CASE(val, ret)              case val: return ret
+#define CASE_DB(val, d)             case val: d; break
 #define CASE_A(val, l, r, ret)      case val: l = r; return ret
-#define CASE_AB(val, l, r)          case val: l = r; break
+#define CASE_AB(val, l, r)          CASE_DB(val, l = r);
 #define CASE_CB(val, con, t)        case val: if (con) return t; else break
+
+#define DEFAULT(ret)                default: return ret
+#define DEFAULT_B()                 default: break
 
 #define String_IsNullOrEmpty(str)   (!str || !*str)
 #define WString_IsNullOrEmpty(str)  String_IsNullOrEmpty(str)

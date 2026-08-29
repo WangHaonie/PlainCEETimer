@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
@@ -45,5 +46,5 @@ public class AppParamsInfo
     {
         get;
         set => field = !ConfigValidator.ValidateNeeded || value.Ticks > TimeSpan.TicksPerSecond ? value : ConfigValidator.MaxTick;
-    }
+    } = ConfigValidator.MaxTick;
 }

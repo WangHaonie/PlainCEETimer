@@ -52,14 +52,14 @@ DeclIatData(GetSysColor, Comdlg);
 DeclIatData(DrawThemeBackground, Comctl);
 DeclIatData(DrawThemeText, Comctl);
 
-static int WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
+static PreferredAppMode WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
 {
     if (INITFUNC(g_SetPreferredAppMode, UXTHEME_DLL, ORD2STR(135)))
     {
         return g_SetPreferredAppMode(preferredAppMode);
     }
 
-    return 0;
+    return Default;
 }
 
 static void WINAPI FlushMenuThemes()
@@ -93,10 +93,11 @@ static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffe
 static bool CacheThemeClass(HTHEME hTheme)
 {
     if (s_lastOpenedTheme != hTheme && SUCCEEDED(GetThemeClass(hTheme, s_themeClassCache, VSCLASSNAME_BUFFER)))
+    {
         s_lastOpenedTheme = hTheme;
+    }
 
-    if (!s_lastOpenedTheme) return false;
-    return true;
+    return s_lastOpenedTheme;
 }
 
 /*
@@ -297,7 +298,7 @@ static bool HandleMcArrows(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
         CASE(MCNP_NORMAL, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW));
         CASE(MCNP_HOT, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_HOT));
         CASE(MCNP_PRESSED, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_PRESSED));
-        default: return false;
+        DEFAULT(false);
     }
 
     return true;
@@ -339,8 +340,7 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
                 case MCGC_SELECTEDHOT:
                     s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
                     break;
-                default:
-                    return false;
+                DEFAULT(false);
             }
 
             goto paint;
@@ -356,8 +356,7 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
                 case MCGCU_SELECTEDHOT:
                     s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
                     break;
-                default:
-                    return false;
+                DEFAULT(false);
             }
 
             goto paint;
@@ -369,7 +368,7 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
             {
                 CASE_AB(MCTGC_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
                 CASE_AB(MCTGC_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
-                default: return false;
+                DEFAULT(false);
             }
 
             goto paint;
@@ -381,7 +380,7 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
             {
                 CASE_AB(MCTGCU_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
                 CASE_AB(MCTGCU_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
-                default: return false;
+                DEFAULT(false);
             }
 
             goto paint;

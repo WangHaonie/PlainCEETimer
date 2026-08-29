@@ -5,13 +5,14 @@ namespace PlainCEETimer.UI;
 public class ThemeHelper : IDisposable
 {
     private readonly IThemeAware m_obj;
+    private static readonly bool themeChangeSupported = ThemeManager.IsDarkModeSupported;
 
     public ThemeHelper(IThemeAware obj)
     {
         if (obj != null)
         {
             m_obj = obj;
-            if (ThemeManager.IsDarkModeSupported) ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+            if (themeChangeSupported) ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
             m_obj.UpdateTheme(ThemeManager.ShouldUseDarkMode, true);
         }
     }
@@ -23,7 +24,7 @@ public class ThemeHelper : IDisposable
 
     public void Dispose()
     {
-        ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+        if (themeChangeSupported) ThemeManager.ThemeChanged -= ThemeManager_ThemeChanged;
         GC.SuppressFinalize(this);
     }
 

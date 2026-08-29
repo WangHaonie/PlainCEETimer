@@ -518,20 +518,11 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
             switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
             {
-                case PTSPCOLOR_RESTORE:
-                    RestoreCtrlColors(colors);
-                    break;
-                case PTSPCOLOR_BACKTEXT:
-                    colors->backText = color;
-                    break;
-                case PTSPCOLOR_FORETEXT:
-                    colors->foreText = color;
-                    break;
-                case PTSPCOLOR_FORETEXTDISABLED:
-                    colors->foreTextDisabled = color;
-                    break;
-                default:
-                    return 0;
+                CASE_DB(PTSPCOLOR_RESTORE, RestoreCtrlColors(colors));
+                CASE_AB(PTSPCOLOR_BACKTEXT, colors->backText, color);
+                CASE_AB(PTSPCOLOR_FORETEXT, colors->foreText, color);
+                CASE_AB(PTSPCOLOR_FORETEXTDISABLED, colors->foreTextDisabled, color);
+                DEFAULT(0);
             }
 
             if (wParam)
