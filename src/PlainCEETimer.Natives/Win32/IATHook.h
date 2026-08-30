@@ -111,14 +111,8 @@ inline bool __stdcall ReplaceFunctionCore(PIMAGE_THUNK_DATA addr, TFunc pNewFunc
 {
     if (addr)
     {
-        DWORD oldProtect = 0;
-
-        if (VirtualProtect(&addr->u1.Function, sizeof(void*), PAGE_READWRITE, &oldProtect))
-        {
-            addr->u1.Function = reinterpret_cast<ULONGLONG>(pNewFunc);
-            VirtualProtect(&addr->u1.Function, sizeof(void*), oldProtect, &oldProtect);
-            return true;
-        }
+        addr->u1.Function = reinterpret_cast<ULONGLONG>(pNewFunc);
+        return true;
     }
 
     return false;
@@ -143,6 +137,11 @@ inline bool __stdcall InitializeIatHook(
         : FindIatThunkInModule(hMod, importedModuleName, importedFuncName, importedFuncOrdinal);
 
     if (!addr) return false;
+
+    DWORD oldProtect = 0;
+
+    if (!VirtualProtect(&addr->u1.Function, sizeof(void*), PAGE_READWRITE, &oldProtect))
+        return false;
 
     data.pThunk = addr;
     data.OldFunc = reinterpret_cast<TFunc>(addr->u1.Function);
