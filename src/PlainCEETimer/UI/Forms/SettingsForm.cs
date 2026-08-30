@@ -457,6 +457,7 @@ public sealed class SettingsForm : AppForm
                             var enabled = CheckBoxDebug.Checked;
                             GBoxDpiAware.Enabled = enabled;
                             GBoxTSPresent.Enabled = enabled;
+                            GBoxDbgWndStyles.Enabled = enabled;
                             SettingsChanged();
                         }),
 
@@ -468,7 +469,16 @@ public sealed class SettingsForm : AppForm
 
                         GBoxTSPresent = b.GroupBox("TimeSpan 呈现",
                         [
-                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", SettingsChanged),
+                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", (_, _) =>
+                            {
+                                if (CheckBoxCTSP.Checked)
+                                {
+                                    MessageX.Warn("启用经典控件时，设置的 最大上限 将失效！");
+                                }
+
+                                SettingsChanged();
+                            }),
+
                             LabelTSFormat = b.Label("显示格式"),
                             TextBoxTSFormat = b.TextBox(200, false, SettingsChanged),
                             LabelTSMax = b.Label("最大上限"),
