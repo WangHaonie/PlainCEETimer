@@ -5,9 +5,9 @@
 #include <Windows.h>
 #include <strsafe.h>
 
-#define HEAPALLOC(type)             CastToP(type*, HeapAllocEx(sizeof(type)))
-#define HEAPALLOC_M(type, count)    CastToP(type*, HeapAllocEx(count * sizeof(type)))
-#define HEAPFREE(lpMem)             HeapFreeEx(CastToP(LPVOID*, &lpMem))
+#define HEAPALLOC(type)             CastP(type*, HeapAllocEx(sizeof(type)))
+#define HEAPALLOC_M(type, count)    CastP(type*, HeapAllocEx(count * sizeof(type)))
+#define HEAPFREE(lpMem)             HeapFreeEx(CastP(LPVOID*, &lpMem))
 
 #define CLEARMEM(lpMem)             ZeroMemory(lpMem, sizeof(*lpMem))
 
@@ -76,8 +76,8 @@ inline bool __cdecl WString_Equals(const wchar_t* strA, const wchar_t* strB, boo
 template <typename T>
 constexpr T TString_ToLower(T c) noexcept
 {
-    return (c >= CastToS(T, 'A') && c <= CastToS(T, 'Z'))
-        ? (c + CastToS(T, 'a') - CastToS(T, 'A'))
+    return (c >= CastS(T, 'A') && c <= CastS(T, 'Z'))
+        ? (c + CastS(T, 'a') - CastS(T, 'A'))
         : c;
 }
 
@@ -163,7 +163,7 @@ inline bool __stdcall LoadFunction(TFunc* lpProc, LPCSTR lpModuleName, LPCSTR lp
 
                 if (addr)
                 {
-                    *lpProc = CastToP(TFunc, addr);
+                    *lpProc = CastP(TFunc, addr);
                     return true;
                 }
             }
@@ -190,7 +190,7 @@ https://learn.microsoft.com/en-us/dotnet/framework/interop/default-marshalling-b
 inline LPWSTR __stdcall CoTaskStrAllocW(size_t strLength)
 {
     size_t s = strLength * sizeof(WCHAR);
-    LPWSTR ptr = CastToP(LPWSTR, CoTaskMemAlloc(s));
+    LPWSTR ptr = CastP(LPWSTR, CoTaskMemAlloc(s));
     return ptr;
 }
 
@@ -206,7 +206,7 @@ inline int __stdcall LoadStringExW(HINSTANCE hInstance, UINT uID, LPWSTR* ppBuff
 {
     if (ppBuffer)
     {
-        return LoadString(hInstance, uID, CastToP(LPWSTR, ppBuffer), 0);
+        return LoadString(hInstance, uID, CastP(LPWSTR, ppBuffer), 0);
     }
 
     return 0;
@@ -216,7 +216,7 @@ inline void __stdcall SetDlgItemTextFromResW(HWND hDlg, int nIDDlgItem, LPWSTR l
 {
     if (hDlg && cch > 0 && lpResString)
     {
-        LPWSTR buffer = CastToP(LPWSTR, _malloca((cch + 1) * sizeof(WCHAR)));
+        LPWSTR buffer = CastP(LPWSTR, _malloca((cch + 1) * sizeof(WCHAR)));
 
         if (buffer)
         {

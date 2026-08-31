@@ -30,7 +30,7 @@ SIZE_T NATIVESAPI GetProcessPrivateWS()
 
     PROCESS_MEMORY_COUNTERS_EX2 pmc2 = {};
 
-    if (GetProcessMemoryInfo(GetCurrentProcess(), (PPROCESS_MEMORY_COUNTERS)&pmc2, sizeof(pmc2)))
+    if (GetProcessMemoryInfo(GetCurrentProcess(), CastP(PPROCESS_MEMORY_COUNTERS, &pmc2), sizeof(pmc2)))
     {
         return pmc2.PrivateWorkingSetSize;
     }

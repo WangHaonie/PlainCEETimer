@@ -20,8 +20,8 @@
 
 #define NATIVES_EXPORT              extern "C"
 #define NATIVESAPI                  __stdcall
-#define CastToP(t, v)               reinterpret_cast<t>(v)
-#define CastToS(t, v)               static_cast<t>(v)
+#define CastP(t, v)                 reinterpret_cast<t>(v)
+#define CastS(t, v)                 static_cast<t>(v)
 
 #define DetourBegin()	            DetourTransactionBegin(); DetourUpdateThread(GetCurrentThread())
 #define DetourEnd()		            DetourTransactionCommit()

@@ -87,8 +87,8 @@ void PlainTimeSpanPick::NotifyValueChanged() const
     if (!hParent) hParent = m_hWnd;
 
     SendMessage(hParent, WM_COMMAND,
-        MAKEWPARAM(CastToS(UINT, GetWindowLongPtr(m_hWnd, GWLP_ID)), PTSPN_VALUECHANGE),
-        CastToP(LPARAM, m_hWnd));
+        MAKEWPARAM(CastS(UINT, GetWindowLongPtr(m_hWnd, GWLP_ID)), PTSPN_VALUECHANGE),
+        CastP(LPARAM, m_hWnd));
 }
 
 INT PlainTimeSpanPick::FindNextNumericPart(INT start, int step) const
@@ -150,9 +150,9 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         case WM_CREATE:
         {
             RestoreCtrlColors(&m_crCtrlColors);
-            HWND hParent = CastToP(LPCREATESTRUCT, lParam)->hwndParent;
-            HFONT hFont = CastToP(HFONT, SendMessage(hParent, WM_GETFONT, 0, 0));
-            if (!hFont) hFont = CastToP(HFONT, GetStockObject(DEFAULT_GUI_FONT));
+            HWND hParent = CastP(LPCREATESTRUCT, lParam)->hwndParent;
+            HFONT hFont = CastP(HFONT, SendMessage(hParent, WM_GETFONT, 0, 0));
+            if (!hFont) hFont = CastP(HFONT, GetStockObject(DEFAULT_GUI_FONT));
             m_hFont = hFont;
 
             if (!SetFormat(nullptr))
@@ -167,7 +167,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         {
             if (lParam)
             {
-                return CastToS(LRESULT, BuildDisplayText(CastToP(LPWSTR, lParam), CastToS(size_t, wParam)));
+                return CastS(LRESULT, BuildDisplayText(CastP(LPWSTR, lParam), CastS(size_t, wParam)));
             }
 
             return 0;
@@ -175,7 +175,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
         case WM_GETTEXTLENGTH:
         {
-            return CastToS(LRESULT, BuildDisplayText(nullptr, 0));
+            return CastS(LRESULT, BuildDisplayText(nullptr, 0));
         }
 
         case WM_SETTEXT:
@@ -190,7 +190,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
         case WM_SETFONT:
         {
-            m_hFont = CastToP(HFONT, wParam);
+            m_hFont = CastP(HFONT, wParam);
 
             if (LOWORD(lParam))
             {
@@ -290,7 +290,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
                 if (IsNumericPart(seg.dwType))
                 {
-                    WCHAR c = CastToS(WCHAR, wParam);
+                    WCHAR c = CastS(WCHAR, wParam);
 
                     if (c >= L'0' && c <= L'9')
                     {
@@ -384,7 +384,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             GetClientRect(hWnd, &rc);
             HDC cdc = CreateCompatibleDC(hdc);
             HBITMAP bm = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
-            HBITMAP bmOld = CastToP(HBITMAP, SelectObject(cdc, bm));
+            HBITMAP bmOld = CastP(HBITMAP, SelectObject(cdc, bm));
             LPCTRLCOLORS colors = &m_crCtrlColors;
 
             HBRUSH hBgBrush = CreateSolidBrush(colors->backText);
@@ -395,7 +395,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             HBRUSH hBorderBrush = CreateSolidBrush(crBd);
             FrameRect(cdc, &rc, hBorderBrush);
             DeleteObject(hBorderBrush);
-            HFONT fontOld = CastToP(HFONT, SelectObject(cdc, m_hFont));
+            HFONT fontOld = CastP(HFONT, SelectObject(cdc, m_hFont));
 
             TEXTMETRIC tm;
             GetTextMetrics(cdc, &tm);
@@ -443,7 +443,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
         case PTSPM_SETFORMAT:
         {
-            if (lParam && SetFormat(CastToP(LPCWSTR, lParam)))
+            if (lParam && SetFormat(CastP(LPCWSTR, lParam)))
             {
                 Invalidate();
                 return TRUE;
@@ -456,7 +456,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         {
             if (lParam)
             {
-                LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
+                LPTIMESPAN pts = CastP(LPTIMESPAN, lParam);
                 *pts = m_tsValue;
             }
 
@@ -467,7 +467,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         {
             if (lParam)
             {
-                LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
+                LPTIMESPAN pts = CastP(LPTIMESPAN, lParam);
                 TIMESPAN ts = std::clamp(*pts, TIMESPAN_ZERO, m_tsValueMax);
 
                 if (ts != m_tsValue)
@@ -486,7 +486,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         {
             if (lParam)
             {
-                LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
+                LPTIMESPAN pts = CastP(LPTIMESPAN, lParam);
                 *pts = m_tsValueMax;
             }
 
@@ -497,7 +497,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         {
             if (lParam)
             {
-                LPTIMESPAN pts = CastToP(LPTIMESPAN, lParam);
+                LPTIMESPAN pts = CastP(LPTIMESPAN, lParam);
                 TIMESPAN value = std::clamp(*pts, 1LL, TIMESPAN_MAX);
 
                 if (value != m_tsValueMax)
@@ -541,7 +541,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
                 if (IsNumericPart(seg.dwType))
                 {
-                    int delta = CastToS(int, wParam);
+                    int delta = CastS(int, wParam);
                     ScrollNumeric(seg, delta);
                     UpdateSegmentMaxValue();
                     UpdateValue();

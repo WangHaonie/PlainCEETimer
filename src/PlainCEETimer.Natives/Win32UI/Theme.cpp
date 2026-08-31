@@ -142,7 +142,7 @@ static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBo
     }
 
     SetDCBrushColor(hdc, bBorder ? crBorder : crBack);
-    FrameRect(hdc, lpRect, CastToP(HBRUSH, GetStockObject(DC_BRUSH)));
+    FrameRect(hdc, lpRect, CastP(HBRUSH, GetStockObject(DC_BRUSH)));
     return true;
 }
 
@@ -177,8 +177,8 @@ static bool PnDrawMcArrow(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
     LONG y = t + h / 2;
 
     HBRUSH hbr = CreateSolidBrush(crFill);
-    HBRUSH hbrOld = CastToP(HBRUSH, SelectObject(hdc, hbr));
-    HPEN hpnOld = CastToP(HPEN, SelectObject(hdc, GetStockObject(NULL_PEN)));
+    HBRUSH hbrOld = CastP(HBRUSH, SelectObject(hdc, hbr));
+    HPEN hpnOld = CastP(HPEN, SelectObject(hdc, GetStockObject(NULL_PEN)));
 
     POINT pts[3];
 
@@ -517,7 +517,7 @@ static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
         case ASBT_MICAALT:
         dwmapi:
         {
-            DWM_SYSTEMBACKDROP_TYPE value = ASB_GET_STATUS(dwFlags) ? CastToS(DWM_SYSTEMBACKDROP_TYPE, dwType) : DWMSBT_NONE;
+            DWM_SYSTEMBACKDROP_TYPE value = ASB_GET_STATUS(dwFlags) ? CastS(DWM_SYSTEMBACKDROP_TYPE, dwType) : DWMSBT_NONE;
 
             if (FAILED(DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &value, sizeof(value))))
             {
@@ -537,7 +537,7 @@ static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
 
             if (pvData)
             {
-                DWORD abgrGradient = *CastToP(LPDWORD, pvData);
+                DWORD abgrGradient = *CastP(LPDWORD, pvData);
                 return EnableBlurBehind(hWnd, dwType == ASBT_ACRYLIC, abgrGradient, bEnabled);
             }
         }
@@ -683,7 +683,7 @@ BOOL NATIVESAPI ApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
     if (hWnd && ApplySystemBackdropCore(hWnd, dwFlags, pvData))
     {
         MARGINS margins;
-        int* s = CastToP(int*, &margins);
+        int* s = CastP(int*, &margins);
         int* e = s + 4;
         int value = ASB_GET_STATUS(dwFlags) ? -1 : 0;
         while (s < e) *s++ = value;

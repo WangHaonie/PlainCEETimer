@@ -464,9 +464,9 @@ HANDLE PlainTimeSpanPick::CreateFormat(LPCWSTR pszFormat)
             {
                 lpFormat->lpLiterals = literals;
                 lpFormat->lpSegments = segments;
-                lpFormat->cchLiterals = CastToS(INT, cchBufferLiterals);
+                lpFormat->cchLiterals = CastS(INT, cchBufferLiterals);
                 lpFormat->cSegments = cSegments;
-                return CastToP(HANDLE, lpFormat);
+                return CastP(HANDLE, lpFormat);
             }
         }
 
@@ -479,7 +479,7 @@ HANDLE PlainTimeSpanPick::CreateFormat(LPCWSTR pszFormat)
 
 BOOL PlainTimeSpanPick::Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer)
 {
-    LPPTSPFORMAT lpFormat = CastToP(LPPTSPFORMAT, hFormat);
+    LPPTSPFORMAT lpFormat = CastP(LPPTSPFORMAT, hFormat);
 
     if (lpFormat)
     {
@@ -492,7 +492,7 @@ BOOL PlainTimeSpanPick::Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBu
 
             if (!lpBuffer)
             {
-                *lpcchBuffer = CastToS(INT, count);
+                *lpcchBuffer = CastS(INT, count);
             }
 
             return TRUE;
@@ -504,7 +504,7 @@ BOOL PlainTimeSpanPick::Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBu
 
 BOOL PlainTimeSpanPick::FreeFormatMemory(HANDLE hFormat)
 {
-    LPPTSPFORMAT lpFormat = CastToP(LPPTSPFORMAT, hFormat);
+    LPPTSPFORMAT lpFormat = CastP(LPPTSPFORMAT, hFormat);
 
     if (lpFormat)
     {

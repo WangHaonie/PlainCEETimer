@@ -11,13 +11,13 @@ BOOL PlainTimeSpanPick::ValidateFormat(LPCWSTR pszFormat)
 
 LRESULT CALLBACK PlainTimeSpanPick::s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PlainTimeSpanPick* ptr = CastToP(PlainTimeSpanPick*, GetWindowLongPtr(hWnd, NULL));
+    PlainTimeSpanPick* ptr = CastP(PlainTimeSpanPick*, GetWindowLongPtr(hWnd, NULL));
 
     if (message == WM_NCCREATE)
     {
         ptr = new PlainTimeSpanPick(hWnd);
         ptr->m_lpBufferEdit = HEAPALLOC_M(WCHAR, PTSP_EDIT_BUFFER);
-        SetWindowLongPtr(hWnd, NULL, CastToP(LONG_PTR, ptr));
+        SetWindowLongPtr(hWnd, NULL, CastP(LONG_PTR, ptr));
     }
 
     if (ptr)

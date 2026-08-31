@@ -26,7 +26,7 @@ BOOL NATIVESAPI RunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLO
 
     cc.Flags = flags;
     cc.hwndOwner = hWndOwner;
-    cc.hInstance = CastToP(HWND, GetModuleHandleW(LIBRARYNAME));
+    cc.hInstance = CastP(HWND, GetModuleHandleW(LIBRARYNAME));
     cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
 
     if (ChooseColor(&cc))
