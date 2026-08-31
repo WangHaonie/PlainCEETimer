@@ -335,7 +335,13 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
             switch (iStateId)
             {
                 CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE);
-                CASE_AB(MCGC_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                case MCGC_HOT:
+                case MCGC_HASSTATE:
+                case MCGC_HASSTATEHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_HOT;
+                    break;
+                case MCGC_TODAY:
+                case MCGC_TODAYSELECTED:
                 case MCGC_SELECTED:
                 case MCGC_SELECTEDHOT:
                     s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
@@ -351,7 +357,11 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
             switch (iStateId)
             {
                 CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE);
-                CASE_AB(MCGCU_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
+                case MCGCU_HOT:
+                case MCGCU_HASSTATE:
+                case MCGCU_HASSTATEHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_HOT;
+                    break;
                 case MCGCU_SELECTED:
                 case MCGCU_SELECTEDHOT:
                     s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
@@ -366,8 +376,18 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
         {
             switch (iStateId)
             {
-                CASE_AB(MCTGC_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
-                CASE_AB(MCTGC_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
+                CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_DISABLED);
+                case MCTGC_HOT:
+                case MCTGC_HASSTATE:
+                case MCTGC_HASSTATEHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_HOT;
+                    break;
+                case MCTGC_TODAY:
+                case MCTGC_TODAYSELECTED:
+                case MCTGC_SELECTED:
+                case MCTGC_SELECTEDHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
+                    break;
                 DEFAULT(false);
             }
 
@@ -378,8 +398,16 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
         {
             switch (iStateId)
             {
-                CASE_AB(MCTGCU_HOT, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_HOT);
-                CASE_AB(MCTGCU_SELECTED, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_SELECTED);
+                CASE_AB(0, s_dttoptions.crText, DCOLOR_MONTHCAL_FORE_DISABLED);
+                case MCTGCU_HOT:
+                case MCTGCU_HASSTATE:
+                case MCTGCU_HASSTATEHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_HOT;
+                    break;
+                case MCTGCU_SELECTED:
+                case MCTGCU_SELECTEDHOT:
+                    s_dttoptions.crText = DCOLOR_MONTHCAL_FORE_SELECTED;
+                    break;
                 DEFAULT(false);
             }
 
