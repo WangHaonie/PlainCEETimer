@@ -19,7 +19,7 @@ public sealed class WPFApp : Application, IThemeAware
     private ResourceDictionary themeDict;
     private ThemeHelper themeHelper;
     private static bool m_closing;
-    private readonly bool nt10 = !SystemVersion.BeforeNT10;
+    private readonly bool atLeastNT10 = !SystemVersion.BeforeNT10;
 
     private const string ThemeDir = "WPF/Appearance/";
 
@@ -61,7 +61,8 @@ public sealed class WPFApp : Application, IThemeAware
 
     private void LoadTheme()
     {
-        var dict = Resources.MergedDictionaries;
+        var dict = Resources.MergedDictionaries
+            .AddEx(Resource.Create(ThemeDir + "Basics.xaml"));
 
         if (SystemVersion.IsWindows11)
         {
@@ -72,7 +73,7 @@ public sealed class WPFApp : Application, IThemeAware
             dict.Add(Resource.Create(ThemeDir + "Default.Windows10.xaml"));
         }
 
-        dict.AddEx(Resource.Create(ThemeDir + "Default.xaml"), nt10)
+        dict.AddEx(Resource.Create(ThemeDir + "Default.xaml"), atLeastNT10)
             .AddEx(Resource.Create(ThemeDir + "Controls.xaml"));
 
         themeHelper ??= new(this);
@@ -89,7 +90,7 @@ public sealed class WPFApp : Application, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        if (nt10)
+        if (atLeastNT10)
         {
             var dict = Resources.MergedDictionaries;
             var old = themeDict;
