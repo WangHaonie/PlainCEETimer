@@ -63,7 +63,7 @@ internal static class ConfigValidator
 
     private static readonly JsonSerializerSettings Settings = new()
     {
-        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+        DefaultValueHandling = DefaultValueHandling.Ignore,
         NullValueHandling = NullValueHandling.Ignore,
         TypeNameHandling = TypeNameHandling.Auto,
 #if DEBUG

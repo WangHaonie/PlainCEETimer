@@ -133,7 +133,7 @@ public sealed class SettingsForm : AppForm
     private ColorPair[] SelectedColors;
     private string DebugTSFormat;
     private TimeSpan DebugTSMax;
-    private readonly ComboTrigger comboTrigger = new(10, 500);
+    private ComboTrigger comboTrigger;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
 
@@ -813,6 +813,8 @@ public sealed class SettingsForm : AppForm
             if (new Rectangle(0, ClientSize.Height - xy, xy, xy)
                 .Contains(e.Location))
             {
+                comboTrigger ??= new(10, 500);
+
                 if (comboTrigger.Stop || IsDebug)
                 {
                     MessageX.Info("已开启调试选项，无需执行此操作。");
