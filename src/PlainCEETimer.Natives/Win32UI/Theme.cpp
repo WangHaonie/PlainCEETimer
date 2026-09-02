@@ -254,17 +254,21 @@ static bool HandleDtpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
 {
     if (iPartId == DP_DATEBORDER)
     {
+        COLORREF crBack = DCOLOR_DATEPICKER_BACK;
         COLORREF crBorder = COLOR_EMPTY;
 
         switch (iStateId)
         {
             CASE_AB(DPDB_NORMAL, crBorder, DCOLOR_DATEPICKER_BORDER);
-            CASE_AB(DPDB_HOT, crBorder, DCOLOR_DATEPICKER_BORDER_HOT);
+            case DPDB_HOT:
+                crBorder = DCOLOR_DATEPICKER_BORDER_HOT;
+                crBack = DCOLOR_DATEPICKER_BACK_HOT;
+                break;
             CASE_AB(DPDB_FOCUSED, crBorder, DCOLOR_DATEPICKER_BORDER_FOCUSED);
             CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
         }
 
-        return PnCommonPaint(hdc, pRect, DCOLOR_DATEPICKER_BACK, crBorder, true);
+        return PnCommonPaint(hdc, pRect, crBack, crBorder, true);
     }
 
     return false;
