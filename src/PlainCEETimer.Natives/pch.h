@@ -30,16 +30,17 @@
 #define DetourUnhook(o, h)          DetourDetach(DETOUR_ARGS(o, h))
 
 #define DeclIatData(n, dn)          static IAT_HOOK_DATA<fn##n> IatHook##dn##n = {}
-#define HookIat(args, data, original, hook)     \
-            if (InitializeIatHook(args, data))  \
-            {                                   \
-                if (!original)                  \
-                {                               \
-                    original = data.OldFunc;    \
-                }                               \
-                ReplaceFunction(data, hook);    \
-            }
-#define UnhookIat(data)             RestoreFunction(data)
+
+#define IatHook_Enable(data)        ++data.RefCount;
+#define IatHook_Disable(data)       if (data.Initialized && data.Hooked) --data.RefCount;
+
+#ifdef _DEBUG
+#define IatHook_DDump(data)         DDump(L"-----> [IAT Hook] %s: Ref=%d", L#data, data.RefCount); if (data.RefCount == 0xFFFFFFFF) __debugbreak()
+#define IatHook_Enable(data)        ++data.RefCount; IatHook_DDump(data);
+#define IatHook_Disable(data)       if (data.Initialized && data.Hooked) { --data.RefCount; IatHook_DDump(data); }
+#endif
+
+#define IatHook_IsEnabled(data)     data.RefCount
 
 #define STRSAFE_DEFAULT             0
 
