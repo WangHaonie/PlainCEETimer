@@ -215,3 +215,12 @@ public static class Natives
     public const int ASBT_MICAALT = 4;
     public const int ASBT_AERO = 5;
 }
+
+
+[NoConstants]
+[CompilerRemove]
+public static class STATUS
+{
+    public const nint Zero = 0;
+    public const nint One = 1;
+}

@@ -99,7 +99,7 @@ public class PlainHotkeyControl : Control, IThemeAware
             case WinUser.WM_ERASEBKGND when UseDark:
                 Win32UI.GetClientRect(m.HWnd, out var rc);
                 Win32UI.FillRect(m.WParam, ref rc, hBrush);
-                m.Result = new(1);
+                m.Result = STATUS.One;
                 return;
             case WinUser.WM_PAINT when UseDark:
                 Win32UI.PnHookSysColor();

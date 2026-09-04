@@ -89,7 +89,7 @@ public class SystemMenu
 
         if ((id = InsertMenu(index, MenuFlag.String, text)) > 0 && onClick != null)
         {
-            pnw.Add(new(new(id), onClick));
+            pnw.Add(new((nint)id, onClick));
         }
 
         return this;

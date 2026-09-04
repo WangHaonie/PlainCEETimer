@@ -28,7 +28,7 @@ public sealed class PlainListView : ListView, IThemeAware
             {
                 case WinUser.WM_SETCURSOR:
                 case WinUser.WM_CONTEXTMENU:
-                    m.Result = new(1);
+                    m.Result = STATUS.One;
                     return;
                 case CommCtrl.HDM_LAYOUT:
                     base.WndProc(ref m);
@@ -222,12 +222,12 @@ public sealed class PlainListView : ListView, IThemeAware
                         switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW.dwDrawStage))
                         {
                             case CommCtrl.CDDS_PREPAINT:
-                                m.Result = new(CommCtrl.CDRF_NOTIFYITEMDRAW);
+                                m.Result = (nint)CommCtrl.CDRF_NOTIFYITEMDRAW;
                                 return;
                             case CommCtrl.CDDS_ITEMPREPAINT:
                                 Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW.hdc),
                                     UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
-                                m.Result = new(CommCtrl.CDRF_DODEFAULT);
+                                m.Result = (nint)CommCtrl.CDRF_DODEFAULT;
                                 return;
                         }
 

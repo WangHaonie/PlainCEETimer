@@ -13,7 +13,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
 {
     private int m_id;
     private bool registered;
-    private IntPtr hid;
+    private nint hid;
 
     private static IntPtr hhkmw;
     private static RandomUID hkids;
@@ -51,7 +51,7 @@ public class HotKeyService(HotKey hk, HotKeyPressEventHandler onHotKeyPress)
         if (TestCore(hk)
             && Win32UI.RegisterHotKey(hkmw.Handle, m_id = GetId(), WinUser.MOD_NOREPEAT | (uint)hk.Modifiers, hk.Key))
         {
-            hid = new(m_id);
+            hid = m_id;
             registered = true;
             return true;
         }

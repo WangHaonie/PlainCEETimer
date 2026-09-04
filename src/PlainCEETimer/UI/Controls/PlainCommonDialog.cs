@@ -302,7 +302,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             cdsccnw.m_hParent = hWnd;
         }
 
-        return new(1);
+        return STATUS.One;
     }
 
     private IntPtr WmCtlColor(IntPtr hDC)

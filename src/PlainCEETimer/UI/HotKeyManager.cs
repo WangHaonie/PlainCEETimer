@@ -28,7 +28,7 @@ internal static class HotKeyManager
     {
         public MessageWindow()
         {
-            CreateHandle(new() { Parent = new(WinUser.HWND_MESSAGE) });
+            CreateHandle(new() { Parent = (nint)WinUser.HWND_MESSAGE });
         }
 
         protected override void WndProc(ref Message m)
