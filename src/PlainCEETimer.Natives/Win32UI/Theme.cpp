@@ -26,6 +26,8 @@ using fnSetWindowCompositionAttribute = BOOL (WINAPI*)(HWND hwnd, const WINDOWCO
 DeclDelegateType(DrawThemeBackground);
 using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffer);
 DeclDelegateType(DrawThemeText);
+DeclDelegateType(DrawEdge);
+DeclDelegateType(FrameRect);
 
 static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME s_lastOpenedTheme = nullptr;
@@ -41,6 +43,8 @@ DeclDelegateField(SetWindowCompositionAttribute);
 DeclDelegateField(DrawThemeBackground);
 DeclDelegateField(GetThemeClass);
 DeclDelegateField(DrawThemeText);
+DeclDelegateField(DrawEdge);
+DeclDelegateField(FrameRect);
 
 DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
@@ -49,6 +53,8 @@ DeclIatData(GetSysColorBrush, Comdlg);
 DeclIatData(GetSysColor, Comdlg);
 DeclIatData(DrawThemeBackground, Comctl);
 DeclIatData(DrawThemeText, Comctl);
+DeclIatData(DrawEdge, Comdlg);
+DeclIatData(FrameRect, Comdlg);
 
 static PreferredAppMode WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
 {
@@ -531,6 +537,41 @@ static HBRUSH WINAPI GetSysColorBrush_(int nIndex)
     return g_GetSysColorBrush(nIndex);
 }
 
+static BOOL WINAPI DrawEdge_(HDC hdc, LPRECT qrc, UINT edge, UINT grfFlags)
+{
+    if (IatHook_IsEnabled(IatHookComdlgDrawEdge))
+    {
+        if (edge == EDGE_SUNKEN)
+        {
+            PnCommonPaint(hdc, qrc, COLOR_EMPTY, IatHookComdlgDrawEdge.Tag, true, false);
+            
+            if (grfFlags & BF_ADJUST)
+            {
+                InflateRect(qrc, -1, -1);
+            }
+
+            return TRUE;
+        }
+    }
+
+    return g_DrawEdge(hdc, qrc, edge, grfFlags);
+}
+
+static int WINAPI FrameRect_(HDC hDC, const RECT* lprc, HBRUSH hbr)
+{
+    if (IatHook_IsEnabled(IatHookComdlgFrameRect))
+    {
+        static LOGBRUSH lb;
+
+        if (GetObject(hbr, sizeof(lb), &lb) && !lb.lbColor)
+        {
+            return PnCommonPaint(hDC, (RECT*)lprc, COLOR_EMPTY, IatHookComdlgFrameRect.Tag, true, false);
+        }
+    }
+
+    return g_FrameRect(hDC, lprc, hbr);
+}
+
 static BOOL EnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool bEnabled)
 {
     if (!bAcrylic)
@@ -694,6 +735,37 @@ void NATIVESAPI PnHookSysColorBrush()
 void NATIVESAPI PnUnhookSysColorBrush()
 {
     IatHook_Disable(IatHookComdlgGetSysColorBrush);
+}
+
+NATIVES_EXPORT void NATIVESAPI PnHookClassicEdge(LPVOID lpTag)
+{
+    if (!lpTag) return;
+
+    COLORREF* crArray = CastP(COLORREF*, lpTag);
+
+    if (HookIat(HOOK_COMDLG32_DRAWEDGE_ARGS,
+        IatHookComdlgDrawEdge,
+        g_DrawEdge,
+        DrawEdge_))
+    {
+        IatHook_Enable(IatHookComdlgDrawEdge);
+        IatHookComdlgDrawEdge.Tag = crArray[0];
+    }
+
+    if (HookIat(HOOK_COMDLG32_FRAMERECT_ARGS,
+        IatHookComdlgFrameRect,
+        g_FrameRect,
+        FrameRect_))
+    {
+        IatHook_Enable(IatHookComdlgFrameRect);
+        IatHookComdlgFrameRect.Tag = crArray[1];
+    }
+}
+
+NATIVES_EXPORT void NATIVESAPI PnUnhookClassicEdge()
+{
+    IatHook_Disable(IatHookComdlgDrawEdge);
+    IatHook_Disable(IatHookComdlgFrameRect);
 }
 
 /*

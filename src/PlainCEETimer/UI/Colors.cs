@@ -15,6 +15,7 @@ internal static class Colors
     public static readonly Color DarkBackText = Color.FromArgb(25, 25, 25);
     public static readonly Color DarkBackConsole = Color.FromArgb(12, 12, 12);
     public static readonly Color DarkBorder = Color.FromArgb(60, 60, 60);
+    public static readonly Color DarkBorderSelected = Color.FromArgb(96, 205, 255);
     public static readonly Color LightForeTextDisabled = Color.FromArgb(131, 131, 131);
     public static readonly Color LightForeLinkNormal = Color.FromArgb(0, 62, 146);
     public static readonly Color LightForeLinkOnClick = Color.FromArgb(0, 103, 192);
@@ -22,5 +23,6 @@ internal static class Colors
     public static readonly Color LightForeListViewHeader = Color.FromArgb(76, 96, 122);
     public static readonly Color LightForeListViewDefaultItem = Color.FromArgb(30, 136, 229);
     public static readonly Color LightBorder = Color.FromArgb(220, 220, 220);
+    public static readonly Color LightBorderSelected = Color.FromArgb(0, 120, 212);
     public static readonly Color WindowBorder = Color.FromArgb(97, 97, 97);
 }

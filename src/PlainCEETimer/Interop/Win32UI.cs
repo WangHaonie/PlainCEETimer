@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
@@ -195,6 +196,12 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#29")]
     public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
 
+    [DllImport(App.NativesDll, EntryPoint = "#50")]
+    public static extern void PnHookSysColorBrush();
+
+    [DllImport(App.NativesDll, EntryPoint = "#51")]
+    public static extern void PnUnhookSysColorBrush();
+
     [DllImport(App.NativesDll, EntryPoint = "#48")]
     public static extern void PnHookOpenTheme();
 
@@ -207,11 +214,11 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#60")]
     public static extern void PnUnhookThemedPaint();
 
-    [DllImport(App.NativesDll, EntryPoint = "#50")]
-    public static extern void PnHookSysColorBrush();
+    [DllImport(App.NativesDll, EntryPoint = "#61")]
+    public unsafe static extern void PnHookClassicEdge(void* lpTag);
 
-    [DllImport(App.NativesDll, EntryPoint = "#51")]
-    public static extern void PnUnhookSysColorBrush();
+    [DllImport(App.NativesDll, EntryPoint = "#62")]
+    public static extern void PnUnhookClassicEdge();
 
     [DllImport(App.NativesDll, EntryPoint = "#30")]
     public static extern void SetTopMostWindow(IntPtr hWnd);

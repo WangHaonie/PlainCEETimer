@@ -14,23 +14,65 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 {
     private sealed class ColorDlgNativeWindow : NativeWindow
     {
+        private bool UseDark;
+        private bool dragging;
+        private readonly COLORREF[] m_crsColorBox = new COLORREF[2];
+
+        internal void UpdateTheme(bool useDark)
+        {
+            UseDark = useDark;
+            m_crsColorBox[0] = (COLORREF)(useDark ? Colors.DarkBorder : Colors.LightBorder);
+            m_crsColorBox[1] = (COLORREF)(useDark ? Colors.DarkBorderSelected : Colors.LightBorderSelected);
+        }
+
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
             {
-                case WinUser.WM_MOUSEMOVE:
                 case WinUser.WM_LBUTTONDOWN:
+                    dragging = true;
+                    goto proceed;
                 case WinUser.WM_LBUTTONUP:
+                    dragging = false;
+                    goto proceed;
+                case WinUser.WM_KEYDOWN:
                 case WinUser.WM_LBUTTONDBLCLK:
                 case WinUser.WM_COMMAND:
                 case WinUser.WM_PAINT:
-                    Win32UI.PnHookSysColorBrush();
+                case WinUser.WM_MOUSEMOVE when dragging:
+                proceed:
+                    Hook();
                     base.WndProc(ref m);
-                    Win32UI.PnUnhookSysColorBrush();
+                    Unhook();
                     return;
             }
 
             base.WndProc(ref m);
+        }
+
+        private unsafe void Hook()
+        {
+            if (UseDark)
+            {
+                Win32UI.PnHookSysColor();
+                Win32UI.PnHookSysColorBrush();
+            }
+
+            fixed (COLORREF* ptr = m_crsColorBox)
+            {
+                Win32UI.PnHookClassicEdge(ptr);
+            }
+        }
+
+        private void Unhook()
+        {
+            if (UseDark)
+            {
+                Win32UI.PnUnhookSysColor();
+                Win32UI.PnUnhookSysColorBrush();
+            }
+
+            Win32UI.PnUnhookClassicEdge();
         }
     }
 
@@ -459,14 +501,8 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         if (IsColor)
         {
-            if (useDark)
-            {
-                NativeWindowHelper.Attach(hWnd, ref cdnw);
-            }
-            else
-            {
-                NativeWindowHelper.Detach(cdnw);
-            }
+            NativeWindowHelper.Attach(hWnd, ref cdnw);
+            cdnw.UpdateTheme(useDark);
         }
 
         if (!init)

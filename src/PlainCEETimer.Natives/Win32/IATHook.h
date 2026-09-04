@@ -16,6 +16,7 @@ struct IAT_HOOK_DATA
     TFunc OldFunc = nullptr;
     TFunc NewFunc = nullptr;
     DWORD RefCount = 0;
+    ULONG_PTR Tag = 0;
     bool Initialized = false;
     bool Hooked = false;
 };
