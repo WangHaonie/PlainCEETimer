@@ -21,7 +21,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         internal void UpdateTheme(bool useDark)
         {
             UseDark = useDark;
-            m_crsColorBox[0] = (COLORREF)(useDark ? Colors.DarkBorder : Colors.LightBorder);
+            m_crsColorBox[0] = (COLORREF)(useDark ? Colors.DarkBorderEdit : Colors.LightBorderEdit);
             m_crsColorBox[1] = (COLORREF)(useDark ? Colors.DarkBorderSelected : Colors.LightBorderSelected);
         }
 
