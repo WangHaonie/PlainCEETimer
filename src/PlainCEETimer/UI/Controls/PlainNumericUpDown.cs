@@ -47,7 +47,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 
         for (int i = 0; i < count; i++)
         {
-            ThemeManager.EnableDarkModeForControl(ctrls[i], useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+            ThemeManager.ApplyControlTheme(ctrls[i], useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
         }
     }
 }

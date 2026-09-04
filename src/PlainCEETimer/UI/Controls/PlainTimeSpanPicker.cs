@@ -294,14 +294,14 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
                     state, int.MakeLong24(Colors.DarkForeText.ToWin32(), PTSPCOLOR_FORETEXT));
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeTextDisabled.ToWin32(), PTSPCOLOR_FORETEXTDISABLED));
-                ThemeManager.EnableDarkModeForControl(Controls[0], SystemStyle.ExplorerDark);
+                ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.ExplorerDark);
             }
             else
             {
                 BackColor = SystemColors.Window;
                 Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
                     state, int.MakeLong24(0, PTSPCOLOR_RESTORE));
-                ThemeManager.EnableDarkModeForControl(Controls[0], SystemStyle.Explorer);
+                ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.Explorer);
             }
         }
     }

@@ -97,15 +97,18 @@ public static class ThemeManager
 
     public static void EnableDarkModeForWindow(IntPtr hWnd, bool enabled)
     {
-        Win32UI.EnableDarkModeForWindowFrame(hWnd, isNewDwma, enabled);
+        if (initialized)
+        {
+            Win32UI.EnableDarkModeForWindowFrame(hWnd, isNewDwma, enabled);
+        }
     }
 
-    public static void EnableDarkModeForControl(IWin32Window control, SystemStyle type, bool AutoUpgrade = false)
+    public static void ApplyControlTheme(IWin32Window control, SystemStyle type, bool AutoUpgrade = false)
     {
-        EnableDarkModeForControl(control.Handle, type, AutoUpgrade);
+        ApplyControlTheme(control.Handle, type, AutoUpgrade);
     }
 
-    public static void EnableDarkModeForControl(IntPtr hWnd, SystemStyle type, bool AutoUpgrade = false)
+    public static void ApplyControlTheme(IntPtr hWnd, SystemStyle type, bool AutoUpgrade = false)
     {
         if (AutoUpgrade)
         {

@@ -80,6 +80,6 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
     {
         ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
-        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd);
+        ThemeManager.ApplyControlTheme(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd);
     }
 }

@@ -443,31 +443,22 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        if (!ThemeManager.IsDarkModeSupported)
-        {
-            return;
-        }
-
         UseDark = useDark;
         var hWnd = Handle;
         ThemeManager.EnableDarkModeForWindow(hWnd, useDark);
 
         Win32UI.EnumChildWindows(hWnd, (child, _) =>
         {
-            ThemeManager.EnableDarkModeForControl(child, GetNativeStyle(child, out var up), up);
+            ThemeManager.ApplyControlTheme(child, GetNativeStyle(child, out var up), up);
             return true;
         }, IntPtr.Zero);
 
         if (IsFont)
         {
             if (useDark)
-            {
                 NativeWindowHelper.Attach(hWnd, ref fdnw);
-            }
             else
-            {
                 NativeWindowHelper.Detach(fdnw);
-            }
 
             IntPtr hCtrl;
 
@@ -476,19 +467,15 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 if (useDark)
                 {
                     if (ThemeManager.NewThemeAvailable)
-                    {
-                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.DarkTheme);
-                    }
+                        ThemeManager.ApplyControlTheme(hCtrl, SystemStyle.DarkTheme);
                     else
-                    {
                         NativeWindowHelper.Attach(hCtrl, ref gpnw);
-                    }
                 }
                 else
                 {
                     if (ThemeManager.NewThemeAvailable)
                     {
-                        ThemeManager.EnableDarkModeForControl(hCtrl, SystemStyle.Explorer);
+                        ThemeManager.ApplyControlTheme(hCtrl, SystemStyle.Explorer);
                     }
                     else
                     {

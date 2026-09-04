@@ -58,7 +58,7 @@ public sealed class NavigationView : Control
         {
             ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
             BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
-            ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+            ThemeManager.ApplyControlTheme(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
         }
     }
 

@@ -263,6 +263,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
         }
 
-        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd, true);
+        ThemeManager.ApplyControlTheme(this, useDark ? SystemStyle.CfdDark : SystemStyle.Cfd, true);
     }
 }

@@ -41,6 +41,6 @@ public sealed class PlainToolTip : ToolTip, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        ThemeManager.EnableDarkModeForControl(Handle, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ThemeManager.ApplyControlTheme(Handle, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
     }
 }

@@ -52,7 +52,7 @@ public sealed class PlainGroupBox : GroupBox, IThemeAware
 
         if (ThemeManager.NewThemeAvailable)
         {
-            ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
+            ThemeManager.ApplyControlTheme(this, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
         }
         else if (!init)
         {

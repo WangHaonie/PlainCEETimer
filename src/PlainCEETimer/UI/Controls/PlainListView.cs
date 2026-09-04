@@ -306,9 +306,9 @@ public sealed class PlainListView : ListView, IThemeAware
         IntPtr hHeader = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETHEADER, 0, 0);
         IntPtr hToolTips = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETTOOLTIPS, 0, 0);
 
-        ThemeManager.EnableDarkModeForControl(hListView, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
-        ThemeManager.EnableDarkModeForControl(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
-        ThemeManager.EnableDarkModeForControl(hToolTips, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ThemeManager.ApplyControlTheme(hListView, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
+        ThemeManager.ApplyControlTheme(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
+        ThemeManager.ApplyControlTheme(hToolTips, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
 
         if (init)
         {

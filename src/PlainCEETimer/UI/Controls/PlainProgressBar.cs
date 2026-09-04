@@ -115,7 +115,7 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
     {
         if (ThemeManager.NewThemeAvailable)
         {
-            ThemeManager.EnableDarkModeForControl(Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Progress);
+            ThemeManager.ApplyControlTheme(Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Progress);
         }
         else
         {

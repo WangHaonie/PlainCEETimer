@@ -21,7 +21,7 @@ public class PlainButtonBase : IThemeAware
     private void UpdateStyle()
     {
         Target.FlatStyle = UseDark && Target.Enabled ? FlatStyle.Standard : FlatStyle.System;
-        ThemeManager.EnableDarkModeForControl(Target, UseDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ThemeManager.ApplyControlTheme(Target, UseDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
@@ -32,7 +32,7 @@ public class PlainButtonBase : IThemeAware
         {
             if (ThemeManager.NewThemeAvailable)
             {
-                ThemeManager.EnableDarkModeForControl(Target.Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
+                ThemeManager.ApplyControlTheme(Target.Handle, useDark ? SystemStyle.DarkTheme : SystemStyle.Explorer);
             }
             else
             {

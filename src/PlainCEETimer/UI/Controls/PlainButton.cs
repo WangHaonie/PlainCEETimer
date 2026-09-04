@@ -73,6 +73,6 @@ public sealed class PlainButton : Button, IThemeAware
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        ThemeManager.EnableDarkModeForControl(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ThemeManager.ApplyControlTheme(this, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
     }
 }
