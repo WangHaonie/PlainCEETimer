@@ -9,16 +9,18 @@ namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainButton : Button, IThemeAware
 {
-    private sealed class ParentNativeWindow(PlainButton b) : NativeWindow
+    private sealed class ParentNativeWindow : NativeWindow
     {
+        internal PlainButton m_owner;
+
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == WinUser.WM_NOTIFY)
             {
                 if (Marshal.ReadInt32(m.LParam, NMHDR.code) == CommCtrl.BCN_DROPDOWN
-                    && Marshal.ReadIntPtr(m.LParam, NMHDR.hwndFrom) == b.Handle)
+                    && Marshal.ReadIntPtr(m.LParam, NMHDR.hwndFrom) == m_owner.Handle)
                 {
-                    b.ContextMenu.Show(b, new(0, b.Height));
+                    m_owner.ContextMenu.Show(m_owner, new(0, m_owner.Height));
                 }
             }
 
@@ -56,9 +58,8 @@ public sealed class PlainButton : Button, IThemeAware
 
         if (ContextMenu != null)
         {
-            pnw?.ReleaseHandle();
-            pnw ??= new ParentNativeWindow(this);
-            pnw.AssignHandle(Parent.Handle);
+            NativeWindowHelper.Attach(Parent.Handle, ref pnw);
+            pnw.m_owner = this;
         }
 
         base.OnHandleCreated(e);

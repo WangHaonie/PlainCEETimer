@@ -9,6 +9,7 @@ public static class WinUser
     public const int HCBT_CREATEWND = 3;
     public const int HCBT_DESTROYWND = 4;
 
+    public const int HTCLIENT = 1;
     public const int HTCAPTION = 2;
 
     public const int HWND_TOP = 0;
@@ -76,11 +77,13 @@ public static class WinUser
     public const int WM_CTLCOLORBTN = 0x0135;
     public const int WM_GETFONT = 0x0031;
     public const int WM_WINDOWPOSCHANGED = 0x0047;
+    public const int WM_NCHITTEST = 0x0084;
     public const int WM_MOUSEMOVE = 0x0200;
     public const int WM_MOUSEWHEEL = 0x020A;
     public const int WM_LBUTTONDOWN = 0x0201;
     public const int WM_LBUTTONUP = 0x0202;
     public const int WM_LBUTTONDBLCLK = 0x0203;
+    public const int WM_RBUTTONDOWN = 0x0204;
     public const int WM_NCLBUTTONDOWN = 0x00A1;
     public const int WM_NCRBUTTONDOWN = 0x00A4;
     public const int WM_NCMBUTTONDOWN = 0x00A7;

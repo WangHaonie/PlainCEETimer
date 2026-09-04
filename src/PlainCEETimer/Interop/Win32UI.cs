@@ -55,6 +55,9 @@ internal static class Win32UI
     public static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
     [DllImport(App.User32Dll)]
+    public static extern bool SetDlgItemInt(IntPtr hDlg, int nIDDlgItem, int uValue, bool bSigned);
+
+    [DllImport(App.User32Dll)]
     public static extern nint SendMessage(IntPtr hWnd, int msg, int wParam, nint lParam);
 
     [DllImport(App.User32Dll)]

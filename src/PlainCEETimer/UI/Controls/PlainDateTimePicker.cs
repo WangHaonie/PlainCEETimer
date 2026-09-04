@@ -10,21 +10,21 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 {
     private sealed class DropDownAndSysMonthCal32NativeWindow : NativeWindow
     {
+        internal PlainDateTimePicker m_owner;
+
         private bool dragging;
         private bool canHook = true;
         private Debouncer debouncer;
-        private readonly PlainDateTimePicker Owner;
         private readonly ActionInvoker<bool> UnhookAction;
 
-        public DropDownAndSysMonthCal32NativeWindow(PlainDateTimePicker owner)
+        public DropDownAndSysMonthCal32NativeWindow()
         {
-            Owner = owner;
             UnhookAction = new(Unhook);
         }
 
         protected override void WndProc(ref Message m)
         {
-            if (Owner.UseDark)
+            if (m_owner.UseDark)
             {
                 switch (m.Msg)
                 {
@@ -81,19 +81,18 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
 
     protected override void OnDropDown(EventArgs eventargs)
     {
-        m_smcnw ??= new(this);
-        m_ddnw ??= new(this);
         var hmc = Win32UI.SendMessage(Handle, CommCtrl.DTM_GETMONTHCAL, 0, 0);
-        var hdd = Win32UI.GetParent(hmc);
-        m_smcnw.AssignHandle(hmc);
-        m_ddnw.AssignHandle(hdd);
+        NativeWindowHelper.Attach(hmc, ref m_smcnw);
+        NativeWindowHelper.Attach(Win32UI.GetParent(hmc), ref m_ddnw);
+        m_smcnw.m_owner = this;
+        m_ddnw.m_owner = this;
         base.OnDropDown(eventargs);
     }
 
     protected override void OnCloseUp(EventArgs eventargs)
     {
-        m_ddnw?.ReleaseHandle();
-        m_smcnw?.ReleaseHandle();
+        NativeWindowHelper.Detach(m_ddnw);
+        NativeWindowHelper.Detach(m_smcnw);
         base.OnCloseUp(eventargs);
     }
 

@@ -313,9 +313,7 @@ public sealed class PlainListView : ListView, IThemeAware
         if (init)
         {
             Win32UI.SetTopMostWindow(hToolTips);
-            hnw?.ReleaseHandle();
-            hnw = new SysHeader32NativeWindow();
-            hnw.AssignHandle(hHeader);
+            NativeWindowHelper.Attach(hHeader, ref hnw);
 
             if (SystemVersion.IsWindows11)
             {

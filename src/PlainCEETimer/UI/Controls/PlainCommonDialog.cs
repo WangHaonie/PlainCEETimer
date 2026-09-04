@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -67,6 +68,114 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         }
     }
 
+    private sealed class ColorDlgStaticColorCurrentNativeWindow : NativeWindow
+    {
+        internal IntPtr m_hParent;
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WinUser.WM_NCHITTEST:
+                    m.Result = (nint)WinUser.HTCLIENT;
+                    return;
+
+                case WinUser.WM_SETCURSOR:
+
+                    if (m.LParam.LoWord == WinUser.HTCLIENT)
+                    {
+                        Cursor.Current = Cursors.Help;
+                        m.Result = (nint)1;
+                        return;
+                    }
+
+                    break;
+
+                case WinUser.WM_RBUTTONDOWN:
+                case WinUser.WM_LBUTTONDBLCLK:
+                    SetExistingColor(m_hParent);
+                    m.Result = IntPtr.Zero;
+                    return;
+            }
+
+            base.WndProc(ref m);
+        }
+
+        private static void SetExistingColor(IntPtr hDlg)
+        {
+            if (Clipboard.ContainsText())
+            {
+                var color = String2Color(Clipboard.GetText());
+
+                if (!color.IsEmpty)
+                {
+                    const int COLOR_RED = 706;
+                    const int COLOR_GREEN = 707;
+                    const int COLOR_BLUE = 708;
+
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_RED, color.R, true);
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_GREEN, color.G, true);
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_BLUE, color.B, true);
+                }
+            }
+        }
+
+        private static Color String2Color(string s)
+        {
+            var result = Color.Empty;
+            String2ColorCore(s, ref result);
+
+            if (!result.IsEmpty)
+            {
+                goto ret;
+            }
+
+            if (!string.IsNullOrEmpty(s))
+            {
+                var start = -1;
+                var end = -1;
+                var length = s.Length;
+
+                for (int i = 0; i < length; i++)
+                {
+                    if (char.IsDigit(s[i]))
+                    {
+                        start = i;
+                        break;
+                    }
+                }
+
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    if (char.IsDigit(s[i]))
+                    {
+                        end = i;
+                        break;
+                    }
+                }
+
+                if (start != -1 && end != -1 && end >= start)
+                {
+                    s = s.Substring(start, end - start + 1);
+                    String2ColorCore(s, ref result);
+                    goto ret;
+                }
+            }
+
+        ret:
+            return result;
+        }
+
+        private static void String2ColorCore(string s, ref Color color)
+        {
+            try
+            {
+                color = ColorTranslator.FromHtml(s);
+            }
+            catch { }
+        }
+    }
+
     private class IAppWindowWrapper(IntPtr hWnd) : IAppWindow
     {
         public bool InvokeRequired => false;
@@ -105,6 +214,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private ColorDlgNativeWindow cdnw;
     private FontDlgNativeWindow fdnw;
     private GroupBoxNativeWindow gpnw;
+    private ColorDlgStaticColorCurrentNativeWindow cdsccnw;
     private ThemeHelper themeHelper;
     private readonly bool IsFont;
     private readonly bool IsColor;
@@ -184,6 +294,14 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         Win32UI.GetWindowRect(hWnd, out var rect);
         Win32UI.MakeCenter(rect, Owner.Bounds, out var r);
         Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
+
+        if (IsColor)
+        {
+            const int COLOR_CURRENT = 709;
+            NativeWindowHelper.Attach(Win32UI.GetDlgItem(hWnd, COLOR_CURRENT), ref cdsccnw);
+            cdsccnw.m_hParent = hWnd;
+        }
+
         return new(1);
     }
 
@@ -302,12 +420,11 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         {
             if (useDark)
             {
-                fdnw ??= new();
-                fdnw.AssignHandle(hWnd);
+                NativeWindowHelper.Attach(hWnd, ref fdnw);
             }
             else
             {
-                fdnw.ReleaseHandle();
+                NativeWindowHelper.Detach(fdnw);
             }
 
             IntPtr hCtrl;
@@ -322,9 +439,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     }
                     else
                     {
-                        gpnw?.ReleaseHandle();
-                        gpnw ??= new();
-                        gpnw.AssignHandle(hCtrl);
+                        NativeWindowHelper.Attach(hCtrl, ref gpnw);
                     }
                 }
                 else
@@ -335,11 +450,8 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     }
                     else
                     {
-                        if (gpnw != null)
-                        {
-                            gpnw.ReleaseHandle();
-                            Win32UI.RedrawWindow(hCtrl, IntPtr.Zero, IntPtr.Zero, RDW.Common);
-                        }
+                        NativeWindowHelper.Detach(gpnw);
+                        Win32UI.RedrawWindow(hCtrl, IntPtr.Zero, IntPtr.Zero, RDW.Common);
                     }
                 }
             }
@@ -349,12 +461,11 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         {
             if (useDark)
             {
-                cdnw ??= new();
-                cdnw.AssignHandle(hWnd);
+                NativeWindowHelper.Attach(hWnd, ref cdnw);
             }
             else
             {
-                cdnw.ReleaseHandle();
+                NativeWindowHelper.Detach(cdnw);
             }
         }
 
