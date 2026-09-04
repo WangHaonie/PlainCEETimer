@@ -74,4 +74,14 @@ public static class Extensions
     {
         return new(JObject.Load(reader), serializer);
     }
+
+    extension(ColorConverter)
+    {
+        public static string Format(Color color, ColorFormat format) => format switch
+        {
+            ColorFormat.RGB => $"{color.R},{color.G},{color.B}",
+            ColorFormat.HEX => $"#{color.R:X2}{color.G:X2}{color.B:X2}",
+            _ => ColorTranslator.ToHtml(color)
+        };
+    }
 }

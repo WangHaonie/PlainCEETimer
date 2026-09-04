@@ -50,3 +50,10 @@ public enum DurationUnit
     Hours,
     Days
 }
+
+public enum ColorFormat
+{
+    Default,
+    RGB,
+    HEX
+}

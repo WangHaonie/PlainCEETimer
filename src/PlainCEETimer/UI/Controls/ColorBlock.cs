@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
@@ -140,8 +141,8 @@ public sealed class ColorBlock : PlainLabel
         {
             CurrentColor = Screenshot.GetPixel(ScreenshotSample / 2, ScreenshotSample / 2);
             strpos = $"{MouseX},{MouseY}";
-            strrgb = $"{CurrentColor.R},{CurrentColor.G},{CurrentColor.B}";
-            strhex = $"#{CurrentColor.R:X2}{CurrentColor.G:X2}{CurrentColor.B:X2}";
+            strrgb = ColorConverter.Format(CurrentColor, ColorFormat.RGB);
+            strhex = ColorConverter.Format(CurrentColor, ColorFormat.HEX);
         }
 
         private void DrawScreenshot(Graphics g)

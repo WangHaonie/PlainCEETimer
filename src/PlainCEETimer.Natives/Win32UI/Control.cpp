@@ -4,6 +4,7 @@
 #include "Win32/IATHook.h"
 #include <CommCtrl.h>
 #include <Windows.h>
+#include <windowsx.h>
 
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
@@ -212,4 +213,44 @@ void NATIVESAPI PnUnhookGetMessage()
         g_GetMsgProc = nullptr;
         g_hGetMsgProc = nullptr;
     }
+}
+
+int NATIVESAPI CDCCM_WmContextMenu(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    if (hWnd && wParam)
+    {
+        HWND hCtrl = CastP(HWND, wParam);
+
+        if (GetDlgCtrlID(hCtrl) == COLOR_CURRENT)
+        {
+            static HMODULE hmod = GetModuleHandle(LIBRARYNAME);
+            HMENU hMenu = LoadMenu(hmod, MAKEINTRESOURCE(IDR_COLORDLG_COLORCURRENT_MENU));
+
+            if (hMenu)
+            {
+                HMENU hPopup = GetSubMenu(hMenu, 0);
+
+                if (hPopup)
+                {
+                    static NMHDR nmhdr;
+
+                    int cmd = TrackPopupMenu(hPopup,
+                        TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
+                        GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hWnd, nullptr);
+
+                    if (cmd > 0)
+                    {
+                        nmhdr.hwndFrom = hCtrl;
+                        nmhdr.idFrom = COLOR_CURRENT;
+                        nmhdr.code = cmd;
+                        SNDMSG(hCtrl, WM_NOTIFY, wParam, CastP(LPARAM, &nmhdr));
+                    }
+
+                    return cmd;
+                }
+            }
+        }
+    }
+
+    return -1;
 }

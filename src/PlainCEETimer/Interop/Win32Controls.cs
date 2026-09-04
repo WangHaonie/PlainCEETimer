@@ -27,4 +27,7 @@ internal static class Win32Controls
 
     [DllImport(App.NativesDll, EntryPoint = "#57")]
     public static extern bool PlainTimeSpanPick_SuggestValue(ref TimeSpan lptsValue);
+
+    [DllImport(App.NativesDll, EntryPoint = "#63")]
+    public static extern int CDCCM_WmContextMenu(IntPtr hWnd, IntPtr wParam, IntPtr lParam);
 }

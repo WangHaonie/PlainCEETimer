@@ -29,6 +29,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         {
             switch (m.Msg)
             {
+                case WinUser.WM_CONTEXTMENU:
+                    Win32Controls.CDCCM_WmContextMenu(m.HWnd, m.WParam, m.LParam);
+                    return;
                 case WinUser.WM_LBUTTONDOWN:
                     dragging = true;
                     goto proceed;
@@ -122,6 +125,27 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     m.Result = (nint)WinUser.HTCLIENT;
                     return;
 
+                case WinUser.WM_NOTIFY:
+
+                    var lp = m.LParam;
+
+                    if (Marshal.ReadInt32(lp, NMHDR.idFrom) == COLOR_CURRENT)
+                    {
+                        switch (Marshal.ReadInt32(lp, NMHDR.code))
+                        {
+                            case IDM_CDCCM_FROMCLIPBOARD:
+                                goto pastecolor;
+                            case IDM_CDCCM_COPYASRGB:
+                                CopyColorToClipboard(true);
+                                break;
+                            case IDM_CDCCM_COPYASHEX:
+                                CopyColorToClipboard(false);
+                                break;
+                        }
+                    }
+
+                    return;
+
                 case WinUser.WM_SETCURSOR:
 
                     if (m.LParam.LoWord == WinUser.HTCLIENT)
@@ -133,8 +157,8 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                     break;
 
-                case WinUser.WM_RBUTTONDOWN:
                 case WinUser.WM_LBUTTONDBLCLK:
+                pastecolor:
                     SetExistingColor(m_hParent);
                     m.Result = IntPtr.Zero;
                     return;
@@ -151,14 +175,20 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                 if (!color.IsEmpty)
                 {
-                    const int COLOR_RED = 706;
-                    const int COLOR_GREEN = 707;
-                    const int COLOR_BLUE = 708;
-
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_RED, color.R, true);
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_GREEN, color.G, true);
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_BLUE, color.B, true);
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_RED, color.R, false);
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_GREEN, color.G, false);
+                    Win32UI.SetDlgItemInt(hDlg, COLOR_BLUE, color.B, false);
                 }
+            }
+        }
+
+        private void CopyColorToClipboard(bool rgb)
+        {
+            var text = Color2String(m_hParent, rgb);
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                Clipboard.SetText(text);
             }
         }
 
@@ -206,6 +236,25 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         ret:
             return result;
+        }
+
+        private static string Color2String(IntPtr hDlg, bool rgb)
+        {
+            if (TryGetInt(hDlg, COLOR_RED, out int r)
+                && TryGetInt(hDlg, COLOR_GREEN, out int g)
+                && TryGetInt(hDlg, COLOR_BLUE, out int b))
+            {
+                return ColorConverter.Format(Color.FromArgb(r, g, b), rgb ? ColorFormat.RGB : ColorFormat.HEX);
+            }
+
+            return null;
+        }
+
+        private static bool TryGetInt(IntPtr hDlg, int nIDDlgItem, out int value)
+        {
+            var success = false;
+            value = Win32UI.GetDlgItemInt(hDlg, nIDDlgItem, ref success, false);
+            return success;
         }
 
         private static void String2ColorCore(string s, ref Color color)
@@ -266,6 +315,15 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private static FnMessageBoxW fnMessageBox;
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
+
+    private const int IDM_FIRST = 40000;
+    private const int COLOR_RED = 706;
+    private const int COLOR_GREEN = 707;
+    private const int COLOR_BLUE = 708;
+    private const int COLOR_CURRENT = 709;
+    private const int IDM_CDCCM_FROMCLIPBOARD = IDM_FIRST + 1;
+    private const int IDM_CDCCM_COPYASRGB = IDM_FIRST + 2;
+    private const int IDM_CDCCM_COPYASHEX = IDM_FIRST + 3;
 
     protected PlainCommonDialog(AppForm owner, string dialogTitle)
     {
@@ -339,7 +397,6 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         if (IsColor)
         {
-            const int COLOR_CURRENT = 709;
             NativeWindowHelper.Attach(Win32UI.GetDlgItem(hWnd, COLOR_CURRENT), ref cdsccnw);
             cdsccnw.m_hParent = hWnd;
         }

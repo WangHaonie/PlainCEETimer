@@ -78,3 +78,4 @@ EXPORTS
     PnUnhookThemedPaint @60 NONAME
     PnHookClassicEdge @61 NONAME
     PnUnhookClassicEdge @62 NONAME
+    CDCCM_WmContextMenu @63 NONAME

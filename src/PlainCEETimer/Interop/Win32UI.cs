@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
@@ -57,6 +56,9 @@ internal static class Win32UI
 
     [DllImport(App.User32Dll)]
     public static extern bool SetDlgItemInt(IntPtr hDlg, int nIDDlgItem, int uValue, bool bSigned);
+
+    [DllImport(App.User32Dll)]
+    public static extern int GetDlgItemInt(IntPtr hDlg, int nIDDlgItem, ref bool lpTranslated, bool bSigned);
 
     [DllImport(App.User32Dll)]
     public static extern nint SendMessage(IntPtr hWnd, int msg, int wParam, nint lParam);
