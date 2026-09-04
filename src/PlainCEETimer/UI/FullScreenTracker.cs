@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
@@ -201,7 +200,7 @@ public class FullScreenTracker : IDisposable
 
     private bool ShouldIgnoreWindow(IntPtr hWnd)
     {
-        using var cn = Win32UI.GetClassName(hWnd).AsStringUni();
+        var cn = Win32UI.GetWindowClassName(hWnd);
 
         foreach (var wnd in m_banlist)
         {

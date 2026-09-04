@@ -41,7 +41,6 @@ EXPORTS
     MenuGetItemCheckState @31 NONAME
     MenuUncheckItem @32 NONAME
     GetWindowTextEx @33 NONAME
-    GetWindowClassName @34 NONAME
     PnHookSysColor @35 NONAME
     PnUnhookSysColor @36 NONAME
     RemoveWindowExStyle @37 NONAME
@@ -79,3 +78,5 @@ EXPORTS
     PnHookClassicEdge @61 NONAME
     PnUnhookClassicEdge @62 NONAME
     CDCCM_WmContextMenu @63 NONAME
+    
+    ;Next #34

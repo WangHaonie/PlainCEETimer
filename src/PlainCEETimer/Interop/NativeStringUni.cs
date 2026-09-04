@@ -11,6 +11,12 @@ public ref struct NativeStringUni
     private readonly IntPtr m_ptr;
     private readonly ReadOnlySpan<char> m_value;
 
+    public NativeStringUni(char[] array, int length = -1)
+    {
+        if (length < 0) length = array.Length;
+        m_value = new(array, 0, length);
+    }
+
     public unsafe NativeStringUni(char* ptr, int length = -1, bool free = true)
     {
         m_ptr = free ? new(ptr) : IntPtr.Zero;
@@ -129,7 +135,7 @@ public ref struct NativeStringUni
                     length = length.Clamp(0, n);
                 }
 
-                value = new ReadOnlySpan<char>(ptr, length);
+                value = new(ptr, length);
             }
         }
         catch { }

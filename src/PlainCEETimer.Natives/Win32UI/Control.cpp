@@ -114,18 +114,6 @@ LPCWSTR NATIVESAPI GetWindowTextEx(HWND hWnd)
     return nullptr;
 }
 
-LPCWSTR NATIVESAPI GetWindowClassName(HWND hWnd)
-{
-    if (hWnd)
-    {
-        LPWSTR buffer = CoTaskStrAllocW(256); // lpszClassName 最大长度
-        GetClassName(hWnd, buffer, 256);
-        return buffer;
-    }
-
-    return nullptr;
-}
-
 void NATIVESAPI RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 {
     SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyle);

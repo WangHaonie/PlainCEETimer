@@ -6,10 +6,12 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
+[NoConstants]
 public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 {
     private sealed class ColorDlgNativeWindow : NativeWindow
@@ -428,7 +430,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     private SystemStyle GetNativeStyle(IntPtr hWnd, out bool up)
     {
-        using var cn = Win32UI.GetClassName(hWnd).AsStringUni();
+        var cn = Win32UI.GetWindowClassName(hWnd);
 
         if (cn == "ComboBox")
         {

@@ -1,16 +1,41 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Interop;
 
+[NoConstants]
 internal static class Win32UI
 {
     private static List<IntPtr> UnmanagedWindows;
+    private static readonly ThreadLocal<char[]> s_bufferClassName = new(() => ArrayPool<char>.Shared.Rent(s_cchBufferClassName), true);
+
+    private const int s_cchBufferClassName = 32;
+
+    static Win32UI()
+    {
+        App.Current.AppExit += static () =>
+        {
+            var values = s_bufferClassName.Values;
+
+            if (values is { Count: var length } && length > 0)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    ArrayPool<char>.Shared.Return(values[i]);
+                }
+            }
+
+            s_bufferClassName.Dispose();
+        };
+    }
 
     [DllImport(App.Gdi32Dll)]
     public static extern int SetBkMode(IntPtr hdc, int mode);
@@ -98,6 +123,9 @@ internal static class Win32UI
 
     [DllImport(App.User32Dll)]
     public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+    public unsafe static extern int GetClassName(IntPtr hWnd, char* lpClassName, int nMaxCount);
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetShellWindow();
@@ -234,9 +262,6 @@ internal static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#33", CharSet = CharSet.Unicode)]
     public static extern string GetWindowText(IntPtr hWnd);
 
-    [DllImport(App.NativesDll, EntryPoint = "#34", CharSet = CharSet.Unicode)]
-    public static extern IntPtr GetClassName(IntPtr hWnd);
-
     [DllImport(App.NativesDll, EntryPoint = "#35")]
     public static extern void PnHookSysColor();
 
@@ -285,6 +310,17 @@ internal static class Win32UI
         fixed (char* ptr = lParam)
         {
             return SendMessage(hWnd, msg, wParam, ptr);
+        }
+    }
+
+    public unsafe static NativeStringUni GetWindowClassName(IntPtr hWnd)
+    {
+        var buffer = s_bufferClassName.Value;
+
+        fixed (char* ptr = buffer)
+        {
+            var length = GetClassName(hWnd, ptr, s_cchBufferClassName);
+            return new(buffer, length);
         }
     }
 
