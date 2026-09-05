@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -114,6 +115,12 @@ internal static class DebugExtensions
 
         if (App.DebugShouldDumpToConsole)
         {
+            if (Debugger.IsAttached)
+            {
+                Debug.WriteLine(json);
+                goto ret;
+            }
+
             var tmp = ConsoleHelper.Instance
                 .Write("[").Write(DateTime.Now.LogFormat()).Write("] ");
 
@@ -129,6 +136,7 @@ internal static class DebugExtensions
             AppMessageBox.Instance.Info(name + ": " + json);
         }
 
+    ret:
         return obj;
     }
 

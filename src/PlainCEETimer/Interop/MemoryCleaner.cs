@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
@@ -10,6 +11,7 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.Interop;
 
 [NoConstants]
+[SuppressUnmanagedCodeSecurity]
 public class MemoryCleaner : IDisposable
 {
     public bool Enabled

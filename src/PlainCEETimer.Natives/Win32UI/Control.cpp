@@ -222,9 +222,9 @@ int NATIVESAPI CDCCM_WmContextMenu(HWND hWnd, WPARAM wParam, LPARAM lParam)
                 {
                     static NMHDR nmhdr;
 
-                    int cmd = TrackPopupMenu(hPopup,
+                    int cmd = TrackPopupMenuEx(hPopup,
                         TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
-                        GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hWnd, nullptr);
+                        GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
 
                     if (cmd > 0)
                     {

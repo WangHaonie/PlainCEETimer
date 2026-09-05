@@ -543,7 +543,7 @@ static BOOL WINAPI DrawEdge_(HDC hdc, LPRECT qrc, UINT edge, UINT grfFlags)
     {
         if (edge == EDGE_SUNKEN)
         {
-            PnCommonPaint(hdc, qrc, COLOR_EMPTY, IatHookComdlgDrawEdge.Tag, true, false);
+            PnCommonPaint(hdc, qrc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgDrawEdge.Tag), true, false);
             
             if (grfFlags & BF_ADJUST)
             {
@@ -565,7 +565,7 @@ static int WINAPI FrameRect_(HDC hDC, const RECT* lprc, HBRUSH hbr)
 
         if (GetObject(hbr, sizeof(lb), &lb) && !lb.lbColor)
         {
-            return PnCommonPaint(hDC, (RECT*)lprc, COLOR_EMPTY, IatHookComdlgFrameRect.Tag, true, false);
+            return PnCommonPaint(hDC, (RECT*)lprc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgFrameRect.Tag), true, false);
         }
     }
 

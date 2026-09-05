@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Security;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
+[SuppressUnmanagedCodeSecurity]
 public static class DisplayHelper
 {
     public static string[] GetSystemDisplays()

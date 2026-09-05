@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Interop;
 
+[SuppressUnmanagedCodeSecurity]
 public static class ShellLink
 {
     private static readonly string LnkName = "高考倒计时.lnk";

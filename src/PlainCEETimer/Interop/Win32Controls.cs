@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.Interop;
 
 [NoConstants]
+[SuppressUnmanagedCodeSecurity]
 internal static class Win32Controls
 {
     public const string WC_PLAINTIMESPANPICK = "PlainTimeSpanPick";

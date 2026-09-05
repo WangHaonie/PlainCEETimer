@@ -8,7 +8,6 @@ public class Debouncer : IDisposable
 {
     private IActionInvoker m_invoker;
     private readonly long m_delay;
-    private readonly bool m_condition;
     private readonly object syncLock;
     private readonly Timer m_timer;
     private readonly IDebounceState m_state;
@@ -23,14 +22,13 @@ public class Debouncer : IDisposable
     public Debouncer(IDebounceState state, long delay = 500L) : this(delay)
     {
         m_state = state;
-        m_condition = state != null;
     }
 
     public void Debounce(IActionInvoker invoker)
     {
         lock (syncLock)
         {
-            if (m_condition && !m_state.ShouldDebounce)
+            if (m_state?.ShouldDebounce == false)
             {
                 SafeExecutionContext.Send(invoker);
             }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32.SafeHandles;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
+[SuppressUnmanagedCodeSecurity]
 internal static class Win32
 {
     public static IntPtr AllocConsole()

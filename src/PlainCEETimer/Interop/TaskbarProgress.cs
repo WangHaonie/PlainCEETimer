@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
+[SuppressUnmanagedCodeSecurity]
 public class TaskbarProgress : IDisposable
 {
     private readonly IntPtr hWnd;

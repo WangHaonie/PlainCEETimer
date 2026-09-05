@@ -32,7 +32,8 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             switch (m.Msg)
             {
                 case WinUser.WM_CONTEXTMENU:
-                    Win32Controls.CDCCM_WmContextMenu(m.HWnd, m.WParam, m.LParam);
+                    if (Win32Controls.CDCCM_WmContextMenu(m.HWnd, m.WParam, m.LParam) < 0)
+                        break;
                     return;
                 case WinUser.WM_LBUTTONDOWN:
                     dragging = true;
@@ -40,6 +41,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 case WinUser.WM_LBUTTONUP:
                     dragging = false;
                     goto proceed;
+                case WinUser.WM_CHAR:
                 case WinUser.WM_KEYDOWN:
                 case WinUser.WM_LBUTTONDBLCLK:
                 case WinUser.WM_COMMAND:
@@ -118,6 +120,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private sealed class ColorDlgStaticColorCurrentNativeWindow : NativeWindow
     {
         internal IntPtr m_hParent;
+        internal int commdlg_SetRGBColor;
 
         protected override void WndProc(ref Message m)
         {
@@ -161,7 +164,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                 case WinUser.WM_LBUTTONDBLCLK:
                 pastecolor:
-                    SetExistingColor(m_hParent);
+                    SetExistingColor();
                     m.Result = IntPtr.Zero;
                     return;
             }
@@ -169,7 +172,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             base.WndProc(ref m);
         }
 
-        private static void SetExistingColor(IntPtr hDlg)
+        private void SetExistingColor()
         {
             if (Clipboard.ContainsText())
             {
@@ -177,9 +180,26 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                 if (!color.IsEmpty)
                 {
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_RED, color.R, false);
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_GREEN, color.G, false);
-                    Win32UI.SetDlgItemInt(hDlg, COLOR_BLUE, color.B, false);
+                    if (commdlg_SetRGBColor == 0)
+                    {
+                        var msg = Win32UI.RegisterWindowMessage(SETRGBSTRING);
+
+                        if (msg != 0)
+                        {
+                            commdlg_SetRGBColor = (int)msg;
+                        }
+                    }
+
+                    if (commdlg_SetRGBColor != 0)
+                    {
+                        Win32UI.SendMessage(m_hParent, commdlg_SetRGBColor, 0, (COLORREF)color);
+                    }
+                    else
+                    {
+                        Win32UI.SetDlgItemInt(m_hParent, COLOR_RED, color.R, false);
+                        Win32UI.SetDlgItemInt(m_hParent, COLOR_GREEN, color.G, false);
+                        Win32UI.SetDlgItemInt(m_hParent, COLOR_BLUE, color.B, false);
+                    }
                 }
             }
         }
@@ -326,6 +346,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private const int IDM_CDCCM_FROMCLIPBOARD = IDM_FIRST + 1;
     private const int IDM_CDCCM_COPYASRGB = IDM_FIRST + 2;
     private const int IDM_CDCCM_COPYASHEX = IDM_FIRST + 3;
+    private const string SETRGBSTRING = nameof(ColorDlgStaticColorCurrentNativeWindow.commdlg_SetRGBColor);
 
     protected PlainCommonDialog(AppForm owner, string dialogTitle)
     {

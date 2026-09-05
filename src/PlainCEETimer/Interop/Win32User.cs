@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Principal;
 using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.Interop;
 
+[SuppressUnmanagedCodeSecurity]
 internal static class Win32User
 {
     /*

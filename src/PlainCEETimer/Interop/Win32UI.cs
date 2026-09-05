@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
@@ -12,6 +13,7 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.Interop;
 
 [NoConstants]
+[SuppressUnmanagedCodeSecurity]
 internal static class Win32UI
 {
     private static List<IntPtr> UnmanagedWindows;
@@ -96,6 +98,9 @@ internal static class Win32UI
 
     [DllImport(App.User32Dll)]
     public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
+    public static extern uint RegisterWindowMessage(string lpString);
 
     [DllImport(App.User32Dll)]
     public static extern int FillRect(IntPtr hDC, ref RECT lprc, IntPtr hbr);
