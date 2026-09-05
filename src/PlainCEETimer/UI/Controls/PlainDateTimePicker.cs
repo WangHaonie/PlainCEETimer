@@ -40,7 +40,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
                     case WinUser.WM_MOUSEMOVE when dragging:
                     proceed:
                         if (canHook) Hook(true);
-                        debouncer ??= new();
+                        debouncer ??= new(uiCritical: true);
                         debouncer.Debounce(UnhookAction.WithArgs(true));
                         break;
 

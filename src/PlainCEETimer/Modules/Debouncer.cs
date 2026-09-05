@@ -1,25 +1,42 @@
 ﻿using System;
 using System.Threading;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
+using UITimer = System.Windows.Forms.Timer;
 
 namespace PlainCEETimer.Modules;
 
+[NoConstants]
 public class Debouncer : IDisposable
 {
     private IActionInvoker m_invoker;
+    private readonly bool m_uiCritical;
     private readonly long m_delay;
     private readonly object syncLock;
-    private readonly Timer m_timer;
     private readonly IDebounceState m_state;
+    private readonly Timer m_thTimer;
+    private readonly UITimer m_uiTimer;
 
-    public Debouncer(long delay = 500L)
+    private const long DefaultDelay = 500L;
+
+    public Debouncer(long delay = DefaultDelay, bool uiCritical = false)
     {
-        m_delay = delay;
-        m_timer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+        if (uiCritical)
+        {
+            m_uiTimer = new() { Interval = (int)delay };
+            m_uiTimer.Tick += Timer_Tick;
+        }
+        else
+        {
+            m_thTimer = new(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+        }
+
         syncLock = new();
+        m_delay = delay;
+        m_uiCritical = uiCritical;
     }
 
-    public Debouncer(IDebounceState state, long delay = 500L) : this(delay)
+    public Debouncer(IDebounceState state, long delay = DefaultDelay, bool uiCritical = false) : this(delay, uiCritical)
     {
         m_state = state;
     }
@@ -35,14 +52,24 @@ public class Debouncer : IDisposable
             else
             {
                 m_invoker = invoker;
-                m_timer.Change(m_delay, Timeout.Infinite);
+
+                if (m_uiCritical)
+                {
+                    m_uiTimer.Stop();
+                    m_uiTimer.Start();
+                }
+                else
+                {
+                    m_thTimer.Change(m_delay, Timeout.Infinite);
+                }
             }
         }
     }
 
     public void Dispose()
     {
-        m_timer.Destroy();
+        m_uiTimer.Destroy();
+        m_thTimer.Destroy();
         GC.SuppressFinalize(this);
     }
 
@@ -56,6 +83,19 @@ public class Debouncer : IDisposable
         }
 
         SafeExecutionContext.Post(invoker.Invoke, state);
+    }
+
+    private void Timer_Tick(object sender, EventArgs e)
+    {
+        IActionInvoker invoker = null;
+
+        lock (syncLock)
+        {
+            m_uiTimer.Stop();
+            invoker = m_invoker;
+        }
+
+        invoker.Invoke(null);
     }
 
     ~Debouncer()
