@@ -104,6 +104,10 @@ public static class WinUser
     public const int WS_EX_CLIENTEDGE = 0x00000200;
     public const int WS_EX_COMPOSITED = 0x02000000;
 
+    public const int BS_TYPEMASK = 0x0000000F;
+    public const int BS_PUSHBUTTON = 0x00000000;
+    public const int BS_DEFPUSHBUTTON = 0x00000001;
+
     public const int GA_ROOT = 2;
 
     public const int GWL_STYLE = -16;

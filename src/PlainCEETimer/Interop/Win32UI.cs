@@ -127,7 +127,7 @@ internal static class Win32UI
     public static extern IntPtr GetAncestor(IntPtr hWnd, uint gaFlags);
 
     [DllImport(App.User32Dll)]
-    public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+    public static extern nint GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public unsafe static extern int GetClassName(IntPtr hWnd, char* lpClassName, int nMaxCount);

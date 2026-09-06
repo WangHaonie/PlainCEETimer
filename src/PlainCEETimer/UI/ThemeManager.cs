@@ -156,7 +156,8 @@ public static class ThemeManager
 
     private static void UpgradeStyle(ref SystemStyle style)
     {
-        if (canUseNewTheme && style == SystemStyle.CfdDark)
+        if (canUseNewTheme
+            && (style is SystemStyle.CfdDark or SystemStyle.ExplorerDark))
         {
             style = SystemStyle.DarkTheme;
         }

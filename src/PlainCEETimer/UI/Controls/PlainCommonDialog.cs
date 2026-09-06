@@ -465,7 +465,18 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             return UseDark ? SystemStyle.CfdDark : SystemStyle.Explorer;
         }
 
+        if (cn == "Button")
+        {
+            if ((Win32UI.GetWindowLongPtr(hWnd, WinUser.GWL_STYLE) & WinUser.BS_TYPEMASK)
+                is WinUser.BS_PUSHBUTTON or WinUser.BS_DEFPUSHBUTTON)
+            {
+                up = false;
+                goto ret;
+            }
+        }
+
         up = true;
+    ret:
         return UseDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer;
     }
 

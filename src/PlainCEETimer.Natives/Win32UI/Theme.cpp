@@ -428,6 +428,46 @@ paint:
     return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
 }
 
+static bool HandleChbRbText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+{
+    bool disabled = false;
+
+    switch (iPartId)
+    {
+        case BP_RADIOBUTTON:
+        {
+            switch (iStateId)
+            {
+                case RBS_UNCHECKEDDISABLED:
+                case RBS_CHECKEDDISABLED:
+                    disabled = true;
+                    break;
+            }
+
+            break;
+        }
+
+        case BP_CHECKBOX:
+        {
+            switch (iStateId)
+            {
+                case CBS_UNCHECKEDDISABLED:
+                case CBS_CHECKEDDISABLED:
+                case CBS_MIXEDDISABLED:
+                case CBS_IMPLICITDISABLED:
+                case CBS_EXCLUDEDDISABLED:
+                    disabled = true;
+                    break;
+            }
+
+            break;
+        }
+    }
+
+    s_dttoptions.crText = disabled ? DCOLOR_BUTTON_FORE_DISABLED : DCOLOR_TEXT_FORE;
+    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+}
+
 static bool HandleGrpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
 {
     s_dttoptions.crText = DCOLOR_TEXT_FORE;
@@ -458,7 +498,17 @@ static bool HandleControlVsText(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
         {
             CASE(strhash(VSCLASS_DATEPICKER), HandleDtpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
             CASE(strhash(VSCLASS_MONTHCAL), HandleMcText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
-            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+
+            case strhash(VSCLASS_BUTTON):
+            {
+                switch (iPartId)
+                {
+                    case BP_RADIOBUTTON:
+                    case BP_CHECKBOX:
+                        return HandleChbRbText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
+                    CASE(BP_GROUPBOX, HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+                }
+            }
         }
     }
 

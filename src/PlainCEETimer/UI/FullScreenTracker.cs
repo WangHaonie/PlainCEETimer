@@ -193,7 +193,7 @@ public class FullScreenTracker : IDisposable
             && hWnd != Win32UI.GetShellWindow()
             && !ShouldIgnoreWindow(hWnd)
             && Win32UI.IsWindowVisible(hWnd)
-            && (Win32UI.GetWindowLong(hWnd, WinUser.GWL_STYLE) & (WinUser.WS_CHILD | WinUser.WS_MINIMIZE)) == 0
+            && (Win32UI.GetWindowLongPtr(hWnd, WinUser.GWL_STYLE) & (WinUser.WS_CHILD | WinUser.WS_MINIMIZE)) == 0
             && IsOnTargetScreen(hWnd)
             && IsFullScreenWindow(hWnd);
     }
