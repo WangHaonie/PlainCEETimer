@@ -117,6 +117,12 @@ internal static class DebugExtensions
         {
             if (Debugger.IsAttached)
             {
+                if (dumpExp)
+                {
+                    Debug.Write(name);
+                    Debug.Write(": ");
+                }
+
                 Debug.WriteLine(json);
                 goto ret;
             }

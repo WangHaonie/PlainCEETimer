@@ -640,8 +640,8 @@ public sealed class SettingsForm : AppForm
         if (AllowTheme)
         {
             GroupBoxArrageControl(GBoxTheme, RadioButtonThemeSystem, 4);
-            ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 6);
-            ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 6);
+            ArrangeControlXT(RadioButtonThemeLight, RadioButtonThemeSystem, 10);
+            ArrangeControlXT(RadioButtonThemeDark, RadioButtonThemeLight, 10);
             GroupBoxAutoAdjustHeight(GBoxTheme, RadioButtonThemeSystem, 6);
 
             ArrangeControlYL(GBoxMainForm, GBoxTheme, 0, 2);

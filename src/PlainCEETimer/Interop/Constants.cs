@@ -221,7 +221,7 @@ public static class Natives
 
 [NoConstants]
 [CompilerRemove]
-public static class STATUS
+public static class NInt
 {
     public const nint Zero = 0;
     public const nint One = 1;

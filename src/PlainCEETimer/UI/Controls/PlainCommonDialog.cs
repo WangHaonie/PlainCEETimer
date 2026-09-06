@@ -156,7 +156,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     if (m.LParam.LoWord == WinUser.HTCLIENT)
                     {
                         Cursor.Current = Cursors.Help;
-                        m.Result = (nint)1;
+                        m.Result = NInt.One;
                         return;
                     }
 
@@ -424,7 +424,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             cdsccnw.m_hParent = hWnd;
         }
 
-        return STATUS.One;
+        return NInt.One;
     }
 
     private IntPtr WmCtlColor(IntPtr hDC)

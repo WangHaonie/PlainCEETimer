@@ -28,7 +28,7 @@ public sealed class PlainListView : ListView, IThemeAware
             {
                 case WinUser.WM_SETCURSOR:
                 case WinUser.WM_CONTEXTMENU:
-                    m.Result = STATUS.One;
+                    m.Result = NInt.One;
                     return;
                 case CommCtrl.HDM_LAYOUT:
                     base.WndProc(ref m);
