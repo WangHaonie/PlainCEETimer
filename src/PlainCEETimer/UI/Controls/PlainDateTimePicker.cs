@@ -38,6 +38,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
                     case WinUser.WM_KEYDOWN:
                     case WinUser.WM_MOUSEWHEEL:
                     case WinUser.WM_MOUSEMOVE when dragging:
+                    case WinUser.WM_MENUSELECT when m.LParam == IntPtr.Zero:
                     proceed:
                         SafeHook();
                         debouncer ??= new(uiCritical: true);

@@ -79,6 +79,7 @@ public static class WinUser
     public const int WM_CTLCOLORBTN = 0x0135;
     public const int WM_GETFONT = 0x0031;
     public const int WM_WINDOWPOSCHANGED = 0x0047;
+    public const int WM_MENUSELECT = 0x011F;
     public const int WM_NCHITTEST = 0x0084;
     public const int WM_MOUSEMOVE = 0x0200;
     public const int WM_MOUSEWHEEL = 0x020A;
