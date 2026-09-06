@@ -13,13 +13,13 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
         internal PlainDateTimePicker m_owner;
 
         private bool dragging;
-        private bool canHook = true;
+        private bool canHook;
         private Debouncer debouncer;
-        private readonly ActionInvoker<bool> UnhookAction;
+        private readonly ActionInvoker UnhookAction;
 
         public DropDownAndSysMonthCal32NativeWindow()
         {
-            UnhookAction = new(Unhook);
+            UnhookAction = new(DelayUnhook);
         }
 
         protected override void WndProc(ref Message m)
@@ -33,38 +33,65 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
                         goto proceed;
                     case WinUser.WM_LBUTTONUP:
                         dragging = false;
-                        break;
+                        goto proceed;
                     case WinUser.WM_TIMER:
                     case WinUser.WM_KEYDOWN:
                     case WinUser.WM_MOUSEWHEEL:
                     case WinUser.WM_MOUSEMOVE when dragging:
                     proceed:
-                        if (canHook) Hook(true);
+                        SafeHook();
                         debouncer ??= new(uiCritical: true);
-                        debouncer.Debounce(UnhookAction.WithArgs(true));
+                        debouncer.Debounce(UnhookAction);
                         break;
-
                     case WinUser.WM_PAINT:
-                        Hook(false);
+                        HookCore();
                         base.WndProc(ref m);
-                        Unhook(false);
+                        UnhookCore();
                         return;
+                    case WinUser.WM_NCDESTROY:
+                        debouncer.Destroy();
+                        SafeUnhook();
+                        break;
                 }
             }
 
             base.WndProc(ref m);
         }
 
-        private void Hook(bool flag)
+        private void SafeHook()
         {
-            Win32UI.PnHookThemedPaint();
-            if (flag) canHook = false;
+            if (!canHook)
+            {
+                HookCore();
+                canHook = true;
+            }
         }
 
-        private void Unhook(bool flag)
+        private void SafeUnhook()
+        {
+            if (canHook)
+            {
+                UnhookCore();
+                canHook = false;
+            }
+        }
+
+        private void DelayUnhook()
+        {
+            if (!dragging)
+            {
+                SafeUnhook();
+            }
+        }
+
+        private static void HookCore()
+        {
+            Win32UI.PnHookThemedPaint();
+        }
+
+        private static void UnhookCore()
         {
             Win32UI.PnUnhookThemedPaint();
-            if (flag) canHook = true;
         }
     }
 

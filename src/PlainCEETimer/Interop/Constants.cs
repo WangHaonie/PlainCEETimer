@@ -69,6 +69,7 @@ public static class WinUser
     public const int WM_NOTIFY = 0x004E;
     public const int WM_USER = 0x0400;
     public const int WM_DESTROY = 0x0002;
+    public const int WM_NCDESTROY = 0x0082;
     public const int WM_INITDIALOG = 0x0110;
     public const int WM_TIMER = 0x0113;
     public const int WM_CTLCOLORDLG = 0x0136;
