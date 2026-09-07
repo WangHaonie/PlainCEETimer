@@ -31,13 +31,14 @@
 
 #define DeclIatData(n, dn)          static IAT_HOOK_DATA<fn##n> IatHook##dn##n = {}
 
-#define IatHook_Enable(data)        ++data.RefCount;
-#define IatHook_Disable(data)       if (data.Initialized && data.Hooked) --data.RefCount;
 
 #ifdef _DEBUG
 #define IatHook_DDump(data)         DDump(L"-----> [IAT Hook] %s: Ref=%d", L#data, data.RefCount); if (data.RefCount == 0xFFFFFFFF) __debugbreak()
 #define IatHook_Enable(data)        ++data.RefCount; IatHook_DDump(data);
 #define IatHook_Disable(data)       if (data.Initialized && data.Hooked) { --data.RefCount; IatHook_DDump(data); }
+#else
+#define IatHook_Enable(data)        ++data.RefCount;
+#define IatHook_Disable(data)       if (data.Initialized && data.Hooked) --data.RefCount;
 #endif
 
 #define IatHook_IsEnabled(data)     data.RefCount
