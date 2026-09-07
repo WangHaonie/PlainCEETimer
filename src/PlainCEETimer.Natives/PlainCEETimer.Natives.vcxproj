@@ -67,7 +67,7 @@
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;PLAINCEETIMERNATIVES_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(ProjectDir)Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Collections;$(ProjectDir)Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -79,7 +79,7 @@
       <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Collections;$(ProjectDir)Detours\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -89,6 +89,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collections\BrushTable.h" />
     <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.Core.h" />
     <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.h" />
     <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Win32\Win32.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collections\BrushTable.cpp" />
     <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.Core.cpp" />
     <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.cpp" />
     <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.cpp" />

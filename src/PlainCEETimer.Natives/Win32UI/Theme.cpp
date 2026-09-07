@@ -2,10 +2,11 @@
 #include "Theme.h"
 #include "Utils.h"
 #include "Win32/IATHook.h"
+#include <detours.h>
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <vssym32.h>
-#include <detours.h>
+#include <BrushTable.h>
 
 /*
 
@@ -32,6 +33,7 @@ DeclDelegateType(FrameRect);
 static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME s_lastOpenedTheme = nullptr;
 static DTTOPTS s_dttoptions = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
+static BrushTable s_brushes;
 
 DeclDelegateField(SetPreferredAppMode);
 DeclDelegateField(OpenNcThemeData);
@@ -140,9 +142,7 @@ static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBo
 {
     if (bBack)
     {
-        HBRUSH hbrBack = CreateSolidBrush(crBack);
-        FillRect(hdc, lpRect, hbrBack);
-        DeleteObject(hbrBack);
+        FillRect(hdc, lpRect, s_brushes.GetBrush(crBack));
     }
 
     SetDCBrushColor(hdc, bBorder ? crBorder : crBack);
@@ -180,8 +180,7 @@ static bool PnDrawMcArrow(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
     LONG b = t + h;
     LONG y = t + h / 2;
 
-    HBRUSH hbr = CreateSolidBrush(crFill);
-    HBRUSH hbrOld = CastP(HBRUSH, SelectObject(hdc, hbr));
+    HBRUSH hbrOld = CastP(HBRUSH, SelectObject(hdc, s_brushes.GetBrush(crFill)));
     HPEN hpnOld = CastP(HPEN, SelectObject(hdc, GetStockObject(NULL_PEN)));
 
     POINT pts[3];
@@ -202,7 +201,6 @@ static bool PnDrawMcArrow(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
     Polygon(hdc, pts, 3);
     SelectObject(hdc, hbrOld);
     SelectObject(hdc, hpnOld);
-    DeleteObject(hbr);
     return true;
 }
 

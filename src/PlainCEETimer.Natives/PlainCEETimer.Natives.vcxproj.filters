@@ -19,6 +19,9 @@
     <Filter Include="Controls\PlainTimeSpanPick">
       <UniqueIdentifier>{9ec69e38-3c66-4c18-9ffa-d1deef6db070}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Collections">
+      <UniqueIdentifier>{68019fb2-f8f8-4578-964e-f62335587626}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -78,6 +81,9 @@
     <ClInclude Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.h">
       <Filter>Controls\PlainTimeSpanPick</Filter>
     </ClInclude>
+    <ClInclude Include="Collections\BrushTable.h">
+      <Filter>Collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -124,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="Controls\PlainTimeSpanPick\PlainTimeSpanPick.UI.cpp">
       <Filter>Controls\PlainTimeSpanPick</Filter>
+    </ClCompile>
+    <ClCompile Include="Collections\BrushTable.cpp">
+      <Filter>Collections</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

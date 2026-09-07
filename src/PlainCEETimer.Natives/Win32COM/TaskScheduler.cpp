@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "TaskScheduler.h"
 #include "Utils.h"
+#include <atlbase.h>
 #include <comdef.h>
 #include <taskschd.h>
 #include <Windows.h>
@@ -16,7 +17,7 @@ void NATIVESAPI InitializeTaskScheduler()
         SUCCEEDED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pts))))
     {
         pts->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t());
-        pts->GetFolder(_bstr_t(L"\\"), &ptf);
+        pts->GetFolder(CComBSTR(L"\\"), &ptf);
         init = true;
     }
 }
@@ -25,7 +26,7 @@ void NATIVESAPI TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TA
 {
     if (init)
     {
-        ptf->RegisterTask(_bstr_t(path), _bstr_t(xmlText), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), logonType, _variant_t(), &prt);
+        ptf->RegisterTask(CComBSTR(path), CComBSTR(xmlText), TASK_CREATE_OR_UPDATE, _variant_t(), _variant_t(), logonType, _variant_t(), &prt);
     }
 
     ReleasePPI(&prt);
@@ -34,7 +35,7 @@ void NATIVESAPI TaskSchedulerImportTaskFromXml(LPCWSTR path, LPCWSTR xmlText, TA
 BOOL NATIVESAPI TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 {
     if (init
-        && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt))
+        && SUCCEEDED(ptf->GetTask(CComBSTR(path), &prt))
         && SUCCEEDED(prt->get_Xml(pXml)))
     {
         return TRUE;
@@ -46,7 +47,7 @@ BOOL NATIVESAPI TaskSchedulerExportTaskAsXml(LPCWSTR path, LPBSTR pXml)
 
 BOOL NATIVESAPI TaskSchedulerExistsTask(LPCWSTR path)
 {
-    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && SUCCEEDED(ptf->GetTask(CComBSTR(path), &prt)))
     {
         return TRUE;
     }
@@ -57,7 +58,7 @@ BOOL NATIVESAPI TaskSchedulerExistsTask(LPCWSTR path)
 
 void NATIVESAPI TaskSchedulerEnableTask(LPCWSTR path)
 {
-    if (init && SUCCEEDED(ptf->GetTask(_bstr_t(path), &prt)))
+    if (init && SUCCEEDED(ptf->GetTask(CComBSTR(path), &prt)))
     {
         VARIANT_BOOL enabled;
         prt->get_Enabled(&enabled);
@@ -75,7 +76,7 @@ void NATIVESAPI TaskSchedulerDeleteTask(LPCWSTR path)
 {
     if (init)
     {
-        ptf->DeleteTask(_bstr_t(path), 0);
+        ptf->DeleteTask(CComBSTR(path), 0);
     }
 }
 
