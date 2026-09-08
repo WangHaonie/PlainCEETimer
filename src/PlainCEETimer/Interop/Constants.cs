@@ -223,7 +223,6 @@ public static class Natives
     public const int ASBT_AERO = 5;
 }
 
-
 [NoConstants]
 [CompilerRemove]
 public static class NInt

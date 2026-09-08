@@ -77,7 +77,7 @@ public class PlainHotkeyControl : Control, IThemeAware
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        Win32UI.RemoveWindowExStyle(Handle, WinUser.WS_EX_CLIENTEDGE);
+        Win32UI.PnRemoveWindowExStyle(Handle, WinUser.WS_EX_CLIENTEDGE);
         Win32UI.SendMessage(Handle, CommCtrl.HKM_SETRULES, CommCtrl.HKCOMB_NONE | CommCtrl.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
         SetHotKey(hotkey);
     }

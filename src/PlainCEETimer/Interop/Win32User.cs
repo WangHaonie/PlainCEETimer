@@ -33,13 +33,13 @@ internal static class Win32User
     static Win32User()
     {
         processOwner = WindowsIdentity.GetCurrent().Name;
-        logonUser = GetLogonUserName();
+        logonUser = PnGetLogonUserName();
         NotImpersonal = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#4", CharSet = CharSet.Unicode)]
-    private static extern string GetLogonUserName();
+    [DllImport(App.NativesDll, EntryPoint = "#52", CharSet = CharSet.Unicode)]
+    private static extern string PnGetLogonUserName();
 
-    [DllImport(App.NativesDll, EntryPoint = "#5", CharSet = CharSet.Unicode)]
-    public static extern bool RunProcessAsLogonUser(string path, string args, out int lpExitCode);
+    [DllImport(App.NativesDll, EntryPoint = "#53", CharSet = CharSet.Unicode)]
+    public static extern bool PnRunProcessAsLogonUser(string path, string args, out int lpExitCode);
 }

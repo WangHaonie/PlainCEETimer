@@ -23,7 +23,7 @@ public sealed class PlainColorDialog(AppForm owner, Color existing) : PlainCommo
         fixed (COLORREF* lpColor = &color)
         fixed (COLORREF* lpColors = customColors)
         {
-            var result = Win32UI.RunColorDialog(hWndOwner, HookProc, lpColor, lpColors);
+            var result = Win32UI.PnRunColorDialog(hWndOwner, HookProc, lpColor, lpColors);
 
             if (result)
             {

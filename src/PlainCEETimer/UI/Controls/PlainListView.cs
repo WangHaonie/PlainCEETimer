@@ -93,7 +93,7 @@ public sealed class PlainListView : ListView, IThemeAware
     {
         if (Items.Count != 0)
         {
-            Win32UI.ListViewSelectAllItems(Handle, selected);
+            Win32UI.PnListViewSelectAllItems(Handle, selected);
         }
     }
 
@@ -312,12 +312,12 @@ public sealed class PlainListView : ListView, IThemeAware
 
         if (init)
         {
-            Win32UI.SetTopMostWindow(hToolTips);
+            Win32UI.PnSetTopMostWindow(hToolTips);
             NativeWindowHelper.Attach(hHeader, ref hnw);
 
             if (SystemVersion.IsWindows11)
             {
-                Win32UI.SetRoundCornerEx(hToolTips, true);
+                Win32UI.PnSetRoundCornerEx(hToolTips, true);
             }
         }
     }

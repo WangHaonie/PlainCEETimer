@@ -37,15 +37,15 @@ public class TaskbarProgress : IDisposable
         Dispose();
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#6")]
+    [DllImport(App.NativesDll, EntryPoint = "#26")]
     private static extern void Initialize();
 
-    [DllImport(App.NativesDll, EntryPoint = "#7")]
+    [DllImport(App.NativesDll, EntryPoint = "#27")]
     private static extern void SetState(IntPtr hWnd, ProgressStyle tbpFlags);
 
-    [DllImport(App.NativesDll, EntryPoint = "#8")]
+    [DllImport(App.NativesDll, EntryPoint = "#28")]
     private static extern void SetValue(IntPtr hWnd, long ullCompleted, long ullTotal);
 
-    [DllImport(App.NativesDll, EntryPoint = "#9")]
+    [DllImport(App.NativesDll, EntryPoint = "#29")]
     private static extern void Release();
 }

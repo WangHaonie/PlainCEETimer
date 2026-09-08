@@ -7,7 +7,7 @@ public class FullScreenWindowEventArgs(IntPtr hWnd)
 {
     public IntPtr Handle => hWnd;
 
-    public string Text => field ??= Win32UI.GetWindowText(hWnd);
+    public string Text => field ??= Win32UI.PnGetWindowText(hWnd);
 
     public string ClassName => field ??= Win32UI.GetWindowClassName(hWnd).ToString();
 }

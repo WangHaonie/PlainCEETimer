@@ -18,7 +18,14 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     {
         private bool UseDark;
         private bool dragging;
-        private readonly COLORREF[] m_crsColorBox = new COLORREF[2];
+        private readonly COLORREF[] m_crsColorBox;
+        private readonly GCHandle m_hcrsColorBox;
+
+        public ColorDlgNativeWindow()
+        {
+            m_crsColorBox = new COLORREF[2];
+            m_hcrsColorBox = GCHandle.Alloc(m_crsColorBox, GCHandleType.Pinned);
+        }
 
         internal void UpdateTheme(bool useDark)
         {
@@ -52,12 +59,15 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     base.WndProc(ref m);
                     Unhook();
                     return;
+                case WinUser.WM_NCDESTROY:
+                    m_hcrsColorBox.Free();
+                    break;
             }
 
             base.WndProc(ref m);
         }
 
-        private unsafe void Hook()
+        private void Hook()
         {
             if (UseDark)
             {
@@ -65,10 +75,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 Win32UI.PnHookSysColorBrush();
             }
 
-            fixed (COLORREF* ptr = m_crsColorBox)
-            {
-                Win32UI.PnHookClassicEdge(ptr);
-            }
+            Win32UI.PnHookClassicEdge(m_hcrsColorBox.AddrOfPinnedObject());
         }
 
         private void Unhook()
@@ -487,7 +494,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             case WinUser.HCBT_CREATEWND:
                 var lpcs = Marshal.ReadIntPtr(lParam);
 
-                if (Win32UI.IsDialog(lpcs))
+                if (Win32UI.PnIsDialog(lpcs))
                 {
                     Win32UI.GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT.hwndParent), out var lprc);
 

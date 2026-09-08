@@ -642,7 +642,7 @@ static BOOL EnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool 
     return SetWindowCompositionAttribute(hWnd, &wcad);
 }
 
-static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
+static BOOL PnApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
 {
     DWORD dwType = ASB_GET_BACKDROP(dwFlags);
     BOOL bEnabled = ASB_GET_STATUS(dwFlags);
@@ -682,7 +682,7 @@ static BOOL ApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
     return FALSE;
 }
 
-void NATIVESAPI EnableDarkModeForApp(BOOL enabled)
+void NATIVESAPI PnEnableDarkModeForApp(BOOL enabled)
 {
     if (enabled)
     {
@@ -825,7 +825,7 @@ https://stackoverflow.com/a/62811758
 
 */
 
-void NATIVESAPI EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
+void NATIVESAPI PnEnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled)
 {
     if (hWnd)
     {
@@ -836,7 +836,7 @@ void NATIVESAPI EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL ena
     }
 }
 
-void NATIVESAPI SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
+void NATIVESAPI PnSetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
 {
     if (hWnd)
     {
@@ -845,7 +845,7 @@ void NATIVESAPI SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled)
     }
 }
 
-DWORD NATIVESAPI GetSystemAccentColor()
+DWORD NATIVESAPI PnGetSystemAccentColor()
 {
     DWORD result = 0;
     BOOL flag = FALSE;
@@ -853,9 +853,9 @@ DWORD NATIVESAPI GetSystemAccentColor()
     return result;
 }
 
-BOOL NATIVESAPI ApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
+BOOL NATIVESAPI PnApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
 {
-    if (hWnd && ApplySystemBackdropCore(hWnd, dwFlags, pvData))
+    if (hWnd && PnApplySystemBackdropCore(hWnd, dwFlags, pvData))
     {
         MARGINS margins;
         int* s = CastP(int*, &margins);

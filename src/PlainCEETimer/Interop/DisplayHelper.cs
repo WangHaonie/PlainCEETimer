@@ -12,7 +12,7 @@ public static class DisplayHelper
     {
         List<string> tmp = [];
 
-        EnumSystemDisplays(d =>
+        PnEnumSystemDisplays(d =>
         {
             tmp.Add(d.ToString());
             return true;
@@ -26,6 +26,6 @@ public static class DisplayHelper
         return [.. tmp];
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#3")]
-    private static extern bool EnumSystemDisplays(EnumDisplayProc lpfnEnum);
+    [DllImport(App.NativesDll, EntryPoint = "#1")]
+    private static extern bool PnEnumSystemDisplays(EnumDisplayProc lpfnEnum);
 }

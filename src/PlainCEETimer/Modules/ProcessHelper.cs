@@ -41,7 +41,7 @@ public static class ProcessHelper
 
     public static bool RunAsLogonUser(string path, string args, out int exitCode)
     {
-        return Win32User.RunProcessAsLogonUser(path, args, out exitCode);
+        return Win32User.PnRunProcessAsLogonUser(path, args, out exitCode);
     }
 
     public static string GetExitMessage(object process)

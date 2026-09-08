@@ -102,15 +102,15 @@ public static class ShellLink
         }
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#10")]
+    [DllImport(App.NativesDll, EntryPoint = "#22")]
     private static extern void Initialize();
 
-    [DllImport(App.NativesDll, EntryPoint = "#11", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#23", CharSet = CharSet.Unicode)]
     private static extern void Create(ref LNKFILEINFO lpLnkFileInfo);
 
-    [DllImport(App.NativesDll, EntryPoint = "#12", CharSet = CharSet.Unicode)]
+    [DllImport(App.NativesDll, EntryPoint = "#24", CharSet = CharSet.Unicode)]
     private static extern void Query(ref LNKFILEINFO lpLnkFileInfo);
 
-    [DllImport(App.NativesDll, EntryPoint = "#13")]
+    [DllImport(App.NativesDll, EntryPoint = "#25")]
     private static extern void Release();
 }

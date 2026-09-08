@@ -27,7 +27,7 @@ public sealed class PlainToolTip : ToolTip, IThemeAware
 
         if (SystemVersion.IsWindows11)
         {
-            Win32UI.SetRoundCornerEx(hwnd, true);
+            Win32UI.PnSetRoundCornerEx(hwnd, true);
         }
 
         themeHelper ??= new(this);

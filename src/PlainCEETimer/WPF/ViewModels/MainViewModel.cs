@@ -128,12 +128,16 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
         return false;
     }
 
-    internal void WndProc(ref Message m)
+    internal bool WndProc(ref Message m)
     {
         if (m.Msg == WinUser.WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
         {
             SetBorderColor(true, ThemeManager.GetAccentColor(m.WParam));
+            m.Result = NInt.Zero;
+            return true;
         }
+
+        return false;
     }
 
     private void Initialize()

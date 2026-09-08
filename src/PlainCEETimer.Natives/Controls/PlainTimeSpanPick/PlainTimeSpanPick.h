@@ -25,8 +25,6 @@
 
 typedef LONGLONG TIMESPAN, *LPTIMESPAN;
 
-typedef void *HFORMAT;
-
 typedef struct tagCTRLCOLORS
 {
     COLORREF backText;
@@ -88,8 +86,8 @@ public:
 
     static BOOL ValidateFormat(LPCWSTR pszFormat);
     static HANDLE CreateFormat(LPCWSTR pszFormat);
-    static BOOL Format(HFORMAT hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
-    static BOOL FreeFormatMemory(HFORMAT hFormat);
+    static BOOL Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
+    static BOOL FreeFormatMemory(HANDLE hFormat);
     static LRESULT CALLBACK s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
@@ -137,6 +135,6 @@ private:
 NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat);
 NATIVES_EXPORT HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat);
-NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_Format(HFORMAT hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
-NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HFORMAT hFormat);
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);
+NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat);
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_SuggestValue(LPTIMESPAN lptsValue);

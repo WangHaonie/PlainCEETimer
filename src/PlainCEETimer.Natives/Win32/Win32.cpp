@@ -4,7 +4,7 @@
 #include <TlHelp32.h>
 #include <Windows.h>
 
-static void KillProcessTreeCore(DWORD dwProcessId)
+static void PnKillProcessTreeCore(DWORD dwProcessId)
 {
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 pe32 = { sizeof(pe32) };
@@ -15,7 +15,7 @@ static void KillProcessTreeCore(DWORD dwProcessId)
         {
             if (pe32.th32ParentProcessID == dwProcessId)
             {
-                KillProcessTreeCore(pe32.th32ProcessID);
+                PnKillProcessTreeCore(pe32.th32ProcessID);
             }
         }
         while (Process32Next(hSnapshot, &pe32));
@@ -30,7 +30,7 @@ static void KillProcessTreeCore(DWORD dwProcessId)
     }
 }
 
-HWND NATIVESAPI AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
+HWND NATIVESAPI PnAllocConsole(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
 {
     BOOL attached = AttachConsole(ATTACH_PARENT_PROCESS);
     if (!attached) AllocConsole();
@@ -74,12 +74,12 @@ HWND NATIVESAPI AllocConsoleForApp(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStd
     return GetConsoleWindow();
 }
 
-void NATIVESAPI KillProcessTree(DWORD dwProcessId)
+void NATIVESAPI PnKillProcessTree(DWORD dwProcessId)
 {
-    KillProcessTreeCore(dwProcessId);
+    PnKillProcessTreeCore(dwProcessId);
 }
 
-int NATIVESAPI LoadStringInternal(UINT uID, LPWSTR* ppBuffer)
+int NATIVESAPI PnLoadStringInternal(UINT uID, LPWSTR* ppBuffer)
 {
     static HMODULE hModule = GetModuleHandle(LIBRARYNAME);
     return LoadStringExW(hModule, uID, ppBuffer);

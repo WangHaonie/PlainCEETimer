@@ -12,21 +12,21 @@ internal static class Win32
 {
     public static IntPtr AllocConsole()
     {
-        var hwnd = AllocConsoleForApp(SystemVersion.BeforeNT10, out var phStdIn, out var phStdOut, out var phStdErr);
+        var hwnd = PnAllocConsole(SystemVersion.BeforeNT10, out var phStdIn, out var phStdOut, out var phStdErr);
         Console.SetIn(new StreamReader(new FileStream(new SafeFileHandle(phStdIn, false), FileAccess.Read), Console.InputEncoding));
         Console.SetOut(new StreamWriter(new FileStream(new SafeFileHandle(phStdOut, false), FileAccess.Write), Console.OutputEncoding) { AutoFlush = true });
         Console.SetError(new StreamWriter(new FileStream(new SafeFileHandle(phStdErr, false), FileAccess.Write), Console.OutputEncoding) { AutoFlush = true });
         return hwnd;
     }
 
-    [DllImport(App.NativesDll, EntryPoint = "#41")]
-    private static extern IntPtr AllocConsoleForApp(bool bRefresh, out IntPtr phStdIn, out IntPtr phStdOut, out IntPtr phStdErr);
+    [DllImport(App.NativesDll, EntryPoint = "#54")]
+    private static extern IntPtr PnAllocConsole(bool bRefresh, out IntPtr phStdIn, out IntPtr phStdOut, out IntPtr phStdErr);
 
-    [DllImport(App.NativesDll, EntryPoint = "#42")]
-    public static extern void KillProcessTree(int dwProcessId);
+    [DllImport(App.NativesDll, EntryPoint = "#55")]
+    public static extern void PnKillProcessTree(int dwProcessId);
 
     [DllImport(App.NativesDll, EntryPoint = "#56")]
-    public static extern int LoadStringInternal(uint uID, out IntPtr ppBuffer);
+    public static extern int PnLoadStringInternal(uint uID, out IntPtr ppBuffer);
 
     [DllImport(App.Kernel32Dll)]
     public static extern ulong GetTickCount64();

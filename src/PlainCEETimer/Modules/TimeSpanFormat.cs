@@ -12,7 +12,7 @@ public static class TimeSpanFormat
         {
             if (field == null)
             {
-                var length = Win32.LoadStringInternal(201, out var str);
+                var length = Win32.PnLoadStringInternal(201, out var str);
                 field = length > 0 ? new((char*)str, 0, length) : string.Empty;
             }
 

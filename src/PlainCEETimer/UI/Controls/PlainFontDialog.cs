@@ -13,7 +13,7 @@ public sealed class PlainFontDialog(AppForm owner, Font font) : PlainCommonDialo
     protected override bool StartDialog(IntPtr hWndOwner)
     {
         var lf = LOGFONT.FromFont(font);
-        var result = Win32UI.RunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(ConfigValidator.MaxFontSize, ConfigValidator.MinFontSize));
+        var result = Win32UI.PnRunFontDialog(hWndOwner, HookProc, ref lf, int.MakeLong(ConfigValidator.MaxFontSize, ConfigValidator.MinFontSize));
 
         if (result)
         {

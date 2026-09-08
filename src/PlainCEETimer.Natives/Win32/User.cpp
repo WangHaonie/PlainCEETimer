@@ -73,7 +73,7 @@ static LPWSTR BuildCommandLine(LPWSTR application, LPWSTR args)
     return buffer;
 }
 
-LPCWSTR NATIVESAPI GetLogonUserName()
+LPCWSTR NATIVESAPI PnGetLogonUserName()
 {
     DWORD cbDomain;
     DWORD cbUser;
@@ -91,7 +91,7 @@ LPCWSTR NATIVESAPI GetLogonUserName()
     return result;
 }
 
-BOOL NATIVESAPI RunProcessAsLogonUser(LPWSTR path, LPWSTR args, LPDWORD lpExitCode)
+BOOL NATIVESAPI PnRunProcessAsLogonUser(LPWSTR path, LPWSTR args, LPDWORD lpExitCode)
 {
     if (WString_IsNullOrEmpty(path) && WString_IsNullOrEmpty(args))
     {

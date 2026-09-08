@@ -204,101 +204,101 @@ internal static class Win32UI
     [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
     public unsafe static extern uint ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
 
+    [DllImport(App.NativesDll, EntryPoint = "#2")]
+    public unsafe static extern bool PnRunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
+
+    [DllImport(App.NativesDll, EntryPoint = "#3")]
+    public static extern bool PnRunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
+
+    [DllImport(App.NativesDll, EntryPoint = "#20")]
+    public static extern void PnSetRoundCorner(IntPtr hWnd, int width, int height, int radius);
+
     [DllImport(App.NativesDll, EntryPoint = "#21")]
-    public unsafe static extern bool RunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
-
-    [DllImport(App.NativesDll, EntryPoint = "#22")]
-    public static extern bool RunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
-
-    [DllImport(App.NativesDll, EntryPoint = "#23")]
-    public static extern void SetRoundCorner(IntPtr hWnd, int width, int height, int radius);
-
-    [DllImport(App.NativesDll, EntryPoint = "#24")]
-    public static extern void SetRoundCornerEx(IntPtr hWnd, bool smallCorner);
-
-    [DllImport(App.NativesDll, EntryPoint = "#25")]
-    public static extern void EnableDarkModeForApp(bool enabled);
-
-    [DllImport(App.NativesDll, EntryPoint = "#26")]
-    public static extern void EnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1, bool enabled);
-
-    [DllImport(App.NativesDll, EntryPoint = "#27")]
-    public static extern void SetBorderColor(IntPtr hWnd, COLORREF color, bool enabled);
-
-    [DllImport(App.NativesDll, EntryPoint = "#28")]
-    public static extern int GetSystemAccentColor();
-
-    [DllImport(App.NativesDll, EntryPoint = "#29")]
-    public static extern void ListViewSelectAllItems(IntPtr hLV, bool selected);
-
-    [DllImport(App.NativesDll, EntryPoint = "#50")]
-    public static extern void PnHookSysColorBrush();
-
-    [DllImport(App.NativesDll, EntryPoint = "#51")]
-    public static extern void PnUnhookSysColorBrush();
-
-    [DllImport(App.NativesDll, EntryPoint = "#48")]
-    public static extern void PnHookOpenTheme();
-
-    [DllImport(App.NativesDll, EntryPoint = "#49")]
-    public static extern void PnUnhookOpenTheme();
-
-    [DllImport(App.NativesDll, EntryPoint = "#59")]
-    public static extern void PnHookThemedPaint();
-
-    [DllImport(App.NativesDll, EntryPoint = "#60")]
-    public static extern void PnUnhookThemedPaint();
-
-    [DllImport(App.NativesDll, EntryPoint = "#61")]
-    public unsafe static extern void PnHookClassicEdge(void* lpTag);
-
-    [DllImport(App.NativesDll, EntryPoint = "#62")]
-    public static extern void PnUnhookClassicEdge();
-
-    [DllImport(App.NativesDll, EntryPoint = "#30")]
-    public static extern void SetTopMostWindow(IntPtr hWnd);
-
-    [DllImport(App.NativesDll, EntryPoint = "#31")]
-    public static extern bool MenuGetItemCheckState(IntPtr hMenu, int item, bool fByPosition);
-
-    [DllImport(App.NativesDll, EntryPoint = "#32")]
-    public static extern bool MenuUncheckItem(IntPtr hMenu, int item, bool fByPosition);
-
-    [DllImport(App.NativesDll, EntryPoint = "#33", CharSet = CharSet.Unicode)]
-    public static extern string GetWindowText(IntPtr hWnd);
-
-    [DllImport(App.NativesDll, EntryPoint = "#35")]
-    public static extern void PnHookSysColor();
-
-    [DllImport(App.NativesDll, EntryPoint = "#36")]
-    public static extern void PnUnhookSysColor();
+    public static extern void PnSetRoundCornerEx(IntPtr hWnd, bool smallCorner);
 
     [DllImport(App.NativesDll, EntryPoint = "#37")]
-    public static extern void RemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
+    public static extern void PnEnableDarkModeForApp(bool enabled);
 
-    [DllImport(App.NativesDll, EntryPoint = "#46")]
-    public static extern bool CheckWindowExStyle(IntPtr hWnd, long dwExStyle);
+    [DllImport(App.NativesDll, EntryPoint = "#48")]
+    public static extern void PnEnableDarkModeForWindowFrame(IntPtr hWnd, bool after20h1, bool enabled);
 
-    [DllImport(App.NativesDll, EntryPoint = "#38")]
-    public static extern void PnHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
+    [DllImport(App.NativesDll, EntryPoint = "#49")]
+    public static extern void SetBorderColor(IntPtr hWnd, COLORREF color, bool enabled);
 
-    [DllImport(App.NativesDll, EntryPoint = "#39")]
-    public static extern void PnUnhookMessageBox();
+    [DllImport(App.NativesDll, EntryPoint = "#50")]
+    public static extern int PnGetSystemAccentColor();
 
-    [DllImport(App.NativesDll, EntryPoint = "#40")]
-    public static extern bool IsDialog(IntPtr lpCreateStruct);
-
-    [DllImport(App.NativesDll, EntryPoint = "#43")]
-    public static extern void RemoveWindowIcon(IntPtr hWnd);
+    [DllImport(App.NativesDll, EntryPoint = "#4")]
+    public static extern void PnListViewSelectAllItems(IntPtr hLV, bool selected);
 
     [DllImport(App.NativesDll, EntryPoint = "#44")]
-    public static extern void PnHookGetMessage(WHGETMESSAGE lpfnGetMsgProc, int dwThreadId);
+    public static extern void PnHookSysColorBrush();
 
     [DllImport(App.NativesDll, EntryPoint = "#45")]
+    public static extern void PnUnhookSysColorBrush();
+
+    [DllImport(App.NativesDll, EntryPoint = "#40")]
+    public static extern void PnHookOpenTheme();
+
+    [DllImport(App.NativesDll, EntryPoint = "#41")]
+    public static extern void PnUnhookOpenTheme();
+
+    [DllImport(App.NativesDll, EntryPoint = "#42")]
+    public static extern void PnHookThemedPaint();
+
+    [DllImport(App.NativesDll, EntryPoint = "#43")]
+    public static extern void PnUnhookThemedPaint();
+
+    [DllImport(App.NativesDll, EntryPoint = "#46")]
+    public static extern void PnHookClassicEdge(nint lpTag);
+
+    [DllImport(App.NativesDll, EntryPoint = "#47")]
+    public static extern void PnUnhookClassicEdge();
+
+    [DllImport(App.NativesDll, EntryPoint = "#5")]
+    public static extern void PnSetTopMostWindow(IntPtr hWnd);
+
+    [DllImport(App.NativesDll, EntryPoint = "#6")]
+    public static extern bool PnMenuGetItemCheckState(IntPtr hMenu, int item, bool bByPos);
+
+    [DllImport(App.NativesDll, EntryPoint = "#7")]
+    public static extern bool PnMenuUncheckItem(IntPtr hMenu, int item, bool bByPos);
+
+    [DllImport(App.NativesDll, EntryPoint = "#8", CharSet = CharSet.Unicode)]
+    public static extern string PnGetWindowText(IntPtr hWnd);
+
+    [DllImport(App.NativesDll, EntryPoint = "#38")]
+    public static extern void PnHookSysColor();
+
+    [DllImport(App.NativesDll, EntryPoint = "#39")]
+    public static extern void PnUnhookSysColor();
+
+    [DllImport(App.NativesDll, EntryPoint = "#9")]
+    public static extern void PnRemoveWindowExStyle(IntPtr hWnd, long dwExStyle);
+
+    [DllImport(App.NativesDll, EntryPoint = "#10")]
+    public static extern bool PnCheckWindowExStyle(IntPtr hWnd, long dwExStyle);
+
+    [DllImport(App.NativesDll, EntryPoint = "#11")]
+    public static extern void PnHookMessageBox(HOOKPROC lpfnCbtProc, FnMessageBoxW lpfnMessageBoxW, int dwHookFlag);
+
+    [DllImport(App.NativesDll, EntryPoint = "#12")]
+    public static extern void PnUnhookMessageBox();
+
+    [DllImport(App.NativesDll, EntryPoint = "#13")]
+    public static extern bool PnIsDialog(IntPtr lpCreateStruct);
+
+    [DllImport(App.NativesDll, EntryPoint = "#14")]
+    public static extern void PnRemoveWindowIcon(IntPtr hWnd);
+
+    [DllImport(App.NativesDll, EntryPoint = "#15")]
+    public static extern void PnHookGetMessage(WHGETMESSAGE lpfnGetMsgProc, int dwThreadId);
+
+    [DllImport(App.NativesDll, EntryPoint = "#16")]
     public static extern void PnUnhookGetMessage();
 
-    [DllImport(App.NativesDll, EntryPoint = "#58")]
-    public unsafe static extern bool ApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
+    [DllImport(App.NativesDll, EntryPoint = "#51")]
+    public unsafe static extern bool PnApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
 
     public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
     {

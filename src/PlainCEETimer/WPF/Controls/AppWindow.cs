@@ -200,12 +200,12 @@ public class AppWindow : Window, IAppWindow
 
         if (NativeRoundCorner)
         {
-            Win32UI.SetRoundCornerEx(hwnd, false);
+            Win32UI.PnSetRoundCornerEx(hwnd, false);
         }
 
         if (WindowStyle != WindowStyle.None)
         {
-            Win32UI.RemoveWindowIcon(hwnd);
+            Win32UI.PnRemoveWindowIcon(hwnd);
         }
 
         var canResize = ResizeMode is ResizeMode.CanResize or ResizeMode.CanResizeWithGrip;

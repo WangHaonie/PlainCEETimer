@@ -99,7 +99,7 @@ public static class ThemeManager
     {
         if (initialized)
         {
-            Win32UI.EnableDarkModeForWindowFrame(hWnd, isNewDwma, enabled);
+            Win32UI.PnEnableDarkModeForWindowFrame(hWnd, isNewDwma, enabled);
         }
     }
 
@@ -125,7 +125,7 @@ public static class ThemeManager
 
     public unsafe static Color GetAccentColor(IntPtr wParam = default)
     {
-        return Color.FromArgb(wParam != default ? (int)(uint)(void*)wParam : Win32UI.GetSystemAccentColor());
+        return Color.FromArgb(wParam != default ? (int)(uint)(void*)wParam : Win32UI.PnGetSystemAccentColor());
     }
 
     internal static SystemTheme UpdateThemeForUserChoice()
@@ -165,7 +165,7 @@ public static class ThemeManager
 
     private static void UpdateAppTheme()
     {
-        Win32UI.EnableDarkModeForApp(shouldUseDarkMode);
+        Win32UI.PnEnableDarkModeForApp(shouldUseDarkMode);
     }
 
     private static void TryFireOnThemeChanged()

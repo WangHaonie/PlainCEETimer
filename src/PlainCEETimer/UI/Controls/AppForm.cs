@@ -252,7 +252,7 @@ public abstract class AppForm : Form, IAppWindow
         {
             if (SystemVersion.IsWindows11)
             {
-                Win32UI.SetRoundCornerEx(Handle, SmallRoundCorner);
+                Win32UI.PnSetRoundCornerEx(Handle, SmallRoundCorner);
             }
             else
             {
@@ -826,7 +826,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
 
-        if (owner != null && !TopMost && Win32UI.CheckWindowExStyle(owner.Handle, WinUser.WS_EX_TOPMOST))
+        if (owner != null && !TopMost && Win32UI.PnCheckWindowExStyle(owner.Handle, WinUser.WS_EX_TOPMOST))
         {
             TopMost = true;
         }
@@ -846,7 +846,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         if (SetRoundRegion && SetRoundCorner)
         {
-            Win32UI.SetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
+            Win32UI.PnSetRoundCorner(Handle, Width, Height, ScaleToDpi(RoundCornerRadius));
         }
     }
 

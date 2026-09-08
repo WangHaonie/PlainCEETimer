@@ -200,7 +200,7 @@ public sealed class ConsoleWindow : AppDialog
 
         if (comboTrigger.Trigger())
         {
-            Win32.KillProcessTree(ExternalProc.Id);
+            Win32.PnKillProcessTree(ExternalProc.Id);
             ToolTipCloseInfo.Hide(this);
             OnComplete();
             return false;

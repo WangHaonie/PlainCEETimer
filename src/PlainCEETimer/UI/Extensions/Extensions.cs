@@ -107,7 +107,7 @@ public static class Extensions
     {
         if (item != null)
         {
-            Win32UI.MenuUncheckItem(item.Parent.Handle, item.Index, true);
+            Win32UI.PnMenuUncheckItem(item.Parent.Handle, item.Index, true);
         }
     }
 

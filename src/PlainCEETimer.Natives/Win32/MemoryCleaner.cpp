@@ -12,12 +12,12 @@ https://stackoverflow.com/a/223300/21094697
 
 */
 
-void NATIVESAPI ClearProcessWS()
+void NATIVESAPI PnClearProcessWS()
 {
     EmptyWorkingSet(GetCurrentProcess());
 }
 
-SIZE_T NATIVESAPI GetProcessPrivateWS()
+SIZE_T NATIVESAPI PnGetProcessPrivateWS()
 {
     /*
     

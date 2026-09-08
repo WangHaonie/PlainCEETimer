@@ -32,9 +32,9 @@ public class WindowManager
         }
     }
 
-    internal void OnTopMostChanged(bool topmost, bool fAsDefault = true)
+    internal void OnTopMostChanged(bool topmost, bool bAsDefault = true)
     {
-        if (fAsDefault)
+        if (bAsDefault)
         {
             _topmost = topmost;
         }

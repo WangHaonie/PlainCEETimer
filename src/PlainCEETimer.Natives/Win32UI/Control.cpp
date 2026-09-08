@@ -47,7 +47,7 @@ static int WINAPI MessageBoxW_(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UIN
 // https://learn.microsoft.com/zh-cn/windows/win32/api/commctrl/nf-commctrl-listview_setitemstate
 //
 
-void NATIVESAPI ListViewSelectAllItems(HWND hLV, BOOL selected)
+void NATIVESAPI PnListViewSelectAllItems(HWND hLV, BOOL selected)
 {
     if (hLV)
     {
@@ -55,7 +55,7 @@ void NATIVESAPI ListViewSelectAllItems(HWND hLV, BOOL selected)
     }
 }
 
-void NATIVESAPI SetTopMostWindow(HWND hWnd)
+void NATIVESAPI PnSetTopMostWindow(HWND hWnd)
 {
     if (hWnd)
     {
@@ -63,14 +63,14 @@ void NATIVESAPI SetTopMostWindow(HWND hWnd)
     }
 }
 
-BOOL NATIVESAPI MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition)
+BOOL NATIVESAPI PnMenuGetItemCheckState(HMENU hMenu, UINT item, BOOL bByPos)
 {
     if (hMenu)
     {
         MENUITEMINFO mii = { sizeof(mii) };
         mii.fMask = MIIM_STATE;
 
-        if (GetMenuItemInfo(hMenu, item, fByPosition, &mii) && (mii.fState & MFS_CHECKED) != 0)
+        if (GetMenuItemInfo(hMenu, item, bByPos, &mii) && (mii.fState & MFS_CHECKED) != 0)
         {
             return TRUE;
         }
@@ -79,14 +79,14 @@ BOOL NATIVESAPI MenuGetItemCheckState(HMENU hMenu, UINT item, BOOL fByPosition)
     return FALSE;
 }
 
-BOOL NATIVESAPI MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition)
+BOOL NATIVESAPI PnMenuUncheckItem(HMENU hMenu, UINT item, BOOL bByPos)
 {
     if (hMenu)
     {
         MENUITEMINFO mii = { sizeof(mii) };
         mii.fMask = MIIM_STATE | MIIM_FTYPE;
 
-        if (GetMenuItemInfo(hMenu, item, fByPosition, &mii))
+        if (GetMenuItemInfo(hMenu, item, bByPos, &mii))
         {
             mii.fState = 0;
             mii.fType &= ~MFT_RADIOCHECK;
@@ -97,7 +97,7 @@ BOOL NATIVESAPI MenuUncheckItem(HMENU hMenu, UINT item, BOOL fByPosition)
     return FALSE;
 }
 
-LPCWSTR NATIVESAPI GetWindowTextEx(HWND hWnd)
+LPCWSTR NATIVESAPI PnGetWindowText(HWND hWnd)
 {
     if (hWnd)
     {
@@ -114,13 +114,13 @@ LPCWSTR NATIVESAPI GetWindowTextEx(HWND hWnd)
     return nullptr;
 }
 
-void NATIVESAPI RemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
+void NATIVESAPI PnRemoveWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 {
     SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) & ~dwExStyle);
     SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
-BOOL NATIVESAPI CheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
+BOOL NATIVESAPI PnCheckWindowExStyle(HWND hWnd, LONG_PTR dwExStyle)
 {
     if ((GetWindowLongPtr(hWnd, GWL_EXSTYLE) & dwExStyle) == dwExStyle)
     {
@@ -160,7 +160,7 @@ void NATIVESAPI PnUnhookMessageBox()
     }
 }
 
-BOOL NATIVESAPI IsDialog(LPCREATESTRUCT lpCreateStruct)
+BOOL NATIVESAPI PnIsDialog(LPCREATESTRUCT lpCreateStruct)
 {
     auto style = WS_POPUP | WS_CAPTION | DS_3DLOOK | DS_MODALFRAME;
     auto ex = WS_EX_DLGMODALFRAME;
@@ -173,7 +173,7 @@ BOOL NATIVESAPI IsDialog(LPCREATESTRUCT lpCreateStruct)
     return FALSE;
 }
 
-void NATIVESAPI RemoveWindowIcon(HWND hWnd)
+void NATIVESAPI PnRemoveWindowIcon(HWND hWnd)
 {
     if (hWnd)
     {

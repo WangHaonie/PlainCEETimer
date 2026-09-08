@@ -16,7 +16,7 @@ enum PreferredAppMode
 
 #define HOOK_COMCTL32_OPENNCTHEMEDATA_ARGS      COMCTL32_DLL, UXTHEME_DLL, nullptr, 49, true
 
-NATIVES_EXPORT void NATIVESAPI EnableDarkModeForApp(BOOL enabled);
+NATIVES_EXPORT void NATIVESAPI PnEnableDarkModeForApp(BOOL enabled);
 
 #define HOOK_COMCTL32_GETSYSCOLOR_ARGS			COMCTL32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
 #define HOOK_COMDLG32_GETSYSCOLOR_ARGS			COMDLG32_DLL, USER32_DLL, nameof(GetSysColor), 0, false
@@ -86,10 +86,10 @@ NATIVES_EXPORT void NATIVESAPI PnUnhookClassicEdge();
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
 
-NATIVES_EXPORT void NATIVESAPI EnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled);
+NATIVES_EXPORT void NATIVESAPI PnEnableDarkModeForWindowFrame(HWND hWnd, BOOL after20h1, BOOL enabled);
 
-NATIVES_EXPORT void NATIVESAPI SetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
-NATIVES_EXPORT DWORD NATIVESAPI GetSystemAccentColor();
+NATIVES_EXPORT void NATIVESAPI PnSetWindowBorderColor(HWND hWnd, COLORREF color, BOOL enabled);
+NATIVES_EXPORT DWORD NATIVESAPI PnGetSystemAccentColor();
 
 /*
 
@@ -204,4 +204,4 @@ typedef struct _ACCENT_POLICY
 #define ASB_GET_STATUS(dw)              ((((DWORD)(dw)) & ASB_STATUS_MASK) >> 8)
 #define ASB_DEFINED_FOPTIONS(dw, op)    (ASB_GET_FOPTIONS(dw) & op)
 
-NATIVES_EXPORT BOOL NATIVESAPI ApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData);
+NATIVES_EXPORT BOOL NATIVESAPI PnApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData);

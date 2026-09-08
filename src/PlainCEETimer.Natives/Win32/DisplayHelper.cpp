@@ -182,7 +182,7 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
     }, CastP(LPARAM, &data));
 }
 
-BOOL NATIVESAPI EnumSystemDisplays(EnumDisplayProc lpfnEnum)
+BOOL NATIVESAPI PnEnumSystemDisplays(EnumDisplayProc lpfnEnum)
 {
     if (!lpfnEnum)
     {

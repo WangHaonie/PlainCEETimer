@@ -22,4 +22,4 @@ struct EnumDisplayData
     int index;
 };
 
-NATIVES_EXPORT BOOL NATIVESAPI EnumSystemDisplays(EnumDisplayProc lpfnEnum);
+NATIVES_EXPORT BOOL NATIVESAPI PnEnumSystemDisplays(EnumDisplayProc lpfnEnum);

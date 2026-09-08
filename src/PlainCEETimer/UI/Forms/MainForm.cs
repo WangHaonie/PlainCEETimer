@@ -66,8 +66,10 @@ public sealed class MainForm : AppForm
 
     protected override void WndProc(ref Message m)
     {
-        vm.WndProc(ref m);
-        base.WndProc(ref m);
+        if (!vm.WndProc(ref m))
+        {
+            base.WndProc(ref m);
+        }
     }
 
     private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

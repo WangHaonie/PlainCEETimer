@@ -1,82 +1,76 @@
 EXPORTS
 
-    GetProcessPrivateWS @1 NONAME
-    ClearProcessWS @2 NONAME
+    PnEnumSystemDisplays @1 NONAME
 
-    EnumSystemDisplays @3 NONAME
+    PnRunColorDialog @2 NONAME
+    PnRunFontDialog @3 NONAME
 
-    GetLogonUserName @4 NONAME
-    RunProcessAsLogonUser @5 NONAME
+    PnListViewSelectAllItems @4 NONAME
+    PnSetTopMostWindow @5 NONAME
+    PnMenuGetItemCheckState @6 NONAME
+    PnMenuUncheckItem @7 NONAME
+    PnGetWindowText @8 NONAME
+    PnRemoveWindowExStyle @9 NONAME
+    PnCheckWindowExStyle @10 NONAME
+    PnHookMessageBox @11 NONAME
+    PnUnhookMessageBox @12 NONAME
+    PnIsDialog @13 NONAME
+    PnRemoveWindowIcon @14 NONAME
+    PnHookGetMessage @15 NONAME
+    PnUnhookGetMessage @16 NONAME
+    CDCCM_WmContextMenu @17 NONAME
 
-    InitializeTaskbarList @6 NONAME
-    TaskbarListSetProgressState @7 NONAME
-    TaskbarListSetProgressValue @8 NONAME
-    ReleaseTaskbarList @9 NONAME
+    PnClearProcessWS @18 NONAME
+    PnGetProcessPrivateWS @19 NONAME
 
-    InitializeShellLink @10 NONAME
-    ShellLinkCreateLnk @11 NONAME
-    ShellLinkQueryLnk @12 NONAME
-    ReleaseShellLink @13 NONAME
+    PnSetRoundCorner @20 NONAME
+    PnSetRoundCornerEx @21 NONAME
 
-    InitializeTaskScheduler @14 NONAME
-    TaskSchedulerImportTaskFromXml @15 NONAME
-    TaskSchedulerExportTaskAsXml @16 NONAME
-    TaskSchedulerExistsTask @17 NONAME
-    TaskSchedulerEnableTask @18 NONAME
-    TaskSchedulerDeleteTask @19 NONAME
-    ReleaseTaskScheduler @20 NONAME
+    InitializeShellLink @22 NONAME
+    ShellLinkCreateLnk @23 NONAME
+    ShellLinkQueryLnk @24 NONAME
+    ReleaseShellLink @25 NONAME
 
-    RunColorDialog @21 NONAME
-    RunFontDialog @22 NONAME
+    InitializeTaskbarList @26 NONAME
+    TaskbarListSetProgressState @27 NONAME
+    TaskbarListSetProgressValue @28 NONAME
+    ReleaseTaskbarList @29 NONAME
 
-    SetRoundCorner @23 NONAME
-    SetRoundCornerEx @24 NONAME
-    EnableDarkModeForApp @25 NONAME
-    EnableDarkModeForWindowFrame @26 NONAME
-    SetWindowBorderColor @27 NONAME
-    GetSystemAccentColor @28 NONAME
+    InitializeTaskScheduler @30 NONAME
+    TaskSchedulerImportTaskFromXml @31 NONAME
+    TaskSchedulerExportTaskAsXml @32 NONAME
+    TaskSchedulerExistsTask @33 NONAME
+    TaskSchedulerEnableTask @34 NONAME
+    TaskSchedulerDeleteTask @35 NONAME
+    ReleaseTaskScheduler @36 NONAME
 
-    ListViewSelectAllItems @29 NONAME
-    SetTopMostWindow @30 NONAME
-    MenuGetItemCheckState @31 NONAME
-    MenuUncheckItem @32 NONAME
-    GetWindowTextEx @33 NONAME
-    PnHookSysColor @35 NONAME
-    PnUnhookSysColor @36 NONAME
-    RemoveWindowExStyle @37 NONAME
-    PnHookMessageBox @38 NONAME
-    PnUnhookMessageBox @39 NONAME
-    IsDialog @40 NONAME
+    PnEnableDarkModeForApp @37 NONAME
+    PnHookSysColor @38 NONAME
+    PnUnhookSysColor @39 NONAME
+    PnHookOpenTheme @40 NONAME
+    PnUnhookOpenTheme @41 NONAME
+    PnHookThemedPaint @42 NONAME
+    PnUnhookThemedPaint @43 NONAME
+    PnHookSysColorBrush @44 NONAME
+    PnUnhookSysColorBrush @45 NONAME
+    PnHookClassicEdge @46 NONAME
+    PnUnhookClassicEdge @47 NONAME
+    PnEnableDarkModeForWindowFrame @48 NONAME
+    PnSetWindowBorderColor @49 NONAME
+    PnGetSystemAccentColor @50 NONAME
+    PnApplySystemBackdrop @51 NONAME
 
-    AllocConsoleForApp @41 NONAME
-    KillProcessTree @42 NONAME
+    PnGetLogonUserName @52 NONAME
+    PnRunProcessAsLogonUser @53 NONAME
 
-    RemoveWindowIcon @43 NONAME
-    PnHookGetMessage @44 NONAME
-    PnUnhookGetMessage @45 NONAME
-    CheckWindowExStyle @46 NONAME
+    PnAllocConsole @54 NONAME
+    PnKillProcessTree @55 NONAME
+    PnLoadStringInternal @56 NONAME
 
-    PlainTimeSpanPick_RegisterWC @47 NONAME
-
-    PnHookOpenTheme @48 NONAME
-    PnUnhookOpenTheme @49 NONAME
-    PnHookSysColorBrush @50 NONAME
-    PnUnhookSysColorBrush @51 NONAME
-
-    PlainTimeSpanPick_ValidateFormat @52 NONAME
-    PlainTimeSpanPick_ParseFormat @53 NONAME
-    PlainTimeSpanPick_Format @54 NONAME
-    PlainTimeSpanPick_FreeMemory @55 NONAME
-
-    LoadStringInternal @56 NONAME
-    PlainTimeSpanPick_SuggestValue @57 NONAME
-
-    ApplySystemBackdrop @58 NONAME
-
-    PnHookThemedPaint @59 NONAME
-    PnUnhookThemedPaint @60 NONAME
-    PnHookClassicEdge @61 NONAME
-    PnUnhookClassicEdge @62 NONAME
-    CDCCM_WmContextMenu @63 NONAME
+    PlainTimeSpanPick_RegisterWC @57 NONAME
+    PlainTimeSpanPick_ValidateFormat @58 NONAME
+    PlainTimeSpanPick_ParseFormat @59 NONAME
+    PlainTimeSpanPick_Format @60 NONAME
+    PlainTimeSpanPick_FreeMemory @61 NONAME
+    PlainTimeSpanPick_SuggestValue @62 NONAME
     
-    ;Next #34

@@ -89,6 +89,6 @@ public class SystemBackdrop
         }
 
         int flags = (enabled.ToWin32() << 8) | 0b00000100 << 4 | (type & 0xF);
-        return Win32UI.ApplySystemBackdrop(hWnd, flags, null);
+        return Win32UI.PnApplySystemBackdrop(hWnd, flags, null);
     }
 }
