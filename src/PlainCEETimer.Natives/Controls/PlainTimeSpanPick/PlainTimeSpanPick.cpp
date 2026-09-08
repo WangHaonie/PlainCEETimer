@@ -50,12 +50,12 @@ HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat)
     return PlainTimeSpanPick::CreateFormat(pszFormat);
 }
 
-BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer)
+BOOL NATIVESAPI PlainTimeSpanPick_Format(HFORMAT hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer)
 {
     return PlainTimeSpanPick::Format(hFormat, lptsValue, lpBuffer, lpcchBuffer);
 }
 
-BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HANDLE hFormat)
+BOOL NATIVESAPI PlainTimeSpanPick_FreeMemory(HFORMAT hFormat)
 {
     return PlainTimeSpanPick::FreeFormatMemory(hFormat);
 }
