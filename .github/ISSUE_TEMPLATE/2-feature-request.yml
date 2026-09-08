@@ -11,26 +11,26 @@ body:
   - type: checkboxes
     id: verify
     attributes:
-      label: ⭕ 确认功能
-      description: 请根据真实情况勾选下列选项以确认是否添加此功能
+      label: ⭕ 确认事项
+      description: 请根据你的实际情况勾选以下项目
       options:
         - label: 我正在使用的是最新版本
           required: true
-        - label: 我确定我建议的功能没有重复
+        - label: 我已确认没有重复提交相同或类似的功能建议
           required: true
 
   - type: textarea
     id: suggest
     attributes:
       label: ⭕ 功能描述
-      description: 请详细说明有关该功能的描述，以及为什么要添加此功能
+      description: 请详细描述你希望添加的功能，以及它能为用户带来哪些帮助或解决什么问题
     validations:
       required: true
 
   - type: textarea
     id: details
     attributes:
-      label: 🌈 [选填] 可能的实现方法
-      description: 请详细说明实现此功能的大致方法，内容可以是文字描述或者是相关代码
+      label: ⚪ [选填] 可能的实现方法
+      description: 如果你对该功能的实现有思路，欢迎在此补充，可以是文字说明或相关代码
     validations:
       required: false

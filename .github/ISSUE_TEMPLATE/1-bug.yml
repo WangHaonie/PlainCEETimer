@@ -8,41 +8,56 @@ body:
       value: |
         感谢您抽出宝贵的时间来填写此问题报告！
 
+  - type: input
+    id: version
+    attributes:
+      label: ⭕ 版本号
+      description: 请填写出现问题的程序版本号。如果使用的是测试版，请同时注明对应的 Commit
+      placeholder: "例如: 5.0.1 或 5.0.1-0a1b2c3"
+    validations:
+      required: true
+
   - type: checkboxes
     id: verify
     attributes:
-      label: ⭕ 确认问题
-      description: 请根据真实情况勾选下列选项以确认是否真的出现了问题
+      label: ⭕ 确认事项
+      description: 请根据你的实际情况勾选以下项目，以帮助我们更快定位问题
       options:
         - label: 我正在使用的是最新版本
           required: true
-        - label: 本程序是在 GitHub 下载的，而不是在其他网站或渠道
+        - label: 本程序是从 GitHub 下载的，而非其他来源
           required: true
-        - label: 我没有更改过程序的配置文件
+        - label: 我没有修改过程序的配置文件
           required: true
-        - label: 我没有在程序的安装目录修改、删除了某些必要文件或更改了它们的访问权限
+        - label: 我没有在安装目录中修改、删除关键文件，或更改过它们的访问权限
+          required: true
+        - label: 我已确认所需运行库正确安装
           required: true
 
   - type: textarea
     id: report
     attributes:
       label: ⭕ 问题描述
-      description: 请详细说明该问题是怎样发生的
+      description: 请尽可能详细地描述问题是如何发生的，例如操作步骤、复现方式、预期结果与实际结果
     validations:
       required: true
 
   - type: textarea
     id: details
     attributes:
-      label: 🌈 [选填] 错误详情
-      description: 如果弹出了错误消息框，请将其截图并粘贴到此处
+      label: ⚪ [选填] 错误详情
+      description: |
+        当程序遇到未处理异常时，通常会弹出错误对话框，并将详细信息写入安装目录下的相关文件中。
+        请先检查安装目录中是否存在类似文件，并将其内容粘贴到此处；
+        如果没有弹出错误对话框，也没有生成上述文件，可能是程序内部发生了异常，请打开 事件查看器 (`eventvwr.msc`) 查找相关错误信息并粘贴到这里。
+        其他类型的错误报告/分析亦可。
     validations:
       required: false
 
   - type: textarea
     id: solution
     attributes:
-      label: 🌈 [选填] 可能的解决方法
-      description: 请详细说明可能会解决此问题的方法，内容可以是文字描述或者是相关代码
+      label: ⚪ [选填] 可能的解决方法
+      description: 如果你认为有解决此问题的思路，欢迎在此补充，可以是文字说明或相关代码
     validations:
       required: false
