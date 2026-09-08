@@ -247,7 +247,7 @@ public sealed class SettingsForm : AppForm
                             UpdateOptionsForPptsvc();
                         }),
 
-                        CheckBoxUniTopMost = b.CheckBox("顶置其他窗口(&U)", SettingsChanged),
+                        CheckBoxUniTopMost = b.CheckBox("顶置其他窗口(&U)", SettingsChanged).Disable(),
 
                         CheckBoxTrayIcon = b.CheckBox("在托盘区域显示通知图标(&I)", (_, _) =>
                         {
@@ -257,7 +257,7 @@ public sealed class SettingsForm : AppForm
                             SettingsChanged();
                         }),
 
-                        CheckBoxTrayText = b.CheckBox("鼠标悬停在通知图标上时显示倒计时内容(&N)", SettingsChanged),
+                        CheckBoxTrayText = b.CheckBox("鼠标悬停在通知图标上时显示倒计时内容(&N)", SettingsChanged).Disable(),
                     ])
                 ]),
                 #endregion
@@ -887,9 +887,7 @@ public sealed class SettingsForm : AppForm
 
         CheckBoxAutoSwitch.Checked = General.AutoSwitch;
         ComboBoxAutoSwitchInterval.SelectedIndex = General.Interval;
-        var ti = General.TrayIcon;
-        CheckBoxTrayText.Enabled = ti;
-        CheckBoxTrayIcon.Checked = ti;
+        CheckBoxTrayIcon.Checked = General.TrayIcon;
         CheckBoxTrayText.Checked = General.TrayText;
         CheckBoxMemClean.Checked = General.MemClean;
         CheckBoxTopMost.Checked = General.TopMost;
