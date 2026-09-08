@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <atlcoll.h>
 #include <Windows.h>
@@ -6,16 +6,16 @@
 class BrushTable
 {
 public:
-	BrushTable() = default;
+    BrushTable() = default;
 
-	HBRUSH GetBrush(COLORREF color);
-	void Clear();
+    HBRUSH GetBrush(COLORREF color);
+    void Clear();
 
-	BrushTable(const BrushTable&) = delete;
-	BrushTable& operator=(const BrushTable&) = delete;
+    BrushTable(const BrushTable&) = delete;
+    BrushTable& operator=(const BrushTable&) = delete;
 
-	~BrushTable();
+    ~BrushTable();
 
 private:
-	CAtlMap<COLORREF, HBRUSH> m_map;
+    CAtlMap<COLORREF, HBRUSH> m_map;
 };
