@@ -8,12 +8,12 @@ namespace PlainCEETimer.Interop;
 
 [NoConstants]
 [SuppressUnmanagedCodeSecurity]
-internal static class Win32Controls
+internal unsafe static class Win32Controls
 {
     public const string WC_PLAINTIMESPANPICK = "PlainTimeSpanPick";
 
-    [DllImport(App.NativesDll, EntryPoint = "#57", CharSet = CharSet.Unicode)]
-    public static extern ushort PlainTimeSpanPick_RegisterWC();
+    [DllImport(App.NativesDll, EntryPoint = "#57")]
+    public static extern ushort PlainTimeSpanPick_InitClass();
 
     [DllImport(App.NativesDll, EntryPoint = "#58", CharSet = CharSet.Unicode)]
     public static extern bool PlainTimeSpanPick_ValidateFormat(string pszFormat);
@@ -22,7 +22,7 @@ internal static class Win32Controls
     public static extern IntPtr PlainTimeSpanPick_ParseFormat(string pszFormat);
 
     [DllImport(App.NativesDll, EntryPoint = "#60", CharSet = CharSet.Unicode)]
-    public unsafe static extern bool PlainTimeSpanPick_Format(IntPtr hFormat, ref TimeSpan lptsValue, char* lpBuffer, ref int lpcchBuffer);
+    public static extern bool PlainTimeSpanPick_Format(IntPtr hFormat, ref TimeSpan lptsValue, char* lpBuffer, ref int lpcchBuffer);
 
     [DllImport(App.NativesDll, EntryPoint = "#61")]
     public static extern bool PlainTimeSpanPick_FreeMemory(IntPtr hFormat);

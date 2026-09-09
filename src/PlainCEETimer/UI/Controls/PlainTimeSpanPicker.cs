@@ -155,7 +155,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     static PlainTimeSpanPicker()
     {
-        Win32Controls.PlainTimeSpanPick_RegisterWC();
+        Win32Controls.PlainTimeSpanPick_InitClass();
     }
 
     public override void DownButton()

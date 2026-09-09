@@ -132,7 +132,7 @@ private:
     static size_t BuildDisplayTextInternal(LPPTSPSEGMENT lpSegments, INT cSegments, LPWSTR buffer, size_t count);
 };
 
-NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC();
+NATIVES_EXPORT ATOM NATIVESAPI PlainTimeSpanPick_InitClass();
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_ValidateFormat(LPCWSTR pszFormat);
 NATIVES_EXPORT HANDLE NATIVESAPI PlainTimeSpanPick_ParseFormat(LPCWSTR pszFormat);
 NATIVES_EXPORT BOOL NATIVESAPI PlainTimeSpanPick_Format(HANDLE hFormat, LPTIMESPAN lptsValue, LPWSTR lpBuffer, LPINT lpcchBuffer);

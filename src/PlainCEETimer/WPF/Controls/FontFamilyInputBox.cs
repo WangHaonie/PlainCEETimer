@@ -312,8 +312,6 @@ public sealed class FontFamilyInputBox : TextBox
                 if (throttler.Throttle())
                     IsOpen = false;
                 break;
-            default:
-                break;
         }
 
         return IntPtr.Zero;

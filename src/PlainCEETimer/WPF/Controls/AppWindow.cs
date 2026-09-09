@@ -153,18 +153,16 @@ public class AppWindow : Window, IAppWindow
 
     public void ReActivate()
     {
-        if (IsClosed)
+        if (!IsClosed)
         {
-            return;
+            var tmp = Topmost;
+            WindowState = WindowState.Normal;
+            Topmost = true;
+            Show();
+            Activate();
+            Topmost = tmp;
+            KeepOnScreen();
         }
-
-        var tmp = Topmost;
-        WindowState = WindowState.Normal;
-        Topmost = true;
-        Show();
-        Activate();
-        Topmost = tmp;
-        KeepOnScreen();
     }
 
     public bool? ShowDialog(IAppWindow owner)

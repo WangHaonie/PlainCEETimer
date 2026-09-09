@@ -28,7 +28,7 @@ LRESULT CALLBACK PlainTimeSpanPick::s_WndProc(HWND hWnd, UINT message, WPARAM wP
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-ATOM NATIVESAPI PlainTimeSpanPick_RegisterWC()
+ATOM NATIVESAPI PlainTimeSpanPick_InitClass()
 {
     WNDCLASSEX wcx = { sizeof(wcx) };
     wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_GLOBALCLASS;

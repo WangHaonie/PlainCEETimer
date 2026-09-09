@@ -67,7 +67,7 @@ EXPORTS
     PnKillProcessTree @55 NONAME
     PnLoadStringInternal @56 NONAME
 
-    PlainTimeSpanPick_RegisterWC @57 NONAME
+    PlainTimeSpanPick_InitClass @57 NONAME
     PlainTimeSpanPick_ValidateFormat @58 NONAME
     PlainTimeSpanPick_ParseFormat @59 NONAME
     PlainTimeSpanPick_Format @60 NONAME
