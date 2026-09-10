@@ -126,7 +126,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
     private sealed class ColorDlgStaticColorCurrentNativeWindow : NativeWindow
     {
-        internal IntPtr m_hParent;
+        internal IntPtr m_hColorDlg;
         internal int commdlg_SetRGBColor;
 
         protected override void WndProc(ref Message m)
@@ -199,13 +199,13 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                     if (commdlg_SetRGBColor != 0)
                     {
-                        Win32UI.SendMessage(m_hParent, commdlg_SetRGBColor, 0, (COLORREF)color);
+                        Win32UI.SendMessage(m_hColorDlg, commdlg_SetRGBColor, 0, (COLORREF)color);
                     }
                     else
                     {
-                        Win32UI.SetDlgItemInt(m_hParent, COLOR_RED, color.R, false);
-                        Win32UI.SetDlgItemInt(m_hParent, COLOR_GREEN, color.G, false);
-                        Win32UI.SetDlgItemInt(m_hParent, COLOR_BLUE, color.B, false);
+                        Win32UI.SetDlgItemInt(m_hColorDlg, COLOR_RED, color.R, false);
+                        Win32UI.SetDlgItemInt(m_hColorDlg, COLOR_GREEN, color.G, false);
+                        Win32UI.SetDlgItemInt(m_hColorDlg, COLOR_BLUE, color.B, false);
                     }
                 }
             }
@@ -213,7 +213,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         private void CopyColorToClipboard(bool rgb)
         {
-            var text = Color2String(m_hParent, rgb);
+            var text = Color2String(m_hColorDlg, rgb);
 
             if (!string.IsNullOrEmpty(text))
             {
@@ -428,7 +428,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         if (IsColor)
         {
             NativeWindowHelper.Attach(Win32UI.GetDlgItem(hWnd, COLOR_CURRENT), ref cdsccnw);
-            cdsccnw.m_hParent = hWnd;
+            cdsccnw.m_hColorDlg = hWnd;
         }
 
         return NInt.One;

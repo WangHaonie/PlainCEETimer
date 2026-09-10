@@ -441,6 +441,28 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             return 0;
         }
 
+        case PNCM_OVERRIDECOLORS:
+        {
+            LPCTRLCOLORS colors = &m_crCtrlColors;
+            COLORREF color = PTSPCOLOR_GET_COLOR_LPARAM(lParam);
+
+            switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
+            {
+                CASE_DB(PTSPCOLOR_RESTORE, RestoreCtrlColors(colors));
+                CASE_AB(PTSPCOLOR_BACKTEXT, colors->backText, color);
+                CASE_AB(PTSPCOLOR_FORETEXT, colors->foreText, color);
+                CASE_AB(PTSPCOLOR_FORETEXTDISABLED, colors->foreTextDisabled, color);
+                DEFAULT(0);
+            }
+
+            if (wParam)
+            {
+                Invalidate();
+            }
+
+            return 0;
+        }
+
         case PTSPM_SETFORMAT:
         {
             if (lParam && SetFormat(CastP(LPCWSTR, lParam)))
@@ -506,28 +528,6 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
                     UpdateMaxValue(value);
                     Invalidate();
                 }
-            }
-
-            return 0;
-        }
-
-        case PTSPM_OVERRIDECOLORS:
-        {
-            LPCTRLCOLORS colors = &m_crCtrlColors;
-            COLORREF color = PTSPCOLOR_GET_COLOR_LPARAM(lParam);
-
-            switch (PTSPCOLOR_GET_PART_LPARAM(lParam))
-            {
-                CASE_DB(PTSPCOLOR_RESTORE, RestoreCtrlColors(colors));
-                CASE_AB(PTSPCOLOR_BACKTEXT, colors->backText, color);
-                CASE_AB(PTSPCOLOR_FORETEXT, colors->foreText, color);
-                CASE_AB(PTSPCOLOR_FORETEXTDISABLED, colors->foreTextDisabled, color);
-                DEFAULT(0);
-            }
-
-            if (wParam)
-            {
-                Invalidate();
             }
 
             return 0;

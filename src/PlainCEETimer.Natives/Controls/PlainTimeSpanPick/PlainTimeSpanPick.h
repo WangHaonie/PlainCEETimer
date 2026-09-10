@@ -5,13 +5,14 @@
 
 #define WC_PLAINTIMESPANPICK        L"PlainTimeSpanPick"
 
+#define PNCM_OVERRIDECOLORS          (WM_USER + 0x101)
+
 #define PTSPM_SETFORMAT             (WM_USER + 0x111)
 #define PTSPM_GETVALUE              (WM_USER + 0x112)
 #define PTSPM_SETVALUE              (WM_USER + 0x113)
 #define PTSPM_GETMAXVALUE           (WM_USER + 0x114)
 #define PTSPM_SETMAXVALUE           (WM_USER + 0x115)
-#define PTSPM_OVERRIDECOLORS        (WM_USER + 0x116)
-#define PTSPM_INCREASE              (WM_USER + 0x117)
+#define PTSPM_INCREASE              (WM_USER + 0x116)
 
 #define PTSPN_VALUECHANGE           1
 

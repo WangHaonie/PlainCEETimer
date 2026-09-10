@@ -132,13 +132,13 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     private readonly ActionInvoker OnValueChangedAction;
     private readonly ControlInternals internals;
 
+    private const int PNCM_OVERRIDECOLORS = WinUser.WM_USER + 0x101;
     private const int PTSPM_SETFORMAT = WinUser.WM_USER + 0x111;
     private const int PTSPM_GETVALUE = WinUser.WM_USER + 0x112;
     private const int PTSPM_SETVALUE = WinUser.WM_USER + 0x113;
     private const int PTSPM_GETMAXVALUE = WinUser.WM_USER + 0x114;
     private const int PTSPM_SETMAXVALUE = WinUser.WM_USER + 0x115;
-    private const int PTSPM_OVERRIDECOLORS = WinUser.WM_USER + 0x116;
-    private const int PTSPM_INCREASE = WinUser.WM_USER + 0x117;
+    private const int PTSPM_INCREASE = WinUser.WM_USER + 0x116;
     private const int PTSPN_VALUECHANGE = 1;
     private const int PTSPCOLOR_BACKTEXT = 0;
     private const int PTSPCOLOR_FORETEXT = 1;
@@ -288,18 +288,18 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
             if (useDark)
             {
                 BackColor = Colors.DarkBackText;
-                Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
+                Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkBackText.ToWin32(), PTSPCOLOR_BACKTEXT));
-                Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
+                Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeText.ToWin32(), PTSPCOLOR_FORETEXT));
-                Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
+                Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeTextDisabled.ToWin32(), PTSPCOLOR_FORETEXTDISABLED));
                 ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.ExplorerDark);
             }
             else
             {
                 BackColor = SystemColors.Window;
-                Win32UI.SendMessage(hwnd, PTSPM_OVERRIDECOLORS,
+                Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(0, PTSPCOLOR_RESTORE));
                 ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.Explorer);
             }
