@@ -158,7 +158,8 @@ jobs:
         run: makensis /INPUTCHARSET UTF8 /DOUTPUT_DIR=..\..\ src/PlainCEETimer.Setup/Setup.nsi
 
       - name: Pack PDB Symbols
-        run: 7z a -t7z -mx=9 "Symbols.7z" "src/.output/*.pdb"
+        working-directory: ./src/.output
+        run: 7z a -t7z -mx=9 "..\..\Symbols.7z" "*.pdb"
 
       - name: Delete Previous Pre-Release
         if: inputs.release-type == 'ci'
