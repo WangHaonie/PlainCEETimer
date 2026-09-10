@@ -1,0 +1,234 @@
+name: Common Build
+
+on:
+  workflow_call:
+    inputs:
+      release-type:
+        description: 'Release type: ci or stable'
+        required: true
+        type: string
+      prerelease:
+        description: 'Whether the GitHub release is a prerelease'
+        required: true
+        type: boolean
+      static-json-name:
+        description: 'JSON filename to write under api/ in the Static'
+        required: true
+        type: string
+      static-download-dir:
+        description: 'Directory under the Static for the installer'
+        required: true
+        type: string
+      static-commit-prefix:
+        description: 'Commit message prefix for the Static'
+        required: true
+        type: string
+      static-delete-pattern:
+        description: 'Glob pattern for cleaning old installers in the Static'
+        required: true
+        type: string
+    outputs:
+      version:
+        description: 'Version read from .github/triggers/stable-release'
+        value: ${{ jobs.build.outputs.version }}
+      sha:
+        description: 'Short commit SHA'
+        value: ${{ jobs.build.outputs.sha }}
+      tag:
+        description: "Stable tag (v{version}); empty for CI"
+        value: ${{ jobs.build.outputs.tag }}
+      loc:
+        description: 'Lines of code count'
+        value: ${{ jobs.build.outputs.loc }}
+
+jobs:
+  common-build:
+    runs-on: windows-2022
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    outputs:
+      version: ${{ steps.read_version.outputs.version }}
+      sha: ${{ steps.read_version.outputs.sha }}
+      tag: ${{ steps.read_version.outputs.tag }}
+      loc: ${{ steps.count_loc.outputs.loc }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install MSBuild
+        uses: microsoft/setup-msbuild@v3
+        with:
+          msbuild-architecture: x64
+
+      - name: Configure MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Build Dependencies
+        run: |
+          cd src/PlainCEETimer.Natives/Detours/src
+          nmake
+
+      - name: Cache NuGet Packages
+        uses: actions/cache@v5
+        with:
+          path: |
+            ${{ env.NUGET_PACKAGES }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - id: read_version
+        name: Read Version
+        run: |
+          $ver = (Get-Content -Raw -Encoding UTF8 ".github/triggers/stable-release").Trim()
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "version=$ver"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "sha=$($env:GITHUB_SHA.Substring(0, 7))"
+          if ('${{ inputs.release-type }}' -eq 'stable') {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "tag=v$ver"
+          }
+
+      - id: count_loc
+        name: Count Lines of Code
+        run: |
+          irm -OutFile cloc.exe https://github.com/AlDanial/cloc/releases/download/v2.06/cloc-2.06.exe
+          ./cloc src --vcs=git --include-lang="C/C++ Header,C#,C++,XAML" --by-file --md --out loc.md
+          $locnum = [double]::Parse((((Get-Content -Path "loc.md" -Tail 1) -split '\|') | ForEach-Object { $_.Trim() } | Select-Object -Last 1))
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "loc=$locnum"
+          Write-Host "Lines of Code: $locnum"
+
+      - name: Generate Release Content
+        run: |
+          $Date = [DateTime]::UtcNow.AddHours(8.0)
+          $($Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")) >date.txt
+          $Culture = [System.Globalization.CultureInfo]::GetCultureInfoByIetfLanguageTag("zh-CN")
+          $Timestamp = [Math]::Truncate($Date.Ticks / 10000000 - 55287792000)
+
+          $Ver = '${{ steps.read_version.outputs.version }}'
+          $Sha = '${{ steps.read_version.outputs.sha }}'
+          $Tag = '${{ steps.read_version.outputs.tag }}'
+
+          if ('${{ inputs.release-type }}' -eq 'ci') {
+            $Content = "## ♻️ 自动构建版本
+          **🌏 构建日期**
+          + $($Date.ToString("yyyy'-'MM'-'dd dddd HH':'mm':'ss", $Culture)) (中国标准时间)
+
+          **🎯 构建内容**
+          + 详见 [$Sha](https://github.com/WangHaonie/PlainCEETimer/commit/$Sha)
+
+          **⚠️ 注意事项**
+          + 自动构建版本的功能可能不稳定，不推荐作为长期使用
+          + 自动构建的版本号沿用上一个正式版的版本号，确保在下一个正式版发布时可以获取到更新"
+          } else {
+            $ChangeLog = (Get-Content -Raw -Encoding UTF8 ".github/build/stable-changelog.txt").Trim()
+            $Content = "## $Tag 更新日志
+          >  ✨ 新功能、🛠️ 修复、⛔ 移除
+
+          $ChangeLog
+
+          ## 用户手册【墙裂建议先阅读再使用】
+          + [点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。"
+          }
+
+          $Content >content.txt
+
+          $AppInfo = "
+          using PlainCEETimer.Modules.Annotations.Fody; namespace PlainCEETimer.Modules;
+          [NoConstants, CompilerRemove] internal static class AppInfo
+          {
+              public const string Version = `"$Ver`";
+              public const string CommitSHA = `"$Sha`";
+              public const string BuildDate = `"$($Date.ToString("yyyy/M/d"))`";
+              public const long Timestamp = $Timestamp;
+          }" >src\PlainCEETimer\Modules\AppInfo.cs
+
+          $SetupPath = "src/PlainCEETimer.Setup/Setup.nsi"
+          $SetupScript = Get-Content -Encoding UTF8 $SetupPath
+          $SetupScript[0] = "!define SETUP_FILENAME_NO_V `"$Ver`""
+          Set-Content -Path $SetupPath -Value $SetupScript -Encoding UTF8
+
+      - name: Restore & Build Project
+        working-directory: ./src/
+        run: msbuild /r /m /p:RestoreLockedMode=true /p:Configuration=Release /p:Platform=x64 /p:BuildInParallel=true
+
+      - name: Build Setup
+        run: makensis /INPUTCHARSET UTF8 /DOUTPUT_DIR=..\..\ src/PlainCEETimer.Setup/Setup.nsi
+
+      - name: Pack PDB Symbols
+        run: 7z a -t7z -mx=9 "Symbols.7z" "src/.output/*.pdb"
+
+      - name: Delete Previous Pre-Release
+        if: inputs.release-type == 'ci'
+        uses: 8Mi-Tech/delete-release-assets-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: Preview
+          deleteOnlyFromDrafts: false
+
+      - name: Checkout PlainCEETimerStatic
+        uses: actions/checkout@v6
+        with:
+          repository: WangHaonie/PlainCEETimerStatic
+          ssh-key: ${{ secrets.TRIGGER_PRIVATE_KEY }}
+          path: PlainCEETimerStatic
+
+      - name: Push to PlainCEETimerStatic
+        run: |
+          $date = (Get-Content -Raw -Encoding UTF8 "date.txt").Trim()
+          $size = $((Get-Item 'PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe').Length)
+
+          ./.github/build/wfutil.exe -FormatChangelogs ".github/build/stable-changelog.txt" "changelog.txt"
+          $log = (Get-Content -Raw -Encoding UTF8 "changelog.txt").Trim()
+
+          cd PlainCEETimerStatic
+
+          git config user.name "WangHaonie"
+          git config user.email "68315280+WangHaonie@users.noreply.github.com"
+
+          md badges -ErrorAction Ignore
+          $loc = [Math]::Round(${{ steps.count_loc.outputs.loc }} / 1000, 1)
+          curl "https://img.shields.io/badge/%E4%BB%A3%E7%A0%81%E9%87%8F-${loc}k-blue" >badges\loc.svg
+
+          md md -ErrorAction Ignore
+          Copy-Item -Path "../loc.md" -Destination "md/loc.md"
+
+          md api -ErrorAction Ignore
+          $json = @"
+          {"name":"${{ steps.read_version.outputs.version }}","published_at":"$date","body":"$log","size":$size,"commit":"${{ steps.read_version.outputs.sha }}"}
+          "@ >api\${{ inputs.static-json-name }}
+
+          md ${{ inputs.static-download-dir }} -ErrorAction Ignore
+          Get-ChildItem -Path "${{ inputs.static-delete-pattern }}" -File -ErrorAction Ignore | Remove-Item -Force -ErrorAction Stop
+          Copy-Item -Path "../PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe" -Destination "${{ inputs.static-download-dir }}/CEETimerCSharpWinForms_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
+
+          git add .
+          git commit -m "${{ inputs.static-commit-prefix }} WangHaonie/PlainCEETimer@${{ steps.read_version.outputs.sha }}"
+          git push
+
+      - name: Upload Setup to Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe
+          path: "PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe"
+          archive: false
+
+      - name: Upload Symbols to Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: Symbols.7z
+          path: Symbols.7z
+          archive: false
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ inputs.release-type == 'stable' && steps.read_version.outputs.version || '' }}
+          tag_name: ${{ inputs.release-type == 'ci' && 'Preview' || steps.read_version.outputs.tag }}
+          files: |
+            PlainCEETimer_${{ steps.read_version.outputs.version }}_x64_Setup.exe
+            Symbols.7z
+          prerelease: ${{ inputs.prerelease }}
+          body_path: content.txt

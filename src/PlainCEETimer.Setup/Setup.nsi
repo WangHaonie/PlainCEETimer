@@ -83,7 +83,11 @@ Var /GLOBAL NewConfigPath
 Var /GLOBAL ShouldUninstallPrevious
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "PlainCEETimer_${SETUP_FILENAME_NO_V}_x64_Setup.exe"
+!ifdef OUTPUT_DIR
+  OutFile "${OUTPUT_DIR}\PlainCEETimer_${SETUP_FILENAME_NO_V}_x64_Setup.exe"
+!else
+  OutFile "PlainCEETimer_${SETUP_FILENAME_NO_V}_x64_Setup.exe"
+!endif
 InstallDir "$PROFILE\AppData\Local\CEETimerCSharpWinForms"
 InstallDirRegKey HKCU "${PRODUCT_UNINST_KEY}" "InstallLocation"
 ShowInstDetails show
