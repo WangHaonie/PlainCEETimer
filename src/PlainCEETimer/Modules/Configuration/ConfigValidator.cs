@@ -252,12 +252,12 @@ internal static class ConfigValidator
         return Win32Controls.PlainTimeSpanPick_SuggestValue(ref value);
     }
 
-    internal static bool ImportConfig(string path)
+    internal static bool ImportConfig(string path, ref string backup)
     {
         if (TryReadConfig(path, out var config, out _) && config != null)
         {
             isSuppressing = true;
-            BackupConfig();
+            if (BackupConfig() is string s && s != null) backup = s;
             WriteToConfig(app.ConfigFilePath, config);
             return true;
         }
@@ -297,7 +297,7 @@ internal static class ConfigValidator
         }
     }
 
-    private static void BackupConfig()
+    private static string BackupConfig()
     {
         try
         {
@@ -305,17 +305,17 @@ internal static class ConfigValidator
 
             if (File.Exists(cfg))
             {
-                var bak = cfg + ".bak";
-
-                if (File.Exists(bak))
-                {
-                    File.Delete(cfg);
-                }
-
+                var dir = App.Current.ExecutableDir;
+                var name = Path.GetFileName(cfg);
+                var bak = PathUtils.MakeUniqueName(dir, name);
                 WriteToConfig(bak, app.AppConfig);
+                return bak;
             }
+
         }
         catch { }
+
+        return null;
     }
 
     private static bool TryReadConfig(string path, out AppConfig config, out Exception ex)

@@ -47,7 +47,7 @@ public static class TimeSpanFormat
 
         if (Win32Controls.PlainTimeSpanPick_Format(hFormat, ref value, null, ref count))
         {
-            string result = StringInternals.FastAllocateString(count++);
+            var result = StringInternals.FastAllocateString(count++);
 
             fixed (char* lpBuffer = result)
             {

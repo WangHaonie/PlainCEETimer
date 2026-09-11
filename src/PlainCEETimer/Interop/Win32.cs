@@ -8,7 +8,7 @@ using PlainCEETimer.Modules;
 namespace PlainCEETimer.Interop;
 
 [SuppressUnmanagedCodeSecurity]
-internal static class Win32
+internal unsafe static class Win32
 {
     public static IntPtr AllocConsole()
     {
@@ -41,7 +41,7 @@ internal static class Win32
     public static extern int GetCurrentThreadId();
 
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
-    public unsafe static extern int lstrlen(char* lpString);
+    public static extern int lstrlen(char* lpString);
 
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern bool SetThreadPreferredUILanguages(int dwFlags, PCZZWSTR pwszLanguagesBuffer, IntPtr pulNumLanguages);
@@ -51,4 +51,13 @@ internal static class Win32
 
     [DllImport(App.User32Dll)]
     public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+    [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
+    public static extern int GetShortPathName(char* lpszLongPath, char* lpszShortPath, int cchBuffer);
+
+    [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode, ExactSpelling = true)]
+    public static extern bool PathYetAnotherMakeUniqueName(char* pszUniqueName, string pszPath, nint pszShort, string pszFileSpec);
+
+    [DllImport(App.ShlwapiDll, CharSet = CharSet.Unicode)]
+    public static extern bool PathCompactPathEx(char* pszOut, string pszSrc, int cchMax, int dwFlags);
 }

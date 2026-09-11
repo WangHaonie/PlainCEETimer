@@ -756,11 +756,13 @@ public sealed class SettingsForm : AppForm
                     {
                         var file = dialog.FileName;
 
-                        if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + file.Truncate(70, 10), MessageButtons.YesNo) == true)
+                        if (MessageX.Warn("确认导入此配置文件？稍后将自动备份并覆盖当前配置。\n" + PathUtils.CompactPath(file), MessageButtons.YesNo) == true)
                         {
-                            if (ConfigValidator.ImportConfig(file))
+                            string bak = null;
+
+                            if (ConfigValidator.ImportConfig(file, ref bak))
                             {
-                                MessageX.Info("配置文件导入成功，需要立即重启！");
+                                MessageX.Info("配置文件导入成功，需要立即重启！\n\n当前配置备份于：\n" + PathUtils.CompactPath(bak));
                                 App.Current.Shutdown(true);
                             }
                             else
@@ -786,8 +788,9 @@ public sealed class SettingsForm : AppForm
                         out var dialog,
                         FileFilter.ConfigFile) == true)
                     {
-                        ConfigValidator.ExportConfig(dialog.FileName);
-                        MessageX.Info("配置文件导出完成！");
+                        var file = dialog.FileName;
+                        ConfigValidator.ExportConfig(file);
+                        MessageX.Info("配置文件导出完成！\n\n位置:\n" + PathUtils.CompactPath(file));
                     }
 
                     ShowingDialog = false;

@@ -128,6 +128,13 @@ public static class WinUser
 
 [NoConstants]
 [CompilerRemove]
+public static class Windows
+{
+    public const int MAX_PATH = 260;
+}
+
+[NoConstants]
+[CompilerRemove]
 public static class CommCtrl
 {
     public const int CDRF_DODEFAULT = 0x00000000;

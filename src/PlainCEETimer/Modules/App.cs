@@ -30,7 +30,7 @@ internal class App
 
     public string ExecutablePath => field ??= Application.ExecutablePath;
 
-    public string ConfigFilePath => field ??= $"{ExecutableDir}{AppNameEng}.config";
+    public string ConfigFilePath => field ??= $"{ExecutableDir}{AppConfigName}";
 
     public bool IsExiting => m_IsExiting;
 
@@ -55,10 +55,12 @@ internal class App
     public const string UxThemeDll = "uxtheme.dll";
     public const string Shell32Dll = "shell32.dll";
     public const string ShcoreDll = "shcore.dll";
+    public const string ShlwapiDll = "shlwapi.dll";
     public const string Gdi32Dll = "gdi32.dll";
     public const string Kernel32Dll = "kernel32.dll";
     public const string DateTimeFormat = "yyyyMMddHHmmss";
     public const string AppTitle = $"{AppNameEng} v{AppInfo.Version} ({AppInfo.BuildDate}, {AppInfo.CommitSHA})";
+    public const string AppConfigName = $"{AppNameEng}.config";
     private const string UEFilePrefix = "UnhandledException_";
 
     private bool m_IsExiting;
