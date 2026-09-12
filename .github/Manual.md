@@ -1,6 +1,6 @@
 <div align="center">
     <h1>PlainCEETimer 用户手册</h1>
-    <h4>适用于 v5.0.12 | 修订日期 2026/6/20</h4>
+    <h4>适用于 v5.0.13 | 修订日期 2026/9/12</h4>
 </div>
 
 # 📖 目录
@@ -13,6 +13,7 @@
   - [🎉 特性](#-特性)
   - [✨ 选项说明](#-选项说明)
 - [🎯 字体对话框 (WPF) 使用说明](#-字体对话框-wpf-使用说明)
+- [🎯 颜色对话框使用说明](#-颜色对话框使用说明)
 - [🎯 快捷键对话框使用说明](#-快捷键对话框使用说明)
 - [🎯 托盘图标使用说明](#-托盘图标使用说明)
   - [🎉 特性](#-特性-1)
@@ -45,6 +46,7 @@
 - [🎯 命令输出对话框使用说明](#-命令输出对话框使用说明)
 - [🎯 FileDialogWrapper 对话框使用说明](#-filedialogwrapper-对话框使用说明)
 - [🎯 意外错误对话框使用说明](#-意外错误对话框使用说明)
+- [🎯 调试选项](#-调试选项)
 - [🎯 命令行选项](#-命令行选项)
 - [📣 常见错误](#-常见错误)
 - [📄 后记](#-后记)
@@ -52,7 +54,7 @@
 # ⬇️ 下载安装
 
 > [!TIP]
-> 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请自行到 [Release](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) 下载。
+> 本项目具有自动构建，若想使用自动构建版本 (相当于测试版)，请到 [Release](https://github.com/WangHaonie/PlainCEETimer/releases/tag/Preview) 下载。自 5.0.12 后也可以在应用内下载 (见 [🎯 关于窗口使用说明](#-关于窗口使用说明))。
 
 ## 🛠️ 运行环境准备
 + **Windows 7 SP1 x64** 及以上；
@@ -117,11 +119,37 @@
 
 | **选项名称** | **功能说明** | **注意** |
 | ----- | ---- | ---- |
-| **字体家族** | 设置字体的字体家族。支持类似 CSS 的字体回退，可以定义多个字体。例如输入 `Times New Roman, Noto Sans SC` 可以使英文字符应用 `Times New Roman`，其余字符应用 `Noto Sans SC`。详见 [Microsoft Learn](https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.media.fontfamily#font-fallback)。 | 需要手动键入字体名称以及`,`，字符串总长度不超过 100。 |
+| **字体家族** | 设置字体的字体家族。支持类似 CSS 的字体回退，可以定义多个字体。例如输入 `Times New Roman, Noto Sans SC` 可以使英文字符应用 `Times New Roman`，其余字符应用 `Noto Sans SC`。详见 [Microsoft Learn](https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.media.fontfamily#font-fallback)。 | 当输入框为空或输入`,`时，会弹出下拉列表，可以从中快速填写字体名称。`鼠标滚轮`/`上下键`移动选项，`左键`单击/`Enter`/`Tab`确认选项。 |
 | **字体粗细** | 设置字体的字重。 | 部分字体 (例如非**可变字体**, **Variable Font**) 可能只支持常见少量字重，为正常现象。详见 [Microsoft Learn](https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.fontweight#remarks)。 |
 | **字体大小** | 设置字体的大小。 | 范围 `10`~`36` pt，支持输入小数。 |
 | **字体预览** | 预览当前设置的字体。 | 预览框可手动编辑要预览内容，清空则重置为默认内容，不会将设置的预览文本保存到配置文件中。 |
 
+# 🎯 颜色对话框使用说明
+
+右键`当前`色块 (调色板下面的大色块，表示当前选择的颜色)，可以弹出上下文菜单：
+
+| **选项** | **功能说明** |
+| ----- | ---- |
+| `粘贴` | 从剪切板中解析颜色并应用到当前颜色。支持传入的格式见下表。 |
+| `复制 RGB` | 将当前颜色以`r,g,b`的文本格式复制到剪切板。 |
+| `复制 HEX` | 将当前颜色以`#rrggbb`的文本格式复制到剪切板。|
+
+> [!TIP]
+> 直接双击大色块，也可以快速粘贴剪切板中的内容。相当于点击了 `粘贴` 菜单项。
+
+可粘贴的格式有以下，其解析基于内置引擎 ([1](https://learn.microsoft.com/en-us/dotnet/api/system.drawing.colortranslator.fromhtml), [2](https://learn.microsoft.com/en-us/dotnet/api/system.windows.media.colorconverter.convertfromstring))。
+
+| **名称** | **格式** | **示例** | **备注** |
+| ----- | ---- | ---- | ---- |
+| (A)RGB | `[a,]r,g,b` | `255,0,0` | 将忽略 Alpha 通道。 |
+| HEX | `#[aa]rrggbb` | `#FF0000` |  |
+| ScRGB | `sc#[a,]r,g,b` | `sc#1.0,0.0,0.0` |  |
+| ICC 配置 | `ContextColor [ICC] [a],[1],[2],...` | `ContextColor C:\Windows\System32\spool\drivers\color\AdobeRGB1998.icc 1.0,1.0,0.0,0.0` |  |
+| [HTML 颜色](https://www.runoob.com/html/html-colornames.html) | `String` | `Red` |  |
+| 简写 HEX | `#rgb` | `#F00` |  |
+| 编程 HEX | `0xrrggbb` | `0xFF0000` |  |
+| 早期 HEX | `&hrrggbb` | `&hFF0000` |  |
+| 整数 | `UInt32` | `16711680` | 十六进制 `RRGGBB` 的十进制形式 |
 
 # 🎯 快捷键对话框使用说明
 
@@ -162,7 +190,7 @@
 
 | **选项名称** | **功能说明** | **注意** |
 | ----- | ---- | ---- |
-| **导入配置** | 选择并导入配置文件 |  |
+| **导入配置** | 选择并导入配置文件 | 目前仅支持全量替换，不支持增量更新，故程序也会在导入前自动备份 |
 | **导出配置** | 选择并导出配置文件 |  |
 
 ## ✨ 基本
@@ -221,7 +249,7 @@
 # 🎯 关于窗口使用说明
 | **选项名称** | **功能说明** | **注意** |
 | ----- | ---- | ---- |
-| **程序 Logo** | 手动检查更新。 | 检查更新功能为强制启用机制，无法控制其开关。按下 Ctrl 键并单击可以检查测试版更新 (慎用)。测试版更新不会在程序启动时自动检测。 |
+| **程序 Logo** | 手动检查更新。 | 检查更新功能为强制启用机制，无法控制其开关。在 Logo 上按下 Ctrl 键并单击可以检查测试版更新 (慎用)。程序会在每次启动时检查正式版更新，不会自动获取测试版更新。 |
 | **链接** | 点击相应链接跳转到相应的页面。 |  |
 
 # 🎯 下载器窗口使用说明
@@ -254,9 +282,10 @@
 + **重复**：选中一个考试信息后按下 `Ctrl`+`C` 来重复选中的考试信息
 + **编辑**：**左键双击**现有考试信息可快速打开考试信息对话框。
 + **删除**：按下 `Delete` 键即可实现删除。
-+ **排除**：按下 `Ctrl`+`X` 排除选择的考试。这些考试将不参与倒计时，同时不会出现在考试切换菜单里，但仍会保留，并非删除。已排除的考试会显示为灰色。
-+ **包括**：按下 `Ctrl`+`I` 包括选择的考试。与 **排除** 相对。
++ **排除**：按下 `Ctrl`+`X` 排除选择的考试。这些考试将不参与倒计时，同时不会出现在考试切换菜单里，但仍会保留，并非删除。已排除的考试会显示为灰色。与直接操作复选框功能相同。
++ **包括**：按下 `Ctrl`+`I` 包括选择的考试。与 **排除** 相对。与直接操作复选框功能相同。
 + **全选**：按下 `Ctrl`+`A` 组合键即可实现全选。支持不连续多选 (**原生特性**，按住 `Ctrl` 同时 `鼠标左键` 单击考试信息)。
++ **反选**：选中当前列表中未选中的项并取消选中已选中的项。
 
 ## ✨ 选项说明
 | **选项名称** | **功能说明** | **注意** |
@@ -270,6 +299,7 @@
 | **排除** | 排除选择的考试。 | 被排除考试将不参与倒计时，也不会出现在考试切换菜单里，但仍会保留，并非删除。已排除的考试会在列表中显示为灰色。 |
 | **包括** | 包括选择的考试。 | 与 **排除** 相反。 |
 | **全选** | 全选所有的考试信息。 |  |
+| **反选** | 反选考试信息。 |  |
 
 # 🎯 考试信息对话框使用说明
 
@@ -304,6 +334,7 @@
 + **编辑**：**左键双击**现有规则可快速打开规则对话框。
 + **删除**：按下 `Delete` 键即可实现删除。
 + **全选**：按下 `Ctrl`+`A` 组合键即可实现全选。单击分组标题可以全选同一个类别下的规则 (**原生特性**)。支持不连续多选 (**原生特性**，按住 `Ctrl` 同时 `鼠标左键` 单击规则)。
++ **反选**：选中当前列表中未选中的项并取消选中已选中的项。
 
 ## ✨ 选项说明
 | **选项名称** | **功能说明** | **注意** |
@@ -315,6 +346,7 @@
 | **编辑** | 编辑当前选中的规则。 | 只能选中一个，不能同时编辑多个规则。详见 [🎯 规则对话框使用说明](#-规则对话框使用说明)。 |
 | **删除** | 删除当前选中的规则。 | 支持多选。 |
 | **全选** | 全选所有的规则。 |  |
+| **反选** | 反选规则。 |  |
 
 # 🎯 规则对话框使用说明
 ## 🎉 特性
@@ -332,7 +364,7 @@
 | **选项名称** | **功能说明** | **注意** |
 | ----- | ---- | ---- |
 | **距离考试...** | 选择规则要匹配的阶段。 | 有关各阶段，详见 [✨ 时间线说明](#-时间线说明)。当规则为默认规则时此项不可用。 |
-| **...天...时...分...秒** | 在指定的时间匹配该规则。 | 最少`1`秒，不能全为`0`。可以通过键盘上下箭或鼠标滚轮来对值进行增/减。当规则为默认规则时此项不可用。 |
+| **...天...时...分...秒** | 在指定的时间匹配该规则。 | 最少`1`秒，不能全为`0`。可以通过键盘上下箭或鼠标滚轮来对值进行增/减。当规则为默认规则时此项不可用。自 5.0.13 起，默认采用新控件，可以更加方便地输入 TimeSpan。左键单击可以切换到最近的可编辑部分，`上下键`/`鼠标滚轮`/`UpDown 按钮`快速自增减对应部分的值，也可以直接输入。`左右键` 切换可编辑部分。 |
 | **文字颜色...背景颜色...** | 指定在此时要显示的文字/背景颜色。 | 点击色块选择颜色，不支持像**设置**里那样拖放。默认颜色组合为**设置>外观**里的颜色，也是全局默认颜色。 |
 | **自定义文本** | 指定此时倒计时的内容的格式。点击 `..` 按钮可以进入多行编辑模式。 | 若当前为一般规则，默认使用**默认规则**的文本。有关占位符详见 [🎯 占位符一览](#-占位符一览)。多行编辑模式下会出现包含了所有占位符的下拉框，当点击下拉项时，可快速将相应的占位符插入到光标所在位置。 |
 | **重置** | 重置颜色组合或自定义文本为全局默认颜色。 | 若当前为**默认规则**，则将重置为初始规则，否则将重置为**默认规则**。 |
@@ -369,22 +401,18 @@
 | 关于 | [AboutForm](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Forms/AboutForm.cs) | `100%` |  |
 | 消息框 | [AppMessageBox](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/AppMessageBox.cs) | `100%` |  |
 | 命令输出对话框 | [ConsoleWindow](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/ConsoleWindow.cs) | `100%` |  |
-| 规则对话框 | [RuleDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/RuleDialog.cs) | `100%` | `#1` |
 | 考试信息管理器 | [ExamManager](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/ExamManager.cs) | `100%` |  |
 | 规则管理器 | [RulesManager](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/RulesManager.cs) | `100%` |  |
-| 颜色对话框 | [PlainColorDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Controls/PlainColorDialog.cs) | `95%` | `#2` |
-| 字体对话框 | [PlainFontDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Controls/PlainFontDialog.cs) | `90%` | `#3` |
-| 下载器 | [DownloaderForm](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Forms/DownloaderForm.cs) | `90%` | ProgressBar`#4` |
-| 字体对话框 (WPF) | [FontDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/WPF/Views/FontDialog.xaml.cs) | `85%` | `#5` |
-| 考试信息对话框 | [ExamDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/ExamDialog.cs) | `80%` | DateTimePicker |
-| 系统消息框 | [MessageBox](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.messagebox) | `0%` |  |
+| 字体对话框 (WPF) | [FontDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/WPF/Views/FontDialog.xaml.cs) | `100%` |  |
+| 颜色对话框 | [PlainColorDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Controls/PlainColorDialog.cs) | `100%` | |
+| 字体对话框 | [PlainFontDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Controls/PlainFontDialog.cs) | `100%` |  |
+| 下载器 | [DownloaderForm](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Forms/DownloaderForm.cs) | `100%` |  |
+| 规则对话框 | [RuleDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/RuleDialog.cs) | `100%` | `#1` |
+| 考试信息对话框 | [ExamDialog](https://github.com/WangHaonie/PlainCEETimer/blob/main/src/PlainCEETimer/UI/Dialogs/ExamDialog.cs) | `99%` | `DateTimePicker` 部分 |
+| 系统消息框 | [MessageBox](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.messagebox) | `0%` | 不打算实施 |
 
 > [!NOTE]
 > `#1` 在 Windows 10 上，NumericUpDown 控件的 UpDown 按钮没有深色主题为正常现象。<br>
-> `#2` 色块选过后会出现白边，亮度三角形滑块能见度低 (可以使用滑条)。<br>
-> `#3` 示例的预览文本为控件动态生成的白底黑字，暂时无法实现深色主题。<br>
-> `#4` ProgressBar 控件在低于 Windows 11 26120.6682 的系统上没有深色主题为正常现象。<br>
-> `#5` 滚动条和右键菜单暂时无法实现深色主题，敬请期待。
 
 # 🎯 命令输出对话框使用说明
 
@@ -412,6 +440,23 @@
 | `重试` | 重启程序。 |
 | `忽略` | 忽略本次错误，并尝试继续运行程序。|
 
+# 🎯 调试选项
+
+> [!TIP]
+> 用于设置应用程序内部的运作机制以及部分正在开发的功能。进入方法：连续点击设置窗口左下角 15x15 (逻辑分辨率) 区域 10 次。
+
+
+| **选项** | **功能说明** |
+| ----- | ---- |
+| `使用调试选项` | 启用或关闭调试选项。 |
+| `禁用 WinForms 窗口 Per-Monitor V2` | 本程序的 WinForms 窗口已经实现支持 PMv2，若某些特殊情况下表现不佳，可尝试关闭 PMv2。变更后建议重启应用程序。 |
+| `强制为通用对话框启用 Per-Monitor V2` | 通用对话框默认使用 System aware，开启后可以体验 PMv2，但在运行时响应 DPI 更改时可能会导致大量错位。 |
+| `恢复经典 TimeSpan 选取控件` | 自 5.0.13 开始，本程序默认采用专用的 TimeSpan 输入控件，而不是之前的一个 UpDown 和一个 Label 相互组合的经典布局。新控件在空间上更紧凑，由于是自定义控件，若遇到无法输入的情况，可以开启该选项切回经典方式。 |
+| `显示格式` | 指定应用程序中 TimeSpan 的格式化字符串，默认为`d天h时m分s秒`，用户可以随意组合搭配，仅支持 `d``h``m``s` 这四个占位符，至少包含一个占位符。当占位符有缺失时 (比如只指定了 `s`，那么该部分的最大值为设置的最大 TimeSpan 的 TotalSeconds)，将自动调整各部分上限。清空输入框并保存即可实现恢复默认格式。 |
+| `最大上限` | 设置倒计时使用的 TimeSpan 最大值，默认值为 `65535天23时59分59秒`，最大值为 Int64.MaxValue。推荐指定一个为1天的倍数的 TimeSpan 以免复杂的进位关系导致可能的交互困难，即可以被刚好拆分为 `x天23时59分59秒` 的值。若不满足条件，应用程序也会近似出一个符合条件的值，可根据实际情况决定是否选用。此最大值特性目前仅适用于新 TimeSpan 输入控件，也就是说当启用 `恢复经典 TimeSpan 选取控件` 时，此项失效，最大值仍为默认值。 |
+| `启用主窗口 Backdrop 效果 (Acrylic)` | 此为正在开发的功能，目前仅适用于 Windows 11，可以为倒计时主窗口背景应用 Acrylic 效果，也就是高斯模糊，取代原本的纯色背景。不过当窗口失焦时效果会丢失，将在后续版本中完善。需要系统开启 `透明效果` 选项。 |
+
+
 # 🎯 命令行选项
 
 > [!TIP]
@@ -426,7 +471,7 @@
 | `/op` | 优化程序运行速度。 | 提升一定的运行速度。推荐在以下情况下使用：首次运行本程序、清理过系统垃圾 (特别是 .NET 缓存) 之后、其他情况导致的肉眼明显感知到程序运行速度变慢。 |
 
 # 📣 常见错误
-**PlainCEETimer.exe 已停止运行**
+**PlainCEETimer.exe 已停止运行 或 闪退**
 + 未安装 .NET Framework 4.8 或更高版本，请参见 [🛠️ 运行环境准备](#️-运行环境准备)。
 + 相关组件丢失，比如 (`Newtonsoft.Json.dll`、`PlainCEETimer.Natives.dll` 等)
 
@@ -444,6 +489,9 @@
 + `PlainCEETimer.Natives.dll` 丢失，请重新安装。
 + 可能是程序内部出错，请运行 `eventvwr.msc` 定位到 `Windows 日志` >`应用程序` 找到当时来源为 `.NET Runtime` 或 `Application Error` 的**错误**消息，点击下方的**详细信息**选项卡，复制所有日志内容，然后上报到 [Issues](https://github.com/WangHaonie/PlainCEETimer/issues/new/choose)。
 + 若系统生成了错误转储文件 (`PlainCEETimer.exe*.dmp`)，通常位于 `%LocalAppData%\CrashDumps`，可以选择将其进行压缩后上传。
+
+> [!TIP]
+> 如果有能力的话，可以自行进行崩溃分析，需要的 PDB 符号表自 5.0.13 起会随着 Release 一同发布，包括测试版。你可以到相应页面下载 `Symbols.7z`。若是测试版且不是最新的，可以到相应 Commit (关于窗口中版本号会标注) 的 Action 里的 Artifacts 中下载，有效时长 90 天，过期将无法下载。若无法自行修复，可以将 dmp 分析报告提交到 Issue。
 
 # 📄 后记
 + 此高考倒计时程序是本人在高中时期因班级需要而编写，如有雷同，纯属巧合；
