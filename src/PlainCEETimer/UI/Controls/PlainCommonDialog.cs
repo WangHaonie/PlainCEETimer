@@ -8,6 +8,7 @@ using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.WPF.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -223,10 +224,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
         private static Color String2Color(string s)
         {
-            var result = Color.Empty;
-            String2ColorCore(s, ref result);
-
-            if (!result.IsEmpty)
+            if (TryParseColor(s, out var result))
             {
                 goto ret;
             }
@@ -258,8 +256,11 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                 if (start != -1 && end != -1 && end >= start)
                 {
                     s = s.Substring(start, end - start + 1);
-                    String2ColorCore(s, ref result);
-                    goto ret;
+
+                    if (TryParseColor(s, out result))
+                    {
+                        goto ret;
+                    }
                 }
             }
 
@@ -286,13 +287,27 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             return success;
         }
 
-        private static void String2ColorCore(string s, ref Color color)
+        private static bool TryParseColor(string s, out Color result)
         {
+            result = Color.Empty;
+
             try
             {
-                color = ColorTranslator.FromHtml(s);
+                result = ColorTranslator.FromHtml(s);
+                goto ret;
             }
             catch { }
+
+            try
+            {
+                result = ((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(s)).Truncate();
+                goto ret;
+            }
+            catch { }
+
+            return false;
+        ret:
+            return !result.IsEmpty;
         }
     }
 

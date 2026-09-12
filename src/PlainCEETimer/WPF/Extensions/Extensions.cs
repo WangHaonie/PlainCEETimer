@@ -42,6 +42,11 @@ public static class Extensions
         return new((int)size.Width, (int)size.Height);
     }
 
+    public static WFColor Truncate(this Color color)
+    {
+        return WFColor.FromArgb(color.A, color.R, color.G, color.B);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Pt2Dip(this double pt)
     {
