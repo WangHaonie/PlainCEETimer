@@ -24,7 +24,7 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 */
 
 [DebuggerDisplay("{Hotkey}")]
-public class PlainHotkeyControl : Control, IThemeAware
+public class PlainHotkeyControl : PlainControlBase, IThemeAware
 {
     public event EventHandler HotKeyChanged;
 

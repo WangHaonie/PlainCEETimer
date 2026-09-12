@@ -123,12 +123,13 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
 
     public event EventHandler ValueChanged;
 
+    private bool inSetValue;
+    private string m_format = AppParams.TSFormat;
     private TimeSpan m_value;
     private TimeSpan m_valueMax = AppParams.TSMax;
-    private string m_format = AppParams.TSFormat;
     private ThemeHelper themeHelper;
-    private bool inSetValue;
     private readonly Debouncer debouncer;
+    private readonly ControlDpiScaleFix cdsf;
     private readonly ActionInvoker OnValueChangedAction;
     private readonly ControlInternals internals;
 
@@ -151,6 +152,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         OnValueChangedAction = new(OnValueChangedImpl);
         debouncer = new(new ControlDebounceHelper(this));
         internals = ControlInternals.AttachTo(this);
+        cdsf = new();
     }
 
     static PlainTimeSpanPicker()
@@ -199,6 +201,14 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     {
         themeHelper.Destroy();
         base.Dispose(disposing);
+    }
+
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        if (cdsf.CanScale(factor))
+        {
+            base.ScaleControl(factor, specified);
+        }
     }
 
     protected override void WndProc(ref Message m)

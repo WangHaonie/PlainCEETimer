@@ -8,7 +8,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class NavigationView : Control
+public sealed class NavigationView : PlainControlBase
 {
     private sealed class NavigationBar : TreeView, IThemeAware
     {
