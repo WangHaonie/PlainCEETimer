@@ -28,6 +28,8 @@ public class DefaultCountdownService : ICountdownService
         }
     }
 
+    public CountdownBasicInfo CurrentInfo { get; private set; }
+
     private int ExamIndex;
     private int LastExamIndex = -2;
     private int ExamsCount;
@@ -66,7 +68,13 @@ public class DefaultCountdownService : ICountdownService
     public DefaultCountdownService()
     {
         OnExamSwitchedInvoker = new(i => ExamSwitched?.Invoke(this, new(i)));
-        OnCountdownUpdatedInvoker = new((s, cp) => CountdownUpdated?.Invoke(this, new(s, cp.Fore, cp.Back)));
+
+        OnCountdownUpdatedInvoker = new((s, cp) =>
+        {
+            var e = new CountdownBasicInfo(s, cp.Fore, cp.Back);
+            CurrentInfo = e;
+            CountdownUpdated?.Invoke(this, e);
+        });
     }
 
     public void Start(CountdownStartInfo startInfo)

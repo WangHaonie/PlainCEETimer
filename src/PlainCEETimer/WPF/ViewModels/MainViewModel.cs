@@ -6,6 +6,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Countdown.Immersive;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
@@ -79,6 +80,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private MenuItemBuilder ItemBuilder;
     private ContextMenu ContextMenuMain;
     private FullScreenTracker fullScreenTracker;
+    private ImmersiveWindow ImmersiveWindow;
     private Exam[] Exams;
     private BorderColorObject BorderColorObj;
     private Rect ScreenRect;
@@ -185,6 +187,8 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             }
         };
 
+        var immersive = AppParams.ImmersiveCountdown;
+
         ItemBuilder ??= b =>
         [
             b.Item("切换(&Q)"),
@@ -241,6 +245,18 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
                 FormAbout.ReActivate();
             }),
+
+            b.Conditional(immersive, b => b.Separator()),
+
+            b.Conditional(immersive, b => b.Item("沉浸模式(&I)", (_, _) =>
+            {
+                if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
+                {
+                    ImmersiveWindow = new(CountdownHelper.Instance.CountdownService);
+                }
+
+                ImmersiveWindow.ReActivate();
+            })),
 
             b.Separator(),
 
@@ -638,6 +654,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     {
         Font = font.DxFont;
         GdiFont = new(font.GdiFont);
+        CountdownHelper.Instance.SetCountdownFont(Font);
         UpdateFontNameItem(font);
 
         if (!ConfigValidator.ValidateNeeded)

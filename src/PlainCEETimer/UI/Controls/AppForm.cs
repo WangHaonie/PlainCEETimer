@@ -164,6 +164,7 @@ public abstract class AppForm : Form, IAppWindow
 
         OnInitializing();
         ResumeLayout(true);
+        App.Current.SetMainWindow(this);
     }
 
     static AppForm()

@@ -40,6 +40,8 @@ internal class App
 
     public Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
+    public IAppWindow MainWindow => mainWindow;
+
     public static App Current => appInstance;
 
     internal event Action AppExit;
@@ -67,6 +69,7 @@ internal class App
     private string AllArgs;
     private Icon appIcon;
     private Mutex MainMutex;
+    private IAppWindow mainWindow;
     private static App appInstance;
     private readonly bool IsMainProcess;
     private readonly string ExecutableName;
@@ -88,6 +91,11 @@ internal class App
         MutexName = $"{AppNameEngOld}_MUTEX_61c0097d-3682-421c-84e6-70ca37dc31dd_[A3F8B92E6D14]";
         MainMutex = new(true, MutexName, out IsMainProcess);
         appInstance = this;
+    }
+
+    public void SetMainWindow(IAppWindow window)
+    {
+        mainWindow ??= window;
     }
 
     public void PopupAbortRetryIgnore(string message, string title)

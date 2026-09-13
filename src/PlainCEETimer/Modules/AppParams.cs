@@ -20,6 +20,7 @@ internal static class AppParams
     public static bool UseClassicTSP => m_DebugMode && m_UseClassicTSP;
 
     public static bool MainBackdropAcrylic => m_DebugMode && m_MainBackdropAcrylic;
+    public static bool ImmersiveCountdown => m_DebugMode && m_ImmersiveCountdown;
 
     public static string TSFormat => m_DebugMode ? m_TSFormat : null;
 
@@ -30,6 +31,7 @@ internal static class AppParams
     private static bool m_EnableCommDlgPMv2;
     private static bool m_UseClassicTSP;
     private static bool m_MainBackdropAcrylic;
+    private static bool m_ImmersiveCountdown;
     private static string m_TSFormat;
     private static TimeSpan m_TSMax;
 
@@ -37,6 +39,7 @@ internal static class AppParams
     public const string EnableCommDlgPMv2_Key = "ACB1";
     public const string UseClassicTSP_Key = "9AA6";
     public const string MainBackdropAcrylic_Key = "A5C8";
+    public const string ImmersiveCountdown_Key = "43A6";
     public const string TSFormat_Key = "4BD0";
     public const string TSMax_Key = "A421";
 
@@ -51,6 +54,7 @@ internal static class AppParams
             m_EnableCommDlgPMv2 = info.EnableCommDlgPMv2;
             m_UseClassicTSP = info.UseClassicTSP;
             m_MainBackdropAcrylic = info.MainBackdropAcrylic && SystemVersion.IsWindows11;
+            m_ImmersiveCountdown = info.ImmersiveCountdown;
             m_TSFormat = info.TSFormat;
             m_TSMax = info.TSMax;
         }

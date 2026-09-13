@@ -18,7 +18,7 @@ public sealed partial class MainWindow : AppWindow
     {
         vm = new(new()
         {
-            CountdownService = new DefaultCountdownService(),
+            CountdownService = CountdownHelper.Instance.CountdownService,
             DialogService = MessageX,
             BorderColorService = new SystemBorderColorService(this),
             WindowInitializer = new WPFWindowInitializer(this),

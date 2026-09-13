@@ -21,6 +21,9 @@ public class AppParamsInfo
     [JsonProperty(AppParams.MainBackdropAcrylic_Key)]
     public bool MainBackdropAcrylic { get; set; }
 
+    [JsonProperty(AppParams.ImmersiveCountdown_Key)]
+    public bool ImmersiveCountdown { get; set; }
+
     [JsonProperty(AppParams.TSFormat_Key)]
     public string TSFormat
     {

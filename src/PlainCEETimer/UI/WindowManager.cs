@@ -12,13 +12,13 @@ public class WindowManager
 {
     public static WindowManager Current { get; } = new();
 
-    public bool TopMost => _topmost;
+    public bool TopMost => m_topmost;
 
     public event EventHandler<TopMostStateChangedEventArgs> TopMostChanged;
 
     public event EventHandler ActivateRequested;
 
-    private bool _topmost = true;
+    private bool m_topmost = true;
 
     internal static void RunMainUI(bool isWpf)
     {
@@ -36,7 +36,7 @@ public class WindowManager
     {
         if (bAsDefault)
         {
-            _topmost = topmost;
+            m_topmost = topmost;
         }
 
         TopMostChanged?.Invoke(this, new(topmost));

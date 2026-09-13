@@ -7,6 +7,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
+using PlainCEETimer.UI.Controls;
 using PlainCEETimer.WPF.Modules;
 
 namespace PlainCEETimer.WPF;
@@ -19,6 +20,7 @@ public sealed class WPFApp : Application, IThemeAware
     private ResourceDictionary themeDict;
     private ThemeHelper themeHelper;
     private static bool m_closing;
+    private static WPFApp s_instance;
     private readonly bool atLeastNT10 = !SystemVersion.BeforeNT10;
 
     private const string ThemeDir = "WPF/Appearance/";
@@ -26,6 +28,14 @@ public sealed class WPFApp : Application, IThemeAware
     public WPFApp()
     {
         InitializeComponent();
+    }
+
+    public static void EnsureAlive()
+    {
+        if (Current == null)
+        {
+            s_instance ??= new();
+        }
     }
 
     protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
@@ -38,6 +48,7 @@ public sealed class WPFApp : Application, IThemeAware
     {
         themeHelper.Destroy();
         base.OnExit(e);
+        s_instance = null;
         App.Current.Shutdown();
     }
 
@@ -52,7 +63,7 @@ public sealed class WPFApp : Application, IThemeAware
             }
         };
 
-        ShutdownMode = ShutdownMode.OnMainWindowClose;
+        ShutdownMode = App.Current.MainWindow is AppForm ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
         InternalInit();
         LoadTheme();
         SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());

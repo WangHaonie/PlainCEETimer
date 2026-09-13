@@ -77,6 +77,8 @@ public class AppWindow : Window, IAppWindow
         }
     }
 
+    public bool IsOpen => !IsClosed;
+
     protected IScreenService ScreenService { get; }
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
@@ -139,6 +141,13 @@ public class AppWindow : Window, IAppWindow
 
         MessageX = new AppMessageBox(this);
         UpdateDpiScale(VisualTreeHelper.GetDpi(this));
+        Loaded += (_, e) => OnLoaded(e);
+        App.Current.SetMainWindow(this);
+    }
+
+    static AppWindow()
+    {
+        WPFApp.EnsureAlive();
     }
 
     public object Invoke(Delegate method, params object[] args)
@@ -234,6 +243,11 @@ public class AppWindow : Window, IAppWindow
         ClearEvents();
         base.OnClosed(e);
         IsClosed = true;
+    }
+
+    protected virtual void OnLoaded(RoutedEventArgs e)
+    {
+        return;
     }
 
     protected virtual bool OnClosing()

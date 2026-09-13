@@ -24,4 +24,14 @@ public class ContextMenuBuilder
     {
         return new("-");
     }
+
+    public MenuItem Conditional(bool condition, Func<ContextMenuBuilder, MenuItem> builder)
+    {
+        if (condition)
+        {
+            return builder(this);
+        }
+
+        return null;
+    }
 }

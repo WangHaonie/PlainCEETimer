@@ -36,7 +36,19 @@ public static class ContextMenuExtensions
 
     public static ContextMenu Build(this MenuItemBuilder builder)
     {
-        return new(builder(new()));
+        var menu = new ContextMenu();
+        var items = menu.MenuItems;
+        var source = builder(new());
+
+        foreach (var item in source)
+        {
+            if (item != null)
+            {
+                items.Add(item);
+            }
+        }
+
+        return menu;
     }
 
     public static ContextMenu AddItems(this ContextMenu menu, MenuItemBuilder builder, int index = 0)
