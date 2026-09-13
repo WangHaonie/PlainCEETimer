@@ -129,7 +129,7 @@ internal static class ConfigValidator
     public static void SetValue<T>(ref T[] field, T[] value, ConfigField type)
         where T : IListViewData<T>
     {
-        if (value != null)
+        if (!value.IsNullOrEmpty())
         {
             if (ValidateNeeded)
             {
