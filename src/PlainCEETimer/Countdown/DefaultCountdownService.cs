@@ -38,7 +38,6 @@ public class DefaultCountdownService : ICountdownService
     private bool CanStart;
     private bool CanUseRules;
     private bool CanUpdateRules;
-    private bool CanUpdateToken;
     private int Mode;
     private string DefaultText;
     private CountdownFormat Format;
@@ -55,7 +54,8 @@ public class DefaultCountdownService : ICountdownService
     private CountdownRule[] GlobalRules;
     private CountdownRule[] CurrentRules;
     private CountdownRule[] DefaultRules;
-    private ReadOnlyCollection<PhParsedToken> CurrentTokens;
+    private string LastFormat;
+    private ReadOnlyCollection<PhParsedToken> LastTokens;
     private volatile bool IsDisposing;
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
@@ -178,19 +178,20 @@ public class DefaultCountdownService : ICountdownService
         };
 
         CanUpdateRules = true;
-        CanUpdateToken = true;
     }
 
     private void AutoSwitchCallback(object state)
     {
         if (!IsDisposing)
         {
+            var i = ExamIndex;
+
             do
             {
                 ExamIndex = (ExamIndex + 1) % ExamsCount;
                 UpdateExams();
             }
-            while (!TestExam(CurrentExam, out _, out _) && ExamIndex != ExamsCount - 1);
+            while (!TestExam(CurrentExam, out _, out _) && ExamIndex != i);
 
             TryStartMainTimer();
             OnExamSwitched();
@@ -289,18 +290,18 @@ public class DefaultCountdownService : ICountdownService
     {
         lock (SyncObject)
         {
-            if (CanUpdateToken)
+            if (format != LastFormat)
             {
-                CurrentTokens = PhTokenParser.Parse(format);
-                CanUpdateToken = false;
+                LastTokens = PhTokenParser.Parse(format);
+                LastFormat = format;
             }
 
-            var length = CurrentTokens.Count;
+            var length = LastTokens.Count;
             ContentBuilder.Clear();
 
             for (int i = 0; i < length; i++)
             {
-                ContentBuilder.Append(TranslatePh(CurrentTokens[i], span, phase));
+                ContentBuilder.Append(TranslatePh(LastTokens[i], span, phase));
             }
 
             return ContentBuilder.ToString();
