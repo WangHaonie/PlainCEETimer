@@ -10,6 +10,8 @@ namespace PlainCEETimer.Interop;
 [SuppressUnmanagedCodeSecurity]
 internal unsafe static class Win32Controls
 {
+    public const string HOTKEY_CLASS = "msctls_hotkey32";
+    public const string UPDOWN_CLASS = "msctls_updown32";
     public const string WC_PLAINTIMESPANPICK = "PlainTimeSpanPick";
 
     [DllImport(App.NativesDll, EntryPoint = "#57")]

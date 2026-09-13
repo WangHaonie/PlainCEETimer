@@ -55,7 +55,7 @@ public class PlainHotkeyControl : PlainControlBase, IThemeAware
         get
         {
             var cp = base.CreateParams;
-            cp.ClassName = "msctls_hotkey32";
+            cp.ClassName = Win32Controls.HOTKEY_CLASS;
             cp.Style |= WinUser.WS_BORDER;
             return cp;
         }
