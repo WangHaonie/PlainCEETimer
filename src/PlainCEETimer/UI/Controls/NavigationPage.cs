@@ -21,6 +21,7 @@ public sealed class NavigationPage : Panel, IThemeAware
         Visible = false;
         Dock = DockStyle.Fill;
         AutoScroll = true;
+        HScroll = false;
     }
 
     protected override void Dispose(bool disposing)
@@ -33,7 +34,7 @@ public sealed class NavigationPage : Panel, IThemeAware
     {
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
 
-        if (!init && (HScroll || VScroll))
+        if (!init && VScroll)
         {
             Win32UI.SetWindowTheme(Handle, null, null);
         }
