@@ -252,7 +252,8 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
             {
                 if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
                 {
-                    ImmersiveWindow = new(CountdownHelper.Instance.CountdownService);
+                    WPFApp.EnsureAlive();
+                    ImmersiveWindow = new(CountdownManager.Instance.CountdownService);
                 }
 
                 ImmersiveWindow.ReActivate();
@@ -654,7 +655,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     {
         Font = font.DxFont;
         GdiFont = new(font.GdiFont);
-        CountdownHelper.Instance.SetCountdownFont(Font);
+        CountdownManager.Instance.SetCountdownFont(Font);
         UpdateFontNameItem(font);
 
         if (!ConfigValidator.ValidateNeeded)

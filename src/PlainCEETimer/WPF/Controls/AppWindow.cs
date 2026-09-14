@@ -145,11 +145,6 @@ public class AppWindow : Window, IAppWindow
         App.Current.SetMainWindow(this);
     }
 
-    static AppWindow()
-    {
-        WPFApp.EnsureAlive();
-    }
-
     public object Invoke(Delegate method, params object[] args)
     {
         return Dispatcher.Invoke(method, args);

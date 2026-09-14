@@ -8,7 +8,7 @@ using PlainCEETimer.WPF.Models;
 
 namespace PlainCEETimer.WPF.ViewModels;
 
-public sealed partial class ImmersiveWindowViewModel : ObservableObject, IDisposable
+public sealed partial class ImmersiveViewModel : ObservableObject, IDisposable
 {
     [ObservableProperty]
     public partial string Content { get; private set; }
@@ -23,13 +23,13 @@ public sealed partial class ImmersiveWindowViewModel : ObservableObject, IDispos
     public partial FontModel Font { get; private set; }
 
     private readonly ICountdownService m_countdown;
-    private readonly CountdownHelper m_helper;
+    private readonly CountdownManager m_helper;
     private readonly ColorToBrushConverter m_cbConverter;
 
-    public ImmersiveWindowViewModel(ICountdownService countdown)
+    public ImmersiveViewModel(ICountdownService countdown)
     {
         m_countdown = countdown;
-        m_helper = CountdownHelper.Instance;
+        m_helper = CountdownManager.Instance;
         m_cbConverter = new();
 
         m_countdown.CountdownUpdated += OnCountdownUpdated;
@@ -67,7 +67,7 @@ public sealed partial class ImmersiveWindowViewModel : ObservableObject, IDispos
         GC.SuppressFinalize(this);
     }
 
-    ~ImmersiveWindowViewModel()
+    ~ImmersiveViewModel()
     {
         Dispose();
     }

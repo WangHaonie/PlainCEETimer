@@ -25,7 +25,7 @@ public sealed class MainForm : AppForm
 
         vm = new(new()
         {
-            CountdownService = CountdownHelper.Instance.CountdownService,
+            CountdownService = CountdownManager.Instance.CountdownService,
             DialogService = MessageX,
             BorderColorService = new SystemBorderColorService(this),
             WindowInitializer = new WinFormsWindowInitializer(this),

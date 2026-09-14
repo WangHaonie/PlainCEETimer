@@ -1,11 +1,16 @@
 ﻿<base:AppWindow x:Class="PlainCEETimer.Countdown.Immersive.ImmersiveWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlainCEETimer.WPF.Views"
+        xmlns:vm="clr-namespace:PlainCEETimer.WPF.ViewModels"
         xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:ImmersiveViewModel}"
         Title="沉浸模式 - 高考倒计时"
         ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="CenterScreen"
         ShowInTaskbar="True" UseLayoutRounding="True">
-    <Border x:Name="Root" Background="{Binding BackBrush}">
+    <Border Background="{Binding BackBrush}">
         <TextBlock x:Name="CountdownText" Margin="12"
                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
                    TextAlignment="Center" TextWrapping="Wrap"

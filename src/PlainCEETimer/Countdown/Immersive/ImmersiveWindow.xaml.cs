@@ -18,7 +18,7 @@ public sealed partial class ImmersiveWindow : AppWindow
     protected override AppWindowStyle Params => AppWindowStyle.Special;
 
     private double PxPerDip = 1D;
-    private readonly ImmersiveWindowViewModel vm;
+    private readonly ImmersiveViewModel vm;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker ApplyStyleAction;
     private readonly double MinFontSize;
@@ -46,8 +46,8 @@ public sealed partial class ImmersiveWindow : AppWindow
         vm.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName
-                is nameof(ImmersiveWindowViewModel.Content)
-                or nameof(ImmersiveWindowViewModel.Font))
+                is nameof(ImmersiveViewModel.Content)
+                or nameof(ImmersiveViewModel.Font))
             {
                 UpdateStyle();
             }
