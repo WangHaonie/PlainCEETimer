@@ -9,7 +9,7 @@ public class CountdownManager
 {
     public static CountdownManager Instance => field ??= new();
 
-    public ICountdownService CountdownService => field ??= new DefaultCountdownService();
+    public ICountdownService CountdownService => field ??= new DefaultCountdownService() { ShouldDispose = false };
 
     public FontModel CountdownFont => _font;
 

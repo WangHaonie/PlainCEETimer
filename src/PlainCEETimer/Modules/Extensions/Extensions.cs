@@ -84,4 +84,10 @@ public static class Extensions
             _ => ColorTranslator.ToHtml(color)
         };
     }
+
+    public static ViewModelBuilder<TViewModel> CreateViewModel<TViewModel>(this IServiceProvider provider)
+        where TViewModel : class
+    {
+        return new(provider);
+    }
 }

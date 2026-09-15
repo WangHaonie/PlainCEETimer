@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.ViewModels;
@@ -22,21 +24,19 @@ public sealed class MainForm : AppForm
     protected override void OnInitializing()
     {
         Text = "高考倒计时";
-
-        vm = new(new()
-        {
-            CountdownService = CountdownManager.Instance.CountdownService,
-            DialogService = MessageX,
-            BorderColorService = new SystemBorderColorService(this),
-            WindowInitializer = new WinFormsWindowInitializer(this),
-            WindowDragService = new WinFormsWindowDragService(this),
-            WindowScreenChangeService = new WinFormsWindowScreenChangeService(this),
-            WindowBounds = new WinFormsWindowBounds(this),
-            WindowStyles = new WinFormsWindowStyles(this),
-            TrayIconLoader = new AppTrayIconLoader(),
-            ScreenService = ScreenService,
-            UnifiedFontService = new WinFormsFontService(this)
-        });
+        vm = ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>()
+            .Import<ICountdownService>((vm, s) => vm.CountdownService = s)
+            .Import(MessageX, (vm, s) => vm.DialogService = s)
+            .Import(new SystemBorderColorService(this), (vm, s) => vm.BorderColorService = s)
+            .Import(new WinFormsWindowInitializer(this), (vm, s) => vm.WindowInitializer = s)
+            .Import(new WinFormsWindowDragService(this), (vm, s) => vm.WindowDragService = s)
+            .Import(new WinFormsWindowScreenChangeService(this), (vm, s) => vm.WindowScreenChangeService = s)
+            .Import(new WinFormsWindowBounds(this), (vm, s) => vm.WindowBounds = s)
+            .Import(new WinFormsWindowStyles(this), (vm, s) => vm.WindowStyles = s)
+            .Import<ITrayIconLoader>((vm, s) => vm.TrayIconLoader = s)
+            .Import(ScreenService, (vm, s) => vm.ScreenService = s)
+            .Import(new WinFormsFontService(this), (vm, s) => vm.UnifiedFontService = s)
+            .Build();
 
         vm.PropertyChanged += OnPropertyChanged;
     }

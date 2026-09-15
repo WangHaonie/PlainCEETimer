@@ -4,13 +4,15 @@ namespace PlainCEETimer.Countdown;
 
 public interface ICountdownService : IDisposable
 {
-    event ExamSwitchedEventHandler ExamSwitched;
+    bool Enabled { get; set; }
 
-    event CountdownUpdatedEventHandler CountdownUpdated;
+    bool ShouldDispose { get; }
 
     CountdownBasicInfo CurrentInfo { get; }
 
-    bool Enabled { get; set; }
+    event ExamSwitchedEventHandler ExamSwitched;
+
+    event CountdownUpdatedEventHandler CountdownUpdated;
 
     void Start(CountdownStartInfo startInfo);
 

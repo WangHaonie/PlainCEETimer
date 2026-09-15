@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PlainCEETimer.SourceGenerators.Base;
 
-public abstract class PlainIncrementalGenerator<T> : IIncrementalGenerator
+public abstract class PlainSourceGenerator<T> : IIncrementalGenerator
 {
     public virtual void Initialize(IncrementalGeneratorInitializationContext context)
     {

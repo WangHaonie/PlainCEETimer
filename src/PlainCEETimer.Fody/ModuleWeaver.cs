@@ -24,10 +24,12 @@ public class ModuleWeaver : BaseModuleWeaver
     }
 
     private const string BaseNamespace = "PlainCEETimer.Modules.Annotations.Fody";
+    private const string SGenNamespace = "PlainCEETimer.Modules.Annotations.SourceGenerators";
 
     private static readonly AttributeInfo NoConstantsAttribute = new(BaseNamespace, nameof(NoConstantsAttribute));
     private static readonly AttributeInfo ConstantAttribute = new(BaseNamespace, nameof(ConstantAttribute));
     private static readonly AttributeInfo CompilerRemoveAttribute = new(BaseNamespace, nameof(CompilerRemoveAttribute));
+    private static readonly AttributeInfo BackingFieldAttribute = new(SGenNamespace, nameof(BackingFieldAttribute));
 
     public override bool ShouldCleanReference => true;
 
@@ -35,6 +37,7 @@ public class ModuleWeaver : BaseModuleWeaver
     {
         HandleNoConstantsAttribute();
         HandleCompilerRemoveAttribute();
+        HandleBackingFieldAttribute();
     }
 
     public override IEnumerable<string> GetAssembliesForScanning()
@@ -66,6 +69,24 @@ public class ModuleWeaver : BaseModuleWeaver
         }
 
         TryRemoveType(CompilerRemoveAttribute);
+    }
+
+    private void HandleBackingFieldAttribute()
+    {
+        foreach (var type in ModuleDefinition.GetTypes())
+        {
+            foreach (var property in type.Properties.ToList())
+            {
+                var attribute = FindAttribute(property, BackingFieldAttribute);
+
+                if (attribute != null)
+                {
+                    property.CustomAttributes.Remove(attribute);
+                }
+            }
+        }
+
+        TryRemoveType(BackingFieldAttribute);
     }
 
     private ReadOnlyCollection<TypeAndAttribute> GetTypesWithAttribute(AttributeInfo info, Predicate<TypeDefinition> isAttributeTarget)

@@ -30,6 +30,8 @@ public class DefaultCountdownService : ICountdownService
 
     public CountdownBasicInfo CurrentInfo { get; private set; }
 
+    public bool ShouldDispose { get; internal set; } = true;
+
     private int ExamIndex;
     private int LastExamIndex = -2;
     private int ExamsCount;

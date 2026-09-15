@@ -6,8 +6,8 @@ using PlainCEETimer.SourceGenerators.Models;
 
 namespace PlainCEETimer.SourceGenerators;
 
-[Generator]
-public sealed class ReflectionGenerator : PlainIncrementalGenerator<ReflectionModel>
+// [Generator]
+public sealed class ReflectionGenerator : PlainSourceGenerator<ReflectionModel>
 {
     private const string Internals = nameof(Internals);
     private const string ReflectionClassAttribute = nameof(ReflectionClassAttribute);
@@ -27,11 +27,11 @@ public sealed class ReflectionGenerator : PlainIncrementalGenerator<ReflectionMo
 
     protected override void Generate(SourceProductionContext context, ImmutableArray<ReflectionModel?> model)
     {
-        throw new NotImplementedException();
+        return;
     }
 
     private static ReflectionModel? GetModelByMethod(ref GeneratorSyntaxContext context, MethodDeclarationSyntax mds)
     {
-        throw new NotImplementedException();
+        return default;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Controls;
@@ -16,20 +18,19 @@ public sealed partial class MainWindow : AppWindow
 
     public MainWindow()
     {
-        vm = new(new()
-        {
-            CountdownService = CountdownManager.Instance.CountdownService,
-            DialogService = MessageX,
-            BorderColorService = new SystemBorderColorService(this),
-            WindowInitializer = new WPFWindowInitializer(this),
-            WindowDragService = new WPFWindowDragService(this),
-            WindowScreenChangeService = new WPFWindowScreenChangeService(this),
-            WindowBounds = new WPFWindowBounds(this),
-            WindowStyles = new WPFWindowStyles(this),
-            TrayIconLoader = new AppTrayIconLoader(),
-            ScreenService = ScreenService,
-            UnifiedFontService = new WPFFontService(this)
-        });
+        vm = ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>()
+            .Import<ICountdownService>((vm, s) => vm.CountdownService = s)
+            .Import(MessageX, (vm, s) => vm.DialogService = s)
+            .Import(new SystemBorderColorService(this), (vm, s) => vm.BorderColorService = s)
+            .Import(new WPFWindowInitializer(this), (vm, s) => vm.WindowInitializer = s)
+            .Import(new WPFWindowDragService(this), (vm, s) => vm.WindowDragService = s)
+            .Import(new WPFWindowScreenChangeService(this), (vm, s) => vm.WindowScreenChangeService = s)
+            .Import(new WPFWindowBounds(this), (vm, s) => vm.WindowBounds = s)
+            .Import(new WPFWindowStyles(this), (vm, s) => vm.WindowStyles = s)
+            .Import<ITrayIconLoader>((vm, s) => vm.TrayIconLoader = s)
+            .Import(ScreenService, (vm, s) => vm.ScreenService = s)
+            .Import(new WPFFontService(this), (vm, s) => vm.UnifiedFontService = s)
+            .Build();
 
         DataContext = vm;
         InitializeComponent();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
@@ -10,6 +11,7 @@ using PlainCEETimer.Countdown.Immersive;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Http;
@@ -30,7 +32,7 @@ using WFColor = System.Drawing.Color;
 namespace PlainCEETimer.WPF.ViewModels;
 
 [NoConstants]
-public sealed partial class MainViewModel : ObservableObject, IConfirmClose
+public sealed partial class MainViewModel : ObservableObject, ISupportInitialize, IMainServiceHub, IConfirmClose
 {
     [ObservableProperty]
     public partial Color Background { get; set; }
@@ -57,6 +59,39 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     [ObservableProperty]
     public partial DipFont GdiFont { get; private set; }
     #endregion
+
+    [BackingField(MemberNames.Countdown)]
+    public required partial ICountdownService CountdownService { get; set; }
+
+    [BackingField(MemberNames.MessageX)]
+    public required partial IDialogService DialogService { get; set; }
+
+    [BackingField(MemberNames.Initializer)]
+    public required partial IWindowInitializer WindowInitializer { get; set; }
+
+    [BackingField(MemberNames.DragService)]
+    public required partial IWindowDragService WindowDragService { get; set; }
+
+    [BackingField(MemberNames.ScreenChangeService)]
+    public required partial IWindowScreenChangeService WindowScreenChangeService { get; set; }
+
+    [BackingField(MemberNames.Bounds)]
+    public required partial IWindowBounds WindowBounds { get; set; }
+
+    [BackingField(MemberNames.Styles)]
+    public required partial IWindowStyles WindowStyles { get; set; }
+
+    [BackingField(MemberNames.TrayIcon)]
+    public required partial ITrayIconLoader TrayIconLoader { get; set; }
+
+    [BackingField(MemberNames.Screen)]
+    public required partial IScreenService ScreenService { get; set; }
+
+    [BackingField(MemberNames.FontService)]
+    public required partial IUnifiedFontService UnifiedFontService { get; set; }
+
+    [BackingField(MemberNames.WindowBorderColor)]
+    public partial IBorderColorService BorderColorService { get; set; }
 
     private int ScreenIndex;
     private int ExamIndex;
@@ -86,42 +121,24 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
     private Rect ScreenRect;
     private SystemTheme CurrentTheme;
     private CountdownPosition CountdownPos;
-    private readonly ICountdownService Countdown;
-    private readonly IDialogService MessageX;
-    private readonly IAppWindow Owner;
-    private readonly IWindowInitializer Initializer;
-    private readonly IWindowDragService DragService;
-    private readonly IWindowScreenChangeService ScreenChangeService;
-    private readonly IWindowBounds Bounds;
-    private readonly ITrayIconLoader TrayIcon;
-    private readonly IWindowStyles Styles;
-    private readonly IScreenService Screen;
-    private readonly IUnifiedFontService FontService;
-    private readonly IBorderColorService BorderColorService;
+    private IAppWindow Owner;
     private readonly App app = App.Current;
 
     private const int PptsvcThreshold = 1;
 
-    public MainViewModel(MainServiceHub services)
+    public void BeginInit()
     {
-        Countdown = services.CountdownService;
-        MessageX = services.DialogService;
-        Owner = MessageX.Owner;
-        Initializer = services.WindowInitializer;
-        DragService = services.WindowDragService;
-        ScreenChangeService = services.WindowScreenChangeService;
-        Bounds = services.WindowBounds;
-        TrayIcon = services.TrayIconLoader;
-        Styles = services.WindowStyles;
-        Screen = services.ScreenService;
-        FontService = services.UnifiedFontService;
-        BorderColorService = services.BorderColorService;
+        return;
+    }
+
+    public void EndInit()
+    {
         Initialize();
     }
 
     public void Cleanup()
     {
-        Countdown.Destroy();
+        if (Countdown.ShouldDispose) Countdown.Destroy();
         ScreenChangeService.Destroy();
     }
 
@@ -144,6 +161,8 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void Initialize()
     {
+        Owner = MessageX.Owner;
+
         Initializer.Initialize += (_, _) =>
         {
             RefreshSettings();
@@ -701,7 +720,7 @@ public sealed partial class MainViewModel : ObservableObject, IConfirmClose
 
     private void SetBorderColor(bool enabled, WFColor color)
     {
-        if (BorderColorService?.SetBorderColor(enabled, color) != true)
+        if (WindowBorderColor?.SetBorderColor(enabled, color) != true)
         {
             BorderColor = (BorderColorObj.Enabled && enabled ? color : Colors.WindowBorder).ToColor();
         }
