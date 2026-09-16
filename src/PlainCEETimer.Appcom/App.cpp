@@ -12,13 +12,13 @@ int main()
     PathCombine(exe, dir, EXE);
 
     STARTUPINFO si = { sizeof(si) };
-    PROCESS_INFORMATION pi = {};
     GetStartupInfo(&si);
+    PROCESS_INFORMATION pi;
 
     if (CreateProcess(exe, GetCommandLine(), nullptr, nullptr, TRUE, 0, nullptr, nullptr, &si, &pi))
     {
         WaitForSingleObject(pi.hProcess, INFINITE);
-        DWORD exitCode = 0;
+        DWORD exitCode;
         GetExitCodeProcess(pi.hProcess, &exitCode);
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
