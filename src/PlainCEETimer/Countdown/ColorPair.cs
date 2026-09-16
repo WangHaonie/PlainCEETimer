@@ -1,18 +1,23 @@
-﻿using System;
+﻿#pragma warning disable IDE0290
+
+using System;
 using System.Drawing;
 using Newtonsoft.Json;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Countdown;
 
 [JsonConverter(typeof(ColorPairConverter))]
-public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
+public partial struct ColorPair : IEquatable<ColorPair>
 {
-    public readonly Color Fore => fore;
+    [BackingField(MemberNames.fore)]
+    public readonly partial Color Fore { get; }
 
-    public readonly Color Back => back;
+    [BackingField(MemberNames.back)]
+    public readonly partial Color Back { get; }
 
     public bool? Readable
     {
@@ -37,9 +42,15 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
         }
     }
 
+    public ColorPair(Color foreColor, Color backColor)
+    {
+        fore = foreColor;
+        back = backColor;
+    }
+
     public readonly bool Equals(ColorPair other)
     {
-        return Fore == other.Fore && Back == other.Back;
+        return fore == other.fore && back == other.back;
     }
 
     public readonly override bool Equals(object obj)
@@ -55,8 +66,8 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
     public readonly override int GetHashCode()
     {
         return new HashCode()
-            .Add(Fore)
-            .Add(Back)
+            .Add(fore)
+            .Add(back)
             .Combine();
     }
 
@@ -90,3 +101,5 @@ public struct ColorPair(Color fore, Color back) : IEquatable<ColorPair>
         return 0.2126 * R + 0.7152 * G + 0.0722 * B;
     }
 }
+
+#pragma warning restore IDE0290

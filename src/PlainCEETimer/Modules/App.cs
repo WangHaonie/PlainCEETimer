@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Update;
@@ -17,7 +18,7 @@ using PlainCEETimer.UI;
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
-internal class App
+internal partial class App
 {
 #if DEBUG
     private static void DebugTest()
@@ -32,17 +33,21 @@ internal class App
 
     public string ConfigFilePath => field ??= $"{ExecutableDir}{AppConfigName}";
 
-    public bool IsExiting => m_IsExiting;
+    public Version VersionObject => field ??= Version.Parse(AppInfo.Version);
 
     public Icon AppIcon => appIcon ??= HICON.FromFile(ExecutablePath).ToIcon();
 
-    public AppConfig AppConfig { get; private set; }
+    [BackingField("isExiting")]
+    public partial bool IsExiting { get; }
 
-    public Version VersionObject => field ??= Version.Parse(AppInfo.Version);
+    [BackingField("appConfig")]
+    public partial AppConfig AppConfig { get; }
 
-    public IAppWindow MainWindow => mainWindow;
+    [BackingField("mainWindow")]
+    public partial IAppWindow MainWindow { get; }
 
-    public static App Current => appInstance;
+    [BackingField("appInstance")]
+    public static partial App Current { get; }
 
     internal event Action AppExit;
 
@@ -65,12 +70,9 @@ internal class App
     public const string AppConfigName = $"{AppNameEng}.config";
     private const string UEFilePrefix = "UnhandledException_";
 
-    private bool m_IsExiting;
     private string AllArgs;
     private Icon appIcon;
     private Mutex MainMutex;
-    private IAppWindow mainWindow;
-    private static App appInstance;
     private readonly bool IsMainProcess;
     private readonly string ExecutableName;
     private readonly string PipeName;
@@ -125,35 +127,33 @@ internal class App
     {
         lock (syncLock2)
         {
-            if (m_IsExiting)
+            if (!isExiting)
             {
-                return;
-            }
+                isExiting = true;
+                AppExit?.Invoke();
+                appIcon.Destroy();
 
-            m_IsExiting = true;
-            AppExit?.Invoke();
-            appIcon.Destroy();
-
-            if (MainMutex != null)
-            {
-                if (IsMainProcess)
+                if (MainMutex != null)
                 {
-                    MainMutex.ReleaseMutex();
+                    if (IsMainProcess)
+                    {
+                        MainMutex.ReleaseMutex();
+                    }
+
+                    MainMutex.Destroy();
+                    MainMutex = null;
                 }
 
-                MainMutex.Destroy();
-                MainMutex = null;
-            }
+                if (restart)
+                {
+                    ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+                }
 
-            if (restart)
-            {
-                ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
+                750.AsDelay(_ => Win32.ExitProcess(0));
+                WindowManager.TryExitUI();
+                Environment.Exit(0);
+                appInstance = null;
             }
-
-            750.AsDelay(_ => Win32.ExitProcess(0));
-            WindowManager.TryExitUI();
-            Environment.Exit(0);
-            appInstance = null;
         }
     }
 
@@ -321,7 +321,7 @@ internal class App
     private void InternalInit()
     {
         AppMessageFilter.Initialize();
-        AppConfig = ConfigValidator.ReadConfig();
+        appConfig = ConfigValidator.ReadConfig();
         DpiHelperEx.Initialize();
         ThemeManager.Initialize();
         Application.EnableVisualStyles();

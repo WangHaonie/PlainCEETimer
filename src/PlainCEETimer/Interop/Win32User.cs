@@ -23,18 +23,19 @@ internal static class Win32User
 
     */
 
-    public static string ProcessOwner => processOwner;
-    public static string LogonUser => logonUser;
-    public static bool NotImpersonal { get; }
+    public static string ProcessOwner { get; }
 
-    private static readonly string processOwner;
-    private static readonly string logonUser;
+    public static string LogonUser { get; }
+
+    public static bool NotImpersonal { get; }
 
     static Win32User()
     {
-        processOwner = WindowsIdentity.GetCurrent().Name;
-        logonUser = PnGetLogonUserName();
-        NotImpersonal = processOwner.Equals(logonUser, StringComparison.OrdinalIgnoreCase);
+        var po = WindowsIdentity.GetCurrent().Name;
+        var lu = PnGetLogonUserName();
+        ProcessOwner = po;
+        LogonUser = lu;
+        NotImpersonal = po.Equals(lu, StringComparison.OrdinalIgnoreCase);
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#52", CharSet = CharSet.Unicode)]

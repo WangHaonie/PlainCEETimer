@@ -17,4 +17,9 @@ public static class MemberNames
     public const string Screen = nameof(Screen);
     public const string FontService = nameof(FontService);
     public const string WindowBorderColor = nameof(WindowBorderColor);
+
+    public const string columnMaxWidth = nameof(columnMaxWidth);
+
+    public const string fore = nameof(fore);
+    public const string back = nameof(back);
 }

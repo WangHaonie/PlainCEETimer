@@ -1,39 +1,36 @@
 ﻿using System;
 using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Configuration;
 
 namespace PlainCEETimer.Modules;
 
 [NoConstants]
-internal static class AppParams
+internal static partial class AppParams
 {
-    public static bool DebugMode
-    {
-        get => m_DebugMode;
-        set => m_DebugMode = value;
-    }
+    [BackingField("m_DebugMode")]
+    public static partial bool DebugMode { get; }
 
-    public static bool DisableWFPMv2 => m_DebugMode && m_DisableWFPMv2;
+    [BackingField("m_DisableWFPMv2")]
+    public static partial bool DisableWFPMv2 { get; }
 
-    public static bool EnableCommDlgPMv2 => m_DebugMode && m_EnableCommDlgPMv2;
+    [BackingField("m_EnableCommDlgPMv2")]
+    public static partial bool EnableCommDlgPMv2 { get; }
 
-    public static bool UseClassicTSP => m_DebugMode && m_UseClassicTSP;
+    [BackingField("m_UseClassicTSP")]
+    public static partial bool UseClassicTSP { get; }
 
-    public static bool MainBackdropAcrylic => m_DebugMode && m_MainBackdropAcrylic;
-    public static bool ImmersiveCountdown => m_DebugMode && m_ImmersiveCountdown;
+    [BackingField("m_MainBackdropAcrylic")]
+    public static partial bool MainBackdropAcrylic { get; }
 
-    public static string TSFormat => m_DebugMode ? m_TSFormat : null;
+    [BackingField("m_ImmersiveCountdown")]
+    public static partial bool ImmersiveCountdown { get; }
 
-    public static TimeSpan TSMax => m_DebugMode && !m_UseClassicTSP ? m_TSMax : ConfigValidator.MaxTick;
+    [BackingField("m_TSFormat")]
+    public static partial string TSFormat { get; }
 
-    private static bool m_DebugMode;
-    private static bool m_DisableWFPMv2;
-    private static bool m_EnableCommDlgPMv2;
-    private static bool m_UseClassicTSP;
-    private static bool m_MainBackdropAcrylic;
-    private static bool m_ImmersiveCountdown;
-    private static string m_TSFormat;
-    private static TimeSpan m_TSMax;
+    [BackingField("m_TSMax")]
+    public static partial TimeSpan TSMax { get; }
 
     public const string DisableWFPMv2_Key = "BBFB";
     public const string EnableCommDlgPMv2_Key = "ACB1";
@@ -49,14 +46,15 @@ internal static class AppParams
 
         if (info != null)
         {
-            m_DebugMode = info.Debug;
-            m_DisableWFPMv2 = info.DisableWFPMv2;
-            m_EnableCommDlgPMv2 = info.EnableCommDlgPMv2;
-            m_UseClassicTSP = info.UseClassicTSP;
-            m_MainBackdropAcrylic = info.MainBackdropAcrylic && SystemVersion.IsWindows11;
-            m_ImmersiveCountdown = info.ImmersiveCountdown;
-            m_TSFormat = info.TSFormat;
-            m_TSMax = info.TSMax;
+            var dbg = info.Debug;
+            m_DebugMode = dbg;
+            m_DisableWFPMv2 = dbg && info.DisableWFPMv2;
+            m_EnableCommDlgPMv2 = dbg && info.EnableCommDlgPMv2;
+            m_UseClassicTSP = dbg && info.UseClassicTSP;
+            m_MainBackdropAcrylic = dbg && info.MainBackdropAcrylic && SystemVersion.IsWindows11;
+            m_ImmersiveCountdown = dbg && info.ImmersiveCountdown;
+            m_TSFormat = dbg ? info.TSFormat : null;
+            m_TSMax = dbg && !m_UseClassicTSP ? info.TSMax : ConfigValidator.MaxTick;
         }
     }
 }

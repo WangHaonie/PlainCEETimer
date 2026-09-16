@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.Modules.Linq;
 
@@ -18,7 +19,7 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUti
 
 */
 
-public sealed class PlainListView : ListView, IThemeAware
+public sealed partial class PlainListView : ListView, IThemeAware
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
@@ -65,13 +66,9 @@ public sealed class PlainListView : ListView, IThemeAware
         }
     }
 
-    public int ColumnMaxWidth
-    {
-        get => columnMaxWidth;
-        set => columnMaxWidth = value;
-    }
+    [BackingField(MemberNames.columnMaxWidth)]
+    public partial int ColumnMaxWidth { get; set; }
 
-    private int columnMaxWidth;
     private bool UseDark;
     private bool _SuppressFuckingAutoCheck;
     private readonly bool isW11 = SystemVersion.IsWindows11;
