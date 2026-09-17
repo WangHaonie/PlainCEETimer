@@ -51,7 +51,6 @@
   </PropertyGroup>
   <ItemGroup>
 	<WeaverFiles Include="$(OutputPath)PlainCEETimer.Fody.dll" />
-	<ProjectReference Include="..\PlainCEETimer.SourceGenerators\PlainCEETimer.SourceGenerators.csproj"
-        OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	<ProjectReference Include="..\PlainCEETimer.SourceGenerators\PlainCEETimer.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

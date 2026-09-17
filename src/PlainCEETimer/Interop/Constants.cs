@@ -238,3 +238,16 @@ public static class NInt
     public const nint Zero = 0;
     public const nint One = 1;
 }
+
+[NoConstants]
+[CompilerRemove]
+public static class PSCMF
+{
+    public const int STD_IN = 0x000000;
+    public const int STD_OUT = 0x100000;
+
+    public const int FLAGS_DISABLE = 0x000000;
+    public const int FLAGS_ENABLE = 0x010000;
+
+    public const int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x000004;
+}

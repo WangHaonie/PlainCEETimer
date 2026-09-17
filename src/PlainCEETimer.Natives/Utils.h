@@ -29,6 +29,8 @@
 
 #define INITFUNC(p, mn, pn)         (p || (!p && LoadFunction(&p, mn, pn)))
 
+#define IS_HANDLE_VALID(h)          (h && h != INVALID_HANDLE_VALUE)
+
 inline void DDump(const wchar_t* format, ...)
 {
 #ifdef _DEBUG

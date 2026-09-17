@@ -7,6 +7,7 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using PlainCEETimer.Countdown.Console;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Annotations.SourceGenerators;
@@ -21,7 +22,7 @@ namespace PlainCEETimer.Modules;
 internal partial class App
 {
 #if DEBUG
-    private static void DebugTest()
+    private unsafe static void DebugTest()
     {
 
     }
@@ -211,6 +212,9 @@ internal partial class App
                         case "ac":
                             UacHelper.PrintReport();
                             break;
+                        case "cli":
+                            new ConsoleCountdown().Launch();
+                            break;
                         case "fr":
                             Updater.Instance.InteractiveDownload(args.GetFirst(), args.Get("src"));
                             break;
@@ -373,6 +377,8 @@ internal partial class App
                 .WriteLine("\t显示此帮助信息.")
             .WriteLine("/ac", ConsoleColor.White)
                 .WriteLine("\t检测当前用户是否具有管理员权限.")
+            .WriteLine("/cli", ConsoleColor.White)
+                .WriteLine("\t在终端中运行倒计时.")
             .WriteLine("/fr [<版本号>] [/src <UpdateSource>]", ConsoleColor.White)
                 .WriteLine("\t强制下载并安装指定的版本, 留空则当前版本, 推荐在特殊情况下使用, 不支持老版本.")
                 .WriteLine($"\t可用的更新源: [ {nameof(UpdateSource.GiteeStable)},0 | {nameof(UpdateSource.GitHubStable)},1 | {nameof(UpdateSource.GiteeCI)},2 | {nameof(UpdateSource.GitHubCI)},3 ]")

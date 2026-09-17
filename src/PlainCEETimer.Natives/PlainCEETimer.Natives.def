@@ -74,3 +74,8 @@ EXPORTS
     PlainTimeSpanPick_FreeMemory @61 NONAME
     PlainTimeSpanPick_SuggestValue @62 NONAME
     
+    PnGetConsoleColor @63 NONAME
+    PnSetConsoleMode @64 NONAME
+    PnBuildAnsiColorString @65 NONAME
+    PnConsoleGetCursor @66 NONAME
+    PnConsoleClear @67 NONAME
