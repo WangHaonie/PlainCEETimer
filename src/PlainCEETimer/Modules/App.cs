@@ -230,7 +230,7 @@ internal partial class App
                             DeleteExtraFiles();
                             break;
                         default:
-                            ConsoleHelper.Instance
+                            PlainConsole.Instance
                                 .WriteLine("无法解析的命令行参数:", ConsoleColor.White)
                                 .WriteLine(AllArgs, ConsoleColor.Red)
                                 .Timeout(3);
@@ -249,7 +249,7 @@ internal partial class App
 
         if (argc != 0 && !TryRunRedirector(args))
         {
-            ConsoleHelper.Instance
+            PlainConsole.Instance
                 .WriteLine("请先退出已打开的实例再使用命令行功能。", ConsoleColor.Red)
                 .Timeout(3);
         }
@@ -365,7 +365,7 @@ internal partial class App
 
     private static void PrintHelp()
     {
-        ConsoleHelper.Instance
+        PlainConsole.Instance
             .WriteLine(AppTitle, ConsoleColor.White)
             .WriteLine(AppName, ConsoleColor.White)
             .WriteLine()
@@ -402,7 +402,7 @@ internal partial class App
 #if DEBUG
     internal static void HandleFirstChanceException(Exception ex)
     {
-        ConsoleHelper.Instance.Color(ConsoleColor.Yellow)
+        PlainConsole.Instance.Color(ConsoleColor.Yellow)
             .Write(DateTime.Now.LogFormat()).Write(" [").Write(nameof(AppDomain.CurrentDomain.FirstChanceException)).Write("] ").WriteLine()
             .WriteLine(ex.ToString()).ResetColor();
     }

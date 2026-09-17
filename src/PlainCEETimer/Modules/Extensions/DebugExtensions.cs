@@ -44,7 +44,7 @@ internal static class DebugExtensions
                     .Select(f => new FieldAndOffset(f, OffsetOf(type, f.Name)))
                     .OrderBy(x => x.Offset).ToList();
 
-                var c = ConsoleHelper.Instance;
+                var c = PlainConsole.Instance;
                 c.Write("----- Memory Layout of ").Write(type.FullName, ConsoleColor.DarkGreen).Write(" (").Write(SizeOf(type)).WriteLine(" bytes) -----");
 
                 foreach (var item in data)
@@ -127,7 +127,7 @@ internal static class DebugExtensions
                 goto ret;
             }
 
-            var tmp = ConsoleHelper.Instance
+            var tmp = PlainConsole.Instance
                 .Write("[").Write(DateTime.Now.LogFormat()).Write("] ");
 
             if (dumpExp)

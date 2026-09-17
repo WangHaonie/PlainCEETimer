@@ -6,30 +6,30 @@ using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Countdown.Console;
 
-public sealed class ConsoleCountdown
+public class ConsoleCountdown
 {
-    private readonly ICountdownService Countdown = CountdownManager.Instance.CountdownService;
-    private readonly ConsoleHelper Console = ConsoleHelper.Instance;
-    private readonly ManualResetEventSlim ExitEvent = new(false);
     private readonly object SyncObject = new();
-
-    private bool IsRendering;
+    private readonly ICountdownService Countdown = CountdownManager.Instance.CountdownService;
+    private readonly ManualResetEventSlim ExitEvent = new(false);
+    private readonly PlainConsole Console = PlainConsole.Instance;
 
     public void Launch()
     {
-        Countdown.CountdownUpdated += CountdownUpdated;
-        System.Console.CancelKeyPress += OnCancelKeyPress;
+        System.Console.CancelKeyPress += Console_CancelKeyPress;
+        Countdown.CountdownUpdated += Countdown_CountdownUpdated;
+        Countdown.ExamSwitched += Countdown_ExamSwitched;
 
         try
         {
-            Console.Anchor();
+            Console.Title(App.AppName).Anchor();
             StartCountdown();
             ExitEvent.Wait();
         }
         finally
         {
-            System.Console.CancelKeyPress -= OnCancelKeyPress;
-            Countdown.CountdownUpdated -= CountdownUpdated;
+            System.Console.CancelKeyPress -= Console_CancelKeyPress;
+            Countdown.CountdownUpdated -= Countdown_CountdownUpdated;
+            Countdown.ExamSwitched -= Countdown_ExamSwitched;
             Console.AnchorEnd().ResetColor().WriteLine();
             ExitEvent.Dispose();
         }
@@ -37,44 +37,43 @@ public sealed class ConsoleCountdown
 
     private void StartCountdown()
     {
-        var config = App.Current.AppConfig;
-        var general = config.General;
-        var display = config.Display;
-        var exams = config.Exams.ArrayWhere(e => !e.Excluded).ArrayOrder();
+        var a = App.Current.AppConfig;
+        var g = a.General;
+        var d = a.Display;
+        var e = a.Exams.ArrayWhere(e => !e.Excluded).ArrayOrder();
 
         Countdown.Start(new()
         {
-            AutoSwitchInterval = ConfigValidator.GetAutoSwitchInterval(general.Interval),
-            ExamIndex = config.Exam,
-            GlobalRules = config.GlobalRules,
-            AutoSwitch = general.AutoSwitch,
-            Mode = display.Mode,
-            Format = display.Format,
-            Exams = exams,
-            CustomRules = config.CustomRules,
+            AutoSwitchInterval = ConfigValidator.GetAutoSwitchInterval(g.Interval),
+            ExamIndex = a.Exam,
+            GlobalRules = a.GlobalRules,
+            AutoSwitch = g.AutoSwitch,
+            Mode = d.Mode,
+            Format = d.Format,
+            Exams = e,
+            CustomRules = a.CustomRules,
             DefaultRules = DefaultValues.GlobalDefaultRules,
             DefaultColor = DefaultValues.GlobalDefaultColor
         });
     }
 
-    private void CountdownUpdated(object sender, CountdownBasicInfo info)
-    {
-        lock (SyncObject)
-        {
-            if (!IsRendering)
-            {
-                IsRendering = true;
-                Console.Clear()
-                    .Color(info.ForeColor, info.BackColor)
-                    .Write(info.Content);
-                IsRendering = false;
-            }
-        }
-    }
-
-    private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+    private void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
     {
         e.Cancel = true;
         ExitEvent.Set();
+    }
+
+    private void Countdown_CountdownUpdated(object sender, CountdownBasicInfo e)
+    {
+        lock (SyncObject)
+        {
+            Console.ResetColor().Clear()
+                .Color(e.ForeColor, e.BackColor).Write(e.Content);
+        }
+    }
+
+    private void Countdown_ExamSwitched(object sender, ExamSwitchedEventArgs e)
+    {
+        ConfigValidator.DemandConfig();
     }
 }

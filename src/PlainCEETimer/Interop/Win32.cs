@@ -32,6 +32,9 @@ internal unsafe static class Win32
     [DllImport(App.NativesDll, EntryPoint = "#67")]
     public static extern bool PnConsoleClear(IntPtr hConsoleHandle, uint coFrom, uint coTo);
 
+    [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
+    public static extern bool SetConsoleTitle(string lpConsoleTitle);
+
     [DllImport(App.Kernel32Dll)]
     public static extern ulong GetTickCount64();
 
@@ -50,12 +53,6 @@ internal unsafe static class Win32
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern bool SetThreadPreferredUILanguages(int dwFlags, PCZZWSTR pwszLanguagesBuffer, IntPtr pulNumLanguages);
 
-    [DllImport(App.User32Dll)]
-    public static extern IntPtr SetWinEventHook(int eventMin, int eventMax, IntPtr hmodWinEventProc, WINEVENTPROC pfnWinEventProc, int idProcess, int idThread, int dwFlags);
-
-    [DllImport(App.User32Dll)]
-    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
-
     [DllImport(App.Kernel32Dll, CharSet = CharSet.Unicode)]
     public static extern int GetShortPathName(char* lpszLongPath, char* lpszShortPath, int cchBuffer);
 
@@ -64,4 +61,10 @@ internal unsafe static class Win32
 
     [DllImport(App.ShlwapiDll, CharSet = CharSet.Unicode)]
     public static extern bool PathCompactPathEx(char* pszOut, string pszSrc, int cchMax, int dwFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern IntPtr SetWinEventHook(int eventMin, int eventMax, IntPtr hmodWinEventProc, WINEVENTPROC pfnWinEventProc, int idProcess, int idThread, int dwFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 }

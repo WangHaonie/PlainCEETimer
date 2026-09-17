@@ -41,7 +41,7 @@ public static class UacHelper
         var ard = GetUserAdminDesc(false, out var ar);
         var ardL = GetUserAdminDesc(true, out var arL);
 
-        ConsoleHelper.Instance
+        PlainConsole.Instance
             .WriteLine("\t======== 检测结果 ========")
             .WriteLine()
             .WriteLine("当前系统", ConsoleColor.Cyan)

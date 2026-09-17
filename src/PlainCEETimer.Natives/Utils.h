@@ -42,10 +42,10 @@ inline void DDump(const wchar_t* format, ...)
     LPWSTR current = nullptr;
     size_t remain = 0;
 
-    if (SUCCEEDED(StringCchVPrintfExW(buffer, count - 1, &current, &remain, STRSAFE_DEFAULT, format, args)))
+    if (SUCCEEDED(StringCchVPrintfEx(buffer, count - 1, &current, &remain, STRSAFE_DEFAULT, format, args)))
     {
-        StringCchCopyExW(current, remain, L"\n", nullptr, nullptr, STRSAFE_DEFAULT);
-        OutputDebugStringW(buffer);
+        StringCchCopyEx(current, remain, L"\n", nullptr, nullptr, STRSAFE_DEFAULT);
+        OutputDebugString(buffer);
     }
 
     va_end(args);

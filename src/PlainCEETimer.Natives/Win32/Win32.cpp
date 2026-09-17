@@ -193,7 +193,7 @@ BOOL NATIVESAPI PnBuildAnsiColorString(LPWSTR lpBuffer, DWORD dwCchBuffer, LPDWO
 
         if (SUCCEEDED(hr))
         {
-            *lpData = dwCchBuffer - remain;
+            *lpData = dwCchBuffer - CastS(DWORD, remain);
             return TRUE;
         }
     }

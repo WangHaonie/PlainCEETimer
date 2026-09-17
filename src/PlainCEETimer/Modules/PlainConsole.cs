@@ -7,9 +7,9 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
-public class ConsoleHelper
+public class PlainConsole
 {
-    public static ConsoleHelper Instance { get; } = new();
+    public static PlainConsole Instance { get; } = new();
 
     private ConsoleColorString concolor;
     private bool RecordCursor;
@@ -22,7 +22,7 @@ public class ConsoleHelper
     private static readonly IntPtr hOut;
     private static readonly IntPtr hErr;
 
-    static ConsoleHelper()
+    static PlainConsole()
     {
         Win32.PnAllocConsole(SystemVersion.BeforeNT10, out var phStdIn, out var phStdOut, out var phStdErr);
         EnsureConsole(phStdIn, phStdOut, phStdErr);
@@ -30,7 +30,17 @@ public class ConsoleHelper
         _SupportAnsiColor = Win32.PnSetConsoleMode(phStdOut, PSCMF.STD_OUT | PSCMF.FLAGS_ENABLE | PSCMF.ENABLE_VIRTUAL_TERMINAL_PROCESSING);
     }
 
-    public ConsoleHelper Write(string s)
+    public PlainConsole Title(string title)
+    {
+        if (!string.IsNullOrEmpty(title))
+        {
+            Win32.SetConsoleTitle(title);
+        }
+
+        return this;
+    }
+
+    public PlainConsole Write(string s)
     {
         lock (syncLock)
         {
@@ -40,7 +50,7 @@ public class ConsoleHelper
         }
     }
 
-    public ConsoleHelper Write(string s, ConsoleColor color)
+    public PlainConsole Write(string s, ConsoleColor color)
     {
         var tmp = Console.ForegroundColor;
         Console.ForegroundColor = color;
@@ -49,51 +59,51 @@ public class ConsoleHelper
         return this;
     }
 
-    public ConsoleHelper WriteLine()
+    public PlainConsole WriteLine()
     {
         return Write("\r\n");
     }
 
-    public ConsoleHelper WriteLine(string s)
+    public PlainConsole WriteLine(string s)
     {
         Write(s);
         return WriteLine();
     }
 
-    public ConsoleHelper WriteLine(string s, ConsoleColor color)
+    public PlainConsole WriteLine(string s, ConsoleColor color)
     {
         Write(s, color);
         return WriteLine();
     }
 
-    public ConsoleHelper Write<T>(T obj)
+    public PlainConsole Write<T>(T obj)
     {
         return Write(obj.ToString());
     }
 
-    public ConsoleHelper Write<T>(T obj, ConsoleColor color)
+    public PlainConsole Write<T>(T obj, ConsoleColor color)
     {
         return Write(obj.ToString(), color);
     }
 
-    public ConsoleHelper WriteLine<T>(T obj, ConsoleColor color)
+    public PlainConsole WriteLine<T>(T obj, ConsoleColor color)
     {
         return WriteLine(obj.ToString(), color);
     }
 
-    public ConsoleHelper Color(ConsoleColor color)
+    public PlainConsole Color(ConsoleColor color)
     {
         Console.ForegroundColor = color;
         return this;
     }
 
-    public ConsoleHelper Color(ConsoleColor fore, ConsoleColor back)
+    public PlainConsole Color(ConsoleColor fore, ConsoleColor back)
     {
         Console.BackgroundColor = back;
         return Color(fore);
     }
 
-    public ConsoleHelper Color(Color fore, Color back)
+    public PlainConsole Color(Color fore, Color back)
     {
         if (_SupportAnsiColor)
         {
@@ -112,33 +122,33 @@ public class ConsoleHelper
         return this;
     }
 
-    public ConsoleHelper ResetColor()
+    public PlainConsole ResetColor()
     {
         if (_SupportAnsiColor) Write(ConsoleColorString.Reset);
         Console.ResetColor();
         return this;
     }
 
-    public ConsoleHelper Timeout(int seconds)
+    public PlainConsole Timeout(int seconds)
     {
         CStd.system($"timeout {seconds} >nul");
         return this;
     }
 
-    public ConsoleHelper Anchor()
+    public PlainConsole Anchor()
     {
         RecordCursor = true;
         CursorPosA = Win32.PnConsoleGetCursor(hOut);
         return this;
     }
 
-    public ConsoleHelper AnchorEnd()
+    public PlainConsole AnchorEnd()
     {
         RecordCursor = false;
         return this;
     }
 
-    public ConsoleHelper Clear()
+    public PlainConsole Clear()
     {
         if (RecordCursor)
         {
@@ -155,7 +165,7 @@ public class ConsoleHelper
         Console.SetError(new StreamWriter(new FileStream(new SafeFileHandle(hErr, false), FileAccess.Write), Console.OutputEncoding) { AutoFlush = true });
     }
 
-    ~ConsoleHelper()
+    ~PlainConsole()
     {
         concolor.Destroy();
     }
