@@ -10,6 +10,7 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
@@ -22,7 +23,7 @@ using WFSize = System.Drawing.Size;
 namespace PlainCEETimer.WPF.Controls;
 
 [NoConstants]
-public class AppWindow : Window, IAppWindow
+public partial class AppWindow : Window, IAppWindow
 {
     private sealed class AppNativeWindow : NativeWindow
     {
@@ -83,6 +84,9 @@ public class AppWindow : Window, IAppWindow
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
 
+    [BackingField("m_DpiScale")]
+    protected partial DpiScale DpiScale { get; }
+
     protected WindowManager WindowManager { get; } = WindowManager.Current;
 
     public static readonly DependencyProperty SuggestedMaxWidthProperty =
@@ -91,8 +95,6 @@ public class AppWindow : Window, IAppWindow
 
     private bool IsClosed;
     private bool IsClosing;
-    private double DpiScaleX;
-    private double DpiScaleY;
     private IAppWindow _owner;
     private ThemeHelper themeHelper;
     private AppNativeWindow window;
@@ -224,12 +226,13 @@ public class AppWindow : Window, IAppWindow
         base.OnSourceInitialized(e);
     }
 
-    protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+    protected sealed override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
     {
         UpdateDpiScale(newDpi);
         RefreshSuggestedMaxWidth();
         base.OnDpiChanged(oldDpi, newDpi);
         DpiHelperEx.GlobalUpdateDeviceDpi();
+        OnDpiChanged();
     }
 
     protected sealed override void OnClosed(EventArgs e)
@@ -241,6 +244,11 @@ public class AppWindow : Window, IAppWindow
     }
 
     protected virtual void OnLoaded(RoutedEventArgs e)
+    {
+        return;
+    }
+
+    protected virtual void OnDpiChanged()
     {
         return;
     }
@@ -310,13 +318,13 @@ public class AppWindow : Window, IAppWindow
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal protected double Px2DipX(int px)
     {
-        return px / DpiScaleX;
+        return px / m_DpiScale.DpiScaleX;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal protected double Px2DipY(int px)
     {
-        return px / DpiScaleY;
+        return px / m_DpiScale.DpiScaleY;
     }
 
     internal protected Point Px2Dip(WFPoint p)
@@ -342,13 +350,13 @@ public class AppWindow : Window, IAppWindow
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal protected int Dip2PxX(double dip)
     {
-        return (int)(dip * DpiScaleX);
+        return (int)(dip * m_DpiScale.DpiScaleX);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal protected int Dip2PxY(double dip)
     {
-        return (int)(dip * DpiScaleY);
+        return (int)(dip * m_DpiScale.DpiScaleY);
     }
 
     protected WFRectagle GetCurrentScreenRect()
@@ -467,8 +475,7 @@ public class AppWindow : Window, IAppWindow
 
     private void UpdateDpiScale(DpiScale dpiScale)
     {
-        DpiScaleX = dpiScale.DpiScaleX;
-        DpiScaleY = dpiScale.DpiScaleY;
+        m_DpiScale = dpiScale;
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

@@ -17,25 +17,41 @@ public sealed partial class ImmersiveWindow : AppWindow
 {
     protected override AppWindowStyle Params => AppWindowStyle.Special;
 
+    private double ContentWidth => Content is FrameworkElement host ? Math.Max(0D, ActualWidth - host.ActualWidth) : 0D;
+
+    private double ContentHeight => Content is FrameworkElement host ? Math.Max(0D, ActualHeight - host.ActualHeight) : 0D;
+
+    private Size ContentArea
+    {
+        get
+        {
+            var host = Content as FrameworkElement;
+            var width = host?.ActualWidth ?? ActualWidth;
+            var height = host?.ActualHeight ?? ActualHeight;
+            return new(Math.Max(1D, width - ContentPadding), Math.Max(1D, height - ContentPadding));
+        }
+    }
+
     private double PxPerDip = 1D;
     private readonly ImmersiveViewModel vm;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker ApplyStyleAction;
     private readonly double MinFontSize;
     private readonly double MaxFontSize;
+    private static readonly Duration AnimateDuration;
 
     private const double ContentPadding = 24D;
     private const double MinWindowWidth = 160D;
     private const double MinWindowHeight = 80D;
     private const int LayoutDelayMs = 300;
     private const double FontAnimThreshold = 0.5;
-    private static readonly Duration AnimateDuration;
+    private const double TitleBarChromeWidth = 200D;
+    private const bool FitMinWidthToTitleBar = true;
 
     public ImmersiveWindow(ICountdownService countdown)
     {
         vm = new(countdown);
         DataContext = vm;
-        MinWidth = MinWindowWidth;
         MinHeight = MinWindowHeight;
         InitializeComponent();
         MinFontSize = ((double)ConfigValidator.MinFontSize).Pt2Dip();
@@ -61,8 +77,13 @@ public sealed partial class ImmersiveWindow : AppWindow
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
-        var source = PresentationSource.FromVisual(this);
-        if (source != null) PxPerDip = source.CompositionTarget.TransformToDevice.M11;
+        UpdateMetrics();
+        UpdateStyle();
+    }
+
+    protected override void OnDpiChanged()
+    {
+        UpdateMetrics();
         UpdateStyle();
     }
 
@@ -87,89 +108,62 @@ public sealed partial class ImmersiveWindow : AppWindow
         }
     }
 
+    private double MeasureTitleBarMinWidth()
+    {
+        var ft = new FormattedText(Title, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+            new(FontFamily, FontStyle, FontWeight, FontStretch),
+            FontSize, Brushes.Black, PxPerDip);
+
+        return Math.Max(MinWindowWidth, ft.Width + TitleBarChromeWidth);
+    }
+
+    private void UpdateMetrics()
+    {
+        PxPerDip = DpiScale.PixelsPerDip;
+        MinWidth = FitMinWidthToTitleBar ? MeasureTitleBarMinWidth() : MinWindowWidth;
+    }
+
     private void ApplyStyle()
     {
         var text = vm.Content;
 
         if (!string.IsNullOrEmpty(text))
         {
-            var cx = Math.Max(1D, ActualWidth - ContentPadding);
-            var cy = Math.Max(1D, ActualHeight - ContentPadding);
-            var size = FindMaxNoWrapFontSize(text, cx);
+            var cx = ContentArea.Width;
+            var cy = ContentArea.Height;
 
-            if (size >= MinFontSize)
+            if (FitsOneLine(text, MaxFontSize, cx, cy))
             {
-                AnimateFont(size);
-                UpdateMinHeight(text, MinFontSize);
-                return;
+                AnimateFont(MaxFontSize);
+            }
+            else if (FitsOneLine(text, MinFontSize, cx, cy))
+            {
+                AnimateFont(FindMaxNoWrapFontSize(text, cx, cy));
+            }
+            else
+            {
+                EnsureFitsMin(text, ref cx, ref cy);
+                AnimateFont(FindMaxWrapFontSize(text, cx, cy));
             }
 
-            size = FindMaxWrapFontSize(text, cx, cy);
-
-            if (size >= MinFontSize)
-            {
-                AnimateFont(size);
-                UpdateMinHeight(text, MinFontSize);
-                return;
-            }
-
-            EnsureFitsMin(text, ref cx, ref cy);
-            AnimateFont(FindMaxWrapFontSize(text, cx, cy));
-            UpdateMinHeight(text, MinFontSize);
+            UpdateMinHeight(text, MinFontSize, cx);
         }
     }
 
-    private double FindMaxNoWrapFontSize(string text, double cxConstraint)
+    private bool FitsOneLine(string text, double fontSize, double cxConstraint, double cyConstraint)
     {
-        var maxSize = MeasureNoWrap(text, MaxFontSize);
+        var size = MeasureNoWrap(text, fontSize);
+        return size.Width <= cxConstraint && size.Height <= cyConstraint;
+    }
 
-        if (maxSize.Width <= cxConstraint)
-        {
-            return MaxFontSize;
-        }
-
-        var expected = MaxFontSize * (cxConstraint / maxSize.Width);
-        expected = Math.Max(MinFontSize, Math.Min(MaxFontSize, expected));
-        return BinarySearchDown(text, expected, MaxFontSize, cxConstraint);
+    private double FindMaxNoWrapFontSize(string text, double cxConstraint, double cyConstraint)
+    {
+        return BinarySearchCore(MinFontSize, MaxFontSize, f => FitsOneLine(text, f, cxConstraint, cyConstraint));
     }
 
     private double FindMaxWrapFontSize(string text, double cxConstraint, double cyConstraint)
     {
-        if (IsWrapFit(text, MaxFontSize, cxConstraint, cyConstraint))
-        {
-            return MaxFontSize;
-        }
-
-        var szMax = MeasureWrap(text, MaxFontSize, cxConstraint);
-        var cx = MaxFontSize * (cxConstraint / Math.Max(1, szMax.Width));
-        var cy = MaxFontSize * (cyConstraint / Math.Max(1, szMax.Height));
-        var expect = Math.Min(cx, cy);
-        expect = Math.Max(MinFontSize, Math.Min(MaxFontSize, expect));
-        return BinarySearchWrapDown(text, expect, MaxFontSize, cxConstraint, cyConstraint);
-    }
-
-    private double BinarySearchDown(string text, double lo, double hi, double cxConstraint)
-    {
-        bool _Measure(double f) => MeasureNoWrap(text, f).Width <= cxConstraint;
-
-        if (_Measure(lo))
-        {
-            return BinarySearchCore(lo, hi, _Measure);
-        }
-
-        return BinarySearchCore(MinFontSize, lo, _Measure);
-    }
-
-    private double BinarySearchWrapDown(string text, double lo, double hi, double cxConstraint, double cyConstraint)
-    {
-        bool _Fits(double f) => IsWrapFit(text, f, cxConstraint, cyConstraint);
-
-        if (_Fits(lo))
-        {
-            return BinarySearchCore(lo, hi, _Fits);
-        }
-
-        return BinarySearchCore(MinFontSize, lo, _Fits);
+        return BinarySearchCore(MinFontSize, MaxFontSize, f => IsWrapFit(text, f, cxConstraint, cyConstraint));
     }
 
     private static double BinarySearchCore(double lo, double hi, Func<double, bool> predicate)
@@ -227,27 +221,26 @@ public sealed partial class ImmersiveWindow : AppWindow
 
     private void EnsureFitsMin(string text, ref double cx, ref double cy)
     {
-        var sizeWrapped = MeasureWrap(text, MinFontSize, cx);
-        var cyMax = Px2DipY(ScreenService.WorkingArea.Height);
-        var cyNeeded = Math.Ceiling(sizeWrapped.Height + ContentPadding);
+        var cxContent = ContentWidth;
+        var cyContent = ContentHeight;
+        var cyNeeded = Math.Ceiling(MeasureWrap(text, MinFontSize, cx).Height + ContentPadding);
+        var cyMax = Px2DipY(ScreenService.WorkingArea.Height) - cyContent;
 
-        if (cyNeeded > ActualHeight && cyNeeded <= cyMax)
+        if (cyNeeded > cy + ContentPadding && cyNeeded <= cyMax)
         {
-            Height = cyNeeded;
-            cy = Math.Max(1D, ActualHeight - ContentPadding);
+            Height = cyNeeded + cyContent;
+            cy = cyNeeded - ContentPadding;
         }
 
-        sizeWrapped = MeasureWrap(text, MinFontSize, cx);
-
-        if (sizeWrapped.Height > cy)
+        if (cyNeeded > cy + ContentPadding)
         {
-            var cxMax = Px2DipX(ScreenService.WorkingArea.Width);
+            var cxMax = Px2DipX(ScreenService.WorkingArea.Width) - cxContent;
             var cxTarget = FindMinWidthForHeight(text, MinFontSize, cx, cxMax, cy);
 
             if (cxTarget > cx)
             {
-                Width = cxTarget + ContentPadding;
-                cx = Math.Max(1D, ActualWidth - ContentPadding);
+                Width = cxTarget + ContentPadding + cxContent;
+                cx = cxTarget;
             }
         }
     }
@@ -270,12 +263,12 @@ public sealed partial class ImmersiveWindow : AppWindow
         return hi;
     }
 
-    private void UpdateMinHeight(string text, double fontSize)
+    private void UpdateMinHeight(string text, double fontSize, double cx)
     {
-        var size = MeasureWrap(text, fontSize, Math.Max(1D, ActualWidth - ContentPadding));
-        var required = Math.Ceiling(size.Height + ContentPadding);
-        MinHeight = Math.Max(MinWindowHeight, required);
-        if (required > ActualHeight) Height = required;
+        var required = Math.Ceiling(MeasureWrap(text, fontSize, cx).Height + ContentPadding);
+        var outer = required + ContentHeight;
+        MinHeight = Math.Max(MinWindowHeight, outer);
+        if (outer > ActualHeight) Height = outer;
     }
 
     private void AnimateFont(double target)
