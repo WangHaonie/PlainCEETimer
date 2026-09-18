@@ -7,6 +7,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
+using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Controls;
 using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.ViewModels;
@@ -48,9 +49,15 @@ public sealed partial class ImmersiveWindow : AppWindow
     private const double TitleBarChromeWidth = 200D;
     private const bool FitMinWidthToTitleBar = true;
 
-    public ImmersiveWindow(ICountdownService countdown)
+    public ImmersiveWindow()
     {
-        vm = new(countdown);
+        vm = ServiceHost.ServiceProvider.CreateViewModel<ImmersiveViewModel>()
+            .Import<ICountdownService>((vm, s) => vm.CountdownService = s)
+            .Import(new WPFWindowStyles(this), (vm, s) => vm.WindowStyles = s)
+            .Import(new WPFWindowInitializer(this), (vm, s) => vm.WindowInitializer = s)
+            .Import(MessageX, (vm, s) => vm.DialogService = s)
+            .Build();
+
         DataContext = vm;
         MinHeight = MinWindowHeight;
         InitializeComponent();

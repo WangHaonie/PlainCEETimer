@@ -155,8 +155,8 @@ static BOOL GdiEnumDisplays(EnumDisplayProc lpfnEnum)
         {
             info.dosPath = mi.szDevice;
             info.position = { mi.rcMonitor.left, mi.rcMonitor.top };
-            info.width = mi.rcMonitor.right - mi.rcMonitor.left;
-            info.height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+            info.width = RECT_cx(mi.rcMonitor);
+            info.height = RECT_cy(mi.rcMonitor);
 
             DEVMODEW dm = { sizeof(dm) };
 

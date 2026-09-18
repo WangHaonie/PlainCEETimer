@@ -365,3 +365,6 @@ public readonly struct PCZZWSTR
         return new(s);
     }
 }
+
+[StructLayout(LayoutKind.Sequential, Size = 52)]
+public struct WNDINFO;

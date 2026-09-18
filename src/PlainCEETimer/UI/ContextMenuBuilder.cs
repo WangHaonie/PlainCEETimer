@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable CA1822
+using System;
 using System.Windows.Forms;
 
 namespace PlainCEETimer.UI;
@@ -35,3 +36,4 @@ public class ContextMenuBuilder
         return null;
     }
 }
+#pragma warning restore CA1822

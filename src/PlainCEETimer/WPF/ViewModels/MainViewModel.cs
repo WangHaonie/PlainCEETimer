@@ -272,7 +272,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
                 if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
                 {
                     WPFApp.EnsureAlive();
-                    ImmersiveWindow = new(CountdownManager.Instance.CountdownService);
+                    ImmersiveWindow = new();
                 }
 
                 ImmersiveWindow.ReActivate();

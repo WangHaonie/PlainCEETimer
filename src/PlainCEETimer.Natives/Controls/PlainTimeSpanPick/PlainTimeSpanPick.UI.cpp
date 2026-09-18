@@ -122,8 +122,8 @@ void PlainTimeSpanPick::DrawMainText(HDC hdc, LPCWSTR text, int cch, LPCTRLCOLOR
     {
         RECT rcText = {};
         DrawText(hdc, text, cch, &rcText, DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE);
-        int cx = rcText.right - rcText.left;
-        int cy = rcText.bottom - rcText.top;
+        int cx = RECT_cx(rcText);
+        int cy = RECT_cy(rcText);
 
         RECT rcBounds = { x, y, x + cx, y + cy };
         if (prc) *prc = rcBounds;

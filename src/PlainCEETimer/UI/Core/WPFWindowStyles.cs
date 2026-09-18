@@ -58,4 +58,9 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
         backdrop?.Clear();
         return false;
     }
+
+    public void ToggleScreen()
+    {
+        window.ToggleFullScreen();
+    }
 }

@@ -13,4 +13,6 @@ public interface IWindowStyles
     void ShowActivated(bool activate);
 
     bool ApplyBackdrop(bool enabled, int type);
+
+    void ToggleScreen();
 }

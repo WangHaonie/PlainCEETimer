@@ -14,7 +14,7 @@ namespace PlainCEETimer.Interop;
 
 [NoConstants]
 [SuppressUnmanagedCodeSecurity]
-internal static class Win32UI
+internal unsafe static class Win32UI
 {
     private static List<IntPtr> UnmanagedWindows;
     private static readonly ThreadLocal<char[]> s_bufferClassName = new(() => ArrayPool<char>.Shared.Rent(s_cchBufferClassName), true);
@@ -130,7 +130,7 @@ internal static class Win32UI
     public static extern nint GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
-    public unsafe static extern int GetClassName(IntPtr hWnd, char* lpClassName, int nMaxCount);
+    public static extern int GetClassName(IntPtr hWnd, char* lpClassName, int nMaxCount);
 
     [DllImport(App.User32Dll)]
     public static extern IntPtr GetShellWindow();
@@ -202,10 +202,10 @@ internal static class Win32UI
     */
 
     [DllImport(App.Shell32Dll, CharSet = CharSet.Unicode)]
-    public unsafe static extern uint ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
+    public static extern uint ExtractIconEx(string lpszFile, int nIconIndex, out HICON phiconLarge, HICON* phiconSmall, int nIcons);
 
     [DllImport(App.NativesDll, EntryPoint = "#2")]
-    public unsafe static extern bool PnRunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
+    public static extern bool PnRunColorDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, COLORREF* lpColor, COLORREF* lpCustomColors);
 
     [DllImport(App.NativesDll, EntryPoint = "#3")]
     public static extern bool PnRunFontDialog(IntPtr hWndOwner, WNDPROC lpfnHookProc, ref LOGFONT lpLogFont, int nSizeLimit);
@@ -298,19 +298,25 @@ internal static class Win32UI
     public static extern void PnUnhookGetMessage();
 
     [DllImport(App.NativesDll, EntryPoint = "#51")]
-    public unsafe static extern bool PnApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
+    public static extern bool PnApplySystemBackdrop(IntPtr hWnd, int dwFlags, void* pvData);
 
-    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
+    [DllImport(App.NativesDll, EntryPoint = "#68")]
+    public static extern bool PnToggleFullScreen(IntPtr hWnd, ref WNDINFO lpWndInfo);
+
+    [DllImport(App.NativesDll, EntryPoint = "#69")]
+    public static extern bool PnPtInWindowClient(IntPtr hWnd, int x, int y);
+
+    public static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
     {
         return SendMessage(hWnd, msg, wParam, (nint)lParam);
     }
 
-    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, void* lParam)
+    public static nint SendMessage(IntPtr hWnd, int msg, int wParam, void* lParam)
     {
         return SendMessage(hWnd, msg, wParam, (nint)lParam);
     }
 
-    public unsafe static nint SendMessage(IntPtr hWnd, int msg, int wParam, string lParam)
+    public static nint SendMessage(IntPtr hWnd, int msg, int wParam, string lParam)
     {
         fixed (char* ptr = lParam)
         {
@@ -318,7 +324,7 @@ internal static class Win32UI
         }
     }
 
-    public unsafe static NativeStringUni GetWindowClassName(IntPtr hWnd)
+    public static NativeStringUni GetWindowClassName(IntPtr hWnd)
     {
         var buffer = s_bufferClassName.Value;
 

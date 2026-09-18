@@ -68,6 +68,9 @@ public static class WinUser
     public const int WM_CHAR = 0x0102;
     public const int WM_NOTIFY = 0x004E;
     public const int WM_NCCREATE = 0x0081;
+    public const int WM_NCCALCSIZE = 0x0083;
+    public const int WM_NCPAINT = 0x0085;
+    public const int WM_NCACTIVATE = 0x0086;
     public const int WM_USER = 0x0400;
     public const int WM_DESTROY = 0x0002;
     public const int WM_NCDESTROY = 0x0082;

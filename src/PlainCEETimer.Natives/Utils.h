@@ -25,7 +25,8 @@
 
 #define strhash(s)                  TString_iGetHashCode(s)
 
-#define RECT_IS_ZEROCX(rc)          ((rc.right - rc.left) == 0)
+#define RECT_cx(rc)                 (rc.right - rc.left)
+#define RECT_cy(rc)                 (rc.bottom - rc.top)
 
 #define INITFUNC(p, mn, pn)         (p || (!p && LoadFunction(&p, mn, pn)))
 

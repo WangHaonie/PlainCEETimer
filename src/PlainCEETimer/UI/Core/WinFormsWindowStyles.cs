@@ -57,4 +57,9 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
         backdrop?.Clear();
         return false;
     }
+
+    public void ToggleScreen()
+    {
+        return;
+    }
 }

@@ -218,7 +218,7 @@ static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iS
     if (pRect)
     {
         RECT rc = *pRect;
-        if (RECT_IS_ZEROCX(rc)) return false;
+        if (RECT_cx(rc) == 0) return false;
     }
     
     switch (iPartId)

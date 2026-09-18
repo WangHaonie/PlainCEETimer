@@ -10,14 +10,18 @@
         Title="沉浸模式 - 高考倒计时"
         ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="CenterScreen"
         ShowInTaskbar="True" UseLayoutRounding="True">
+    <Window.InputBindings>
+        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ToggleFullScreenCommand}" />
+        <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}" />
+    </Window.InputBindings>
     <Border Background="{Binding BackBrush}">
         <TextBlock x:Name="CountdownText" Margin="12"
-                   HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                   TextAlignment="Center" TextWrapping="Wrap"
-                   FontFamily="{Binding Font.FontFamily.Value}"
-                   FontSize="{Binding Font.Size}"
-                   FontWeight="{Binding Font.Weight}"
-                   Foreground="{Binding ForeBrush}"
-                   Text="{Binding Content}" />
+            HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            TextAlignment="Center" TextWrapping="Wrap"
+            FontFamily="{Binding Font.FontFamily.Value}"
+            FontSize="{Binding Font.Size}"
+            FontWeight="{Binding Font.Weight}"
+            Foreground="{Binding ForeBrush}"
+            Text="{Binding Content}" />
     </Border>
 </base:AppWindow>

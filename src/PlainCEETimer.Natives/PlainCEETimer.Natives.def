@@ -79,3 +79,6 @@ EXPORTS
     PnBuildAnsiColorString @65 NONAME
     PnConsoleGetCursor @66 NONAME
     PnConsoleClear @67 NONAME
+
+    PnToggleFullScreen @68 NONAME
+    PnPtInWindowClient @69 NONAME

@@ -80,6 +80,9 @@ public partial class AppWindow : Window, IAppWindow
 
     public bool IsOpen => !IsClosed;
 
+    [BackingField("_isFullScreen")]
+    public partial bool FullScreen { get; }
+
     protected IScreenService ScreenService { get; }
 
     protected virtual AppWindowStyle Params => AppWindowStyle.None;
@@ -96,6 +99,7 @@ public partial class AppWindow : Window, IAppWindow
     private bool IsClosed;
     private bool IsClosing;
     private IAppWindow _owner;
+    private WNDINFO _fsInfo;
     private ThemeHelper themeHelper;
     private AppNativeWindow window;
     private WindowInteropHelper wih;
@@ -279,6 +283,17 @@ public partial class AppWindow : Window, IAppWindow
             case WinUser.WM_SYSCOMMAND:
                 WmSysCommand(ref m);
                 return;
+            case WinUser.WM_NCPAINT:
+            case WinUser.WM_NCCALCSIZE:
+            case WinUser.WM_NCACTIVATE:
+
+                if (_isFullScreen)
+                {
+                    m.Result = IntPtr.Zero;
+                    return;
+                }
+
+                break;
         }
 
         DefWndProc(ref m);
@@ -293,6 +308,12 @@ public partial class AppWindow : Window, IAppWindow
     {
         Left = Px2DipX(x);
         Top = Px2DipY(y);
+    }
+
+    internal protected void ToggleFullScreen()
+    {
+        _isFullScreen = !_isFullScreen;
+        Win32UI.PnToggleFullScreen(Handle, ref _fsInfo);
     }
 
     internal protected Point KeepOnScreen()
@@ -407,15 +428,19 @@ public partial class AppWindow : Window, IAppWindow
         DefWndProc(ref m);
     }
 
-    private void WmContextMenu(ref Message m)
+    private unsafe void WmContextMenu(ref Message m)
     {
         var cm = LegacyContextMenu;
 
         if (cm != null)
         {
             var pos = m.LParam.AsMenuLocation();
-            Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
-            return;
+
+            if (Win32UI.PnPtInWindowClient(m.HWnd, pos.X, pos.Y))
+            {
+                Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
+                return;
+            }
         }
 
         DefWndProc(ref m);

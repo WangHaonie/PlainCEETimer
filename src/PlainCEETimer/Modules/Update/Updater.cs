@@ -94,7 +94,7 @@ internal class Updater : IDisposable
             }
         }
 
-        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 700 * 1024L);
+        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 850 * 1024L);
     }
 
     public void Dispose()
