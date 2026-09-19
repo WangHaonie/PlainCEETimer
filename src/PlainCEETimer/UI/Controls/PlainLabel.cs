@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
@@ -17,6 +18,7 @@ public class PlainLabel : Label, IThemeAware
     private bool canResize;
     private ThemeHelper themeHelper;
     private readonly LabelInternals internals;
+    private static readonly bool EnableAutoCopy = false;
 
     public PlainLabel()
     {
@@ -84,6 +86,19 @@ public class PlainLabel : Label, IThemeAware
         {
             Invalidate();
         }
+    }
+
+    protected override void WndProc(ref Message m)
+    {
+        switch (m.Msg)
+        {
+            case WinUser.WM_LBUTTONDBLCLK:
+            case WinUser.WM_NCLBUTTONDBLCLK:
+                if (EnableAutoCopy) break;
+                return;
+        }
+
+        base.WndProc(ref m);
     }
 
     private void UpdateAutoSize()
