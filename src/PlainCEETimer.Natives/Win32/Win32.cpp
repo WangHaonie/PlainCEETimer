@@ -216,7 +216,7 @@ COORD NATIVESAPI PnConsoleGetCursor(HANDLE hConsoleHandle)
     return COORD{};
 }
 
-NATIVES_EXPORT BOOL NATIVESAPI PnConsoleClear(HANDLE hConsoleHandle, COORD coFrom, COORD coTo)
+BOOL NATIVESAPI PnConsoleClear(HANDLE hConsoleHandle, COORD coFrom, COORD coTo)
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 

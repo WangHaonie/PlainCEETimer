@@ -186,7 +186,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     }
 
 #if DEBUG
-    private readonly bool FixWheelClicksButton;
+    private static readonly bool FixWheelClicksButton = false;
 
     protected override void OnMouseWheel(MouseEventArgs e)
     {

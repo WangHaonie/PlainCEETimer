@@ -112,6 +112,15 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         m_styles.ToggleScreen();
     }
 
+    [RelayCommand]
+    private void ExitFullScreen()
+    {
+        if (isFullScreen)
+        {
+            ToggleFullScreen();
+        }
+    }
+
     ~ImmersiveViewModel()
     {
         Dispose();

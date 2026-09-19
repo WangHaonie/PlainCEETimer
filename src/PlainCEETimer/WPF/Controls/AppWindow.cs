@@ -283,17 +283,25 @@ public partial class AppWindow : Window, IAppWindow
             case WinUser.WM_SYSCOMMAND:
                 WmSysCommand(ref m);
                 return;
-            case WinUser.WM_NCPAINT:
             case WinUser.WM_NCCALCSIZE:
+            case WinUser.WM_NCPAINT:
+                HandleFullScreen(ref m, IntPtr.Zero);
+                return;
+            case WinUser.WM_NCHITTEST:
             case WinUser.WM_NCACTIVATE:
+                HandleFullScreen(ref m, NInt.One);
+                return;
+        }
 
-                if (_isFullScreen)
-                {
-                    m.Result = IntPtr.Zero;
-                    return;
-                }
+        DefWndProc(ref m);
+    }
 
-                break;
+    private void HandleFullScreen(ref Message m, IntPtr value)
+    {
+        if (_isFullScreen)
+        {
+            m.Result = value;
+            return;
         }
 
         DefWndProc(ref m);

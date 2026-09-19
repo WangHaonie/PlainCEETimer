@@ -785,7 +785,7 @@ void NATIVESAPI PnUnhookSysColorBrush()
     IatHook_Disable(IatHookComdlgGetSysColorBrush);
 }
 
-NATIVES_EXPORT void NATIVESAPI PnHookClassicEdge(LPVOID lpTag)
+void NATIVESAPI PnHookClassicEdge(LPVOID lpTag)
 {
     if (!lpTag) return;
 
@@ -810,7 +810,7 @@ NATIVES_EXPORT void NATIVESAPI PnHookClassicEdge(LPVOID lpTag)
     }
 }
 
-NATIVES_EXPORT void NATIVESAPI PnUnhookClassicEdge()
+void NATIVESAPI PnUnhookClassicEdge()
 {
     IatHook_Disable(IatHookComdlgDrawEdge);
     IatHook_Disable(IatHookComdlgFrameRect);

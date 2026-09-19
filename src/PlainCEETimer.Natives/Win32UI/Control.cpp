@@ -245,7 +245,6 @@ int NATIVESAPI CDCCM_WmContextMenu(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 BOOL NATIVESAPI PnToggleFullScreen(HWND hWnd, LPWNDINFO lpWndInfo)
 {
-
     if (hWnd && lpWndInfo)
     {
         lpWndInfo->wpWnd.length = sizeof(WINDOWPLACEMENT);
@@ -260,16 +259,15 @@ BOOL NATIVESAPI PnToggleFullScreen(HWND hWnd, LPWNDINFO lpWndInfo)
         else
         {
             DWORD dwStyle = CastS(DWORD, GetWindowLongPtr(hWnd, GWL_STYLE));
-            HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+            GetWindowPlacement(hWnd, &lpWndInfo->wpWnd);
             MONITORINFO mi = { sizeof(mi) };
 
-            if (GetMonitorInfo(hMonitor, &mi))
+            if (GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi))
             {
-                lpWndInfo->dwStyle = dwStyle;
-                GetWindowPlacement(hWnd, &lpWndInfo->wpWnd);
                 SetWindowLongPtr(hWnd, GWL_STYLE, (dwStyle & ~WS_OVERLAPPEDWINDOW) | WS_POPUP);
-                SetWindowPos(hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
-                    RECT_cx(mi.rcMonitor), RECT_cy(mi.rcMonitor), SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_SHOWWINDOW);
+                SetWindowPos(hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, RECT_cx(mi.rcMonitor), RECT_cy(mi.rcMonitor),
+                             SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_SHOWWINDOW);
+                lpWndInfo->dwStyle = dwStyle;
                 lpWndInfo->bFull = TRUE;
             }
         }

@@ -13,6 +13,7 @@
     <Window.InputBindings>
         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ToggleFullScreenCommand}" />
         <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding ExitFullScreenCommand}" />
     </Window.InputBindings>
     <Border Background="{Binding BackBrush}">
         <TextBlock x:Name="CountdownText" Margin="12"
