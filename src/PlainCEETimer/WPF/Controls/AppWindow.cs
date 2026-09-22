@@ -296,17 +296,6 @@ public partial class AppWindow : Window, IAppWindow
         DefWndProc(ref m);
     }
 
-    private void HandleFullScreen(ref Message m, IntPtr value)
-    {
-        if (_isFullScreen)
-        {
-            m.Result = value;
-            return;
-        }
-
-        DefWndProc(ref m);
-    }
-
     protected virtual void DefWndProc(ref Message m)
     {
         window.DefWndProc(ref m);
@@ -430,6 +419,17 @@ public partial class AppWindow : Window, IAppWindow
     {
         if (FireOnClosing())
         {
+            return;
+        }
+
+        DefWndProc(ref m);
+    }
+
+    private void HandleFullScreen(ref Message m, IntPtr value)
+    {
+        if (_isFullScreen)
+        {
+            m.Result = value;
             return;
         }
 

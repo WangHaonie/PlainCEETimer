@@ -123,9 +123,9 @@ public static class ThemeManager
         return GetTheme(oldValue) != GetTheme(newValue);
     }
 
-    public static Color GetAccentColor(IntPtr wParam = default)
+    public static Color GetAccentColor(nint wParam = default)
     {
-        return Color.FromArgb(wParam != default ? (int)(nint)wParam : Win32UI.PnGetSystemAccentColor());
+        return Color.FromArgb(wParam != default ? (int)wParam : Win32UI.PnGetSystemAccentColor());
     }
 
     internal static SystemTheme UpdateThemeForUserChoice()

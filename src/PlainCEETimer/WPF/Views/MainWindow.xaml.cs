@@ -48,7 +48,7 @@ public sealed partial class MainWindow : AppWindow
 
     protected override void WndProc(ref Message m)
     {
-        if (!vm.WndProc(ref m))
+        if (!vm.WindowProc(ref m))
         {
             base.WndProc(ref m);
         }

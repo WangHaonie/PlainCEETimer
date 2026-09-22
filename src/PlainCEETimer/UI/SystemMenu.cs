@@ -108,8 +108,7 @@ public class SystemMenu
 
     public static SystemMenu FromHwnd(IntPtr hWnd)
     {
-        var ncm = new SystemMenu(Win32UI.GetSystemMenu(hWnd, false), hWnd);
-        return ncm;
+        return new(Win32UI.GetSystemMenu(hWnd, false), hWnd);
     }
 
     private int InsertMenu(int index, int flags, string text)

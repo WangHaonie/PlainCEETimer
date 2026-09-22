@@ -147,7 +147,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         return false;
     }
 
-    internal bool WndProc(ref Message m)
+    internal bool WindowProc(ref Message m)
     {
         if (m.Msg == WinUser.WM_DWMCOLORIZATIONCOLORCHANGED && BorderUseAccentColor)
         {

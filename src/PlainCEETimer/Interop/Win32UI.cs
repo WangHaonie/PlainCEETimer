@@ -88,7 +88,7 @@ internal unsafe static class Win32UI
     public static extern int GetDlgItemInt(IntPtr hDlg, int nIDDlgItem, ref bool lpTranslated, bool bSigned);
 
     [DllImport(App.User32Dll)]
-    public static extern nint SendMessage(IntPtr hWnd, int msg, int wParam, nint lParam);
+    public static extern nint SendMessage(IntPtr hWnd, int msg, nint wParam, nint lParam);
 
     [DllImport(App.User32Dll)]
     public static extern bool DestroyIcon(HICON hIcon);
