@@ -58,6 +58,11 @@ DeclIatData(DrawThemeText, Comctl);
 DeclIatData(DrawEdge, Comdlg);
 DeclIatData(FrameRect, Comdlg);
 
+#define DTT_ARGS        hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect
+#define DTT_ARGS_DECL   HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect
+#define DTBG_ARGS       hTheme, hdc, iPartId, iStateId, pRect
+#define DTBG_ARGS_DECL  HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect
+
 static PreferredAppMode WINAPI SetPreferredAppMode(PreferredAppMode preferredAppMode)
 {
     if (INITFUNC(g_SetPreferredAppMode, UXTHEME_DLL, ORD2STR(135)))
@@ -96,7 +101,7 @@ static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffe
     return HRESULT_FROM_WIN32(ERROR_PROC_NOT_FOUND);
 }
 
-static bool CacheThemeClass(HTHEME hTheme)
+static bool PnRevealThemeClass(HTHEME hTheme)
 {
     if (s_lastOpenedTheme != hTheme && SUCCEEDED(GetThemeClass(hTheme, s_themeClassCache, VSCLASSNAME_BUFFER)))
     {
@@ -213,7 +218,7 @@ https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019
 
 */
 
-static bool HandleProgressBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+static bool PnDrawProgressBackground(DTBG_ARGS_DECL)
 {
     if (pRect)
     {
@@ -252,7 +257,7 @@ https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019
 
 */
 
-static bool HandleDtpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+static bool PnDrawDatePickerBackground(DTBG_ARGS_DECL)
 {
     if (iPartId == DP_DATEBORDER)
     {
@@ -276,7 +281,7 @@ static bool HandleDtpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
     return false;
 }
 
-static bool HandleDtpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+static bool PnDrawDatePickerText(DTT_ARGS_DECL)
 {
     if (iPartId == DP_DATETEXT)
     {
@@ -291,7 +296,7 @@ static bool HandleDtpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPC
                 break;
         }
 
-        return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+        return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
     }
 
     return false;
@@ -310,7 +315,7 @@ static bool HandleMcArrows(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
     return true;
 }
 
-static bool HandleMcBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+static bool PnDrawMonthCalBackground(DTBG_ARGS_DECL)
 {
     switch (iPartId)
     {
@@ -327,12 +332,12 @@ static bool HandleMcBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId
     return false;
 }
 
-static bool HandleGrpBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+static bool PnDrawGroupBoxBackground(DTBG_ARGS_DECL)
 {
     return PnCommonPaint(hdc, pRect, COLOR_EMPTY, DCOLOR_GRPBOX_BORDER, true, false);
 }
 
-static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+static bool PnDrawMonthCalText(DTT_ARGS_DECL)
 {
     switch (iPartId)
     {
@@ -423,10 +428,10 @@ static bool HandleMcText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCW
 
     return false;
 paint:
-    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+    return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
 }
 
-static bool HandleChbRbText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+static bool PnDrawButtonText(DTT_ARGS_DECL)
 {
     bool disabled = false;
 
@@ -463,39 +468,39 @@ static bool HandleChbRbText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, L
     }
 
     s_dttoptions.crText = disabled ? DCOLOR_BUTTON_FORE_DISABLED : DCOLOR_TEXT_FORE;
-    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+    return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
 }
 
-static bool HandleGrpText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+static bool PnDrawGroupBoxText(DTT_ARGS_DECL)
 {
     s_dttoptions.crText = DCOLOR_TEXT_FORE;
-    return SUCCEEDED(DrawThemeTextEx(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect, &s_dttoptions));
+    return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
 }
 
-static bool HandleControlVsBg(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPRECT pRect)
+static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
 {
-    if (CacheThemeClass(hTheme))
+    if (PnRevealThemeClass(hTheme))
     {
         switch (strhash(s_themeClassCache))
         {
-            CASE(strhash(VSCLASS_PROGRESS), HandleProgressBackground(hTheme, hdc, iPartId, iStateId, pRect));
-            CASE(strhash(VSCLASS_DATEPICKER), HandleDtpBackground(hTheme, hdc, iPartId, iStateId, pRect));
-            CASE(strhash(VSCLASS_MONTHCAL), HandleMcBackground(hTheme, hdc, iPartId, iStateId, pRect));
-            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, HandleGrpBackground(hTheme, hdc, iPartId, iStateId, pRect));
+            CASE(strhash(VSCLASS_PROGRESS), PnDrawProgressBackground(DTBG_ARGS));
+            CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerBackground(DTBG_ARGS));
+            CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
+            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
         }
     }
 
     return false;
 }
 
-static bool HandleControlVsText(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect)
+static bool PnDrawThemeText(DTT_ARGS_DECL)
 {
-    if (CacheThemeClass(hTheme))
+    if (PnRevealThemeClass(hTheme))
     {
         switch (strhash(s_themeClassCache))
         {
-            CASE(strhash(VSCLASS_DATEPICKER), HandleDtpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
-            CASE(strhash(VSCLASS_MONTHCAL), HandleMcText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+            CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerText(DTT_ARGS));
+            CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalText(DTT_ARGS));
 
             case strhash(VSCLASS_BUTTON):
             {
@@ -503,8 +508,8 @@ static bool HandleControlVsText(HTHEME hTheme, HDC hdc, int iPartId, int iStateI
                 {
                     case BP_RADIOBUTTON:
                     case BP_CHECKBOX:
-                        return HandleChbRbText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect);
-                    CASE(BP_GROUPBOX, HandleGrpText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect));
+                        return PnDrawButtonText(DTT_ARGS);
+                    CASE(BP_GROUPBOX, PnDrawGroupBoxText(DTT_ARGS));
                 }
             }
         }
@@ -541,7 +546,7 @@ static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT 
 static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, LPCRECT pClipRect)
 {
     if (IatHook_IsEnabled(IatHookComctlDrawThemeBackground)
-        && HandleControlVsBg(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
+        && PnDrawThemeBackground(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -552,7 +557,7 @@ static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, 
 static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, DWORD dwTextFlags2, LPCRECT pRect)
 {
     if (IatHook_IsEnabled(IatHookComctlDrawThemeText)
-        && HandleControlVsText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
+        && PnDrawThemeText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
     {
         return S_OK;
     }

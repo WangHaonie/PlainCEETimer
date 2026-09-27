@@ -15,6 +15,7 @@ using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
+using PlainCEETimer.WPF.Modules;
 using WFContextMenu = System.Windows.Forms.ContextMenu;
 using WFPoint = System.Drawing.Point;
 using WFRectagle = System.Drawing.Rectangle;
@@ -134,9 +135,9 @@ public partial class AppWindow : Window, IAppWindow
             {
                 WindowChrome.SetWindowChrome(this, new()
                 {
-                    CaptionHeight = 0,
-                    CornerRadius = (TryFindResource("WindowBorderCornerRadius") is CornerRadius cr) ? cr : default,
-                    GlassFrameThickness = new(0)
+                    CaptionHeight = 0D,
+                    CornerRadius = this.GetResource<CornerRadius>(KnownResources.WindowBorderCornerRadius),
+                    GlassFrameThickness = default
                 });
             }
             else

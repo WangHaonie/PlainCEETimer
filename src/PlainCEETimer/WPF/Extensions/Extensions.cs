@@ -91,6 +91,21 @@ public static class Extensions
         return false;
     }
 
+    public static T GetResource<T>(this FrameworkElement obj, string resourceName)
+    {
+        return GetResource<T>(obj, (object)resourceName);
+    }
+
+    public static T GetResource<T>(this FrameworkElement obj, object resourceKey)
+    {
+        if (obj.TryFindResource(resourceKey) is T res)
+        {
+            return res;
+        }
+
+        return default;
+    }
+
     extension(FontFamily ff)
     {
         public string LocaleDisplayName
