@@ -126,7 +126,7 @@ https://github.com/ysc3839/win32-darkmode/issues/32
 
 */
 
-static void HandleNcScrollBars(HWND& hWnd, LPCWSTR& pszClassList)
+static void PnHandleNcScrollBars(HWND& hWnd, LPCWSTR& pszClassList)
 {
     if (WString_Equals(pszClassList, WC_SCROLLBAR, true))
     {
@@ -135,7 +135,7 @@ static void HandleNcScrollBars(HWND& hWnd, LPCWSTR& pszClassList)
     }
 }
 
-static void HandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
+static void PnHandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
 {
     if (WString_Equals(pszClassList, WC_BUTTON, true) && !hWnd)
     {
@@ -302,7 +302,7 @@ static bool PnDrawDatePickerText(DTT_ARGS_DECL)
     return false;
 }
 
-static bool HandleMcArrows(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
+static bool PnDrawMonthCalArrow(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
 {
     switch (iStateId)
     {
@@ -326,7 +326,7 @@ static bool PnDrawMonthCalBackground(DTBG_ARGS_DECL)
             return PnCommonPaint(hdc, pRect, DCOLOR_MONTHCAL_BACK, DCOLOR_MONTHCAL_BORDER, true);
         case MC_NAVNEXT:
         case MC_NAVPREV:
-            return HandleMcArrows(hdc, pRect, iPartId == MC_NAVPREV, iStateId);
+            return PnDrawMonthCalArrow(hdc, pRect, iPartId == MC_NAVPREV, iStateId);
     }
 
     return false;
@@ -518,7 +518,7 @@ static bool PnDrawThemeText(DTT_ARGS_DECL)
     return false;
 }
 
-static void HandleColorDlgLumArrow(int& nIndex)
+static void PnHandleChooseColorLumArrow(int& nIndex)
 {
     if (nIndex == COLOR_BTNTEXT) nIndex = COLOR_WINDOW;
 }
@@ -527,7 +527,7 @@ static HTHEME WINAPI OpenNcThemeData_(HWND hWnd, LPCWSTR pszClassList)
 {
     if (IatHook_IsEnabled(IatHookComctlOpenNcThemeData))
     {
-        HandleNcScrollBars(hWnd, pszClassList);
+        PnHandleNcScrollBars(hWnd, pszClassList);
     }
 
     return g_OpenNcThemeData(hWnd, pszClassList);
@@ -537,7 +537,7 @@ static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT 
 {
     if (IatHook_IsEnabled(IatHookComctlOpenThemeDataForDpi))
     {
-        HandleListViewCheckBoxes(hWnd, pszClassList);
+        PnHandleListViewCheckBoxes(hWnd, pszClassList);
     }
 
     return g_OpenThemeDataForDpi(hWnd, pszClassList, dpi);
@@ -584,7 +584,7 @@ static HBRUSH WINAPI GetSysColorBrush_(int nIndex)
 {
     if (IatHook_IsEnabled(IatHookComdlgGetSysColorBrush))
     {
-        HandleColorDlgLumArrow(nIndex);
+        PnHandleChooseColorLumArrow(nIndex);
     }
 
     return g_GetSysColorBrush(nIndex);
