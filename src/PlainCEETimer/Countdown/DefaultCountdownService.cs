@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,25 +13,12 @@ namespace PlainCEETimer.Countdown;
 
 public class DefaultCountdownService : ICountdownService
 {
-    public event ExamSwitchedEventHandler ExamSwitched;
-    public event CountdownUpdatedEventHandler CountdownUpdated;
-
-    public bool Enabled
-    {
-        get;
-        set
-        {
-            if (field != value)
-            {
-                IsDisposing = !value;
-                field = value;
-            }
-        }
-    }
-
     public CountdownBasicInfo CurrentInfo { get; private set; }
 
     public bool ShouldDispose { get; internal set; } = true;
+
+    public event ExamSwitchedEventHandler ExamSwitched;
+    public event CountdownUpdatedEventHandler CountdownUpdated;
 
     private int ExamIndex;
     private int LastExamIndex = -2;
@@ -61,11 +49,13 @@ public class DefaultCountdownService : ICountdownService
     private string LastFormat;
     private ReadOnlyCollection<PhParsedToken> LastTokens;
     private volatile bool IsDisposing;
+    private volatile bool IsAlive;
     private readonly object SyncObject = new();
     private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
     private readonly StringBuilder ContentBuilder = new(128);
     private readonly ActionInvoker<int> OnExamSwitchedInvoker;
     private readonly ActionInvoker<string, ColorPair> OnCountdownUpdatedInvoker;
+    private readonly HashSet<CountdownRecipient> Recipients = [];
 
     public DefaultCountdownService()
     {
@@ -77,6 +67,23 @@ public class DefaultCountdownService : ICountdownService
             CurrentInfo = e;
             CountdownUpdated?.Invoke(this, e);
         });
+    }
+
+    public void SetRecipient(CountdownRecipient recipient, bool alive)
+    {
+        lock (SyncObject)
+        {
+            if (alive ? Recipients.Add(recipient) : Recipients.Remove(recipient))
+            {
+                IsAlive = Recipients.Count > 0;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        UpdateRunningState();
     }
 
     public void Start(CountdownStartInfo startInfo)
@@ -124,11 +131,26 @@ public class DefaultCountdownService : ICountdownService
 
     private void InternalStart()
     {
-        Enabled = true;
         UpdateExams();
         OnExamSwitched();
-        TryStartMainTimer();
-        ResetAutoSwitchTimer();
+        UpdateRunningState();
+    }
+
+    private void UpdateRunningState()
+    {
+        if (!IsDisposing)
+        {
+            if (!IsAlive)
+            {
+                StopMainTimer();
+                StopAutoSwitchTimer();
+            }
+            else if (Info != null)
+            {
+                TryStartMainTimer();
+                ResetAutoSwitchTimer();
+            }
+        }
     }
 
     private void TryStartMainTimer()
@@ -192,7 +214,7 @@ public class DefaultCountdownService : ICountdownService
 
     private void AutoSwitchCallback(object state)
     {
-        if (!IsDisposing)
+        if (!IsDisposing && IsAlive)
         {
             var i = ExamIndex;
 
@@ -210,7 +232,7 @@ public class DefaultCountdownService : ICountdownService
 
     private void CountdownCallback(object state)
     {
-        if (!IsDisposing)
+        if (!IsDisposing && IsAlive)
         {
             if (CanStart && TestExam(CurrentExam, out var phase, out var span))
             {

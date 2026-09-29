@@ -100,7 +100,6 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     private bool IsPPTService;
     private bool ShowTrayIcon;
     private bool ShowTrayText;
-    private bool IsHotKey1Activated;
     private bool BorderUseAccentColor;
     private bool IsWpf;
     private string[] ExamItems;
@@ -122,6 +121,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     private SystemTheme CurrentTheme;
     private CountdownPosition CountdownPos;
     private IAppWindow Owner;
+    private WindowVisibilityController WindowVisibility;
     private readonly App app = App.Current;
 
     private const int PptsvcThreshold = 1;
@@ -162,6 +162,8 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     private void Initialize()
     {
         Owner = MessageX.Owner;
+        WindowVisibility = new(Styles, SetCountdownRecipient);
+        WindowManager.Current.ActivateRequested += (_, _) => WindowVisibility.Show(true);
 
         Initializer.Initialize += (_, _) =>
         {
@@ -328,7 +330,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         ApplyStyle();
         RunFullScreenTracker();
         RunCountdown();
-        SetCountdownVisible();
+        SetCountdownRecipient();
     }
 
     private void LoadConfig()
@@ -721,18 +723,17 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
 
     private void FullScreenTracker_FullScreenEntered(object sender, FullScreenWindowEventArgs e)
     {
-        SetWindowVisible(false, false);
+        WindowVisibility.Hide();
     }
 
     private void FullScreenTracker_FullScreenExited(object sender, FullScreenWindowEventArgs e)
     {
-        SetWindowVisible(true, false);
+        WindowVisibility.Show(false);
     }
 
     private void ToggleVisibilityHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
-        IsHotKey1Activated = !IsHotKey1Activated;
-        SetWindowVisible(!IsHotKey1Activated, true);
+        WindowVisibility.Toggle();
     }
 
     private void SwitchToPreviousExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
@@ -745,23 +746,9 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         Countdown.SwitchTo(SwitchOption.Next);
     }
 
-    private void SetCountdownVisible()
+    private void SetCountdownRecipient()
     {
-        Countdown.Enabled = Styles.Visible || ShowTrayText;
-    }
-
-    private void SetWindowVisible(bool visible, bool activate)
-    {
-        if (visible)
-        {
-            Styles.ShowActivated(activate);
-        }
-        else
-        {
-            Styles.Visible = false;
-        }
-
-        IsHotKey1Activated = !visible;
-        SetCountdownVisible();
+        Countdown.SetRecipient(CountdownRecipient.MainWindow, !WindowVisibility.Hidden);
+        Countdown.SetRecipient(CountdownRecipient.TrayText, ShowTrayText);
     }
 }

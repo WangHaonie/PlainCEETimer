@@ -36,3 +36,11 @@ public enum SwitchOption
     Next,
     Previous
 }
+
+public enum CountdownRecipient
+{
+    MainWindow,
+    TrayText,
+    Immersive,
+    Console
+}

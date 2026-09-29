@@ -18,6 +18,7 @@ public class ConsoleCountdown
         System.Console.CancelKeyPress += Console_CancelKeyPress;
         Countdown.CountdownUpdated += Countdown_CountdownUpdated;
         Countdown.ExamSwitched += Countdown_ExamSwitched;
+        Countdown.SetRecipient(CountdownRecipient.Console, true);
 
         try
         {
@@ -28,6 +29,7 @@ public class ConsoleCountdown
         finally
         {
             System.Console.CancelKeyPress -= Console_CancelKeyPress;
+            Countdown.SetRecipient(CountdownRecipient.Console, false);
             Countdown.CountdownUpdated -= Countdown_CountdownUpdated;
             Countdown.ExamSwitched -= Countdown_ExamSwitched;
             Console.AnchorEnd().ResetColor().WriteLine();

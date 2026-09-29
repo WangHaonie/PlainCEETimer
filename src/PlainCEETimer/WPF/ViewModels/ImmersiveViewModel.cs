@@ -64,6 +64,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     public void EndInit()
     {
         m_countdown.CountdownUpdated += OnCountdownUpdated;
+        m_countdown.SetRecipient(CountdownRecipient.Immersive, true);
 
         if (m_countdown.CurrentInfo != null)
         {
@@ -83,6 +84,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
     public void Dispose()
     {
+        m_countdown.SetRecipient(CountdownRecipient.Immersive, false);
         m_countdown.CountdownUpdated -= OnCountdownUpdated;
         m_helper.CountdownFontChanged -= OnCountdownFontChanged;
         GC.SuppressFinalize(this);
