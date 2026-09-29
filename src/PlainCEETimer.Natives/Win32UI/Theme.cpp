@@ -155,7 +155,7 @@ static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBo
     return true;
 }
 
-static bool PnDrawMcArrow(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
+static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
 {
     if (!lpRect) return false;
 
@@ -306,9 +306,9 @@ static bool PnDrawMonthCalArrow(HDC hdc, LPRECT pRect, bool bLeft, int iStateId)
 {
     switch (iStateId)
     {
-        CASE(MCNP_NORMAL, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW));
-        CASE(MCNP_HOT, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_HOT));
-        CASE(MCNP_PRESSED, PnDrawMcArrow(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_PRESSED));
+        CASE(MCNP_NORMAL, PnDrawMonthCalArrowCore(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW));
+        CASE(MCNP_HOT, PnDrawMonthCalArrowCore(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_HOT));
+        CASE(MCNP_PRESSED, PnDrawMonthCalArrowCore(hdc, pRect, bLeft, DCOLOR_MONTHCAL_ARROW_PRESSED));
         DEFAULT(false);
     }
 
@@ -625,7 +625,7 @@ static int WINAPI FrameRect_(HDC hDC, const RECT* lprc, HBRUSH hbr)
     return g_FrameRect(hDC, lprc, hbr);
 }
 
-static BOOL EnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool bEnabled)
+static BOOL PnEnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool bEnabled)
 {
     if (!bAcrylic)
     {
@@ -679,7 +679,7 @@ static BOOL PnApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
             if (pvData)
             {
                 DWORD abgrGradient = *CastP(LPDWORD, pvData);
-                return EnableBlurBehind(hWnd, dwType == ASBT_ACRYLIC, abgrGradient, bEnabled);
+                return PnEnableBlurBehind(hWnd, dwType == ASBT_ACRYLIC, abgrGradient, bEnabled);
             }
         }
     }
