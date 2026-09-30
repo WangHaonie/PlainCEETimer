@@ -329,7 +329,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         SetCountdownAutoWrap();
         ApplyStyle();
         RunFullScreenTracker();
-        RunCountdown();
+        EnsureCountdown();
         SetCountdownRecipient();
     }
 
@@ -493,23 +493,6 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         }
 
         IsWpf = newIsWpf;
-    }
-
-    private void RunCountdown()
-    {
-        Countdown.Start(new()
-        {
-            AutoSwitchInterval = ConfigValidator.GetAutoSwitchInterval(General.Interval),
-            ExamIndex = ExamIndex,
-            GlobalRules = AppConfig.GlobalRules,
-            AutoSwitch = General.AutoSwitch,
-            Mode = Display.Mode,
-            Format = Display.Format,
-            Exams = Exams,
-            CustomRules = AppConfig.CustomRules,
-            DefaultRules = DefaultValues.GlobalDefaultRules,
-            DefaultColor = DefaultValues.GlobalDefaultColor
-        });
     }
 
     private void RegisterHotKeys()
@@ -750,5 +733,10 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     {
         Countdown.SetRecipient(CountdownRecipient.MainWindow, !WindowVisibility.Hidden);
         Countdown.SetRecipient(CountdownRecipient.TrayText, ShowTrayText);
+    }
+
+    private static void EnsureCountdown()
+    {
+        CountdownManager.EnsureService();
     }
 }

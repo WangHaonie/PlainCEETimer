@@ -14,8 +14,6 @@ public interface ICountdownService : IDisposable
 
     void SetRecipient(CountdownRecipient recipient, bool alive);
 
-    void Start(CountdownStartInfo startInfo);
-
     void SwitchTo(SwitchOption option, int index = 0);
 
     void ForceRefresh();

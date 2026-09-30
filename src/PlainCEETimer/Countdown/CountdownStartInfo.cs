@@ -1,4 +1,7 @@
-﻿namespace PlainCEETimer.Countdown;
+﻿using PlainCEETimer.Modules.Configuration;
+using PlainCEETimer.Modules.Linq;
+
+namespace PlainCEETimer.Countdown;
 
 public sealed class CountdownStartInfo
 {
@@ -21,4 +24,25 @@ public sealed class CountdownStartInfo
     public required CountdownRule[] GlobalRules { get; init; }
 
     public required CountdownRule[] DefaultRules { get; init; }
+
+    public static CountdownStartInfo FromConfig(AppConfig config)
+    {
+        var a = config;
+        var g = config.General;
+        var d = config.Display;
+
+        return new()
+        {
+            AutoSwitchInterval = ConfigValidator.GetAutoSwitchInterval(g.Interval),
+            ExamIndex = a.Exam,
+            GlobalRules = a.GlobalRules,
+            AutoSwitch = g.AutoSwitch,
+            Mode = d.Mode,
+            Format = d.Format,
+            Exams = a.Exams.ArrayWhere(e => !e.Excluded).ArrayOrder(),
+            CustomRules = a.CustomRules,
+            DefaultRules = DefaultValues.GlobalDefaultRules,
+            DefaultColor = DefaultValues.GlobalDefaultColor
+        };
+    }
 }

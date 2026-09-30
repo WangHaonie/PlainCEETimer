@@ -2,7 +2,6 @@
 using System.Threading;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
-using PlainCEETimer.Modules.Linq;
 
 namespace PlainCEETimer.Countdown.Console;
 
@@ -23,7 +22,7 @@ public class ConsoleCountdown
         try
         {
             Console.Title(App.AppName).Anchor();
-            StartCountdown();
+            CountdownManager.EnsureService();
             ExitEvent.Wait();
         }
         finally
@@ -35,28 +34,6 @@ public class ConsoleCountdown
             Console.AnchorEnd().ResetColor().WriteLine();
             ExitEvent.Dispose();
         }
-    }
-
-    private void StartCountdown()
-    {
-        var a = App.Current.AppConfig;
-        var g = a.General;
-        var d = a.Display;
-        var e = a.Exams.ArrayWhere(e => !e.Excluded).ArrayOrder();
-
-        Countdown.Start(new()
-        {
-            AutoSwitchInterval = ConfigValidator.GetAutoSwitchInterval(g.Interval),
-            ExamIndex = a.Exam,
-            GlobalRules = a.GlobalRules,
-            AutoSwitch = g.AutoSwitch,
-            Mode = d.Mode,
-            Format = d.Format,
-            Exams = e,
-            CustomRules = a.CustomRules,
-            DefaultRules = DefaultValues.GlobalDefaultRules,
-            DefaultColor = DefaultValues.GlobalDefaultColor
-        });
     }
 
     private void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)

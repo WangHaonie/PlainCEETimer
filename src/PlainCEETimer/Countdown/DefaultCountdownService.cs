@@ -86,12 +86,6 @@ public class DefaultCountdownService : ICountdownService
         UpdateRunningState();
     }
 
-    public void Start(CountdownStartInfo startInfo)
-    {
-        SetStartInfo(startInfo);
-        InternalStart();
-    }
-
     public void SwitchTo(SwitchOption option, int index = 0)
     {
         ExamIndex = option switch
@@ -115,6 +109,12 @@ public class DefaultCountdownService : ICountdownService
         StopAutoSwitchTimer();
         StopMainTimer();
         GC.SuppressFinalize(this);
+    }
+
+    internal void Start(CountdownStartInfo startInfo)
+    {
+        SetStartInfo(startInfo);
+        InternalStart();
     }
 
     private void SetStartInfo(CountdownStartInfo value)
