@@ -284,11 +284,11 @@ BOOL NATIVESAPI PnPtInWindowClient(HWND hWnd, LONG x, LONG y)
 
     if (ScreenToClient(hWnd, &pt))
     {
-        RECT rcClient;
+        RECT rc;
 
-        if (GetClientRect(hWnd, &rcClient))
+        if (GetClientRect(hWnd, &rc))
         {
-            return PtInRect(&rcClient, pt);
+            return PtInRect(&rc, pt);
         }
     }
 
