@@ -457,9 +457,17 @@ public sealed class SettingsForm : AppForm
                         CheckBoxDebug = b.CheckBox("使用调试选项", (_, _) =>
                         {
                             var enabled = CheckBoxDebug.Checked;
-                            GBoxDpiAware.Enabled = enabled;
-                            GBoxTSPresent.Enabled = enabled;
-                            GBoxDbgWndStyles.Enabled = enabled;
+                            var ctrls = PageDebug.Controls;
+                            var count = ctrls.Count;
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                if (ctrls[i] is PlainGroupBox g)
+                                {
+                                    g.Enabled = enabled;
+                                }
+	                        }
+
                             SettingsChanged();
                         }),
 
