@@ -138,12 +138,20 @@ public sealed class SettingsForm : AppForm
     private ComboTrigger comboTrigger;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
+    private readonly ActionInvoker<bool> SettingsChangedInvoker;
 
     private const int DebugTriggerArea_value = 15;
 
     public SettingsForm()
     {
         SetStyle(ControlStyles.StandardDoubleClick, false);
+
+        SettingsChangedInvoker = new(value =>
+        {
+            UserChanged = value;
+            ButtonOK.Enabled = value;
+            ButtonApply.Enabled = value;
+        });
     }
 
     protected override void OnInitializing()
@@ -466,7 +474,7 @@ public sealed class SettingsForm : AppForm
                                 {
                                     g.Enabled = enabled;
                                 }
-	                        }
+                            }
 
                             SettingsChanged();
                         }),
@@ -891,7 +899,7 @@ public sealed class SettingsForm : AppForm
 
     private void SettingsChanged()
     {
-        SettingsChanged(null, null);
+        SettingsChanged(this, EventArgs.Empty);
     }
 
     private void RefreshSettings()
@@ -1203,11 +1211,6 @@ public sealed class SettingsForm : AppForm
 
     private void SetSettingsChanged(bool value)
     {
-        EnsureLoaded(() =>
-        {
-            UserChanged = value;
-            ButtonOK.Enabled = value;
-            ButtonApply.Enabled = value;
-        });
+        EnsureLoaded(SettingsChangedInvoker.WithArgs(value));
     }
 }

@@ -652,14 +652,19 @@ public abstract class AppForm : Form, IAppWindow
         DialogEndAction?.Invoke(new(DialogEndResult));
     }
 
-    /// <summary>
-    /// 仅当窗体加载完成再执行指定的代码。
-    /// </summary>
     protected void EnsureLoaded(Action action)
     {
         if (!IsLoading)
         {
             action();
+        }
+    }
+
+    protected void EnsureLoaded(IInvokable action)
+    {
+        if (!IsLoading)
+        {
+            action.Invoke();
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace PlainCEETimer.Modules;
 
-public interface IActionInvoker
+public interface IActionInvoker : IInvokable
 {
     void Invoke(object state);
 }

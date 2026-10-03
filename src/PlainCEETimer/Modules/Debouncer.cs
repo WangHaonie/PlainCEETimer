@@ -95,7 +95,7 @@ public class Debouncer : IDisposable
             invoker = m_invoker;
         }
 
-        invoker.Invoke(null);
+        invoker.Invoke();
     }
 
     ~Debouncer()
