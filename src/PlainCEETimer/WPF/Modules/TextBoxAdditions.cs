@@ -1,21 +1,22 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.WPF.Modules;
 
-public static class TextBoxHelper
+public static class TextBoxAdditions
 {
     public static readonly DependencyProperty HasErrorProperty =
-        DependencyProperty.RegisterAttached("HasError", typeof(bool), typeof(TextBoxHelper),
+        DependencyProperty.RegisterAttached(MemberNames.HasError, typeof(bool), typeof(TextBoxAdditions),
             new PropertyMetadata(false, OnHasErrorChanged));
 
     public static readonly DependencyProperty ErrorActionProperty =
-        DependencyProperty.RegisterAttached("ErrorAction", typeof(TextBoxErrorAction), typeof(TextBoxHelper),
+        DependencyProperty.RegisterAttached(MemberNames.ErrorAction, typeof(TextBoxErrorAction), typeof(TextBoxAdditions),
             new PropertyMetadata(TextBoxErrorAction.Highlight));
 
     public static readonly DependencyProperty HighlightBrushProperty =
-        DependencyProperty.RegisterAttached("HighlightBrush", typeof(Brush), typeof(TextBoxHelper),
+        DependencyProperty.RegisterAttached(MemberNames.HighlightBrush, typeof(Brush), typeof(TextBoxAdditions),
             new PropertyMetadata(Brushes.Red));
 
     public static void SetHasError(DependencyObject obj, bool value)

@@ -22,4 +22,9 @@ public static class MemberNames
 
     public const string fore = nameof(fore);
     public const string back = nameof(back);
+
+    public const string HasError = nameof(HasError);
+    public const string ErrorAction = nameof(ErrorAction);
+    public const string HighlightBrush = nameof(HighlightBrush);
+    public const string ContextMenu = nameof(ContextMenu);
 }

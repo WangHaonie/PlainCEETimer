@@ -56,8 +56,6 @@ public partial class AppWindow : Window, IAppWindow
         }
     }
 
-    public WFContextMenu LegacyContextMenu { get; set; }
-
     public IntPtr Handle => EnsureInteropHelper().EnsureHandle();
 
     public bool InvokeRequired => !Dispatcher.CheckAccess();
@@ -439,15 +437,24 @@ public partial class AppWindow : Window, IAppWindow
 
     private unsafe void WmContextMenu(ref Message m)
     {
-        var cm = LegacyContextMenu;
+        var pos = m.LParam.AsMenuLocation();
+        var x = pos.X;
+        var y = pos.Y;
 
-        if (cm != null)
+        if (Win32UI.PnPtInWindowClient(m.HWnd, x, y))
         {
-            var pos = m.LParam.AsMenuLocation();
+            var owner = default(DependencyObject);
+            var rp = PointFromScreen(new(x, y));
 
-            if (Win32UI.PnPtInWindowClient(m.HWnd, pos.X, pos.Y))
+            VisualTreeHelper.HitTest(this, null, r =>
             {
-                Win32UI.TrackPopupMenuEx(cm.Handle, TrackPopupMenu.Default, pos.X, pos.Y, m.HWnd, IntPtr.Zero);
+                owner = r.VisualHit;
+                return HitTestResultBehavior.Stop;
+            }, new PointHitTestParameters(rp));
+
+            if (owner != null && Win32ContextMenu.TryFindContextMenu(owner, this, out var menu) && menu != null)
+            {
+                Win32UI.TrackPopupMenuEx(menu.Handle, TrackPopupMenu.Default, x, y, m.HWnd, IntPtr.Zero);
                 return;
             }
         }
@@ -519,7 +526,7 @@ public partial class AppWindow : Window, IAppWindow
 
     WFContextMenu IHasContextMenu.ContextMenu
     {
-        get => LegacyContextMenu;
-        set => LegacyContextMenu = value;
+        get => Win32ContextMenu.GetContextMenu(this);
+        set => Win32ContextMenu.SetContextMenu(this, value);
     }
 }

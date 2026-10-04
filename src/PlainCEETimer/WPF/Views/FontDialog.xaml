@@ -37,8 +37,8 @@
             Height="23" Padding="1" Margin="0,0,0,13" PopupMaxHeight="180"
             MaxLength="{x:Static m:ConfigValidator.MaxFontFamilyLength}"
             Text="{Binding FontFamilyText, UpdateSourceTrigger=PropertyChanged, Delay=300}"
-            mod:TextBoxHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
-            mod:TextBoxHelper.ErrorAction="Highlight"/>
+            mod:TextBoxAdditions.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
+            mod:TextBoxAdditions.ErrorAction="Highlight"/>
         <TextBlock Grid.Row="1" Grid.Column="0"
             Margin="0,0,10,15" VerticalAlignment="Center"
             Text="字体粗细" />
@@ -69,8 +69,8 @@
                     FontFamily="{Binding PreviewFontFamily.Value}"
                     FontWeight="{Binding FontWeight.FontWeight}"
                     FontSize="{Binding PreviewFontSize}"
-                    mod:TextBoxHelper.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
-                    mod:TextBoxHelper.ErrorAction="Hidden"/>
+                    mod:TextBoxAdditions.HasError="{Binding IsFontValid, Converter={StaticResource InverseBooleanConverter}}"
+                    mod:TextBoxAdditions.ErrorAction="Hidden"/>
                 <TextBlock Text="输入的字体无效！" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
