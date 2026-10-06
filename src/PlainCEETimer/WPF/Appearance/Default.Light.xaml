@@ -38,4 +38,9 @@
     <SolidColorBrush x:Key="BackItemHot" Color="#CCE8FF"/>
     <SolidColorBrush x:Key="BackItemSelected" Color="#CCE8FF"/>
     <SolidColorBrush x:Key="BorderItemSelected" Color="#0078D4"/>
+
+    <SolidColorBrush x:Key="BackSplitter" Color="#EDEFF2"/>
+
+    <SolidColorBrush x:Key="BorderToolTip" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="BackToolTip" Color="#F9F9F9"/>
 </ResourceDictionary>

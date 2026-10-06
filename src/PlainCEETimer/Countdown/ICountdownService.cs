@@ -8,6 +8,8 @@ public interface ICountdownService : IDisposable
 
     CountdownBasicInfo CurrentInfo { get; }
 
+    int CurrentIndex { get; }
+
     event ExamSwitchedEventHandler ExamSwitched;
 
     event CountdownUpdatedEventHandler CountdownUpdated;

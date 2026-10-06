@@ -27,4 +27,5 @@ public static class MemberNames
     public const string ErrorAction = nameof(ErrorAction);
     public const string HighlightBrush = nameof(HighlightBrush);
     public const string ContextMenu = nameof(ContextMenu);
+    public const string ShowArrows = nameof(ShowArrows);
 }

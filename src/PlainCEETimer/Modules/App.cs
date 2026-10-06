@@ -163,6 +163,7 @@ internal partial class App
 #if DEBUG
         if (Debugger.IsAttached)
         {
+            WriteException(ex);
             throw ex;
         }
 #endif

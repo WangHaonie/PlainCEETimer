@@ -18,7 +18,7 @@ public sealed partial class MainWindow : AppWindow
 
     public MainWindow()
     {
-        vm = ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>()
+        ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>().ApplyTo(this)
             .Import<ICountdownService>((vm, s) => vm.CountdownService = s)
             .Import(MessageX, (vm, s) => vm.DialogService = s)
             .Import(new SystemBorderColorService(this), (vm, s) => vm.BorderColorService = s)
@@ -30,9 +30,8 @@ public sealed partial class MainWindow : AppWindow
             .Import<ITrayIconLoader>((vm, s) => vm.TrayIconLoader = s)
             .Import(ScreenService, (vm, s) => vm.ScreenService = s)
             .Import(new WPFFontService(this), (vm, s) => vm.UnifiedFontService = s)
-            .Build();
+            .Build(out vm);
 
-        DataContext = vm;
         InitializeComponent();
     }
 

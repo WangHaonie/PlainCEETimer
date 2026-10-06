@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Linq;
-using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Countdown;
 
+[NoConstants]
 public class DefaultCountdownService : ICountdownService
 {
     public CountdownBasicInfo CurrentInfo { get; private set; }
+
+    public int CurrentIndex => ExamIndex;
 
     public bool ShouldDispose { get; internal set; } = true;
 
     public event ExamSwitchedEventHandler ExamSwitched;
     public event CountdownUpdatedEventHandler CountdownUpdated;
+
+    public const string WelcomeText = "欢迎使用高考倒计时";
 
     private int ExamIndex;
     private int LastExamIndex = -2;
@@ -26,33 +27,17 @@ public class DefaultCountdownService : ICountdownService
     private int AutoSwitchInterval;
     private bool IsRunning;
     private bool EnableAutoSwitch;
-    private bool CanUseCustomText;
     private bool CanStart;
-    private bool CanUseRules;
-    private bool CanUpdateRules;
-    private int Mode;
-    private string DefaultText;
-    private CountdownFormat Format;
-    private CountdownPhase Phase = CountdownPhase.None;
     private Timer MainTimer;
     private Timer AutoSwitchTimer;
     private Exam CurrentExam;
-    private ExamSettings Settings;
     private ColorPair DefaultColor;
     private Exam[] Exams;
     private CountdownStartInfo Info;
-    private CountdownRule DefaultRule;
-    private CountdownRule[] CustomRules;
-    private CountdownRule[] GlobalRules;
-    private CountdownRule[] CurrentRules;
-    private CountdownRule[] DefaultRules;
-    private string LastFormat;
-    private ReadOnlyCollection<PhParsedToken> LastTokens;
+    private DefaultCountdownBuilder CurrentEvaluator;
     private volatile bool IsDisposing;
     private volatile bool IsAlive;
     private readonly object SyncObject = new();
-    private readonly string[] PhHints = [Ph.Start, Ph.End, Ph.Past];
-    private readonly StringBuilder ContentBuilder = new(128);
     private readonly ActionInvoker<int> OnExamSwitchedInvoker;
     private readonly ActionInvoker<string, ColorPair> OnCountdownUpdatedInvoker;
     private readonly HashSet<CountdownRecipient> Recipients = [];
@@ -125,7 +110,6 @@ public class DefaultCountdownService : ICountdownService
         Exams = value.Exams;
         ExamsCount = Exams.Length;
         Info = value;
-        DefaultRules = value.DefaultRules;
         DefaultColor = value.DefaultColor;
     }
 
@@ -177,39 +161,8 @@ public class DefaultCountdownService : ICountdownService
     private void UpdateExams()
     {
         CurrentExam = GetCurrentExam(Exams, ref ExamIndex);
-        Settings = CurrentExam.Settings;
-
-        if (Settings.IsEnabled())
-        {
-            Mode = Settings.Mode;
-            Format = Settings.Format;
-            CustomRules = Settings.Rules ?? [];
-            GlobalRules = Settings.DefRules ?? Info.GlobalRules;
-        }
-        else
-        {
-            Mode = Info.Mode;
-            Format = Info.Format;
-            CustomRules = Info.CustomRules ?? [];
-            GlobalRules = Info.GlobalRules ?? DefaultRules;
-        }
-
-        CanStart = !string.IsNullOrWhiteSpace(CurrentExam.Name) && (CurrentExam.End > CurrentExam.Start || Mode == 0);
-        CanUseCustomText = Format == CountdownFormat.Custom;
-
-        DefaultText = Format switch
-        {
-            CountdownFormat.DaysOnly => "距离{x}{ht}{d}天",
-            CountdownFormat.DaysOnlyOneDecimal => "距离{x}{ht}{dd}天",
-            CountdownFormat.DaysOnlyCeiling => "距离{x}{ht}{cd}天",
-            CountdownFormat.HoursOnly => "距离{x}{ht}{th}小时",
-            CountdownFormat.HoursOnlyOneDecimal => "距离{x}{ht}{dh}小时",
-            CountdownFormat.MinutesOnly => "距离{x}{ht}{tm}分钟",
-            CountdownFormat.SecondsOnly => "距离{x}{ht}{ts}秒",
-            _ => "距离{x}{ht}{d}天{h}时{m}分{s}秒"
-        };
-
-        CanUpdateRules = true;
+        CurrentEvaluator = new(CurrentExam, Info);
+        CanStart = CurrentEvaluator.CanStart;
     }
 
     private void AutoSwitchCallback(object state)
@@ -223,7 +176,7 @@ public class DefaultCountdownService : ICountdownService
                 ExamIndex = (ExamIndex + 1) % ExamsCount;
                 UpdateExams();
             }
-            while (!TestExam(CurrentExam, out _, out _) && ExamIndex != i);
+            while (!CurrentEvaluator.TestExam(DateTime.Now, out _, out _) && ExamIndex != i);
 
             TryStartMainTimer();
             OnExamSwitched();
@@ -234,129 +187,17 @@ public class DefaultCountdownService : ICountdownService
     {
         if (!IsDisposing && IsAlive)
         {
-            if (CanStart && TestExam(CurrentExam, out var phase, out var span))
+            if (CurrentEvaluator != null && CurrentEvaluator.TryBuild(DateTime.Now, out var content, out var colors))
             {
-                SetPhase(phase);
-                ApplyCustomRule((int)phase, span);
+                OnCountdownUpdated(content, colors);
             }
             else
             {
                 StopMainTimer();
-                OnCountdownUpdated("欢迎使用高考倒计时", DefaultColor);
+                OnCountdownUpdated(WelcomeText, DefaultColor);
             }
         }
     }
-
-    private bool TestExam(Exam exam, out CountdownPhase phase, out TimeSpan span)
-    {
-        var t = DateTime.Now;
-        var s = exam.Start;
-        var e = exam.End;
-
-        if (Mode >= 0 && t < s)
-        {
-            phase = CountdownPhase.P1;
-            span = s - t;
-            return true;
-        }
-
-        if (Mode >= 1 && t < e)
-        {
-            phase = CountdownPhase.P2;
-            span = e - t;
-            return true;
-        }
-
-        if (Mode >= 2 && t > e)
-        {
-            phase = CountdownPhase.P3;
-            span = t - e;
-            return true;
-        }
-
-        phase = CountdownPhase.None;
-        span = default;
-        return false;
-    }
-
-    private void SetPhase(CountdownPhase phase)
-    {
-        if (CanUpdateRules || Phase != phase)
-        {
-            CurrentRules = CustomRules
-                .ArrayWhere(r => r.Phase == phase)
-                .ArrayOrderDescending();
-
-            DefaultRule = GlobalRules[(int)phase];
-            CanUseRules = CanUseCustomText && CurrentRules.Length != 0;
-            Phase = phase;
-            CanUpdateRules = false;
-        }
-    }
-
-    private void ApplyCustomRule(int phase, TimeSpan span)
-    {
-        if (CanUseCustomText)
-        {
-            if (CanUseRules)
-            {
-                foreach (var rule in CurrentRules)
-                {
-                    if (phase == 2 ? (span >= rule.Tick) : (span <= rule.Tick))
-                    {
-                        OnCountdownUpdated(BuildContent(rule.Text, span, phase), rule.Colors);
-                        return;
-                    }
-                }
-            }
-
-            OnCountdownUpdated(BuildContent(DefaultRule.Text, span, phase), DefaultRule.Colors);
-        }
-        else
-        {
-            OnCountdownUpdated(BuildContent(DefaultText, span, phase), DefaultRules[phase].Colors);
-        }
-    }
-
-    private string BuildContent(string format, TimeSpan span, int phase)
-    {
-        lock (SyncObject)
-        {
-            if (format != LastFormat)
-            {
-                LastTokens = PhTokenParser.Parse(format);
-                LastFormat = format;
-            }
-
-            var length = LastTokens.Count;
-            ContentBuilder.Clear();
-
-            for (int i = 0; i < length; i++)
-            {
-                ContentBuilder.Append(TranslatePh(LastTokens[i], span, phase));
-            }
-
-            return ContentBuilder.ToString();
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private string TranslatePh(PhParsedToken format, TimeSpan span, int phase) => format.Token switch
-    {
-        PhToken.ExamName => CurrentExam.Name,
-        PhToken.Days => span.Days.ToString(),
-        PhToken.DecimalDays => span.TotalDays.Format(),
-        PhToken.CeilingDays => Math.Ceiling(span.TotalDays).ToString(),
-        PhToken.Hours => span.Hours.ToString("00"),
-        PhToken.TotalHours => Math.Truncate(span.TotalHours).ToString(),
-        PhToken.DecimalHours => span.TotalHours.Format(),
-        PhToken.Minutes => span.Minutes.ToString("00"),
-        PhToken.TotalMinutes => span.TotalMinutes.ToString("0"),
-        PhToken.Seconds => span.Seconds.ToString("00"),
-        PhToken.TotalSeconds => span.TotalSeconds.ToString("0"),
-        PhToken.Hint => CanUseCustomText ? string.Empty : PhHints[phase],
-        _ => format.Value,
-    };
 
     private void OnExamSwitched()
     {

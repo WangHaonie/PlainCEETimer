@@ -6,23 +6,164 @@
         xmlns:local="clr-namespace:PlainCEETimer.WPF.Views"
         xmlns:vm="clr-namespace:PlainCEETimer.WPF.ViewModels"
         xmlns:base="clr-namespace:PlainCEETimer.WPF.Controls"
+        xmlns:mod="clr-namespace:PlainCEETimer.WPF.Modules"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:ImmersiveViewModel}"
         Title="沉浸模式 - 高考倒计时"
         ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="CenterScreen"
         ShowInTaskbar="True" UseLayoutRounding="True">
+    <base:AppWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="SidebarExpandGlyph" TargetType="Path" BasedOn="{StaticResource GlyphPath}">
+            <Setter Property="Data" Value="{StaticResource IconExpand}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSidebarExpanded}" Value="True">
+                    <Setter Property="Data" Value="{StaticResource IconCollapse}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </base:AppWindow.Resources>
     <Window.InputBindings>
-        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ToggleFullScreenCommand}" />
         <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}" />
-        <KeyBinding Key="Esc" Command="{Binding ExitFullScreenCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding HandleEscapeCommand}" />
+        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ToggleFullScreenCommand}" />
     </Window.InputBindings>
     <Border Background="{Binding BackBrush}">
-        <TextBlock x:Name="CountdownText" Margin="12"
-            HorizontalAlignment="Stretch" VerticalAlignment="Center"
-            TextAlignment="Center" TextWrapping="Wrap"
-            FontFamily="{Binding Font.FontFamily.Value}"
-            FontSize="{Binding Font.Size}"
-            FontWeight="{Binding Font.Weight}"
-            Foreground="{Binding ForeBrush}"
-            Text="{Binding Content}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="CountdownArea" Grid.Column="0" Background="Transparent"
+                  MouseMove="CountdownArea_MouseMove">
+                <StackPanel x:Name="CountdownHost"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <TextBlock x:Name="PrevText" Margin="12,8"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                        TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                        Visibility="{Binding ShowPrevNext, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        FontFamily="{Binding Font.FontFamily.Value}"
+                        FontWeight="{Binding Font.Weight}"
+                        Foreground="{Binding PrevForeBrush}"
+                        Text="{Binding PrevContent}" />
+                    <TextBlock x:Name="CurrentText" Margin="12,8"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                        TextAlignment="Center" TextWrapping="Wrap"
+                        FontFamily="{Binding Font.FontFamily.Value}"
+                        FontWeight="{Binding Font.Weight}"
+                        Foreground="{Binding ForeBrush}"
+                        Text="{Binding Content}" />
+                    <TextBlock x:Name="NextText" Margin="12,8"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                        TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                        Visibility="{Binding ShowPrevNext, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        FontFamily="{Binding Font.FontFamily.Value}"
+                        FontWeight="{Binding Font.Weight}"
+                        Foreground="{Binding NextForeBrush}"
+                        Text="{Binding NextContent}" />
+                </StackPanel>
+
+                <Button x:Name="SidebarToggle"
+                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                        Width="24" Height="24" Margin="8"
+                        ToolTip="打开/关闭侧栏"
+                        Command="{Binding ToggleSidebarCommand}"
+                        mod:Win32ContextMenu.ContextMenu="{x:Null}">
+                    <Viewbox Width="16" Height="16">
+                        <Path Style="{StaticResource GlyphPath}" Data="{StaticResource IconMenu}" />
+                    </Viewbox>
+                </Button>
+            </Grid>
+
+            <Border x:Name="SidebarPanel" Grid.Column="1" Width="0" ClipToBounds="True"
+                    Background="{DynamicResource BackText}"
+                    mod:Win32ContextMenu.ContextMenu="{x:Null}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Thumb x:Name="SidebarGrip" Grid.Column="0"
+                           DragDelta="SidebarGrip_DragDelta"
+                           DragCompleted="SidebarGrip_DragCompleted">
+                        <Thumb.Style>
+                            <Style TargetType="Thumb">
+                                <Setter Property="Width" Value="3" />
+                                <Setter Property="Cursor" Value="SizeWE" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Grid Background="Transparent">
+                                                <Rectangle x:Name="Line" Width="3" HorizontalAlignment="Left"
+                                                           Fill="{DynamicResource BackSplitter}"
+                                                           SnapsToDevicePixels="True" />
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsDragging" Value="True">
+                                                    <Setter TargetName="Line" Property="Width" Value="1" />
+                                                    <Setter TargetName="Line" Property="Fill"
+                                                            Value="{DynamicResource BorderItemSelected}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Thumb.Style>
+                    </Thumb>
+
+                    <Grid x:Name="SidebarContent" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="12,8,8,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="全部考试" />
+                            <Button x:Name="SidebarExpandButton" Grid.Column="1"
+                                    Width="24" Height="24" Padding="0"
+                                    Command="{Binding ToggleSidebarExpandCommand}"
+                                    ToolTip="展开/收起侧栏">
+                                <Viewbox Width="16" Height="16">
+                                    <Path Style="{StaticResource SidebarExpandGlyph}" />
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                        <ListBox x:Name="ExamList" Grid.Row="1"
+                                 ItemsSource="{Binding ExamItems}"
+                                 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                 FontFamily="{Binding Font.FontFamily.Value}"
+                                 FontSize="{Binding Font.Size}"
+                                 FontWeight="{Binding Font.Weight}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 mod:ScrollBarAdditions.ShowArrows="False">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="4,4">
+                                        <TextBlock Text="{Binding Name}" FontSize="12"
+                                                   FontFamily="{DynamicResource AppFontFamily}"
+                                                   FontWeight="Normal"
+                                                   Foreground="{DynamicResource ForeText}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <Border Margin="0,4,0,0" CornerRadius="{DynamicResource CountdownCardCornerRadius}" ClipToBounds="True"
+                                                HorizontalAlignment="Left"
+                                                Background="{Binding BackBrush}" Padding="6,2,6,2">
+                                            <TextBlock Text="{Binding Content}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{Binding ForeBrush}" />
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Border>
 </base:AppWindow>

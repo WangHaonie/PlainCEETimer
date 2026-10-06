@@ -98,15 +98,18 @@
     <Compile Update="UI\Controls\PlainFlyout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UI\Dialogs\ImmersiveOptionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="WPF\Views\FontDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="WPF\Views\MainWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Update="UI\Controls\PlainTabControl.cs">
+    <Compile Update="UI\Controls\PlainTabControl.cs">
       <SubType>Component</SubType>
-    </None>
+    </Compile>
     <Compile Update="UI\Controls\PlainTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -145,8 +148,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="UI\Controls\PlainTabControl.cs">
+    <Compile Update="UI\Controls\PlainTabControl.cs">
       <SubType>Component</SubType>
-    </None>
+    </Compile>
   </ItemGroup>
 </Project>

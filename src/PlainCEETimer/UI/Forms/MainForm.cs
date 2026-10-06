@@ -24,7 +24,8 @@ public sealed class MainForm : AppForm
     protected override void OnInitializing()
     {
         Text = "高考倒计时";
-        vm = ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>()
+
+        ServiceHost.ServiceProvider.CreateViewModel<MainViewModel>()
             .Import<ICountdownService>((vm, s) => vm.CountdownService = s)
             .Import(MessageX, (vm, s) => vm.DialogService = s)
             .Import(new SystemBorderColorService(this), (vm, s) => vm.BorderColorService = s)
@@ -36,7 +37,7 @@ public sealed class MainForm : AppForm
             .Import<ITrayIconLoader>((vm, s) => vm.TrayIconLoader = s)
             .Import(ScreenService, (vm, s) => vm.ScreenService = s)
             .Import(new WinFormsFontService(this), (vm, s) => vm.UnifiedFontService = s)
-            .Build();
+            .Build(out vm);
 
         vm.PropertyChanged += OnPropertyChanged;
     }

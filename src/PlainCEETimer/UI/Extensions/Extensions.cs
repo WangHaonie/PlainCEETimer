@@ -48,6 +48,12 @@ public static class Extensions
         return control;
     }
 
+    public static MenuItem With(this MenuItem item, Action<MenuItem> action)
+    {
+        action(item);
+        return item;
+    }
+
     public static PlainLinkLabel Link(this PlainLinkLabel label, string link, out LinkLabel.Link instance)
     {
         instance = label.Links.Add(0, label.Text.Length, link);

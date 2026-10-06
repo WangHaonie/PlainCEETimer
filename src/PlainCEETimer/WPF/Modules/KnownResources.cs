@@ -7,4 +7,6 @@ namespace PlainCEETimer.WPF.Modules;
 public static class KnownResources
 {
     public const string WindowBorderCornerRadius = nameof(WindowBorderCornerRadius);
+
+    public const string AppFontFamily = nameof(AppFontFamily);
 }

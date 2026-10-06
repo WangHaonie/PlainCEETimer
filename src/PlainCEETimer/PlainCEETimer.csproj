@@ -22,13 +22,7 @@
 	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="UI\Controls\PlainTabControl.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Properties\AppIcon256px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="UI\Controls\PlainTabControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />

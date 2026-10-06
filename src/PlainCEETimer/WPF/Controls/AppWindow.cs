@@ -114,12 +114,12 @@ public partial class AppWindow : Window, IAppWindow
     public AppWindow()
     {
         SetResourceReference(StyleProperty, typeof(Window));
+        SetResourceReference(FontFamilyProperty, KnownResources.AppFontFamily);
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
         suggestMaxWidth = CheckParam(AppWindowStyle.SuggestMaxWidth);
         InitEvents();
-        FontFamily = new("Segoe UI, Microsoft YaHei");
         FontSize = 9D.Pt2Dip();
         ScreenService = new ScreenHelper(Special ? this : null);
 

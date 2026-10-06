@@ -85,7 +85,8 @@ public sealed class WPFApp : Application, IThemeAware
         }
 
         dict.AddEx(Resource.Create(ThemeDir + "Default.xaml"), atLeastNT10)
-            .AddEx(Resource.Create(ThemeDir + "Controls.xaml"));
+            .AddEx(Resource.Create(ThemeDir + "Controls.xaml"))
+            .AddEx(Resource.Create(ThemeDir + "Images.xaml"));
 
         themeHelper ??= new(this);
     }

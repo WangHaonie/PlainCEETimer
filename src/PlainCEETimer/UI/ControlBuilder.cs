@@ -182,7 +182,6 @@ public class ControlBuilder
         return ctrl;
     }
 
-#if false
     public PlainTabControl TabCtrl(int w, int h, bool multiline, TabPage[] pages)
     {
         var ctrl = new PlainTabControl();
@@ -203,7 +202,6 @@ public class ControlBuilder
 
         return ctrl;
     }
-#endif
 
     public NavigationView NavigationView(int x, int y, int cxBar, int cxPage, int cy, int cyHeader, int indentHeader, NavigationPage[] pages)
     {

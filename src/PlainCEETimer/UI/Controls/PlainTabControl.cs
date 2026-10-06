@@ -1,6 +1,7 @@
-﻿﻿using System;
+﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Extensions;
 
@@ -27,7 +28,7 @@ public class PlainTabControl : TabControl
 
             if (ThemeManager.NewThemeAvailable)
             {
-                ThemeManager.EnableDarkModeForControl(this, SystemStyle.DarkTheme);
+                ThemeManager.ApplyControlTheme(this, SystemStyle.DarkTheme);
             }
             else
             {
@@ -42,9 +43,9 @@ public class PlainTabControl : TabControl
     protected override void WndProc(ref Message m)
     {
         if (UseDark && m.Msg == WinUser.WM_PARENTNOTIFY
-            && m.WParam.ToInt32().LoWord == WinUser.WM_CREATE)
+            && m.WParam.LoWord == WinUser.WM_CREATE)
         {
-            ThemeManager.EnableDarkModeForControl(m.LParam, SystemStyle.ExplorerDark);
+            ThemeManager.ApplyControlTheme(m.LParam, SystemStyle.ExplorerDark);
         }
 
         base.WndProc(ref m);
