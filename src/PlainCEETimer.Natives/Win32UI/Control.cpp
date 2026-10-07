@@ -294,3 +294,33 @@ BOOL NATIVESAPI PnPtInWindowClient(HWND hWnd, LONG x, LONG y)
 
     return FALSE;
 }
+
+BOOL NATIVESAPI PnTryGetTabUpDown(HWND hTab, HWND* phUpDown)
+{
+    if (hTab && phUpDown)
+    {
+        ULONG_PTR htc = CastS(ULONG_PTR, GetWindowLongPtr(hTab, NULL));
+        HWND result;
+
+        if (htc)
+        {
+            result = *CastP(HWND*, CastP(LPBYTE, htc) + 0x40);
+
+            if (IsWindow(result))
+            {
+                *phUpDown = result;
+                return TRUE;
+            }
+        }
+
+        result = FindWindowEx(hTab, nullptr, UPDOWN_CLASS, nullptr);
+
+        if (result)
+        {
+            *phUpDown = result;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}

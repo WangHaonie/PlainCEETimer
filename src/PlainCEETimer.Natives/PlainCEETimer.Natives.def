@@ -82,3 +82,4 @@ EXPORTS
 
     PnToggleFullScreen @68 NONAME
     PnPtInWindowClient @69 NONAME
+    PnTryGetTabUpDown @70 NONAME

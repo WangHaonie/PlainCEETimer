@@ -372,9 +372,17 @@ public sealed partial class ImmersiveWindow : AppWindow
 
     private void ViewModel_ExamSwitched(object sender, EventArgs e)
     {
+        CountdownHost.BeginAnimation(OpacityProperty, null);
+
+        if (vm.NoAnimate)
+        {
+            CountdownHost.Opacity = 1D;
+            CountdownHost.RenderTransform = null;
+            return;
+        }
+
         var t = new TranslateTransform(0.0, TransitionOffset);
         CountdownHost.RenderTransform = t;
-        CountdownHost.BeginAnimation(OpacityProperty, null);
         CountdownHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0.0, 1.0, AnimateDuration));
 
         t.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(TransitionOffset, 0.0, AnimateDuration)
@@ -523,6 +531,14 @@ public sealed partial class ImmersiveWindow : AppWindow
         var from = SidebarPanel.ActualWidth;
 
         SidebarPanel.BeginAnimation(WidthProperty, null);
+
+        if (vm.NoAnimate)
+        {
+            SidebarPanel.Width = target;
+            UpdateStyle();
+            return;
+        }
+
         SidebarPanel.Width = from;
         SidebarPanel.BeginAnimation(WidthProperty, new DoubleAnimation(from, target, AnimateDuration)
         {
@@ -612,12 +628,12 @@ public sealed partial class ImmersiveWindow : AppWindow
         return lo;
     }
 
-    private static void AnimateLine(TextBlock target, double fontSize)
+    private void AnimateLine(TextBlock target, double fontSize)
     {
         var current = target.FontSize;
         target.BeginAnimation(TextBlock.FontSizeProperty, null);
 
-        if (double.IsNaN(current) || Math.Abs(fontSize - current) < FontAnimThreshold)
+        if (vm.NoAnimate || double.IsNaN(current) || Math.Abs(fontSize - current) < FontAnimThreshold)
         {
             target.FontSize = fontSize;
             return;
@@ -629,12 +645,12 @@ public sealed partial class ImmersiveWindow : AppWindow
         });
     }
 
-    private static void AnimateOpacity(UIElement target, double value)
+    private void AnimateOpacity(UIElement target, double value)
     {
         var current = target.Opacity;
         target.BeginAnimation(OpacityProperty, null);
 
-        if (Math.Abs(current - value) < 0.01D)
+        if (vm.NoAnimate || Math.Abs(current - value) < 0.01D)
         {
             target.Opacity = value;
             return;

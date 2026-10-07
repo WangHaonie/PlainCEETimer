@@ -67,6 +67,12 @@ NATIVES_EXPORT void NATIVESAPI PnUnhookOpenTheme();
 
 #define DCOLOR_GRPBOX_BORDER                    RGB(77, 77, 77)
 
+#define DCOLOR_TAB_PANE_BACK                    RGB(25, 25, 25)
+#define DCOLOR_TAB_HEADER_BACK                  RGB(32, 32, 32)
+#define DCOLOR_TAB_HEADER_BACK_HOT              RGB(49, 49, 49)
+#define DCOLOR_TAB_HEADER_BACK_SELECTED         RGB(38, 38, 38)
+#define DCOLOR_TAB_BORDER                       RGB(78, 78, 78)
+
 #define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackground), 0, true
 #define HOOK_COMCTL32_DRAWTHEMETEXT_ARGS        COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeText), 0, true
 

@@ -59,6 +59,9 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     public partial bool ShowPrevNext { get; private set; }
 
     [ObservableProperty]
+    public partial bool NoAnimate { get; private set; }
+
+    [ObservableProperty]
     public partial double SidebarWidth { get; private set; }
 
     [ObservableProperty]
@@ -87,6 +90,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     private bool _SuppressSelect;
     private int examIndex;
     private MenuItem MenuItemFullScreen;
+    private MenuItem MenuItemTopMost;
     private MenuItemBuilder DefaultMenuBuilder;
     private System.Threading.Timer MainTimer;
     private ImmersiveObject config;
@@ -130,6 +134,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
         DefaultMenuBuilder = b =>
         [
+            MenuItemTopMost = b.Item("置顶(&T)", (_, _) => ToggleTopMost()).With(x => x.Checked = config.TopMost),
             MenuItemFullScreen = b.Item("全屏(&F)", (_, _) => ToggleFullScreen()).With(x => x.Checked = isFullScreen),
             b.Separator(),
 
@@ -139,7 +144,8 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
                 if (dialog.ShowDialog(MessageX.Owner) == true)
                 {
-
+                    LoadConfig();
+                    ConfigValidator.DemandConfig();
                 }
             })
         ];
@@ -150,26 +156,15 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         };
     }
 
-    public void Dispose()
-    {
-        m_bDisposed = true;
-        MainTimer?.Destroy();
-
-        if (m_countdown != null)
-        {
-            m_countdown.ExamSwitched -= OnExamSwitched;
-            m_countdown.SetRecipient(CountdownRecipient.Immersive, false);
-        }
-
-        m_helper.CountdownFontChanged -= OnCountdownFontChanged;
-        GC.SuppressFinalize(this);
-    }
-
     public void LoadConfig()
     {
         config = App.Current.AppConfig.Immersive;
         ShowPrevNext = config.PrevNext;
+        NoAnimate = config.NoAnimate;
         SidebarWidth = config.SidebarWidth;
+        m_controller.Loop = ShowPrevNext && config.Loop;
+        m_controller.SkipExams = ShowPrevNext && config.SkipExams;
+        ApplyTopMost();
         Refresh();
     }
 
@@ -188,6 +183,21 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
             config.SidebarWidth = width;
             ConfigValidator.DemandConfig();
         }
+    }
+
+    public void Dispose()
+    {
+        m_bDisposed = true;
+        MainTimer?.Destroy();
+
+        if (m_countdown != null)
+        {
+            m_countdown.ExamSwitched -= OnExamSwitched;
+            m_countdown.SetRecipient(CountdownRecipient.Immersive, false);
+        }
+
+        m_helper.CountdownFontChanged -= OnCountdownFontChanged;
+        GC.SuppressFinalize(this);
     }
 
     private void OnTimerCallback(object state)
@@ -337,11 +347,27 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     }
 
     [RelayCommand]
+    private void ToggleTopMost()
+    {
+        config.TopMost = !config.TopMost;
+        ApplyTopMost();
+        ConfigValidator.DemandConfig();
+    }
+
+    [RelayCommand]
     private void ToggleFullScreen()
     {
         isFullScreen = !isFullScreen;
         MenuItemFullScreen?.Checked = isFullScreen;
+        ApplyTopMost();
         m_styles.ToggleScreen();
+    }
+
+    private void ApplyTopMost()
+    {
+        var tm = config.TopMost && !isFullScreen;
+        WindowStyles.TopMost = tm;
+        MenuItemTopMost?.Checked = tm;
     }
 
     [RelayCommand]

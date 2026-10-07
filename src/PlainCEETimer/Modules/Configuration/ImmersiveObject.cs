@@ -8,7 +8,13 @@ namespace PlainCEETimer.Modules.Configuration;
 [NoConstants]
 public class ImmersiveObject
 {
-    public bool PrevNext { get; set; } = true;
+    public bool PrevNext { get; set; }
+
+    public bool Loop { get; set; }
+
+    public bool SkipExams { get; set; }
+
+    public bool NoAnimate { get; set; }
 
     public double SidebarWidth
     {
@@ -20,6 +26,8 @@ public class ImmersiveObject
 
     public bool FullScreen { get; set; }
 
+    public bool TopMost { get; set; }
+
     [JsonConverter(typeof(SizeFormatConverter))]
     public Size Size { get; set; }
 
@@ -28,4 +36,16 @@ public class ImmersiveObject
     public const double MaxSidebarWidth = 1200D;
 
     public const double DefaultSidebarWidth = 320D;
+
+    public ImmersiveObject CreateCopy()
+    {
+        return new()
+        {
+            SidebarWidth = SidebarWidth,
+            Maximize = Maximize,
+            FullScreen = FullScreen,
+            TopMost = TopMost,
+            Size = Size
+        };
+    }
 }

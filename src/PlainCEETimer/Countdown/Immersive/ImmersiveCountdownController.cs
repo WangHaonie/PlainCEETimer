@@ -83,7 +83,7 @@ public partial class ImmersiveCountdownController
 
             steps++;
 
-            if (!_skip || now <= Exams[i].End)
+            if (!_skip || Builders[i].TestExam(now, out _, out _))
             {
                 index = i;
                 return true;

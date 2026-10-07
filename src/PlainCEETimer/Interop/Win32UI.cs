@@ -306,6 +306,9 @@ internal unsafe static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#69")]
     public static extern bool PnPtInWindowClient(IntPtr hWnd, int x, int y);
 
+    [DllImport(App.NativesDll, EntryPoint = "#70")]
+    public static extern bool PnTryGetTabUpDown(IntPtr hTab, out IntPtr phUpDown);
+
     public static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
     {
         return SendMessage(hWnd, msg, wParam, (nint)lParam);

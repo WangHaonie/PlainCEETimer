@@ -143,7 +143,7 @@ static void PnHandleListViewCheckBoxes(HWND& hWnd, LPCWSTR& pszClassList)
     }
 }
 
-static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBorder, bool bBorder, bool bBack = true)
+static bool PnDrawBackground(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBorder, bool bBorder, bool bBack = true)
 {
     if (bBack)
     {
@@ -153,6 +153,30 @@ static bool PnCommonPaint(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBo
     SetDCBrushColor(hdc, bBorder ? crBorder : crBack);
     FrameRect(hdc, lpRect, CastP(HBRUSH, GetStockObject(DC_BRUSH)));
     return true;
+}
+
+static bool PnDrawTabItemBackground(HDC hdc, LPRECT lpRect, COLORREF crBack, COLORREF crBorder)
+{
+    PnDrawBackground(hdc, lpRect, crBack, COLOR_EMPTY, false);
+
+    static POINT pts[4];
+    LONG l = lpRect->left, t = lpRect->top, r = lpRect->right - 1, b = lpRect->bottom - 1;
+    pts[0] = { l, b - 1 };
+    pts[1] = { l, t };
+    pts[2] = { r, t };
+    pts[3] = { r, b };
+
+    HPEN hpOld = CastP(HPEN, SelectObject(hdc, GetStockObject(DC_PEN)));
+    SetDCPenColor(hdc, crBorder);
+    Polyline(hdc, pts, 4);
+    SelectObject(hdc, hpOld);
+    return true;
+}
+
+static bool PnDrawText(DTT_ARGS_DECL, bool bEnabled)
+{
+    s_dttoptions.crText = bEnabled ? DCOLOR_TEXT_FORE : DCOLOR_TEXT_FORE_DISABLED;
+    return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
 }
 
 static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF crFill)
@@ -230,17 +254,17 @@ static bool PnDrawProgressBackground(DTBG_ARGS_DECL)
     {
         case PP_TRANSPARENTBAR:
         case PP_TRANSPARENTBARVERT:
-            return PnCommonPaint(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);
+            return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);
 
         case PP_FILL:
         case PP_FILLVERT:
         {
             switch (iStateId)
             {
-                CASE(PBFS_NORMAL, PnCommonPaint(hdc, pRect, DCOLOR_PROGRESS_BACK_NORMAL, COLOR_EMPTY, false));
-                CASE(PBFS_ERROR, PnCommonPaint(hdc, pRect, DCOLOR_PROGRESS_BACK_ERROR, COLOR_EMPTY, false));
-                CASE(PBFS_PAUSED, PnCommonPaint(hdc, pRect, DCOLOR_PROGRESS_BACK_PAUSED, COLOR_EMPTY, false));
-                CASE(PBFS_PARTIAL, PnCommonPaint(hdc, pRect, DCOLOR_PROGRESS_BACK_PARTIAL, COLOR_EMPTY, false));
+                CASE(PBFS_NORMAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_NORMAL, COLOR_EMPTY, false));
+                CASE(PBFS_ERROR, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_ERROR, COLOR_EMPTY, false));
+                CASE(PBFS_PAUSED, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PAUSED, COLOR_EMPTY, false));
+                CASE(PBFS_PARTIAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PARTIAL, COLOR_EMPTY, false));
             }
         }
     }
@@ -275,7 +299,7 @@ static bool PnDrawDatePickerBackground(DTBG_ARGS_DECL)
             CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
         }
 
-        return PnCommonPaint(hdc, pRect, crBack, crBorder, true);
+        return PnDrawBackground(hdc, pRect, crBack, crBorder, true);
     }
 
     return false;
@@ -323,7 +347,7 @@ static bool PnDrawMonthCalBackground(DTBG_ARGS_DECL)
         case MC_GRIDBACKGROUND:
         case MC_GRIDCELLBACKGROUND:
         case MC_COLHEADERSPLITTER:
-            return PnCommonPaint(hdc, pRect, DCOLOR_MONTHCAL_BACK, DCOLOR_MONTHCAL_BORDER, true);
+            return PnDrawBackground(hdc, pRect, DCOLOR_MONTHCAL_BACK, DCOLOR_MONTHCAL_BORDER, true);
         case MC_NAVNEXT:
         case MC_NAVPREV:
             return PnDrawMonthCalArrow(hdc, pRect, iPartId == MC_NAVPREV, iStateId);
@@ -332,9 +356,36 @@ static bool PnDrawMonthCalBackground(DTBG_ARGS_DECL)
     return false;
 }
 
+static bool PnDrawTabBackground(DTBG_ARGS_DECL)
+{
+    switch (iPartId)
+    {
+        case TABP_PANE:
+            return PnDrawBackground(hdc, pRect, DCOLOR_TAB_PANE_BACK, DCOLOR_TAB_BORDER, true);
+
+        case TABP_TOPTABITEM:
+        case TABP_TOPTABITEMLEFTEDGE:
+        case TABP_TOPTABITEMRIGHTEDGE:
+        case TABP_TOPTABITEMBOTHEDGE:
+        {
+            switch (iStateId)
+            {
+                case TTIS_NORMAL:
+                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK, DCOLOR_TAB_BORDER);
+                case TTIS_HOT:
+                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_HOT, DCOLOR_TAB_BORDER);
+                case TTIS_SELECTED:
+                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_SELECTED, DCOLOR_TAB_BORDER);
+            }
+        }
+    }
+
+    return false;
+}
+
 static bool PnDrawGroupBoxBackground(DTBG_ARGS_DECL)
 {
-    return PnCommonPaint(hdc, pRect, COLOR_EMPTY, DCOLOR_GRPBOX_BORDER, true, false);
+    return PnDrawBackground(hdc, pRect, COLOR_EMPTY, DCOLOR_GRPBOX_BORDER, true, false);
 }
 
 static bool PnDrawMonthCalText(DTT_ARGS_DECL)
@@ -473,8 +524,12 @@ static bool PnDrawButtonText(DTT_ARGS_DECL)
 
 static bool PnDrawGroupBoxText(DTT_ARGS_DECL)
 {
-    s_dttoptions.crText = DCOLOR_TEXT_FORE;
-    return SUCCEEDED(DrawThemeTextEx(DTT_ARGS, &s_dttoptions));
+    return PnDrawText(DTT_ARGS, true);
+}
+
+static bool PnDrawTabItemText(DTT_ARGS_DECL)
+{
+    return PnDrawText(DTT_ARGS, true);
 }
 
 static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
@@ -486,6 +541,7 @@ static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
             CASE(strhash(VSCLASS_PROGRESS), PnDrawProgressBackground(DTBG_ARGS));
             CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerBackground(DTBG_ARGS));
             CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
+            CASE(strhash(VSCLASS_TAB), PnDrawTabBackground(DTBG_ARGS));
             CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
         }
     }
@@ -501,6 +557,7 @@ static bool PnDrawThemeText(DTT_ARGS_DECL)
         {
             CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerText(DTT_ARGS));
             CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalText(DTT_ARGS));
+            CASE(strhash(VSCLASS_TAB), PnDrawTabItemText(DTT_ARGS));
 
             case strhash(VSCLASS_BUTTON):
             {
@@ -596,7 +653,7 @@ static BOOL WINAPI DrawEdge_(HDC hdc, LPRECT qrc, UINT edge, UINT grfFlags)
     {
         if (edge == EDGE_SUNKEN)
         {
-            PnCommonPaint(hdc, qrc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgDrawEdge.Tag), true, false);
+            PnDrawBackground(hdc, qrc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgDrawEdge.Tag), true, false);
             
             if (grfFlags & BF_ADJUST)
             {
@@ -618,7 +675,7 @@ static int WINAPI FrameRect_(HDC hDC, const RECT* lprc, HBRUSH hbr)
 
         if (GetObject(hbr, sizeof(lb), &lb) && !lb.lbColor)
         {
-            return PnCommonPaint(hDC, (RECT*)lprc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgFrameRect.Tag), true, false);
+            return PnDrawBackground(hDC, (RECT*)lprc, COLOR_EMPTY, CastS(COLORREF, IatHookComdlgFrameRect.Tag), true, false);
         }
     }
 
