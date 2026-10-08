@@ -4,7 +4,7 @@
     <CornerRadius x:Key="SmallCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="MenuItemCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="SelectionRectangleCornerRadius">0</CornerRadius>
-    <CornerRadius x:Key="WindowBorder">8</CornerRadius>
+    <CornerRadius x:Key="WindowBorderCornerRadius">8</CornerRadius>
     <CornerRadius x:Key="CountdownCardCornerRadius">8</CornerRadius>
 
     <FontFamily x:Key="AppFontFamily">Segoe UI, Microsoft YaHei</FontFamily>

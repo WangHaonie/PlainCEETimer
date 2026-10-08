@@ -237,6 +237,19 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
                 b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(AppConfig.GetDefaultFont()))
             ]),
 
+            b.Conditional(immersive, b => b.Separator()),
+
+            b.Conditional(immersive, b => b.Item("沉浸模式(&I)", (_, _) =>
+            {
+                if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
+                {
+                    WPFApp.EnsureAlive();
+                    ImmersiveWindow = new();
+                }
+
+                ImmersiveWindow.ReActivate();
+            }).AsDefault()),
+
             b.Separator(),
 
             b.Item("设置(&S)", (_, _) =>
@@ -266,19 +279,6 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
 
                 FormAbout.ReActivate();
             }),
-
-            b.Conditional(immersive, b => b.Separator()),
-
-            b.Conditional(immersive, b => b.Item("沉浸模式(&I)", (_, _) =>
-            {
-                if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
-                {
-                    WPFApp.EnsureAlive();
-                    ImmersiveWindow = new();
-                }
-
-                ImmersiveWindow.ReActivate();
-            })),
 
             b.Separator(),
 
