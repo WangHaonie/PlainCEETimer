@@ -104,7 +104,6 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxCommDlgDpiAware;
     private PlainCheckBox CheckBoxCTSP;
     private PlainCheckBox CheckBoxMainBackdrop;
-    private PlainCheckBox CheckBoxImmersive;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
     private PlainNumericUpDown NudTruncate;
@@ -124,7 +123,6 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxDpiAware;
     private PlainGroupBox GBoxTSPresent;
     private PlainGroupBox GBoxDbgWndStyles;
-    private PlainGroupBox GBoxDbgImmersive;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
@@ -506,11 +504,6 @@ public sealed class SettingsForm : AppForm
                         GBoxDbgWndStyles = b.GroupBox("窗口样式",
                         [
                             CheckBoxMainBackdrop = b.CheckBox("启用主窗口 Backdrop 效果 (Acrylic)", SettingsChanged)
-                        ]),
-
-                        GBoxDbgImmersive = b.GroupBox("沉浸式倒计时",
-                        [
-                            CheckBoxImmersive = b.CheckBox("启用沉浸模式", SettingsChanged)
                         ])
                     ])
                 ),
@@ -736,10 +729,6 @@ public sealed class SettingsForm : AppForm
             ArrangeControlYL(GBoxDbgWndStyles, GBoxTSPresent, 0, 2);
             GroupBoxArrageControl(GBoxDbgWndStyles, CheckBoxMainBackdrop, 4);
             GroupBoxAutoAdjustHeight(GBoxDbgWndStyles, CheckBoxMainBackdrop, 6);
-
-            ArrangeControlYL(GBoxDbgImmersive, GBoxDbgWndStyles, 0, 2);
-            GroupBoxArrageControl(GBoxDbgImmersive, CheckBoxImmersive, 4);
-            GroupBoxAutoAdjustHeight(GBoxDbgImmersive, CheckBoxImmersive, 6);
         }
         #endregion
 
@@ -949,7 +938,6 @@ public sealed class SettingsForm : AppForm
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
             CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
             CheckBoxMainBackdrop.Checked = ParamsInfo.MainBackdropAcrylic;
-            CheckBoxImmersive.Checked = ParamsInfo.ImmersiveCountdown;
             TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
             PtspTSMax.Value = ParamsInfo.TSMax;
         }
@@ -1198,7 +1186,6 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
             ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
             ParamsInfo.MainBackdropAcrylic = CheckBoxMainBackdrop.Checked;
-            ParamsInfo.ImmersiveCountdown = CheckBoxImmersive.Checked;
             ParamsInfo.TSFormat = DebugTSFormat;
             ParamsInfo.TSMax = PtspTSMax.Value;
             AppParams.LoadConfig();

@@ -23,9 +23,6 @@ internal static partial class AppParams
     [BackingField("m_MainBackdropAcrylic")]
     public static partial bool MainBackdropAcrylic { get; }
 
-    [BackingField("m_ImmersiveCountdown")]
-    public static partial bool ImmersiveCountdown { get; }
-
     [BackingField("m_TSFormat")]
     public static partial string TSFormat { get; }
 
@@ -52,7 +49,6 @@ internal static partial class AppParams
             m_EnableCommDlgPMv2 = dbg && info.EnableCommDlgPMv2;
             m_UseClassicTSP = dbg && info.UseClassicTSP;
             m_MainBackdropAcrylic = dbg && info.MainBackdropAcrylic && SystemVersion.IsWindows11;
-            m_ImmersiveCountdown = dbg && info.ImmersiveCountdown;
             m_TSFormat = dbg ? info.TSFormat : null;
             m_TSMax = dbg && !m_UseClassicTSP ? info.TSMax : ConfigValidator.MaxTick;
         }

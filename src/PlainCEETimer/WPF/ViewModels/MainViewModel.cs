@@ -171,7 +171,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
             RegisterHotKeys();
             ConfigValidator.ValidateNeeded = false;
 
-            if (AppParams.ImmersiveCountdown && AppConfig.Immersive?.AutoStart == true)
+            if (AppConfig.Immersive?.AutoStart == true)
             {
                 StartImmersive();
             }
@@ -213,8 +213,6 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
             }
         };
 
-        var immersive = AppParams.ImmersiveCountdown;
-
         ItemBuilder ??= b =>
         [
             b.Item("切换(&Q)"),
@@ -242,13 +240,8 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
                 b.Item("恢复默认(&R)", (_, _) => ChangeCountdownFont(AppConfig.GetDefaultFont()))
             ]),
 
-            b.Conditional(immersive, b => b.Separator()),
-
-            b.Conditional(immersive, b => b.Item("沉浸模式(&I)", (_, _) =>
-            {
-                StartImmersive();
-            }).AsDefault()),
-
+            b.Separator(),
+            b.Item("沉浸模式(&I)", (_, _) => StartImmersive()).AsDefault(),
             b.Separator(),
 
             b.Item("设置(&S)", (_, _) =>
