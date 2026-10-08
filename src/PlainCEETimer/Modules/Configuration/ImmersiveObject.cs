@@ -28,6 +28,8 @@ public class ImmersiveObject
 
     public bool TopMost { get; set; }
 
+    public bool UnTopMost { get; set; }
+
     [JsonConverter(typeof(SizeFormatConverter))]
     public Size Size { get; set; }
 

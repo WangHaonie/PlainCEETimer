@@ -14,6 +14,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
     private PlainCheckBox CheckBoxSkipExams;
     private PlainCheckBox CheckBoxShowLoop;
     private PlainCheckBox CheckBoxNoAnimate;
+    private PlainCheckBox CheckBoxUnTopMost;
     private EventHandler OnUserChanged;
 
     protected override void OnInitializing()
@@ -42,6 +43,11 @@ public sealed class ImmersiveOptionsDialog : AppDialog
                 b.TabPage("动画",
                 [
                     CheckBoxNoAnimate = b.CheckBox("关闭所有动画效果(&N)", OnUserChanged)
+                ]),
+
+                b.TabPage("行为",
+                [
+                    CheckBoxUnTopMost = b.CheckBox("禁止在全屏模式下设置顶置(&U)", OnUserChanged)
                 ])
             ])
         ]);
@@ -58,6 +64,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
         ArrangeControlYL(CheckBoxShowLoop, CheckBoxSkipExams, 0, 3);
 
         ArrangeFirstControl(CheckBoxNoAnimate, 6);
+        ArrangeFirstControl(CheckBoxUnTopMost, 6);
 
         ArrangeCommonButtonsR(ButtonA, ButtonB, TabControlMain, 0, 3);
         InitWindowSize(ButtonB, 6, 3);
@@ -74,6 +81,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
             CheckBoxShowLoop.Checked = pn && c.Loop;
             CheckBoxSkipExams.Checked = pn && c.SkipExams;
             CheckBoxNoAnimate.Checked = c.NoAnimate;
+            CheckBoxUnTopMost.Checked = c.UnTopMost;
         }
     }
 
@@ -88,6 +96,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
         i.Loop = pn && CheckBoxShowLoop.Checked;
         i.SkipExams = pn && CheckBoxSkipExams.Checked;
         i.NoAnimate = CheckBoxNoAnimate.Checked;
+        i.UnTopMost = CheckBoxUnTopMost.Checked;
 
         a.Immersive = i;
         return base.OnClickButtonA();

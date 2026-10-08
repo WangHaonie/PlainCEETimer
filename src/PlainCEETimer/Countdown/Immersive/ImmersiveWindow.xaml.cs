@@ -372,23 +372,26 @@ public sealed partial class ImmersiveWindow : AppWindow
 
     private void ViewModel_ExamSwitched(object sender, EventArgs e)
     {
-        CountdownHost.BeginAnimation(OpacityProperty, null);
-
-        if (vm.NoAnimate)
+        if (!vm.IsSidebarExpanded)
         {
-            CountdownHost.Opacity = 1D;
-            CountdownHost.RenderTransform = null;
-            return;
+            CountdownHost.BeginAnimation(OpacityProperty, null);
+
+            if (vm.NoAnimate)
+            {
+                CountdownHost.Opacity = 1D;
+                CountdownHost.RenderTransform = null;
+                return;
+            }
+
+            var t = new TranslateTransform(0.0, TransitionOffset);
+            CountdownHost.RenderTransform = t;
+            CountdownHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0.0, 1.0, AnimateDuration));
+
+            t.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(TransitionOffset, 0.0, AnimateDuration)
+            {
+                EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
+            });
         }
-
-        var t = new TranslateTransform(0.0, TransitionOffset);
-        CountdownHost.RenderTransform = t;
-        CountdownHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0.0, 1.0, AnimateDuration));
-
-        t.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(TransitionOffset, 0.0, AnimateDuration)
-        {
-            EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
-        });
     }
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -470,7 +473,42 @@ public sealed partial class ImmersiveWindow : AppWindow
             cxSidebar = ClampSidebarWidth(cxSidebarUser);
         }
 
+        AnimateCountdownHost(vm.IsSidebarExpanded);
         AnimateSidebar(GetSidebarTargetWidth());
+    }
+
+    private void AnimateCountdownHost(bool hide)
+    {
+        var current = CountdownHost.Opacity;
+        CountdownHost.BeginAnimation(OpacityProperty, null);
+
+        if (vm.NoAnimate)
+        {
+            CountdownHost.Opacity = hide ? 0D : 1D;
+            CountdownHost.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+            return;
+        }
+
+        CountdownHost.Visibility = Visibility.Visible;
+
+        if (hide)
+        {
+            var anim = new DoubleAnimation(current, 0D, AnimateDuration);
+
+            anim.Completed += (_, _) =>
+            {
+                if (vm.IsSidebarExpanded)
+                {
+                    CountdownHost.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            CountdownHost.BeginAnimation(OpacityProperty, anim);
+            return;
+        }
+
+        CountdownHost.Opacity = 0D;
+        CountdownHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0D, 1D, AnimateDuration));
     }
 
     private void OnSidebarWidthChanged()

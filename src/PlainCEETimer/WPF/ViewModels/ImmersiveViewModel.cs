@@ -134,8 +134,8 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
         DefaultMenuBuilder = b =>
         [
-            MenuItemTopMost = b.Item("置顶(&T)", (_, _) => ToggleTopMost()).With(x => x.Checked = config.TopMost),
-            MenuItemFullScreen = b.Item("全屏(&F)", (_, _) => ToggleFullScreen()).With(x => x.Checked = isFullScreen),
+            MenuItemTopMost = b.Item("置顶(&T)", (_, _) => ToggleTopMost()),
+            MenuItemFullScreen = b.Item("全屏(&F)", (_, _) => ToggleFullScreen()),
             b.Separator(),
 
             b.Item("选项(&O)", (_, _) =>
@@ -153,6 +153,8 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         Initializer.Initialize += (_, _) =>
         {
             MessageX.Owner.AttachContextMenuEx(DefaultMenuBuilder, out _);
+            MenuItemFullScreen.Checked = isFullScreen;
+            ApplyTopMost();
         };
     }
 
@@ -323,6 +325,13 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         return Color.FromArgb(255, t, t, t);
     }
 
+    private void ApplyTopMost()
+    {
+        var tm = config.TopMost && !(isFullScreen && config.UnTopMost);
+        WindowStyles.TopMost = tm;
+        MenuItemTopMost?.Checked = tm;
+    }
+
     [RelayCommand]
     private void ToggleSidebar()
     {
@@ -361,13 +370,6 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         MenuItemFullScreen?.Checked = isFullScreen;
         ApplyTopMost();
         m_styles.ToggleScreen();
-    }
-
-    private void ApplyTopMost()
-    {
-        var tm = config.TopMost && !isFullScreen;
-        WindowStyles.TopMost = tm;
-        MenuItemTopMost?.Checked = tm;
     }
 
     [RelayCommand]
