@@ -15,6 +15,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
     private PlainCheckBox CheckBoxShowLoop;
     private PlainCheckBox CheckBoxNoAnimate;
     private PlainCheckBox CheckBoxUnTopMost;
+    private PlainCheckBox CheckBoxAutoStart;
     private EventHandler OnUserChanged;
 
     protected override void OnInitializing()
@@ -26,7 +27,13 @@ public sealed class ImmersiveOptionsDialog : AppDialog
         [
             TabControlMain = b.TabCtrl(180, 100, false,
             [
-                b.TabPage("首页",
+                b.TabPage("常规",
+                [
+                    CheckBoxAutoStart = b.CheckBox("沉浸模式跟随主窗口启动(&A)", OnUserChanged),
+                    CheckBoxUnTopMost = b.CheckBox("禁止在全屏模式下设置顶置(&U)", OnUserChanged)
+                ]),
+
+                b.TabPage("显示",
                 [
                     CheckBoxShowPrevNext = b.CheckBox("预览前后考试的倒计时(&P)", (_, _) =>
                     {
@@ -43,11 +50,6 @@ public sealed class ImmersiveOptionsDialog : AppDialog
                 b.TabPage("动画",
                 [
                     CheckBoxNoAnimate = b.CheckBox("关闭所有动画效果(&N)", OnUserChanged)
-                ]),
-
-                b.TabPage("行为",
-                [
-                    CheckBoxUnTopMost = b.CheckBox("禁止在全屏模式下设置顶置(&U)", OnUserChanged)
                 ])
             ])
         ]);
@@ -59,12 +61,14 @@ public sealed class ImmersiveOptionsDialog : AppDialog
     {
         ArrangeFirstControl(TabControlMain, 6);
 
+        ArrangeFirstControl(CheckBoxAutoStart, 6);
+        ArrangeControlYL(CheckBoxUnTopMost, CheckBoxAutoStart, 0, 3);
+
         ArrangeFirstControl(CheckBoxShowPrevNext, 6);
         ArrangeControlYL(CheckBoxSkipExams, CheckBoxShowPrevNext, 0, 3);
         ArrangeControlYL(CheckBoxShowLoop, CheckBoxSkipExams, 0, 3);
 
         ArrangeFirstControl(CheckBoxNoAnimate, 6);
-        ArrangeFirstControl(CheckBoxUnTopMost, 6);
 
         ArrangeCommonButtonsR(ButtonA, ButtonB, TabControlMain, 0, 3);
         InitWindowSize(ButtonB, 6, 3);
@@ -82,6 +86,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
             CheckBoxSkipExams.Checked = pn && c.SkipExams;
             CheckBoxNoAnimate.Checked = c.NoAnimate;
             CheckBoxUnTopMost.Checked = c.UnTopMost;
+            CheckBoxAutoStart.Checked = c.AutoStart;
         }
     }
 
@@ -97,6 +102,7 @@ public sealed class ImmersiveOptionsDialog : AppDialog
         i.SkipExams = pn && CheckBoxSkipExams.Checked;
         i.NoAnimate = CheckBoxNoAnimate.Checked;
         i.UnTopMost = CheckBoxUnTopMost.Checked;
+        i.AutoStart = CheckBoxAutoStart.Checked;
 
         a.Immersive = i;
         return base.OnClickButtonA();

@@ -171,6 +171,11 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
             RegisterHotKeys();
             ConfigValidator.ValidateNeeded = false;
 
+            if (AppParams.ImmersiveCountdown && AppConfig.Immersive?.AutoStart == true)
+            {
+                StartImmersive();
+            }
+
             new Action(() =>
             {
                 Startup.Initialize();
@@ -241,13 +246,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
 
             b.Conditional(immersive, b => b.Item("沉浸模式(&I)", (_, _) =>
             {
-                if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
-                {
-                    WPFApp.EnsureAlive();
-                    ImmersiveWindow = new();
-                }
-
-                ImmersiveWindow.ReActivate();
+                StartImmersive();
             }).AsDefault()),
 
             b.Separator(),
@@ -545,6 +544,17 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         fullScreenTracker.SetScreen(ScreenChangeService.Current);
         fullScreenTracker.Start();
         IsTracking = true;
+    }
+
+    private void StartImmersive()
+    {
+        if (ImmersiveWindow == null || !ImmersiveWindow.IsOpen)
+        {
+            WPFApp.EnsureAlive();
+            ImmersiveWindow = new();
+        }
+
+        ImmersiveWindow.ReActivate();
     }
 
     private void VerifyLocation()

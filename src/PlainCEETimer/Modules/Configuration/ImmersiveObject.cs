@@ -16,6 +16,8 @@ public class ImmersiveObject
 
     public bool NoAnimate { get; set; }
 
+    public bool AutoStart { get; set; }
+
     public double SidebarWidth
     {
         get;
