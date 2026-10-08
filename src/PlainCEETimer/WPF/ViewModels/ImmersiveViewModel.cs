@@ -67,6 +67,9 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     [ObservableProperty]
     public partial bool IsSidebarExpanded { get; private set; }
 
+    [ObservableProperty]
+    public partial ImmersiveExamItem[] ExamItems { get; private set; }
+
     [BackingField("m_countdown")]
     public required partial ICountdownService CountdownService { get; set; }
 
@@ -82,9 +85,6 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     [BackingField("isFullScreen")]
     public partial bool IsFullScreen { get; }
 
-    [BackingField("_examItems")]
-    public partial ImmersiveExamItem[] ExamItems { get; }
-
     public event EventHandler ExamSwitched;
 
     private bool _SuppressSelect;
@@ -94,9 +94,9 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     private MenuItemBuilder DefaultMenuBuilder;
     private System.Threading.Timer MainTimer;
     private ImmersiveObject config;
+    private ImmersiveCountdownController m_controller;
     private volatile bool m_bDisposed;
     private readonly ActionInvoker RefreshAction;
-    private readonly ImmersiveCountdownController m_controller;
     private readonly CountdownManager m_helper;
     private readonly ColorToBrushConverter m_cbConverter;
 
@@ -108,14 +108,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         Font = m_helper.CountdownFont;
 
         m_controller = new();
-        var count = m_controller.Count;
-        _examItems = new ImmersiveExamItem[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            _examItems[i] = new(i, m_controller.GetExamName(i));
-        }
-
+        BuildExamItems();
         RefreshAction = new(Refresh);
     }
 
@@ -164,8 +157,15 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         ShowPrevNext = config.PrevNext;
         NoAnimate = config.NoAnimate;
         SidebarWidth = config.SidebarWidth;
-        m_controller.Loop = ShowPrevNext && config.Loop;
-        m_controller.SkipExams = ShowPrevNext && config.SkipExams;
+
+        m_controller = new ImmersiveCountdownController
+        {
+            Loop = ShowPrevNext && config.Loop,
+            SkipExams = ShowPrevNext && config.SkipExams
+        };
+
+        BuildExamItems();
+        examIndex = m_countdown.CurrentIndex;
         ApplyTopMost();
         Refresh();
     }
@@ -229,7 +229,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
             return;
         }
 
-        if (value >= 0 && value < _examItems.Length && value != examIndex)
+        if (value >= 0 && value < ExamItems.Length && value != examIndex)
         {
             m_countdown.SwitchTo(SwitchOption.ByIndex, value);
         }
@@ -241,6 +241,19 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         {
             RefreshItems();
         }
+    }
+
+    private void BuildExamItems()
+    {
+        var count = m_controller.Count;
+        var items = new ImmersiveExamItem[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            items[i] = new(i, m_controller.GetExamName(i));
+        }
+
+        ExamItems = items;
     }
 
     private void Refresh()
@@ -288,23 +301,26 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
     private void RefreshItems()
     {
-        for (int i = 0; i < _examItems.Length; i++)
+        if (ExamItems is { Length: var length } items && length > 0)
         {
-            var item = _examItems[i];
-            var colors = m_controller.DefaultColor;
-
-            if (m_controller.TryBuild(i, out var content, out var evaluated))
+            for (int i = 0; i < length; i++)
             {
-                item.Content = content;
-                colors = evaluated;
-            }
-            else
-            {
-                item.Content = DefaultCountdownService.WelcomeText;
-            }
+                var item = items[i];
+                var colors = m_controller.DefaultColor;
 
-            item.ForeBrush = m_cbConverter.Convert(colors.Fore.ToColor());
-            item.BackBrush = m_cbConverter.Convert(colors.Back.ToColor());
+                if (m_controller.TryBuild(i, out var content, out var c))
+                {
+                    item.Content = content;
+                    colors = c;
+                }
+                else
+                {
+                    item.Content = DefaultCountdownService.WelcomeText;
+                }
+
+                item.ForeBrush = m_cbConverter.Convert(colors.Fore.ToColor());
+                item.BackBrush = m_cbConverter.Convert(colors.Back.ToColor());
+            }
         }
     }
 

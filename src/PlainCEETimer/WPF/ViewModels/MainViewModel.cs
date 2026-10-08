@@ -323,6 +323,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         RunFullScreenTracker();
         EnsureCountdown();
         SetCountdownRecipient();
+        SyncToImmersive();
     }
 
     private void LoadConfig()
@@ -561,6 +562,14 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
             {
                 SaveLocation();
             }
+        }
+    }
+
+    private void SyncToImmersive()
+    {
+        if (ImmersiveWindow is { IsOpen: true } i)
+        {
+            i.ReloadConfig();
         }
     }
 
