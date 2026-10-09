@@ -6,10 +6,9 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainComboBox : ComboBox, IThemeAware
+public sealed class PlainComboBox : ComboBox, IThemeAwareEx
 {
     private bool Calculated;
-    private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnSelectedIndexChangedInvoker;
 
@@ -23,7 +22,7 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
     }
 
@@ -71,7 +70,6 @@ public sealed class PlainComboBox : ComboBox, IThemeAware
 
     protected override void Dispose(bool disposing)
     {
-        themeHelper.Destroy();
         debouncer.Destroy();
         base.Dispose(disposing);
     }

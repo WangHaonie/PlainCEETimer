@@ -10,7 +10,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainTextBox : TextBox, IThemeAware
+public sealed class PlainTextBox : TextBox, IThemeAwareEx
 {
     private sealed class TextBoxFlyout(PlainTextBox parent) : PlainFlyout
     {
@@ -121,7 +121,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     private PlainButton ButtonExpand;
     private TextBoxFlyout flyout;
-    private ThemeHelper themeHelper;
     private readonly bool hasFlyout;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnTextChangedInvoker;
@@ -181,7 +180,7 @@ public sealed class PlainTextBox : TextBox, IThemeAware
             UpdateExpandButtonMargin();
         }
 
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
     }
 
     protected override void OnDpiChangedAfterParent(EventArgs e)
@@ -219,7 +218,6 @@ public sealed class PlainTextBox : TextBox, IThemeAware
 
     protected override void Dispose(bool disposing)
     {
-        themeHelper.Destroy();
         debouncer.Destroy();
         base.Dispose(disposing);
     }

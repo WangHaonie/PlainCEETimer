@@ -5,18 +5,16 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
-public class PlainLabel : Label, IThemeAware
+public class PlainLabel : Label, IThemeAwareEx
 {
     private const int TextExtraPadding = 2;
 
     private bool UseDark;
     private bool canResize;
-    private ThemeHelper themeHelper;
     private readonly LabelInternals internals;
     private static readonly bool EnableAutoCopy = false;
 
@@ -46,7 +44,7 @@ public class PlainLabel : Label, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
         UpdateAutoSize();
     }
@@ -70,12 +68,6 @@ public class PlainLabel : Label, IThemeAware
 
         using var brush = new SolidBrush(BackColor);
         pevent.Graphics.FillRectangle(brush, ClientRectangle);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     protected virtual void UpdateTheme(bool useDark, bool init)

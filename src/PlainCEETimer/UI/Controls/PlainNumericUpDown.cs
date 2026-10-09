@@ -6,9 +6,8 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
+public sealed class PlainNumericUpDown : NumericUpDown, IThemeAwareEx
 {
-    private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnValueChangedInvoker;
 
@@ -21,7 +20,7 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
     }
 
@@ -32,7 +31,6 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAware
 
     protected override void Dispose(bool disposing)
     {
-        themeHelper.Destroy();
         debouncer.Destroy();
         base.Dispose(disposing);
     }

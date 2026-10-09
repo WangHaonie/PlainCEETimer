@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -24,7 +23,7 @@ https://github.com/ozone10/darkmodelib/issues/9#issuecomment-3448256063
 */
 
 [DebuggerDisplay("{Hotkey}")]
-public class PlainHotkeyControl : PlainControlBase, IThemeAware
+public class PlainHotkeyControl : PlainControlBase, IThemeAwareEx
 {
     public event EventHandler HotKeyChanged;
 
@@ -65,13 +64,12 @@ public class PlainHotkeyControl : PlainControlBase, IThemeAware
 
     private bool UseDark;
     private Hotkey hotkey;
-    private readonly ThemeHelper themeHelper;
     private readonly IntPtr hBrush = Win32UI.CreateSolidBrush(Colors.DarkBackText);
 
     public PlainHotkeyControl()
     {
         SetStyle(ControlStyles.UserPaint, false);
-        themeHelper = new(this);
+        ThemeHelper.Attach(this);
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -80,12 +78,6 @@ public class PlainHotkeyControl : PlainControlBase, IThemeAware
         Win32UI.PnRemoveWindowExStyle(Handle, WinUser.WS_EX_CLIENTEDGE);
         Win32UI.SendMessage(Handle, CommCtrl.HKM_SETRULES, CommCtrl.HKCOMB_NONE | CommCtrl.HKCOMB_S, (int)(HotkeyF.Ctrl | HotkeyF.Alt));
         SetHotKey(hotkey);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     protected override void WndProc(ref Message m)

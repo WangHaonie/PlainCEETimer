@@ -2,12 +2,11 @@
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainProgressBar : ProgressBar, IThemeAware
+public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
 {
     public new int Value
     {
@@ -44,11 +43,10 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
     private int m_value;
     private ProgressStyle m_style;
     private TaskbarProgress tbp;
-    private ThemeHelper themeHelper;
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
 
         if (!init)
         {
@@ -59,12 +57,6 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAware
         UpdateStyle();
         UpdateValue();
         base.OnHandleCreated(e);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     protected override void OnHandleDestroyed(EventArgs e)

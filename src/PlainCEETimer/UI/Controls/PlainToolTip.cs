@@ -3,11 +3,10 @@ using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainToolTip : ToolTip, IThemeAware
+public sealed class PlainToolTip : ToolTip, IThemeAwareEx
 {
     public IntPtr Handle
     {
@@ -18,7 +17,6 @@ public sealed class PlainToolTip : ToolTip, IThemeAware
         }
     }
 
-    private ThemeHelper themeHelper;
     private PropertyInfo m_piHandle;
 
     public void InitStyle()
@@ -30,13 +28,7 @@ public sealed class PlainToolTip : ToolTip, IThemeAware
             Win32UI.PnSetRoundCornerEx(hwnd, true);
         }
 
-        themeHelper ??= new(this);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
+        ThemeHelper.Attach(this);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

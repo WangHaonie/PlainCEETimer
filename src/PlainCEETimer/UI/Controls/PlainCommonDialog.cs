@@ -435,7 +435,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
             Win32UI.SetWindowText(hWnd, Text);
         }
 
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this, ref themeHelper);
         Win32UI.GetWindowRect(hWnd, out var rect);
         Win32UI.MakeCenter(rect, Owner.Bounds, out var r);
         Win32UI.MoveWindow(hWnd, r.X, r.Y, r.Width, r.Height, false);
@@ -467,7 +467,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         Win32UI.PnUnhookMessageBox();
         Win32UI.DeleteObject(hBrush);
         Win32UI.UnregisterUnmanagedWindow(Handle);
-        themeHelper.Destroy();
+        ThemeHelper.Detach(ref themeHelper);
         return IntPtr.Zero;
     }
 

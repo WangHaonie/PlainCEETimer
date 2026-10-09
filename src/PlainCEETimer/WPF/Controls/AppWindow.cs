@@ -224,7 +224,7 @@ public partial class AppWindow : Window, IAppWindow
             .SetEnabled(WinUser.SC_MINIMIZE, canMinimize)
             .SetEnabled(WinUser.SC_MAXIMIZE, canResize);
 
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this, ref themeHelper);
         RefreshSuggestedMaxWidth();
         base.OnSourceInitialized(e);
     }
@@ -401,7 +401,7 @@ public partial class AppWindow : Window, IAppWindow
             WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
         }
 
-        themeHelper.Destroy();
+        ThemeHelper.Detach(ref themeHelper);
     }
 
     private void WindowManager_TopMostChanged(object sender, TopMostStateChangedEventArgs e)

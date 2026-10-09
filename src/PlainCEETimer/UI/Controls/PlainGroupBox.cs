@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainGroupBox : GroupBox, IThemeAware
+public sealed class PlainGroupBox : GroupBox, IThemeAwareEx
 {
     private bool UseDark;
-    private ThemeHelper themeHelper;
 
     public PlainGroupBox()
     {
@@ -20,7 +18,7 @@ public sealed class PlainGroupBox : GroupBox, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
     }
 
@@ -37,12 +35,6 @@ public sealed class PlainGroupBox : GroupBox, IThemeAware
         {
             base.OnPaint(e);
         }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

@@ -247,7 +247,7 @@ public abstract class AppForm : Form, IAppWindow
     {
         UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this, ref themeHelper);
 
         if (SetRoundCorner)
         {
@@ -825,7 +825,7 @@ public abstract class AppForm : Form, IAppWindow
             WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
         }
 
-        themeHelper.Destroy();
+        ThemeHelper.Detach(ref themeHelper);
     }
 
     private void InitModal(IWin32Window owner)

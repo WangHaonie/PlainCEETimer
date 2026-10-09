@@ -1,19 +1,16 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class PlainLinkLabel : LinkLabel, IThemeAware
+public class PlainLinkLabel : LinkLabel, IThemeAwareEx
 {
-    private readonly ThemeHelper themeHelper;
-
     public PlainLinkLabel()
     {
         AutoSize = true;
         LinkBehavior = LinkBehavior.HoverUnderline;
-        themeHelper = new(this);
+        ThemeHelper.Attach(this);
     }
 
     internal void AdjustLine(bool flag)
@@ -34,12 +31,6 @@ public class PlainLinkLabel : LinkLabel, IThemeAware
 
             base.OnLinkClicked(e);
         }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

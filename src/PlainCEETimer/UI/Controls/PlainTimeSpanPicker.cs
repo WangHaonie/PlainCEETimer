@@ -12,7 +12,7 @@ namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
 [DebuggerDisplay("{Text}")]
-public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
+public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAwareEx
 {
     private sealed class PlainTimeSpanPickerAccessibleObject(PlainTimeSpanPicker ownerControl) : ControlAccessibleObject(ownerControl)
     {
@@ -127,7 +127,6 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
     private string m_format = AppParams.TSFormat;
     private TimeSpan m_value;
     private TimeSpan m_valueMax = AppParams.TSMax;
-    private ThemeHelper themeHelper;
     private readonly Debouncer debouncer;
     private readonly ControlDpiScaleFix cdsf;
     private readonly ActionInvoker OnValueChangedAction;
@@ -182,7 +181,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         SetFormat();
         SetMaxValue();
         SetValue();
-        themeHelper = new(this);
+        ThemeHelper.Attach(this);
     }
 
 #if DEBUG
@@ -196,12 +195,6 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAware
         }
     }
 #endif
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
-    }
 
     protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
     {

@@ -6,7 +6,7 @@ using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
+public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
 {
     private sealed class DropDownAndSysMonthCal32NativeWindow : NativeWindow
     {
@@ -97,13 +97,12 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
     }
 
     private bool UseDark;
-    private ThemeHelper themeHelper;
     private DropDownAndSysMonthCal32NativeWindow m_ddnw;
     private DropDownAndSysMonthCal32NativeWindow m_smcnw;
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
     }
 
@@ -139,12 +138,6 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAware
         }
 
         base.WndProc(ref m);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

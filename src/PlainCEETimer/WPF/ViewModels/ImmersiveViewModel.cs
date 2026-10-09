@@ -91,7 +91,6 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
     private int examIndex;
     private MenuItem MenuItemFullScreen;
     private MenuItem MenuItemTopMost;
-    private MenuItemBuilder DefaultMenuBuilder;
     private System.Threading.Timer MainTimer;
     private ImmersiveObject config;
     private ImmersiveCountdownController m_controller;
@@ -125,27 +124,26 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         LoadConfig();
         MainTimer = new(OnTimerCallback, null, 0, 1000);
 
-        DefaultMenuBuilder = b =>
-        [
-            MenuItemTopMost = b.Item("置顶(&T)", (_, _) => ToggleTopMost()),
-            MenuItemFullScreen = b.Item("全屏(&F)", (_, _) => ToggleFullScreen()),
-            b.Separator(),
-
-            b.Item("选项(&O)", (_, _) =>
-            {
-                var dialog = new ImmersiveOptionsDialog();
-
-                if (dialog.ShowDialog(MessageX.Owner) == true)
-                {
-                    LoadConfig();
-                    ConfigValidator.DemandConfig();
-                }
-            })
-        ];
-
         Initializer.Initialize += (_, _) =>
         {
-            MessageX.Owner.AttachContextMenuEx(DefaultMenuBuilder, out _);
+            MessageX.Owner.AttachContextMenuEx(b =>
+            [
+                MenuItemTopMost = b.Item("置顶(&T)", (_, _) => ToggleTopMost()),
+                MenuItemFullScreen = b.Item("全屏(&F)", (_, _) => ToggleFullScreen()),
+                b.Separator(),
+
+                b.Item("选项(&O)", (_, _) =>
+                {
+                    var dialog = new ImmersiveOptionsDialog();
+
+                    if (dialog.ShowDialog(MessageX.Owner) == true)
+                    {
+                        LoadConfig();
+                        ConfigValidator.DemandConfig();
+                    }
+                })
+            ], out _);
+
             MenuItemFullScreen.Checked = isFullScreen;
             ApplyTopMost();
         };
@@ -158,7 +156,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
         NoAnimate = config.NoAnimate;
         SidebarWidth = config.SidebarWidth;
 
-        m_controller = new ImmersiveCountdownController
+        m_controller = new()
         {
             Loop = ShowPrevNext && config.Loop,
             SkipExams = ShowPrevNext && config.SkipExams

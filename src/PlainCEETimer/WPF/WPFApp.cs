@@ -46,7 +46,7 @@ public sealed class WPFApp : Application, IThemeAware
 
     protected override void OnExit(ExitEventArgs e)
     {
-        themeHelper.Destroy();
+        ThemeHelper.Detach(ref themeHelper);
         base.OnExit(e);
         s_instance = null;
         App.Current.Shutdown();
@@ -88,7 +88,7 @@ public sealed class WPFApp : Application, IThemeAware
             .AddEx(Resource.Create(ThemeDir + "Controls.xaml"))
             .AddEx(Resource.Create(ThemeDir + "Images.xaml"));
 
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this, ref themeHelper);
     }
 
     private static void InternalInit()

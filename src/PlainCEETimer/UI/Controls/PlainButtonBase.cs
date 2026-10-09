@@ -1,6 +1,5 @@
 ﻿using System.Windows.Forms;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -20,12 +19,12 @@ internal class PlainButtonBase : IThemeAware
 
     internal void Attach()
     {
-        th ??= new(this);
+        ThemeHelper.Attach(this, ref th);
     }
 
     internal void Detach()
     {
-        th.Destroy();
+        ThemeHelper.Detach(ref th);
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

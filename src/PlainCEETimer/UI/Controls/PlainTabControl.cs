@@ -4,15 +4,13 @@ using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
-using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class PlainTabControl : TabControl, IThemeAware
+public class PlainTabControl : TabControl, IThemeAwareEx
 {
     private bool UseDark;
-    private ThemeHelper themeHelper;
     private static readonly bool NewTheme = ThemeManager.NewThemeAvailable;
 
     public PlainTabControl()
@@ -22,7 +20,7 @@ public class PlainTabControl : TabControl, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         this.HideFocusIndicator();
         base.OnHandleCreated(e);
     }
@@ -45,12 +43,6 @@ public class PlainTabControl : TabControl, IThemeAware
         }
 
         base.WndProc(ref m);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     private static void UpdateUpDownTheme(IntPtr hud, bool useDark)

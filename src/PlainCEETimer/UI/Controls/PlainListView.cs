@@ -19,7 +19,7 @@ https://github.com/ysc3839/win32-darkmode/blob/master/win32-darkmode/ListViewUti
 
 */
 
-public sealed partial class PlainListView : ListView, IThemeAware
+public sealed partial class PlainListView : ListView, IThemeAwareEx
 {
     private sealed class SysHeader32NativeWindow : NativeWindow
     {
@@ -72,7 +72,6 @@ public sealed partial class PlainListView : ListView, IThemeAware
     private bool UseDark;
     private bool _SuppressFuckingAutoCheck;
     private readonly bool isW11 = SystemVersion.IsWindows11;
-    private ThemeHelper themeHelper;
     private SysHeader32NativeWindow hnw;
     private readonly ColumnHeader BlankColumn = new() { Text = "", Width = 0 };
 
@@ -145,7 +144,7 @@ public sealed partial class PlainListView : ListView, IThemeAware
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        themeHelper ??= new(this);
+        ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
         UpdateRowHeight();
     }
@@ -182,12 +181,6 @@ public sealed partial class PlainListView : ListView, IThemeAware
         e.NewWidth = Columns[e.ColumnIndex].Width;
         e.Cancel = true;
         base.OnColumnWidthChanging(e);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        themeHelper.Destroy();
-        base.Dispose(disposing);
     }
 
     protected override void WndProc(ref Message m)

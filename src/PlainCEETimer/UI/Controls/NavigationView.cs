@@ -34,13 +34,13 @@ public sealed class NavigationView : PlainControlBase
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            themeHelper ??= new(this);
+            ThemeHelper.Attach(this, ref themeHelper);
         }
 
         protected override void Dispose(bool disposing)
         {
-            themeHelper.Destroy();
             debouncer.Destroy();
+            ThemeHelper.Detach(ref themeHelper);
             base.Dispose(disposing);
         }
 
