@@ -29,7 +29,7 @@ internal static class ConfigValidator
     public const int DefCpp = 30;
     public const int MaxCpp = 300;
     public const int MaxFontName = 35;
-    public const int MaxCustomTextLength = 800;
+    public const int MaxCustomTextLength = 100;
     public const int MaxGlobalRulesCount = 3;
     public const int DefaultCountdownRuleFlag = 1469529003; // hashcode of "spr_flag"
     public const long MinTick = TimeSpan.TicksPerSecond; // 1s
@@ -199,11 +199,6 @@ internal static class ConfigValidator
 
     public static void EnsureCustomText(string custom)
     {
-        if (!IsValidCustomLength(custom.Length))
-        {
-            throw InvalidTampering(ConfigField.CustomTextLength);
-        }
-
         if (!VerifyCustomText(custom))
         {
             throw InvalidTampering(ConfigField.CustomTextFormat);
