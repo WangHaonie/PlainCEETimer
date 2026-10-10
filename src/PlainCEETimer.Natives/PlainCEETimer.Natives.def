@@ -83,3 +83,6 @@ EXPORTS
     PnToggleFullScreen @68 NONAME
     PnPtInWindowClient @69 NONAME
     PnTryGetTabUpDown @70 NONAME
+
+    DateTimePick_InitClass @71 NONAME
+    CDCCM_DestroyMenu @72 NONAME

@@ -62,6 +62,7 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     return;
                 case WinUser.WM_NCDESTROY:
                     m_hcrsColorBox.Free();
+                    Win32Controls.CDCCM_DestroyMenu();
                     break;
             }
 
@@ -146,12 +147,12 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
                     {
                         switch (Marshal.ReadInt32(lp, NMHDR.code))
                         {
-                            case IDM_CDCCM_FROMCLIPBOARD:
+                            case Natives.IDM_CDCCM_FROMCLIPBOARD:
                                 goto pastecolor;
-                            case IDM_CDCCM_COPYASRGB:
+                            case Natives.IDM_CDCCM_COPYASRGB:
                                 CopyColorToClipboard(true);
                                 break;
-                            case IDM_CDCCM_COPYASHEX:
+                            case Natives.IDM_CDCCM_COPYASHEX:
                                 CopyColorToClipboard(false);
                                 break;
                         }
@@ -360,14 +361,10 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
     private static readonly COLORREF BackCrColor = Colors.DarkBackText;
     private static readonly COLORREF ForeCrColor = Colors.DarkForeText;
 
-    private const int IDM_FIRST = 40000;
     private const int COLOR_RED = 706;
     private const int COLOR_GREEN = 707;
     private const int COLOR_BLUE = 708;
     private const int COLOR_CURRENT = 709;
-    private const int IDM_CDCCM_FROMCLIPBOARD = IDM_FIRST + 1;
-    private const int IDM_CDCCM_COPYASRGB = IDM_FIRST + 2;
-    private const int IDM_CDCCM_COPYASHEX = IDM_FIRST + 3;
     private const string SETRGBSTRING = nameof(ColorDlgStaticColorCurrentNativeWindow.commdlg_SetRGBColor);
 
     protected PlainCommonDialog(AppForm owner, string dialogTitle)

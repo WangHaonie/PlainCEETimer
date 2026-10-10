@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -100,6 +103,11 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
     private DropDownAndSysMonthCal32NativeWindow m_ddnw;
     private DropDownAndSysMonthCal32NativeWindow m_smcnw;
 
+    static PlainDateTimePicker()
+    {
+        Win32Controls.DateTimePick_InitClass();
+    }
+
     protected override void OnHandleCreated(EventArgs e)
     {
         ThemeHelper.Attach(this);
@@ -125,19 +133,53 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
 
     protected override void WndProc(ref Message m)
     {
-        if (UseDark)
+        switch (m.Msg)
         {
-            switch (m.Msg)
-            {
-                case WinUser.WM_PAINT:
-                    Win32UI.PnHookThemedPaint();
-                    base.WndProc(ref m);
-                    Win32UI.PnUnhookThemedPaint();
-                    return;
-            }
+            case WinUser.WM_COMMAND:
+
+                switch (m.WParam.LoWord)
+                {
+                    case Natives.IDM_DPM_COPY:
+                        Copy();
+                        break;
+                    case Natives.IDM_DPM_PASTE:
+                        Paste();
+                        break;
+                }
+
+                break;
+
+            case WinUser.WM_LBUTTONDBLCLK:
+                Paste();
+                return;
+
+            case WinUser.WM_PAINT when UseDark:
+                Win32UI.PnHookThemedPaint();
+                base.WndProc(ref m);
+                Win32UI.PnUnhookThemedPaint();
+                return;
         }
 
         base.WndProc(ref m);
+    }
+
+    private void Copy()
+    {
+        Clipboard.SetText(Text);
+    }
+
+    private void Paste()
+    {
+        if (Clipboard.ContainsText())
+        {
+            var text = Clipboard.GetText();
+
+            if (DateTime.TryParseExact(text, ConfigValidator.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result)
+                || DateTime.TryParse(text, out result))
+            {
+                Value = result;
+            }
+        }
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)

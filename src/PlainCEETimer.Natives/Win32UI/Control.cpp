@@ -10,6 +10,11 @@ static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
 static HHOOK g_hGetMsgProc = nullptr;
 
+static HMENU g_MenuCDCC = nullptr;
+static HMENU g_MenuDP = nullptr;
+
+static WNDPROC g_DefDatePickerWindowProc = nullptr;
+
 DeclIatData(MessageBoxW, Comdlg);
 
 static LRESULT CALLBACK CbtMessageBoxHookProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -30,6 +35,33 @@ static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+static LRESULT CALLBACK DateTimePick_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+        case WM_CONTEXTMENU:
+        {
+            HMENU hPopup = PnGetMenuPopupFromRes(g_MenuDP, IDR_DATEPICKER_MENU);
+
+            if (hPopup)
+            {
+                TrackPopupMenuEx(hPopup, TPM_LEFTALIGN | TPM_RIGHTBUTTON,
+                    GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
+            }
+
+            return 0;
+        }
+
+        case WM_NCDESTROY:
+        {
+            PnDestroyMenu(g_MenuDP);
+            break;
+        }
+    }
+
+    return CallWindowProc(g_DefDatePickerWindowProc, hWnd, message, wParam, lParam);
 }
 
 static int WINAPI MessageBoxW_(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
@@ -211,36 +243,35 @@ int NATIVESAPI CDCCM_WmContextMenu(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
         if (GetDlgCtrlID(hCtrl) == COLOR_CURRENT)
         {
-            static HMODULE hmod = GetModuleHandle(LIBRARYNAME);
-            HMENU hMenu = LoadMenu(hmod, MAKEINTRESOURCE(IDR_COLORDLG_COLORCURRENT_MENU));
+            HMENU hPopup = PnGetMenuPopupFromRes(g_MenuCDCC, IDR_COLORDLG_COLORCURRENT_MENU);
 
-            if (hMenu)
+            if (hPopup)
             {
-                HMENU hPopup = GetSubMenu(hMenu, 0);
+                static NMHDR nmhdr;
 
-                if (hPopup)
+                int cmd = TrackPopupMenuEx(hPopup,
+                    TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
+                    GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
+
+                if (cmd > 0)
                 {
-                    static NMHDR nmhdr;
-
-                    int cmd = TrackPopupMenuEx(hPopup,
-                        TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
-                        GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
-
-                    if (cmd > 0)
-                    {
-                        nmhdr.hwndFrom = hCtrl;
-                        nmhdr.idFrom = COLOR_CURRENT;
-                        nmhdr.code = cmd;
-                        SNDMSG(hCtrl, WM_NOTIFY, wParam, CastP(LPARAM, &nmhdr));
-                    }
-
-                    return cmd;
+                    nmhdr.hwndFrom = hCtrl;
+                    nmhdr.idFrom = COLOR_CURRENT;
+                    nmhdr.code = cmd;
+                    SNDMSG(hCtrl, WM_NOTIFY, wParam, CastP(LPARAM, &nmhdr));
                 }
+
+                return cmd;
             }
         }
     }
 
     return -1;
+}
+
+void NATIVESAPI CDCCM_DestroyMenu()
+{
+    PnDestroyMenu(g_MenuCDCC);
 }
 
 BOOL NATIVESAPI PnToggleFullScreen(HWND hWnd, LPWNDINFO lpWndInfo)
@@ -318,6 +349,26 @@ BOOL NATIVESAPI PnTryGetTabUpDown(HWND hTab, HWND* phUpDown)
         if (result)
         {
             *phUpDown = result;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+BOOL NATIVESAPI DateTimePick_InitClass()
+{
+    WNDCLASSEX wcx = { sizeof(wcx) };
+
+    if (GetClassInfoEx(nullptr, DATETIMEPICK_CLASS, &wcx)
+        && UnregisterClass(DATETIMEPICK_CLASS, nullptr))
+    {
+        g_DefDatePickerWindowProc = wcx.lpfnWndProc;
+        wcx.lpfnWndProc = DateTimePick_WndProc;
+        wcx.style |= (CS_GLOBALCLASS | CS_DBLCLKS);
+
+        if (RegisterClassEx(&wcx))
+        {
             return TRUE;
         }
     }

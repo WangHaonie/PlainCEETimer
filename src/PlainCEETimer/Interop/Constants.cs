@@ -232,6 +232,13 @@ public static class Natives
     public const int ASBT_MICA = 2;
     public const int ASBT_MICAALT = 4;
     public const int ASBT_AERO = 5;
+
+    public const int IDM_FIRST = 40000;
+    public const int IDM_CDCCM_FROMCLIPBOARD = IDM_FIRST + 1;
+    public const int IDM_CDCCM_COPYASRGB = IDM_FIRST + 2;
+    public const int IDM_CDCCM_COPYASHEX = IDM_FIRST + 3;
+    public const int IDM_DPM_COPY = IDM_FIRST + 4;
+    public const int IDM_DPM_PASTE = IDM_FIRST + 5;
 }
 
 [NoConstants]

@@ -230,3 +230,19 @@ inline void __stdcall SetDlgItemTextFromResW(HWND hDlg, int nIDDlgItem, LPWSTR l
         _freea(buffer);
     }
 }
+
+inline HMENU __stdcall PnGetMenuPopupFromRes(HMENU& hMenu, UINT uIDMenu)
+{
+    static HMODULE hmod = GetModuleHandle(LIBRARYNAME);
+    if (!hMenu) hMenu = LoadMenu(hmod, MAKEINTRESOURCE(uIDMenu));
+    return GetSubMenu(hMenu, 0);
+}
+
+inline void __stdcall PnDestroyMenu(HMENU& phMenu)
+{
+    if (phMenu)
+    {
+        DestroyMenu(phMenu);
+        phMenu = nullptr;
+    }
+}

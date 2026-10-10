@@ -19,6 +19,10 @@
 #define IDM_CDCCM_COPYASRGB				(IDM_FIRST + 2)
 #define IDM_CDCCM_COPYASHEX				(IDM_FIRST + 3)
 
+#define IDR_DATEPICKER_MENU				302
+#define IDM_DPM_COPY					(IDM_FIRST + 4)
+#define IDM_DPM_PASTE					(IDM_FIRST + 5)
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

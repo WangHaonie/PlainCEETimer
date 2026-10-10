@@ -54,4 +54,10 @@ internal unsafe static class Win32Controls
 
     [DllImport(App.NativesDll, EntryPoint = "#17")]
     public static extern int CDCCM_WmContextMenu(IntPtr hWnd, IntPtr wParam, IntPtr lParam);
+
+    [DllImport(App.NativesDll, EntryPoint = "#72")]
+    public static extern void CDCCM_DestroyMenu();
+
+    [DllImport(App.NativesDll, EntryPoint = "#71")]
+    public static extern bool DateTimePick_InitClass();
 }
