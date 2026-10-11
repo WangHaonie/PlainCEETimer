@@ -32,7 +32,6 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     private PlainComboBox ComboBoxCountdownFormat;
     private PlainComboBox ComboBoxCountdownEnd;
     private PlainCheckBox CheckBoxEnableSettings;
-    private EventHandler OnUserChanged;
     private ExamSettings Settings;
     private CountdownRule[] Rules;
     private CountdownRule[] DefaultRules;
@@ -41,23 +40,22 @@ public sealed class ExamDialog(Exam data) : AppDialog, IListViewChildDialog<Exam
     protected override void OnInitializing()
     {
         Text = "考试信息 - 高考倒计时";
-        OnUserChanged = (_, _) => UserChanged();
 
         this.AddControls(b =>
         [
             LabelName = b.Label("考试名称"),
-            LabelStart = b.Label("考试开始"),
-            LabelEnd = b.Label("考试结束"),
-            TextBoxName = b.TextBox(221, false, OnUserChanged)
+            TextBoxName = b.TextBox(221, false, UserChanged)
                 .With(c => c.MaxLength = ConfigValidator.MaxExamNameLength),
             LabelCounter = b.Counter(TextBoxName, ConfigValidator.IsValidExamLength),
-            DTPStart = b.DateTimePicker(256, OnUserChanged),
-            DTPEnd = b.DateTimePicker(256, OnUserChanged),
+            LabelStart = b.Label("考试开始"),
+            DTPStart = b.DateTimePicker(256, UserChanged),
+            LabelEnd = b.Label("考试结束"),
+            DTPEnd = b.DateTimePicker(256, UserChanged),
 
             GBoxContent = b.GroupBox(null,
             [
                 LabelCountdownEnd = b.Label("当考试开始后, 显示"),
-                ComboBoxCountdownEnd = b.ComboBox(187, OnUserChanged, Ph.ComboBoxEndItems),
+                ComboBoxCountdownEnd = b.ComboBox(187, UserChanged, Ph.ComboBoxEndItems),
                 LabelCountdownFormat = b.Label("倒计时内容格式"),
 
                 ComboBoxCountdownFormat = b.ComboBox(117, (_, _) =>

@@ -33,7 +33,7 @@ public readonly struct BorderColorObject
 
     internal BorderColorObject(int dw)
     {
-        Enabled = ((dw >> 28) & 0xF).ToBool();
+        Enabled = ((dw >> 28) & 0xF).ToBoolean();
         Type = (dw >> 24) & 0xF;
         Color = (dw & COLORREF.EmptyValue).ToColor();
         value = dw;

@@ -32,6 +32,15 @@ public static class NumericExtensions
         return value;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long Clamp(this long value, long min, long max)
+    {
+        if (min > max) ThrowMinMaxException(min, max);
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
+
     public static string Format(this double value)
     {
         return value.ToString("0.#");

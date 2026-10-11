@@ -11,7 +11,6 @@ public sealed class HotKeyDialog : AppDialog
 {
     protected override AppWindowStyle Params => AppWindowStyle.AllControl;
 
-    private EventHandler OnUserChanged;
     private PlainLabel LabelHotKey1;
     private PlainLabel LabelHotKey2;
     private PlainLabel LabelHotKey3;
@@ -24,16 +23,15 @@ public sealed class HotKeyDialog : AppDialog
     protected override void OnInitializing()
     {
         Text = "快捷键绑定";
-        OnUserChanged = (_, _) => UserChanged();
 
         this.AddControls(b =>
         [
             LabelHotKey1 = b.Label(HotKeyManager.GetHotKeyDescription(0)),
             LabelHotKey2 = b.Label(HotKeyManager.GetHotKeyDescription(1)),
             LabelHotKey3 = b.Label(HotKeyManager.GetHotKeyDescription(2)),
-            HotkeyCtrl1 = b.HotkeyCtrl(185, OnUserChanged),
-            HotkeyCtrl2 = b.HotkeyCtrl(185, OnUserChanged),
-            HotkeyCtrl3 = b.HotkeyCtrl(185, OnUserChanged)
+            HotkeyCtrl1 = b.HotkeyCtrl(185, UserChanged),
+            HotkeyCtrl2 = b.HotkeyCtrl(185, UserChanged),
+            HotkeyCtrl3 = b.HotkeyCtrl(185, UserChanged)
         ]);
 
         HotKeyCtrls = [HotkeyCtrl1, HotkeyCtrl2, HotkeyCtrl3];

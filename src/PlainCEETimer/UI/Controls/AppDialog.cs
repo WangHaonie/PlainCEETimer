@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -8,6 +9,8 @@ public abstract class AppDialog : AppForm
     protected PlainButton ButtonA { get; private set; }
     protected PlainButton ButtonB { get; private set; }
 
+    protected virtual bool GrayButtonA => true;
+
     private bool IsUserChanged;
 
     protected override void OnInitializing()
@@ -16,9 +19,14 @@ public abstract class AppDialog : AppForm
 
         this.AddControls(b =>
         [
-            ButtonA = b.Button("确定(&O)", (_, _) => OnClickButtonA()).Disable(),
+            ButtonA = b.Button("确定(&O)", (_, _) => OnClickButtonA()),
             ButtonB = b.Button("取消(&C)", (_, _) => OnClickButtonB())
         ]);
+
+        if (GrayButtonA)
+        {
+            ButtonA.Disable();
+        }
 
         if (CheckParam(AppWindowStyle.BindButtons))
         {
@@ -44,6 +52,11 @@ public abstract class AppDialog : AppForm
     protected override bool OnClosing(CloseReason closeReason)
     {
         return IsUserChanged && ShowUnsavedWarning("是否保存当前更改？", OnClickButtonA, ref IsUserChanged);
+    }
+
+    protected void UserChanged(object sender, EventArgs e)
+    {
+        UserChanged();
     }
 
     protected void UserChanged()

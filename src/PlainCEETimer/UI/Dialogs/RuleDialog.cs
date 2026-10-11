@@ -30,7 +30,6 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     private PlainLinkLabel LinkResetText;
     private PlainTextBox TextBoxCustomText;
     private PlainTimeSpanPicker PTSPExam;
-    private EventHandler OnUserChanged;
     private CountdownRule data = existing;
     private readonly CountdownRule[] Presets = presets ?? DefaultValues.GlobalDefaultRules;
     private readonly Dictionary<int, CountdownBasicInfo> TemporaryChanges = new(3);
@@ -38,7 +37,6 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
     protected override void OnInitializing()
     {
         Text = "自定义规则 - 高考倒计时";
-        OnUserChanged = (_, _) => UserChanged();
 
         this.AddControls(b =>
         [
@@ -51,7 +49,7 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
             BlockPreview = b.Block("颜色效果预览"),
             BlockFore = b.Block(true, BlockPreview, ColorBlocks_Click),
             BlockBack = b.Block(false, BlockPreview, ColorBlocks_Click),
-            PTSPExam = b.TimeSpanPicker(151, OnUserChanged),
+            PTSPExam = b.TimeSpanPicker(151, UserChanged),
 
             TextBoxCustomText = b.TextBox(228, true, (_, _) =>
             {

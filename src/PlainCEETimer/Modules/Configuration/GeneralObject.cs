@@ -1,5 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.JsonConverters;
 
 namespace PlainCEETimer.Modules.Configuration;
 
@@ -46,6 +50,23 @@ public class GeneralObject
     } = ConfigValidator.DefExamNameTruncate;
 
     public BorderColorObject BorderColor { get; set; }
+
+    public bool PreferMinusTS { get; set; }
+
+    [JsonConverter(typeof(TimeSpanTicksConverter))]
+    public TimeSpan PreferredTS
+    {
+        get;
+        set
+        {
+            if (ConfigValidator.ValidateNeeded)
+            {
+                value = value.TruncateToSeconds();
+            }
+
+            field = value;
+        }
+    }
 
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)

@@ -239,6 +239,7 @@ public static class Natives
     public const int IDM_CDCCM_COPYASHEX = IDM_FIRST + 3;
     public const int IDM_DPM_COPY = IDM_FIRST + 4;
     public const int IDM_DPM_PASTE = IDM_FIRST + 5;
+    public const int IDM_DPM_RELATIVE = IDM_FIRST + 6;
 }
 
 [NoConstants]

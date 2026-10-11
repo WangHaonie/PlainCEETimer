@@ -581,7 +581,12 @@ public abstract class AppForm : Form, IAppWindow
 
     protected void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control reference, int xOffset = 0, int yOffset = 0)
     {
-        button2.SetBounds(reference.Right - button2.Width + ScaleToDpi(xOffset), reference.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
+        ArrangeCommonButtonsR(button1, button2, reference, reference, xOffset, yOffset);
+    }
+
+    protected void ArrangeCommonButtonsR(PlainButton button1, PlainButton button2, Control referenceX, Control referenceY, int xOffset = 0, int yOffset = 0)
+    {
+        button2.SetBounds(referenceX.Right - button2.Width + ScaleToDpi(xOffset), referenceY.Bottom + ScaleToDpi(yOffset), 0, 0, BoundsSpecified.Location);
         button1?.SetBounds(button2.Left - button1.Width - ScaleToDpi(3), button2.Top, 0, 0, BoundsSpecified.Location);
     }
 

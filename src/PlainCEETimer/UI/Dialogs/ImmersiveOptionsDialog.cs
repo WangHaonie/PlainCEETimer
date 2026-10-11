@@ -1,5 +1,4 @@
-﻿using System;
-using PlainCEETimer.Modules;
+﻿using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Extensions;
 
@@ -16,12 +15,10 @@ public sealed class ImmersiveOptionsDialog : AppDialog
     private PlainCheckBox CheckBoxNoAnimate;
     private PlainCheckBox CheckBoxUnTopMost;
     private PlainCheckBox CheckBoxAutoStart;
-    private EventHandler OnUserChanged;
 
     protected override void OnInitializing()
     {
         Text = "沉浸模式选项 - 高考倒计时";
-        OnUserChanged = (_, _) => UserChanged();
 
         this.AddControls(b =>
         [
@@ -29,8 +26,8 @@ public sealed class ImmersiveOptionsDialog : AppDialog
             [
                 b.TabPage("常规",
                 [
-                    CheckBoxAutoStart = b.CheckBox("沉浸模式跟随主窗口启动(&A)", OnUserChanged),
-                    CheckBoxUnTopMost = b.CheckBox("禁止在全屏模式下设置顶置(&U)", OnUserChanged)
+                    CheckBoxAutoStart = b.CheckBox("沉浸模式跟随主窗口启动(&A)", UserChanged),
+                    CheckBoxUnTopMost = b.CheckBox("禁止在全屏模式下设置顶置(&U)", UserChanged)
                 ]),
 
                 b.TabPage("显示",
@@ -43,13 +40,13 @@ public sealed class ImmersiveOptionsDialog : AppDialog
                         UserChanged();
                     }),
 
-                    CheckBoxSkipExams = b.CheckBox("跳过预览无倒计时的考试(&S)", OnUserChanged).Disable(),
-                    CheckBoxShowLoop = b.CheckBox("循环显示前后考试的倒计时(&L)", OnUserChanged).Disable()
+                    CheckBoxSkipExams = b.CheckBox("跳过预览无倒计时的考试(&S)", UserChanged).Disable(),
+                    CheckBoxShowLoop = b.CheckBox("循环显示前后考试的倒计时(&L)", UserChanged).Disable()
                 ]),
 
                 b.TabPage("动画",
                 [
-                    CheckBoxNoAnimate = b.CheckBox("关闭所有动画效果(&N)", OnUserChanged)
+                    CheckBoxNoAnimate = b.CheckBox("关闭所有动画效果(&N)", UserChanged)
                 ])
             ])
         ]);

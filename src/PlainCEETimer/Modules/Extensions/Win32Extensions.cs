@@ -11,6 +11,6 @@ public static class Win32Extensions
     public static int ToWin32(this bool b)
         => Convert.ToInt32(b);
 
-    public static bool ToBool(this int i)
+    public static bool ToBoolean(this int i)
         => Convert.ToBoolean(i);
 }

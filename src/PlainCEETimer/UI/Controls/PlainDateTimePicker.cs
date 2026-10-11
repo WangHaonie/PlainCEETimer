@@ -6,6 +6,7 @@ using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -99,7 +100,111 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
         }
     }
 
+    private sealed class RelativeValueDialog(PlainDateTimePicker owner) : AppDialog
+    {
+        public DateTime SelectedValue => m_current;
+
+        protected override bool GrayButtonA => false;
+
+        private DateTime m_current;
+        private DateTime m_value;
+        private PlainLabel LabelCurrent;
+        private PlainLabel LabelSet;
+        private PlainLabel LabelPreview;
+        private PlainTimeSpanPicker PtspMain;
+        private PlainComboBox ComboBoxType;
+
+        protected override void OnInitializing()
+        {
+            var option = owner.AccessibilityObject.Name is var optionName && string.IsNullOrEmpty(optionName)
+                ? string.Empty : $" ({optionName.Truncate(10, true)})";
+            m_current = owner.Value;
+            Text = "设置相对值 - DateTimePicker" + option;
+
+            this.AddControls(b =>
+            [
+                LabelCurrent = b.Label("0"),
+                LabelSet = b.Label("设置为: "),
+                PtspMain = b.TimeSpanPicker(150, UpdatePreview),
+                ComboBoxType = b.ComboBox(55, UpdatePreview, ["之后", "之前"]),
+                LabelPreview = b.Label("0")
+            ]);
+
+            LabelCurrent.Text = $"当前值: {m_current.ToString(ConfigValidator.DTPFormat)}";
+            UpdatePreview(this, EventArgs.Empty);
+            base.OnInitializing();
+        }
+
+        protected override void RunLayout(bool init, bool isHighDpi)
+        {
+            ArrangeFirstControl(LabelCurrent, 6);
+            CompactControlY(PtspMain, LabelCurrent, 3);
+            ArrangeControlYL(LabelSet, LabelCurrent);
+            CenterControlY(LabelSet, PtspMain);
+            CompactControlX(PtspMain, LabelSet);
+            ArrangeControlXT(ComboBoxType, PtspMain, 6);
+            ArrangeControlYL(LabelPreview, LabelSet);
+            CompactControlY(LabelPreview, PtspMain, 1);
+            ArrangeCommonButtonsR(ButtonA, ButtonB, ComboBoxType, LabelPreview, 3, 3);
+            InitWindowSize(ButtonB, 6, 6);
+        }
+
+        protected override void OnLoad()
+        {
+            var g = App.Current.AppConfig.General;
+            PtspMain.Value = g.PreferredTS;
+            ComboBoxType.SelectedIndex = g.PreferMinusTS.ToWin32();
+        }
+
+        protected override bool OnClickButtonA()
+        {
+            var g = App.Current.AppConfig.General;
+            var v = PtspMain.Value;
+            g.PreferredTS = v;
+            g.PreferMinusTS = ComboBoxType.SelectedIndex.ToBoolean();
+            m_current = m_value;
+            ConfigValidator.DemandConfig();
+            return base.OnClickButtonA();
+        }
+
+        private void UpdatePreview(object sender, EventArgs e)
+        {
+            var offset = PtspMain.Value;
+            var negative = ComboBoxType.SelectedIndex.ToBoolean();
+            offset = negative ? new(-offset.Ticks) : offset;
+            var value = SafeAdd(m_current, offset);
+            LabelPreview.Text = "目标值: " + value.ToString(ConfigValidator.DTPFormat);
+            m_value = value;
+        }
+
+        private DateTime SafeAdd(DateTime value, TimeSpan offset)
+        {
+            var min = owner.MinDate.Ticks;
+            var max = owner.MaxDate.Ticks;
+
+            DateTime result;
+
+            try
+            {
+                result = value.Add(offset);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                result = offset.Ticks < 0L ? DateTime.MinValue : DateTime.MaxValue;
+            }
+            catch
+            {
+                result = value;
+            }
+
+            var ticks = result.Ticks.Clamp(min, max);
+            return new(ticks);
+        }
+    }
+
     private bool UseDark;
+    private AppForm parentForm;
+    private RelativeValueDialog dialog;
     private DropDownAndSysMonthCal32NativeWindow m_ddnw;
     private DropDownAndSysMonthCal32NativeWindow m_smcnw;
 
@@ -110,6 +215,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
 
     protected override void OnHandleCreated(EventArgs e)
     {
+        parentForm = this.FindParentForm();
         ThemeHelper.Attach(this);
         base.OnHandleCreated(e);
     }
@@ -145,6 +251,9 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
                     case Natives.IDM_DPM_PASTE:
                         Paste();
                         break;
+                    case Natives.IDM_DPM_RELATIVE:
+                        OpenRelativeDialog();
+                        break;
                 }
 
                 break;
@@ -178,6 +287,19 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
                 || DateTime.TryParse(text, out result))
             {
                 Value = result;
+            }
+        }
+    }
+
+    private void OpenRelativeDialog()
+    {
+        if (dialog == null || dialog.IsDisposed)
+        {
+            dialog = new(this);
+
+            if (dialog.ShowDialog(parentForm) == true)
+            {
+                Value = dialog.SelectedValue;
             }
         }
     }

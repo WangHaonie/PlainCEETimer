@@ -22,6 +22,7 @@
 #define IDR_DATEPICKER_MENU				302
 #define IDM_DPM_COPY					(IDM_FIRST + 4)
 #define IDM_DPM_PASTE					(IDM_FIRST + 5)
+#define IDM_DPM_RELATIVE				(IDM_FIRST + 6)
 
 // Next default values for new objects
 // 

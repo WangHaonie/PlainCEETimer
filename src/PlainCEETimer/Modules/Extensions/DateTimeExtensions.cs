@@ -6,7 +6,7 @@ namespace PlainCEETimer.Modules.Extensions;
 
 public static class DateTimeExtensions
 {
-    extension(DateTime)
+    extension(DateTime value)
     {
         public static ulong TickCount => Win32.GetTickCount64();
     }
@@ -36,6 +36,9 @@ public static class DateTimeExtensions
 
     public static string Format(this TimeSpan timeSpan)
         => TimeSpanFormat.Format(timeSpan, AppParams.TSFormat);
+
+    public static TimeSpan TruncateToSeconds(this TimeSpan ts)
+        => new(ts.Ticks / ConfigValidator.MinTick * ConfigValidator.MinTick);
 
     public static string FormatToTimeAgo(this DateTime dt) => ProcessTimeSpan(DateTime.Now - dt, out var str) switch
     {
