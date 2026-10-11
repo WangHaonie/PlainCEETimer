@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -28,6 +29,21 @@ public static class ReflectionUtils
         where TDelegate : Delegate
     {
         fn ??= StaticCreateDelegateCore<TDelegate>(type, returnType, methodMod, methodName);
+    }
+
+    public static Func<TObject, TField> FieldCreateGetter<TObject, TField>(string fieldName)
+    {
+        var t = typeof(TObject);
+        var fi = t.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        if (fi != null)
+        {
+            var instance = Expression.Parameter(t);
+            var field = Expression.Field(instance, fi);
+            return Expression.Lambda<Func<TObject, TField>>(field, instance).Compile();
+        }
+
+        return null;
     }
 
     private static TDelegate StaticCreateDelegateCore<TDelegate>(Type type, Type returnType, BindingFlags methodMod, string methodName)

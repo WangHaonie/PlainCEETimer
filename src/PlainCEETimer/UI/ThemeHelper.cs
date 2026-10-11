@@ -11,21 +11,15 @@ public class ThemeHelper : IDisposable
 
     private ThemeHelper(IThemeAware obj)
     {
-        if (obj != null)
-        {
-            m_obj = new(obj);
-            Initialize(obj);
-        }
+        m_obj = new(obj);
+        Initialize(obj);
     }
 
     private ThemeHelper(IThemeAwareEx obj)
     {
-        if (obj != null)
-        {
-            m_obj = new(obj);
-            obj.Disposed += Target_Disposed;
-            Initialize(obj);
-        }
+        m_obj = new(obj);
+        obj.Disposed += Target_Disposed;
+        Initialize(obj);
     }
 
     public void Update()
@@ -49,12 +43,15 @@ public class ThemeHelper : IDisposable
 
     public static void Attach(IThemeAware obj, ref ThemeHelper th)
     {
-        if (th != null)
+        if (obj != null)
         {
-            Detach(ref th);
-        }
+            if (th != null)
+            {
+                Detach(ref th);
+            }
 
-        th = new(obj);
+            th = new(obj);
+        }
     }
 
     public static void Detach(ref ThemeHelper th)
@@ -74,6 +71,10 @@ public class ThemeHelper : IDisposable
         if (m_obj.TryGetTarget(out var obj))
         {
             obj.UpdateTheme(useDark, init);
+        }
+        else
+        {
+            Dispose();
         }
     }
 

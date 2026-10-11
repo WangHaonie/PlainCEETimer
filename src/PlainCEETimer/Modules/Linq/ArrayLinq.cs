@@ -140,4 +140,9 @@ public static class ArrayLinq
     {
         return Array.IndexOf(array, value) >= 0;
     }
+
+    public static bool ArrayAny<T>(this T[] array, Predicate<T> match)
+    {
+        return Array.Exists(array, match);
+    }
 }

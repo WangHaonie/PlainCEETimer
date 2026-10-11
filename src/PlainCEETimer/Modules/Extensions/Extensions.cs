@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlainCEETimer.Countdown;
+using PlainCEETimer.Modules.Reflection;
 
 namespace PlainCEETimer.Modules.Extensions;
 
@@ -89,5 +92,18 @@ public static class Extensions
         where TViewModel : class
     {
         return new(provider);
+    }
+
+    private static Func<MulticastDelegate, object> get_invocationList;
+
+    extension(MulticastDelegate value)
+    {
+        public ReadOnlyCollection<Delegate> FastGetInvocationList()
+        {
+            get_invocationList ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, object>("_invocationList");
+            var list = get_invocationList(value);
+            var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();
+            return result == null ? null : Array.AsReadOnly(result);
+        }
     }
 }

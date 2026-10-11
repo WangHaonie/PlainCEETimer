@@ -3,6 +3,7 @@
 #include <combaseapi.h>
 #include <wchar.h>
 #include <Windows.h>
+#include <windowsx.h>
 #include <strsafe.h>
 
 #define HEAPALLOC(type)             CastP(type*, HeapAllocEx(sizeof(type)))
@@ -236,6 +237,12 @@ inline HMENU __stdcall PnGetMenuPopupFromRes(HMENU& hMenu, UINT uIDMenu)
     static HMODULE hmod = GetModuleHandle(LIBRARYNAME);
     if (!hMenu) hMenu = LoadMenu(hmod, MAKEINTRESOURCE(uIDMenu));
     return GetSubMenu(hMenu, 0);
+}
+
+inline int __stdcall PnPopupMenu(HMENU hMenu, HWND hWnd, LPARAM pt, bool bReturnCmd)
+{
+    return TrackPopupMenuEx(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON | (bReturnCmd ? TPM_RETURNCMD : 0),
+        GET_X_LPARAM(pt), GET_Y_LPARAM(pt), hWnd, nullptr);
 }
 
 inline void __stdcall PnDestroyMenu(HMENU& phMenu)

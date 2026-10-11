@@ -125,7 +125,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
             [
                 LabelCurrent = b.Label("0"),
                 LabelSet = b.Label("设置为: "),
-                PtspMain = b.TimeSpanPicker(150, UpdatePreview),
+                PtspMain = b.TimeSpanPicker(155, UpdatePreview),
                 ComboBoxType = b.ComboBox(55, UpdatePreview, ["之后", "之前"]),
                 LabelPreview = b.Label("0")
             ]);
@@ -252,7 +252,7 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
                         Paste();
                         break;
                     case Natives.IDM_DPM_RELATIVE:
-                        OpenRelativeDialog();
+                        OpenDialog();
                         break;
                 }
 
@@ -291,16 +291,16 @@ public sealed class PlainDateTimePicker : DateTimePicker, IThemeAwareEx
         }
     }
 
-    private void OpenRelativeDialog()
+    private void OpenDialog()
     {
         if (dialog == null || dialog.IsDisposed)
         {
             dialog = new(this);
+        }
 
-            if (dialog.ShowDialog(parentForm) == true)
-            {
-                Value = dialog.SelectedValue;
-            }
+        if (dialog.ShowDialog(parentForm) == true)
+        {
+            Value = dialog.SelectedValue;
         }
     }
 

@@ -4,7 +4,6 @@
 #include "Win32/IATHook.h"
 #include <CommCtrl.h>
 #include <Windows.h>
-#include <windowsx.h>
 
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
@@ -47,8 +46,7 @@ static LRESULT CALLBACK DateTimePick_WndProc(HWND hWnd, UINT message, WPARAM wPa
 
             if (hPopup)
             {
-                TrackPopupMenuEx(hPopup, TPM_LEFTALIGN | TPM_RIGHTBUTTON,
-                    GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
+                PnPopupMenu(hPopup, hWnd, lParam, false);
             }
 
             return 0;
@@ -249,9 +247,7 @@ int NATIVESAPI CDCCM_WmContextMenu(HWND hWnd, WPARAM wParam, LPARAM lParam)
             {
                 static NMHDR nmhdr;
 
-                int cmd = TrackPopupMenuEx(hPopup,
-                    TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
-                    GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd, nullptr);
+                int cmd = PnPopupMenu(hPopup, hWnd, lParam, true);
 
                 if (cmd > 0)
                 {
