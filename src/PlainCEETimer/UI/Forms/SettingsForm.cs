@@ -102,7 +102,6 @@ public sealed class SettingsForm : AppForm
     private PlainCheckBox CheckBoxDebug;
     private PlainCheckBox CheckBoxWFDpiAware;
     private PlainCheckBox CheckBoxCommDlgDpiAware;
-    private PlainCheckBox CheckBoxCTSP;
     private PlainCheckBox CheckBoxMainBackdrop;
     private PlainNumericUpDown NudOpacity;
     private PlainNumericUpDown NudMaxCpp;
@@ -485,16 +484,6 @@ public sealed class SettingsForm : AppForm
 
                         GBoxTSPresent = b.GroupBox("TimeSpan 呈现",
                         [
-                            CheckBoxCTSP = b.CheckBox("恢复经典 TimeSpan 选取控件", (_, _) =>
-                            {
-                                if (CheckBoxCTSP.Checked)
-                                {
-                                    MessageX.Warn("启用经典控件时，设置的 最大上限 将失效！");
-                                }
-
-                                SettingsChanged();
-                            }),
-
                             LabelTSFormat = b.Label("显示格式"),
                             TextBoxTSFormat = b.TextBox(200, false, SettingsChanged),
                             LabelTSMax = b.Label("最大上限"),
@@ -715,8 +704,7 @@ public sealed class SettingsForm : AppForm
             GroupBoxAutoAdjustHeight(GBoxDpiAware, CheckBoxCommDlgDpiAware, 4);
 
             ArrangeControlYL(GBoxTSPresent, GBoxDpiAware, 0, 2);
-            GroupBoxArrageControl(GBoxTSPresent, CheckBoxCTSP, 4);
-            ArrangeControlYL(TextBoxTSFormat, CheckBoxCTSP, 0, 3);
+            GroupBoxArrageControl(GBoxTSPresent, TextBoxTSFormat, 4);
             GroupBoxArrageControl(GBoxTSPresent, LabelTSFormat);
             CompactControlX(TextBoxTSFormat, LabelTSFormat);
             CenterControlY(LabelTSFormat, TextBoxTSFormat, -1);
@@ -936,7 +924,6 @@ public sealed class SettingsForm : AppForm
             CheckBoxDebug.Checked = true;
             CheckBoxWFDpiAware.Checked = ParamsInfo.DisableWFPMv2;
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
-            CheckBoxCTSP.Checked = ParamsInfo.UseClassicTSP;
             CheckBoxMainBackdrop.Checked = ParamsInfo.MainBackdropAcrylic;
             TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
             PtspTSMax.Value = ParamsInfo.TSMax;
@@ -1184,7 +1171,6 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.Debug = CheckBoxDebug.Checked;
             ParamsInfo.DisableWFPMv2 = CheckBoxWFDpiAware.Checked;
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
-            ParamsInfo.UseClassicTSP = CheckBoxCTSP.Checked;
             ParamsInfo.MainBackdropAcrylic = CheckBoxMainBackdrop.Checked;
             ParamsInfo.TSFormat = DebugTSFormat;
             ParamsInfo.TSMax = PtspTSMax.Value;

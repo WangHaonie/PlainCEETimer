@@ -15,9 +15,6 @@ public class AppParamsInfo
     [JsonProperty(AppParams.EnableCommDlgPMv2_Key)]
     public bool EnableCommDlgPMv2 { get; set; }
 
-    [JsonProperty(AppParams.UseClassicTSP_Key)]
-    public bool UseClassicTSP { get; set; }
-
     [JsonProperty(AppParams.MainBackdropAcrylic_Key)]
     public bool MainBackdropAcrylic { get; set; }
 
