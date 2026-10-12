@@ -72,9 +72,15 @@ public static class ThemeManager
     private static bool isNewDwma;
     private static SystemTheme theme;
     private static ThemeChangedMessageFilter msgfilter;
+    private static readonly EfficientInvocationList<ThemeChangedEventArgs> ThemeChangedEvent = new(150);
+
     private const string PersonalizeRegPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
-    public static event EventHandler<ThemeChangedEventArgs> ThemeChanged;
+    public static event EventHandler<ThemeChangedEventArgs> ThemeChanged
+    {
+        add => ThemeChangedEvent.Add(value);
+        remove => ThemeChangedEvent.Remove(value);
+    }
 
     public static void Initialize()
     {
@@ -151,7 +157,7 @@ public static class ThemeManager
         theme = GetTheme(theme);
         shouldUseDarkMode = theme == SystemTheme.Dark;
         UpdateAppTheme();
-        ThemeChanged?.Invoke(null, new(theme));
+        ThemeChangedEvent.Invoke(null, new(theme));
     }
 
     private static void UpgradeStyle(ref SystemStyle style)
