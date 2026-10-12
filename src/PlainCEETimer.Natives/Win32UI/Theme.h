@@ -87,7 +87,7 @@ NATIVES_EXPORT void NATIVESAPI PnUnhookSysColorBrush();
 #define HOOK_COMDLG32_DRAWEDGE_ARGS             COMDLG32_DLL, USER32_DLL, nameof(DrawEdge), 0, false
 #define HOOK_COMDLG32_FRAMERECT_ARGS            COMDLG32_DLL, USER32_DLL, nameof(FrameRect), 0, false
 
-NATIVES_EXPORT void NATIVESAPI PnHookClassicEdge(LPVOID lpTag);
+NATIVES_EXPORT void NATIVESAPI PnHookClassicEdge(LPVOID lpData);
 NATIVES_EXPORT void NATIVESAPI PnUnhookClassicEdge();
 
 #define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19

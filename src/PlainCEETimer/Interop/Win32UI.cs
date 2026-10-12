@@ -250,7 +250,7 @@ internal unsafe static class Win32UI
     public static extern void PnUnhookThemedPaint();
 
     [DllImport(App.NativesDll, EntryPoint = "#46")]
-    public static extern void PnHookClassicEdge(nint lpTag);
+    public static extern void PnHookClassicEdge(nint lpData);
 
     [DllImport(App.NativesDll, EntryPoint = "#47")]
     public static extern void PnUnhookClassicEdge();

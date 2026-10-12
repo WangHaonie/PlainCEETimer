@@ -65,6 +65,12 @@ public static class ThemeManager
         }
     }
 
+    public static event EventHandler<ThemeChangedEventArgs> ThemeChanged
+    {
+        add => ThemeChangedEvent.Add(value);
+        remove => ThemeChangedEvent.Remove(value);
+    }
+
     private static bool canFireThemeChanged;
     private static bool initialized;
     private static bool shouldUseDarkMode;
@@ -75,12 +81,6 @@ public static class ThemeManager
     private static readonly EfficientInvocationList<ThemeChangedEventArgs> ThemeChangedEvent = new(150);
 
     private const string PersonalizeRegPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
-
-    public static event EventHandler<ThemeChangedEventArgs> ThemeChanged
-    {
-        add => ThemeChangedEvent.Add(value);
-        remove => ThemeChangedEvent.Remove(value);
-    }
 
     public static void Initialize()
     {

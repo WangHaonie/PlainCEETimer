@@ -847,11 +847,11 @@ void NATIVESAPI PnUnhookSysColorBrush()
     IatHook_Disable(IatHookComdlgGetSysColorBrush);
 }
 
-void NATIVESAPI PnHookClassicEdge(LPVOID lpTag)
+void NATIVESAPI PnHookClassicEdge(LPVOID lpData)
 {
-    if (!lpTag) return;
+    if (!lpData) return;
 
-    COLORREF* crArray = CastP(COLORREF*, lpTag);
+    COLORREF* crArray = CastP(COLORREF*, lpData);
 
     if (HookIat(HOOK_COMDLG32_DRAWEDGE_ARGS,
         IatHookComdlgDrawEdge,
