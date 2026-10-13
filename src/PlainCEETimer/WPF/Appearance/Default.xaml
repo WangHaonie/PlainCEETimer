@@ -469,39 +469,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ListBox">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
-
-    <Style TargetType="ListBoxItem">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border x:Name="Bd" BorderThickness="1" SnapsToDevicePixels="True"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="{DynamicResource SelectionRectangleCornerRadius}">
-                        <ContentPresenter />
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BackItemHot}"/>
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BackItemSelected}"/>
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BorderItemSelected}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="ToolTip">
         <Setter Property="Background" Value="{DynamicResource BackToolTip}"/>
         <Setter Property="Foreground" Value="{DynamicResource ForeText}"/>

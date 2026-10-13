@@ -83,6 +83,10 @@ public sealed class WPFApp : Application, IThemeAware
         {
             dict.Add(Resource.Create(ThemeDir + "Default.Windows10.xaml"));
         }
+        else if (SystemVersion.BeforeNT10)
+        {
+            dict.Add(Resource.Create(ThemeDir + "Default.Windows7.xaml"));
+        }
 
         dict.AddEx(Resource.Create(ThemeDir + "Default.xaml"), atLeastNT10)
             .AddEx(Resource.Create(ThemeDir + "Controls.xaml"))
