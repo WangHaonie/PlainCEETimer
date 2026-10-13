@@ -8,7 +8,7 @@ using PlainCEETimer.Modules;
 namespace PlainCEETimer.WPF.Converters;
 
 [ValueConversion(typeof(Color), typeof(SolidColorBrush))]
-public class ColorToBrushConverter : IValueConverter, IValueConverter<Color, SolidColorBrush>
+public class ColorToBrushConverter : IValueConverter<Color, SolidColorBrush>
 {
     private readonly ConcurrentDictionary<Color, SolidColorBrush> m_brushCache = new();
 

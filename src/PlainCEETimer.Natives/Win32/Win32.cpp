@@ -180,20 +180,20 @@ BOOL NATIVESAPI PnSetConsoleMode(HANDLE hConsoleHandle, DWORD dwFlags)
     return FALSE;
 }
 
-BOOL NATIVESAPI PnBuildAnsiColorString(LPWSTR lpBuffer, DWORD dwCchBuffer, LPDWORD lpData)
+BOOL NATIVESAPI PnBuildAnsiColorString(LPWSTR lpBuffer, DWORD cchBuffer, LPDWORD lpData)
 {
-    if (lpBuffer && dwCchBuffer && lpData)
+    if (lpBuffer && cchBuffer && lpData)
     {
         COLORREF fore = lpData[1];
         COLORREF back = lpData[2];
 
         size_t remain = 0;
-        HRESULT hr = StringCchPrintfEx(lpBuffer, dwCchBuffer, nullptr, &remain, STRSAFE_DEFAULT, L"\x1b[38;2;%d;%d;%d;48;2;%d;%d;%dm",
+        HRESULT hr = StringCchPrintfEx(lpBuffer, cchBuffer, nullptr, &remain, STRSAFE_DEFAULT, L"\x1b[38;2;%d;%d;%d;48;2;%d;%d;%dm",
             GetRValue(fore), GetGValue(fore), GetBValue(fore), GetRValue(back), GetGValue(back), GetBValue(back));
 
         if (SUCCEEDED(hr))
         {
-            *lpData = dwCchBuffer - CastS(DWORD, remain);
+            *lpData = cchBuffer - CastS(DWORD, remain);
             return TRUE;
         }
     }

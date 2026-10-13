@@ -24,7 +24,7 @@ internal unsafe static class Win32
     public static extern bool PnSetConsoleMode(IntPtr hConsoleHandle, int dwFlags);
 
     [DllImport(App.NativesDll, EntryPoint = "#65")]
-    public static extern bool PnBuildAnsiColorString(char* lpBuffer, int dwCchBuffer, int* lpData);
+    public static extern bool PnBuildAnsiColorString(char* lpBuffer, int cchBuffer, int* lpData);
 
     [DllImport(App.NativesDll, EntryPoint = "#66")]
     public static extern uint PnConsoleGetCursor(IntPtr hConsoleHandle);

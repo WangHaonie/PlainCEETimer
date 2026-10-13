@@ -6,6 +6,6 @@ NATIVES_EXPORT int NATIVESAPI PnLoadStringInternal(UINT uID, LPWSTR* ppBuffer);
 
 NATIVES_EXPORT BOOL NATIVESAPI PnGetConsoleColor(HANDLE hConsoleHandle, COLORREF color, LPDWORD lpdwConsoleColor);
 NATIVES_EXPORT BOOL NATIVESAPI PnSetConsoleMode(HANDLE hConsoleHandle, DWORD dwFlags);
-NATIVES_EXPORT BOOL NATIVESAPI PnBuildAnsiColorString(LPWSTR lpBuffer, DWORD dwCchBuffer, LPDWORD lpData);
+NATIVES_EXPORT BOOL NATIVESAPI PnBuildAnsiColorString(LPWSTR lpBuffer, DWORD cchBuffer, LPDWORD lpData);
 NATIVES_EXPORT COORD NATIVESAPI PnConsoleGetCursor(HANDLE hConsoleHandle);
 NATIVES_EXPORT BOOL NATIVESAPI PnConsoleClear(HANDLE hConsoleHandle, COORD coFrom, COORD coTo);

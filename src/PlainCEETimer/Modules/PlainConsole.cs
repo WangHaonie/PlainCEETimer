@@ -11,10 +11,10 @@ public class PlainConsole
 {
     public static PlainConsole Instance { get; } = new();
 
-    private ConsoleColorString concolor;
     private bool RecordCursor;
     private uint CursorPosA;
     private uint CursorPosB;
+    private ConsoleColorString concolor;
     private readonly object syncLock = new();
     private static readonly bool _SupportAnsiColor;
 

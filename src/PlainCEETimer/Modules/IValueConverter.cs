@@ -1,6 +1,8 @@
-﻿namespace PlainCEETimer.Modules;
+﻿using System.Windows.Data;
 
-public interface IValueConverter<TIn, TOut>
+namespace PlainCEETimer.Modules;
+
+public interface IValueConverter<TIn, TOut> : IValueConverter
 {
     TOut Convert(TIn value);
 
