@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -143,9 +144,9 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
 
                     var lp = m.LParam;
 
-                    if (Marshal.ReadInt32(lp, NMHDR.idFrom) == COLOR_CURRENT)
+                    if (Unsafe.ReadInt32(lp, NMHDR.idFrom) == COLOR_CURRENT)
                     {
-                        switch (Marshal.ReadInt32(lp, NMHDR.code))
+                        switch (Unsafe.ReadInt32(lp, NMHDR.code))
                         {
                             case Natives.IDM_CDCCM_FROMCLIPBOARD:
                                 goto pastecolor;
@@ -504,20 +505,20 @@ public abstract class PlainCommonDialog : CommonDialog, IThemeAware
         switch (nCode)
         {
             case WinUser.HCBT_CREATEWND:
-                var lpcs = Marshal.ReadIntPtr(lParam);
+                var lpcs = Unsafe.ReadIntPtr(lParam, 0);
 
                 if (Win32UI.PnIsDialog(lpcs))
                 {
-                    Win32UI.GetWindowRect(Marshal.ReadIntPtr(lpcs, CREATESTRUCT.hwndParent), out var lprc);
+                    Win32UI.GetWindowRect(Unsafe.ReadIntPtr(lpcs, CREATESTRUCT.hwndParent), out var lprc);
 
                     Win32UI.MakeCenter
                     (
                         new
                         (
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT.x),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT.y),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT.cx),
-                            Marshal.ReadInt32(lpcs, CREATESTRUCT.cy)
+                            Unsafe.ReadInt32(lpcs, CREATESTRUCT.x),
+                            Unsafe.ReadInt32(lpcs, CREATESTRUCT.y),
+                            Unsafe.ReadInt32(lpcs, CREATESTRUCT.cx),
+                            Unsafe.ReadInt32(lpcs, CREATESTRUCT.cy)
                         ), lprc, out var r
                     );
 

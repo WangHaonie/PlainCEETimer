@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
+using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -15,8 +16,8 @@ public sealed class PlainButton : Button
         {
             if (m.Msg == WinUser.WM_NOTIFY)
             {
-                if (Marshal.ReadInt32(m.LParam, NMHDR.code) == CommCtrl.BCN_DROPDOWN
-                    && Marshal.ReadIntPtr(m.LParam, NMHDR.hwndFrom) == m_owner.Handle)
+                if (Unsafe.ReadInt32(m.LParam, NMHDR.code) == CommCtrl.BCN_DROPDOWN
+                    && Unsafe.ReadIntPtr(m.LParam, NMHDR.hwndFrom) == m_owner.Handle)
                 {
                     m_owner.ContextMenu.Show(m_owner, new(0, m_owner.Height));
                 }

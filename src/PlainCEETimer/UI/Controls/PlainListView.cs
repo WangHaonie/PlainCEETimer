@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -34,12 +34,12 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
                 case CommCtrl.HDM_LAYOUT:
                     base.WndProc(ref m);
                     var lparam = m.LParam;
-                    var prc = Marshal.ReadIntPtr(lparam, HDLAYOUT.prc);
-                    var pwpos = Marshal.ReadIntPtr(lparam, HDLAYOUT.pwpos);
-                    var height = Marshal.ReadInt32(pwpos, WINDOWPOS.cy);
+                    var prc = Unsafe.ReadIntPtr(lparam, HDLAYOUT.prc);
+                    var pwpos = Unsafe.ReadIntPtr(lparam, HDLAYOUT.pwpos);
+                    var height = Unsafe.ReadInt32(pwpos, WINDOWPOS.cy);
                     height += (int)(height * 0.2F);
-                    Marshal.WriteInt32(pwpos, WINDOWPOS.cy, height);
-                    Marshal.WriteInt32(prc, RECT.top, height);
+                    Unsafe.WriteInt32(pwpos, WINDOWPOS.cy, height);
+                    Unsafe.WriteInt32(prc, RECT.top, height);
                     return;
             }
 
@@ -205,17 +205,17 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
 
             case WinUser.WM_NOTIFY:
 
-                switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
+                switch (Unsafe.ReadInt32(m.LParam, NMHDR.code))
                 {
                     case CommCtrl.NM_CUSTOMDRAW:
 
-                        switch (Marshal.ReadInt32(m.LParam, NMCUSTOMDRAW.dwDrawStage))
+                        switch (Unsafe.ReadInt32(m.LParam, NMCUSTOMDRAW.dwDrawStage))
                         {
                             case CommCtrl.CDDS_PREPAINT:
                                 m.Result = (nint)CommCtrl.CDRF_NOTIFYITEMDRAW;
                                 return;
                             case CommCtrl.CDDS_ITEMPREPAINT:
-                                Win32UI.SetTextColor(Marshal.ReadIntPtr(m.LParam, NMCUSTOMDRAW.hdc),
+                                Win32UI.SetTextColor(Unsafe.ReadIntPtr(m.LParam, NMCUSTOMDRAW.hdc),
                                     UseDark ? Colors.DarkForeListViewHeader : Colors.LightForeListViewHeader);
                                 m.Result = (nint)CommCtrl.CDRF_DODEFAULT;
                                 return;
@@ -234,7 +234,7 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
                          */
 
                         base.WndProc(ref m);
-                        Win32UI.SendMessage(Marshal.ReadIntPtr(m.LParam), CommCtrl.TTM_SETMAXTIPWIDTH, 0, Width);
+                        Win32UI.SendMessage(Unsafe.ReadIntPtr(m.LParam, 0), CommCtrl.TTM_SETMAXTIPWIDTH, 0, Width);
                         return;
                 }
 
@@ -242,7 +242,7 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
 
             case WinUser.WM_REFLECT + WinUser.WM_NOTIFY:
 
-                switch (Marshal.ReadInt32(m.LParam, NMHDR.code))
+                switch (Unsafe.ReadInt32(m.LParam, NMHDR.code))
                 {
                     case CommCtrl.NM_CLICK:
                     case CommCtrl.NM_DBLCLK:
