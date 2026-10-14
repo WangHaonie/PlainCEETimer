@@ -36,10 +36,38 @@ static LRESULT CALLBACK GetMsgHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
+static LRESULT DateTimePick_OnCopyPaste(HWND hWnd, bool bCopy)
+{
+    return SNDMSG(hWnd, WM_COMMAND, MAKEWPARAM((bCopy ? IDM_DPM_COPY : IDM_DPM_PASTE), 0), NULL);
+}
+
 static LRESULT CALLBACK DateTimePick_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+        case WM_KEYDOWN:
+        {
+            if (GetKeyState(VK_CONTROL) & 0x8000)
+            {
+                switch (wParam)
+                {
+                    case L'C':
+                    case L'c':
+                    {
+                        return DateTimePick_OnCopyPaste(hWnd, true);
+                    }
+
+                    case L'V':
+                    case L'v':
+                    {
+                        return DateTimePick_OnCopyPaste(hWnd, false);
+                    }
+                }
+            }
+
+            break;
+        }
+
         case WM_CONTEXTMENU:
         {
             HMENU hPopup = PnGetMenuPopupFromRes(g_MenuDP, IDR_DATEPICKER_MENU);
