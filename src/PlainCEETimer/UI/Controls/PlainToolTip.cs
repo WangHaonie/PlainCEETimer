@@ -33,6 +33,6 @@ public sealed class PlainToolTip : ToolTip, IThemeAwareEx
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
     {
-        ThemeManager.ApplyControlTheme(Handle, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ToolTipStyles.ApplyStyle(Handle, useDark, init);
     }
 }

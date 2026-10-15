@@ -292,23 +292,16 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
         ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
 
-        IntPtr hListView = Handle;
-        IntPtr hHeader = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETHEADER, 0, 0);
-        IntPtr hToolTips = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETTOOLTIPS, 0, 0);
+        var hListView = Handle;
+        var hHeader = Win32UI.SendMessage(hListView, CommCtrl.LVM_GETHEADER, 0, 0);
 
         ThemeManager.ApplyControlTheme(hListView, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
         ThemeManager.ApplyControlTheme(hHeader, useDark ? SystemStyle.ItemsViewDark : SystemStyle.ItemsView);
-        ThemeManager.ApplyControlTheme(hToolTips, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        ToolTipStyles.ApplyStyle(Win32UI.SendMessage(hListView, CommCtrl.LVM_GETTOOLTIPS, 0, 0), useDark, init);
 
         if (init)
         {
-            Win32UI.PnSetTopMostWindow(hToolTips);
             NativeWindowHelper.Attach(hHeader, ref hnw);
-
-            if (SystemVersion.IsWindows11)
-            {
-                Win32UI.PnSetRoundCornerEx(hToolTips, true);
-            }
         }
     }
 }

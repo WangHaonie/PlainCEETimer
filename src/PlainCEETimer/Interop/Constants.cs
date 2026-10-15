@@ -182,6 +182,9 @@ public static class CommCtrl
 
     public const int DTM_FIRST = 0x1000;
     public const int DTM_GETMONTHCAL = DTM_FIRST + 8;
+
+    public const int TBS_TOOLTIPS = 0x0100;
+    public const int TBM_GETTOOLTIPS = WinUser.WM_USER + 30;
 }
 
 [NoConstants]

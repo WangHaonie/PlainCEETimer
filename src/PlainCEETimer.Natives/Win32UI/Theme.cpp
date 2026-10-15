@@ -173,6 +173,78 @@ static bool PnDrawTabItemBackground(HDC hdc, LPRECT lpRect, COLORREF crBack, COL
     return true;
 }
 
+static bool PnDrawTrackBarThumb(HDC hdc, LPRECT lpRect, COLORREF cr, int tbpThumb)
+{
+    static POINT pts[5];
+    LONG l = lpRect->left, t = lpRect->top, r = lpRect->right - 1, b = lpRect->bottom;
+    LONG cx = r - l, cy = b - t;
+
+    switch (tbpThumb)
+    {
+        case TKP_THUMB:
+        case TKP_THUMBVERT:
+            return PnDrawBackground(hdc, lpRect, cr, COLOR_EMPTY, false);
+
+        case TKP_THUMBBOTTOM:
+        {
+            LONG p = cy / 4;
+            LONG yp13 = b - p - 1;
+            pts[0] = { l, t };
+            pts[1] = { l, yp13 };
+            pts[2] = { l + (r - l) / 2, b };
+            pts[3] = { r, yp13 };
+            pts[4] = { r, t };
+            break;
+        }
+
+        case TKP_THUMBTOP:
+        {
+            LONG p = cy / 4;
+            LONG yp13 = t + p + 1;
+            pts[0] = { l, b };
+            pts[1] = { l, yp13 };
+            pts[2] = { l + cx / 2, t };
+            pts[3] = { r, yp13 };
+            pts[4] = { r, b };
+            break;
+        }
+
+        case TKP_THUMBLEFT:
+        {
+            LONG p = cx / 4;
+            LONG xp13 = l + p + 1;
+            --cy, --b;
+            pts[0] = { r, t };
+            pts[1] = { xp13, t };
+            pts[2] = { l, t + cy / 2 };
+            pts[3] = { xp13, b };
+            pts[4] = { r, b };
+            break;
+        }
+
+        case TKP_THUMBRIGHT:
+        {
+            LONG p = cx / 4;
+            LONG xp13 = r - p - 1;
+            --cy, --b;
+            pts[0] = { l, t };
+            pts[1] = { xp13, t };
+            pts[2] = { r, t + cy / 2 };
+            pts[3] = { xp13, b };
+            pts[4] = { l, b };
+            break;
+        }
+
+        DEFAULT(false);
+    }
+
+    HGDIOBJ hbrOld = SelectObject(hdc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(hdc, cr);
+    Polygon(hdc, pts, 5);
+    SelectObject(hdc, hbrOld);
+    return true;
+}
+
 static bool PnDrawText(DTT_ARGS_DECL, bool bEnabled)
 {
     s_dttoptions.crText = bEnabled ? DCOLOR_TEXT_FORE : DCOLOR_TEXT_FORE_DISABLED;
@@ -212,7 +284,7 @@ static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF
     HBRUSH hbrOld = CastP(HBRUSH, SelectObject(hdc, s_brushes.GetBrush(crFill)));
     HPEN hpnOld = CastP(HPEN, SelectObject(hdc, GetStockObject(NULL_PEN)));
 
-    POINT pts[3];
+    static POINT pts[3];
 
     if (bLeft)
     {
@@ -388,6 +460,41 @@ static bool PnDrawGroupBoxBackground(DTBG_ARGS_DECL)
     return PnDrawBackground(hdc, pRect, COLOR_EMPTY, DCOLOR_GRPBOX_BORDER, true, false);
 }
 
+static bool PnDrawTrackBarBackground(DTBG_ARGS_DECL)
+{
+    DDump(L"p=%d, s=%d", iPartId, iStateId);
+
+    switch (iPartId)
+    {
+        case TKP_TRACK:
+        case TKP_TRACKVERT:
+            return PnDrawBackground(hdc, pRect, DCOLOR_TRACKBAR_TRACK_BACK, DCOLOR_TRACKBAR_TRACK_BORDER, true);
+        
+        case TKP_THUMB:
+        case TKP_THUMBVERT:
+        case TKP_THUMBBOTTOM:
+        case TKP_THUMBTOP:
+        case TKP_THUMBLEFT:
+        case TKP_THUMBRIGHT:
+        {
+            COLORREF cr = COLOR_EMPTY;
+
+            switch (iStateId)
+            {
+                CASE_AB(TUBS_NORMAL, cr, DCOLOR_TRACKBAR_THUMB_BACK);
+                CASE_AB(TUBS_HOT, cr, DCOLOR_TRACKBAR_THUMB_BACK_HOT);
+                CASE_AB(TUBS_PRESSED, cr, DCOLOR_TRACKBAR_THUMB_BACK_PRESSED);
+                CASE_AB(TUBS_FOCUSED, cr, DCOLOR_TRACKBAR_THUMB_BACK_FOCUSED);
+                CASE_AB(TUBS_DISABLED, cr, DCOLOR_TRACKBAR_THUMB_BACK_DISABLED);
+            }
+
+            return PnDrawTrackBarThumb(hdc, pRect, cr, iPartId);
+        }
+    }
+
+    return false;
+}
+
 static bool PnDrawMonthCalText(DTT_ARGS_DECL)
 {
     switch (iPartId)
@@ -542,6 +649,7 @@ static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
             CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerBackground(DTBG_ARGS));
             CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
             CASE(strhash(VSCLASS_TAB), PnDrawTabBackground(DTBG_ARGS));
+            CASE(strhash(VSCLASS_TRACKBAR), PnDrawTrackBarBackground(DTBG_ARGS));
             CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
         }
     }

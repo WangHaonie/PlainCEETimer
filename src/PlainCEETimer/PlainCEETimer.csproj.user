@@ -98,6 +98,9 @@
     <Compile Update="UI\Controls\PlainFlyout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="UI\Dialogs\ImmersiveOptionsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
