@@ -48,8 +48,10 @@ public sealed class PlainTrackBar : TrackBar, IThemeAwareEx
         {
             case WinUser.WM_PAINT when UseDark:
                 Win32UI.PnHookThemedPaint();
+                Win32UI.PnHookThemeColor();
                 base.WndProc(ref m);
                 Win32UI.PnUnhookThemedPaint();
+                Win32UI.PnUnhookThemeColor();
                 return;
         }
 

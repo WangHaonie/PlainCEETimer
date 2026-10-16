@@ -86,3 +86,6 @@ EXPORTS
 
     DateTimePick_InitClass @71 NONAME
     CDCCM_DestroyMenu @72 NONAME
+
+    PnHookThemeColor @73 NONAME
+    PnUnhookThemeColor @74 NONAME

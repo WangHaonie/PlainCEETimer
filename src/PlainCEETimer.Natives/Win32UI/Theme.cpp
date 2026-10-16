@@ -29,6 +29,7 @@ using fnGetThemeClass = HRESULT (WINAPI*)(HTHEME hTheme, LPWSTR lpBuffer, int cc
 DeclDelegateType(DrawThemeText);
 DeclDelegateType(DrawEdge);
 DeclDelegateType(FrameRect);
+DeclDelegateType(GetThemeColor);
 
 static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
 static HTHEME s_lastOpenedTheme = nullptr;
@@ -47,6 +48,7 @@ DeclDelegateField(GetThemeClass);
 DeclDelegateField(DrawThemeText);
 DeclDelegateField(DrawEdge);
 DeclDelegateField(FrameRect);
+DeclDelegateField(GetThemeColor);
 
 DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
@@ -55,6 +57,7 @@ DeclIatData(GetSysColorBrush, Comdlg);
 DeclIatData(GetSysColor, Comdlg);
 DeclIatData(DrawThemeBackground, Comctl);
 DeclIatData(DrawThemeText, Comctl);
+DeclIatData(GetThemeColor, Comctl);
 DeclIatData(DrawEdge, Comdlg);
 DeclIatData(FrameRect, Comdlg);
 
@@ -462,8 +465,6 @@ static bool PnDrawGroupBoxBackground(DTBG_ARGS_DECL)
 
 static bool PnDrawTrackBarBackground(DTBG_ARGS_DECL)
 {
-    DDump(L"p=%d, s=%d", iPartId, iStateId);
-
     switch (iPartId)
     {
         case TKP_TRACK:
@@ -683,6 +684,28 @@ static bool PnDrawThemeText(DTT_ARGS_DECL)
     return false;
 }
 
+static bool PnGetThemeColor(HTHEME hTheme, int iPartId, int iStateId, int iPropId, COLORREF* pColor)
+{
+    if (PnRevealThemeClass(hTheme))
+    {
+        switch (strhash(s_themeClassCache))
+        {
+            case strhash(VSCLASS_TRACKBAR):
+            {
+                switch (iPartId)
+                {
+                    case TKP_TICS:
+                    case TKP_TICSVERT:
+                        if (pColor) *pColor = DCOLOR_TRACKBAR_TICS_FORE;
+                        return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 static void PnHandleChooseColorLumArrow(int& nIndex)
 {
     if (nIndex == COLOR_BTNTEXT) nIndex = COLOR_WINDOW;
@@ -728,6 +751,17 @@ static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iS
     }
 
     return g_DrawThemeText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, dwTextFlags2, pRect);
+}
+
+static HRESULT GetThemeColor_(HTHEME hTheme, int iPartId, int iStateId, int iPropId, COLORREF* pColor)
+{
+    if (IatHook_IsEnabled(IatHookComctlGetThemeColor)
+        && PnGetThemeColor(hTheme, iPartId, iStateId, iPropId, pColor))
+    {
+        return S_OK;
+    }
+
+    return g_GetThemeColor(hTheme, iPartId, iStateId, iPropId, pColor);
 }
 
 static DWORD WINAPI GetSysColor_(int nIndex)
@@ -937,6 +971,22 @@ void NATIVESAPI PnUnhookThemedPaint()
 {
     IatHook_Disable(IatHookComctlDrawThemeBackground);
     IatHook_Disable(IatHookComctlDrawThemeText);
+}
+
+void NATIVESAPI PnHookThemeColor()
+{
+    if (HookIat(HOOK_COMCTL32_GETTHEMECOLOR_ARGS,
+        IatHookComctlGetThemeColor,
+        g_GetThemeColor,
+        GetThemeColor_))
+    {
+        IatHook_Enable(IatHookComctlGetThemeColor);
+    }
+}
+
+void NATIVESAPI PnUnhookThemeColor()
+{
+    IatHook_Disable(IatHookComctlGetThemeColor);
 }
 
 void NATIVESAPI PnHookSysColorBrush()

@@ -95,15 +95,28 @@ public static class Extensions
     }
 
     private static Func<MulticastDelegate, object> get_invocationList;
+    private static Func<MulticastDelegate, IntPtr> get_invocationCount;
 
     extension(MulticastDelegate value)
     {
-        public ReadOnlyCollection<Delegate> FastGetInvocationList()
+        public int InvocationCount
         {
-            get_invocationList ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, object>("_invocationList");
-            var list = get_invocationList(value);
-            var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();
-            return result == null ? null : Array.AsReadOnly(result);
+            get
+            {
+                get_invocationCount ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, IntPtr>("_invocationCount");
+                return get_invocationCount(value).ToInt32();
+            }
+        }
+
+        public ReadOnlyCollection<Delegate> InvocationList
+        {
+            get
+            {
+                get_invocationList ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, object>("_invocationList");
+                var list = get_invocationList(value);
+                var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();
+                return result == null ? null : Array.AsReadOnly(result);
+            }
         }
     }
 }
