@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CommonDialogs.h"
 #include <Windows.h>
+#include "../Utils.h"
 
 BOOL NATIVESAPI PnRunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCOLORREF lpColor, LPCOLORREF lpCustomColors)
 {
@@ -26,7 +27,7 @@ BOOL NATIVESAPI PnRunColorDialog(HWND hWndOwner, LPCCHOOKPROC lpfnHookProc, LPCO
 
     cc.Flags = flags;
     cc.hwndOwner = hWndOwner;
-    cc.hInstance = CastP(HWND, GetModuleHandleW(LIBRARYNAME));
+    cc.hInstance = CastP(HWND, GetCurrentModuleHandle());
     cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSECOLOR);
 
     if (ChooseColor(&cc))
@@ -65,7 +66,7 @@ BOOL NATIVESAPI PnRunFontDialog(HWND hWndOwner, LPCFHOOKPROC lpfnHookProc, LPLOG
 
     cf.Flags = flags;
     cf.hwndOwner = hWndOwner;
-    cf.hInstance = GetModuleHandleW(LIBRARYNAME);
+    cf.hInstance = GetCurrentModuleHandle();
     cf.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSEFONT);
 
     if (ChooseFont(&cf))

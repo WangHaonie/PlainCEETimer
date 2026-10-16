@@ -122,8 +122,7 @@ void NATIVESAPI PnKillProcessTree(DWORD dwProcessId)
 
 int NATIVESAPI PnLoadStringInternal(UINT uID, LPWSTR* ppBuffer)
 {
-    static HMODULE hModule = GetModuleHandle(LIBRARYNAME);
-    return LoadStringExW(hModule, uID, ppBuffer);
+    return LoadStringExW(GetCurrentModuleHandle(), uID, ppBuffer);
 }
 
 BOOL NATIVESAPI PnGetConsoleColor(HANDLE hConsoleHandle, COLORREF color, LPDWORD lpdwConsoleColor)

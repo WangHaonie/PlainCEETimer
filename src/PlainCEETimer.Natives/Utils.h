@@ -33,6 +33,8 @@
 
 #define IS_HANDLE_VALID(h)          (h && h != INVALID_HANDLE_VALUE)
 
+extern "C" IMAGE_DOS_HEADER __ImageBase;
+
 inline void DDump(const wchar_t* format, ...)
 {
 #ifdef _DEBUG
@@ -121,6 +123,11 @@ inline void __stdcall ReleasePPI(TInterface** ppi)
         (*ppi)->Release();
         *ppi = nullptr;
     }
+}
+
+inline HMODULE __cdecl GetCurrentModuleHandle()
+{
+    return CastP(HMODULE, &__ImageBase);
 }
 
 inline LPVOID __stdcall HeapAllocEx(SIZE_T dwBytes)
@@ -234,8 +241,7 @@ inline void __stdcall SetDlgItemTextFromResW(HWND hDlg, int nIDDlgItem, LPWSTR l
 
 inline HMENU __stdcall PnGetMenuPopupFromRes(HMENU& hMenu, UINT uIDMenu)
 {
-    static HMODULE hmod = GetModuleHandle(LIBRARYNAME);
-    if (!hMenu) hMenu = LoadMenu(hmod, MAKEINTRESOURCE(uIDMenu));
+    if (!hMenu) hMenu = LoadMenu(GetCurrentModuleHandle(), MAKEINTRESOURCE(uIDMenu));
     return GetSubMenu(hMenu, 0);
 }
 

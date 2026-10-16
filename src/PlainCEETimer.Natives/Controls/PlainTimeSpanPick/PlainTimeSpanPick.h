@@ -93,7 +93,10 @@ public:
 
 private:
 
-    explicit PlainTimeSpanPick(HWND hPtsp) : m_hWnd(hPtsp) {};
+    explicit PlainTimeSpanPick(HWND hPtsp) : m_hWnd(hPtsp)
+    {
+        m_lpBufferEdit = HEAPALLOC_M(WCHAR, PTSP_EDIT_BUFFER);
+    }
 
     HWND m_hWnd;
     CTRLCOLORS m_crCtrlColors = {};

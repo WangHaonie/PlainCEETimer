@@ -16,7 +16,6 @@ LRESULT CALLBACK PlainTimeSpanPick::s_WndProc(HWND hWnd, UINT message, WPARAM wP
     if (message == WM_NCCREATE)
     {
         ptr = new PlainTimeSpanPick(hWnd);
-        ptr->m_lpBufferEdit = HEAPALLOC_M(WCHAR, PTSP_EDIT_BUFFER);
         SetWindowLongPtr(hWnd, NULL, CastP(LONG_PTR, ptr));
     }
 
@@ -34,7 +33,7 @@ ATOM NATIVESAPI PlainTimeSpanPick_InitClass()
     wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_GLOBALCLASS;
     wcx.lpfnWndProc = PlainTimeSpanPick::s_WndProc;
     wcx.cbWndExtra = sizeof(LONG_PTR);
-    wcx.hInstance = GetModuleHandle(LIBRARYNAME);
+    wcx.hInstance = GetCurrentModuleHandle();
     wcx.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcx.lpszClassName = WC_PLAINTIMESPANPICK;
     return RegisterClassEx(&wcx);

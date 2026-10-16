@@ -58,7 +58,7 @@ void PlainTimeSpanPick::LoadFormat(CNZWSTR& snzFormat, LPCWSTR pszFormat)
 
         if (!res || !cch)
         {
-            cch = LoadStringExW(GetModuleHandleW(LIBRARYNAME), IDS_CTRL_PTSP_FORMAT, &res);
+            cch = LoadStringExW(GetCurrentModuleHandle(), IDS_CTRL_PTSP_FORMAT, &res);
         }
 
         LPWSTR pBuffer = res;
