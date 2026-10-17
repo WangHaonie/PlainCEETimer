@@ -31,8 +31,6 @@ DeclDelegateType(DrawEdge);
 DeclDelegateType(FrameRect);
 DeclDelegateType(GetThemeColor);
 
-static WCHAR s_themeClassCache[VSCLASSNAME_BUFFER];
-static HTHEME s_lastOpenedTheme = nullptr;
 static DTTOPTS s_dttoptions = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
 static BrushTable s_brushes;
 
@@ -104,14 +102,19 @@ static HRESULT WINAPI GetThemeClass(HTHEME hTheme, LPWSTR lpBuffer, int cchBuffe
     return HRESULT_FROM_WIN32(ERROR_PROC_NOT_FOUND);
 }
 
-static bool PnRevealThemeClass(HTHEME hTheme)
+static DWORD PnRevealThemeClass(HTHEME hTheme)
 {
-    if (s_lastOpenedTheme != hTheme && SUCCEEDED(GetThemeClass(hTheme, s_themeClassCache, VSCLASSNAME_BUFFER)))
+    static WCHAR name[VSCLASSNAME_BUFFER];
+    static HTHEME last = nullptr;
+    static DWORD id = 0;
+
+    if (last != hTheme && SUCCEEDED(GetThemeClass(hTheme, name, VSCLASSNAME_BUFFER)))
     {
-        s_lastOpenedTheme = hTheme;
+        last = hTheme;
+        id = strhash(name);
     }
 
-    return s_lastOpenedTheme;
+    return id;
 }
 
 /*
@@ -642,17 +645,14 @@ static bool PnDrawTabItemText(DTT_ARGS_DECL)
 
 static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
 {
-    if (PnRevealThemeClass(hTheme))
+    switch (PnRevealThemeClass(hTheme))
     {
-        switch (strhash(s_themeClassCache))
-        {
-            CASE(strhash(VSCLASS_PROGRESS), PnDrawProgressBackground(DTBG_ARGS));
-            CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerBackground(DTBG_ARGS));
-            CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
-            CASE(strhash(VSCLASS_TAB), PnDrawTabBackground(DTBG_ARGS));
-            CASE(strhash(VSCLASS_TRACKBAR), PnDrawTrackBarBackground(DTBG_ARGS));
-            CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
-        }
+        CASE(strhash(VSCLASS_PROGRESS), PnDrawProgressBackground(DTBG_ARGS));
+        CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerBackground(DTBG_ARGS));
+        CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
+        CASE(strhash(VSCLASS_TAB), PnDrawTabBackground(DTBG_ARGS));
+        CASE(strhash(VSCLASS_TRACKBAR), PnDrawTrackBarBackground(DTBG_ARGS));
+        CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
     }
 
     return false;
@@ -660,23 +660,20 @@ static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
 
 static bool PnDrawThemeText(DTT_ARGS_DECL)
 {
-    if (PnRevealThemeClass(hTheme))
+    switch (PnRevealThemeClass(hTheme))
     {
-        switch (strhash(s_themeClassCache))
-        {
-            CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerText(DTT_ARGS));
-            CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalText(DTT_ARGS));
-            CASE(strhash(VSCLASS_TAB), PnDrawTabItemText(DTT_ARGS));
+        CASE(strhash(VSCLASS_DATEPICKER), PnDrawDatePickerText(DTT_ARGS));
+        CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalText(DTT_ARGS));
+        CASE(strhash(VSCLASS_TAB), PnDrawTabItemText(DTT_ARGS));
 
-            case strhash(VSCLASS_BUTTON):
+        case strhash(VSCLASS_BUTTON):
+        {
+            switch (iPartId)
             {
-                switch (iPartId)
-                {
-                    case BP_RADIOBUTTON:
-                    case BP_CHECKBOX:
-                        return PnDrawButtonText(DTT_ARGS);
-                    CASE(BP_GROUPBOX, PnDrawGroupBoxText(DTT_ARGS));
-                }
+                case BP_RADIOBUTTON:
+                case BP_CHECKBOX:
+                    return PnDrawButtonText(DTT_ARGS);
+                CASE(BP_GROUPBOX, PnDrawGroupBoxText(DTT_ARGS));
             }
         }
     }
@@ -686,19 +683,16 @@ static bool PnDrawThemeText(DTT_ARGS_DECL)
 
 static bool PnGetThemeColor(HTHEME hTheme, int iPartId, int iStateId, int iPropId, COLORREF* pColor)
 {
-    if (PnRevealThemeClass(hTheme))
+    switch (PnRevealThemeClass(hTheme))
     {
-        switch (strhash(s_themeClassCache))
+        case strhash(VSCLASS_TRACKBAR):
         {
-            case strhash(VSCLASS_TRACKBAR):
+            switch (iPartId)
             {
-                switch (iPartId)
-                {
-                    case TKP_TICS:
-                    case TKP_TICSVERT:
-                        if (pColor) *pColor = DCOLOR_TRACKBAR_TICS_FORE;
-                        return true;
-                }
+                case TKP_TICS:
+                case TKP_TICSVERT:
+                    if (pColor) *pColor = DCOLOR_TRACKBAR_TICS_FORE;
+                    return true;
             }
         }
     }
