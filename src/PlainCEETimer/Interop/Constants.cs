@@ -105,6 +105,7 @@ public static class WinUser
     public const int WS_CHILD = 0x40000000;
     public const int WS_MINIMIZE = 0x20000000;
     public const int WS_BORDER = 0x00800000;
+    public const int WS_CLIPCHILDREN = 0x02000000;
     public const int WS_EX_TOPMOST = 0x00000008;
     public const int WS_EX_CLIENTEDGE = 0x00000200;
     public const int WS_EX_COMPOSITED = 0x02000000;

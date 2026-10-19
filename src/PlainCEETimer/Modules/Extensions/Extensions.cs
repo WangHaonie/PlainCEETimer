@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
@@ -94,8 +95,10 @@ public static class Extensions
         return new(provider);
     }
 
-    private static Func<MulticastDelegate, object> get_invocationList;
+    private static FieldInfo s_fiInvocationCount;
+    private static FieldInfo s_fiInvocationList;
     private static Func<MulticastDelegate, IntPtr> get_invocationCount;
+    private static Func<MulticastDelegate, object> get_invocationList;
 
     extension(MulticastDelegate value)
     {
@@ -103,7 +106,8 @@ public static class Extensions
         {
             get
             {
-                get_invocationCount ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, IntPtr>("_invocationCount");
+                s_fiInvocationCount ??= typeof(MulticastDelegate).RevealField("_invocationCount");
+                get_invocationCount ??= s_fiInvocationCount.CreateGetter<MulticastDelegate, IntPtr>();
                 return get_invocationCount(value).ToInt32();
             }
         }
@@ -112,7 +116,8 @@ public static class Extensions
         {
             get
             {
-                get_invocationList ??= ReflectionUtils.FieldCreateGetter<MulticastDelegate, object>("_invocationList");
+                s_fiInvocationList ??= typeof(MulticastDelegate).RevealField("_invocationList");
+                get_invocationList ??= s_fiInvocationList.CreateGetter<MulticastDelegate, object>();
                 var list = get_invocationList(value);
                 var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();
                 return result == null ? null : Array.AsReadOnly(result);

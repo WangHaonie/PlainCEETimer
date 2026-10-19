@@ -82,7 +82,7 @@ public sealed partial class PlainListView : ListView, IThemeAwareEx
         HeaderStyle = ColumnHeaderStyle.Nonclickable;
         HideSelection = false;
         ShowItemToolTips = true;
-        SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+        DoubleBuffered = true;
     }
 
     public void SelectAll(bool selected)
