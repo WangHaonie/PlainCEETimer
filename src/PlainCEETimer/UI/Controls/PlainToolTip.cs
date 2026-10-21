@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Reflection;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -12,12 +13,16 @@ public sealed class PlainToolTip : ToolTip, IThemeAwareEx
     {
         get
         {
-            m_piHandle ??= typeof(ToolTip).GetProperty(nameof(Handle), BindingFlags.NonPublic | BindingFlags.Instance);
+            if (m_piHandle == null)
+            {
+                typeof(ToolTip).RevealMember(out m_piHandle);
+            }
+
             return (IntPtr)m_piHandle.GetValue(this);
         }
     }
 
-    private PropertyInfo m_piHandle;
+    private static PropertyInfo m_piHandle;
 
     public void InitStyle()
     {

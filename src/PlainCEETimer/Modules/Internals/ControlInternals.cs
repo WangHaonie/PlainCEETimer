@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Forms;
 
@@ -20,7 +21,7 @@ internal class ControlInternals
 
     static ControlInternals()
     {
-        s_piWindowText = typeof(Control).GetProperty(nameof(WindowText), BindingFlags.Instance | BindingFlags.NonPublic);
+        typeof(Control).RevealMember(out s_piWindowText, nameof(WindowText));
     }
 
     public static ControlInternals AttachTo(Control control)

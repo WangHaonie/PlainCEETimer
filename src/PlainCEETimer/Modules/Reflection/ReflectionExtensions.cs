@@ -7,14 +7,27 @@ namespace PlainCEETimer.Modules.Reflection;
 
 public static class ReflectionExtensions
 {
-    public static FieldInfo RevealField(this Type t, [CallerMemberName] string name = default)
+    public static Type RevealMember<TMemberInfo>(this Type type, out TMemberInfo mi, [CallerMemberName] string name = default, bool isPublic = false, bool isStatic = false)
+        where TMemberInfo : MemberInfo
     {
-        return t.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-    }
+        var flags = (isPublic, isStatic) switch
+        {
+            (false, false) => BindingFlags.NonPublic | BindingFlags.Instance,
+            (false, true) => BindingFlags.NonPublic | BindingFlags.Static,
+            (true, false) => BindingFlags.Public | BindingFlags.Instance,
+            (true, true) => BindingFlags.Public | BindingFlags.Static
+        };
 
-    public static PropertyInfo RevealProperty(this Type t, [CallerMemberName] string name = default)
-    {
-        return t.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+        MemberInfo i = typeof(TMemberInfo) switch
+        {
+            var t when t == typeof(MethodInfo) => type.GetMethod(name, flags),
+            var t when t == typeof(PropertyInfo) => type.GetProperty(name, flags),
+            var t when t == typeof(FieldInfo) => type.GetField(name, flags),
+            _ => default
+        };
+
+        mi = i as TMemberInfo;
+        return type;
     }
 
     public static Func<TObject, TField> CreateGetter<TObject, TField>(this FieldInfo fi)

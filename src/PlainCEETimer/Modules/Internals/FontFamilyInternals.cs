@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Media;
 
@@ -15,11 +16,9 @@ internal static class FontFamilyInternals
         var ass = fft.Assembly;
         var pfft = ass.GetType("MS.Internal.FontFace.PhysicalFontFamily");
         var tifft = ass.GetType("MS.Internal.Text.TextInterface.FontFamily");
-        var battr = BindingFlags.NonPublic | BindingFlags.Instance;
-
-        s_fiFamily = pfft.GetField("_family", battr);
-        s_piFirstFontFamily = fft.GetProperty("FirstFontFamily", battr);
-        s_piOrdinalName = tifft.GetProperty("OrdinalName", battr);
+        pfft.RevealMember(out s_fiFamily, "_family");
+        fft.RevealMember(out s_piFirstFontFamily, "FirstFontFamily");
+        tifft.RevealMember(out s_piOrdinalName, "OrdinalName");
         s_typePhysicalFontFamily = pfft;
     }
 

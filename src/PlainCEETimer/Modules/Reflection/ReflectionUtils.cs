@@ -12,22 +12,22 @@ public static class ReflectionUtils
         return refType.Assembly.GetType(pseudoType.FullName);
     }
 
-    public static void CreateDelegate<TDelegate>(ref TDelegate fn, object instance, MethodInfo methodInfo)
+    public static void CreateDelegate<TDelegate>(out TDelegate fn, object instance, MethodInfo methodInfo)
         where TDelegate : Delegate
     {
-        fn ??= (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, methodInfo);
+        fn = (TDelegate)Delegate.CreateDelegate(typeof(TDelegate), instance, methodInfo);
     }
 
-    public static void StaticCreateDelegate<TDelegate>(ref TDelegate fn, Type type, BindingFlags methodMod, [CallerMemberName] string methodName = "")
+    public static void StaticCreateDelegate<TDelegate>(out TDelegate fn, Type type, BindingFlags methodMod, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        StaticCreateDelegate(ref fn, type, null, methodMod, methodName);
+        StaticCreateDelegate(out fn, type, null, methodMod, methodName);
     }
 
-    public static void StaticCreateDelegate<TDelegate>(ref TDelegate fn, Type type, Type returnType, BindingFlags methodMod, [CallerMemberName] string methodName = "")
+    public static void StaticCreateDelegate<TDelegate>(out TDelegate fn, Type type, Type returnType, BindingFlags methodMod, [CallerMemberName] string methodName = "")
         where TDelegate : Delegate
     {
-        fn ??= StaticCreateDelegateCore<TDelegate>(type, returnType, methodMod, methodName);
+        fn = StaticCreateDelegateCore<TDelegate>(type, returnType, methodMod, methodName);
     }
 
     private static TDelegate StaticCreateDelegateCore<TDelegate>(Type type, Type returnType, BindingFlags methodMod, string methodName)

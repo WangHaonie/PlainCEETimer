@@ -106,7 +106,11 @@ public static class Extensions
         {
             get
             {
-                s_fiInvocationCount ??= typeof(MulticastDelegate).RevealField("_invocationCount");
+                if (s_fiInvocationCount == null)
+                {
+                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationCount);
+                }
+
                 get_invocationCount ??= s_fiInvocationCount.CreateGetter<MulticastDelegate, IntPtr>();
                 return get_invocationCount(value).ToInt32();
             }
@@ -116,7 +120,11 @@ public static class Extensions
         {
             get
             {
-                s_fiInvocationList ??= typeof(MulticastDelegate).RevealField("_invocationList");
+                if (s_fiInvocationList == null)
+                {
+                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationList);
+                }
+
                 get_invocationList ??= s_fiInvocationList.CreateGetter<MulticastDelegate, object>();
                 var list = get_invocationList(value);
                 var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();

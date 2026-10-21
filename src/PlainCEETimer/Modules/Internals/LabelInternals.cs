@@ -22,8 +22,16 @@ internal class LabelInternals
 
     internal StringFormat CreateStringFormat()
     {
-        s_miCreateStringFormat ??= typeof(Label).GetMethod(nameof(CreateStringFormat), BindingFlags.Instance | BindingFlags.NonPublic);
-        ReflectionUtils.CreateDelegate(ref m_fnCreateStringFormat, m_target, s_miCreateStringFormat);
+        if (s_miCreateStringFormat == null)
+        {
+            typeof(Label).RevealMember(out s_miCreateStringFormat);
+        }
+
+        if (m_fnCreateStringFormat == null)
+        {
+            ReflectionUtils.CreateDelegate(out m_fnCreateStringFormat, m_target, s_miCreateStringFormat);
+        }
+
         return m_fnCreateStringFormat();
     }
 }

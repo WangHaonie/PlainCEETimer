@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Forms;
 
@@ -27,9 +28,10 @@ internal static class ApplicationInternals
 
         static ThreadContext()
         {
-            var type = s_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic);
-            s_fiCurrentThreadContext = type.GetField(nameof(currentThreadContext), BindingFlags.NonPublic | BindingFlags.Static);
-            s_fiParkingWindows = type.GetField(nameof(parkingWindows), BindingFlags.NonPublic | BindingFlags.Instance);
+            s_type.GetNestedType(nameof(ThreadContext), BindingFlags.NonPublic)
+                .RevealMember(out s_fiCurrentThreadContext, nameof(currentThreadContext), isStatic: true)
+                .RevealMember(out s_fiParkingWindows, nameof(parkingWindows));
+
             Instance = new();
         }
     }

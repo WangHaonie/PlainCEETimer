@@ -9,8 +9,11 @@ internal static class Command
 
     public static bool DispatchID(int id)
     {
-        ReflectionUtils.StaticCreateDelegate(ref s_fnDispatchID,
-            ReflectionUtils.RevealType(typeof(Control), typeof(Command)), BindingFlags.Public);
+        if (s_fnDispatchID == null)
+        {
+            ReflectionUtils.StaticCreateDelegate(out s_fnDispatchID, ReflectionUtils.RevealType(typeof(Control), typeof(Command)), BindingFlags.Public);
+        }
+
         return s_fnDispatchID(id);
     }
 }

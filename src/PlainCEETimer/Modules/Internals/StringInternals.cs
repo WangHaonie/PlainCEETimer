@@ -12,7 +12,11 @@ internal static class StringInternals
     /// </summary>
     internal static string FastAllocateString(int length)
     {
-        ReflectionUtils.StaticCreateDelegate(ref s_fnFastAllocateString, typeof(string), BindingFlags.NonPublic);
+        if (s_fnFastAllocateString == null)
+        {
+            ReflectionUtils.StaticCreateDelegate(out s_fnFastAllocateString, typeof(string), BindingFlags.NonPublic);
+        }
+
         return s_fnFastAllocateString(length);
     }
 }

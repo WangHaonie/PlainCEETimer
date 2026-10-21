@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Reflection;
 using WFSize = System.Drawing.Size;
@@ -100,36 +101,42 @@ internal static class DpiHelper
 
     public static int LogicalToDeviceUnits(int value, int devicePixels = 0)
     {
-        ReflectionUtils.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits1, s_type, typeof(int), BindingFlags.Public);
+        if (s_fnLogicalToDeviceUnits1 == null)
+        {
+            ReflectionUtils.StaticCreateDelegate(out s_fnLogicalToDeviceUnits1, s_type, typeof(int), BindingFlags.Public);
+        }
+
         return s_fnLogicalToDeviceUnits1(value, devicePixels);
     }
 
     public static WFSize LogicalToDeviceUnits(WFSize logicalSize, int deviceDpi = 0)
     {
-        ReflectionUtils.StaticCreateDelegate(ref s_fnLogicalToDeviceUnits2, s_type, typeof(WFSize), BindingFlags.Public);
+        if (s_fnLogicalToDeviceUnits2 == null)
+        {
+            ReflectionUtils.StaticCreateDelegate(out s_fnLogicalToDeviceUnits2, s_type, typeof(WFSize), BindingFlags.Public);
+        }
+
         return s_fnLogicalToDeviceUnits2(logicalSize, deviceDpi);
     }
 
-    private static void EnsureAccess(int id)
+    private static void EnsureAccess(int id, [CallerMemberName] string name = default)
     {
-        var flags = BindingFlags.Static | BindingFlags.NonPublic;
-
         switch (id)
         {
             case ID_isInitialized:
-                s_fiIsInitialized ??= s_type.GetField(nameof(isInitialized), flags);
+                s_type.RevealMember(out s_fiIsInitialized, name, isStatic: true);
                 break;
             case ID_deviceDpi:
-                s_fiDeviceDpi ??= s_type.GetField(nameof(deviceDpi), flags);
+                s_type.RevealMember(out s_fiDeviceDpi, name, isStatic: true);
                 break;
             case ID_enableHighDpi:
-                s_fiEnableHighDpi ??= s_type.GetField(nameof(enableHighDpi), flags);
+                s_type.RevealMember(out s_fiEnableHighDpi, name, isStatic: true);
                 break;
             case ID_enableDpiChangedMessageHandling:
-                s_fiEnableDpiChangedMessageHandling ??= s_type.GetField(nameof(enableDpiChangedMessageHandling), flags);
+                s_type.RevealMember(out s_fiEnableDpiChangedMessageHandling, name, isStatic: true);
                 break;
             case ID_logicalToDeviceUnitsScalingFactor:
-                s_filogicalToDeviceUnitsScalingFactor ??= s_type.GetField(nameof(logicalToDeviceUnitsScalingFactor), flags);
+                s_type.RevealMember(out s_filogicalToDeviceUnitsScalingFactor, name, isStatic: true);
                 break;
         }
     }
