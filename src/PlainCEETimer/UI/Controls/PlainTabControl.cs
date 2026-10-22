@@ -11,6 +11,7 @@ namespace PlainCEETimer.UI.Controls;
 public class PlainTabControl : TabControl, IThemeAwareEx
 {
     private bool UseDark;
+    private UpDownStyles styles;
     private static readonly bool NewTheme = ThemeManager.NewThemeAvailable;
 
     public PlainTabControl()
@@ -37,7 +38,7 @@ public class PlainTabControl : TabControl, IThemeAwareEx
                     Win32UI.PnUnhookThemedPaint();
                     return;
                 case WinUser.WM_PARENTNOTIFY when m.WParam.LoWord == WinUser.WM_CREATE:
-                    UpdateUpDownTheme(m.LParam, true);
+                    UpdateUpDownTheme(true);
                     break;
             }
         }
@@ -45,9 +46,18 @@ public class PlainTabControl : TabControl, IThemeAwareEx
         base.WndProc(ref m);
     }
 
-    private static void UpdateUpDownTheme(IntPtr hud, bool useDark)
+    private void UpdateUpDownTheme(bool useDark)
     {
-        ThemeManager.ApplyControlTheme(hud, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        if (Win32UI.PnTryGetTabUpDown(Handle, out var hud))
+        {
+            if (UpDownStyles.CanApply)
+            {
+                NativeWindowHelper.Attach(hud, ref styles);
+                styles.UseDark = useDark;
+            }
+
+            ThemeManager.ApplyControlTheme(hud, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
+        }
     }
 
     void IThemeAware.UpdateTheme(bool useDark, bool init)
@@ -80,9 +90,6 @@ public class PlainTabControl : TabControl, IThemeAwareEx
             tp.BackColor = back;
         }
 
-        if (Win32UI.PnTryGetTabUpDown(hwnd, out var hud))
-        {
-            UpdateUpDownTheme(hud, useDark);
-        }
+        UpdateUpDownTheme(useDark);
     }
 }

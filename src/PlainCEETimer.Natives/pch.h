@@ -47,4 +47,10 @@
 
 #define nameof(obj)                 #obj
 
+#ifdef _DEBUG
+#define InlineHook_DDump(ref)		DDump(L"-----> [Inline Hook] %s: Ref=%d", L#ref, ref); if (ref == 0xFFFFFFFF) __debugbreak()
+#else
+#define InlineHook_DDump(ref)
+#endif
+
 #endif 

@@ -124,4 +124,14 @@ public static class Extensions
             Win32UI.SendMessage(control.Handle, WinUser.WM_CHANGEUISTATE, int.MakeLong(WinUser.UIS_SET, WinUser.UISF_HIDEFOCUS), 0);
         }
     }
+
+    public static Control GetUpDown(this UpDownBase target)
+    {
+        return target.Controls[0];
+    }
+
+    public static Control GetEdit(this UpDownBase target)
+    {
+        return target.Controls[1];
+    }
 }

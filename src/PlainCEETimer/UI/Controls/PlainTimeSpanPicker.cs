@@ -7,6 +7,7 @@ using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
@@ -127,6 +128,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAwareEx
     private string m_format = AppParams.TSFormat;
     private TimeSpan m_value;
     private TimeSpan m_valueMax = AppParams.TSMax;
+    private UpDownStyles styles;
     private readonly Debouncer debouncer;
     private readonly ControlDpiScaleFix cdsf;
     private readonly ActionInvoker OnValueChangedAction;
@@ -176,7 +178,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAwareEx
 
     protected override void OnHandleCreated(EventArgs e)
     {
-        Controls[1].Visible = false;
+        this.GetEdit().Visible = false;
         base.OnHandleCreated(e);
         SetFormat();
         SetMaxValue();
@@ -287,6 +289,7 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAwareEx
         {
             var state = (!init).ToWin32();
             var hwnd = Handle;
+            var b = this.GetUpDown();
 
             if (useDark)
             {
@@ -297,15 +300,21 @@ public sealed class PlainTimeSpanPicker : UpDownBase, IThemeAwareEx
                     state, int.MakeLong24(Colors.DarkForeText.ToWin32(), PTSPCOLOR_FORETEXT));
                 Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(Colors.DarkForeTextDisabled.ToWin32(), PTSPCOLOR_FORETEXTDISABLED));
-                ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.ExplorerDark);
             }
             else
             {
                 BackColor = SystemColors.Window;
                 Win32UI.SendMessage(hwnd, PNCM_OVERRIDECOLORS,
                     state, int.MakeLong24(0, PTSPCOLOR_RESTORE));
-                ThemeManager.ApplyControlTheme(Controls[0], SystemStyle.Explorer);
             }
+
+            if (UpDownStyles.CanApply)
+            {
+                NativeWindowHelper.Attach(b.Handle, ref styles);
+                styles.UseDark = useDark;
+            }
+
+            ThemeManager.ApplyControlTheme(b, useDark ? SystemStyle.ExplorerDark : SystemStyle.Explorer);
         }
     }
 }

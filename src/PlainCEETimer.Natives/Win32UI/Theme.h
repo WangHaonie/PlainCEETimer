@@ -82,8 +82,23 @@ NATIVES_EXPORT void NATIVESAPI PnUnhookOpenTheme();
 #define DCOLOR_TRACKBAR_THUMB_BACK_DISABLED     RGB(67, 67, 67)
 #define DCOLOR_TRACKBAR_TICS_FORE               RGB(128, 128, 128)
 
+#define DCOLOR_SPIN_FILL                        RGB(51, 51, 51)
+#define DCOLOR_SPIN_FILL_HOT                    RGB(69, 69, 69)
+#define DCOLOR_SPIN_FILL_PRESSED                RGB(102, 102, 102)
+#define DCOLOR_SPIN_FILL_DISABLED               RGB(51, 51, 51)
+#define DCOLOR_SPIN_ARROW                       RGB(255, 255, 255)
+#define DCOLOR_SPIN_ARROW_HOT                   DCOLOR_SPIN_ARROW
+#define DCOLOR_SPIN_ARROW_PRESSED               RGB(212, 212, 212)
+#define DCOLOR_SPIN_ARROW_DISABLED              RGB(196, 196, 196)
+#define DCOLOR_SPIN_BACK                        RGB(23, 23, 23)
+#define DCOLOR_SPIN_BORDER                      RGB(155, 155, 155)
+#define DCOLOR_SPIN_BORDER_DISABLED             RGB(64, 64, 64)
+
 #define HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS	COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeBackground), 0, true
 #define HOOK_COMCTL32_DRAWTHEMETEXT_ARGS        COMCTL32_DLL, UXTHEME_DLL, nameof(DrawThemeText), 0, true
+
+#define UXTHEME_DRAWTHEMEBACKGROUND             UXTHEME_DLL, nameof(DrawThemeBackground)
+#define UXTHEME_DRAWTHEMETEXT                   UXTHEME_DLL, nameof(DrawThemeText)
 
 NATIVES_EXPORT void NATIVESAPI PnHookThemedPaint();
 NATIVES_EXPORT void NATIVESAPI PnUnhookThemedPaint();

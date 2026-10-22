@@ -1,12 +1,13 @@
 ﻿#include "pch.h"
+#include "../Images.h"
 #include "Theme.h"
 #include "Utils.h"
 #include "Win32/IATHook.h"
+#include <BrushTable.h>
 #include <detours.h>
 #include <Uxtheme.h>
 #include <vsstyle.h>
 #include <vssym32.h>
-#include <BrushTable.h>
 
 /*
 
@@ -53,11 +54,12 @@ DeclIatData(OpenThemeDataForDpi, Comctl);
 DeclIatData(GetSysColor, Comctl);
 DeclIatData(GetSysColorBrush, Comdlg);
 DeclIatData(GetSysColor, Comdlg);
-DeclIatData(DrawThemeBackground, Comctl);
-DeclIatData(DrawThemeText, Comctl);
 DeclIatData(GetThemeColor, Comctl);
 DeclIatData(DrawEdge, Comdlg);
 DeclIatData(FrameRect, Comdlg);
+
+static bool g_bHookThemedPaintInit;
+static DWORD g_dwHookThemedPaintRef;
 
 #define DTT_ARGS        hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect
 #define DTT_ARGS_DECL   HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect
@@ -311,6 +313,48 @@ static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF
     return true;
 }
 
+static bool PnDrawSpinArrow(HDC hdc, LPCRECT pRect, int spnArrow, COLORREF crArrow, COLORREF crBack)
+{
+    HBITMAP bmArrow;
+    SIZE sz;
+    DWORD dpi = GetDpiForWindow(WindowFromDC(hdc));
+    bool bHorz = (spnArrow == SPNP_UPHORZ || spnArrow == SPNP_DOWNHORZ);
+
+    if (bHorz ? GetArrowRightImage(dpi, &bmArrow, &sz) : GetArrowUpImage(dpi, &bmArrow, &sz))
+    {
+        HDC cdc = CreateCompatibleDC(hdc);
+        HGDIOBJ bmOld = SelectObject(cdc, bmArrow);
+
+        int scx = sz.cx;
+        int scy = sz.cy;
+        int x = pRect->left + (PRECT_cx(pRect) - scx) / 2;
+        int y = pRect->top + (PRECT_cy(pRect) - scy) / 2;
+
+        SetTextColor(hdc, crBack);
+        SetBkColor(hdc, crArrow);
+
+        switch (spnArrow)
+        {
+            case SPNP_UP:
+            case SPNP_UPHORZ:
+                BitBlt(hdc, x, y, scx, scy, cdc, 0, 0, SRCCOPY);
+                break;
+            case SPNP_DOWN:
+                StretchBlt(hdc, x, y + scy, scx, -scy, cdc, 0, 0, scx, scy, SRCCOPY);
+                break;
+            case SPNP_DOWNHORZ:
+                StretchBlt(hdc, x + scx, y, -scx, scy, cdc, 0, 0, scx, scy, SRCCOPY);
+                break;
+        }
+
+        SelectObject(cdc, bmOld);
+        DeleteDC(cdc);
+        return true;
+    }
+
+    return false;
+}
+
 /*
 
 Progress 控件深色主题 灵感来自：
@@ -499,6 +543,52 @@ static bool PnDrawTrackBarBackground(DTBG_ARGS_DECL)
     return false;
 }
 
+static bool PnDrawSpinBackground(DTBG_ARGS_DECL)
+{
+    RECT rc = *pRect;
+    InflateRect(&rc, -1, -1);
+
+    switch (iPartId)
+    {
+        case SPNP_UP:
+            ++rc.bottom;
+            break;
+        case SPNP_DOWN:
+            --rc.top;
+            break;
+        case SPNP_UPHORZ:
+            --rc.left;
+            break;
+        case SPNP_DOWNHORZ:
+            ++rc.right;
+            break;
+    }
+
+    COLORREF crFill = DCOLOR_SPIN_FILL;
+    COLORREF crBorder = DCOLOR_SPIN_BORDER;
+    COLORREF crArrow = DCOLOR_SPIN_ARROW;
+
+    switch (iStateId)
+    {
+        case UPS_HOT:
+            crFill = DCOLOR_SPIN_FILL_HOT;
+            break;
+        case UPS_PRESSED:
+            crFill = DCOLOR_SPIN_FILL_PRESSED;
+            crArrow = DCOLOR_SPIN_ARROW_PRESSED;
+            break;
+        case UPS_DISABLED:
+            crFill = DCOLOR_SPIN_FILL_DISABLED;
+            crBorder = DCOLOR_SPIN_BORDER_DISABLED;
+            crArrow = DCOLOR_SPIN_ARROW_DISABLED;
+            break;
+    }
+
+    PnDrawBackground(hdc, pRect, DCOLOR_SPIN_BACK, COLOR_EMPTY, false);
+    PnDrawBackground(hdc, &rc, crFill, crBorder, true);
+    return PnDrawSpinArrow(hdc, &rc, iPartId, crArrow, crFill);
+}
+
 static bool PnDrawMonthCalText(DTT_ARGS_DECL)
 {
     switch (iPartId)
@@ -652,6 +742,7 @@ static bool PnDrawThemeBackground(DTBG_ARGS_DECL)
         CASE(strhash(VSCLASS_MONTHCAL), PnDrawMonthCalBackground(DTBG_ARGS));
         CASE(strhash(VSCLASS_TAB), PnDrawTabBackground(DTBG_ARGS));
         CASE(strhash(VSCLASS_TRACKBAR), PnDrawTrackBarBackground(DTBG_ARGS));
+        CASE(strhash(VSCLASS_SPIN), PnDrawSpinBackground(DTBG_ARGS));
         CASE_CB(strhash(VSCLASS_BUTTON), iPartId == BP_GROUPBOX, PnDrawGroupBoxBackground(DTBG_ARGS));
     }
 
@@ -727,8 +818,7 @@ static HTHEME WINAPI OpenThemeDataForDpi_(HWND hWnd, LPCWSTR pszClassList, UINT 
 
 static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, LPCRECT pClipRect)
 {
-    if (IatHook_IsEnabled(IatHookComctlDrawThemeBackground)
-        && PnDrawThemeBackground(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
+    if (g_dwHookThemedPaintRef && PnDrawThemeBackground(hTheme, hdc, iPartId, iStateId, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -738,8 +828,7 @@ static HRESULT WINAPI DrawThemeBackground_(HTHEME hTheme, HDC hdc, int iPartId, 
 
 static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, DWORD dwTextFlags2, LPCRECT pRect)
 {
-    if (IatHook_IsEnabled(IatHookComctlDrawThemeText)
-        && PnDrawThemeText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
+    if (g_dwHookThemedPaintRef && PnDrawThemeText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, (LPRECT)pRect))
     {
         return S_OK;
     }
@@ -944,27 +1033,25 @@ void NATIVESAPI PnUnhookOpenTheme()
 
 void NATIVESAPI PnHookThemedPaint()
 {
-    if (HookIat(HOOK_COMCTL32_DRAWTHEMEBACKGROUND_ARGS,
-        IatHookComctlDrawThemeBackground,
-        g_DrawThemeBackground,
-        DrawThemeBackground_))
+    if (!g_bHookThemedPaintInit)
     {
-        IatHook_Enable(IatHookComctlDrawThemeBackground);
+        LoadFunction(&g_DrawThemeBackground, UXTHEME_DRAWTHEMEBACKGROUND);
+        LoadFunction(&g_DrawThemeText, UXTHEME_DRAWTHEMETEXT);
+        DetourBegin();
+        DetourHook(g_DrawThemeBackground, DrawThemeBackground_);
+        DetourHook(g_DrawThemeText, DrawThemeText_);
+        DetourEnd();
+        g_bHookThemedPaintInit = true;
     }
 
-    if (HookIat(HOOK_COMCTL32_DRAWTHEMETEXT_ARGS,
-        IatHookComctlDrawThemeText,
-        g_DrawThemeText,
-        DrawThemeText_))
-    {
-        IatHook_Enable(IatHookComctlDrawThemeText);
-    }
+    ++g_dwHookThemedPaintRef;
+    InlineHook_DDump(g_dwHookThemedPaintRef);
 }
 
 void NATIVESAPI PnUnhookThemedPaint()
 {
-    IatHook_Disable(IatHookComctlDrawThemeBackground);
-    IatHook_Disable(IatHookComctlDrawThemeText);
+    --g_dwHookThemedPaintRef;
+    InlineHook_DDump(g_dwHookThemedPaintRef);
 }
 
 void NATIVESAPI PnHookThemeColor()

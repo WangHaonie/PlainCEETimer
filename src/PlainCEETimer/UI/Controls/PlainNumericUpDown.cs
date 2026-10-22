@@ -3,11 +3,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
 public sealed class PlainNumericUpDown : NumericUpDown, IThemeAwareEx
 {
+    private UpDownStyles styles;
     private readonly Debouncer debouncer;
     private readonly ActionInvoker<EventArgs> OnValueChangedInvoker;
 
@@ -39,6 +41,12 @@ public sealed class PlainNumericUpDown : NumericUpDown, IThemeAwareEx
     {
         ForeColor = useDark ? Colors.DarkForeText : SystemColors.WindowText;
         BackColor = useDark ? Colors.DarkBackText : SystemColors.Window;
+
+        if (UpDownStyles.CanApply)
+        {
+            NativeWindowHelper.Attach(this.GetUpDown().Handle, ref styles);
+            styles.UseDark = useDark;
+        }
 
         var ctrls = Controls;
         var count = ctrls.Count;

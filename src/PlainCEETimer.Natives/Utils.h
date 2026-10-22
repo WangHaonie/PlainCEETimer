@@ -29,6 +29,9 @@
 #define RECT_cx(rc)                 ((rc).right - (rc).left)
 #define RECT_cy(rc)                 ((rc).bottom - (rc).top)
 
+#define PRECT_cx(p)                 (p->right - p->left)
+#define PRECT_cy(p)                 (p->bottom - p->top)
+
 #define INITFUNC(p, mn, pn)         (p || (!p && LoadFunction(&p, mn, pn)))
 
 #define IS_HANDLE_VALID(h)          (h && h != INVALID_HANDLE_VALUE)

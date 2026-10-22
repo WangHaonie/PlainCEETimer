@@ -121,22 +121,24 @@ internal static class DpiHelper
 
     private static void EnsureAccess(int id, [CallerMemberName] string name = default)
     {
+        const bool flag = true;
+
         switch (id)
         {
             case ID_isInitialized:
-                s_type.RevealMember(out s_fiIsInitialized, name, isStatic: true);
+                s_type.RevealMember(out s_fiIsInitialized, name, isStatic: flag);
                 break;
             case ID_deviceDpi:
-                s_type.RevealMember(out s_fiDeviceDpi, name, isStatic: true);
+                s_type.RevealMember(out s_fiDeviceDpi, name, isStatic: flag);
                 break;
             case ID_enableHighDpi:
-                s_type.RevealMember(out s_fiEnableHighDpi, name, isStatic: true);
+                s_type.RevealMember(out s_fiEnableHighDpi, name, isStatic: flag);
                 break;
             case ID_enableDpiChangedMessageHandling:
-                s_type.RevealMember(out s_fiEnableDpiChangedMessageHandling, name, isStatic: true);
+                s_type.RevealMember(out s_fiEnableDpiChangedMessageHandling, name, isStatic: flag);
                 break;
             case ID_logicalToDeviceUnitsScalingFactor:
-                s_type.RevealMember(out s_filogicalToDeviceUnitsScalingFactor, name, isStatic: true);
+                s_type.RevealMember(out s_filogicalToDeviceUnitsScalingFactor, name, isStatic: flag);
                 break;
         }
     }
