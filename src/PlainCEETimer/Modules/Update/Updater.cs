@@ -1,28 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Forms;
 
 namespace PlainCEETimer.Modules.Update;
 
-internal class Updater : IDisposable
+[NoConstants]
+internal class Updater
 {
+    private class Session
+    {
+        public Task<AppUpdateInfo> Task;
+        public bool PopupRequested;
+        public bool Presented;
+    }
+
+    private class State
+    {
+        public Session Session;
+        public AppUpdateInfo Info;
+        public ulong CheckedAt;
+    }
+
     public static Updater Instance { get; } = new();
 
-    private CancellationTokenSource cts;
     private DownloaderForm FormDownloader;
-    private readonly object lockobj;
+    private readonly object lockobj = new();
+    private readonly Dictionary<UpdateSource, State> sources = [];
+    private readonly SemaphoreSlim dialogSemaphore = new(1, 1);
+
+    private const int RequestTimeoutMs = 10 * 1000;
+    private const ulong ResultCacheMs = 2 * 60 * 1000;
 
     private Updater()
     {
-        lockobj = new();
+        return;
     }
 
-    public void CheckForUpdate(bool popup, IAppWindow owner, bool isPreview = false)
+    public async Task CheckForUpdateAsync(bool popup, IAppWindow owner, bool isPreview = false)
     {
 #if DEBUG
         if (!popup)
@@ -30,47 +51,43 @@ internal class Updater : IDisposable
             return;
         }
 #endif
-        lock (lockobj)
-        {
-            Cancel();
-            cts = new();
-        }
-
-        var token = cts.Token;
+        var source = isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable;
         var mx = owner.MessageX;
+        AppUpdateInfo info;
 
         try
         {
-            var response = AppUpdate.FetchAsync(isPreview ? UpdateSource.GiteeCI : UpdateSource.GiteeStable, token).Result;
-            var latest = response.Version;
-            var date = response.ReleaseDate;
-            var dateDesc = $"发布于 {date.FormatToTimeAgo()} ({date.Format()})";
-            var content = response.Changelog;
-            var sha = response.Commit;
-
-            if (latest > App.Current.VersionObject
-                || (isPreview && sha != AppInfo.CommitSHA && date.ToTimestamp() > AppInfo.Timestamp))
+            if (TryGetCachedResult(source, out var cached))
             {
-                if (mx.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == true)
-                {
-                    owner.BeginInvoke(delegate (AppUpdateInfo info)
-                    {
-                        ShowDownloaderUI(info.Url, info.Size);
-                    }, response);
-                }
+                info = cached;
             }
-            else if (popup)
+            else
             {
-                mx.Info(GetMessage(false, isPreview, latest, sha, dateDesc, content));
+                var session = StartOrJoin(source, popup);
+                info = await session.Task.ConfigureAwait(false);
+
+                lock (lockobj)
+                {
+                    if (session.Presented || (!popup && session.PopupRequested))
+                    {
+                        return;
+                    }
+
+                    session.Presented = true;
+                }
             }
         }
         catch (Exception ex)
         {
-            if (ex is not TaskCanceledException && popup)
+            if (popup)
             {
                 mx.Error("检查更新时发生错误! ", ex);
             }
+
+            return;
         }
+
+        await ShowResultAsync(info, popup, isPreview, owner).ConfigureAwait(false);
     }
 
     public void InteractiveDownload(string version, string source)
@@ -97,19 +114,104 @@ internal class Updater : IDisposable
         ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 850 * 1024L);
     }
 
-    public void Dispose()
+    private bool TryGetCachedResult(UpdateSource source, out AppUpdateInfo info)
     {
-        Cancel();
-        GC.SuppressFinalize(this);
+        lock (lockobj)
+        {
+            if (sources.TryGetValue(source, out var state)
+                && state.CheckedAt != default
+                && DateTime.TickCount - state.CheckedAt < ResultCacheMs)
+            {
+                info = state.Info;
+                return true;
+            }
+        }
+
+        info = null;
+        return false;
     }
 
-    private void Cancel()
+    private Session StartOrJoin(UpdateSource source, bool popup)
     {
-        if (cts != null)
+        lock (lockobj)
         {
-            cts.Cancel();
-            cts.Destroy();
-            cts = null;
+            if (!sources.TryGetValue(source, out var state))
+            {
+                state = new State();
+                sources[source] = state;
+            }
+
+            if (state.Session == null || state.Session.Task.IsCompleted)
+            {
+                state.Session = new() { Task = FetchAsync(source, state) };
+            }
+
+            if (popup)
+            {
+                state.Session.PopupRequested = true;
+            }
+
+            return state.Session;
+        }
+    }
+
+    private async Task<AppUpdateInfo> FetchAsync(UpdateSource source, State state)
+    {
+        using var cts = new CancellationTokenSource(RequestTimeoutMs);
+        AppUpdateInfo info;
+
+        try
+        {
+            info = await AppUpdate.FetchAsync(source, cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new TimeoutException($"请求超时，请稍后重试。", ex);
+        }
+
+        lock (lockobj)
+        {
+            state.Info = info;
+            state.CheckedAt = DateTime.TickCount;
+        }
+
+        return info;
+    }
+
+    private async Task ShowResultAsync(AppUpdateInfo info, bool popup, bool isPreview, IAppWindow owner)
+    {
+        await dialogSemaphore.WaitAsync().ConfigureAwait(false);
+
+        try
+        {
+            ShowResult(info, popup, isPreview, owner);
+        }
+        finally
+        {
+            dialogSemaphore.Release();
+        }
+    }
+
+    private void ShowResult(AppUpdateInfo info, bool popup, bool isPreview, IAppWindow owner)
+    {
+        var mx = owner.MessageX;
+        var latest = info.Version;
+        var date = info.ReleaseDate;
+        var dateDesc = $"发布于 {date.FormatToTimeAgo()} ({date.Format()})";
+        var content = info.Changelog;
+        var sha = info.Commit;
+
+        if (latest > App.Current.VersionObject
+            || (isPreview && sha != AppInfo.CommitSHA && date.ToTimestamp() > AppInfo.Timestamp))
+        {
+            if (mx.Info(GetMessage(true, isPreview, latest, sha, dateDesc, content), MessageButtons.YesNo) == true)
+            {
+                owner.BeginInvoke((AppUpdateInfo i) => ShowDownloaderUI(i.Url, i.Size), info);
+            }
+        }
+        else if (popup)
+        {
+            mx.Info(GetMessage(false, isPreview, latest, sha, dateDesc, content));
         }
     }
 

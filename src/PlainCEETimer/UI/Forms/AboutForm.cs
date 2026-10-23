@@ -41,7 +41,7 @@ public sealed class AboutForm : AppForm
                         ButtonOK.Enabled = false;
                         IsCheckingUpdate = true;
 
-                        new Action(() => Updater.Instance.CheckForUpdate(true, this, IsModkeysPressed(Keys.Control))).Start(new Action(() =>
+                        Updater.Instance.CheckForUpdateAsync(true, this, IsModkeysPressed(Keys.Control)).ContinueWith(new Action(() =>
                         {
                             ImageLogo.Enabled = true;
                             ButtonOK.Text = buttonText;

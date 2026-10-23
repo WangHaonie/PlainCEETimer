@@ -14,7 +14,6 @@ using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Http;
 using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.Modules.Update;
 using PlainCEETimer.UI;
@@ -182,7 +181,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
                 Startup.RefreshTaskState();
             }).Start();
 
-            new NetworkedAction(new ActionInvoker(() => Updater.Instance.CheckForUpdate(false, Owner))).Invoke();
+            _ = Updater.Instance.CheckForUpdateAsync(false, Owner);
 
             SystemEvents.DisplaySettingsChanged += (_, _) =>
             {
