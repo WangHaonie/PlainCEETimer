@@ -405,23 +405,41 @@ https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019
 
 static bool PnDrawDatePickerBackground(DTBG_ARGS_DECL)
 {
-    if (iPartId == DP_DATEBORDER)
+    switch (iPartId)
     {
-        COLORREF crBack = DCOLOR_DATEPICKER_BACK;
-        COLORREF crBorder = COLOR_EMPTY;
-
-        switch (iStateId)
+        case DP_DATEBORDER:
         {
-            CASE_AB(DPDB_NORMAL, crBorder, DCOLOR_DATEPICKER_BORDER);
-            case DPDB_HOT:
-                crBorder = DCOLOR_DATEPICKER_BORDER_HOT;
-                crBack = DCOLOR_DATEPICKER_BACK_HOT;
-                break;
-            CASE_AB(DPDB_FOCUSED, crBorder, DCOLOR_DATEPICKER_BORDER_FOCUSED);
-            CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
+            COLORREF crBack = DCOLOR_DATEPICKER_BACK;
+            COLORREF crBorder = COLOR_EMPTY;
+
+            switch (iStateId)
+            {
+                CASE_AB(DPDB_NORMAL, crBorder, DCOLOR_DATEPICKER_BORDER);
+                case DPDB_HOT:
+                    crBorder = DCOLOR_DATEPICKER_BORDER_HOT;
+                    crBack = DCOLOR_DATEPICKER_BACK_HOT;
+                    break;
+                    CASE_AB(DPDB_FOCUSED, crBorder, DCOLOR_DATEPICKER_BORDER_FOCUSED);
+                    CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
+            }
+
+            return PnDrawBackground(hdc, pRect, crBack, crBorder, true);
         }
 
-        return PnDrawBackground(hdc, pRect, crBack, crBorder, true);
+        case DP_SHOWCALENDARBUTTONRIGHT:
+        {
+            bool bPressed = iStateId == DPSCBR_PRESSED;
+            bool bHot = iStateId == DPSCBR_HOT;
+
+            if (bHot || bPressed)
+            {
+                COLORREF crBack = bHot ? DCOLOR_DATEPICKER_SCBR_BACK_HOT : DCOLOR_DATEPICKER_SCBR_BACK_PRESSED;
+                PnDrawBackground(hdc, pRect, crBack, DCOLOR_DATEPICKER_SCBR_BORDER_FOCUSED, true);
+            }
+
+            iStateId = (iStateId == DPSCBR_DISABLED) ? DPSCBR_DISABLED : DPSCBR_NORMAL;
+            return SUCCEEDED(g_DrawThemeBackground(hTheme, hdc, iPartId, iStateId, pRect, nullptr));
+        }
     }
 
     return false;
