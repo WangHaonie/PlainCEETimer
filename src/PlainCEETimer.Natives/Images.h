@@ -1,4 +1,4 @@
-﻿﻿#pragma once
+﻿#pragma once
 #include <Windows.h>
 
 #define IMAGE_ARROWUP_COUNT             7
