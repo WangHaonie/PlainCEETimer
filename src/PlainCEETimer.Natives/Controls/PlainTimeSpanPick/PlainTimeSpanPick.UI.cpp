@@ -384,7 +384,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             GetClientRect(hWnd, &rc);
             HDC cdc = CreateCompatibleDC(hdc);
             HBITMAP bm = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
-            HBITMAP bmOld = CastP(HBITMAP, SelectObject(cdc, bm));
+            HBITMAP bmOld = SelectBitmap(cdc, bm);
             LPCTRLCOLORS colors = &m_crCtrlColors;
 
             HBRUSH hBgBrush = CreateSolidBrush(colors->backText);
@@ -395,7 +395,7 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             HBRUSH hBorderBrush = CreateSolidBrush(crBd);
             FrameRect(cdc, &rc, hBorderBrush);
             DeleteObject(hBorderBrush);
-            HFONT fontOld = CastP(HFONT, SelectObject(cdc, m_hFont));
+            HFONT fontOld = SelectFont(cdc, m_hFont);
 
             TEXTMETRIC tm;
             GetTextMetrics(cdc, &tm);
@@ -421,13 +421,10 @@ LRESULT PlainTimeSpanPick::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             }
 
             BitBlt(hdc, 0, 0, rc.right, rc.bottom, cdc, 0, 0, SRCCOPY);
-
-            SelectObject(cdc, fontOld);
-            SelectObject(cdc, bmOld);
-
+            SelectFont(cdc, fontOld);
+            SelectBitmap(cdc, bmOld);
             DeleteObject(bm);
             DeleteDC(cdc);
-
             EndPaint(hWnd, &ps);
             return 0;
         }

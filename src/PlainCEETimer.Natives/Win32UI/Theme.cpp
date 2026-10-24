@@ -174,10 +174,10 @@ static bool PnDrawTabItemBackground(HDC hdc, LPRECT lpRect, COLORREF crBack, COL
     pts[2] = { r, t };
     pts[3] = { r, b };
 
-    HPEN hpOld = CastP(HPEN, SelectObject(hdc, GetStockObject(DC_PEN)));
+    HPEN hpOld = SelectPen(hdc, GetStockObject(DC_PEN));
     SetDCPenColor(hdc, crBorder);
     Polyline(hdc, pts, 4);
-    SelectObject(hdc, hpOld);
+    SelectPen(hdc, hpOld);
     return true;
 }
 
@@ -246,10 +246,10 @@ static bool PnDrawTrackBarThumb(HDC hdc, LPRECT lpRect, COLORREF cr, int tbpThum
         DEFAULT(false);
     }
 
-    HGDIOBJ hbrOld = SelectObject(hdc, GetStockObject(DC_BRUSH));
+    HBRUSH hbrOld = SelectBrush(hdc, GetStockObject(DC_BRUSH));
     SetDCBrushColor(hdc, cr);
     Polygon(hdc, pts, 5);
-    SelectObject(hdc, hbrOld);
+    SelectBrush(hdc, hbrOld);
     return true;
 }
 
@@ -289,8 +289,8 @@ static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF
     LONG b = t + h;
     LONG y = t + h / 2;
 
-    HBRUSH hbrOld = CastP(HBRUSH, SelectObject(hdc, s_brushes.GetBrush(crFill)));
-    HPEN hpnOld = CastP(HPEN, SelectObject(hdc, GetStockObject(NULL_PEN)));
+    HBRUSH hbrOld = SelectBrush(hdc, s_brushes.GetBrush(crFill));
+    HPEN hpnOld = SelectPen(hdc, GetStockObject(NULL_PEN));
 
     static POINT pts[3];
 
@@ -308,8 +308,8 @@ static bool PnDrawMonthCalArrowCore(HDC hdc, LPRECT lpRect, bool bLeft, COLORREF
     }
 
     Polygon(hdc, pts, 3);
-    SelectObject(hdc, hbrOld);
-    SelectObject(hdc, hpnOld);
+    SelectBrush(hdc, hbrOld);
+    SelectPen(hdc, hpnOld);
     return true;
 }
 
@@ -323,7 +323,7 @@ static bool PnDrawSpinArrow(HDC hdc, LPCRECT pRect, int spnArrow, COLORREF crArr
     if (bHorz ? GetArrowRightImage(dpi, &bmArrow, &sz) : GetArrowUpImage(dpi, &bmArrow, &sz))
     {
         HDC cdc = CreateCompatibleDC(hdc);
-        HGDIOBJ bmOld = SelectObject(cdc, bmArrow);
+        HBITMAP bmOld = SelectBitmap(cdc, bmArrow);
 
         int scx = sz.cx;
         int scy = sz.cy;
@@ -347,7 +347,7 @@ static bool PnDrawSpinArrow(HDC hdc, LPCRECT pRect, int spnArrow, COLORREF crArr
                 break;
         }
 
-        SelectObject(cdc, bmOld);
+        SelectBitmap(cdc, bmOld);
         DeleteDC(cdc);
         return true;
     }
@@ -422,8 +422,8 @@ static bool PnDrawDatePickerBackground(DTBG_ARGS_DECL)
                     crBorder = DCOLOR_DATEPICKER_BORDER_HOT;
                     crBack = DCOLOR_DATEPICKER_BACK_HOT;
                     break;
-                    CASE_AB(DPDB_FOCUSED, crBorder, DCOLOR_DATEPICKER_BORDER_FOCUSED);
-                    CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
+                CASE_AB(DPDB_FOCUSED, crBorder, DCOLOR_DATEPICKER_BORDER_FOCUSED);
+                CASE_AB(DPDB_DISABLED, crBorder, DCOLOR_DATEPICKER_BORDER_DISABLED);
             }
 
             return PnDrawBackground(hdc, pRect, crBack, crBorder, true);
