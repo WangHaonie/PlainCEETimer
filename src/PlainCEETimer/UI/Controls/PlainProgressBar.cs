@@ -26,16 +26,11 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
         {
             if (m_style != value)
             {
+                base.Style = value == ProgressStyle.Indeterminate ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
                 m_style = value;
                 UpdateStyle();
             }
         }
-    }
-
-    public ProgressBarStyle RealStyle
-    {
-        get => base.Style;
-        set => base.Style = value;
     }
 
     private bool init;
@@ -43,6 +38,11 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
     private int m_value;
     private ProgressStyle m_style;
     private TaskbarProgress tbp;
+
+    public PlainProgressBar()
+    {
+        MarqueeAnimationSpeed = 50;
+    }
 
     protected override void OnHandleCreated(EventArgs e)
     {

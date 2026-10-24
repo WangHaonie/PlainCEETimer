@@ -13,18 +13,20 @@ public class Downloader
     public event Action<Exception> Error;
     public event Action Completed;
 
-    public async Task DownloadAsync(string url, string savePath, CancellationToken token, long contentLength = -1, int defaultBuffer = 1024 * 16)
+    public async Task DownloadAsync(string url, string savePath, CancellationToken token, long expected = 0, int defaultBuffer = 1024 * 16)
     {
         try
         {
             var report = new DownloadReport();
             using var response = await HttpService.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
             response.EnsureSuccessStatusCode();
-            var total = response.Content.Headers.ContentLength ?? contentLength;
+            var length = response.Content.Headers.ContentLength ?? 0;
+            var total = length > 0 ? length : -1L;
 
-            report.Total = total / 1024L;
+            report.Total = total;
             using var file = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, defaultBuffer, true);
             using var http = await response.Content.ReadAsStreamAsync();
+            OnDownloading(report);
             var buffer = new byte[defaultBuffer];
             var downloaded = 0L;
             var last = 0L;
@@ -38,9 +40,9 @@ public class Downloader
                 await file.WriteAsync(buffer, 0, read, token);
                 downloaded += read;
                 elapsed = sw.Elapsed;
-                report.Downloaded = downloaded / 1024L;
-                report.Progress = (int)(downloaded * 100 / total);
-                report.Speed = (downloaded - last) / (elapsed - lastReport).TotalSeconds / 1024D;
+                report.Downloaded = downloaded;
+                report.Progress = total > 0 ? (int)(downloaded * 100 / total) : -1;
+                report.Speed = (downloaded - last) / (elapsed - lastReport).TotalSeconds;
                 last = downloaded;
                 lastReport = elapsed;
                 OnDownloading(report);
@@ -52,6 +54,11 @@ public class Downloader
                     File.Delete(savePath);
                     return;
                 }
+            }
+
+            if (downloaded == 0 || (expected > 0 && downloaded != expected))
+            {
+                throw new InvalidDataException("当前文件可能已被损坏或不正确。");
             }
 
             report.Progress = 100;

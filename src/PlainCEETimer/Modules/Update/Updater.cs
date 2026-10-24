@@ -111,7 +111,7 @@ internal class Updater
             }
         }
 
-        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version), 850 * 1024L);
+        ShowDownloaderUI(string.Format(AppUpdate.GetDownloadUrl(src), version));
     }
 
     private bool TryGetCachedResult(UpdateSource source, out AppUpdateInfo info)
@@ -137,7 +137,7 @@ internal class Updater
         {
             if (!sources.TryGetValue(source, out var state))
             {
-                state = new State();
+                state = new();
                 sources[source] = state;
             }
 
@@ -164,9 +164,9 @@ internal class Updater
         {
             info = await AppUpdate.FetchAsync(source, cts.Token).ConfigureAwait(false);
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            throw new TimeoutException($"请求超时，请稍后重试。", ex);
+            throw new TimeoutException();
         }
 
         lock (lockobj)
@@ -264,11 +264,11 @@ internal class Updater
         return sb.ToString();
     }
 
-    private void ShowDownloaderUI(string url, long size)
+    private void ShowDownloaderUI(string url, long expected = 0)
     {
         if (FormDownloader == null || FormDownloader.IsDisposed)
         {
-            FormDownloader = new(url, size);
+            FormDownloader = new(url, expected);
         }
 
         if (Application.MessageLoop)

@@ -366,14 +366,17 @@ https://github.com/winsiderss/systeminformer/blob/103cc43d77a6cd388d04c03371d019
 
 static bool PnDrawProgressBackground(DTBG_ARGS_DECL)
 {
-    if (pRect)
+    if (pRect && PRECT_cx(pRect) == 0)
     {
-        RECT rc = *pRect;
-        if (RECT_cx(rc) == 0) return false;
+        return false;
     }
     
     switch (iPartId)
     {
+        case PP_PULSEOVERLAY:
+        case PP_MOVEOVERLAY:
+        case PP_PULSEOVERLAYVERT:
+        case PP_MOVEOVERLAYVERT:
         case PP_TRANSPARENTBAR:
         case PP_TRANSPARENTBARVERT:
             return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);

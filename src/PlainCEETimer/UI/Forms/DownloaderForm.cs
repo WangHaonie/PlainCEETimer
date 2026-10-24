@@ -11,7 +11,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Forms;
 
-public sealed class DownloaderForm(string url, long size) : AppForm
+public sealed class DownloaderForm(string url, long expectedSize) : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing;
 
@@ -112,13 +112,19 @@ public sealed class DownloaderForm(string url, long size) : AppForm
     {
         IsCancelled = false;
         ButtonRetry.Enabled = false;
-        await UpdateDownloader.DownloadAsync(url, DownloadPath, cts.Token, size);
+        await UpdateDownloader.DownloadAsync(url, DownloadPath, cts.Token, expectedSize);
     }
 
     private void UpdateDownloader_Downloading(object sender, DownloadReport report)
     {
-        UpdateLabels(null, $"{report.Downloaded} KB / {report.Total} KB", $"{report.Speed:0.00} KB/s");
-        ProgressBarMain.Value = report.Progress.Clamp(0, 100);
+        var hasProgress = report.Total > 0;
+        ProgressBarMain.Style = hasProgress ? ProgressStyle.Normal : ProgressStyle.Indeterminate;
+        UpdateLabels(null, $"{report.Downloaded / 1024L} KB / {(hasProgress ? (report.Total / 1024L).ToString() : "-")} KB", $"{report.Speed / 1024.0:0.00} KB/s");
+
+        if (hasProgress)
+        {
+            ProgressBarMain.Value = report.Progress.Clamp(0, 100);
+        }
     }
 
     private void UpdateDownloader_Error(Exception ex)
