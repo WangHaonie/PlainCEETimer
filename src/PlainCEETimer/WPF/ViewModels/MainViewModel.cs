@@ -414,7 +414,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         TrayIcon.Visible = ShowTrayIcon;
 
         TrayIcon.ContextMenu ??= ItemBuilder.Build()
-            .RemoveRange(0, 3)
+            .RemoveRange(0, 5)
             .AddItems(b =>
             [
                 b.Separator(),
