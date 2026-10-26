@@ -12,7 +12,7 @@ using PlainCEETimer.UI.Core;
 namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
-public abstract class AppForm : Form, IAppWindow
+public abstract class AppForm : Form, IAppWindow, IThemeAwareEx
 {
     public new double Opacity
     {
@@ -86,7 +86,6 @@ public abstract class AppForm : Form, IAppWindow
     private Size lastSize;
     private FormWindowState lastState;
     private Font AppFont;
-    private ThemeHelper themeHelper;
     private Action<DialogEndEventArgs> DialogEndAction;
     private readonly AppWindowStyle ParamsInternal;
     private readonly int RoundCornerRadius = 13;
@@ -245,9 +244,9 @@ public abstract class AppForm : Form, IAppWindow
 
     protected override void OnHandleCreated(EventArgs e)
     {
+        ThemeHelper.Attach(this);
         UpdateDpiScale(DpiHelperEx.GetDpiForWindow(this), 96F);
         ApplyAppFont();
-        ThemeHelper.Attach(this, ref themeHelper);
 
         if (SetRoundCorner)
         {
@@ -829,8 +828,6 @@ public abstract class AppForm : Form, IAppWindow
         {
             WindowManager.TopMostChanged -= WindowManager_TopMostChanged;
         }
-
-        ThemeHelper.Detach(ref themeHelper);
     }
 
     private void InitModal(IWin32Window owner)
