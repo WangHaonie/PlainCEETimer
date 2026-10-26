@@ -13,7 +13,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 > 自 v5.0.0 起，本项目名称由 [CEETimerCSharpWinForms](https://github.com/WangHaonie/CEETimerCSharpWinForms/) 更改为 PlainCEETimer。
 
 ## 📷 运行截图
-> v5.0.13, Windows 11, 1920x1080, 125% 缩放
+> v6.0.0, Windows 11, 1920x1080, 125% 缩放
 
 ![主窗口](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Screenshot.png?raw=true)
 
@@ -31,6 +31,7 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 ## ✨ 其他功能
 + ✅ 适配高分、高缩放大屏
 + ✅ 可拖动、固定倒计时
++ ✅ 沉浸模式，一键全屏体验
 + ✅ 禁止多开
 + ✅ 一键开机自启
 + ✅ 支持深色模式（Windows 10 1903 及以上）
@@ -41,11 +42,11 @@ PlainCEETimer, 一个纯粹的高考倒计时, 适用于 Windows 平台, 支持�
 + ✅ <更多功能等你来探索>
 
 ## 📢 用户手册
-+ 适用于 v5.0.13，2026/9/13 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
++ 适用于 v6.0.0，2026/10/26 修订。[点此](https://github.com/WangHaonie/PlainCEETimer/blob/main/.github/Manual.md)进入。
 
 ## 🧑‍💻 开发环境
-+ Windows 11 Pro x64 (26220.9343)
-+ Visual Studio 2026 (18.10.0)
++ Windows 11 Pro x64 (26220.9757)
++ Visual Studio 2026 (18.11.2)
 + .NET Framework (4.8)
 + WinForms
 + WPF
