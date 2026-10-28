@@ -30,7 +30,7 @@ public static class BitmapFilter
         var factor = nWeight + 12;
         var mul = ((1L << 24) + factor - 1) / factor;
 
-        using var bSrc = b.Copy();
+        var bSrc = b.Copy();
         var rect = new Rectangle(0, 0, w, h);
         var bmData = b.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
         var bmSrc = bSrc.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
@@ -47,7 +47,7 @@ public static class BitmapFilter
             }
             else
             {
-                for (var y = 1; y < h - 1; y++)
+                for (int y = 1; y < h - 1; y++)
                 {
                     ConvRow(src, dst, stride, y, w, nWeight, mul);
                 }
@@ -57,6 +57,7 @@ public static class BitmapFilter
         {
             b.UnlockBits(bmData);
             bSrc.UnlockBits(bmSrc);
+            bSrc.Destroy();
         }
     }
 
@@ -65,12 +66,12 @@ public static class BitmapFilter
         var src = (byte*)pSrc + (y - 1) * stride;
         var dst = (byte*)pDst + y * stride;
 
-        for (var x = 1; x < w - 1; x++)
+        for (int x = 1; x < w - 1; x++)
         {
             var i = x * 3;
             var q = src + i - 3;
 
-            for (var c = 0; c < 3; c++)
+            for (int c = 0; c < 3; c++)
             {
                 var sum = q[c] + 2 * q[c + 3] + q[c + 6]
                     + 2 * (q[c + stride] + q[c + 6 + stride]) + nWeight * q[c + 3 + stride]
