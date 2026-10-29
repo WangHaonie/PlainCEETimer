@@ -26,7 +26,7 @@ public static class ReflectionExtensions
             _ => default
         };
 
-        mi = i as TMemberInfo;
+        mi = (TMemberInfo)i;
         return type;
     }
 

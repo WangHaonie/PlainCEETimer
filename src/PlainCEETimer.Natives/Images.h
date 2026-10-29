@@ -166,8 +166,7 @@ inline bool GetArrowRightImage(DWORD dpi, HBITMAP* phbm, SIZE* psz)
         int cbdcx = ((dcx + 15) / 16) * 2;
         int len = cbdcx * dcy;
 
-        BYTE* buf = new BYTE[len];
-        ZeroMemory(buf, len);
+        BYTE* buf = new BYTE[len]{};
 
         for (LONG dy = 0; dy < dcy; dy++)
         {
@@ -184,6 +183,7 @@ inline bool GetArrowRightImage(DWORD dpi, HBITMAP* phbm, SIZE* psz)
         }
 
         result = CreateBitmap(dcx, dcy, 1, 1, buf);
+        delete[] buf;
     }
 
     *phbm = result;
