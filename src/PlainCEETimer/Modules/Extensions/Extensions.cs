@@ -108,10 +108,14 @@ public static class Extensions
             {
                 if (s_fiInvocationCount == null)
                 {
-                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationCount);
+                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationCount, "_invocationCount");
                 }
 
-                get_invocationCount ??= s_fiInvocationCount.CreateGetter<MulticastDelegate, IntPtr>();
+                if (get_invocationCount == null)
+                {
+                    s_fiInvocationCount.CreateGetter(out get_invocationCount);
+                }
+
                 return get_invocationCount(value).ToInt32();
             }
         }
@@ -122,10 +126,14 @@ public static class Extensions
             {
                 if (s_fiInvocationList == null)
                 {
-                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationList);
+                    typeof(MulticastDelegate).RevealMember(out s_fiInvocationList, "_invocationList");
                 }
 
-                get_invocationList ??= s_fiInvocationList.CreateGetter<MulticastDelegate, object>();
+                if (get_invocationList == null)
+                {
+                    s_fiInvocationList.CreateGetter(out get_invocationList);
+                }
+
                 var list = get_invocationList(value);
                 var result = list is object[] arr ? Unsafe.As<object[], Delegate[]>(ref arr) : value.GetInvocationList();
                 return result == null ? null : Array.AsReadOnly(result);

@@ -12,6 +12,7 @@ using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules.Reflection;
 using PlainCEETimer.UI;
 using PlainCEETimer.UI.Core;
 using PlainCEETimer.WPF.Extensions;
@@ -72,8 +73,17 @@ public partial class AppWindow : Window, IAppWindow
     {
         get
         {
-            s_fiShowingAsDialog ??= typeof(Window).GetField("_showingAsDialog", BindingFlags.Instance | BindingFlags.NonPublic);
-            return (bool)s_fiShowingAsDialog.GetValue(this);
+            if (s_fiShowingAsDialog == null)
+            {
+                typeof(Window).RevealMember(out s_fiShowingAsDialog, "_showingAsDialog");
+            }
+
+            if (get_showingAsDialog == null)
+            {
+                s_fiShowingAsDialog.CreateGetter(out get_showingAsDialog);
+            }
+
+            return get_showingAsDialog(this);
         }
     }
 
@@ -103,6 +113,7 @@ public partial class AppWindow : Window, IAppWindow
     private AppNativeWindow window;
     private WindowInteropHelper wih;
     private static FieldInfo s_fiShowingAsDialog;
+    private static Func<Window, bool> get_showingAsDialog;
     private readonly bool SetRoundCorner;
     private readonly bool Special;
     private readonly bool suggestMaxWidth;

@@ -30,19 +30,20 @@ public static class ReflectionExtensions
         return type;
     }
 
-    public static Func<TObject, TField> CreateGetter<TObject, TField>(this FieldInfo fi)
+    public static void CreateGetter<TObject, TField>(this FieldInfo fi, out Func<TObject, TField> fnGetter)
     {
         if (fi != null)
         {
             var instance = Expression.Parameter(typeof(TObject));
             var field = Expression.Field(instance, fi);
-            return Expression.Lambda<Func<TObject, TField>>(field, instance).Compile();
+            fnGetter = Expression.Lambda<Func<TObject, TField>>(field, instance).Compile();
+            return;
         }
 
-        return null;
+        fnGetter = null;
     }
 
-    public static Action<TObject, TField> CreateSetter<TObject, TField>(this FieldInfo fi)
+    public static void CreateSetter<TObject, TField>(this FieldInfo fi, out Action<TObject, TField> fnSetter)
     {
         if (fi != null)
         {
@@ -50,25 +51,27 @@ public static class ReflectionExtensions
             var value = Expression.Parameter(typeof(TField));
             var field = Expression.Field(instance, fi);
             var assign = Expression.Assign(field, value);
-            return Expression.Lambda<Action<TObject, TField>>(assign, instance, value).Compile();
+            fnSetter = Expression.Lambda<Action<TObject, TField>>(assign, instance, value).Compile();
+            return;
         }
 
-        return null;
+        fnSetter = null;
     }
 
-    public static Func<TObject, TProperty> CreateGetter<TObject, TProperty>(this PropertyInfo pi)
+    public static void CreateGetter<TObject, TProperty>(this PropertyInfo pi, out Func<TObject, TProperty> fnGetter)
     {
         if (pi != null && pi.CanRead)
         {
             var instance = Expression.Parameter(typeof(TObject));
             var prop = Expression.Property(instance, pi);
-            return Expression.Lambda<Func<TObject, TProperty>>(prop, instance).Compile();
+            fnGetter = Expression.Lambda<Func<TObject, TProperty>>(prop, instance).Compile();
+            return;
         }
 
-        return null;
+        fnGetter = null;
     }
 
-    public static Action<TObject, TProperty> CreateSetter<TObject, TProperty>(this PropertyInfo pi)
+    public static void CreateSetter<TObject, TProperty>(this PropertyInfo pi, out Action<TObject, TProperty> fnSetter)
     {
         if (pi != null && pi.CanWrite)
         {
@@ -76,9 +79,10 @@ public static class ReflectionExtensions
             var value = Expression.Parameter(typeof(TProperty));
             var prop = Expression.Property(instance, pi);
             var assign = Expression.Assign(prop, value);
-            return Expression.Lambda<Action<TObject, TProperty>>(assign, instance, value).Compile();
+            fnSetter = Expression.Lambda<Action<TObject, TProperty>>(assign, instance, value).Compile();
+            return;
         }
 
-        return null;
+        fnSetter = null;
     }
 }
