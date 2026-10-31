@@ -14,5 +14,7 @@ public interface IWindowStyles
 
     bool ApplyBackdrop(bool enabled, int type);
 
+    void SetPeekStyle(int dw);
+
     void ToggleScreen();
 }

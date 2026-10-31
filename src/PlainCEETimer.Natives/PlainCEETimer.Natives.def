@@ -89,3 +89,5 @@ EXPORTS
 
     PnHookThemeColor @73 NONAME
     PnUnhookThemeColor @74 NONAME
+
+    PnSetWindowPeekStyle @75 NONAME

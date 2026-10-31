@@ -55,6 +55,7 @@ public sealed class SettingsForm : AppForm
     private PlainComboBox ComboBoxPosition;
     private PlainComboBox ComboBoxScreens;
     private PlainComboBox ComboBoxFullScreen;
+    private PlainComboBox ComboBoxPeekStyle;
     private PlainTextBox TextBoxTSFormat;
     private PlainLabel LabelCountdownEnd;
     private PlainLabel LabelCountdownFormat;
@@ -76,6 +77,7 @@ public sealed class SettingsForm : AppForm
     private PlainLabel LabelExit;
     private PlainLabel LabelTSFormat;
     private PlainLabel LabelTSMax;
+    private PlainLabel LabelPeekStyle;
     private NavigationView MainNavigationView;
     private NavigationPage PageAppearance;
     private NavigationPage PageDebug;
@@ -122,6 +124,7 @@ public sealed class SettingsForm : AppForm
     private PlainGroupBox GBoxDpiAware;
     private PlainGroupBox GBoxTSPresent;
     private PlainGroupBox GBoxDbgWndStyles;
+    private PlainGroupBox GBoxPeekStyle;
     private PlainRadioButton RadioButtonThemeDark;
     private PlainRadioButton RadioButtonThemeLight;
     private PlainRadioButton RadioButtonThemeSystem;
@@ -451,6 +454,12 @@ public sealed class SettingsForm : AppForm
                     [
                         LabelPptsvc = b.Label("(仅个别机型) 用于避免希沃PPT小工具内置白板打开后底部工具栏消失的情况。"),
                         CheckBoxPptSvc = b.CheckBox(" ", SettingsChanged)
+                    ]),
+
+                    GBoxPeekStyle = b.GroupBox("Peek 样式",
+                    [
+                        LabelPeekStyle = b.Label("当使用 Peek 预览应用程序窗口或桌面时，主窗口应采取的行为。"),
+                        ComboBoxPeekStyle = b.ComboBox(75, SettingsChanged, "默认", "始终显示", "关闭预览")
                     ])
                 ]),
                 #endregion
@@ -692,6 +701,12 @@ public sealed class SettingsForm : AppForm
         CompactControlY(CheckBoxPptSvc, LabelPptsvc);
         AlignControlXL(CheckBoxPptSvc, LabelPptsvc, 4);
         GroupBoxAutoAdjustHeight(GBoxPptsvc, CheckBoxPptSvc, 2);
+
+        ArrangeControlYL(GBoxPeekStyle, GBoxPptsvc, 0, 2);
+        GroupBoxArrageControl(GBoxPeekStyle, LabelPeekStyle);
+        SetLabelAutoWrap(LabelPeekStyle, true);
+        ArrangeControlYL(ComboBoxPeekStyle, LabelPeekStyle, 4);
+        GroupBoxAutoAdjustHeight(GBoxPeekStyle, ComboBoxPeekStyle, 4);
         #endregion
 
         #region NavPage_Debug
@@ -911,6 +926,7 @@ public sealed class SettingsForm : AppForm
         CheckBoxMainFormUseWPF.Checked = Display.UseWPF;
         CheckBoxPptSvc.Checked = Display.SeewoPptsvc;
         ComboBoxFullScreen.SelectedIndex = (int)Display.FSTMode;
+        ComboBoxPeekStyle.SelectedIndex = General.Peek;
         UpdateOptionsForPptsvc();
 
         ApplyColorBlocks(SelectedColors);
@@ -1156,6 +1172,7 @@ public sealed class SettingsForm : AppForm
         General.Truncate = (int)NudTruncate.Value;
         General.No = CheckBoxShowNo.Checked;
         General.BorderColor = new(CheckBoxBorderColor.Checked, ComboBoxBorderColor.SelectedIndex, BlockBorderColor.Color);
+        General.Peek = (byte)ComboBoxPeekStyle.SelectedIndex;
 
         Display.Mode = ComboBoxCountdownEnd.SelectedIndex;
         Display.Format = (CountdownFormat)ComboBoxCountdownFormat.SelectedIndex;

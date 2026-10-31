@@ -443,6 +443,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         var backdrop = AppParams.MainBackdropAcrylic;
         BackOpacity = backdrop ? 0.01D : 1D;
         Styles.ApplyBackdrop(backdrop, Natives.ASBT_ACRYLIC);
+        Styles.SetPeekStyle(General.Peek);
 
         if (BorderColorObj.Enabled)
         {

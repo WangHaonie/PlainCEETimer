@@ -58,6 +58,11 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
         return false;
     }
 
+    public void SetPeekStyle(int dw)
+    {
+        Win32UI.SetWindowPeekStyle(form, dw);
+    }
+
     public void ToggleScreen()
     {
         return;

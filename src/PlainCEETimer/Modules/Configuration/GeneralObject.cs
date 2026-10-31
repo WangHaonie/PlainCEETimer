@@ -68,6 +68,8 @@ public class GeneralObject
         }
     }
 
+    public byte Peek { get; set; }
+
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {

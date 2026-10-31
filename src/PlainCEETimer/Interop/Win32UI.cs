@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Interop;
 
@@ -315,6 +316,9 @@ internal unsafe static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#70")]
     public static extern bool PnTryGetTabUpDown(IntPtr hTab, out IntPtr phUpDown);
 
+    [DllImport(App.NativesDll, EntryPoint = "#75")]
+    public static extern void PnSetWindowPeekStyle(IntPtr hWnd, int dwStyle);
+
     public static nint SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
     {
         return SendMessage(hWnd, msg, wParam, (nint)lParam);
@@ -385,6 +389,14 @@ internal unsafe static class Win32UI
                     MoveWindow(hWnd, x, y, rcWnd.Width, rcWnd.Height, false);
                 }
             }
+        }
+    }
+
+    public static void SetWindowPeekStyle(IAppWindow window, int dwStyle)
+    {
+        if (window != null)
+        {
+            PnSetWindowPeekStyle(window.Handle, dwStyle);
         }
     }
 }

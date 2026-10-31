@@ -4,6 +4,7 @@
 #include "Win32/IATHook.h"
 #include <CommCtrl.h>
 #include <Windows.h>
+#include <dwmapi.h>
 
 static HOOKPROC g_MsgBoxCbtProc = nullptr;
 static HOOKPROC g_GetMsgProc = nullptr;
@@ -398,4 +399,18 @@ BOOL NATIVESAPI DateTimePick_InitClass()
     }
 
     return FALSE;
+}
+
+void NATIVESAPI PnSetWindowPeekStyle(HWND hWnd, DWORD dwStyle)
+{
+    if (hWnd)
+    {
+        BOOL bf0 = (dwStyle > PSWPS_DEFAULT);
+
+        BOOL b = bf0 && (dwStyle == PSWPS_EXCLUDED);
+        DwmSetWindowAttribute(hWnd, DWMWA_EXCLUDED_FROM_PEEK, &b, sizeof(BOOL));
+
+        b = bf0 && (dwStyle == PSWPS_DISALLOW);
+        DwmSetWindowAttribute(hWnd, DWMWA_DISALLOW_PEEK, &b, sizeof(BOOL));
+    }
 }

@@ -1,4 +1,5 @@
-﻿using PlainCEETimer.WPF.Controls;
+﻿using PlainCEETimer.Interop;
+using PlainCEETimer.WPF.Controls;
 
 namespace PlainCEETimer.UI.Core;
 
@@ -57,6 +58,11 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
 
         backdrop?.Clear();
         return false;
+    }
+
+    public void SetPeekStyle(int dw)
+    {
+        Win32UI.SetWindowPeekStyle(window, dw);
     }
 
     public void ToggleScreen()
