@@ -14,9 +14,11 @@ public sealed class HotKeyDialog : AppDialog
     private PlainLabel LabelHotKey1;
     private PlainLabel LabelHotKey2;
     private PlainLabel LabelHotKey3;
+    private PlainLabel LabelHotKey4;
     private PlainHotkeyControl HotkeyCtrl1;
     private PlainHotkeyControl HotkeyCtrl2;
     private PlainHotkeyControl HotkeyCtrl3;
+    private PlainHotkeyControl HotkeyCtrl4;
     private PlainHotkeyControl[] HotKeyCtrls;
     private readonly AppConfig AppConfig = App.Current.AppConfig;
 
@@ -27,14 +29,16 @@ public sealed class HotKeyDialog : AppDialog
         this.AddControls(b =>
         [
             LabelHotKey1 = b.Label(HotKeyManager.GetHotKeyDescription(0)),
-            LabelHotKey2 = b.Label(HotKeyManager.GetHotKeyDescription(1)),
-            LabelHotKey3 = b.Label(HotKeyManager.GetHotKeyDescription(2)),
             HotkeyCtrl1 = b.HotkeyCtrl(185, UserChanged),
+            LabelHotKey2 = b.Label(HotKeyManager.GetHotKeyDescription(1)),
             HotkeyCtrl2 = b.HotkeyCtrl(185, UserChanged),
-            HotkeyCtrl3 = b.HotkeyCtrl(185, UserChanged)
+            LabelHotKey3 = b.Label(HotKeyManager.GetHotKeyDescription(2)),
+            HotkeyCtrl3 = b.HotkeyCtrl(185, UserChanged),
+            LabelHotKey4 = b.Label(HotKeyManager.GetHotKeyDescription(3)),
+            HotkeyCtrl4 = b.HotkeyCtrl(185, UserChanged)
         ]);
 
-        HotKeyCtrls = [HotkeyCtrl1, HotkeyCtrl2, HotkeyCtrl3];
+        HotKeyCtrls = [HotkeyCtrl1, HotkeyCtrl2, HotkeyCtrl3, HotkeyCtrl4];
         base.OnInitializing();
     }
 
@@ -46,11 +50,14 @@ public sealed class HotKeyDialog : AppDialog
         CenterControlY(LabelHotKey1, HotkeyCtrl1, -1);
         ArrangeControlYL(LabelHotKey2, LabelHotKey1);
         ArrangeControlYL(LabelHotKey3, LabelHotKey2);
+        ArrangeControlYL(LabelHotKey4, LabelHotKey3);
         ArrangeControlYL(HotkeyCtrl2, HotkeyCtrl1, 0, 5);
         ArrangeControlYL(HotkeyCtrl3, HotkeyCtrl2, 0, 5);
+        ArrangeControlYL(HotkeyCtrl4, HotkeyCtrl3, 0, 5);
         CenterControlY(LabelHotKey2, HotkeyCtrl2, -1);
         CenterControlY(LabelHotKey3, HotkeyCtrl3, -1);
-        ArrangeCommonButtonsR(ButtonA, ButtonB, HotkeyCtrl3, 1, 5);
+        CenterControlY(LabelHotKey4, HotkeyCtrl4, -1);
+        ArrangeCommonButtonsR(ButtonA, ButtonB, HotkeyCtrl4, 1, 5);
         InitWindowSize(ButtonB, 5, 5);
     }
 

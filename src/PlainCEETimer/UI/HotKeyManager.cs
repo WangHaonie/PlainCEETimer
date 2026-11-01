@@ -101,7 +101,7 @@ internal static class HotKeyManager
         }
     }
 
-    public const int HotKeyCount = 3;
+    public const int HotKeyCount = 4;
 
     private static readonly List<HotKeyService> hksvcs = [];
     private static readonly HotKeyPressEventHandler[] hkhandlers = new HotKeyPressEventHandler[HotKeyCount];
@@ -140,6 +140,7 @@ internal static class HotKeyManager
         0 => "隐藏主窗口",
         1 => "上一个考试",
         2 => "下一个考试",
+        3 => "沉浸倒计时",
         _ => null
     };
 

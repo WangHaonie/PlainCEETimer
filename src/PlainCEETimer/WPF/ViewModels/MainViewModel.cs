@@ -493,7 +493,8 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         HotKeyManager.SetHandlers(
             ToggleVisibilityHotKeyHandler,
             SwitchToPreviousExamHotKeyHandler,
-            SwitchToNextExamHotKeyHandler
+            SwitchToNextExamHotKeyHandler,
+            StartImmersiveHotKeyHandler
         );
 
         var hks = AppConfig.HotKeys;
@@ -739,6 +740,11 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     private void SwitchToNextExamHotKeyHandler(object sender, HotKeyPressEventArgs e)
     {
         Countdown.SwitchTo(SwitchOption.Next);
+    }
+
+    private void StartImmersiveHotKeyHandler(object sender, HotKeyPressEventArgs e)
+    {
+        StartImmersive();
     }
 
     private void SetCountdownRecipient()
