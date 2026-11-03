@@ -837,14 +837,14 @@ public sealed class SettingsForm : AppForm
             {
                 comboTrigger ??= new(10, 500);
 
-                if (comboTrigger.Stop || IsDebug)
+                if (comboTrigger.Triggered || IsDebug)
                 {
                     MessageX.Info("已开启调试选项，无需执行此操作。");
                 }
                 else if (comboTrigger.Trigger())
                 {
                     ParamsInfo.Debug = true;
-                    comboTrigger.Stop = true;
+                    comboTrigger.Triggered = true;
                     AppParams.LoadConfig();
                     ConfigValidator.DemandConfig();
                     MessageX.Info("调试选项已开启，重新打开设置生效！");

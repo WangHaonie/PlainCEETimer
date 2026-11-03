@@ -1,9 +1,10 @@
 ﻿using System;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Extensions;
 
 namespace PlainCEETimer.Modules;
 
-public class ComboTrigger
+public partial class ComboTrigger
 {
     public int RemainCount
     {
@@ -16,7 +17,8 @@ public class ComboTrigger
         }
     }
 
-    public bool Stop { get; set; }
+    [BackingField("m_triggered")]
+    public partial bool Triggered { get; set; }
 
     private int m_count;
     private ulong m_lastTick;
@@ -39,7 +41,7 @@ public class ComboTrigger
     {
         lock (m_lock)
         {
-            if (Stop)
+            if (m_triggered)
             {
                 return false;
             }
