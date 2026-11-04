@@ -14,11 +14,9 @@ public unsafe class ConsoleColorString : IDisposable
     {
         get
         {
-            int* data = stackalloc int[3];
-            data[1] = m_fore;
-            data[2] = m_back;
+            int* data = stackalloc int[3] { BufferLength, m_fore, m_back };
 
-            if (Win32.PnBuildAnsiColorString(m_pstr, BufferLength, data))
+            if (Win32.PnBuildAnsiColorString(m_pstr, data))
             {
                 return new(m_pstr, 0, *data);
             }
