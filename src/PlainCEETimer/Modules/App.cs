@@ -74,6 +74,7 @@ internal partial class App
     private string AllArgs;
     private Icon appIcon;
     private Mutex MainMutex;
+    private bool bExit = true;
     private readonly bool IsMainProcess;
     private readonly string ExecutableName;
     private readonly string PipeName;
@@ -150,9 +151,13 @@ internal partial class App
                     ProcessHelper.Run(ExecutablePath, useArgs ? AllArgs : null);
                 }
 
-                750.AsDelay(_ => Win32.ExitProcess(0));
-                WindowManager.TryExitUI();
-                Environment.Exit(0);
+                if (bExit)
+                {
+                    750.AsDelay(_ => Win32.ExitProcess(0));
+                    WindowManager.TryExitUI();
+                    Environment.Exit(0);
+                }
+
                 appInstance = null;
             }
         }
@@ -187,6 +192,7 @@ internal partial class App
             StartPipeClient();
         }
 
+        bExit = false;
         Shutdown();
     }
 
