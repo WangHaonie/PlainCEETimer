@@ -71,7 +71,7 @@ static int FindNearestConsoleColor(COLORREF color, LPCOLORREF lpColors)
     return 0;
 }
 
-HWND NATIVESAPI PnAllocConsole(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut, PHANDLE phStdErr)
+HWND NATIVESAPI PnAllocConsole(BOOL bRefresh, PHANDLE pHandles)
 {
     BOOL attached = AttachConsole(ATTACH_PARENT_PROCESS);
     if (!attached) AllocConsole();
@@ -84,9 +84,12 @@ HWND NATIVESAPI PnAllocConsole(BOOL bRefresh, PHANDLE phStdIn, PHANDLE phStdOut,
     SetStdHandle(STD_OUTPUT_HANDLE, hStdOut);
     SetStdHandle(STD_ERROR_HANDLE, hStdErr);
 
-    if (phStdIn) *phStdIn = hStdIn;
-    if (phStdOut) *phStdOut = hStdOut;
-    if (phStdErr) *phStdErr = hStdErr;
+    if (pHandles)
+    {
+        pHandles[0] = hStdIn;
+        pHandles[1] = hStdOut;
+        pHandles[2] = hStdErr;
+    }
 
     if (bRefresh)
     {

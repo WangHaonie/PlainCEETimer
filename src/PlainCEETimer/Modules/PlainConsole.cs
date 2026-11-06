@@ -18,16 +18,22 @@ public class PlainConsole
     private readonly object syncLock = new();
     private static readonly bool _SupportAnsiColor;
 
-    private static readonly IntPtr hIn;
-    private static readonly IntPtr hOut;
-    private static readonly IntPtr hErr;
+    private static readonly nint hIn;
+    private static readonly nint hOut;
+    private static readonly nint hErr;
 
-    static PlainConsole()
+    static unsafe PlainConsole()
     {
-        Win32.PnAllocConsole(SystemVersion.BeforeNT10, out var phStdIn, out var phStdOut, out var phStdErr);
-        EnsureConsole(phStdIn, phStdOut, phStdErr);
-        hIn = phStdIn; hOut = phStdOut; hErr = phStdErr;
-        _SupportAnsiColor = Win32.PnSetConsoleMode(phStdOut, PSCMF.STD_OUT | PSCMF.FLAGS_ENABLE | PSCMF.ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        try
+        {
+            var ptr = stackalloc nint[3];
+            Win32.PnAllocConsole(SystemVersion.BeforeNT10, ptr);
+            nint In = ptr[0], Out = ptr[1], Err = ptr[2];
+            EnsureConsole(In, Out, Err);
+            hIn = In; hOut = Out; hErr = Err;
+            _SupportAnsiColor = Win32.PnSetConsoleMode(Out, PSCMF.STD_OUT | PSCMF.FLAGS_ENABLE | PSCMF.ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        }
+        catch { } // 防 SOE
     }
 
     public PlainConsole Title(string title)

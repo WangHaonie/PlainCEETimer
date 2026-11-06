@@ -9,7 +9,7 @@ namespace PlainCEETimer.Interop;
 internal unsafe static class Win32
 {
     [DllImport(App.NativesDll, EntryPoint = "#54")]
-    public static extern IntPtr PnAllocConsole(bool bRefresh, out IntPtr phStdIn, out IntPtr phStdOut, out IntPtr phStdErr);
+    public static extern IntPtr PnAllocConsole(bool bRefresh, nint* pHandles);
 
     [DllImport(App.NativesDll, EntryPoint = "#55")]
     public static extern void PnKillProcessTree(int dwProcessId);
