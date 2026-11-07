@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.Modules;
+using PlainCEETimer.UI.Controls;
 using PlainCEETimer.UI.Forms;
 using PlainCEETimer.WPF;
+using PlainCEETimer.WPF.Controls;
 using PlainCEETimer.WPF.Views;
 
 namespace PlainCEETimer.UI;
@@ -19,18 +21,7 @@ public class WindowManager
     public event EventHandler ActivateRequested;
 
     private bool m_topmost = true;
-
-    internal static void RunMainUI(bool isWpf)
-    {
-        if (isWpf)
-        {
-            new WPFApp().Run(new MainWindow());
-        }
-        else
-        {
-            Application.Run(new MainForm());
-        }
-    }
+    private static bool m_form;
 
     internal void OnTopMostChanged(bool topmost, bool bAsDefault = true)
     {
@@ -48,11 +39,41 @@ public class WindowManager
         ActivateRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    internal static void TryExitUI()
+    internal static void RunMainUI(bool isWpf)
+    {
+        if (isWpf)
+        {
+            RunUI(new MainWindow());
+        }
+        else
+        {
+            RunUI(new MainForm());
+        }
+    }
+
+    internal static void RunUI(AppForm form)
+    {
+        m_form = App.Current.MainWindow == null && true;
+        Application.Run(form);
+    }
+
+    internal static void RunUI(AppWindow window)
+    {
+        if (System.Windows.Application.Current == null)
+        {
+            m_form = App.Current.MainWindow == null && false;
+            new WPFApp().Run(window);
+        }
+    }
+
+    internal static void EndUI()
     {
         System.Windows.Application.Current?.Shutdown();
-        300.AsDelay(_ => Application.ExitThread());
-        Application.Exit();
+
+        if (m_form)
+        {
+            Application.ExitThread();
+        }
     }
 
     ~WindowManager()

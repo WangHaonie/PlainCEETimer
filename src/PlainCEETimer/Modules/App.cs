@@ -154,7 +154,7 @@ internal partial class App
                 if (bExit)
                 {
                     750.AsDelay(_ => Win32.ExitProcess(0));
-                    WindowManager.TryExitUI();
+                    WindowManager.EndUI();
                     Environment.Exit(0);
                 }
 

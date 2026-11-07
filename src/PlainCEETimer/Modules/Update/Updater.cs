@@ -277,7 +277,7 @@ internal class Updater
         }
         else
         {
-            Application.Run(FormDownloader);
+            WindowManager.RunUI(FormDownloader);
         }
     }
 }
