@@ -413,6 +413,9 @@ public sealed partial class ImmersiveWindow : AppWindow
             case nameof(ImmersiveViewModel.SidebarWidth):
                 OnSidebarWidthChanged();
                 break;
+            case nameof(ImmersiveViewModel.SelectedIndex):
+                SidebarScrollIntoView();
+                break;
         }
     }
 
@@ -517,6 +520,18 @@ public sealed partial class ImmersiveWindow : AppWindow
         ApplySidebarWidth(ClampSidebarWidth(cxSidebarUser));
     }
 
+    private void SidebarScrollIntoView()
+    {
+        var index = vm.SelectedIndex;
+        var items = ExamList.Items;
+
+        if (vm.IsSidebarOpen && index >= 0 && index < items.Count)
+        {
+            ExamList.UpdateLayout();
+            ExamList.ScrollIntoView(items[index]);
+        }
+    }
+
     private void OnIdle()
     {
         if (isActivated && DateTime.TickCount - lastActivateTick >= IdleTimeoutMs)
@@ -574,16 +589,21 @@ public sealed partial class ImmersiveWindow : AppWindow
         {
             SidebarPanel.Width = target;
             UpdateStyle();
+            SidebarScrollIntoView();
             return;
         }
 
         SidebarPanel.Width = from;
-        SidebarPanel.BeginAnimation(WidthProperty, new DoubleAnimation(from, target, AnimateDuration)
+
+        var anim = new DoubleAnimation(from, target, AnimateDuration)
         {
             EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
-        });
+        };
 
+        anim.Completed += (_, _) => SidebarScrollIntoView();
+        SidebarPanel.BeginAnimation(WidthProperty, anim);
         UpdateStyle();
+        SidebarScrollIntoView();
     }
 
     private void UpdateSidebarWidth()
