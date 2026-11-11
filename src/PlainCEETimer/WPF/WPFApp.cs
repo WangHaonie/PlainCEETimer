@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Threading;
-using MS.Internal;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
@@ -67,7 +66,6 @@ public sealed class WPFApp : Application, IThemeAware
         InternalInit();
         LoadTheme();
         SafeExecutionContext.SetContext(new DispatcherSynchronizationContext());
-        FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
     }
 
     private void LoadTheme()

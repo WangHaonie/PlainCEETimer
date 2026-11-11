@@ -28,4 +28,5 @@ public static class MemberNames
     public const string HighlightBrush = nameof(HighlightBrush);
     public const string ContextMenu = nameof(ContextMenu);
     public const string ShowArrows = nameof(ShowArrows);
+    public const string Enabled = nameof(Enabled);
 }

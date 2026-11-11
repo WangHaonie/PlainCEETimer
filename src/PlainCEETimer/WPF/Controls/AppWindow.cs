@@ -126,6 +126,7 @@ public partial class AppWindow : Window, IAppWindow
     {
         SetResourceReference(StyleProperty, typeof(Window));
         SetResourceReference(FontFamilyProperty, KnownResources.AppFontFamily);
+        SetValue(SmoothScroll.EnabledProperty, true);
         ParamsInternal = Params;
         Special = CheckParam(AppWindowStyle.Special);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);

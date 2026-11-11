@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MS.Internal;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.UI.Controls;
@@ -41,6 +42,8 @@ public class WindowManager
 
     internal static void RunMainUI(bool isWpf)
     {
+        InitConfig();
+
         if (isWpf)
         {
             RunUI(new MainWindow());
@@ -74,6 +77,11 @@ public class WindowManager
         {
             Application.ExitThread();
         }
+    }
+
+    private static void InitConfig()
+    {
+        FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
     }
 
     ~WindowManager()
