@@ -499,7 +499,7 @@ public static class SmoothScroll
     }
 
     public static readonly DependencyProperty EnabledProperty =
-        DependencyProperty.RegisterAttached("Enabled", typeof(bool), typeof(SmoothScroll),
+        DependencyProperty.RegisterAttached(MemberNames.Enabled, typeof(bool), typeof(SmoothScroll),
             new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits, OnEnabledChanged));
 
     private static bool s_renderingAttached;
