@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
-using PlainCEETimer.Interop.Extensions;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 
@@ -11,59 +10,11 @@ namespace PlainCEETimer.UI;
 [NoConstants]
 public static class ThemeManager
 {
-    private class ThemeChangedMessageFilter : IAppMessageFilter
-    {
-        private readonly Throttler thr;
-
-        public ThemeChangedMessageFilter()
-        {
-            thr = new();
-        }
-
-        public unsafe bool OnMessage(MSG* lpMsg)
-        {
-            if (IsThemeChanged(lpMsg) && thr.Throttle())
-            {
-                TryFireOnThemeChanged();
-                return true;
-            }
-
-            return false;
-        }
-
-        private unsafe static bool IsThemeChanged(MSG* lpMsg)
-        {
-            return lpMsg->message switch
-            {
-                WinUser.WM_SYSCOLORCHANGE
-                    => true,
-                WinUser.WM_SETTINGCHANGE or WinUser.WM_SETTINGCHANGE + WinUser.WM_REFLECT
-                    => lpMsg->lParam.AsStringUni(free: false) == "ImmersiveColorSet",
-                _
-                    => false,
-            };
-        }
-    }
-
     public static bool IsDarkModeSupported => initialized;
 
     public static bool ShouldUseDarkMode => shouldUseDarkMode;
 
     public static bool NewThemeAvailable => canUseNewTheme;
-
-    public static bool TransparencyEnabled
-    {
-        get
-        {
-            if (!SystemVersion.BeforeNT10)
-            {
-                using var reg = RegistryHelper.Open(PersonalizeRegPath);
-                return reg.Check("EnableTransparency", 1, 0);
-            }
-
-            return false;
-        }
-    }
 
     public static event EventHandler<ThemeChangedEventArgs> ThemeChanged
     {
@@ -76,11 +27,9 @@ public static class ThemeManager
     private static bool shouldUseDarkMode;
     private static bool canUseNewTheme;
     private static bool isNewDwma;
+    private static bool isDetecting;
     private static SystemTheme theme;
-    private static ThemeChangedMessageFilter msgfilter;
     private static readonly EfficientInvocationList<ThemeChangedEventArgs> ThemeChangedEvent = new(150);
-
-    private const string PersonalizeRegPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
     public static void Initialize()
     {
@@ -162,8 +111,7 @@ public static class ThemeManager
 
     private static void UpgradeStyle(ref SystemStyle style)
     {
-        if (canUseNewTheme
-            && (style is SystemStyle.CfdDark or SystemStyle.ExplorerDark))
+        if (canUseNewTheme && (style is SystemStyle.CfdDark or SystemStyle.ExplorerDark))
         {
             style = SystemStyle.DarkTheme;
         }
@@ -174,12 +122,11 @@ public static class ThemeManager
         Win32UI.PnEnableDarkModeForApp(shouldUseDarkMode);
     }
 
-    private static void TryFireOnThemeChanged()
+    private static void OnAppsUseLightThemeChanged(object sender, SystemSettingChangedEventArgs<bool> e)
     {
-        var th = GetCurrentSystemTheme();
-
-        if (IsThemeChanged(theme, th))
+        if (canFireThemeChanged)
         {
+            var th = e.NewValue ? SystemTheme.Light : SystemTheme.Dark;
             theme = th;
             OnThemeChanged(th);
         }
@@ -187,28 +134,25 @@ public static class ThemeManager
 
     private static void StartDetectingThemeChanges()
     {
-        if (initialized && msgfilter == null)
+        if (initialized && !isDetecting)
         {
-            msgfilter = new();
-            AppMessageFilter.AddMessageFilter(msgfilter);
-            App.Current.AppExit += StopDetectingThemeChanges;
+            isDetecting = true;
+            SystemSettings.AppsUseLightTheme.Changed += OnAppsUseLightThemeChanged;
         }
     }
 
     private static void StopDetectingThemeChanges()
     {
-        if (msgfilter != null)
+        if (isDetecting)
         {
-            AppMessageFilter.RemoveMessageFilter(msgfilter);
-            msgfilter = null;
-            App.Current.AppExit -= StopDetectingThemeChanges;
+            isDetecting = false;
+            SystemSettings.AppsUseLightTheme.Changed -= OnAppsUseLightThemeChanged;
         }
     }
 
     private static SystemTheme GetCurrentSystemTheme()
     {
-        using var reg = RegistryHelper.Open(PersonalizeRegPath);
-        return reg.Check("AppsUseLightTheme", 0, 1) ? SystemTheme.Dark : SystemTheme.Light;
+        return SystemSettings.AppsUseLightTheme.Value ? SystemTheme.Light : SystemTheme.Dark;
     }
 
     /*

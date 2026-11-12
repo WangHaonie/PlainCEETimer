@@ -332,6 +332,7 @@ internal partial class App
     private void InternalInit()
     {
         AppMessageFilter.Initialize();
+        SystemSettings.Initialize();
         appConfig = ConfigValidator.ReadConfig();
         DpiHelperEx.Initialize();
         ThemeManager.Initialize();
