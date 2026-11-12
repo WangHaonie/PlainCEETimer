@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Input;
 
@@ -19,7 +20,7 @@ internal class RoutedUICommandInternals : RoutedCommandInternals
 
     static RoutedUICommandInternals()
     {
-        m_fiText = typeof(RoutedUICommand).GetField(nameof(_text), BindingFlags.Instance | BindingFlags.NonPublic);
+        typeof(RoutedUICommand).RevealMember(out m_fiText, nameof(_text));
     }
 
     public static RoutedUICommandInternals AttachTo(RoutedUICommand target)

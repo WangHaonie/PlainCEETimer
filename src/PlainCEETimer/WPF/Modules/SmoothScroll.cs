@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 
 namespace PlainCEETimer.WPF.Modules;
@@ -153,10 +154,8 @@ public static class SmoothScroll
 
         private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (!SystemParameters.ClientAreaAnimation
-                || e.Handled
-                || e.OriginalSource is not DependencyObject source
-                || FindScrollableScrollViewer(source, e.Delta) != m_sv)
+            if (NoAnimation || e.Handled || e.OriginalSource is not DependencyObject src
+                || FindScrollableScrollViewer(src, e.Delta) != m_sv)
             {
                 return;
             }
@@ -192,9 +191,7 @@ public static class SmoothScroll
 
         private void OnBringIntoView(object sender, RequestBringIntoViewEventArgs e)
         {
-            if (!SystemParameters.ClientAreaAnimation
-                || m_SuppressBringIntoView
-                || e.Handled
+            if (NoAnimation || m_SuppressBringIntoView || e.Handled
                 || e.TargetObject is not FrameworkElement target)
             {
                 return;
@@ -337,7 +334,7 @@ public static class SmoothScroll
 
         private void AnimateTo(double vertical, double horizontal, double duration)
         {
-            if (!SystemParameters.ClientAreaAnimation)
+            if (NoAnimation)
             {
                 m_sv.ScrollToVerticalOffset(CoerceVertical(vertical));
                 m_sv.ScrollToHorizontalOffset(CoerceHorizontal(horizontal));
@@ -381,7 +378,7 @@ public static class SmoothScroll
         {
             if (isAnimating)
             {
-                if (!SystemParameters.ClientAreaAnimation)
+                if (NoAnimation)
                 {
                     if (m_Vanimate)
                     {
@@ -426,7 +423,7 @@ public static class SmoothScroll
 
         public void OnAnimationCompleted()
         {
-            if (!SystemParameters.ClientAreaAnimation)
+            if (NoAnimation)
             {
                 m_target = null;
                 return;
@@ -519,6 +516,8 @@ public static class SmoothScroll
     private const double MaxBringIntoViewDuration = 600D;
     private const double AxisTolerance = 0.05D;
     private const int MaxBringIntoViewRetry = 3;
+
+    private static bool NoAnimation => !SystemSettings.ClientAreaAnimation.Value;
 
     public static bool GetEnabled(DependencyObject obj)
     {

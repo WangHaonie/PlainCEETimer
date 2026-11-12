@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Controls;
+using PlainCEETimer.Modules.Reflection;
 
 namespace MS.Internal;
 
@@ -25,11 +26,14 @@ internal static class FrameworkAppContextSwitches
 
     static FrameworkAppContextSwitches()
     {
-        s_type = typeof(Control).Assembly.GetType(typeof(FrameworkAppContextSwitches).FullName);
+        s_type = ReflectionUtils.RevealType(typeof(Control), typeof(FrameworkAppContextSwitches));
     }
 
     private static void EnsureAccess()
     {
-        s_fiUseAdornerForTextboxSelectionRendering ??= s_type.GetField(nameof(_useAdornerForTextboxSelectionRendering), BindingFlags.NonPublic | BindingFlags.Static);
+        if (s_fiUseAdornerForTextboxSelectionRendering == null)
+        {
+            s_type.RevealMember(out s_fiUseAdornerForTextboxSelectionRendering, nameof(_useAdornerForTextboxSelectionRendering), isStatic: true);
+        }
     }
 }

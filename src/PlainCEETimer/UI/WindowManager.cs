@@ -22,7 +22,6 @@ public class WindowManager
     public event EventHandler ActivateRequested;
 
     private bool m_topmost = true;
-    private static bool m_form;
 
     internal void OnTopMostChanged(bool topmost, bool bAsDefault = true)
     {
@@ -40,32 +39,30 @@ public class WindowManager
         ActivateRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    internal static void RunMainUI(bool isWpf)
-    {
-        InitConfig();
-
-        if (isWpf)
-        {
-            RunUI(new MainWindow());
-        }
-        else
-        {
-            RunUI(new MainForm());
-        }
-    }
-
     internal static void RunUI(AppForm form)
     {
-        m_form = App.Current.MainWindow == null && true;
         Application.Run(form);
     }
 
     internal static void RunUI(AppWindow window)
     {
-        if (System.Windows.Application.Current == null)
+        new WPFApp().Run(window);
+    }
+
+    internal static void RunMainUI(bool isWpf)
+    {
+        if (App.Current.MainWindow == null)
         {
-            m_form = App.Current.MainWindow == null && false;
-            new WPFApp().Run(window);
+            InitConfig();
+
+            if (isWpf)
+            {
+                RunUI(new MainWindow());
+            }
+            else
+            {
+                RunUI(new MainForm());
+            }
         }
     }
 
@@ -73,7 +70,7 @@ public class WindowManager
     {
         System.Windows.Application.Current?.Shutdown();
 
-        if (m_form)
+        if (App.Current.MainWindow is AppForm)
         {
             Application.ExitThread();
         }

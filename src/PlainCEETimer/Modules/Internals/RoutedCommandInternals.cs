@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PlainCEETimer.Modules.Reflection;
 
 namespace System.Windows.Input;
 
@@ -21,7 +22,7 @@ internal class RoutedCommandInternals
 
     static RoutedCommandInternals()
     {
-        m_fiInputGestureCollection = typeof(RoutedCommand).GetField(nameof(_inputGestureCollection), BindingFlags.Instance | BindingFlags.NonPublic);
+        typeof(RoutedCommand).RevealMember(out m_fiInputGestureCollection, nameof(_inputGestureCollection));
     }
 
     public static RoutedCommandInternals AttachTo(RoutedCommand target)
