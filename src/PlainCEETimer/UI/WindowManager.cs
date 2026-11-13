@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using MS.Internal;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
@@ -39,51 +41,73 @@ public class WindowManager
         ActivateRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    internal static void RunUI(AppForm form)
-    {
-        Application.Run(form);
-    }
-
-    internal static void RunUI(AppWindow window)
-    {
-        new WPFApp().Run(window);
-    }
-
-    internal static void RunMainUI(bool isWpf)
+    internal static void RunMainUI()
     {
         if (App.Current.MainWindow == null)
         {
             InitConfig();
 
-            if (isWpf)
+            if (App.Current.AppConfig.Display.UseWPF)
             {
-                RunUI(new MainWindow());
+                RunWindow<MainWindow>();
             }
             else
             {
-                RunUI(new MainForm());
+                RunForm(new MainForm());
             }
+        }
+    }
+
+    internal static void RunWindow<TWindow>()
+        where TWindow : AppWindow, new()
+    {
+        new WPFApp().Run(new TWindow());
+    }
+
+    internal static void RunForm(AppForm form)
+    {
+        Application.Run(form);
+    }
+
+    internal static void ShowFormSafe(AppForm form)
+    {
+        if (GetMessageLoopStatus())
+        {
+            form.ReActivate();
+        }
+        else
+        {
+            RunForm(form);
         }
     }
 
     internal static void EndUI()
     {
-        System.Windows.Application.Current?.Shutdown();
-
         if (App.Current.MainWindow is AppForm)
         {
-            Application.ExitThread();
+            Application.Exit();
         }
+
+        System.Windows.Application.Current?.Shutdown();
+    }
+
+    private static bool GetMessageLoopStatus()
+    {
+        if (Application.MessageLoop)
+        {
+            return true;
+        }
+
+        if (Dispatcher.FromThread(Thread.CurrentThread) is Dispatcher d)
+        {
+            return d._frameDepth > 0;
+        }
+
+        return false;
     }
 
     private static void InitConfig()
     {
         FrameworkAppContextSwitches._useAdornerForTextboxSelectionRendering = -1;
-    }
-
-    ~WindowManager()
-    {
-        TopMostChanged = null;
-        ActivateRequested = null;
     }
 }

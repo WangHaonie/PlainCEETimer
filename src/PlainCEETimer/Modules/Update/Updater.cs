@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI;
@@ -271,13 +270,6 @@ internal class Updater
             FormDownloader = new(url, expected);
         }
 
-        if (Application.MessageLoop)
-        {
-            FormDownloader.ReActivate();
-        }
-        else
-        {
-            WindowManager.RunUI(FormDownloader);
-        }
+        WindowManager.ShowFormSafe(FormDownloader);
     }
 }

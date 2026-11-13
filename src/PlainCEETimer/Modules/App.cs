@@ -206,7 +206,7 @@ internal partial class App
                 {
                     new Action(UacHelper.CheckAdmin).Start();
                     Win32TaskScheduler.Initialize();
-                    WindowManager.RunMainUI(AppConfig.Display.UseWPF);
+                    WindowManager.RunMainUI();
                 }
                 else
                 {

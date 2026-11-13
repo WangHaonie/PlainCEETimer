@@ -141,16 +141,7 @@ public partial class AppWindow : Window, IAppWindow
             AllowsTransparency = true;
             Background = Brushes.Transparent;
 
-            if (!SystemVersion.IsWindows11)
-            {
-                WindowChrome.SetWindowChrome(this, new()
-                {
-                    CaptionHeight = 0D,
-                    CornerRadius = this.GetResource<CornerRadius>(KnownResources.WindowBorderCornerRadius),
-                    GlassFrameThickness = default
-                });
-            }
-            else
+            if (SystemVersion.IsWindows11)
             {
                 NativeRoundCorner = true;
             }
@@ -220,6 +211,15 @@ public partial class AppWindow : Window, IAppWindow
         if (NativeRoundCorner)
         {
             Win32UI.PnSetRoundCornerEx(hwnd, false);
+        }
+        else if (SetRoundCorner)
+        {
+            WindowChrome.SetWindowChrome(this, new()
+            {
+                CaptionHeight = 0D,
+                CornerRadius = this.GetResource<CornerRadius>(KnownResources.WindowBorderCornerRadius),
+                GlassFrameThickness = default
+            });
         }
 
         if (WindowStyle != WindowStyle.None)
