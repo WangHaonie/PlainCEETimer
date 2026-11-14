@@ -1,9 +1,10 @@
-﻿﻿namespace PlainCEETimer.SourceGenerators.Models;
+﻿using System.Collections.Immutable;
+
+namespace PlainCEETimer.SourceGenerators.Models;
 
 public record PropertyBackingFieldModel(
     string Namespace,
-    List<string> TypeHierarchy,
-    List<string> TypeKindKeywords,
+    ImmutableArray<TypeLevel> TypeLevels,
     string GroupKey,
     string PropertyModifiers,
     string PropertyType,

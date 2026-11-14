@@ -36,11 +36,11 @@ public static class SystemSettings
         }
     }
 
-    public static SystemSetting<bool> AppsUseLightTheme { get; }
+    public readonly static SystemSetting<bool> AppsUseLightTheme;
 
-    public static SystemSetting<bool> EnableTransparency { get; }
+    public readonly static SystemSetting<bool> EnableTransparency;
 
-    public static SystemSetting<bool> ClientAreaAnimation { get; }
+    public readonly static SystemSetting<bool> ClientAreaAnimation;
 
     private static readonly ISystemSetting[] All;
 

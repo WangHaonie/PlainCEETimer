@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlainCEETimer.Modules.Annotations.SourceGenerators;
 
 namespace PlainCEETimer.Modules;
 
-public sealed class SystemSetting<T> : ISystemSetting
+public sealed partial class SystemSetting<T> : ISystemSetting
 {
-    public T Value => value;
+    [BackingField("value")]
+    public partial T Value { get; }
 
     public event EventHandler<SystemSettingChangedEventArgs<T>> Changed;
 
-    private T value;
     private readonly Func<T> GetValue;
     private static readonly EqualityComparer<T> Comparer = EqualityComparer<T>.Default;
 
