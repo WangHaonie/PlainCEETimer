@@ -243,3 +243,8 @@ typedef struct _ACCENT_POLICY
 #define ASB_DEFINED_FOPTIONS(dw, op)    (ASB_GET_FOPTIONS(dw) & op)
 
 NATIVES_EXPORT BOOL NATIVESAPI PnApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData);
+
+#define UXTHEME_OPENTHEMEDATA                   UXTHEME_DLL, nameof(OpenThemeData)
+#define UXTHEME_CLOSETHEMEDATA                  UXTHEME_DLL, nameof(CloseThemeData)
+
+NATIVES_EXPORT void NATIVESAPI PnHookThemeData();

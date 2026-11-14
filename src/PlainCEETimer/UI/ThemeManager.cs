@@ -120,6 +120,7 @@ public static class ThemeManager
     private static void UpdateAppTheme()
     {
         Win32UI.PnEnableDarkModeForApp(shouldUseDarkMode);
+        Win32UI.PnHookThemeData();
     }
 
     private static void OnAppsUseLightThemeChanged(object sender, SystemSettingChangedEventArgs<bool> e)

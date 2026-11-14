@@ -3,6 +3,7 @@
 #include "Theme.h"
 #include "Utils.h"
 #include "Win32/IATHook.h"
+#include <atlsimpcoll.h>
 #include <BrushTable.h>
 #include <detours.h>
 #include <Uxtheme.h>
@@ -31,6 +32,8 @@ DeclDelegateType(DrawThemeText);
 DeclDelegateType(DrawEdge);
 DeclDelegateType(FrameRect);
 DeclDelegateType(GetThemeColor);
+DeclDelegateType(OpenThemeData);
+DeclDelegateType(CloseThemeData);
 
 static DTTOPTS s_dttoptions = { sizeof(DTTOPTS), DTT_TEXTCOLOR };
 static BrushTable s_brushes;
@@ -48,6 +51,8 @@ DeclDelegateField(DrawThemeText);
 DeclDelegateField(DrawEdge);
 DeclDelegateField(FrameRect);
 DeclDelegateField(GetThemeColor);
+DeclDelegateField(OpenThemeData);
+DeclDelegateField(CloseThemeData);
 
 DeclIatData(OpenNcThemeData, Comctl);
 DeclIatData(OpenThemeDataForDpi, Comctl);
@@ -60,6 +65,7 @@ DeclIatData(FrameRect, Comdlg);
 
 static bool g_bHookThemedPaintInit;
 static DWORD g_dwHookThemedPaintRef;
+static CSimpleArray<HTHEME> g_phtList;
 
 #define DTT_ARGS        hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, pRect
 #define DTT_ARGS_DECL   HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchText, DWORD dwTextFlags, LPRECT pRect
@@ -370,27 +376,41 @@ static bool PnDrawProgressBackground(DTBG_ARGS_DECL)
     {
         return false;
     }
-    
-    switch (iPartId)
-    {
-        case PP_PULSEOVERLAY:
-        case PP_MOVEOVERLAY:
-        case PP_PULSEOVERLAYVERT:
-        case PP_MOVEOVERLAYVERT:
-        case PP_TRANSPARENTBAR:
-        case PP_TRANSPARENTBARVERT:
-            return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);
 
-        case PP_FILL:
-        case PP_FILLVERT:
+    if (g_phtList.Find(hTheme) == -1)
+    {
+        switch (iPartId)
         {
-            switch (iStateId)
+            case PP_TRANSPARENTBAR:
+            case PP_TRANSPARENTBARVERT:
+                return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);
+
+            case PP_FILL:
+            case PP_FILLVERT:
             {
-                CASE(PBFS_NORMAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_NORMAL, COLOR_EMPTY, false));
-                CASE(PBFS_ERROR, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_ERROR, COLOR_EMPTY, false));
-                CASE(PBFS_PAUSED, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PAUSED, COLOR_EMPTY, false));
-                CASE(PBFS_PARTIAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PARTIAL, COLOR_EMPTY, false));
+                switch (iStateId)
+                {
+                    CASE(PBFS_NORMAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_NORMAL, COLOR_EMPTY, false));
+                    CASE(PBFS_ERROR, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_ERROR, COLOR_EMPTY, false));
+                    CASE(PBFS_PAUSED, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PAUSED, COLOR_EMPTY, false));
+                    CASE(PBFS_PARTIAL, PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_PARTIAL, COLOR_EMPTY, false));
+                }
             }
+        }
+    }
+    else
+    {
+        switch (iPartId)
+        {
+            case PP_MOVEOVERLAY:
+            case PP_MOVEOVERLAYVERT:
+            case PP_TRANSPARENTBAR:
+            case PP_TRANSPARENTBARVERT:
+                return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK_NORMAL, COLOR_EMPTY, false);
+
+            case PP_FILL:
+            case PP_FILLVERT:
+                return PnDrawBackground(hdc, pRect, DCOLOR_PROGRESS_BACK, COLOR_EMPTY, false);
         }
     }
 
@@ -857,6 +877,30 @@ static HRESULT WINAPI DrawThemeText_(HTHEME hTheme, HDC hdc, int iPartId, int iS
     return g_DrawThemeText(hTheme, hdc, iPartId, iStateId, pszText, cchText, dwTextFlags, dwTextFlags2, pRect);
 }
 
+static HTHEME WINAPI OpenThemeData_(HWND hwnd, LPCWSTR pszClassList)
+{
+    HTHEME ht = g_OpenThemeData(hwnd, pszClassList);
+    
+    if (ht && WString_Equals(L"Indeterminate::Progress", pszClassList, false))
+    {
+        g_phtList.Add(ht);
+    }
+
+    return ht;
+}
+
+static HRESULT WINAPI CloseThemeData_(HTHEME hTheme)
+{
+    HRESULT hr = g_CloseThemeData(hTheme);
+
+    if (SUCCEEDED(hr))
+    {
+        g_phtList.Remove(hTheme);
+    }
+
+    return hr;
+}
+
 static HRESULT GetThemeColor_(HTHEME hTheme, int iPartId, int iStateId, int iPropId, COLORREF* pColor)
 {
     if (IatHook_IsEnabled(IatHookComctlGetThemeColor)
@@ -1189,4 +1233,17 @@ BOOL NATIVESAPI PnApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
     }
 
     return FALSE;
+}
+
+void NATIVESAPI PnHookThemeData()
+{
+    if (!g_OpenThemeData)
+    {
+        LoadFunction(&g_OpenThemeData, UXTHEME_OPENTHEMEDATA);
+        LoadFunction(&g_CloseThemeData, UXTHEME_CLOSETHEMEDATA);
+        DetourBegin();
+        DetourHook(g_OpenThemeData, OpenThemeData_);
+        DetourHook(g_CloseThemeData, CloseThemeData_);
+        DetourEnd();
+    }
 }

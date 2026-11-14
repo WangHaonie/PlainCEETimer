@@ -262,6 +262,9 @@ internal unsafe static class Win32UI
     [DllImport(App.NativesDll, EntryPoint = "#47")]
     public static extern void PnUnhookClassicEdge();
 
+    [DllImport(App.NativesDll, EntryPoint = "#76")]
+    public static extern void PnHookThemeData();
+
     [DllImport(App.NativesDll, EntryPoint = "#5")]
     public static extern void PnSetTopMostWindow(IntPtr hWnd);
 
