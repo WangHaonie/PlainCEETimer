@@ -59,6 +59,12 @@
     <Compile Update="UI\Controls\PlainDateTimePicker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainDropDown.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\Controls\PlainFlyout.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UI\Controls\PlainFontDialog.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -94,9 +100,6 @@
     </Compile>
     <Compile Update="UI\Controls\PlainToolTip.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="UI\Controls\PlainFlyout.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Update="UI\Controls\PlainTrackBar.cs">
       <SubType>Component</SubType>

@@ -15,11 +15,9 @@ namespace PlainCEETimer.UI.Controls;
 public sealed class ColorBlock : PlainLabel
 {
     [NoConstants]
-    private sealed class ScreenColorPicker : AppForm
+    private sealed class ScreenColorPicker : PlainDropDown
     {
         public Color Result => CurrentColor;
-
-        protected override AppWindowStyle Params => AppWindowStyle.RoundCorner;
 
         private int InfoHeight;
         private int InfoLineHeight;
@@ -127,6 +125,8 @@ public sealed class ColorBlock : PlainLabel
             DrawPreview(g);
             DrawInfoText(g);
             gScreenshot.Destroy();
+
+            base.OnPaint(e);
         }
 
         protected override void Dispose(bool disposing)

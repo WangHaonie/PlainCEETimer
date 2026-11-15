@@ -5,7 +5,7 @@ using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
 
-public abstract class PlainFlyout : AppForm
+public abstract class PlainFlyout : PlainDropDown
 {
     protected sealed override bool SuppressAutoPosition => true;
 

@@ -93,13 +93,12 @@ public abstract class AppForm : Form, IAppWindow, IThemeAwareEx
     private readonly bool suggestMaxWidth;
     private readonly bool HasSizable;
     private readonly bool SetRoundCorner;
-    private readonly bool SmallRoundCorner;
     private readonly bool Special;
     private readonly bool OnEscClosing;
     private const int AutoWrapMargin = 10;
     private const string AppFontFamily = "Segoe UI";
 
-    protected sealed override CreateParams CreateParams
+    protected override CreateParams CreateParams
     {
         get
         {
@@ -123,7 +122,6 @@ public abstract class AppForm : Form, IAppWindow, IThemeAwareEx
         OnEscClosing = CheckParam(AppWindowStyle.OnEscClosing);
         KeyPreview = CheckParam(AppWindowStyle.KeyPreview);
         SetRoundCorner = CheckParam(AppWindowStyle.RoundCorner);
-        SmallRoundCorner = CheckParam(AppWindowStyle.RoundCornerSmall);
         HasSizable = CheckParam(AppWindowStyle.Sizable);
         suggestMaxWidth = CheckParam(AppWindowStyle.SuggestMaxWidth);
         InitEvents();
@@ -146,18 +144,12 @@ public abstract class AppForm : Form, IAppWindow, IThemeAwareEx
             SizeGripStyle = SizeGripStyle.Hide;
         }
 
-        if (SetRoundCorner)
+        if (CheckParam(AppWindowStyle.NoBorder))
         {
             ControlBox = false;
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             ShowInTaskbar = false;
-
-            if (SmallRoundCorner)
-            {
-                RoundCornerRadius = 7;
-            }
-
             ClientSize = default;
         }
 
@@ -252,7 +244,7 @@ public abstract class AppForm : Form, IAppWindow, IThemeAwareEx
         {
             if (SystemVersion.IsWindows11)
             {
-                Win32UI.PnSetRoundCornerEx(Handle, SmallRoundCorner);
+                Win32UI.PnSetRoundCornerEx(Handle, false);
             }
             else
             {

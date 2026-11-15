@@ -21,8 +21,14 @@ public sealed class PlainTextBox : TextBox, IThemeAwareEx
         }
 
         protected override AppWindowStyle Params
-            => AppWindowStyle.RoundCornerSmall | AppWindowStyle.OnEscClosing | AppWindowStyle.ModelessDialog
-                | AppWindowStyle.HideBeforeClose;
+        {
+            get
+            {
+                var p = base.Params;
+                p |= AppWindowStyle.ModelessDialog | AppWindowStyle.HideBeforeClose;
+                return p;
+            }
+        }
 
         protected override Point Offset => new(-4, -4);
 
