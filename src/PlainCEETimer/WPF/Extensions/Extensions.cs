@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using PlainCEETimer.Modules.Annotations.Fody;
 using WFColor = System.Drawing.Color;
 using WFPoint = System.Drawing.Point;
@@ -59,16 +60,29 @@ public static class Extensions
         return dip / PtToDipRatio;
     }
 
+    public static DependencyObject GetParent(this DependencyObject obj)
+    {
+        if (obj is Visual || obj is Visual3D)
+        {
+            return VisualTreeHelper.GetParent(obj) ?? (obj as FrameworkElement)?.Parent;
+        }
+
+        if (obj is FrameworkContentElement fce)
+        {
+            return fce.Parent;
+        }
+
+        return obj is FrameworkElement fe ? fe.Parent : null;
+    }
+
     public static bool IsChildOf(this DependencyObject child, DependencyObject parent)
     {
-        while (child != null)
+        for (; child != null; child = VisualTreeHelper.GetParent(child))
         {
             if (child == parent)
             {
                 return true;
             }
-
-            child = VisualTreeHelper.GetParent(child);
         }
 
         return false;
@@ -76,15 +90,13 @@ public static class Extensions
 
     public static bool GetParent<T>(this DependencyObject source, out T instance)
     {
-        while (source != null && source is not T)
+        for (var current = source; current != null; current = current.GetParent())
         {
-            source = VisualTreeHelper.GetParent(source);
-        }
-
-        if (source is T value)
-        {
-            instance = value;
-            return true;
+            if (current is T value)
+            {
+                instance = value;
+                return true;
+            }
         }
 
         instance = default;

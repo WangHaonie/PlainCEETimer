@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media;
 using PlainCEETimer.Modules;
+using PlainCEETimer.WPF.Extensions;
 
 namespace PlainCEETimer.WPF.Modules;
 
@@ -23,10 +23,9 @@ public static class Win32ContextMenu
 
     public static bool TryFindContextMenu(DependencyObject start, DependencyObject end, out ContextMenu menu)
     {
-        var current = start;
         menu = null;
 
-        while (current != null)
+        for (var current = start; current != null; current = current.GetParent())
         {
             if (current is FrameworkElement)
             {
@@ -43,15 +42,6 @@ public static class Win32ContextMenu
             {
                 break;
             }
-
-            var parent = VisualTreeHelper.GetParent(current);
-
-            if (parent == null && current is FrameworkElement fe)
-            {
-                parent = fe.Parent;
-            }
-
-            current = parent;
         }
 
         return false;

@@ -6,10 +6,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
+using PlainCEETimer.WPF.Extensions;
 
 namespace PlainCEETimer.WPF.Modules;
 
@@ -611,31 +611,14 @@ public static class SmoothScroll
         }
     }
 
-    private static DependencyObject GetParent(DependencyObject obj)
-    {
-        if (obj is Visual || obj is Visual3D)
-        {
-            return VisualTreeHelper.GetParent(obj);
-        }
-
-        if (obj is FrameworkContentElement fce)
-        {
-            return fce.Parent;
-        }
-
-        return LogicalTreeHelper.GetParent(obj);
-    }
-
     private static ScrollViewer FindScrollViewer(DependencyObject obj)
     {
-        while (obj != null)
+        for (var current = obj; current != null; current = current.GetParent())
         {
-            if (obj is ScrollViewer sv)
+            if (current is ScrollViewer sv)
             {
                 return sv;
             }
-
-            obj = GetParent(obj);
         }
 
         return null;
@@ -655,14 +638,12 @@ public static class SmoothScroll
 
     private static ScrollViewer FindScrollableScrollViewer(DependencyObject obj, int delta)
     {
-        while (obj != null)
+        for (var current = obj; current != null; current = current.GetParent())
         {
-            if (obj is ScrollViewer sv && CanScroll(sv, delta))
+            if (current is ScrollViewer sv && CanScroll(sv, delta))
             {
                 return sv;
             }
-
-            obj = GetParent(obj);
         }
 
         return null;
