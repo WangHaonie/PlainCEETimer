@@ -523,8 +523,7 @@ static bool PnDrawTabBackground(DTBG_ARGS_DECL)
 {
     switch (iPartId)
     {
-        case TABP_PANE:
-            return PnDrawBackground(hdc, pRect, DCOLOR_TAB_PANE_BACK, DCOLOR_TAB_BORDER, true);
+        CASE(TABP_PANE, PnDrawBackground(hdc, pRect, DCOLOR_TAB_PANE_BACK, DCOLOR_TAB_BORDER, true));
 
         case TABP_TOPTABITEM:
         case TABP_TOPTABITEMLEFTEDGE:
@@ -533,12 +532,9 @@ static bool PnDrawTabBackground(DTBG_ARGS_DECL)
         {
             switch (iStateId)
             {
-                case TTIS_NORMAL:
-                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK, DCOLOR_TAB_BORDER);
-                case TTIS_HOT:
-                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_HOT, DCOLOR_TAB_BORDER);
-                case TTIS_SELECTED:
-                    return PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_SELECTED, DCOLOR_TAB_BORDER);
+                CASE(TTIS_NORMAL, PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK, DCOLOR_TAB_BORDER));
+                CASE(TTIS_HOT, PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_HOT, DCOLOR_TAB_BORDER));
+                CASE(TTIS_SELECTED, PnDrawTabItemBackground(hdc, pRect, DCOLOR_TAB_HEADER_BACK_SELECTED, DCOLOR_TAB_BORDER));
             }
         }
     }
