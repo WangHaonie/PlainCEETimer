@@ -970,16 +970,21 @@ static int WINAPI FrameRect_(HDC hDC, const RECT* lprc, HBRUSH hbr)
 
 static BOOL PnEnableBlurBehind(HWND hWnd, BOOL bAcrylic, DWORD abgrGradient, bool bEnabled)
 {
-    if (!bAcrylic)
+    ACCENT_STATE state = ACCENT_DISABLED;
+
+    if (bEnabled)
     {
-        return FALSE; // to do
+        state = bAcrylic ? ACCENT_ENABLE_ACRYLICBLURBEHIND : ACCENT_ENABLE_BLURBEHIND;
+
+        if (bAcrylic && !(abgrGradient >> 24))
+        {
+            abgrGradient |= 0x01000000;
+        }
     }
 
     ACCENT_POLICY ap =
     {
-        ACCENT_ENABLE_ACRYLICBLURBEHIND,
-        ACCENT_WINDOWS11_LUMINOSITY | ACCENT_BORDER_ALL,
-        abgrGradient
+        state, ACCENT_NONE, abgrGradient
     };
 
     WINDOWCOMPOSITIONATTRIBDATA wcad =
@@ -1014,7 +1019,9 @@ static BOOL PnApplySystemBackdropCore(HWND hWnd, DWORD dwFlags, PVOID pvData)
         case ASBT_ACRYLIC:
         case ASBT_AERO:
         {
-            if (dwType == ASBT_ACRYLIC && ASB_DEFINED_FOPTIONS(dwFlags, ASBF_USE_DWMAPI))
+            if (dwType == ASBT_ACRYLIC
+                && ASB_DEFINED_FOPTIONS(dwFlags, ASBF_USE_DWMAPI)
+                && !ASB_DEFINED_FOPTIONS(dwFlags, ASBF_ACCENT_POLICY))
             {
                 goto dwmapi;
             }
@@ -1219,12 +1226,9 @@ BOOL NATIVESAPI PnApplySystemBackdrop(HWND hWnd, DWORD dwFlags, PVOID pvData)
 {
     if (hWnd && PnApplySystemBackdropCore(hWnd, dwFlags, pvData))
     {
-        MARGINS margins;
-        int* s = CastP(int*, &margins);
-        int* e = s + 4;
-        int value = ASB_GET_STATUS(dwFlags) ? -1 : 0;
-        while (s < e) *s++ = value;
-        DwmExtendFrameIntoClientArea(hWnd, &margins);
+        MARGINS m;
+        FillMemory(&m, sizeof(m), ASB_GET_STATUS(dwFlags) ? -1 : 0);
+        DwmExtendFrameIntoClientArea(hWnd, &m);
         return TRUE;
     }
 

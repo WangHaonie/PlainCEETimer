@@ -30,6 +30,7 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
     }
 
     private SystemBackdrop backdrop;
+    private uint tint = SystemBackdrop.DefaultTint;
 
     public void ShowActivated(bool activate)
     {
@@ -49,13 +50,19 @@ public class WinFormsWindowStyles(AppForm form) : IWindowStyles
 
         if (enabled)
         {
-            backdrop ??= new(form.Handle);
+            backdrop ??= new(form.Handle, type, tint);
             backdrop.BackdropType = type;
             return backdrop.Apply();
         }
 
         backdrop?.Clear();
         return false;
+    }
+
+    public void SetBackdropTint(uint tint)
+    {
+        this.tint = tint;
+        backdrop?.Tint = tint;
     }
 
     public void SetPeekStyle(int dw)

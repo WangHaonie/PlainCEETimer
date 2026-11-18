@@ -442,7 +442,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         Styles.Opacity = General.Opacity / 100D;
         var backdrop = AppParams.MainBackdropAcrylic;
         BackOpacity = backdrop ? 0.01D : 1D;
-        Styles.ApplyBackdrop(backdrop, Natives.ASBT_ACRYLIC);
+        Styles.ApplyBackdrop(backdrop, SystemBackdrop.SuggestedBackdrop);
         Styles.SetPeekStyle(General.Peek);
 
         if (BorderColorObj.Enabled)
@@ -753,8 +753,21 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         Countdown.SetRecipient(CountdownRecipient.TrayText, ShowTrayText);
     }
 
+    partial void OnBackgroundChanged(Color value)
+    {
+        if (Styles != null)
+        {
+            Styles.SetBackdropTint(MakeTint(value));
+        }
+    }
+
     private static void EnsureCountdown()
     {
         CountdownManager.EnsureService();
+    }
+
+    private static uint MakeTint(Color c)
+    {
+        return SystemBackdrop.TintAlpha | (uint)((c.B << 16) | (c.G << 8) | c.R);
     }
 }

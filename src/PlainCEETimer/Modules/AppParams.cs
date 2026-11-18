@@ -3,6 +3,7 @@ using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Annotations.SourceGenerators;
 using PlainCEETimer.Modules.Configuration;
 using PlainCEETimer.Modules.Extensions;
+using PlainCEETimer.UI;
 
 namespace PlainCEETimer.Modules;
 
@@ -44,7 +45,7 @@ internal static partial class AppParams
             m_DebugMode = dbg;
             m_DisableWFPMv2 = dbg && info.DisableWFPMv2;
             m_EnableCommDlgPMv2 = dbg && info.EnableCommDlgPMv2;
-            m_MainBackdropAcrylic = dbg && info.MainBackdropAcrylic && SystemVersion.IsWindows11;
+            m_MainBackdropAcrylic = dbg && info.MainBackdropAcrylic && SystemBackdrop.BasicSupported;
             m_TSFormat = dbg ? info.TSFormat : null;
             m_TSMax = dbg ? info.TSMax.TruncateToSeconds() : ConfigValidator.MaxTick;
         }

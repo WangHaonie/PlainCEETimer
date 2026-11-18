@@ -138,6 +138,7 @@ public sealed class SettingsForm : AppForm
     private ComboTrigger comboTrigger;
     private readonly bool IsTaskStartUp = Startup.IsTaskSchd;
     private readonly bool IsDebug = AppParams.DebugMode;
+    private readonly bool BdAllowed = SystemBackdrop.BasicSupported;
     private readonly ActionInvoker<bool> SettingsChangedInvoker;
 
     private const int DebugTriggerArea_value = 15;
@@ -499,10 +500,19 @@ public sealed class SettingsForm : AppForm
                             PtspTSMax = b.TimeSpanPicker(200, SettingsChanged).With(x => x.MaxValue = TimeSpan.MaxValue)
                         ]),
 
-                        GBoxDbgWndStyles = b.GroupBox("窗口样式",
+                        GBoxDbgWndStyles = b.Conditional(BdAllowed, b => b.GroupBox("窗口样式",
                         [
-                            CheckBoxMainBackdrop = b.CheckBox("启用主窗口 Backdrop 效果 (Acrylic)", SettingsChanged)
-                        ])
+                            CheckBoxMainBackdrop = b.CheckBox("启用主窗口背景模糊效果 (Acrylic)", (_, _) =>
+                            {
+                                if (CheckBoxMainBackdrop.Checked && !CheckBoxMainFormUseWPF.Checked && !SystemVersion.IsWindows11
+                                    && MessageX.Warn("目前启用此选项会导致主窗口圆角缺失，是否继续？", MessageButtons.YesNo) == false)
+                                {
+                                    CheckBoxMainBackdrop.Checked = false;
+                                }
+
+                                SettingsChanged();
+                            })
+                        ])),
                     ])
                 ),
                 #endregion
@@ -729,9 +739,12 @@ public sealed class SettingsForm : AppForm
             CenterControlY(LabelTSMax, PtspTSMax);
             GroupBoxAutoAdjustHeight(GBoxTSPresent, PtspTSMax, 6);
 
-            ArrangeControlYL(GBoxDbgWndStyles, GBoxTSPresent, 0, 2);
-            GroupBoxArrageControl(GBoxDbgWndStyles, CheckBoxMainBackdrop, 4);
-            GroupBoxAutoAdjustHeight(GBoxDbgWndStyles, CheckBoxMainBackdrop, 6);
+            if (BdAllowed)
+            {
+                ArrangeControlYL(GBoxDbgWndStyles, GBoxTSPresent, 0, 2);
+                GroupBoxArrageControl(GBoxDbgWndStyles, CheckBoxMainBackdrop, 4);
+                GroupBoxAutoAdjustHeight(GBoxDbgWndStyles, CheckBoxMainBackdrop, 6);
+            }
         }
         #endregion
 

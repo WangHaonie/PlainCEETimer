@@ -229,13 +229,10 @@ typedef struct _ACCENT_POLICY
 #define ASBT_AERO                       5
 
 #define ASB_FORCE_OPTIONS_MASK          0x000000F0
-#define ASBF_WIN10_ACRYLIC              0b00000001
-#define ASBF_ALLOW_AERO                 0b00000010
+#define ASBF_ACCENT_POLICY              0b00000001
 #define ASBF_USE_DWMAPI                 0b00000100
 
 #define ASB_STATUS_MASK                 0x00000F00
-#define ASBS_DISABLED                   FALSE;
-#define ASBS_ENABLED                    TRUE;
 
 #define ASB_GET_BACKDROP(dw)            (((DWORD)(dw)) & ASB_BACKDROP_TYPE_MASK)
 #define ASB_GET_FOPTIONS(dw)            ((((DWORD)(dw)) & ASB_FORCE_OPTIONS_MASK) >> 4)

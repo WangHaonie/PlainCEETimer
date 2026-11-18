@@ -231,12 +231,11 @@ public static class WinError
 [CompilerRemove]
 public static class Natives
 {
-    public const int ASBT_AUTO = 0;
     public const int ASBT_NONE = 1;
     public const int ASBT_ACRYLIC = 3;
-    public const int ASBT_MICA = 2;
-    public const int ASBT_MICAALT = 4;
     public const int ASBT_AERO = 5;
+
+    public const int ASBF_ACCENT_POLICY = 0b00000001;
 
     public const int IDM_FIRST = 40000;
     public const int IDM_CDCCM_FROMCLIPBOARD = IDM_FIRST + 1;

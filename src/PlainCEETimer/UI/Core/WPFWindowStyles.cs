@@ -40,6 +40,7 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
     }
 
     private SystemBackdrop backdrop;
+    private uint tint = SystemBackdrop.DefaultTint;
 
     public void ShowActivated(bool activate)
     {
@@ -51,13 +52,19 @@ public class WPFWindowStyles(AppWindow window) : IWindowStyles
     {
         if (enabled)
         {
-            backdrop ??= new(window.Handle);
+            backdrop ??= new(window.Handle, type, tint);
             backdrop.BackdropType = type;
             return backdrop.Apply();
         }
 
         backdrop?.Clear();
         return false;
+    }
+
+    public void SetBackdropTint(uint tint)
+    {
+        this.tint = tint;
+        backdrop?.Tint = tint;
     }
 
     public void SetPeekStyle(int dw)
