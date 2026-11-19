@@ -108,8 +108,10 @@ public static class WinUser
     public const int WS_POPUP = unchecked((int)0x80000000);
     public const int WS_CLIPCHILDREN = 0x02000000;
     public const int WS_EX_TOPMOST = 0x00000008;
+    public const int WS_EX_TOOLWINDOW = 0x00000080;
     public const int WS_EX_CLIENTEDGE = 0x00000200;
     public const int WS_EX_COMPOSITED = 0x02000000;
+    public const int WS_EX_NOACTIVATE = 0x08000000;
 
     public const int BS_TYPEMASK = 0x0000000F;
     public const int BS_PUSHBUTTON = 0x00000000;
@@ -128,7 +130,12 @@ public static class WinUser
     public const int EVENT_SYSTEM_FOREGROUND = 0x0003;
     public const int EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
 
+    public const int SWP_NOSIZE = 0x0001;
     public const int SWP_NOACTIVATE = 0x0010;
+    public const int SWP_SHOWWINDOW = 0x0040;
+
+    public const int PW_CLIENTONLY = 0x00000001;
+    public const int PW_RENDERFULLCONTENT = 0x00000002;
 }
 
 [NoConstants]

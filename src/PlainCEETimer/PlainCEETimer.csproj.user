@@ -29,6 +29,9 @@
     <Compile Update="UI\Controls\ColorBlock.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\Controls\PlainDragImage.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UI\Controls\ListViewDialog.cs">
       <SubType>Form</SubType>
     </Compile>

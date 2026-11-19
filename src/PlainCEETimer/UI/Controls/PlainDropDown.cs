@@ -14,15 +14,21 @@ public class PlainDropDown : AppForm
         get
         {
             var cp = base.CreateParams;
+            var s = cp.Style;
+            s |= WinUser.WS_POPUP;
 
-            if (!isW11)
-            {
-                cp.Style |= WinUser.WS_BORDER | WinUser.WS_POPUP;
-            }
+            if (UseStyles)
+                s |= WinUser.WS_BORDER;
+            else
+                s &= ~WinUser.WS_BORDER;
 
+            cp.Style = s;
+            cp.ExStyle |= WinUser.WS_EX_TOOLWINDOW;
             return cp;
         }
     }
+
+    protected virtual bool UseStyles => true;
 
     private static readonly bool isW11 = SystemVersion.IsWindows11;
 
@@ -30,7 +36,7 @@ public class PlainDropDown : AppForm
     {
         base.OnHandleCreated(e);
 
-        if (isW11)
+        if (isW11 && UseStyles)
         {
             Win32UI.PnSetRoundCornerEx(Handle, true);
         }

@@ -180,7 +180,8 @@ public sealed class ColorBlock : PlainLabel
     {
         public unsafe bool OnMessage(MSG* lpMsg)
         {
-            return lpMsg->message == WinUser.WM_KEYDOWN && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
+            return lpMsg->message == WinUser.WM_KEYDOWN
+                && ctrl.WmKeyDown((Keys)(int)lpMsg->wParam);
         }
     }
 
@@ -216,12 +217,12 @@ public sealed class ColorBlock : PlainLabel
 
     public event EventHandler ColorChanged;
 
-    private bool IsDragging;
     private bool IsPicking;
     private bool IsPickingCancelled;
-    private Point MouseLocation;
     private Rectangle ParentBounds;
+    private PlainDragImage DragImage;
     private ScreenColorPicker ColorPicker;
+    private readonly ControlDragInfo DragInfo;
     private readonly bool IsPreview;
     private readonly bool IsFore;
     private readonly ColorBlock PreviewBlock;
@@ -235,6 +236,7 @@ public sealed class ColorBlock : PlainLabel
         IsFore = isFore;
         PreviewBlock = preview;
         MsgFilter = new(this);
+        DragInfo = new(this);
     }
 
     protected override void OnClick(EventArgs e)
@@ -256,15 +258,12 @@ public sealed class ColorBlock : PlainLabel
     {
         if (!IsPreview)
         {
-            var mButtom = e.Button;
-
-            if (!IsDragging && mButtom == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && !DragInfo.IsDragging)
             {
-                IsDragging = true;
-                Capture = true;
                 ParentBounds = ParentForm.Bounds;
+                DragInfo.Begin(e.Location);
             }
-            else if (IsPicking && mButtom == MouseButtons.Right)
+            else if (e.Button == MouseButtons.Right && IsPicking)
             {
                 CancelScreenColorPicker();
             }
@@ -275,24 +274,37 @@ public sealed class ColorBlock : PlainLabel
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
-        if (!IsPreview && IsDragging)
+        if (!IsPreview)
         {
-            Cursor = Cursors.Cross;
-            MouseLocation = Cursor.Position;
+            DragInfo.Update();
 
-            if (!IsPicking && !ParentBounds.Contains(MouseLocation))
+            if (DragInfo.IsDragging)
             {
-                IsPicking = true;
-                AppMessageFilter.AddMessageFilter(MsgFilter);
-                ColorPicker = new();
-                HideParentForm();
-                ColorPicker.Show();
-                ColorPicker.Activate();
-            }
+                Cursor = Cursors.Default;
 
-            if (IsPicking)
-            {
-                ColorPicker.UpdateFrame(MouseLocation);
+                if (!IsPicking)
+                {
+                    if (ParentBounds.Contains(DragInfo.Location))
+                    {
+                        UpdateDrag();
+                    }
+                    else
+                    {
+                        DestroyDrag();
+                        IsPicking = true;
+                        AppMessageFilter.AddMessageFilter(MsgFilter);
+                        ColorPicker = new();
+                        HideParentForm();
+                        ColorPicker.Show();
+                        ColorPicker.Activate();
+                    }
+                }
+
+                if (IsPicking)
+                {
+                    Cursor = Cursors.Cross;
+                    ColorPicker.UpdateFrame(DragInfo.Location);
+                }
             }
         }
 
@@ -301,27 +313,27 @@ public sealed class ColorBlock : PlainLabel
 
     protected override void OnMouseUp(MouseEventArgs e)
     {
-        EndPicking();
+        EndPicking(IsPicking ? null : PointToScreen(e.Location));
         base.OnMouseUp(e);
     }
 
-    private void EndPicking()
+    private void EndPicking(Point? p)
     {
-        if (!IsPreview && IsDragging)
+        if (!IsPreview && DragInfo.IsDragging)
         {
-            IsDragging = false;
+            DragInfo.End();
             Cursor = Cursors.Default;
-            Capture = false;
+            DestroyDrag();
 
             var parent = Parent;
 
-            if (parent != null)
+            if (parent != null && p is Point pv)
             {
-                var target = parent.GetChildAtPoint(parent.PointToClient(MouseLocation));
+                var target = parent.GetChildAtPoint(parent.PointToClient(pv));
 
-                if (target != null && target is ColorBlock block && Fellows.ArrayContains(block) && block != this)
+                if (target is ColorBlock cb && Fellows.ArrayContains(cb) && cb != this)
                 {
-                    block.Color = Color;
+                    cb.Color = Color;
                 }
             }
 
@@ -345,10 +357,25 @@ public sealed class ColorBlock : PlainLabel
         }
     }
 
+    private void UpdateDrag()
+    {
+        if (DragInfo.IsStarted)
+        {
+            DragImage ??= PlainDragImage.Start(this, DragInfo.Offset);
+            DragImage.Move(DragInfo.Location);
+        }
+    }
+
+    private void DestroyDrag()
+    {
+        DragImage?.Stop();
+        DragImage = null;
+    }
+
     private void CancelScreenColorPicker()
     {
         IsPickingCancelled = true;
-        EndPicking();
+        EndPicking(null);
     }
 
     private bool WmKeyDown(Keys vk)

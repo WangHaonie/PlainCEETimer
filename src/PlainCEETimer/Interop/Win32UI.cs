@@ -76,6 +76,12 @@ internal unsafe static class Win32UI
     [DllImport(App.User32Dll)]
     public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+    [DllImport(App.User32Dll)]
+    public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint nFlags);
+
+    [DllImport(App.User32Dll)]
+    public static extern bool SetWindowPos(IntPtr hWnd, nint hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+
     [DllImport(App.User32Dll, CharSet = CharSet.Unicode)]
     public static extern bool SetWindowText(IntPtr hWnd, string lpString);
 
