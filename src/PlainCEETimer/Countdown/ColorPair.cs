@@ -32,10 +32,21 @@ public partial struct ColorPair : IEquatable<ColorPair>
                 // https://www.w3.org/TR/wcag2ict/#dfn-contrast-ratio
                 //
 
-                var L1 = GetRelativeLum(fore);
-                var L2 = GetRelativeLum(back);
-                double.SwapIf(L1 < L2, ref L1, ref L2);
-                field = (L1 + 0.05) / (L2 + 0.05) >= 3;
+                bool value;
+
+                if (fore == back)
+                {
+                    value = false;
+                }
+                else
+                {
+                    var L1 = GetRelativeLum(fore);
+                    var L2 = GetRelativeLum(back);
+                    double.SwapIf(L1 < L2, ref L1, ref L2);
+                    value = (L1 + 0.05) / (L2 + 0.05) >= 3;
+                }
+
+                field = value;
             }
 
             return field;

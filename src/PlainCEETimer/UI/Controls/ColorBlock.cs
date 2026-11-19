@@ -7,7 +7,6 @@ using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
 using PlainCEETimer.Modules.Annotations.Fody;
 using PlainCEETimer.Modules.Extensions;
-using PlainCEETimer.Modules.Linq;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -185,8 +184,6 @@ public sealed class ColorBlock : PlainLabel
         }
     }
 
-    public ColorBlock[] Fellows { get; set; } = [];
-
     public Color Color
     {
         get => BackColor;
@@ -317,7 +314,7 @@ public sealed class ColorBlock : PlainLabel
         base.OnMouseUp(e);
     }
 
-    private void EndPicking(Point? p)
+    private void EndPicking(Point? screenPoint)
     {
         if (!IsPreview && DragInfo.IsDragging)
         {
@@ -327,11 +324,11 @@ public sealed class ColorBlock : PlainLabel
 
             var parent = Parent;
 
-            if (parent != null && p is Point pv)
+            if (parent != null && screenPoint is Point sp)
             {
-                var target = parent.GetChildAtPoint(parent.PointToClient(pv));
+                var target = parent.GetChildAtPoint(parent.PointToClient(sp), GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Disabled);
 
-                if (target is ColorBlock cb && Fellows.ArrayContains(cb) && cb != this)
+                if (target is ColorBlock cb && cb != this)
                 {
                     cb.Color = Color;
                 }

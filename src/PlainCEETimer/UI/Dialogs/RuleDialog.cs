@@ -101,14 +101,6 @@ public sealed class RuleDialog(CountdownRule existing, CountdownRule[] presets =
         ]);
 
         TextBoxCustomText.FlyoutVisibleChanged += (_, _) => SetPhVisible(TextBoxCustomText.FlyoutVisible);
-
-        ColorBlock[] blocks = [BlockFore, BlockBack];
-
-        foreach (var block in blocks)
-        {
-            block.Fellows = blocks;
-        }
-
         base.OnInitializing();
     }
 

@@ -574,12 +574,6 @@ public sealed class SettingsForm : AppForm
         ]);
 
         ColorBlocks = [BlockColor11, BlockColor21, BlockColor31, BlockColor41, BlockColor12, BlockColor22, BlockColor32, BlockColor42];
-
-        foreach (var block in ColorBlocks)
-        {
-            block.Fellows = ColorBlocks;
-        }
-
         UpdateSettingsArea(SettingsArea.StartUp, false);
         UpdateSettingsArea(SettingsArea.Restart, false);
     }
