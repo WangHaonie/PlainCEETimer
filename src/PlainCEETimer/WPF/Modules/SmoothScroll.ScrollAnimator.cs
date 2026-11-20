@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using PlainCEETimer.WPF.Extensions;
 
@@ -24,6 +25,8 @@ partial class SmoothScroll
         private bool m_Hanimate;
         private bool m_SuppressBringIntoView;
         private double m_duration;
+        private double m_dpiScaleX = 1D;
+        private double m_dpiScaleY = 1D;
         private bool m_scrollUnitSet;
         private int m_idxLbPendingFocus = -1;
         private ItemsControl m_itemsControl;
@@ -114,18 +117,19 @@ partial class SmoothScroll
                 var progress = Math.Min(1D, elapsed / m_duration);
                 var remaining = 1D - progress;
                 var eased = 1D - remaining * remaining * remaining;
+                var done = progress >= 1D;
 
                 if (m_Vanimate)
                 {
-                    m_sv.ScrollToVerticalOffset(fromV + (toV - fromV) * eased);
+                    m_sv.ScrollToVerticalOffset(done ? toV : SnapToPixel(fromV + (toV - fromV) * eased, m_dpiScaleY));
                 }
 
                 if (m_Hanimate)
                 {
-                    m_sv.ScrollToHorizontalOffset(fromH + (toH - fromH) * eased);
+                    m_sv.ScrollToHorizontalOffset(done ? toH : SnapToPixel(fromH + (toH - fromH) * eased, m_dpiScaleX));
                 }
 
-                if (progress >= 1D)
+                if (done)
                 {
                     isAnimating = false;
                     return true;
@@ -485,6 +489,9 @@ partial class SmoothScroll
             if (!isAnimating)
             {
                 isAnimating = true;
+                var dpi = VisualTreeHelper.GetDpi(m_sv);
+                m_dpiScaleX = dpi.DpiScaleX;
+                m_dpiScaleY = dpi.DpiScaleY;
                 AttachRendering(this);
             }
         }
@@ -581,6 +588,11 @@ partial class SmoothScroll
             }
 
             return false;
+        }
+
+        private static double SnapToPixel(double value, double dpiScale)
+        {
+            return dpiScale > 0D ? Math.Round(value * dpiScale) / dpiScale : value;
         }
 
         private static double GetWheelDuration(double delta)

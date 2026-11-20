@@ -17,6 +17,8 @@ public static partial class SmoothScroll
         DependencyProperty.RegisterAttached(MemberNames.Enabled, typeof(bool), typeof(SmoothScroll),
             new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits, OnEnabledChanged));
 
+    public static bool IsAnimating => s_currentAnimators.Count > 0;
+
     private static bool s_renderingAttached;
     private static readonly List<ScrollAnimator> s_currentAnimators = [];
     private static readonly ConditionalWeakTable<ScrollViewer, ScrollAnimator> s_animators = new();

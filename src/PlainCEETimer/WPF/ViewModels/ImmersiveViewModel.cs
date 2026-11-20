@@ -18,6 +18,7 @@ using PlainCEETimer.UI.Extensions;
 using PlainCEETimer.WPF.Converters;
 using PlainCEETimer.WPF.Extensions;
 using PlainCEETimer.WPF.Models;
+using PlainCEETimer.WPF.Modules;
 using WFColor = System.Drawing.Color;
 
 namespace PlainCEETimer.WPF.ViewModels;
@@ -291,7 +292,7 @@ public sealed partial class ImmersiveViewModel : ObservableObject, ISupportIniti
 
     private void RefreshItemsIfVisible()
     {
-        if (IsSidebarOpen)
+        if (IsSidebarOpen && !SmoothScroll.IsAnimating)
         {
             RefreshItems();
         }

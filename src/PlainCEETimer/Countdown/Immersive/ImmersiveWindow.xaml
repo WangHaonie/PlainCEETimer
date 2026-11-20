@@ -139,6 +139,7 @@
                                  FontFamily="{Binding Font.FontFamily.Value}"
                                  FontSize="{Binding Font.Size}"
                                  FontWeight="{Binding Font.Weight}"
+                                 VirtualizingPanel.VirtualizationMode="Recycling"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  mod:ScrollBarAdditions.ShowArrows="False">
