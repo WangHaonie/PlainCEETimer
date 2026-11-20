@@ -504,11 +504,14 @@ public sealed class SettingsForm : AppForm
                         [
                             CheckBoxMainBackdrop = b.CheckBox("启用主窗口背景模糊效果 (Acrylic)", (_, _) =>
                             {
-                                if (CheckBoxMainBackdrop.Checked && !CheckBoxMainFormUseWPF.Checked && !SystemVersion.IsWindows11
-                                    && MessageX.Warn("目前启用此选项会导致主窗口圆角缺失，是否继续？", MessageButtons.YesNo) == false)
+                                EnsureLoaded(() =>
                                 {
-                                    CheckBoxMainBackdrop.Checked = false;
-                                }
+                                    if (CheckBoxMainBackdrop.Checked && !CheckBoxMainFormUseWPF.Checked && !SystemVersion.IsWindows11
+                                    && MessageX.Warn("目前启用此选项会导致主窗口圆角缺失，是否继续？", MessageButtons.YesNo) == false)
+                                    {
+                                        CheckBoxMainBackdrop.Checked = false;
+                                    }
+                                });
 
                                 SettingsChanged();
                             })
