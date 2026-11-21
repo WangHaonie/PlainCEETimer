@@ -9,7 +9,7 @@ using PlainCEETimer.Modules.Extensions;
 namespace PlainCEETimer.UI.Controls;
 
 [NoConstants]
-public sealed class PlainDragImage : PlainDropDown
+public sealed class PlainDragImage : PlainPopup
 {
     protected override AppWindowStyle Params
     {

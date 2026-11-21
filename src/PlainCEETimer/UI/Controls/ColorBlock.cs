@@ -14,7 +14,7 @@ namespace PlainCEETimer.UI.Controls;
 public sealed class ColorBlock : PlainLabel
 {
     [NoConstants]
-    private sealed class ScreenColorPicker : PlainDropDown
+    private sealed class ScreenColorPicker : PlainPopup
     {
         public Color Result => CurrentColor;
 

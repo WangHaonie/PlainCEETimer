@@ -62,7 +62,7 @@
     <Compile Update="UI\Controls\PlainDateTimePicker.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="UI\Controls\PlainDropDown.cs">
+    <Compile Update="UI\Controls\PlainPopup.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="UI\Controls\PlainFlyout.cs">

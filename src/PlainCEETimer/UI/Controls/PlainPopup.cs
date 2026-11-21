@@ -5,7 +5,7 @@ using PlainCEETimer.Modules;
 
 namespace PlainCEETimer.UI.Controls;
 
-public class PlainDropDown : AppForm
+public class PlainPopup : AppForm
 {
     protected override AppWindowStyle Params => AppWindowStyle.OnEscClosing | AppWindowStyle.NoBorder;
 
