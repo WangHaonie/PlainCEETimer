@@ -137,6 +137,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
 
     public void Cleanup()
     {
+        SystemSettings.EnableTransparency.Changed -= SystemSettings_EnableTransparencyChanged;
         if (Countdown.ShouldDispose) Countdown.Destroy();
         ScreenChangeService.Destroy();
     }
@@ -163,6 +164,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         Owner = MessageX.Owner;
         WindowVisibility = new(Styles, SetCountdownRecipient);
         WindowManager.Current.ActivateRequested += (_, _) => WindowVisibility.Show(true);
+        SystemSettings.EnableTransparency.Changed += SystemSettings_EnableTransparencyChanged;
 
         Initializer.Initialize += (_, _) =>
         {
@@ -440,9 +442,7 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         WindowManager.Current.OnTopMostChanged(General.UniTopMost);
         Styles.ShowInTaskbar = !topmost;
         Styles.Opacity = General.Opacity / 100D;
-        var backdrop = AppParams.MainBackdropAcrylic;
-        BackOpacity = backdrop ? 0.01D : 1D;
-        Styles.ApplyBackdrop(backdrop, SystemBackdrop.SuggestedBackdrop);
+        ApplyBackdropStyle();
         Styles.SetPeekStyle(General.Peek);
 
         if (BorderColorObj.Enabled)
@@ -486,6 +486,13 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
         }
 
         IsWpf = newIsWpf;
+    }
+
+    private void ApplyBackdropStyle()
+    {
+        var backdrop = AppParams.MainBackdropAcrylic && SystemSettings.EnableTransparency.Value;
+        BackOpacity = backdrop ? 0.01D : 1D;
+        Styles.ApplyBackdrop(backdrop, SystemBackdrop.SuggestedBackdrop);
     }
 
     private void RegisterHotKeys()
@@ -710,6 +717,11 @@ public sealed partial class MainViewModel : ObservableObject, ISupportInitialize
     private void RefreshSettingsAsync()
     {
         Owner.BeginInvoke(new Action(RefreshSettings));
+    }
+
+    private void SystemSettings_EnableTransparencyChanged(object sender, SystemSettingChangedEventArgs<bool> e)
+    {
+        ApplyBackdropStyle();
     }
 
     private void ScreenChangeService_ScreenChanged(object sender, ScreenChangedEventArgs e)

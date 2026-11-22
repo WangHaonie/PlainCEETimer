@@ -78,8 +78,8 @@ public class SystemBackdrop
 
     public bool Apply()
     {
-        applied = true;
-        return ApplyCore(m_hWnd, true, m_value);
+        applied = ApplyCore(m_hWnd, true, m_value);
+        return applied;
     }
 
     public bool Clear()
@@ -96,7 +96,7 @@ public class SystemBackdrop
 
     private unsafe bool ApplyCore(IntPtr hWnd, bool enabled, int type)
     {
-        if (BasicSupported && SystemSettings.EnableTransparency.Value)
+        if (BasicSupported && (!enabled || SystemSettings.EnableTransparency.Value))
         {
             int flags = (enabled.ToWin32() << 8) | (Natives.ASBF_ACCENT_POLICY << 4) | (type & 0xF);
             uint tint = m_tint;
