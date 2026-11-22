@@ -101,8 +101,16 @@ public sealed class PlainDragImage : PlainPopup
             return bm;
         }
 
-        c.DrawToBitmap(bm, new(0, 0, cx, cy));
-        return bm;
+        bm.Destroy();
+        Win32UI.GetWindowRect(c.Handle, out var rc);
+        var sp = c.PointToScreen(Point.Empty);
+        var x = Math.Max(0, sp.X - rc.Left);
+        var y = Math.Max(0, sp.Y - rc.Top);
+        var wcx = Math.Max(cx + x, rc.Right - rc.Left);
+        var wcy = Math.Max(cy + y, rc.Bottom - rc.Top);
+        bm = new Bitmap(wcx, wcy, PixelFormat.Format32bppRgb);
+        c.DrawToBitmap(bm, new(0, 0, wcx, wcy));
+        return bm.Clone(new(x, y, cx, cy), PixelFormat.Format32bppRgb);
     }
 
     private static bool PrintWindow(IntPtr hWnd, Bitmap image)
