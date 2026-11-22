@@ -950,7 +950,7 @@ public sealed class SettingsForm : AppForm
             CheckBoxDebug.Checked = true;
             CheckBoxWFDpiAware.Checked = ParamsInfo.DisableWFPMv2;
             CheckBoxCommDlgDpiAware.Checked = ParamsInfo.EnableCommDlgPMv2;
-            CheckBoxMainBackdrop.Checked = ParamsInfo.MainBackdropAcrylic;
+            CheckBoxMainBackdrop?.Checked = ParamsInfo.MainBackdropAcrylic;
             TextBoxTSFormat.Text = ParamsInfo.TSFormat ?? TimeSpanFormat.DefaultFormat;
             PtspTSMax.Value = ParamsInfo.TSMax;
         }
@@ -1198,7 +1198,7 @@ public sealed class SettingsForm : AppForm
             ParamsInfo.Debug = CheckBoxDebug.Checked;
             ParamsInfo.DisableWFPMv2 = CheckBoxWFDpiAware.Checked;
             ParamsInfo.EnableCommDlgPMv2 = CheckBoxCommDlgDpiAware.Checked;
-            ParamsInfo.MainBackdropAcrylic = CheckBoxMainBackdrop.Checked;
+            ParamsInfo.MainBackdropAcrylic = CheckBoxMainBackdrop?.Checked ?? false;
             ParamsInfo.TSFormat = DebugTSFormat;
             ParamsInfo.TSMax = PtspTSMax.Value;
             AppParams.LoadConfig();
