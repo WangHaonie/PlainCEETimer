@@ -460,7 +460,7 @@ public sealed class SettingsForm : AppForm
                     GBoxPeekStyle = b.GroupBox("Peek 样式",
                     [
                         LabelPeekStyle = b.Label("当使用 Peek 预览应用程序窗口或桌面时，主窗口应采取的行为。"),
-                        ComboBoxPeekStyle = b.ComboBox(75, SettingsChanged, "默认", "始终显示", "关闭预览")
+                        ComboBoxPeekStyle = b.ComboBox(90, SettingsChanged, "默认", "始终显示", "关闭预览")
                     ])
                 ]),
                 #endregion

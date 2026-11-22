@@ -1,4 +1,4 @@
-﻿namespace PlainCEETimer.UI;
+﻿namespace PlainCEETimer.UI.Core;
 
 public interface IRequireDialog
 {
