@@ -6,35 +6,48 @@ using PlainCEETimer.Modules;
 namespace PlainCEETimer.Interop;
 
 [SuppressUnmanagedCodeSecurity]
-public class TaskbarProgress : IDisposable
+public sealed class TaskbarProgress : IDisposable
 {
-    private readonly IntPtr hWnd;
+    private bool m_disposed;
+    private readonly IntPtr m_hWnd;
+    private static int s_ref;
+    private static readonly object syncLock = new();
 
     public TaskbarProgress(IntPtr hwnd)
     {
-        hWnd = hwnd;
-        Initialize();
+        m_hWnd = hwnd;
+
+        lock (syncLock)
+        {
+            s_ref++;
+            Initialize();
+        }
     }
 
     public void SetState(ProgressStyle state)
     {
-        SetState(hWnd, state);
+        SetState(m_hWnd, state);
     }
 
     public void SetValue(long completed, long total)
     {
-        SetValue(hWnd, completed, total);
+        SetValue(m_hWnd, completed, total);
     }
 
     public void Dispose()
     {
-        Release();
-        GC.SuppressFinalize(this);
-    }
+        if (!m_disposed)
+        {
+            m_disposed = true;
 
-    ~TaskbarProgress()
-    {
-        Dispose();
+            lock (syncLock)
+            {
+                if (--s_ref == 0)
+                {
+                    Release();
+                }
+            }
+        }
     }
 
     [DllImport(App.NativesDll, EntryPoint = "#26")]

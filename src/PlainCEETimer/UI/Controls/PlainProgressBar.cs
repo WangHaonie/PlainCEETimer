@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using PlainCEETimer.Interop;
 using PlainCEETimer.Modules;
+using PlainCEETimer.Modules.Extensions;
 using PlainCEETimer.UI.Extensions;
 
 namespace PlainCEETimer.UI.Controls;
@@ -13,9 +14,8 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
         get => base.Value;
         set
         {
-            m_value = value;
-            UpdateValue();
             base.Value = value;
+            UpdateValue();
         }
     }
 
@@ -26,16 +26,14 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
         {
             if (m_style != value)
             {
-                base.Style = value == ProgressStyle.Indeterminate ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
                 m_style = value;
+                base.Style = value == ProgressStyle.Indeterminate ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
                 UpdateStyle();
             }
         }
     }
 
-    private bool init;
     private bool UseDark;
-    private int m_value;
     private ProgressStyle m_style;
     private TaskbarProgress tbp;
 
@@ -47,13 +45,7 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
     protected override void OnHandleCreated(EventArgs e)
     {
         ThemeHelper.Attach(this);
-
-        if (!init)
-        {
-            tbp = new(this.FindParentForm().Handle);
-            init = true;
-        }
-
+        tbp = new(this.FindParentForm().Handle);
         UpdateStyle();
         UpdateValue();
         base.OnHandleCreated(e);
@@ -61,7 +53,8 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
 
     protected override void OnHandleDestroyed(EventArgs e)
     {
-        init = false;
+        tbp.Destroy();
+        tbp = null;
         base.OnHandleDestroyed(e);
     }
 
@@ -80,7 +73,7 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
 
     private void UpdateStyle()
     {
-        if (init)
+        if (IsHandleCreated && tbp != null)
         {
             tbp.SetState(m_style);
 
@@ -97,9 +90,9 @@ public sealed class PlainProgressBar : ProgressBar, IThemeAwareEx
 
     private void UpdateValue()
     {
-        if (init)
+        if (IsHandleCreated && tbp != null)
         {
-            tbp.SetValue(m_value, 100);
+            tbp.SetValue(base.Value - Minimum, Maximum - Minimum);
         }
     }
 

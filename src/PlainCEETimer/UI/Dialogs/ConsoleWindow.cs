@@ -266,4 +266,15 @@ public sealed class ConsoleWindow : AppDialog
             SafeExecutionContext.Send(OnCompleteInvoker);
         }
     }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            tbp.Destroy();
+            tbp = null;
+        }
+
+        base.Dispose(disposing);
+    }
 }
